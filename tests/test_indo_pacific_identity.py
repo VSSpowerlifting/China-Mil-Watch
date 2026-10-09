@@ -103,7 +103,8 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
         html = self.page("index.html")
         h1 = re.search(r"<h1[^>]*>(.*?)</h1>", html, re.S)
         self.assertIsNotNone(h1)
-        self.assertIn(TITLE, h1.group(1))
+        self.assertIn('The region,', h1.group(1))
+        self.assertIn('aria-label="%s home"' % TITLE, html)
 
     def test_every_page_carries_the_wordmark_and_the_tagline(self):
         for name, html in self.pages().items():
@@ -145,8 +146,8 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
         for name, html in self.pages().items():
             with self.subTest(page=name):
                 self.assertRegex(
-                    html, r'<link rel="icon" type="image/svg\+xml" '
-                          r'href="(\.\./)?mark\.svg">')
+                    html, r'<link rel="icon" type="image/png" sizes="32x32" '
+                          r'href="(\.\./)?assets/identity/selected-ipr/ipr-accent-32\.png">')
 
     def test_the_mark_is_decorative_and_the_wordmark_is_the_name(self):
         """
@@ -184,7 +185,7 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
         # Analysis), the collection (Desks, Sources, Coverage) and the method
         # (Methodology, About). "Records" is the destination formerly labelled
         # "Atlas"; its address is unchanged.
-        self.assertEqual(labels, ["Records", "Analysis", "Desks", "Sources",
+        self.assertEqual(labels, ["Records", "Briefs", "Desks", "Sources",
                                   "Coverage", "Methodology", "About"])
 
 

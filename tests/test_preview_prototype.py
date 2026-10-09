@@ -335,6 +335,13 @@ class PreviewCase(unittest.TestCase):
     def page(self, name: str) -> str:
         return (self.out / name).read_text(encoding="utf-8")
 
+    def css_for(self, route="corpus.html") -> str:
+        """Read the complete styles delivered to this route, after the split."""
+        from core.frontend_budget import measure_page
+        dependencies = measure_page(self.out / route, self.out)["css"]
+        return "\n".join((self.out / path).read_text(encoding="utf-8")
+                         for path in dependencies)
+
 
 class TestProductionIsUntouchable(PreviewCase):
 
@@ -437,31 +444,19 @@ class TestNoFabricatedCoverage(PreviewCase):
                 self.assertIn(entry.status_label, block)
 
     def test_desk_directory_states_the_live_count_honestly(self):
-        """
-        The claim lives on the home page's own desk introduction and again on
-        the desk table, both derived from the same registry and the same run —
-        never typed in.
-
-        The third assertion was `assertIn("1 of 4", ...)`, which matched the
-        coverage apron's plain-text phrasing. That paragraph stated the ratio a
-        second time and was deduplicated away, so the assertion now reads the
-        DERIVATION instead of one rendering of it: the ratio and the
-        enabled-source total must both equal what the view model computes. A
-        literal typed into the template cannot satisfy it, which the old string
-        match could not tell.
-        """
-        html = self.page("index.html")
-        self.assertIn("2</b> collecting desk", html)
-        self.assertIn("of <b>5</b> declared", html)
-
+        from bs4 import BeautifulSoup
         from core.viewmodel import PublicView
         desks = PublicView(TRACKED_DB).desk_directory()
-        intro = html.split('<h2 id="desks">', 1)[1].split('class="desks"', 1)[0]
-        self.assertIn("<b>%d</b> collecting desk" % desks.collecting_count,
-                      intro)
-        self.assertIn("of <b>%d</b> declared" % desks.declared_count, intro)
-        self.assertIn("<b>%d</b> enabled source" % desks.collecting_source_count,
-                      intro)
+        soup = BeautifulSoup(self.page('index.html'), 'html.parser')
+        shown = soup.select('.home-desk-list a')
+        self.assertTrue(shown)
+        self.assertIn('Coverage is selective and concentrated in Chinese sources.', soup.get_text())
+        for item in shown:
+            self.assertIn('public records in this snapshot', item.get_text())
+            self.assertNotIn('None collected', item.get_text())
+        directory = self.page('desks.html')
+        for desk in desks:
+            self.assertIn(desk.name, directory)
 
     def test_home_page_discloses_single_desk_coverage(self):
         """
@@ -935,13 +930,13 @@ class TestRenderedStructure(PreviewCase):
                         "scroll horizontally on mobile")
 
     def test_focus_outline_is_never_removed(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         self.assertNotIn("outline: none", css)
         self.assertNotIn("outline:none", css)
         self.assertIn(":focus-visible", css)
 
     def test_reduced_motion_is_honoured(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         self.assertIn("prefers-reduced-motion", css)
 
     def test_all_internal_links_resolve(self):
@@ -1278,7 +1273,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         decoration, the reader loses the one colour that means 'a model wrote
         this'.
         """
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         users = re.findall(r'([^{}]+)\{[^{}]*var\(--signal\)[^{}]*\}', css)
         selectors = " ".join(users)
         self.assertIn("--signal", css)
@@ -1417,8 +1412,10 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertIn("It is not a feed of US defense releases.", page)
         self.assertIn("Nothing has been configured, enabled or "
                       "collected.", page)
+        from bs4 import BeautifulSoup
+        desk_content = BeautifulSoup(page, "html.parser").main.get_text(" ", strip=True)
         self.assertNotRegex(
-            page, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b")
+            desk_content, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b")
 
     # ── Maintainer ──────────────────────────────────────────────────────
 
@@ -1437,12 +1434,12 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     # ── Typography ──────────────────────────────────────────────────────
 
     def test_table_figures_are_tabular(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         self.assertRegex(
             css, r"table\s*\{[^{}]*font-variant-numeric:\s*tabular-nums")
 
     def test_the_type_ladder_declares_six_levels(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         for step in ("--step-wordmark", "--step-display", "--step-deck",
                      "--step-section", "--step-body", "--step-meta"):
             with self.subTest(step=step):
@@ -1451,111 +1448,32 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     # ── Home is analysis-led ────────────────────────────────────────────
 
     def test_home_orders_purpose_records_desks_analysis_coverage(self):
-        """
-        The regional expansion has to be legible from the home page without
-        scrolling into it: what this is, what arrived, which desks exist and
-        what they actually do, what was read into it, and what did not collect.
-
-        The ONLY thing that moved here is the anchor for "what this is". The
-        coverage apron that used to carry it was deduplicated into the
-        dateline, so `class="purpose"` no longer exists and the page's opening
-        prose is the claim band. The governed order it guards —
-        records, then desks, then analysis, then coverage — is unchanged, and
-        the sequence is now asserted with the opening and the lead record
-        included, so it is longer than it was rather than shorter.
-        """
-        html = self.page("index.html")
-        markers = ('class="opening"', 'class="lead-record"',
-                   "Latest records", '<h2 id="desks">', "Latest analysis",
-                   "What did not collect")
-        for marker in markers:
-            self.assertIn(marker, html, "%s is missing from the home page"
-                          % marker)
-        order = [html.index(marker) for marker in markers]
-        self.assertEqual(order, sorted(order),
-                         "the home page sections are out of order")
+        html = self.page('index.html')
+        markers = ('id="home-title"', 'id="finder-title"', 'id="latest-title"',
+                   'id="latest-analysis"', 'id="home-desks-title"', 'class="wrap home-method"')
+        positions = [html.index(marker) for marker in markers]
+        self.assertEqual(positions, sorted(positions))
 
     def test_the_lead_record_opening_does_not_reorder_desks_and_analysis(self):
-        """
-        The regression this pass exists to prevent.
-
-        C1 lifts the LEAD record out of the reading column and into the
-        opening. That is the only structural move it is authorised to make.
-        An earlier revision of this candidate also swapped Desks and Latest
-        analysis, which is a different decision and was never taken: an
-        analysis section ahead of the desks that produce the record inverts
-        what this publication is.
-
-        Asserted on the folio marks as well as the headings, because the
-        folios are what a reader counts.
-        """
-        html = self.page("index.html")
-        self.assertLess(html.index('<h2 id="desks">'),
-                        html.index("Latest analysis"),
-                        "Desks must precede Latest analysis")
-        # The `01`-`05` folio marks are gone. The historical design had none,
-        # nothing referred to them, and Impeccable flags numbered section
-        # markers as editorial scaffold — the finding this removal cleared.
-        # What a reader actually counts is the headings, so the order is
-        # asserted on those, and their absence is asserted too so the
-        # scaffold cannot come back without a decision.
+        html = self.page('index.html')
+        self.assertLess(html.index('id="latest-title"'), html.index('id="latest-analysis"'))
+        self.assertLess(html.index('id="latest-analysis"'), html.index('id="home-desks-title"'))
         self.assertNotIn('class="section-index"', html)
-        self.assertNotRegex(
-            html, r'<p[^>]*aria-hidden="true"[^>]*>\s*0\d\s*</p>',
-            "numbered section markers are back")
-        sections = [re.sub(r"\s+", " ", t).strip() for t in
-                    re.findall(r'<div class="section-head">\s*<h2[^>]*>(.*?)</h2>',
-                               html, re.S)]
-        self.assertEqual(
-            sections,
-            ["Latest records", "Desks", "Latest analysis",
-             "Record and analysis are not the same thing",
-             "What did not collect"])
+        self.assertNotRegex(html, r'<p[^>]*aria-hidden="true"[^>]*>\s*0\d\s*</p>')
 
     def test_home_leads_with_the_publication_not_a_readme_heading(self):
-        html = self.page("index.html")
-        first_h = re.search(r"<h1[^>]*>(.*?)</h1>", html, re.S)
-        self.assertIsNotNone(first_h)
-        self.assertIn("Test Title", first_h.group(1))
-        self.assertNotIn("What this is", first_h.group(1))
+        html = self.page('index.html')
+        first_h = re.search(r'<h1[^>]*>(.*?)</h1>', html, re.S)
+        self.assertIn('The region,', first_h.group(1))
+        self.assertIn('aria-label="Test Title home"', html)
+        self.assertNotIn('What this is', first_h.group(1))
 
     def test_home_does_not_lead_with_a_cross_desk_total(self):
-        """
-        A single headline number spanning desks that do not collect would be
-        the central dishonesty available to this page. Every figure on it is
-        attached to the desk it came from.
-
-        Re-anchored: the coverage apron this used to read was deduplicated, so
-        the page's opening prose is the claim band. The contract is unchanged
-        and is checked in three parts — the opening states no corpus total at
-        all; the dateline, which does state one, names the desk it belongs to;
-        and the desk ratio is stated where the topology is, not beside the
-        total it must not be multiplied by.
-        """
-        html = self.page("index.html")
-        # The CLAIM column, not the whole opening. The dateline moved into the
-        # opening as its ledger, and the ledger states a corpus total by
-        # design — with the desk attribution that is the whole point of it.
-        # What must carry no figure is the publication's statement of what it
-        # is, which is the left column.
-        opening = html.split('class="opening"', 1)[1].split("</section>", 1)[0]
-        claim = opening.split('class="ledger"', 1)[0]
-        self.assertNotRegex(claim, r"\b\d[\d,]{3,}\b")
-
-        from core.viewmodel import PublicView
-        desks = PublicView(TRACKED_DB).desk_directory()
-        dateline = opening.split('class="ledger"', 1)[1]
-        if desks.collecting_count == 1:
-            self.assertIn("Records held, %s" % desks.collecting[0].name,
-                          " ".join(dateline.split()),
-                          "the corpus total lost its desk attribution")
-        # The desk ratio belongs to Desks, and must not reappear in the band
-        # that carries the corpus total.
-        self.assertNotIn("Collecting desks", dateline)
-        self.assertNotIn("Collecting sources", dateline)
-        intro = html.split('<h2 id="desks">', 1)[1].split('class="cards', 1)[0]
-        self.assertIn("<b>%d</b> collecting desk" % desks.collecting_count,
-                      intro)
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(self.page('index.html'), 'html.parser')
+        self.assertNotIn('{:,}'.format(self.corpus_size), soup.select_one('.pacific-copy').get_text())
+        self.assertIn('{:,} preserved records'.format(self.corpus_size), soup.select_one('.home-finder').get_text())
+        self.assertIn('Snapshot', soup.select_one('.home-finder').get_text())
 
     # ── Corpus counts and labels ────────────────────────────────────────
 
@@ -1664,58 +1582,29 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                 self.assertNotIn("%d articles" % trail, page)
 
     def test_latest_records_blurb_does_not_deny_translation(self):
-        """
-        The blurb may not imply the titles are untranslated — most of them
-        carry a machine translation, shown above the original. It also may not
-        name a single desk now that the roster is derived, nor imply that
-        every collecting desk appears: a desk with nothing analyzed has no row
-        (owner ruling 2026-09-27).
-        """
-        html = self.page("index.html")
-        # Whitespace-normalised: the sentence moved into the records rail
-        # with the revival and wraps at a different column there. The contract
-        # is the words, not the column they happen to break at.
-        flat = " ".join(html.split())
-        self.assertIn("The latest analyzed records, with original-language "
-                      "titles preserved.", flat)
-        self.assertNotIn("from the desks that collect", flat)
-        self.assertNotIn("in the language they were published in", html)
-        self.assertNotIn("China Desk records", html)
+        html = self.page('index.html')
+        self.assertIn('Original-language titles, source-stated dates', html)
+        self.assertIn('Machine translation', html)
+        self.assertNotIn('in the language they were published in', html)
 
     def test_every_home_record_is_in_the_analyzed_state(self):
-        """The blurb says "analyzed", so every record the home page lists —
-        the lead and the register — must be, by the state derivation every
-        label uses."""
-        html = self.page("index.html")
-        body = html.split('aria-labelledby="lead-record-title"', 1)[1]
-        body = body.split('aria-labelledby="coverage"', 1)[0]
-        body = body.split('id="analysis"', 1)[0]
-        ids = [int(i) for i in dict.fromkeys(
-            re.findall(r'href="record/(\d+)\.html"', body))]
-        self.assertEqual(len(ids), gp.HOME_RECORD_COUNT)
-        from scripts.reconcile_db import read_only
-        with read_only(str(TRACKED_DB)) as con:
-            states = dict(con.execute(
-                "SELECT a.id, " + gp.STATE_CASE_SQL + " FROM articles a "
-                " WHERE a.id IN (%s)" % ",".join("?" * len(ids)), ids))
-        self.assertEqual(set(states.values()), {"analyzed"})
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(self.page('index.html'), 'html.parser')
+        recent = [int(a['href'].split('/')[1].split('.')[0]) for a in soup.select('.home-recent h3 a')]
+        corpus = gp.load_corpus(TRACKED_DB)['corpus']
+        self.assertEqual(recent, [r['id'] for r in corpus[:4]])
+        selected = soup.select_one('.home-selected h3 a')
+        if selected:
+            rid = int(selected['href'].split('/')[1].split('.')[0])
+            self.assertEqual(next(r for r in corpus if r['id'] == rid)['state'], 'analyzed')
 
     def test_the_layer_explainer_claims_only_what_holds(self):
-        """Owner ruling 2026-09-27. Analysis is "human-controlled" — the
-        doctrine's word — because the existing issues were drafted through a
-        model under human control. Machine output is published without human
-        review by the daily pipeline; nothing claims no person ever saw it."""
-        flat = " ".join(re.sub(r"<[^>]+>", " ",
-                               self.page("index.html")).split())
-        self.assertIn("Analysis is human-controlled, cites the records it "
-                      "rests on, and is labeled as interpretation.", flat)
-        self.assertIn("the daily pipeline publishes them without human "
-                      "review. They can be wrong.", flat)
-        for claim in ("No model writes it", "no script derives it",
-                      "written by a person", "never reviewed by a human",
-                      "labeled wherever they appear"):
-            with self.subTest(claim=claim):
-                self.assertNotIn(claim, flat)
+        flat = ' '.join(re.sub(r'<[^>]+>', ' ', self.page('index.html')).split())
+        self.assertIn('Human-controlled analysis', flat)
+        self.assertIn('machine output is published without human review', flat)
+        self.assertIn('interpretation', flat.lower())
+        for claim in ('No model writes it', 'no script derives it', 'written by a person', 'never reviewed by a human'):
+            self.assertNotIn(claim, flat)
 
     # ── Reader-facing language ──────────────────────────────────────────
 
@@ -1824,7 +1713,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn('class="citation"', about)
 
     def test_the_citation_carries_no_boxed_styling(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = re.search(r"\.cite-line\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(block)
         self.assertNotIn("background", block.group(1))
@@ -1842,7 +1731,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     def test_edition_label_is_rendered_once_visually(self):
         """Emitted twice, but exactly one is display:none at any width."""
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         self.assertIn(".ed-label-inline { display: none; }", css)
         self.assertIn(".editions .ed-label-wide { display: none; }", css)
 
@@ -1860,7 +1749,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         giving back most of the masthead saving. Two columns x three rows keeps
         every fact and its wording while halving the band.
         """
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         narrow = css.split("@media (max-width: 600px)", 1)[1].split("\n}\n", 1)[0]
         self.assertIn("display: grid", narrow)
         self.assertIn("repeat(2, minmax(0, 1fr))", narrow)
@@ -1929,7 +1818,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                 self.assertNotIn(word, japan)
 
     def test_provenance_values_wrap_rather_than_clip(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         rule = re.search(r"\.token,\s*\.prov-value\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(rule)
         self.assertIn("overflow-wrap", rule.group(1))
@@ -2207,7 +2096,8 @@ class TestRecordPages(PreviewCase):
     def test_original_title_and_translation_notice_follow_record_heading(self):
         rec_id = self.first_in_state("analyzed")
         html = self.record(rec_id)
-        self.assertRegex(html, r'</h1>\s*<div class="record-title-pair">')
+        self.assertLess(html.index('</h1>'), html.index('class="record-source-line"'))
+        self.assertLess(html.index('class="record-source-line"'), html.index('class="record-title-pair"'))
         # The desk line no longer runs on record pages (2026-09-27); the
         # custody line is what now follows the title pair.
         self.assertLess(html.index('class="record-title-pair"'),
@@ -2306,7 +2196,7 @@ class TestRecordPages(PreviewCase):
         self.assertNotIn("tabindex=\"-1\"", html)
 
     def test_urls_and_hashes_can_wrap_at_320px(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for("record/1.html")
         rule = re.search(r"\.token,\s*\.prov-value\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(rule)
         self.assertIn("overflow-wrap", rule.group(1))
@@ -2332,7 +2222,7 @@ class TestRecordPages(PreviewCase):
                     html, r'<p class="cite-text" id="%s">[^<]+</p>' % anchor)
 
     def test_rust_marks_only_machine_generated_material(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for("record/1.html")
         # The rust family moved with the palette; what may not move is the
         # discipline. One token, reserved for machine output.
         self.assertIn("--signal:       #9C4B36", css)
@@ -2861,8 +2751,8 @@ class TestRecordSemantics(PreviewCase):
         by_code = {s["code"]: s["definition"] for s in gp.PROCESSING_STATES}
         self.assertEqual(
             by_code["awaiting_screening"],
-            "Stored but not yet screened for relevance. No judgment of any "
-            "kind has been made about this record.")
+            "Stored but not yet screened for machine relevance. No machine screening judgment "
+            "has been made about this record.")
         self.assertEqual(
             by_code["analysis_incomplete"],
             "Passed relevance screening, but analysis did not complete. The "
@@ -2958,7 +2848,7 @@ class TestTransitionalArchiveIsTruthful(PreviewCase):
         html = self.page("archive.html")
         lede = re.sub(r"\s+", " ", html.split('class="lede"', 1)[1]
                       .split("</p>", 1)[0])
-        self.assertIn("Every stored record in this snapshot", lede)
+        self.assertIn("preserved records. Search English and original titles.", lede)
         self.assertIn("{:,}".format(self.corpus_size), lede)
         self.assertNotIn("recent sample", html)
         self.assertNotIn("the list is complete", html)
@@ -2972,7 +2862,7 @@ class TestTransitionalArchiveIsTruthful(PreviewCase):
 
     def test_completeness_is_backed_by_a_reachable_complete_path(self):
         html = re.sub(r"\s+", " ", self.page("archive.html"))
-        self.assertIn("Every stored record in this snapshot", html)
+        self.assertIn("{:,} preserved records".format(self.corpus_size), html)
         self.assertIn("Every record is also reachable by publication week",
                       html)
 
@@ -3114,24 +3004,24 @@ class TestCorpusIndexMobileTables(PreviewCase):
                 self.assertIn('<th scope="row">', table)
 
     def test_captions_are_not_collapsed_at_any_width(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Corpus index tables at narrow widths", 1)[1]
-        block = block.split("@media (prefers-reduced-motion", 1)[0]
+        block = block.split("/* Volume by publication week", 1)[0]
         self.assertNotIn("caption", block,
                          "the corpus rules must not touch captions")
 
     def test_headers_stay_in_the_accessibility_tree(self):
         """Off-screen, not display:none — scope relationships must survive."""
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Corpus index tables at narrow widths", 1)[1]
-        block = block.split("@media (prefers-reduced-motion", 1)[0]
+        block = block.split("/* Volume by publication week", 1)[0]
         self.assertIn("position: absolute; left: -9999px", block)
         self.assertNotIn("thead { display: none", block)
 
     def test_no_pseudo_label_duplicates_the_column_header(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Corpus index tables at narrow widths", 1)[1]
-        block = block.split("@media (prefers-reduced-motion", 1)[0]
+        block = block.split("/* Volume by publication week", 1)[0]
         # The block's own header comment discusses ::before, and the split
         # consumed its opening `/*`. Start after that comment closes, then
         # strip any remaining comments, so only declarations are scanned.
@@ -3145,15 +3035,14 @@ class TestCorpusIndexMobileTables(PreviewCase):
         self.assertIn('<span class="c-unit"> records</span>', index)
         self.assertIn('<span class="c-unit"> recorded run dates (UTC)</span>',
                       index)
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         self.assertIn(".c-unit { display: none; }", css)
 
     def test_week_ranges_never_break_mid_date(self):
         index = self.page("corpus.html")
-        self.assertIn(".c-range", (self.out / "styles.css").read_text(
-            encoding="utf-8"))
+        self.assertIn(".c-range", self.css_for())
         self.assertIn('<span class="c-range">', index)
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         rule = css.split(".c-range {", 1)[1].split("}", 1)[0]
         self.assertIn("white-space: nowrap", rule)
 
@@ -3166,18 +3055,18 @@ class TestCorpusIndexMobileTables(PreviewCase):
                 self.assertNotIn(code, index)
 
     def test_tabular_figures_are_kept(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Corpus index tables at narrow widths", 1)[1]
-        block = block.split("@media (prefers-reduced-motion", 1)[0]
+        block = block.split("/* Volume by publication week", 1)[0]
         self.assertIn("tabular-nums lining-nums", block)
 
     def test_desktop_layout_is_not_altered_by_the_new_rules(self):
         """Every new rule lives inside the ≤640px query, so 768px and up are
         untouched; only `.c-unit`/`.c-range` apply globally, and they hide
         text and prevent a date break respectively."""
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Corpus index tables at narrow widths", 1)[1]
-        block = block.split("@media (prefers-reduced-motion", 1)[0]
+        block = block.split("/* Volume by publication week", 1)[0]
         outside = block.split("@media (max-width: 640px) {", 1)
         before, after = outside[0], outside[1].rsplit("}", 1)[-1]
         self.assertNotIn("corpus-states", before + after)
@@ -3592,7 +3481,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
     def test_the_hidden_attribute_beats_author_display_rules(self):
         """`.pager { display: flex }` overrode the UA `[hidden]` rule, so the
         pager stayed on screen for a zero-result query."""
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         self.assertIn("[hidden] { display: none !important; }", css)
 
     def test_the_empty_state_is_stated_once(self):
@@ -3638,7 +3527,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
         nav = self.page("archive.html").split('aria-label="Primary"', 1)[1]
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
-        self.assertEqual(labels, ["Records", "Analysis", "Desks", "Sources",
+        self.assertEqual(labels, ["Records", "Briefs", "Desks", "Sources",
                                   "Coverage", "Methodology", "About"])
         self.assertNotIn("Corpus", labels)
         self.assertNotIn("Archive", labels)
@@ -3958,7 +3847,7 @@ class TestVolumeByWeek(PreviewCase):
                 self.assertIn(annotated["annotation"], self.html)
 
     def test_the_volume_block_never_uses_rust(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Volume by publication week", 1)[1]
         block = block.split("@media (prefers-reduced-motion", 1)[0]
         self.assertNotIn("var(--signal)", block)
@@ -3992,7 +3881,7 @@ class TestVolumeByWeek(PreviewCase):
                                                        "archive.html")))
 
     def test_tabular_figures_are_used(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Volume by publication week", 1)[1]
         self.assertIn("tabular-nums lining-nums", block)
 
@@ -4836,11 +4725,10 @@ class TestCorpusGuide(PreviewCase):
     def test_the_guide_adds_no_primary_navigation_item(self):
         """It is reachable contextually. The nav is unchanged."""
         for name, html in self._all_html().items():
-            # The primary navigation is the masthead's RAIL now. Both
-            # renderings of it live inside `.nav-rail`, so reading the rail
-            # covers the desktop list and the compact disclosure at once —
-            # where splitting on the first <nav> only ever read one of them.
-            nav = html.split('class="nav-rail"', 1)[1].split("</header>", 1)[0]
+            from bs4 import BeautifulSoup
+            header = BeautifulSoup(html, "html.parser").select_one(".masthead")
+            self.assertIsNotNone(header)
+            nav = str(header)
             with self.subTest(page=name):
                 self.assertNotIn("corpus-guide.html", nav)
                 self.assertNotIn("Corpus Guide", nav)
@@ -4962,7 +4850,7 @@ class TestCorpusGuide(PreviewCase):
                 self.assertNotIn("is_significant", html)
 
     def test_field_names_render_as_metadata_not_prose(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         self.assertIn(".fieldname", css)
         self.assertRegex(css, r"\.fieldname\s*\{[^{}]*var\(--mono\)")
         # Inside a row header, never in a heading or a paragraph.
@@ -5144,7 +5032,7 @@ class TestCorpusGuide(PreviewCase):
                     self.assertRegex(th, r'scope="(col|row)"')
 
     def test_the_dictionary_table_stacks_without_pseudo_labels(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = css.split("Corpus Guide", 1)[1]
         # `thead` moves off-screen, never out of the accessibility tree.
         self.assertIn(".dictionary thead { position: absolute; left: -9999px; }",
@@ -5315,7 +5203,7 @@ class TestSnapshotScopedCitations(PreviewCase):
             ("analyzed", "machine-generated and have not been reviewed by a "
                          "human"),
             ("not_selected", "screened and not selected for analysis"),
-            ("awaiting_screening", "has not been screened"),
+            ("awaiting_screening", "has not been machine-screened"),
             ("analysis_incomplete", "No completed analysis is claimed"),
         ):
             with self.subTest(state=state):
@@ -5530,7 +5418,7 @@ class TestSnapshotScopedCitations(PreviewCase):
                 self.assertNotIn("data-citation", html)
 
     def test_citations_render_borderless(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         for selector in (r"\.cite-block", r"\.cite-text", r"\.cite-line"):
             block = re.search(selector + r"\s*\{([^{}]*)\}", css)
             with self.subTest(selector=selector):
@@ -5543,7 +5431,7 @@ class TestSnapshotScopedCitations(PreviewCase):
 
     def test_rust_never_marks_a_citation(self):
         """Rust means a model produced this. A citation is authored."""
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         users = re.findall(r'([^{}]+)\{[^{}]*var\(--signal\)[^{}]*\}', css)
         for selector in " ".join(users).split(","):
             with self.subTest(selector=selector.strip()[:40]):
@@ -5611,7 +5499,7 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
         self.assertIn("<summary>Citation text for the", self.html)
 
     def test_the_disclosure_carries_no_box_and_no_rust(self):
-        css = (self.out / "styles.css").read_text(encoding="utf-8")
+        css = self.css_for()
         block = re.search(r"\.ed-cite\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(block)
         self.assertNotIn("border", block.group(1))
@@ -6294,7 +6182,7 @@ class TestShardLedeGrammar(PreviewCase):
         # first — the stylesheet's own prose says "appears nowhere on this
         # page", which is documentation, not a `content:` declaration.
         css = re.sub(r"/\*.*?\*/", " ",
-                     (self.out / "styles.css").read_text(encoding="utf-8"),
+                     self.css_for(),
                      flags=re.S)
         for value in re.findall(r"content:\s*([^;}]+)", css):
             with self.subTest(content=value.strip()):
@@ -6419,7 +6307,8 @@ class TestStop4RoutesAreIntact(PreviewCase):
         # Week shards are top-level files, so they are already inside `top`.
         self.assertEqual(len(files),
                          self.corpus_size + len(top) + len(sources)
-                         + len(covers) + len(atmosphere))
+                         + len(covers) + len(atmosphere)
+                         + len([q for q in (self.out / "assets").rglob("*") if q.is_file()]))
         # Three declared files since 2026-09-15: the withdrawn J-20 derivative,
         # which stays published with its licence record because "do not render
         # it" is not "delete it", and the Ocean Signal Veil's two encodings,

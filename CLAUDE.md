@@ -68,8 +68,11 @@ Baseline: **validator passes with 10 governed warnings**; explain any new one
 in `PROJECT_STATE.md` and never fix one by invention.
 
 ## Design north star (details in docs/DESIGN_SYSTEM.md)
-A living editorial intelligence publication — Paper Ledger (light, the record)
-+ Night Desk (dark, weekly analysis), Source Serif 4 / Inter / IBM Plex Mono,
+The October frontend candidate follows the reviewed photograph-led direction,
+selected lowercase ipr identity and Instrument Serif / Inter / Source Serif 4.
+Paper Ledger remains the reading ground and Night Desk identifies analysis;
+historical weekly typography and identity are preserved. Review evidence is
+`docs/FRONTEND_PRODUCTION_2026-10-09.md`. Keep
 one crimson signal family reserved for analytical meaning.
 No SaaS/dashboard/terminal aesthetics; no box shadows; mono never in prose;
 motion is reveal-based, reduced-motion-safe, transform/opacity only.

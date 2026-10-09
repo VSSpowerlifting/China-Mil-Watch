@@ -369,7 +369,19 @@ def publish(staged: Path, target: Path, gp) -> tuple:
     shutil.move(str(staged), str(target))
 
     for name in carried:
-        shutil.move(str(holding / name), str(target / name))
+        if name == "assets" and (target / name).is_dir():
+            # Fresh frontend assets win at their own paths. Preserve every
+            # older referenced asset without nesting assets/assets or replacing
+            # the newly built fonts, identity and responsive photographs.
+            for source in sorted((holding / name).rglob("*")):
+                if source.is_file():
+                    destination = target / name / source.relative_to(holding / name)
+                    if not destination.exists():
+                        destination.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(source, destination)
+            shutil.rmtree(holding / name)
+        else:
+            shutil.move(str(holding / name), str(target / name))
     shutil.rmtree(holding)
 
     moved = []

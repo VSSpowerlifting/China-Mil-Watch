@@ -3,20 +3,10 @@
 {% from "_weeks.html" import week_strip %}
 {% from "_atlas.html" import spine %}
 {% block title %}The record — {{ title }}{% endblock %}
+{% block head_scripts %}<link rel="stylesheet" href="archive.css">{% endblock %}
+{% block main_class %} class="archive-page"{% endblock %}
 {% block content %}
-<header class="page-head">
-  <h1 class="page-name">The record</h1>
-  <p class="eyebrow eyebrow--corpus">{{ corpus_eyebrow }}</p>
-  <p class="lede">Every stored record in this snapshot — all
-  {{ corpus_total | count }} of them — searchable and filterable, with the
-  original-language title preserved on every one.</p>
-  {# guide-link and volume-jump are the earlier page's anchors, kept for links into it. #}
-  <p class="meta" id="guide-link">What this corpus holds, what each stored field means, and where
-  its counts stop being reliable: <a href="corpus-guide.html">Corpus Guide</a>.
-  <span id="volume-jump"><a href="#volume-heading">View records by publication week</a>.</span></p>
-</header>
-{{ spine(desks, snapshot, corpus_total) }}
-
+<header class="page-head"><h1>The record.</h1><p class="lede">{{ corpus_total | count }} preserved records. Search English and original titles.</p></header>
 {# The finder. `#browse` and the form both ship `hidden`; browse.js reveals
    them, so with JavaScript off no control ever appears operative when nothing
    can operate it. The newest records below are rendered on the server and
@@ -39,6 +29,9 @@
         <input id="f-q" name="q" type="search" autocomplete="off"
                placeholder="English or original title">
       </div>
+      <details class="finder-more">
+        <summary>Filters</summary>
+        <div class="finder-more-body">
       <div class="finder-field">
         <label for="f-desk">Desk</label>
         <select id="f-desk" name="desk">
@@ -67,9 +60,7 @@
           <option value="old">Oldest first</option>
         </select>
       </div>
-      <details class="finder-more">
-        <summary>More filters</summary>
-        <div class="finder-more-body">
+
           <div class="finder-field">
             <label for="f-institution">Publishing institution</label>
             <select id="f-institution" name="institution">
@@ -96,6 +87,7 @@
             <label for="f-trail"><input id="f-trail" name="trail" type="checkbox" value="1">
               Only records in an analysis source trail ({{ trail_record_count | count }})</label>
           </div>
+          <button type="submit" class="btn btn--primary">Apply filters</button>
         </div>
       </details>
       <button type="submit" class="btn btn--primary">Search</button>
@@ -104,11 +96,12 @@
       <ul class="chips" id="chips" aria-label="Active filters"></ul>
       <button type="button" class="chip-clear" id="f-reset" hidden>Clear all filters</button>
     </div>
+
+    <details class="finder-about">
+      <summary>Search scope and counts</summary>
     <p class="finder-note">Search covers titles only — the English title where one
     exists, and the original title always. It does not search machine summaries
     or stored source text.</p>
-    <details class="finder-about">
-      <summary>How the filters count</summary>
       <p>Source outlets and publishing institutions overlap: one institution can
       publish through more than one source, so their counts are not mutually
       exclusive categories. Original language is an attribute of the source, not
@@ -187,6 +180,10 @@ records above, and every record by publication week, do not.</p></noscript>
   </div>
 </figure>
 
+<details class="archive-coverage"><summary>Corpus scope and coverage</summary>
+{{ spine(desks, snapshot, corpus_total) }}
+<p class="meta" id="guide-link">Stored fields and limits: <a href="corpus-guide.html">Corpus Guide</a>. <span id="volume-jump"><a href="#volume-heading">View records by publication week</a>.</span></p>
+</details>
 {% include "_volume.html" %}
 {% endblock %}
 {% block scripts %}<script src="browse.js" defer></script>{% endblock %}

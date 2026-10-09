@@ -47,19 +47,30 @@ This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
-**Evidence Timelines (#158):** implementation prepared on
-`codex/evidence-timelines-20261007`, started from main `24924c59d` and refreshed
-to `e0cd41a2e`. Versioned sidecars, strict source reconciliation,
-approved-only static routes and a
-private review command are in source. Maritime Cooperation 2026 is a new,
-unpublished editorial draft using the five records in approved Brief No. 15;
-that Brief's approval is not inherited. No production timeline/tab is admitted
-while the collection has no approved timeline. Preview and verification are
-documented in `docs/EVIDENCE_TIMELINES.md`. Database, tracked output, Brief
-No. 15's approved sidecar, collectors and workflows are unchanged. The
-remaining gate is owner review of the feature and separate approval of the
-timeline's exact editorial content; no merge, deployment or publication is
-authorized by this work.
+**Frontend implementation candidate (9 October 2026):** the reviewed 8 October
+refinement is integrated on `codex/ipr-frontend-production-20261008`, from main
+`2524d11c2` with current main `0e1b6b753` integrated before final verification.
+Selected `ipr` artwork, local licensed fonts, responsive natural photography and
+home/archive/record/Brief/timeline treatments use the governed renderer.
+Production output is regenerated only through `site/render.py`; canonical DB,
+Brief sidecars, historical issues, desk/source state and collectors are unchanged.
+All 4,980 record contents and 10 approved native Brief relations are verified;
+75 browser cases and 13 reader flows pass. The validator retains its 10 governed
+warnings. The full offline suite passes: 4,874 tests, one existing stale
+prototype snapshot readiness skip. Results and screenshots are recorded in
+`docs/FRONTEND_PRODUCTION_2026-10-09.md`. This is an implementation review
+candidate: no merge or deployment has occurred.
+
+**Evidence Timelines (#181):** the inspected prerequisite at head
+`657e9f264` is integrated into this candidate in separate commit `b80b3e4`,
+preserving concurrent main changes. Versioned sidecars, strict reconciliation,
+approved-only static routes and a private review command remain governed by
+`docs/EVIDENCE_TIMELINES.md`. Maritime Cooperation 2026 remains an unpublished
+editorial draft with unchanged digest; Brief No. 15's approval is not inherited.
+Production emits no timeline route, library, tab or backlinks while none is
+separately approved. Private review is noindex and rejected by the deploy gate.
+Owner implementation review, merge/deployment decisions and separate approval
+of exact timeline editorial content remain outstanding.
 
 Durable documents, and what each one governs:
 

@@ -149,9 +149,12 @@ class TimelineRendering(unittest.TestCase):
                 self.assertEqual(first, second)
 
     def test_detail_page_budget_and_no_additional_javascript(self):
-        total = self.detail().stat().st_size + sum((self.preview / p).stat().st_size for p in ('timeline-shell.css', 'timelines.css'))
-        self.assertLessEqual(total, 120000)
-        self.assertLessEqual((self.preview / 'reveal.js').stat().st_size, 10000)
+        from core.frontend_budget import measure_page
+        for page in (self.detail(), self.preview / 'timelines.html'):
+            budget = measure_page(page, self.preview)
+            self.assertLessEqual(budget['html_css_bytes'], 120000, budget)
+            self.assertLessEqual(budget['js_bytes'], 10000, budget)
+            self.assertEqual(budget['external'], [])
         self.assertIn('src="../reveal.js"', self.detail().read_text())
 
     def test_offline_browser_mobile_keyboard_motion_print_and_primary_links(self):
@@ -184,7 +187,8 @@ class TimelineRendering(unittest.TestCase):
                             self.assertEqual(page.locator('.tl-ledger>ol>li').count(), 5)
                             for control in page.locator('.analysis-nav a,.tl-track a,.tl-evidence summary,.tl-citations a').all():
                                 # Transform interpolation can round 40 CSS px down by 0.00002.
-                                self.assertGreaterEqual(control.bounding_box()['height'], 39.99)
+                                if control.is_visible():
+                                    self.assertGreaterEqual(control.bounding_box()['height'], 39.99)
                             if not js or reduced == 'reduce':
                                 for entry in page.locator('.tl-entry').all():
                                     self.assertEqual(entry.evaluate('(e)=>getComputedStyle(e).opacity'), '1')
@@ -204,6 +208,7 @@ class TimelineRendering(unittest.TestCase):
                 page.locator('.tl-evidence summary').first.focus()
                 self.assertEqual(page.locator(':focus').evaluate('(e)=>getComputedStyle(e).outlineStyle'), 'solid')
                 page.keyboard.press('Enter');self.assertTrue(page.locator('.tl-evidence').first.evaluate('(e)=>e.open'))
+                page.locator('.tl-context-tracks>summary').click()
                 page.locator('.tl-track a[href="#sea-phase"]').click()
                 self.assertTrue(page.url.endswith('#sea-phase'))
                 self.assertLess(page.locator('#sea-phase').bounding_box()['y'], 100)

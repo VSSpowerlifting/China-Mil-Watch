@@ -428,7 +428,7 @@ def _source_veil_entry(eid: str, output_dir: Path, errors: list, rel):
     return {"id": eid, "source_page": article_url}
 
 
-def _brief_veil_entry(eid, output_dir, errors, rel):
+def _brief_veil_entry(eid, output_dir, errors, rel, page_text=None):
     """Native source photography is grounded in its approved Brief and hashes."""
     import hashlib
     from core.brief_collection import SLUG_RE
@@ -451,6 +451,19 @@ def _brief_veil_entry(eid, output_dir, errors, rel):
         checks = ((sources / "media" / (slug + "-source-image.jpg"), meta.get("source_sha256")),
                   (sources / "media" / (slug + "-veil.jpg"), derivative.get("sha256")),
                   (output_dir / "briefs/media" / (slug + "-veil.jpg"), derivative.get("sha256")))
+        # New photo openings serve the unchanged original and receipted WebPs.
+        # Historical veil pages retain their existing derivative checks above.
+        original = output_dir / "briefs/media" / (slug + "-source-image.jpg")
+        if original.exists() or (page_text and original.name in page_text):
+            checks += ((original, meta.get("source_sha256")),)
+            delivery = json.loads((REPO_ROOT / "site/assets/frontend/DELIVERY.json").read_text(encoding="utf-8"))
+            for receipt in delivery.get("images", []):
+                if receipt.get("source") == "briefs/media/" + slug + "-source-image.jpg":
+                    variant = output_dir / "briefs/media" / receipt["file"]
+                    if receipt.get("source_sha256") != meta.get("source_sha256"):
+                        raise ValueError("photo derivative source mismatch")
+                    if variant.exists() or (page_text and variant.name in page_text):
+                        checks += ((variant, receipt.get("sha256")),)
         for path, expected in checks:
             if not expected or hashlib.sha256(path.read_bytes()).hexdigest() != expected:
                 raise ValueError("photo digest mismatch: %s" % path.name)
@@ -523,7 +536,7 @@ def _validate_editorial_images(output_dir: Path, errors: list, warnings: list) -
             if eid.startswith("src-"):
                 entry = _source_veil_entry(eid, output_dir, errors, rel)
             elif eid.startswith("brief-"):
-                entry = _brief_veil_entry(eid, output_dir, errors, rel)
+                entry = _brief_veil_entry(eid, output_dir, errors, rel, text)
             else:
                 entry = by_id.get(eid)
                 if entry is None:

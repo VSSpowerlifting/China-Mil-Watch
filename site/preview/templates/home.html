@@ -1,234 +1,52 @@
 {% extends "base.html" %}
-{% from "_records.html" import lead_record, record_register, records_aside %}
-{% from "_weeks.html" import week_strip %}
-{# The opening paints its own ground, so the page opts out of the reading
-   column's top padding. #}
-{% block main_class %} class="leads-with-hero home-atlas"{% endblock %}
-{# The page's scripted motion: the home sections arriving, once. Synchronous
-   in the head so the start-state class lands before first paint; it bails,
-   leaving the finished page, without IntersectionObserver or when the reader
-   asks for reduced motion.
-
-   intro.js is the opening title (VISUAL_AND_MOTION_SYSTEM §1.1): this page
-   only, and async, so the page never waits on its request. It builds
-   everything it shows, so without JavaScript the page is simply the page. #}
-{% block head_scripts %}<script src="intro.js" async></script><script src="reveal.js"></script>{% endblock %}
+{% from "_records.html" import record_row %}
+{% block title %}{{ title }} — Explore official records{% endblock %}
+{% block main_class %} class="leads-with-hero home-page"{% endblock %}
+{% block head_scripts %}<link rel="stylesheet" href="home.css"><script src="intro.js" async></script>{% endblock %}
 {% block hero %}
-{# ── The opening (protected) ──────────────────────────────────────────────
-   A display claim on the left, the dateline ledger on the right, and the
-   Ocean Signal Veil behind both — strongest at the upper right and gone at
-   the left where the headline sits. Its composition, its type and every text
-   run over the photograph are measured in tests/test_homepage_veil_contract.py.
-
-   The ledger is the same dateline view model `base.html` renders as a strip
-   on every other page; here it is the opening's right-hand column. The veil
-   is decorative and carries no alt text — the credit beside it carries the
-   words. It is declared only at >=901px; see the stylesheet. #}
-<section class="opening" aria-label="What this publication is">
-  {% if veil %}
-  <div class="veil" aria-hidden="true"></div>
-  {% endif %}
-  <div class="wrap opening-inner">
-    <div>
-      {# A paragraph, not a heading: the wordmark is this page's h1 and the lead
-         record's title its first h2. #}
-      <p class="claim">A record of what defense institutions publish about
-        themselves, <em>preserved as published</em> and read in context.</p>
-      <p class="claim-sub">{{ title }} keeps the original text, the date, the
-        institution, and a per-run record of whether collection actually
-        worked. Analysis is separate from the record, cites it, and is labeled
-        as interpretation.</p>
-      <p class="claim-cta">
-        <a class="btn btn--primary" href="archive.html">Explore the record</a>
-        <a class="btn btn--secondary" href="methodology.html">Methodology</a>
-      </p>
-    </div>
-    {# Attribution is rendered visibly. The source is public domain, so no
-       licence compels this; the publication credits a photograph it shows
-       regardless. #}
-    {% if veil %}
-    <p class="veil-credit">{{ veil.source_id }}
-      <a href="{{ veil.source_page }}">{{ veil.repository_label }}</a></p>
-    {% endif %}
-    {% if run_status %}
-    <div class="ledger">
-      <div class="ledger-label">The record, today</div>
-      <dl>
-        <div class="ledger-row"><dt>Records last collected</dt>
-          <dd>{{ freshness.records_last_collected or 'not measured' }}</dd></div>
-        <div class="ledger-row"><dt>Analysis last produced</dt>
-          <dd>{{ freshness.analysis_last_produced or 'not yet recorded' }}</dd></div>
-        <div class="ledger-row"><dt>Last full update</dt>
-          <dd>{{ freshness.last_full_update or 'not yet recorded' }}</dd></div>
-        {# The total carries its desk attribution while one desk collects:
-           "N records across four desks" is the dishonesty this label
-           forecloses. #}
-        {% if corpus_total %}<div class="ledger-row"><dt>Records held{% if desks and desks.collecting_count == 1 %}, {{ desks.collecting[0].name }}{% endif %}</dt>
-          <dd>{{ '{:,}'.format(corpus_total) }}</dd></div>{% endif %}
-        {% if totals and totals.analyzed is not none %}<div class="ledger-row"><dt>Of those, analyzed</dt>
-          <dd>{{ '{:,}'.format(totals.analyzed) }}</dd></div>{% endif %}
-      </dl>
-      {% if freshness.analysis_is_behind_collection %}
-      <p class="ledger-note"><a href="#freshness-note">Analysis trails
-        collection</a></p>
-      {% endif %}
-      <p class="ledger-foot"><a href="coverage.html">Run
-        {{ run_status.run_id }} in full</a></p>
-    </div>
-    {% endif %}
+<section class="pacific-opening opening" aria-labelledby="home-title">
+  <picture><source type="image/webp" srcset="assets/frontend/pacific-fleet-800.webp 800w, assets/frontend/pacific-fleet-1600.webp 1600w, assets/frontend/pacific-fleet-2500.webp 2500w" sizes="100vw"><img class="pacific-photo" src="assets/editorial/reagan-jmsdf-2015.jpg" alt="" width="2500" height="1663" fetchpriority="high"></picture>
+  <div class="wrap pacific-copy">
+    <p class="pacific-intro">Independent, source-grounded monitoring and analysis</p>
+    <h1 class="claim" id="home-title">The region,<br>in its own words.</h1>
+    <p class="pacific-dek claim-sub">Official defense and security texts, preserved<br class="desktop-break"> as published and read in context.</p>
+    <p class="claim-cta"><a class="btn btn--light" href="archive.html">Explore official records</a></p>
   </div>
+  <p class="wrap photo-credit">Illustrative context · U.S. Navy / Nathan Burke · 23 November 2015 · Public domain <a href="https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg">Image source</a></p>
 </section>
 {% endblock %}
-{% block content %}
-{# Section order is governed (PRODUCT_AND_EDITORIAL_DOCTRINE §5): the record,
-   the desks that produce it, the reading of it, the difference between the
-   two, then what failed to collect. The record leads. #}
-{% if home_records.lead %}
-{{ lead_record(home_records.lead, desk_by_source) }}
-{% endif %}
-{% if freshness.analysis_is_behind_collection %}
-{# The screening caveat the ledger links to. `tabindex="-1"` so following the
-   link moves focus, not only the viewport. #}
-<p class="freshness-note" id="freshness-note" tabindex="-1">Analysis trails
-  collection; records after {{ freshness.analysis_last_produced }} await
-  screening. <a href="methodology.html#freshness">What these dates mean</a>,
-  and <a href="coverage.html">what each source returned</a>.</p>
-{% endif %}
-
-<section class="section" aria-labelledby="records">
-  <div class="section-head">
-    <h2 id="records">Latest records</h2>
-    <p class="section-more"><a href="archive.html">All {{ corpus_total | count }} records</a></p>
-  </div>
-  <div class="records-layout">
-{{ record_register(home_records.rest, home_records.shared, desk_by_source) }}
-{{ records_aside(corpus_eyebrow, home_records.shared) }}
-  </div>
-  {# The record over time, as the Records page opens with it: one bar per
-     publication week, each a link to that week. #}
-  {{ week_strip(weeks, volume_max, heading='h3', title='The record by publication week') }}
-</section>
-
-<section class="section" aria-labelledby="desks">
-  <div class="section-head">
-    <h2 id="desks">Desks</h2>
-    <p class="section-more"><a href="desks.html">How desks work</a></p>
-  </div>
-  <p class="section-note">A desk is a declared collection scope. Only a desk
-  that collects has a record count; the others say what stops them rather than
-  showing a zero.</p>
-  {# Collection topology, stated once and here. Both figures are derived:
-     desk counts from the registry, sources summed over desks that collect. #}
-  <p class="eyebrow">{% if desks.collecting_count %}<b>{{ desks.collecting_count }}</b> collecting desk{{ '' if desks.collecting_count == 1 else 's' }} of <b>{{ desks.declared_count }}</b> declared, drawing on <b>{{ desks.collecting_source_count }}</b> enabled source{{ '' if desks.collecting_source_count == 1 else 's' }}.{% else %}<b>0</b> collecting desks of <b>{{ desks.declared_count }}</b> declared, and no enabled source behind them.{% endif %}</p>
-  <ul class="desk-rows desks">
-  {% for d in desks %}
-    <li class="desk-row card--desk {{ 'is-collecting' if d.status == 'live' else 'is-blocked is-quiet' if d.status == 'access_blocked' else 'is-shadow is-quiet' }}" data-reveal style="--ri: {{ loop.index0 }}">
-      <h3><a href="{{ d.route }}">{{ d.name }}</a></h3>
-      <span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span>
-      <p class="desk-figure">{% if d.record_count is not none %}<b>{{ d.record_count|count }}</b> records · {{ d.enabled_source_count }} enabled source{{ '' if d.enabled_source_count == 1 else 's' }}{% else %}No records — see status{% endif %}</p>
-      <p class="desk-foot"><a href="{{ d.route }}">{{ d.name }} in full</a></p>
-    </li>
-  {% endfor %}
-  </ul>
-</section>
-{% endblock %}
+{% block content %}{% endblock %}
 {% block after_content %}
-{#- The analysis band states the same model as Analysis: one publication,
-    Indo-Pacific Record Briefs, led by the newest published item of the whole
-    collection (`collection.lead`). The issues first published as The PLA Watch
-    are earlier Briefs in that collection, so when the newest one is the lead it
-    leads, with where it was first published as a secondary line. The
-    in-development state appears only when the collection holds no item at all.
-    No plate is drawn here; the band links into Analysis for the catalog. -#}
+<section class="wrap home-finder" aria-labelledby="finder-title">
+  <div class="home-finder-heading"><h2 id="finder-title">Explore the official record</h2><p>{{ corpus_total | count }} preserved records <span>Snapshot {{ snapshot.date | reader_date }}</span></p></div>
+  <form action="archive.html" method="get" class="home-search" role="search">
+    <label for="home-q" class="visually-hidden">Search English or original titles</label><input id="home-q" type="search" name="q" placeholder="Search English or original titles" autocomplete="off"><button class="btn" type="submit">Search records</button>
+  </form>
+  <div class="home-search-caption"><p>Search covers titles. Original texts and provenance are available inside each record.</p><a href="archive.html">Browse all records</a></div>
+</section>
+<section class="wrap home-register" aria-labelledby="latest-title">
+  <div class="home-section-head"><div><p class="evidence evidence--record">Source record</p><h2 id="latest-title">As published.</h2></div><a href="archive.html">Latest records</a></div>
+  <p class="home-section-dek">Original-language titles, source-stated dates, and the institutions behind them.</p>
+  <div class="home-register-grid"><div class="home-recent"><ul class="record-list">{% for rec in archive_first[:4] %}{{ record_row(rec, desk_by_source) }}{% endfor %}</ul></div>
+    {% if home_records.lead %}{% set selected = home_records.lead %}
+    <aside class="home-selected" aria-labelledby="selected-title"><p class="home-small-label">A record to explore</p><p class="meta">{{ selected.published_date | reader_date }} · {{ selected.source_name }}</p><h3 id="selected-title"><a href="record/{{ selected.id }}.html"{% if not selected.title_english and selected.language_tag %} lang="{{ selected.language_tag }}"{% endif %}>{{ selected.title_english or selected.title_original }}</a></h3>{% if selected.title_english and selected.title_original %}<p class="home-selected-original" lang="{{ selected.language_tag }}">{{ selected.title_original }}</p><p class="meta"><span class="evidence evidence--model">Machine translation</span> English title; the original is preserved above.</p>{% endif %}<div class="selected-links"><a href="record/{{ selected.id }}.html">Inspect this record</a></div></aside>
+    {% endif %}
+  </div>
+</section>
 {% set lead = collection.lead if collection else none %}
 {% set lead_row = collection.lead_row if collection else none %}
-<section class="band" aria-labelledby="analysis">
-  <div class="wrap section">
-    <div class="section-head">
-      <h2 id="analysis">Latest analysis</h2>
-      <p class="section-more"><a href="analysis.html">All analysis</a></p>
-      <p class="section-kicker">Human-controlled, citing the records it rests on. Labeled as interpretation.</p>
-    </div>
-    <div class="feature feature--briefs" data-reveal>
-      <div>
-        {% if lead %}
-        <p class="briefs-label">{{ collection_name }}{% if lead.is_review %} · Review candidate{% endif %}{% if lead.issue is not none %}, No. {{ lead.issue }}{% endif %}{% if lead.date %} · week ending {{ lead.date|reader_date }}{% endif %}</p>
-        <h3><a href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>{{ lead.title or lead.slug }}</a></h3>
-        {% if lead.dek %}<p class="dek">{{ lead.dek }}</p>{% endif %}
-        {% if lead.is_retrospective and lead_row.kind == 'brief' %}<p class="legacy-note">{{ lead.retrospective_label }}</p>{% endif %}
-        <p class="byline">{% if lead.author_name %}{{ lead.author_name }}{% else %}{{ maintainer.name }}, {{ maintainer.role }}{% endif %}{% if lead.desks %} · {% for slug in lead.desks %}{% set d = desks.get(slug) %}{{ d.name if d else slug }}{% if not loop.last %}{{ ' and ' if loop.length == 2 else ', ' }}{% endif %}{% endfor %}{% endif %}</p>
-        {% if lead_row.kind == 'issue' %}
-        <p class="legacy-note">{{ lead_row.provenance }}</p>
-        {% endif %}
-        {% if lead.synthetic %}
-        <p class="legacy-note">Synthetic test fixture. Not a published brief.</p>
-        {% endif %}
-        <p><a class="btn btn--primary" href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>Read this Brief</a></p>
-        {% else %}
-        <p class="briefs-label">{{ collection_name }}</p>
-        <h3 id="briefs-development">Briefs in development</h3>
-        <p class="dek">{{ collection_name }} is in development, and no Brief has been
-          published yet. Draft Briefs are withheld from the public collection until
-          approved.</p>
-        {% endif %}
-      </div>
-    </div>
-  </div>
+<section id="analysis" class="home-coast-band" aria-labelledby="latest-analysis">
+  <div class="wrap home-coast-inner"><div class="home-latest-analysis"><p class="evidence evidence--analysis">Human-controlled analysis</p><h2 id="latest-analysis">Latest analysis</h2>
+    {% if lead %}{% if lead.synthetic %}<p class="brief-fixture">Synthetic test fixture. Not a published brief.</p>{% endif %}<p class="home-small-label">{{ collection_name }}{% if lead.issue %} · No. {{ lead.issue }}{% endif %}</p><h3><a href="{{ lead.url }}">{{ lead.title }}</a></h3><p>{{ lead.dek }}</p><p class="meta">{{ lead.author_name or maintainer.name }} · Week ending {{ lead.date | reader_date }}{% if lead.is_retrospective %} · {{ lead.retrospective_label }}{% endif %}</p>{% if lead_row.kind == 'issue' %}<p class="meta">{{ lead_row.provenance }}</p>{% endif %}<a class="btn btn--light" href="{{ lead.url }}">Read this Brief</a>
+    {% else %}<h3>Briefs in development</h3><p>Draft Briefs are withheld from the public collection until approved.</p>{% endif %}
+  </div><div>{% if timelines %}{% set item = timelines[0] %}<p class="home-small-label">Evidence Timelines{% if item.is_review %} · Unpublished draft for review{% endif %}</p><h2>Follow the dates.<br>Keep the sources in view.</h2><p>{{ item.dek }}</p><a class="btn btn--light" href="{{ item.route }}">Explore the timeline</a>{% else %}<p class="home-small-label">Indo-Pacific Record Briefs</p><h2>A reading of the record.</h2><p>Analysis compares official accounts and identifies what each source supports. It remains separate from the preserved evidence.</p><a class="btn btn--light" href="analysis.html">All Briefs</a>{% endif %}</div></div>
 </section>
-
-<div class="wrap">
-<section class="section" aria-labelledby="record-and-analysis">
-  <div class="section-head">
-    <h2 id="record-and-analysis">Record and analysis are not the same thing</h2>
-  </div>
-  {# The trust ladder, as three layers every page labels the same way: the
-     stored source (ink), what software produced from it (rust), and the
-     human-controlled analysis (crimson). #}
-  <ul class="layers notes">
-    <li class="note layer--record" data-reveal>
-      <h3>The record</h3>
-      <p class="card-prose">Every item is stored as its institution published it:
-      original language, original date, original URL, and a content fingerprint
-      taken at capture. Nothing in the record asserts that what an institution
-      said is true.</p>
-      <p><span class="evidence evidence--record">Source record</span></p>
-      <p class="card-foot"><a href="archive.html">Explore the record</a></p>
-    </li>
-    <li class="note layer--machine" data-reveal style="--ri: 1">
-      <h3>Machine output</h3>
-      <p class="card-prose">English titles, summaries, screening and the
-      model flag are produced by software, and the daily pipeline publishes
-      them without human review. They can be wrong. A model flag is a triage
-      cue, not an editorial judgment.</p>
-      <p><span class="evidence evidence--model">Machine output</span></p>
-      <p class="card-foot"><a href="methodology.html#evidence">How output is labeled</a></p>
-    </li>
-    <li class="note layer--analysis" data-reveal style="--ri: 2">
-      <h3>The analysis</h3>
-      <p class="card-prose">Analysis is human-controlled, cites the records it
-      rests on, and is labeled as interpretation.</p>
-      <p><span class="evidence evidence--analysis">Analysis</span></p>
-      <p class="card-foot"><a href="analysis.html">Read analysis</a></p>
-    </li>
-  </ul>
+{% if photo_brief %}{% set photo = photo_brief.photo %}
+<section class="wrap home-brief" aria-labelledby="brief-home-title">
+  <div class="home-brief-photo"><picture><source type="image/webp" srcset="{% for v in photo.variants %}briefs/{{ v.route }} {{ v.width }}w{% if not loop.last %}, {% endif %}{% endfor %}" sizes="(max-width:900px) calc(100vw - 44px), 45vw"><img src="briefs/{{ photo.route }}" alt="{{ photo.alt }}" width="{{ photo.width }}" height="{{ photo.height }}" loading="lazy"></picture><p>{{ photo.credit }}. <a href="{{ photo_brief.url }}#{{ photo.anchor }}">Source and credit</a>. Context, not evidence.</p></div>
+  <div class="home-brief-copy"><p class="evidence evidence--analysis">Human-controlled analysis</p><p class="home-small-label">{{ collection_name }} · No. {{ photo_brief.issue }}</p><h2 id="brief-home-title"><a href="{{ photo_brief.url }}">{{ photo_brief.title }}</a></h2><p>{{ photo_brief.dek }}</p><p class="meta">{{ photo_brief.author_name }}<br>Week ending {{ photo_brief.date | reader_date }}{% if photo_brief.is_retrospective %} · {{ photo_brief.retrospective_label }}{% endif %}</p><a class="text-link" href="{{ photo_brief.url }}">Read the Brief</a></div>
 </section>
-
-<section class="section" aria-labelledby="coverage">
-  <div class="section-head">
-    <h2 id="coverage">What did not collect</h2>
-  </div>
-  {% if run_status %}
-  <p class="coverage-prose">Run {{ run_status.run_id }} executed {{ run_status.executed }}
-  collector{{ '' if run_status.executed == 1 else 's' }} and recorded
-  {{ run_status.failed }} execution failure{{ '' if run_status.failed == 1 else 's' }}{% if run_status.unimplemented %}, alongside {{ run_status.unimplemented }}
-  configured source{{ '' if run_status.unimplemented == 1 else 's' }} with no working
-  collector{% endif %}. An empty result has more than one cause and only one of them is healthy, so
-  each source's own outcome is published rather than summarized away.</p>
-  {% else %}
-  <p class="coverage-prose">No collection run is recorded in this snapshot, so nothing can be said about what any source
-  held. That is an absence, not a quiet day.</p>
-  {% endif %}
-  <p class="coverage-foot"><a href="coverage.html">Coverage, per source, per run</a></p>
-</section>
-</div>
+{% endif %}
+<section class="wrap home-desks" aria-labelledby="home-desks-title"><div class="home-section-head"><h2 id="home-desks-title">The desks behind the record.</h2><a href="coverage.html">Scope and coverage</a></div><p class="home-coverage-note">This snapshot contains public records from {% for d in desks if d.record_count %}{{ d.name }}{% if not loop.last %}, {% endif %}{% endfor %}. Coverage is selective and concentrated in Chinese sources. Other desks contribute no public records to this snapshot; their scope and limitations are described in <a href="coverage.html">coverage detail</a>.</p><div class="home-desk-list">{% for d in desks if d.record_count %}<a href="{{ d.route }}">{{ d.name }}<span>{{ d.record_count | count }} public records in this snapshot</span></a>{% endfor %}</div></section>
+<section class="wrap home-method"><h2>Evidence first. Interpretation labeled.</h2><p>Each record preserves its original title, available source text, source-stated date, and URL. Machine translations and summaries are labeled; machine output is published without human review and can be wrong. Briefs make human judgments with a visible source trail.</p><a href="methodology.html">How this publication works</a></section>
 {% endblock %}

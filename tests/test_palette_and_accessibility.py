@@ -171,8 +171,8 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
             flat = " ".join(selector.split())
             with self.subTest(selector=flat):
                 self.assertTrue(
-                    ".band" in flat or ".skip" in flat,
-                    "the band focus ring is applied outside .band / .skip: %s"
+                    any(scope in flat for scope in (".band", ".skip", ".masthead--dark")),
+                    "the band focus ring is applied outside its dark surface / skip: %s"
                     % flat)
 
     def test_the_crimson_family_stays_off_the_light_accent_scheme(self):
@@ -216,7 +216,7 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
         eye next month.
         """
         header = CSS.read_text(encoding="utf-8").split(":root {", 1)[0]
-        self.assertIn("P1 INSTITUTIONAL PALETTE, MEASURED", header)
+        self.assertIn("REVIEWED OCTOBER PALETTE, MEASURED", header)
         self.assertIn("TWO FOCUS RINGS", header)
         self.assertIn("ACCENT DISCIPLINE", header)
 
@@ -352,9 +352,8 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
     def test_a_skip_link_is_the_first_thing_in_tab_order(self):
         base = (REPO_ROOT / "site" / "preview" / "templates"
                 / "base.html").read_text(encoding="utf-8")
-        body = base.split("<body>", 1)[1]
         # The optional body-class block ends before the shared first focus target.
-        body = re.sub(r"^\s*\{% endblock %\}", "", body)
+        body = base.split("{% block body_open %}", 1)[1].split("{% endblock %}", 1)[1]
         self.assertTrue(body.lstrip().startswith('<a class="skip"'))
         self.assertIn(".skip:focus", self.css)
 
@@ -411,6 +410,7 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
                          ".record-headline a", ".register-item h3 a",
                          ".desks .card--desk h3 a", ".band .feature h3 a",
                          ".nav-rail-inner a", ".nav-mobile a", ".analysis-nav a",
+                         ".nav-desktop>a", ".nav-more a", ".nav-mobile>nav a",
                          ".btn", ".editions", "nav.primary", ".skip",
                          ".footer-col a", ".trail-tag")),
                     "%s removes the underline from prose links" % flat)

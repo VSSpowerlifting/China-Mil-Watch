@@ -399,7 +399,7 @@ class TestZeroStateOnlyWhenTheCollectionIsEmpty(unittest.TestCase):
     def test_the_home_band_says_briefs_are_in_development(self):
         home = self.page("index.html")
         band = home[home.index('id="analysis"'):]
-        band = band[:band.index('aria-labelledby="record-and-analysis"')]
+        band = band[:band.index('</section>')]
         self.assertIn("Briefs in development", band)
         self.assertNotIn("Read this Brief", band)
 
@@ -599,8 +599,10 @@ class TestSiteBuild(unittest.TestCase):
             self.assertIn(target, anchors)
 
     def test_the_veil_is_credited_to_its_cited_article(self):
-        self.assertIn('class="brief-veil"', self.brief_html)
-        self.assertEqual(self.brief_html.count("Context, not evidence"), 2)
+        self.assertNotIn('class="brief-veil"', self.brief_html)
+        # Synthetic fixture has no pinned original JPEG; the photo gate
+        # therefore keeps its opening text-led.
+        self.assertNotIn('class="brief-opening-photo"', self.brief_html)
         self.assertIn('href="https://fixture-b.invalid/news/b1"', self.brief_html)
         self.assertTrue((self.root / "fixture" / "briefs" / "media"
                          / bc.veil_name(SLUG)).is_file())
@@ -743,7 +745,7 @@ class TestSiteBuild(unittest.TestCase):
     @staticmethod
     def home_band(html):
         band = html[html.index('id="analysis"'):]
-        return band[:band.index('aria-labelledby="record-and-analysis"')]
+        return band[:band.index('</section>')]
 
     def test_the_home_band_shows_the_newest_unified_brief_not_a_zero_state(self):
         # Earlier issues are published Briefs, so with no native brief the band
@@ -751,7 +753,7 @@ class TestSiteBuild(unittest.TestCase):
         band = self.home_band(self.page("plain", "index.html"))
         lead = gp.load_editions(REPO_ROOT)[0]
         self.assertNotIn("Briefs in development", band)
-        self.assertIn("Indo-Pacific Record Briefs, No. %d" % lead["issue"], band)
+        self.assertIn("No. %d" % lead["issue"], band)
         self.assertIn('href="%s"' % lead["url"], band)
         self.assertIn("Read this Brief", band)
         self.assertIn("From the former series The PLA Watch", band)

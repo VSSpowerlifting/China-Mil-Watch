@@ -281,7 +281,7 @@ class TestTheBuildShipsTheIdentityAssets(IdentityBuildCase):
                                  "%s written into a current build" % name)
 
 
-class TestTheMastheadCarriesTheCompass(IdentityBuildCase):
+class TestTheMastheadCarriesSelectedIpr(IdentityBuildCase):
 
     def test_every_masthead_shows_the_compass_mark(self):
         for name, html in self.sample().items():
@@ -290,7 +290,7 @@ class TestTheMastheadCarriesTheCompass(IdentityBuildCase):
                 self.assertRegex(
                     mast,
                     r'<img[^>]+class="brand-mark"[^>]+'
-                    r'src="(\.\./)?masthead-mark\.png"')
+                    r'src="(\.\./)?assets/identity/selected-ipr/ipr-(navy|ivory)-160\.png"')
 
     def test_the_generic_document_glyph_is_gone(self):
         """
@@ -399,10 +399,10 @@ class TestTheCurrentMetadataIdentity(IdentityBuildCase):
             up = "../" if "/" in name else ""
             with self.subTest(page=name):
                 self.assertIn(
-                    '<link rel="icon" type="image/svg+xml" href="%smark.svg">'
+                    '<link rel="icon" type="image/png" sizes="32x32" href="%sassets/identity/selected-ipr/ipr-accent-32.png">'
                     % up, head)
                 self.assertIn(
-                    '<link rel="apple-touch-icon" href="%sapple-touch-icon.png">'
+                    '<link rel="apple-touch-icon" href="%sassets/identity/selected-ipr/ipr-accent-180.png">'
                     % up, head)
 
     def test_every_page_declares_a_theme_colour_matching_the_band(self):
@@ -570,8 +570,8 @@ class TestNestedRoutesResolve(IdentityBuildCase):
     def test_nested_icon_references_climb_exactly_one_level(self):
         for name, html in self.nested_sample().items():
             with self.subTest(page=name):
-                self.assertIn('href="../mark.svg"', self.head(html))
-                self.assertIn('src="../masthead-mark.png"',
+                self.assertIn('href="../assets/identity/selected-ipr/ipr-accent-32.png"', self.head(html))
+                self.assertIn('src="../assets/identity/selected-ipr/ipr-navy-160.png"',
                               self.masthead(html))
 
 
@@ -670,7 +670,7 @@ class TestNoRegressionInTheQualityFloor(IdentityBuildCase):
 
     def test_the_mobile_disclosure_navigation_survives(self):
         html = self.page("index.html")
-        self.assertIn("nav-toggle", html)
+        self.assertIn("shell-menu nav-mobile", html)
         self.assertIn("<summary", html)
 
 

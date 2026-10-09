@@ -315,9 +315,14 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
                 self.assertNotIn(evasion, html.lower())
 
     def test_no_planned_desk_is_counted_as_a_live_one(self):
-        html = self.page("index.html")
-        self.assertIn("2</b> collecting desk", html)
-        self.assertIn("of <b>5</b> declared", html)
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(self.page("index.html"), "html.parser")
+        public_desks = [d for d in gp.PublicView(TRACKED_DB).desk_directory() if d.record_count]
+        shown = soup.select(".home-desk-list a")
+        self.assertEqual({a.get("href") for a in shown},
+                         {d.slug + ".html" for d in public_desks})
+        self.assertNotIn("japan.html", {a.get("href") for a in shown})
+        self.assertIn("Other desks contribute no public records", soup.main.get_text(" "))
 
     def test_the_volume_rows_still_name_the_joint_staff(self):
         """The row subject moved from the template into the registry so each

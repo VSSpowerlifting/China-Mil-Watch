@@ -556,18 +556,13 @@ class TestIdentityIsUntouched(WeeklySurfaces):
                 self.assertIn("No. %d" % post["issue"], post["html"])
 
 
-class TestCompassSizingIsUnchanged(unittest.TestCase):
-    """
-    The compass belongs to the record site, not to the weekly templates. This
-    change must not reach it; 56 desktop and 48 compact stay as published.
-    """
+class TestSelectedIdentityOnRecordSite(unittest.TestCase):
+    """The October frontend replaces compass chrome; weekly identity is kept."""
 
-    def test_the_mark_is_56_on_desktop_and_48_compact(self):
+    def test_selected_mark_uses_reviewed_sizes_and_natural_aspect(self):
         css = PREVIEW_CSS.read_text(encoding="utf-8")
-        self.assertRegex(css, r"\.brand-mark\s*\{[^}]*width:\s*56px;"
-                              r"\s*height:\s*56px")
-        self.assertRegex(css, r"\.brand-mark\s*\{\s*width:\s*48px;"
-                              r"\s*height:\s*48px;\s*\}")
+        self.assertRegex(css, r"\.brand-mark\s*\{[^}]*width:\s*72px;[^}]*height:\s*auto")
+        self.assertRegex(css, r"\.brand-mark\s*\{[^}]*width:\s*56px")
 
     def test_the_weekly_templates_do_not_style_the_mark(self):
         for path in WEEKLY_TEMPLATES:

@@ -9,17 +9,9 @@
    HTML in a directory; this is how a stray copy identifies itself. #}
 <meta name="generator" content="{{ title }} — {{ mode }} build">
 <meta name="robots" content="noindex, nofollow">
-{# Identity. The compass is the publication's mark; `mark.svg` is the
-   simplified derivative, because the canonical artwork's 4 px rings are
-   sub-pixel below 32 px and dissolve into a halo at favicon size.
-   `site/assets/identity/IDENTITY_ASSETS.md` records which file is canonical. #}
-{# Follows --band in styles.css. `tests/test_identity_assets.py`
-   reads the token rather than a literal, so the two cannot drift. #}
-<meta name="theme-color" content="#12222C">
-<link rel="icon" type="image/svg+xml" href="{{ '../' if nested else '' }}mark.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="{{ '../' if nested else '' }}icon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="{{ '../' if nested else '' }}icon-16.png">
-<link rel="apple-touch-icon" href="{{ '../' if nested else '' }}apple-touch-icon.png">
+<meta name="theme-color" content="#142E38">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ '../' if nested else '' }}assets/identity/selected-ipr/ipr-accent-32.png">
+<link rel="apple-touch-icon" href="{{ '../' if nested else '' }}assets/identity/selected-ipr/ipr-accent-180.png">
 {# Link-preview identity. The absolute URL and image need an origin the
    template does not have, so they are written in the post-processing pass
    that writes the canonical — one source of truth for a page's address. #}
@@ -30,105 +22,68 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ self.title() }}">
 <meta name="twitter:description" content="{{ self.description() }}">
-{# The publication's three families, weights capped, shared with Night Desk
-   (DECISION_LOG 2026-09-26): Source Serif 4 (the voice), Inter (the
-   interface) and IBM Plex Mono (metadata: the masthead kicker, hashes, ids).
-   Fallback stacks in styles.css keep every page readable when the font
-   service is unreachable. #}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital%2Copsz%2Cwght@0%2C8..60%2C400..800;1%2C8..60%2C400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-{% block stylesheets %}<link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
-<link rel="stylesheet" href="{{ '../' if nested else '' }}topography.css">
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ '../' if nested else '' }}fonts.css">
+<link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
 {% endblock %}
 {# Head scripts, declared per page rather than inherited by all of them. The
    week shards carry a contract that they ship no <script> at all, and the
    record pages carry no bytes for behaviour they do not have. #}
+{% if record is not defined and brief is not defined and not timeline_surface | default(false) and page != 'index.html' %}<link rel="stylesheet" href="{{ '../' if nested else '' }}support.css">{% endif %}
 {% block head_scripts %}{% endblock %}
 </head>
-{% block body_open %}
-<body>
-{% endblock %}
-<a class="skip" href="#main">Skip to content</a>
 {% set root = '../' if nested else '' %}
-{# The masthead: one shell on every record-site page, light and static, with
-   no controls. Search lives on the Records page, first in the navigation. A
-   site-wide search box here was tried and withdrawn (DECISION_LOG 2026-09-27):
-   it added 58px to the measured phone masthead, pushed the lead record below
-   the first viewport, put a record count on pages that must carry none, and
-   did nothing without JavaScript. #}
-<header class="masthead">
-  <div class="wrap masthead-name-row">
-    <a class="brand" href="{{ root }}index.html">
-      {# The compass, at 56 CSS px (48 compact). Below the 48 CSS px floor in
-         `IDENTITY_ASSETS.md` the canonical double ring merges into a halo, so
-         at <=380px the `source` serves `mark.svg`, the sanctioned simplified
-         derivative. One element, one asset per width, no script. Decorative:
-         the wordmark beside it is the accessible name. #}
-      <picture>
-        <source media="(max-width: 380px)"
-                srcset="{{ root }}mark.svg"
-                type="image/svg+xml">
-        <img class="brand-mark" src="{{ root }}masthead-mark.png"
-             width="56" height="56" alt="" aria-hidden="true"
-             decoding="async" fetchpriority="high">
-      </picture>
-      <span class="brand-text">
-        {# The home page leads with the publication, so the wordmark is its h1.
-           Every other page has its own h1. #}
-        {% if page == 'index.html' %}
-        <h1 class="brand-name">{{ title }}</h1>
-        {% else %}
-        <p class="brand-name">{{ title }}</p>
-        {% endif %}
-        <p class="brand-sub">{{ tagline }}</p>
-      </span>
+{% set shell_dark = page == 'index.html' or timeline_surface | default(false) %}
+{% block body_open %}<body{% if page == 'index.html' %} class="page-home"{% endif %}>{% endblock %}
+<a class="skip" href="#main">Skip to content</a>
+<div class="publication-status"><span>Independent publication</span>{% if snapshot is defined and corpus_total is defined %}<span>Corpus snapshot: {{ snapshot.date | reader_date }} · {{ corpus_total | count }} records</span>{% endif %}</div>
+<header class="masthead{% if shell_dark %} masthead--dark{% endif %}">
+  <div class="wrap header-inner">
+    {% set logo_color = 'ivory' if shell_dark else 'navy' %}
+    <a class="brand" href="{{ root }}index.html" aria-label="{{ title }} home">
+      <img class="brand-mark" src="{{ root }}assets/identity/selected-ipr/ipr-{{ logo_color }}-160.png"
+           srcset="{{ root }}assets/identity/selected-ipr/ipr-{{ logo_color }}-160.png 160w, {{ root }}assets/identity/selected-ipr/ipr-{{ logo_color }}-320.png 320w"
+           sizes="(max-width:500px) 56px, 72px" width="160" height="{{ 133 if shell_dark else 130 }}" alt="" aria-hidden="true" decoding="async" fetchpriority="high">
+      <span class="brand-name">Indo-Pacific<span>Record</span></span>
     </a>
-  </div>
-  {# Seven destinations in three groups, defined once and rendered twice:
-     reading (Records, Analysis), the collection (Desks, Sources, Coverage) and
-     the method (Methodology, About). "Records" was "Atlas" until 2026-09-27;
-     the destination and its address are unchanged (DECISION_LOG).
-
-     Exactly one presentation is in the document at a time: the other is
-     `display: none`, which removes it from the accessibility tree as well.
-     The compact one stays a <details> — keyboard operable, announced as
-     expandable, and working with JavaScript off. #}
-  {% set nav = [('archive.html','Records',false),('analysis.html','Analysis',false),('desks.html','Desks',true),('sources.html','Sources',false),('coverage.html','Coverage',false),('methodology.html','Methodology',true),('about.html','About',false)] %}
-  {% set desk_routes = desks | map(attribute='route') | list if desks else [] %}
-  {% macro is_current(href) -%}
-    {{- 'y' if (page == href
-        or (href == 'archive.html' and page in ['corpus.html', 'corpus-guide.html'])
-        or (href == 'desks.html' and page in desk_routes)
-        or (href == 'analysis.html' and page == 'pla-watch.html')) else '' -}}
-  {%- endmacro %}
-  {% macro nav_links() -%}
-    <ul>
-      {% for href, label, group in nav %}
-      <li{% if group %} class="nav-group-start"{% endif %}><a href="{{ root }}{{ href }}"{% if is_current(href) %} aria-current="page"{% endif %}>{{ label }}</a></li>
-      {% endfor %}
-    </ul>
-  {%- endmacro %}
-  <div class="nav-rail">
-    <nav class="wrap nav-rail-inner nav-desktop" aria-label="Primary">
-      {{ nav_links() }}
+    {% set nav = [('archive.html','Records'),('analysis.html','Briefs')] %}
+    {% if timelines %}{% set nav = nav + [('timelines.html','Timelines')] %}{% endif %}
+    {% set nav = nav + [('desks.html','Desks')] %}
+    {% set desk_routes = desks | map(attribute='route') | list if desks else [] %}
+    {% macro links() %}
+      {% for href, label in nav %}<a href="{{ root }}{{ href }}"{% if (page == href and not timeline_surface | default(false)) or (href == 'archive.html' and page in ['corpus.html','corpus-guide.html']) or (href == 'desks.html' and page in desk_routes) or (href == 'analysis.html' and page == 'pla-watch.html') or (href == 'timelines.html' and timeline_surface | default(false)) %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}
+    {% endmacro %}
+    <nav class="nav-desktop" aria-label="Primary">
+      {{ links() }}
+      <details class="shell-menu nav-more"><summary>About IPR</summary><div>
+        <a href="{{ root }}sources.html"{% if page == 'sources.html' %} aria-current="page"{% endif %}>Sources</a><a href="{{ root }}coverage.html"{% if page == 'coverage.html' %} aria-current="page"{% endif %}>Coverage</a>
+        <a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a><a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a>
+      </div></details>
     </nav>
-    <div class="wrap">
-      <details class="nav-toggle nav-mobile">
-        <summary>Sections</summary>
-        <nav aria-label="Primary">
-          {{ nav_links() }}
-        </nav>
-      </details>
-    </div>
+    <details class="shell-menu nav-mobile"><summary>Menu <span aria-hidden="true">☰</span></summary>
+      <nav aria-label="Primary">{{ links() }}<a href="{{ root }}sources.html"{% if page == 'sources.html' %} aria-current="page"{% endif %}>Sources</a><a href="{{ root }}coverage.html"{% if page == 'coverage.html' %} aria-current="page"{% endif %}>Coverage</a><a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a><a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a></nav>
+    </details>
   </div>
 </header>
-{# Three dates and, when they disagree, one sentence saying why. They come
-   apart during a provider failure — collection continues while analysis stops
-   — so a single "last updated" would have to pick a story. An unknown value
-   says so rather than borrowing a plausible neighbour. One quiet line under
-   the navigation; the home page states the same view in its opening ledger. #}
-{% if run_status and page != 'index.html' and not (timeline_surface|default(false)) %}
+{# A decorative profile follows the actual address, including nested pages.
+   It never represents geography, collection volume or analytical meaning. #}
+{% if timeline is defined %}{% set terrain_key = timeline.route %}
+{% elif brief is defined %}{% set terrain_key = brief.route %}
+{% elif source is defined %}{% set terrain_key = source.route %}
+{% elif record is defined %}{% set terrain_key = 'record/' ~ record.id %}
+{% elif week is defined %}{% set terrain_key = week.path ~ '-' ~ (page_no | default(1)) %}
+{% else %}{% set terrain_key = page %}{% endif %}
+<main id="main"{% if topography_style is defined %} style="{{ topography_style(terrain_key) }}"{% endif %}{% block main_class %}{% endblock %}>
+
+{% if review_mode %}<p class="wrap review-banner" role="note">Private editorial preview · draft content is unapproved and unpublished.</p>{% endif %}
+{% block hero %}{% endblock %}
+  <div class="wrap">
+{% block content %}{% endblock %}
+  </div>
+{% block after_content %}{% endblock %}
+</main>
+<details class="publication-freshness wrap"><summary>Collection and processing dates</summary>
+{% if run_status %}
 <aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     {# The labels are not shortened: these three dates exist precisely because
@@ -154,28 +109,12 @@
       <a href="{{ root }}methodology.html#freshness">What
       these dates mean</a>.</p>
     {% endif %}
-    <p class="detail"><a href="{{ root }}coverage.html">Run
+    <p class="detail"><a href="{{ root }}coverage.html"{% if page == 'coverage.html' %} aria-current="page"{% endif %}>Run
       {{ run_status.run_id }} in full</a></p>
   </div>
 </aside>
 {% endif %}
-{# A decorative profile follows the actual address, including nested pages.
-   It never represents geography, collection volume or analytical meaning. #}
-{% if timeline is defined %}{% set terrain_key = timeline.route %}
-{% elif brief is defined %}{% set terrain_key = brief.route %}
-{% elif source is defined %}{% set terrain_key = source.route %}
-{% elif record is defined %}{% set terrain_key = 'record/' ~ record.id %}
-{% elif week is defined %}{% set terrain_key = week.path ~ '-' ~ (page_no | default(1)) %}
-{% else %}{% set terrain_key = page %}{% endif %}
-<main id="main"{% if topography_style is defined %} style="{{ topography_style(terrain_key) }}"{% endif %}{% block main_class %}{% endblock %}>
-  <div class="topography" aria-hidden="true"></div>
-{% if review_mode %}<p class="wrap review-banner" role="note">Private editorial preview · draft content is unapproved and unpublished.</p>{% endif %}
-{% block hero %}{% endblock %}
-  <div class="wrap">
-{% block content %}{% endblock %}
-  </div>
-{% block after_content %}{% endblock %}
-</main>
+</details>
 <footer class="site">
   <div class="wrap">
     {# The colophon opens on the publication's name. A div rather than a
@@ -183,7 +122,8 @@
        describe the site as unpublished; PR #32 published it. #}
     <div class="footer-grid">
       <div>
-        <div class="footer-name">{{ title }}</div>
+        <a class="brand brand--footer" href="{{ root }}index.html" aria-label="{{ title }} home"><img class="brand-mark" src="{{ root }}assets/identity/selected-ipr/ipr-navy-160.png" width="160" height="130" loading="lazy" alt=""><span class="brand-name">Indo-Pacific<span>Record</span></span></a>
+        <p class="colophon-tagline">{{ tagline }}</p>
         <p>{{ title }} is an independent research project created and edited by
         {{ maintainer.name }} · <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
         <p>Corrections and questions about any record are welcome at the same
@@ -196,8 +136,8 @@
           <li><a href="{{ root }}corpus.html">Records by week</a></li>
           <li><a href="{{ root }}corpus-guide.html">Corpus Guide</a></li>
           <li><a href="{{ root }}desks.html">Desks</a></li>
-          <li><a href="{{ root }}sources.html">Sources</a></li>
-          <li><a href="{{ root }}coverage.html">Coverage</a></li>
+          <li><a href="{{ root }}sources.html"{% if page == 'sources.html' %} aria-current="page"{% endif %}>Sources</a></li>
+          <li><a href="{{ root }}coverage.html"{% if page == 'coverage.html' %} aria-current="page"{% endif %}>Coverage</a></li>
         </ul>
       </nav>
       <nav class="footer-col" aria-label="Analysis">
@@ -212,8 +152,8 @@
       <nav class="footer-col" aria-label="About this publication">
         <h2>About</h2>
         <ul>
-          <li><a href="{{ root }}methodology.html">Methodology</a></li>
-          <li><a href="{{ root }}about.html">About</a></li>
+          <li><a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a></li>
+          <li><a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a></li>
           <li><a href="{{ root }}corpus-guide.html#citation">Citing a record</a></li>
         </ul>
       </nav>
@@ -223,5 +163,6 @@
   </div>
 </footer>
 {% block scripts %}{% endblock %}
+{% if record is defined or brief is defined or timeline_surface | default(false) or page in ['index.html','archive.html'] %}<script src="{{ root }}shell.js" defer></script>{% endif %}
 </body>
 </html>
