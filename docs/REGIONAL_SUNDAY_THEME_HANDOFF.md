@@ -27,7 +27,12 @@ directive, only used by the standalone private trial entrypoint. With this
 directive it restricts its actual model evidence to the **exact** 2–10
 owner-chosen IDs, reverifies their source-trail fingerprints against the
 latest read-only SQLite view, and refuses absent, held or truncated original
-text. **The thematic AI prompt itself contains only the owner-reviewed analyst
+text. At the actual model-time SQLite read, it also recomputes SHA-256 over
+the selected source text and matches it against the signed inventory's
+publisher URL, publication date, originating desk, publisher/title/language
+metadata and stored-body fingerprint. Source drift refuses the generation
+before an external model call. **The thematic AI prompt itself contains only
+the owner-reviewed analyst
 synopses and documented limitations**, never the stored article body or full-text
 translation. The source body is read for integrity and availability, not to
 expand synopsis-only third-party source-use permission. It still requires
