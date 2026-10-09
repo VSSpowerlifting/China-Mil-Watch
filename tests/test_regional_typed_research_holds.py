@@ -90,7 +90,9 @@ class TypedResearchHoldTests(unittest.TestCase):
     def test_metadata_drift_and_duplicate_publisher_url_fail(self):
         inv, rows = fixture()
         d = copy.deepcopy(rows)
-        d[0]["published_date"] = "2026-10-07"
+        d[0]["published_date"] = (
+            "2026-10-06" if d[0]["published_date"] != "2026-10-06"
+            else "2026-10-08")
         with self.assertRaises(TypedResearchHoldError):
             audit_typed_holds(inv, d)
         d = copy.deepcopy(rows)
