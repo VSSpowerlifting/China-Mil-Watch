@@ -192,7 +192,7 @@ def build_inventory(*, registry, rows, week_ending, as_of, review_day,
         else:
             state = "collector_unavailable"
             reason = ("Registry status " + desk.status +
-                      "; no eligible production source; no claim of institutional silence")
+                      "; no eligible production source; publisher activity cannot be inferred")
         coverage.append({
             "desk": desk.slug,
             "registry_status": desk.status,
