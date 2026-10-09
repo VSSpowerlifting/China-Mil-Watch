@@ -128,8 +128,12 @@ jobs:
         if: steps.timecheck.outputs.should_run == 'true'
         run: pip install -r requirements.txt
 
+      # A stalled system APT mirror must not hold the daily-update
+      # concurrency slot for hours (observed on 2026-10-07). This prerequisite
+      # has to fail *before* migrations, collection, models and publication.
       - name: Install Playwright browser
         if: steps.timecheck.outputs.should_run == 'true'
+        timeout-minutes: 15
         run: playwright install chromium --with-deps
 
       # ── 4b. Apply and verify migrations BEFORE any collection ─────────────
