@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -128,9 +129,7 @@ def write_report_pair(json_path, json_text, html_path, html_text):
     try:
         for path, content in ((json_path, json_text), (html_path, html_text)):
             with path.open("x", encoding="utf-8") as stream:
-                identity = stream.fileno()
-                import os
-                info = os.fstat(identity)
+                info = os.fstat(stream.fileno())
                 created.append((path, info.st_dev, info.st_ino))
                 stream.write(content)
     except OSError:
