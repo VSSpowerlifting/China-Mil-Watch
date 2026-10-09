@@ -85,6 +85,12 @@ class VietnamUnsignedCitedSourceTests(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(CitationBridgeRefused):
                 build_unsigned(sidecar(), fake)
 
+    def test_repeated_external_citations_cannot_flood_reviewer_queue(self):
+        draft = sidecar()
+        draft["opening_note"] += " [External mps-vi:1000000000]" * 9
+        with self.assertRaisesRegex(CitationBridgeRefused, "excessively repeated"):
+            build_unsigned(draft, packet())
+
     def test_wrong_week_published_or_numbered_draft_refused(self):
         for field, value in (
             ("editorial_status", "approved"),
