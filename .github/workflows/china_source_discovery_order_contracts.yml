@@ -1,0 +1,49 @@
+name: China source first-seen discovery contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scraper/sources/china_mil_online.py'
+      - 'scraper/sources/global_times_mil.py'
+      - 'scraper/sources/mod_china.py'
+      - 'tests/test_china_source_discovery_order.py'
+      - 'docs/CHINA_SOURCE_DISCOVERY_ORDER.md'
+      - '.github/workflows/china_source_discovery_order_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  china-discovery-order-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin tracked archive
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/china-source-order-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Offline source, dates and canonical dedup
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_china_source_discovery_order -v
+          python -m unittest tests.test_mod_china_discovery -v
+          python -m unittest tests.test_global_times_extraction -v
+          python -m unittest tests.test_dedup_authority -v
+      - name: Preserve public output and database
+        run: |
+          sha256sum -c "$RUNNER_TEMP/china-source-order-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
