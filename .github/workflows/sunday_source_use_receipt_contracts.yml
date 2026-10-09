@@ -6,6 +6,8 @@ on:
     paths:
       - core/brief_editorial_source_use.py
       - scripts/sunday_editorial_handoff.py
+      - scripts/sunday_briefs_auto_writer.py
+      - tests/test_briefs_editorial_evidence.py
       - tests/test_sunday_editorial_source_use.py
       - .github/workflows/sunday_source_use_receipt_contracts.yml
       - docs/SUNDAY_EDITORIAL_SOURCE_USE_RECEIPT.md
