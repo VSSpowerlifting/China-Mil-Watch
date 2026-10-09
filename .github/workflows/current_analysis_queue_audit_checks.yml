@@ -1,0 +1,61 @@
+name: Current analysis queue read-only contract
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_current_analysis_queue.py'
+      - 'tests/test_audit_current_analysis_queue.py'
+      - 'docs/CURRENT_ANALYSIS_QUEUE_AUDIT.md'
+      - '.github/workflows/current_analysis_queue_audit_checks.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked database and prevent SQLite sidecars
+        id: baseline
+        shell: bash
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Prove synthetic queue partitions, held states and no DB writes
+        run: python -m unittest tests.test_audit_current_analysis_queue -v
+      - name: Run read-only audit against actual tracked production database
+        shell: bash
+        run: |
+          python -m scripts.audit_current_analysis_queue \
+            --db pla_watch.db --out "$RUNNER_TEMP/ipr-current-queue.json"
+          python - "$RUNNER_TEMP/ipr-current-queue.json" <<'PY'
+          import json
+          import sys
+          report = json.load(open(sys.argv[1], encoding="utf-8"))
+          assert report["schema"] == "ipr-current-analysis-queue/1"
+          assert sum(report["counts"].values()) == report["stored_records"]
+          assert sum(s["stored_records"] for s in report["sources"]) == report["stored_records"]
+          assert report["automatic_queue_candidates"] == (
+              report["counts"]["pending_relevance"] + report["counts"]["pending_analysis"])
+          assert not report["model_spend_authorized"]
+          assert not report["publication_authorized"]
+          print("One copied production database counted; no collection or analysis asserted.")
+          PY
+      - name: Assert database and all public output are unchanged
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        shell: bash
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.db }}"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
