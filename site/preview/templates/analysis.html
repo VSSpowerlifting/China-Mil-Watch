@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% from "_plate.html" import edition_plate %}
+{% from "_terrain.html" import terrain %}
 {% block title %}Analysis — {{ title }}{% endblock %}
-{% block head_scripts %}{% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="{{ briefs_feed_route }}">{% endif %}{% endblock %}
+{% block body_open %}<body class="page-briefs material-paper">{% endblock %}
+{% block head_scripts %}
+<link rel="stylesheet" href="briefs-catalog.css">
+<script src="reveal.js"></script>
+{% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="{{ briefs_feed_route }}">{% endif %}{% endblock %}
 {% block main_class %} class="leads-with-hero"{% endblock %}
 {#- The landing page of Indo-Pacific Record Briefs, the one analysis
     publication. There is deliberately no separate briefs/index.html: it would
@@ -24,6 +29,7 @@
 {% set lead = collection.lead %}
 {% set lead_row = collection.lead_row %}
 <section class="band briefs-head" aria-labelledby="briefs-title">
+  {{ terrain('hero', reveal=true) }}
   <div class="wrap briefs-head-inner">
     <div class="briefs-masthead">
       <p class="briefs-kicker">Analysis</p>
@@ -76,6 +82,7 @@
 {% if collection.rows %}
 {% set n_rows = collection.rows|length %}
 <section class="briefs-index" aria-labelledby="briefs-published">
+  {{ terrain('margin') }}
   <h2 id="briefs-published">All Briefs</h2>
   <p class="section-note">Newest reporting window first.{% if review_mode %} This private preview includes an unapproved candidate.{% endif %}</p>
   <ol class="issue-ledger issue-ledger--briefs">
@@ -127,6 +134,8 @@
   <p class="meta">Draft Briefs are withheld from the public catalog and feed until approved.</p>
 </section>
 {% endblock %}
+
+{% block scripts %}<script src="shell.js" defer></script>{% endblock %}
 
 {% block after_content %}
 {#- Reference, after the catalog and the labeling key. DECISION_LOG 2026-09-23 point 7 keeps the

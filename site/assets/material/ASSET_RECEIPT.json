@@ -1,0 +1,41 @@
+{
+  "purpose": "Generated decorative material and original abstract IPR curves; no evidence or geography",
+  "master": {
+    "bundle": "IPR_Visual_Enrichment_2026-10-09 (2).zip",
+    "path": "assets/chart-paper.png",
+    "sha256": "61002883e45fd8418f5544a2fd27656cef2c656c1566c0b1def250953879c672",
+    "bytes": 2600875,
+    "dimensions": [
+      1254,
+      1254
+    ],
+    "generation": "Supplied generated chart-paper review material; original prompt/model not supplied"
+  },
+  "contours": {
+    "source": "site/preview/topography.css",
+    "path_count": 12,
+    "coordinates": "unchanged; cubic paths only"
+  },
+  "paper": {
+    "method": "256px luminance crop resized to 128px, mirrored seamless 256px tile, 8-tone IPR paper palette",
+    "dimensions": [
+      256,
+      256
+    ],
+    "decoded_rgba_bytes": 262144
+  },
+  "assets": {
+    "chart-paper.png": {
+      "sha256": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
+      "bytes": 14086
+    },
+    "contours-hero.svg": {
+      "sha256": "9709749816d91d6b86cb8e70135dbb7d7c4c0d4150d4c31c3b437202e206e98c",
+      "bytes": 3031
+    },
+    "contours-paper.svg": {
+      "sha256": "d1ba66e45ddf74c9efaa7597ea8881358c2898c3f4076908909986f8de9bd568",
+      "bytes": 3031
+    }
+  }
+}

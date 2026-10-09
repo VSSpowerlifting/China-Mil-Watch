@@ -1,0 +1,7 @@
+{# Original abstract IPR geometry; decoration, never geography or evidence.
+   Opt-in primitives. Motion observes only the artwork, never reading content. #}
+{% macro terrain(variant, reveal=false) -%}
+<div class="terrain-stage terrain-stage--{{ variant }}" aria-hidden="true"{% if reveal %} data-reveal{% endif %}>
+  <div class="terrain-lines"></div>
+</div>
+{%- endmacro %}

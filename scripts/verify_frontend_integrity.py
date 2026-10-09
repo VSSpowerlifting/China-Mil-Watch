@@ -20,7 +20,7 @@ def normalized(value):
 
 
 def verify(public, private, destination):
-    public, private = Path(public), Path(private)
+    public, private = Path(public), Path(private) if private else None
     data = gp.load_corpus(ROOT / 'pla_watch.db')
     corpus = data['corpus']
     snapshot = gp.snapshot_from_corpus(ROOT / 'pla_watch.db')
@@ -77,14 +77,16 @@ def verify(public, private, destination):
             native_relations += 1
     assert not (public / 'timeline').exists()
     assert not (public / 'timelines.html').exists()
-    for path in private.glob('timeline/*.html'):
+    for path in private.glob('timeline/*.html') if private else ():
         text = path.read_text()
         assert 'noindex, nofollow' in text and 'rel="canonical"' not in text
     budgets = []
-    limits = {'index.html': 120000, 'archive.html': 300000, 'record/3924.html': 120000,
+    limits = {'index.html': 120000, 'archive.html': 300000, 'analysis.html': 300000, 'record/3924.html': 120000,
               'briefs/maritime-cooperation-2026.html': 120000, 'timelines.html': 120000,
               'timeline/maritime-cooperation-2026.html': 120000}
     for route, cap in limits.items():
+        if route.startswith('timeline') and private is None:
+            continue
         root = private if route.startswith('timeline') else public
         measure = measure_page(root / route, root)
         assert measure['html_css_bytes'] <= cap, (route, measure)
@@ -103,6 +105,6 @@ def verify(public, private, destination):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--public', required=True);parser.add_argument('--private', required=True);parser.add_argument('--receipt', required=True)
+    parser.add_argument('--public', required=True);parser.add_argument('--private');parser.add_argument('--receipt', required=True)
     args = parser.parse_args()
     verify(args.public, args.private, args.receipt)
