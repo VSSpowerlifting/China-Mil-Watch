@@ -424,6 +424,56 @@ class ThemeSundayHandoffTests(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 run(common + ["--allow-private-paid-writer"])
 
+    def test_owner_audit_cli_produces_private_receipt_without_paid_model(self):
+        inv, review, proposals = scenario()
+        choice = approve(inv, review, proposals)
+        sidecar = {"week_start": "2026-10-04", "week_ending": SAT,
+                   "desks": ["china", "singapore"],
+                   "source_trail": [{"record_id": 42}, {"record_id": 47}]}
+        with tempfile.TemporaryDirectory() as root:
+            directory = Path(root)
+            review_path = directory / "review.json"
+            proposal_path = directory / "proposal.json"
+            choice_path = directory / "choice.json"
+            output_path = directory / "audit.json"
+            for path, value in ((review_path, review),
+                                (proposal_path, proposals),
+                                (choice_path, choice)):
+                path.write_text(json.dumps(value), encoding="utf-8")
+            args = ["audit", "--week-ending", SAT, "--as-of", SAT,
+                    "--review-local-day", SUN,
+                    "--signed-review", str(review_path),
+                    "--proposals", str(proposal_path),
+                    "--choice", str(choice_path), "--out", str(output_path)]
+            with patch("sys.stdin.isatty", return_value=True), patch(
+                    "getpass.getpass", return_value=SECRET.decode()), patch(
+                    "scripts.regional_sunday_theme_preview.inspect",
+                    return_value=inv), patch(
+                    "scripts.regional_sunday_theme_preview.prepare_scaffold",
+                    return_value=sidecar), patch(
+                    "scripts.regional_sunday_theme_preview.choose_evidence",
+                    return_value=[({"id": 42}, "read"), ({"id": 47}, "read")]), patch(
+                    "scripts.regional_sunday_theme_preview.compose") as writer, patch(
+                    "scripts.sunday_editorial_handoff.send_packet") as mail:
+                self.assertEqual(run(args), 0)
+                writer.assert_not_called()
+                mail.assert_not_called()
+            receipt = json.loads(output_path.read_text(encoding="utf-8"))
+            self.assertFalse(receipt["model_called"])
+            self.assertEqual(receipt["selected_source_count"], 2)
+            self.assertTrue(receipt["source_audit_only_not_a_reusable_model_authorization"])
+            self.assertEqual(output_path.stat().st_mode & 0o777, 0o600)
+            with patch("sys.stdin.isatty", return_value=True), patch(
+                    "getpass.getpass", return_value=SECRET.decode()), patch(
+                    "scripts.regional_sunday_theme_preview.inspect",
+                    return_value=inv), patch(
+                    "scripts.regional_sunday_theme_preview.prepare_scaffold",
+                    return_value=sidecar), patch(
+                    "scripts.regional_sunday_theme_preview.choose_evidence",
+                    return_value=[({"id": 42}, "read"), ({"id": 47}, "read")]):
+                with self.assertRaises(SystemExit):
+                    run(args)  # Exclusive output; no overwrite/automatic retry.
+
     def test_preview_file_is_exclusive_private_and_unpublished(self):
         with tempfile.TemporaryDirectory() as root:
             dest = Path(root) / "private-manuscript.txt"
