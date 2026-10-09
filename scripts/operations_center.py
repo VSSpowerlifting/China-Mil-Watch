@@ -255,6 +255,24 @@ def render_html(snapshot: dict) -> str:
           "%s / %s" % (s["enabled_in_shadow_manifest"], s["declared_source_count"]),
           s["inventory_role"], "not inspected")
          for s in snapshot["shadow_source_manifests"]])
+    review_labels = {
+        "latest_source_collection_failed": "Latest source collection failed",
+        "publication_silence_overdue": "Publication silence overdue",
+        "adapter_configuration_not_healthy": "Adapter configuration requires review",
+    }
+    review_rows = [
+        (flag["desk_id"], flag["source_slug"],
+         "; ".join(review_labels[reason] for reason in flag["reasons"]))
+        for flag in snapshot["source_health_review_flags"]
+    ]
+    review = table(("Desk", "Source", "Evidence-backed review reasons"),
+                   review_rows)
+    unknown = [
+        (d["name"], s["name"])
+        for d in snapshot["desks"] for s in d["production_sources"]
+        if s["enabled"] and s["latest_run_failed"] is None
+    ]
+    unknown_runs = table(("Desk", "Source without latest run evidence"), unknown)
     notes = "".join("<li>%s</li>" % val(note) for note in snapshot["limits"])
     css = """
     :root{color-scheme:light;--navy:#142a38;--teal:#247e7d;--paper:#f7f5f0}
@@ -279,7 +297,12 @@ def render_html(snapshot: dict) -> str:
             "<h1>Operations Center</h1><p>Read-only inspection, not a green light for "
             "production promotion, rights reuse, editorial delivery, or publication.</p>"
             "<p class='meta'>As of %s · Daily marker: %s (%s) · %s source flags</p>"
-            "</header><section><h2>Declared desks</h2>%s</section>"
+            "</header><section><h2>Source review flags</h2>"
+            "<p>Evidence-backed collection, publication-silence and adapter reasons. "
+            "Empty does not certify complete coverage.</p>%s</section>"
+            "<section><h2>Source runs not observed</h2>"
+            "<p>Unknown is not a successful collection or a source failure.</p>%s</section>"
+            "<section><h2>Declared desks</h2>%s</section>"
             "<section><h2>Production source health</h2>%s</section>"
             "<section><h2>Shadow source inventory</h2>"
             "<p class='notice'>Configurations only. No live shadow Actions, ledgers, "
@@ -289,7 +312,7 @@ def render_html(snapshot: dict) -> str:
                 css, val(snapshot["as_of"]), val(snapshot["daily_marker"]["date"]),
                 val(snapshot["daily_marker"]["state"]),
                 val(len(snapshot["source_health_review_flags"])),
-                desks, sources, shadows, notes)
+                review, unknown_runs, desks, sources, shadows, notes)
 
 
 def safe_destination(path: Path) -> Path:
