@@ -208,6 +208,21 @@ def validate(root=ROOT, contract_path=None):
             "production_eligible": False, "editorial_authorized": False,
             "run_attested": False,
         })
+    # A matching expected cron is not enough: an added *unexpected* active
+    # schedule can silently increase shadow collection frequency. Compare the
+    # entire cron multiset to explicitly reviewed workflow-level expectations.
+    by_workflow = {}
+    for binding in config["sources"]:
+        if binding["workflow"] is not None:
+            by_workflow.setdefault(root / binding["workflow"], set())
+            if binding["trigger"] == "scheduled":
+                by_workflow[root / binding["workflow"]].add(binding["cron"])
+    for workflow_path, approved_crons in by_workflow.items():
+        observed_crons = workflow_cache[workflow_path][0]
+        require(len(observed_crons) == len(set(observed_crons)) and
+                set(observed_crons) == approved_crons,
+                "unexpected, duplicated or missing active workflow schedule: " +
+                str(workflow_path.relative_to(root)))
     require(set(expected) == set(declared),
             "shadow source-family coverage drift: missing=%s extra=%s" %
             (sorted((str(p.relative_to(root)), s) for p, s in set(expected) - set(declared)),
