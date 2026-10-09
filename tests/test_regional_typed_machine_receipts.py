@@ -3,6 +3,9 @@ from __future__ import annotations
 
 import copy
 import json
+import tempfile
+from pathlib import Path
+from unittest.mock import patch
 import unittest
 
 from core.regional_typed_machine_receipts import (
@@ -10,6 +13,7 @@ from core.regional_typed_machine_receipts import (
 )
 from core.regional_typed_research_holds import audit_typed_holds
 from scripts.attest_japan_sunday_research import attest
+from scripts.regional_typed_machine_receipts import main as audit_command
 from scripts.prepare_vietnam_briefs_evidence import canonical_json
 from tests.test_japan_sunday_source_attestation import approved_snapshot
 from tests.test_regional_typed_research_holds import fixture
@@ -183,6 +187,34 @@ class RegionalMachineReceiptTests(unittest.TestCase):
         missing = queue_at(OCT5, ("mps-vi:1791199100",))
         with self.assertRaisesRegex(MachineReceiptError, "absent"):
             reconcile_machine_receipts(holds, vietnam_queues=[missing])
+
+    def test_private_cli_writes_metadata_only_receipt_without_model_or_mail(self):
+        holds, original = holds_and_rows()
+        japan = japan_receipt()
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            hold_path, japan_path, output = (
+                root / "holds.json", root / "japan.json", root / "joined.json")
+            hold_path.write_text(json.dumps(holds), encoding="utf-8")
+            japan_path.write_text(json.dumps(japan), encoding="utf-8")
+            args = ["--holds", str(hold_path),
+                    "--japan-attestation", str(japan_path),
+                    "--out", str(output)]
+            with patch("scripts.sunday_editorial_handoff.send_packet") as email:
+                self.assertEqual(audit_command(args), 0)
+                email.assert_not_called()
+            receipt = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(len(receipt["items"]), 6)
+            self.assertEqual(output.stat().st_mode & 0o777, 0o600)
+            self.assertFalse(receipt["model_input_authorized"])
+            self.assertFalse(receipt["editor_email_authorized"])
+            self.assertFalse(receipt["publication_authorized"])
+            packed = json.dumps(receipt, ensure_ascii=False)
+            for row in original:
+                self.assertNotIn(row["source_url"], packed)
+                self.assertNotIn(row["summary"], packed)
+            with self.assertRaises(SystemExit):
+                audit_command(args)  # Exclusive mode refuses overwrite.
 
     def test_fake_approval_holds_are_rejected_before_receipts(self):
         holds, _ = holds_and_rows()
