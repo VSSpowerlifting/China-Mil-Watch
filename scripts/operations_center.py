@@ -299,6 +299,43 @@ def render_html(snapshot: dict) -> str:
                    "Evidence classification", "Candidate-slot summary"),
                   candidate_rows)
         )
+    daily_evidence = snapshot.get("daily_actions_evidence")
+    daily_section = ""
+    if daily_evidence is not None:
+        daily_rows = []
+        for attempt in daily_evidence["attempts"]:
+            metrics = attempt["analysis_log_metrics_supplied"]
+            daily_rows.append((
+                attempt["created_new_york_date"], attempt["run_id"],
+                attempt["github_conclusion"], attempt["status"],
+                "unknown" if attempt["guard_decision_supplied"] is None else
+                ("ran" if attempt["guard_decision_supplied"] else "skipped"),
+                metrics["new_articles_stored"] if metrics else None,
+                metrics["backlog_after_cap"] if metrics else None,
+            ))
+        summary = []
+        for day, counts in sorted(
+                daily_evidence["created_new_york_day_counts"].items()):
+            for name, count in sorted(counts.items()):
+                summary.append((day, name, count))
+        daily_section = (
+            "<section><h2>Daily Actions evidence candidates</h2>"
+            "<p class='notice'>Operator-supplied receipts, NOT authenticated. "
+            "A green Actions conclusion alone does not establish collection. "
+            "Missing dates do not establish publisher silence. Analysis backlog "
+            "totals, if supplied, are historical log claims, not live queue size.</p>"
+            "<p class='meta'>%s supplied attempts · receipt as of %s</p>"
+            "%s<h3>Supplied attempts by New York creation date</h3>%s"
+            "</section>" % (
+                val(daily_evidence["supplied_attempt_count"]),
+                val(daily_evidence["as_of_utc"]),
+                table(("NY creation date", "Actions run ID", "Conclusion",
+                       "Candidate interpretation", "Guard evidence",
+                       "Stored articles (supplied)", "Unprocessed backlog (supplied)"),
+                      daily_rows),
+                table(("NY creation date", "Interpretation", "Count"), summary),
+            )
+        )
     notes = "".join("<li>%s</li>" % val(note) for note in snapshot["limits"])
     css = """
     :root{color-scheme:light;--navy:#142a38;--teal:#247e7d;--paper:#f7f5f0}
@@ -333,13 +370,13 @@ def render_html(snapshot: dict) -> str:
             "<section><h2>Shadow source inventory</h2>"
             "<p class='notice'>Configurations only. No live shadow Actions, ledgers, "
             "source-rights reviews, or qualification receipts were checked.</p>%s</section>"
-            "%s<section><h2>Evidence limits</h2><ul>%s</ul></section>"
+            "%s%s<section><h2>Evidence limits</h2><ul>%s</ul></section>"
             "</main></body></html>") % (
                 css, val(snapshot["as_of"]), val(snapshot["daily_marker"]["date"]),
                 val(snapshot["daily_marker"]["state"]),
                 val(len(snapshot["source_health_review_flags"])),
                 review, unknown_runs, desks, sources, shadows,
-                overlay_section, notes)
+                overlay_section, daily_section, notes)
 
 
 def safe_destination(path: Path) -> Path:
