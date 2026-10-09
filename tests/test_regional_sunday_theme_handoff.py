@@ -230,6 +230,31 @@ class ThemeSundayHandoffTests(unittest.TestCase):
         self.assertNotIn("B" * 300, recorded[0]["messages"][0]["content"])
         self.assertFalse("publication_authorized" in output)
 
+    def test_signed_theme_cannot_bypass_research_source_attestation(self):
+        inv, review, proposals = scenario()
+        directive = verify_choice(inv, review, SECRET, proposals,
+                                  approve(inv, review, proposals))
+        directive = dict(directive, selected_source_ids=[1, 2])
+        sidecar = {"week_start": "2026-10-04", "week_ending": SAT,
+                   "desks": ["china", "singapore"], "source_trail": []}
+        payload = [{
+            "id": "JP-W41-01", "desk": "japan",
+            "status": "unapproved-source-linked-editorial-candidate",
+            "source_url": "https://www.mod.go.jp/en/article/example.html",
+        }]
+        with patch("scripts.sunday_briefs_auto_writer.choose_evidence",
+                   return_value=evidence()), patch(
+                   "scripts.sunday_briefs_auto_writer.research_prompt") as research:
+            with self.assertRaisesRegex(ValueError, "unattested supplemental"):
+                compose(sidecar, SAT, client=Mock(), selected_theme=directive,
+                        supplemental=payload,
+                        reviewed_synopses={
+                            ident: {"analyst_synopsis": "a" * 100,
+                                    "accuracy_limitations": "a" * 40}
+                            for ident in (1, 2)
+                        })
+            research.assert_not_called()
+
     def test_one_owner_paid_model_call_only_even_on_bad_citations(self):
         inv, review, proposals = scenario()
         directive = verify_choice(inv, review, SECRET, proposals,
