@@ -1,0 +1,59 @@
+name: Regional typed source-use owner decision - offline
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/regional_typed_source_use_decision.py
+      - tests/test_regional_typed_source_use_decision.py
+      - docs/REGIONAL_TYPED_SOURCE_USE_DECISION.md
+      - .github/workflows/regional_typed_source_use_decision_checks.yml
+
+permissions:
+  contents: read
+
+jobs:
+  offline-source-decisions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Baseline tracked database
+        run: sha256sum pla_watch.db > "$RUNNER_TEMP/typed-source-decisions-db.sha"
+      - name: Install offline dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Strict offline source-rights and signature regression tests
+        run: |
+          python -m unittest -v \
+            tests.test_regional_typed_source_use_decision \
+            tests.test_regional_typed_human_review_prep \
+            tests.test_regional_typed_research_holds \
+            tests.test_regional_reviewed_evidence
+      - name: No operational capability or network dispatch in decision module
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          body = Path("core/regional_typed_source_use_decision.py").read_text()
+          wf = Path(".github/workflows/regional_typed_source_use_decision_checks.yml").read_text()
+          for name in ("smtplib", "ANTHROPIC_API_KEY", "send_packet(",
+                       "upload" + "-artifact", "urllib.request", "requests.get("):
+              assert name not in body
+          for key in ("model_input_authorized", "publication_authorized",
+                      "future_selector_integration_required", "hmac.compare_digest"):
+              assert key in body
+          assert ("  " + "schedule:") not in wf
+          PY
+      - name: Preserve production database and published output
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/typed-source-decisions-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
