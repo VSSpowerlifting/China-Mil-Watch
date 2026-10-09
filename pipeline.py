@@ -118,6 +118,28 @@ class _SourceSlugView:
 SCRAPERS = _SourceSlugView()
 
 
+def hold_blank_original_bodies(candidates: list) -> tuple[list, int]:
+    """Remove unextractable *stored inputs* from this run's model candidate list.
+
+    A blank body is an extraction/recovery question, NEVER proof that the
+    publisher issued no prose. Preserve those article rows and processing
+    metadata unchanged; exclude them only from paid API dispatch so they
+    cannot occupy fresh/backlog cap slots or repeatedly buy empty responses.
+
+    Items are (article_id, title, original_body, url). Return a new list;
+    callers keep their initial source data and all stored records intact.
+    """
+    ready = []
+    withheld = 0
+    for item in candidates:
+        body = item[2]
+        if isinstance(body, str) and body.strip():
+            ready.append(item)
+        else:
+            withheld += 1
+    return ready, withheld
+
+
 # ── Atomic-batch sources ─────────────────────────────────────────────────────
 #
 # Every source defaults to insert_article()'s per-article-own-commit design:
@@ -557,6 +579,24 @@ def run(
          r["url"]            or "?")
         for r in live_rows + archive_rows
     ]
+
+    # Check the ACTUAL original body that the model would receive before
+    # giving it a paid queue slot. Blank bodies can result from historical
+    # extraction/template drift, so this is an *in-run dispatch hold*, not a
+    # terminal verdict, deletion, invented source silence or DB state change.
+    # Keep all three queue sources distinct for transparent cap accounting.
+    new_queue, blank_new = hold_blank_original_bodies(new_queue)
+    pending, blank_pending = hold_blank_original_bodies(pending)
+    unscored, blank_unscored = hold_blank_original_bodies(unscored)
+    blank_withheld = blank_new + blank_pending + blank_unscored
+    if blank_withheld:
+        logger.warning(
+            "Withheld %d stored article(s) with blank original bodies from "
+            "paid analysis dispatch: %d new, %d pending, %d unscored. "
+            "Rows and processing states were not changed; original text "
+            "requires source/extraction review before analysis.",
+            blank_withheld, blank_new, blank_pending, blank_unscored,
+        )
 
     backlog       = pending + unscored
     backlog_total = len(backlog)
