@@ -39,11 +39,48 @@ class SurfaceMaterial(unittest.TestCase):
             with Image.open(MATERIAL / 'chart-paper.png') as source:
                 self.assertEqual(list(image.getdata()), list(source.getdata()))
 
-    def test_builder_reproduces_asset_and_receipt(self):
+    def test_builder_reproduces_decoded_asset_and_provenance(self):
+        # PNG IDAT deflate output is not stable across Pillow/zlib versions.
+        # Requiring matching compressed bytes rejected CI's valid rebuild
+        # even though the verified source indices and resulting navy pixels
+        # did not change. Keep the checked-in asset's immutable SHA receipt
+        # in test_receipt_binds_source_chain_and_delivered_asset above, and
+        # compare actual indexed pixels/palette as well as metadata here.
         with tempfile.TemporaryDirectory() as directory:
-            build(directory)
-            for name in ('navy-paper.png', 'NAVY_RECEIPT.json'):
-                self.assertEqual((Path(directory) / name).read_bytes(), (MATERIAL / name).read_bytes())
+            generated_receipt = build(directory)
+            target = Path(directory)
+            generated_bytes = (target / 'navy-paper.png').read_bytes()
+            stored_bytes = (MATERIAL / 'navy-paper.png').read_bytes()
+            generated_meta = json.loads(
+                (target / 'NAVY_RECEIPT.json').read_text())
+            stored_meta = json.loads(
+                (MATERIAL / 'NAVY_RECEIPT.json').read_text())
+
+            self.assertEqual(generated_receipt, generated_meta)
+            self.assertEqual(generated_meta['source'], stored_meta['source'])
+            for key in ('purpose', 'builder', 'method', 'palette_rgb',
+                        'dimensions', 'decoded_rgba_bytes',
+                        'delivery_cap_bytes'):
+                self.assertEqual(generated_meta[key], stored_meta[key])
+            self.assertEqual(generated_meta['asset']['path'], 'navy-paper.png')
+            self.assertEqual(
+                generated_meta['asset']['sha256'],
+                hashlib.sha256(generated_bytes).hexdigest())
+            self.assertEqual(
+                generated_meta['asset']['bytes'], len(generated_bytes))
+            self.assertLessEqual(len(generated_bytes), 16000)
+            # Bytes can differ when the encoder uses different IDAT deflate
+            # decisions, but the complete indexed artwork must not drift.
+            with Image.open(target / 'navy-paper.png') as generated:
+                with Image.open(MATERIAL / 'navy-paper.png') as delivered:
+                    self.assertEqual(
+                        (generated.format, generated.mode, generated.size),
+                        (delivered.format, delivered.mode, delivered.size))
+                    self.assertEqual(generated.tobytes(), delivered.tobytes())
+                    self.assertEqual(generated.getpalette(),
+                                     delivered.getpalette())
+                    self.assertEqual(generated.convert('RGBA').tobytes(),
+                                     delivered.convert('RGBA').tobytes())
 
     def test_changed_source_or_master_chain_fails_closed(self):
         with tempfile.TemporaryDirectory() as directory:
