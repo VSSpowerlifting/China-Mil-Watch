@@ -53,6 +53,16 @@ jobs:
           assert report["model_spend_authorized"] is False
           assert report["publication_authorized"] is False
           print("Source-attributed real SQLite queue accounting verified")
+          print("STORED_QUEUE_AUDIT_COUNTS " + json.dumps({
+              "article_rows": report["article_rows"],
+              "stored_daily_queue_eligible": report["stored_daily_queue_eligible"],
+              "stored_daily_pending_analysis": report["stored_daily_pending_analysis"],
+              "stored_daily_unscored": report["stored_daily_unscored"],
+              "stored_held_out_of_daily": report["stored_held_out_of_daily"],
+              "paused": report["totals"]["paused"],
+              "terminal": report["totals"]["terminal"],
+              "unknown_state": report["totals"]["unknown_state"],
+          }, sort_keys=True))
           PY
       - name: Verify DB and published site were not modified
         if: ${{ !cancelled() && steps.before.outcome == 'success' }}
