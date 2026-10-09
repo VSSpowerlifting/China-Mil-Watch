@@ -13,15 +13,50 @@ def utc(timestamp):
 
 
 def window(date_time, *, event="schedule", marker="2026-10-11",
-           send=True, target="", historical=False, friday=False):
+           send=True, target="", historical=False, friday=False,
+           pilot="2026-10-10", digest="a" * 64, scheduled_preview=False):
     return resolve_sunday_handoff(
         event=event, now=date_time, reporting_saturday=target,
         send_email=send, allow_historical_send=historical,
         sunday_daily_marker=marker, friday_delivery_enabled=friday,
+        pilot_owner_reviewed_week=pilot,
+        pilot_owner_reviewed_sha256=digest,
+        scheduled_owner_preview=scheduled_preview,
     )
 
 
 class SundayHandoffTests(unittest.TestCase):
+    def test_first_sunday_schedule_requires_owner_review_before_model(self):
+        with self.assertRaisesRegex(SundayHandoffRefused, "owner"):
+            window(utc("2026-10-11T19:17:00"), pilot="")
+        with self.assertRaisesRegex(SundayHandoffRefused, "owner"):
+            window(utc("2026-10-11T19:17:00"), pilot="2026-10-03")
+        r = window(utc("2026-10-11T19:17:00"), pilot="2026-10-10")
+        self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "true")
+
+    def test_first_sunday_send_requires_sha_setting_before_generation(self):
+        for malformed in ("", "true", "A" * 64, "a" * 63,
+                          "a" * 64 + " ", "a" * 64 + "\\n"):
+            with self.subTest(digest=repr(malformed)):
+                with self.assertRaisesRegex(
+                    SundayHandoffRefused, "IPR_SUNDAY_OWNER_REVIEWED_SHA256"
+                ):
+                    window(utc("2026-10-11T19:17:00"), digest=malformed)
+
+    def test_first_sunday_no_send_preview_needs_no_signoff(self):
+        r = window(utc("2026-10-11T19:17:00"),
+                   event="workflow_dispatch", send=False, pilot="", digest="")
+        self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "false")
+
+    def test_first_sunday_historical_editor_send_still_requires_signoff(self):
+        with self.assertRaisesRegex(SundayHandoffRefused, "owner"):
+            window(utc("2026-10-15T16:00:00"), event="workflow_dispatch",
+                   send=True, historical=True, pilot="")
+        r = window(utc("2026-10-15T16:00:00"),
+                   event="workflow_dispatch", send=True, historical=True,
+                   pilot="2026-10-10")
+        self.assertEqual(r["IPR_SUNDAY_WEEK_END"], "2026-10-10")
+
     def test_sunday_complete_week_and_marker(self):
         r = window(utc("2026-10-11T19:17:00"))
         self.assertEqual(r, {
@@ -89,13 +124,33 @@ class SundayHandoffTests(unittest.TestCase):
                 with self.assertRaisesRegex(SundayHandoffRefused, expected):
                     window(now, event="workflow_dispatch", send=False, target=target)
 
+    def test_opt_in_scheduled_owner_preview_never_authorizes_dylan(self):
+        sunday = utc("2026-10-11T19:17:00")
+        r = window(sunday, send=False, scheduled_preview=True,
+                   pilot="", digest="", friday=True)
+        self.assertEqual(r["IPR_SUNDAY_SHOULD_SEND"], "false")
+        self.assertEqual(r["IPR_SUNDAY_AS_OF"], "2026-10-10")
+        for marker in ("", "2026-10-10", "2026-10-12"):
+            with self.subTest(marker=marker), self.assertRaisesRegex(
+                    SundayHandoffRefused, "success marker"):
+                window(sunday, send=False, scheduled_preview=True,
+                       marker=marker, pilot="", digest="")
+        with self.assertRaisesRegex(SundayHandoffRefused, "cannot both be enabled"):
+            window(sunday, send=True, scheduled_preview=True)
+        with self.assertRaisesRegex(SundayHandoffRefused, "manual dispatch"):
+            window(sunday, event="workflow_dispatch", send=False,
+                   scheduled_preview=True)
+        with self.assertRaisesRegex(SundayHandoffRefused, "outside New York-local Sunday"):
+            window(utc("2026-10-12T06:00:00"), send=False,
+                   scheduled_preview=True)
+
     def test_scheduled_replays_and_offday_refused(self):
         now = utc("2026-10-11T19:17:00")
         with self.assertRaisesRegex(SundayHandoffRefused, "historical"):
             window(now, target="2026-10-03")
         with self.assertRaisesRegex(SundayHandoffRefused, "historical"):
             window(now, historical=True)
-        with self.assertRaisesRegex(SundayHandoffRefused, "flag"):
+        with self.assertRaisesRegex(SundayHandoffRefused, "explicitly enabled"):
             window(now, send=False)
         with self.assertRaisesRegex(SundayHandoffRefused, "unsupported"):
             window(now, event="push")

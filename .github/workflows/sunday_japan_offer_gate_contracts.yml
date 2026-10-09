@@ -1,0 +1,39 @@
+name: Sunday Japan Evidence Offered to Unified Writer — No-Send Contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/sunday_japan_offer_gate_contracts.yml
+      - .github/workflows/sunday_briefs_editorial_handoff.yml
+      - scripts/sunday_japan_offer_gate.py
+      - tests/test_sunday_japan_offer_gate.py
+      - docs/SUNDAY_JAPAN_MODEL_OFFER_GATE.md
+
+permissions:
+  contents: read
+
+jobs:
+  source-roster-before-model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test exact first-Sunday Japan model roster, future omission and no-send
+        run: python -m unittest tests.test_sunday_japan_offer_gate -v
+      - name: Audit first-Sunday actual private research packet without model or SMTP
+        run: |
+          python -m scripts.sunday_japan_offer_gate \
+            --week-ending 2026-10-10 \
+            --as-of 2026-10-10 \
+            --packet research/briefs_editorial_evidence/2026-10-10.json
+      - name: Assert production files unchanged
+        run: |
+          test -z "$(git status --porcelain -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

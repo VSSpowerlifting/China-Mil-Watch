@@ -1,0 +1,78 @@
+name: Regional weekly inventory focused checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - feat/regional-editorial-slate-contract-20261008
+    paths:
+      - core/regional_weekly_inventory.py
+      - tests/test_regional_weekly_inventory.py
+      - scripts/regional_weekly_inventory.py
+      - core/regional_editorial_slate.py
+      - docs/REGIONAL_EDITORIAL_INTELLIGENCE.md
+      - .github/workflows/regional_weekly_inventory_checks.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: regional-inventory-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  focused-inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out read-only PR merge tree
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record archive baseline
+        id: before
+        run: echo "sha=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Install repository dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test slate and inventory contracts
+        run: python -m unittest tests.test_regional_editorial_slate tests.test_regional_weekly_inventory -v
+      - name: Replay read-only historical reporting-week snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          scratch="$(mktemp -d)"
+          trap 'rm -rf "$scratch"' EXIT
+          python scripts/regional_weekly_inventory.py \
+            --week-ending 2026-10-10 \
+            --as-of 2026-10-08 \
+            --review-local-day 2026-10-08 \
+            --db pla_watch.db \
+            --marker "$scratch/no-success-marker" \
+            --out "$scratch/private.json"
+          python - "$scratch/private.json" <<'PY'
+          import json, sys
+          data = json.load(open(sys.argv[1], encoding="utf-8"))
+          assert data["model_input_authorized"] is False
+          assert data["publication_authorized"] is False
+          assert data["editor_email_authorized"] is False
+          assert data["production_preflight"] == "hold_before_model_or_email"
+          assert data["empty_editorial_slate"]["candidates"] == []
+          assert data["empty_editorial_slate"]["provisional_lead"] is None
+          assert len(data["coverage"]) >= 2
+          print("Read-only, no-send partial-week inventory contract OK")
+          PY
+      - name: Tracked database and output unchanged
+        if: always() && steps.before.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.before.outputs.sha }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          echo "Tracked DB/output preserved"

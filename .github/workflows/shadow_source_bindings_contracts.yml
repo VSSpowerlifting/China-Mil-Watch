@@ -1,0 +1,46 @@
+name: Shadow source workflow binding contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'config/shadow_source_workflow_bindings.json'
+      - 'scripts/audit_shadow_workflow_bindings.py'
+      - 'tests/test_shadow_workflow_bindings.py'
+      - 'docs/SHADOW_SOURCE_WORKFLOW_BINDINGS.md'
+      - '.github/workflows/shadow_source_bindings_contracts.yml'
+      - '.github/workflows/*shadow*.yml'
+      - 'shadow/**/manifest.json'
+
+permissions:
+  contents: read
+
+jobs:
+  check-declarations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked archive baseline
+        id: baseline
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Verify real manifest and workflow mapping declarations
+        run: python scripts/audit_shadow_workflow_bindings.py > "$RUNNER_TEMP/shadow-source-binding-report.json"
+      - name: Test drift and shared workflow routing traps
+        run: python -m unittest tests.test_shadow_workflow_bindings -v
+      - name: Assert source database and generated output unchanged
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

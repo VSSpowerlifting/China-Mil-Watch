@@ -1,0 +1,36 @@
+name: Sunday Scheduled Owner-Only Preview — Offline No-Send Contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/weekly_briefs_sunday_window.py
+      - tests/test_weekly_briefs_sunday_window.py
+      - tests/test_sunday_scheduled_owner_preview.py
+      - .github/workflows/sunday_briefs_editorial_handoff.yml
+      - .github/workflows/sunday_scheduled_owner_preview_contracts.yml
+      - docs/SUNDAY_SCHEDULED_OWNER_PREVIEW.md
+
+permissions:
+  contents: read
+
+jobs:
+  scheduled-owner-preview-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Execute deterministic no-SMTP Sunday schedule contracts
+        run: |
+          python -m unittest tests.test_sunday_scheduled_owner_preview tests.test_weekly_briefs_sunday_window -v
+      - name: Verify production database and publication outputs stay unchanged
+        run: |
+          test -z "$(git status --porcelain -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      # No SMTP secrets, model keys, external APIs, or publication permission.
