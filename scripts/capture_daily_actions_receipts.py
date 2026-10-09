@@ -16,7 +16,7 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
@@ -58,6 +58,13 @@ def exact_utc_date(value):
         raise CaptureError("invalid UTC date") from exc
 
 
+class RefuseRedirect(HTTPRedirectHandler):
+    """Do not forward optional bearer credentials to a redirect target."""
+
+    def redirect_request(self, request, fp, code, msg, headers, newurl):
+        raise CaptureError("GitHub Actions API redirected; refusing")
+
+
 def transport(endpoint, query):
     """GET fixed-host GitHub API only; return JSON object, never follow API URLs."""
     require(type(endpoint) is str and endpoint.startswith("/actions/") and
@@ -75,7 +82,8 @@ def transport(endpoint, query):
     request = Request(BASE + endpoint + "?" + urlencode(query),
                       headers=headers, method="GET")
     try:
-        with urlopen(request, timeout=TIMEOUT_SECONDS) as response:
+        opener = build_opener(RefuseRedirect())
+        with opener.open(request, timeout=TIMEOUT_SECONDS) as response:
             require(response.geturl().startswith("https://api.github.com/"),
                     "unexpected Actions API redirect")
             require(response.status == 200, "unexpected Actions API status")
