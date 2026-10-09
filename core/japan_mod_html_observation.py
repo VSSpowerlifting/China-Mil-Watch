@@ -85,9 +85,11 @@ def attest_packet_scope(rows):
     """Reject a broadened source set or forged research rights."""
     need(isinstance(rows, list) and len(rows) <= 8,
          "only bounded validated editorial packet accepted")
-    japan = {r.get("id"): r for r in rows if isinstance(r, dict)
-             and r.get("desk") == "japan"}
-    need(set(japan) == {"JP-W41-01", "JP-W41-02", "JP-W41-06"},
+    japan_rows = [r for r in rows if isinstance(r, dict)
+                  and r.get("desk") == "japan"]
+    japan = {r.get("id"): r for r in japan_rows}
+    need(len(japan_rows) == 3 and len(japan) == 3 and
+         set(japan) == {"JP-W41-01", "JP-W41-02", "JP-W41-06"},
          "expected exact Oct10 Japan research roster")
     for ident, (url, day, title) in TARGETS.items():
         r = japan[ident]
