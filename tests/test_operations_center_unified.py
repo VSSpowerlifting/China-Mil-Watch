@@ -91,6 +91,34 @@ class UnifiedOperationsContracts(unittest.TestCase):
             d["created_new_york_day_counts"]["2026-10-08"][
                 "green_scheduling_guard_skip_candidate"], 1)
 
+    def test_actual_metadata_capture_to_dashboard_does_not_invent_guard(self):
+        # Exercise the actual merged API capture -> canonical classifier ->
+        # Operations Center integration without network or edited log claims.
+        from scripts import capture_daily_actions_receipts as capture
+        from tests.test_capture_daily_actions_receipts import (
+            fixture, run as api_run, job as api_job,
+        )
+        api = api_run(conclusion="success")
+        job = api_job()
+        for step in job["steps"]:
+            if step["name"] in daily.STEP_NAMES:
+                step["conclusion"] = "success"
+        supplied = capture.capture(
+            "2026-10-07", fixture([api], jobs={api["id"]: [job]}),
+            as_of_utc="2026-10-09T03:00:00Z")
+        self.assertIsNone(supplied["runs"][0]["guard"]["should_run"])
+        self.assertIsNone(supplied["runs"][0]["analysis"])
+        data = self.build(receipts=supplied)
+        row = data["daily_actions_evidence"]["attempts"][0]
+        self.assertEqual("green_workflow_work_not_established", row["status"])
+        self.assertFalse(row["collection_executed_authenticated"])
+        self.assertFalse(data["daily_actions_evidence"]["input_origin_authenticated"])
+        self.assertEqual([], data["daily_actions_evidence"]["historical_backlog_snapshots"])
+        html = ops.render_html(data)
+        self.assertIn("green_workflow_work_not_established", html)
+        self.assertIn("NOT authenticated", html)
+        self.assertFalse(data["publication_authorized"])
+
     def test_cancelled_unknown_execution_stays_unknown(self):
         d = self.build(receipts=envelope([cancelled()]))[
             "daily_actions_evidence"]
