@@ -118,8 +118,6 @@ class MixedOwnerChoiceTests(unittest.TestCase):
             lambda d: d.update(publication_authorized=True),
             lambda d: d.update(model_id="someone-elses-model"),
             lambda d: d.update(candidate_analysis=[]),
-            lambda d: d["validated_model_proposed_slate"]["candidates"][0]
-                .update(thesis="Changed claim after model proposal."),
             lambda d: d["validated_model_proposed_slate"]["evidence"][0]
                 .update(source_url="https://publisher.example/fake"),
             lambda d: d.update(owner_run_hmac_sha256="a" * 64),
@@ -128,6 +126,21 @@ class MixedOwnerChoiceTests(unittest.TestCase):
             mod(changed)
             with self.subTest(mutation=str(mod)), self.assertRaises(ValueError):
                 unsigned(inputs, run, changed)
+
+    def test_unsigned_preview_can_be_revised_before_owner_choice(self):
+        # Model output is not provider-signed. Source validation deliberately
+        # cannot prove original model wording; human must approve exact draft.
+        inputs, run, preview = selected_preview()
+        edited = copy.deepcopy(preview)
+        edited["validated_model_proposed_slate"]["candidates"][0]["thesis"] = (
+            "A revised, defensible source-attributed private analytical focus "
+            "that remains tentative pending corroboration and owner judgment.")
+        revised = unsigned(inputs, run, edited)
+        original = unsigned(inputs, run, preview)
+        self.assertNotEqual(original["approved_focus"],
+                            revised["approved_focus"])
+        self.assertNotEqual(original["model_proposal_digest_sha256"],
+                            revised["model_proposal_digest_sha256"])
 
     def test_signed_owner_choice_tampering_and_wrong_key_refused(self):
         inputs, run, preview, sig = approved_choice()
