@@ -22,8 +22,8 @@ from scripts.sunday_editorial_handoff import send_packet
 NY = ZoneInfo("America/New_York")
 SCHEMA = "ipr-reviewed-sunday-manual-handoff/1"
 MAX_BYTES = 3_000_000
-DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\\Z")
-DIGEST = re.compile(r"[0-9a-f]{64}\\Z")
+DATE = re.compile(r"[0-9]{4}-[0-9]{2}-[0-9]{2}\Z")
+DIGEST = re.compile(r"[0-9a-f]{64}\Z")
 HEADER = "INDO-PACIFIC RECORD | BRIEFS EDITORIAL WORKSHEET"
 STRUCTURE = (
     "=== EDITABLE MANUSCRIPT ===",
