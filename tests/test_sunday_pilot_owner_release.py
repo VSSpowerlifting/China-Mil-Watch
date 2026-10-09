@@ -1,6 +1,7 @@
 """First Sunday editorial recipient requires exact-week human-owner clearance."""
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import tempfile
@@ -11,6 +12,7 @@ from unittest.mock import patch
 
 from scripts.sunday_pilot_owner_review import (
     OwnerReviewRequired, PILOT_SATURDAY, require_owner_review,
+    require_exact_reviewed_manuscript,
 )
 from scripts.sunday_editorial_handoff import main, send_packet
 from scripts.weekly_briefs_sunday_window import SundayHandoffRefused, resolve_sunday_handoff
@@ -99,6 +101,82 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
                 self.assertEqual(mail["To"], "owner@example.com")
                 self.assertNotIn("editor@example.com", str(mail))
 
+    def test_pilot_release_needs_exact_reviewed_attachment_hash(self):
+        attachment = b"IPR pilot manuscript and appendices\\n"
+        exact = hashlib.sha256(attachment).hexdigest()
+        self.assertTrue(require_exact_reviewed_manuscript(
+            week_ending=PILOT_SATURDAY, sending=True,
+            manuscript_bytes=attachment, approved_sha256=exact,
+        ))
+        for wrong in ("", "true", "0" * 64, exact.upper(), " " + exact,
+                      hashlib.sha256(b"another model draft").hexdigest()):
+            with self.subTest(approved=wrong), self.assertRaises(
+                OwnerReviewRequired
+            ):
+                require_exact_reviewed_manuscript(
+                    week_ending=PILOT_SATURDAY, sending=True,
+                    manuscript_bytes=attachment, approved_sha256=wrong,
+                )
+        self.assertFalse(require_exact_reviewed_manuscript(
+            week_ending=PILOT_SATURDAY, sending=False,
+            manuscript_bytes=attachment, approved_sha256="",
+        ))
+        self.assertFalse(require_exact_reviewed_manuscript(
+            week_ending="2026-10-17", sending=True,
+            manuscript_bytes=attachment, approved_sha256="",
+        ))
+
+    def test_direct_smtp_requires_review_of_exact_bytes_not_just_week(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "first-edition.txt"
+            original = b"Owner-reviewed exact thematic manuscript\\n"
+            path.write_bytes(original)
+            approved = hashlib.sha256(original).hexdigest()
+            with patch.dict(os.environ, {
+                "IPR_SUNDAY_OWNER_REVIEWED_WEEK": PILOT_SATURDAY,
+                "IPR_SUNDAY_OWNER_REVIEWED_SHA256": hashlib.sha256(
+                    b"a different draft"
+                ).hexdigest(),
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_PREVIEW_TO": "owner@example.com",
+                "IPR_SMTP_USER": "author@gmail.com",
+                "IPR_SMTP_APP_PASSWORD": "abcdefghijklmnop",
+            }, clear=True), patch(
+                "scripts.sunday_editorial_handoff.smtplib.SMTP_SSL"
+            ) as smtp:
+                with self.assertRaisesRegex(OwnerReviewRequired,
+                                             "differs from owner's reviewed"):
+                    send_packet(path, PILOT_SATURDAY, full_week=True)
+                smtp.assert_not_called()
+                os.environ["IPR_SUNDAY_OWNER_REVIEWED_SHA256"] = approved
+                send_packet(path, PILOT_SATURDAY, full_week=True)
+                email = smtp.return_value.__enter__.return_value.send_message.call_args.args[0]
+                self.assertEqual(email["To"], "editor@example.com")
+                self.assertEqual(next(email.iter_attachments()).get_content().encode(),
+                                 original)
+
+    def test_owner_preview_contains_exact_attachment_digest_for_verification(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "private-preview.txt"
+            data = b"Private edition in exact bytes\\n"
+            path.write_bytes(data)
+            with patch.dict(os.environ, {
+                "IPR_SUNDAY_OWNER_REVIEWED_WEEK": "",
+                "IPR_SUNDAY_OWNER_REVIEWED_SHA256": "",
+                "IPR_EDITOR_TO": "editor@example.com",
+                "IPR_PREVIEW_TO": "owner@example.com",
+                "IPR_SMTP_USER": "author@gmail.com",
+                "IPR_SMTP_APP_PASSWORD": "abcdefghijklmnop",
+            }, clear=True), patch(
+                "scripts.sunday_editorial_handoff.smtplib.SMTP_SSL"
+            ) as smtp:
+                send_packet(path, PILOT_SATURDAY, full_week=True,
+                            preview_to_owner=True)
+                mail = smtp.return_value.__enter__.return_value.send_message.call_args.args[0]
+                self.assertIn(hashlib.sha256(data).hexdigest(),
+                              mail.get_body(preferencelist=("plain",)).get_content())
+                self.assertEqual(mail["To"], "owner@example.com")
+
     def test_cli_blocks_model_and_attachment_without_owner_review(self):
         with tempfile.TemporaryDirectory() as folder:
             sidecar = Path(folder) / "scaffold.json"
@@ -122,6 +200,7 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
         text = WORKFLOW.read_text(encoding="utf-8")
         review = "vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK"
         self.assertEqual(text.count(review), 2)
+        self.assertIn("vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256", text)
         self.assertIn('pilot_owner_reviewed_week=os.environ.get(', text)
         self.assertIn("python -m scripts.sunday_editorial_handoff", text)
         step = text.index("- name: Verify reporting Saturday and Sunday's successful database update")
