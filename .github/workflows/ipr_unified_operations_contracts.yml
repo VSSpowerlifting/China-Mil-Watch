@@ -7,6 +7,7 @@ on:
       - 'scripts/operations_center_unified.py'
       - 'scripts/operations_center.py'
       - 'tests/test_operations_center_unified.py'
+      - 'tests/test_operations_center_private_reports.py'
       - 'docs/IPR_UNIFIED_OPERATIONS_CENTER.md'
       - '.github/workflows/ipr_unified_operations_contracts.yml'
 
@@ -35,6 +36,7 @@ jobs:
       - name: Verify unified production, shadow and Daily evidence integration
         run: |
           python -m unittest tests.test_operations_center_unified -v
+          python -m unittest tests.test_operations_center_private_reports -v
           python -m unittest tests.test_analysis_queue_source_audit -v
           python -m unittest tests.test_operations_center -v
           python -m unittest tests.test_operations_center_shadow_overlay -v
@@ -50,8 +52,12 @@ jobs:
           import os
           from pathlib import Path
           root = Path(os.environ["RUNNER_TEMP"])
-          snapshot = json.loads((root / "ipr-unified-real.json").read_text())
-          html = (root / "ipr-unified-real.html").read_text()
+          snapshot_path = root / "ipr-unified-real.json"
+          html_path = root / "ipr-unified-real.html"
+          snapshot = json.loads(snapshot_path.read_text())
+          html = html_path.read_text()
+          assert snapshot_path.stat().st_mode & 0o077 == 0
+          assert html_path.stat().st_mode & 0o077 == 0
           assert snapshot["schema"] == "ipr-operations-snapshot/1"
           assert snapshot["shadow_evidence_overlay"]["schema"]
           assert snapshot["shadow_evidence_overlay"]["collection_verified"] is False
@@ -75,8 +81,12 @@ jobs:
           import os
           from pathlib import Path
           root = Path(os.environ["RUNNER_TEMP"])
-          report = json.loads((root / "ipr-unified-queue-real.json").read_text())
-          html = (root / "ipr-unified-queue-real.html").read_text()
+          report_path = root / "ipr-unified-queue-real.json"
+          html_path = root / "ipr-unified-queue-real.html"
+          report = json.loads(report_path.read_text())
+          html = html_path.read_text()
+          assert report_path.stat().st_mode & 0o077 == 0
+          assert html_path.stat().st_mode & 0o077 == 0
           queue = report["stored_analysis_queue_evidence"]
           assert queue["schema"] == "ipr-operations-stored-queue-evidence/1"
           assert queue["article_rows"] == sum(x["rows_total"] for x in queue["sources"])
