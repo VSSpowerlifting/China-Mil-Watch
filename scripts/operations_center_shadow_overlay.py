@@ -305,13 +305,12 @@ def main(argv=None):
         report = attach(original, read_json(args.bindings),
                         [read_json(path) for path in args.slot_report])
         html = ops.render_html(report)
-        # Both outputs are outside the repository and new; never touch state.
-        # Both are pre-rendered before either is opened.
-        with json_path.open("x", encoding="utf-8") as stream:
-            stream.write(json.dumps(report, indent=2, ensure_ascii=False,
-                                    sort_keys=True) + "\n")
-        with html_path.open("x", encoding="utf-8") as stream:
-            stream.write(html)
+        # Both outputs are outside the repository; new private files only.
+        ops.write_private_reports((
+            (json_path, json.dumps(report, indent=2, ensure_ascii=False,
+                                   sort_keys=True) + "\n"),
+            (html_path, html),
+        ))
         print("Offline shadow-candidate overlay (unauthenticated): " +
               str(html_path))
     except (OverlayError, ops.SnapshotError, OSError, ValueError,
