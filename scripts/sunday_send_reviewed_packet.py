@@ -17,7 +17,7 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from scripts.sunday_editorial_handoff import send_packet
+from scripts.sunday_editorial_handoff import send_packet, single_address
 
 NY = ZoneInfo("America/New_York")
 SCHEMA = "ipr-reviewed-sunday-manual-handoff/1"
@@ -134,6 +134,24 @@ def handoff(path, week_ending, *, send=False, owner_confirmed=False,
             or local_day.weekday() != 6) and not historical_override:
         raise ReviewedHandoffRefused(
             "sending a past-week reviewed manuscript requires --allow-historical-send"
+        )
+    # A deliberate manual editor handoff must not run alongside the old
+    # recurring Friday delivery service. The operator supplies the same
+    # environment that IPR's weekly workflow uses; we do not update variables.
+    if os.environ.get("IPR_EDITOR_DELIVERY_ENABLED", "").lower() == "true":
+        raise ReviewedHandoffRefused(
+            "parallel editor service enabled: disable IPR_EDITOR_DELIVERY_ENABLED"
+        )
+    try:
+        editor = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
+        owner = single_address(os.environ.get("IPR_PREVIEW_TO", ""), "IPR_PREVIEW_TO")
+    except ValueError as exc:
+        raise ReviewedHandoffRefused(
+            "manual handoff needs distinct configured owner and editor addresses"
+        ) from exc
+    if editor.casefold() == owner.casefold():
+        raise ReviewedHandoffRefused(
+            "manual editor recipient must differ from the owner-preview address"
         )
     # Snapshot bytes in a private temporary directory. Protect against a
     # changed original file between preflight hashing and SMTP attachment read.
