@@ -595,6 +595,19 @@ class BrowserCase(WeeklySurfaces):
         for name, html in cls().all_pages().items():
             (cls.tmp / name).write_text(html, encoding="utf-8")
 
+        # The real historical HTML links to locally owned CSS and WOFF2.
+        # Without these delivery files, the fixture quietly 404s its fonts,
+        # so both warm and "blocked" runs are the same fallback-only page.
+        # Serve the *actual checked-in* assets rather than synthetic fonts.
+        preview = REPO_ROOT / "site" / "preview"
+        for stylesheet in ("topography.css", "historical-enrichment.css",
+                           "historical-fonts.css"):
+            shutil.copyfile(preview / stylesheet, cls.tmp / stylesheet)
+        shutil.copytree(
+            REPO_ROOT / "site" / "assets" / "fonts" / "historical",
+            cls.tmp / "assets" / "fonts" / "historical",
+        )
+
         class Quiet(http.server.SimpleHTTPRequestHandler):
             def log_message(self, *a):
                 pass
