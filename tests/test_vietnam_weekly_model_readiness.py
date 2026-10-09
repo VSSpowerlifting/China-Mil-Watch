@@ -44,7 +44,11 @@ class ReadinessTests(unittest.TestCase):
 
     def test_stale_version_is_visible_and_not_forwarded_to_model(self):
         notes = copy.deepcopy(NOTES)
-        notes["entries"][0]["content_sha256"] = "f" * 64
+        # The Oct 8 Australia source can sort first; test the historical
+        # Oct 5 source explicitly instead of assuming notes-list order.
+        stale = next(row for row in notes["entries"]
+                     if row["source_identity"] == "mps-vi:1791199100")
+        stale["content_sha256"] = "f" * 64
         report, pack = audit(queue(), notes, SAT)
         self.assertEqual(report["status"], "partial")
         self.assertEqual(report["counts"]["stale_source_version_synopsis"], 1)
