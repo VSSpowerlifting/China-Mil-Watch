@@ -184,13 +184,19 @@ def delivery_inventory(root):
 
 
 def full_capture(page, path):
-    """Load actual lazy images before a full-page capture; restore the view."""
+    """Observe actual entrance reveals and lazy images before a full capture."""
     position = page.evaluate('({x:scrollX,y:scrollY})')
+    step=max(200,page.evaluate('innerHeight')*.8)
+    height=page.evaluate('document.documentElement.scrollHeight')
+    for y in range(0,int(height),int(step)):
+        page.evaluate('(y)=>scrollTo(0,y)',y)
+        page.wait_for_timeout(80)
     for img in page.locator('img').all():
         if img.is_visible():
             img.scroll_into_view_if_needed()
             page.wait_for_function('''(e)=>{const src=e.currentSrc,stable=e.dataset.captureSrc===src;e.dataset.captureSrc=src;return stable && e.complete && e.naturalWidth>0}''',arg=img.element_handle(),polling='raf')
             img.evaluate('(e)=>e.decode()')
+    settle_document_animations(page)
     page.evaluate('(p)=>scrollTo(p.x,p.y)', position)
     page.screenshot(path=str(path), full_page=True, type='jpeg', quality=85)
 
