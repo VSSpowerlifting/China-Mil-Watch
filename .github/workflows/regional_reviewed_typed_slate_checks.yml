@@ -1,0 +1,64 @@
+name: Reviewed typed+production manual slate — offline only
+
+on:
+  pull_request:
+    branches:
+      - main
+      - feat/regional-typed-source-use-signoff-20261009
+    paths:
+      - core/regional_reviewed_typed_slate.py
+      - tests/test_regional_reviewed_typed_slate.py
+      - docs/REGIONAL_REVIEWED_TYPED_SLATE.md
+      - .github/workflows/regional_reviewed_typed_slate_checks.yml
+
+permissions:
+  contents: read
+
+jobs:
+  offline-reviewed-mixed-slate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Snapshot production database
+        run: sha256sum pla_watch.db > "$RUNNER_TEMP/reviewed-mixed-slate-db.sha"
+      - name: Install existing pinned project requirements
+        run: python -m pip install -r requirements.txt
+      - name: Exercise typed owner, historical receipt and mixed slate boundaries
+        run: |
+          python -m unittest -v \
+            tests.test_regional_reviewed_typed_slate \
+            tests.test_regional_typed_source_use_decision \
+            tests.test_regional_theme_selector \
+            tests.test_regional_typed_machine_receipts
+      - name: Refuse model, SMTP or automatic publication in mixed slate module
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path("core/regional_reviewed_typed_slate.py").read_text()
+          workflow = Path(
+              ".github/workflows/regional_reviewed_typed_slate_checks.yml"
+          ).read_text()
+          for forbidden in ("smtplib", "ANTHROPIC_API_KEY",
+                            "requests.get(", "urllib.request",
+                            "send_packet(", "model_tool("):
+              assert forbidden not in source
+          assert "model_input_authorized" in source
+          assert "publication_authorized" in source
+          assert ("  " + "schedule:") not in workflow
+          assert "upload" + "-artifact" not in workflow
+          PY
+      - name: Preserve tracked SQLite and published output
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/reviewed-mixed-slate-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
