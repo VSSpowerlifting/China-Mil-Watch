@@ -153,7 +153,7 @@ class IndonesiaProvenance(unittest.TestCase):
 
     def test_action_mismatches_fail_closed(self):
         mutations = [
-            ({"event": "schedule"}, "scheduled run"),
+            ({"event": "schedule"}, "scheduled rerun"),
             ({"head_sha": "d" * 40}, "collector branch/commit"),
             ({"run_attempt": 2}, "attempt mismatch"),
             ({"workflow_id": 101}, "workflow identity"),
