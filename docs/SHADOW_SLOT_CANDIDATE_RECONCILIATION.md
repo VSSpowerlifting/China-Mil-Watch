@@ -10,7 +10,7 @@ It does **not** discover GitHub Actions runs, read or authenticate Git state, in
 
 The existing `core.shadow_schedule` module documents late Singapore GitHub Actions runs that started after UTC midnight and were originally attributed to the next date. Collector code now derives the nominal scheduled date from its declared cron and observed starting time. This reconciliation layer calls that same date rule, rather than inventing another. A delayed start is not a missed collection if its authenticated source ledger supports the previous logical slot.
 
-A **manual dispatch without explicit target-date provenance** never repairs a missing scheduled slot. The only candidate for recovery is an explicit `target_date` on `workflow_dispatch`; an Actions re-run with `event=schedule` and attempt greater than 1 does not become an original scheduled collection. The report requires independent source-state and Actions identity checks as input indicators, but does *not* authenticate these assertions itself.
+A **manual dispatch without explicit target-date provenance** never repairs a missing scheduled slot. The only candidate for recovery is an explicit `target_date` on `workflow_dispatch`, **started no earlier than that target day's nominal UTC cron slot**. A manual dispatch before its named slot is visible as nonqualifying rather than preemptively filling future collection evidence. An Actions re-run with `event=schedule` and attempt greater than 1 does not become an original scheduled collection. The report requires independent source-state and Actions identity checks as input indicators, but does *not* authenticate these assertions itself.
 
 ## Command (no network)
 
