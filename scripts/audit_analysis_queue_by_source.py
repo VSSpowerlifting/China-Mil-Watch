@@ -175,10 +175,8 @@ def summarize(conn, *, at=None, live_days=LIVE_BACKLOG_DAYS):
     }
 
 
-def snapshot(path=DB_PATH, *, at=None, live_days=LIVE_BACKLOG_DAYS):
-    source = Path(path)
-    require(source.is_file(), "tracked SQLite input is absent")
-    # SHA of the concrete input files; not an independent attestable git SHA.
+def _snapshot_file_hashes(source):
+    """Hash SQLite plus present sidecars; identity evidence, not a signature."""
     hashes = {}
     for label, filename in (("db", source), ("wal", Path(str(source) + "-wal")),
                             ("shm", Path(str(source) + "-shm"))):
@@ -188,9 +186,21 @@ def snapshot(path=DB_PATH, *, at=None, live_days=LIVE_BACKLOG_DAYS):
                 for chunk in iter(lambda: stream.read(1024 * 1024), b""):
                     digest.update(chunk)
                 hashes[label] = digest.hexdigest()
+    return hashes
+
+
+def snapshot(path=DB_PATH, *, at=None, live_days=LIVE_BACKLOG_DAYS):
+    source = Path(path)
+    require(source.is_file(), "tracked SQLite input is absent")
+    # Pin the bytes we attribute. A concurrent local write must not produce a
+    # plausible audit with a hash that identifies a *different* source state.
+    before = _snapshot_file_hashes(source)
     with read_only(source) as conn:
         report = summarize(conn, at=at, live_days=live_days)
-    report["input_file_sha256"] = hashes
+    after = _snapshot_file_hashes(source)
+    require(before == after and "db" in after,
+            "database or SQLite sidecar changed during analysis audit")
+    report["input_file_sha256"] = before
     report["input_file_identity_not_signed"] = True
     return report
 
