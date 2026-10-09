@@ -205,6 +205,34 @@ class ThemeSundayHandoffTests(unittest.TestCase):
                     proposal=proposals, choice=choice, secret=SECRET)
             writer.assert_not_called()
 
+    def test_rehearsal_passes_only_signed_synopses_to_composer(self):
+        inv, review, proposals = scenario()
+        choice = approve(inv, review, proposals)
+        sidecar = {"week_start": "2026-10-04", "week_ending": SAT,
+                   "desks": ["china", "singapore"],
+                   "source_trail": [{"record_id": 42}, {"record_id": 47}]}
+        generated = {"_private_owner_selected_production_ids": [42, 47]}
+        with patch("scripts.regional_sunday_theme_preview.prepare_scaffold",
+                   return_value=sidecar), patch(
+                   "scripts.regional_sunday_theme_preview.compose",
+                   return_value=generated) as writer, patch(
+                   "scripts.regional_sunday_theme_preview.render_packet",
+                   return_value="PRIVATE DRAFT") as renderer:
+            result = build_private_manuscript(
+                inventory=inv, signed_review=review, proposal=proposals,
+                choice=choice, secret=SECRET, client=Mock())
+        self.assertIn("PRIVATE DRAFT", result)
+        self.assertIn("NO EDITOR DELIVERY", result)
+        renderer.assert_called_once()
+        writer.assert_called_once()
+        kwargs = writer.call_args.kwargs
+        self.assertEqual(kwargs["selected_theme"]["selected_source_ids"], [42, 47])
+        notes = kwargs["reviewed_synopses"]
+        self.assertEqual(set(notes), {42, 47})
+        self.assertTrue(all(len(v["analyst_synopsis"]) >= 65 for v in notes.values()))
+        self.assertFalse(any("text_original" in v or "text_english" in v
+                             for v in notes.values()))
+
     def test_preview_file_is_exclusive_private_and_unpublished(self):
         with tempfile.TemporaryDirectory() as root:
             dest = Path(root) / "private-manuscript.txt"
