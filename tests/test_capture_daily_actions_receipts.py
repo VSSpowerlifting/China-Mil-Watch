@@ -101,7 +101,7 @@ class CaptureDailyActions(unittest.TestCase):
         for item in step["steps"]:
             if item["name"] in audit.STEP_NAMES:
                 item["conclusion"] = "success"
-        result = grab.capture(DAY, fixture(jobs={row["id"]: [step]}),
+        result = grab.capture(DAY, fixture([row], jobs={row["id"]: [step]}),
                               as_of_utc="2026-10-09T04:00:00Z")
         self.assertIsNone(result["runs"][0]["guard"]["should_run"])
         self.assertIsNone(result["runs"][0]["analysis"])
