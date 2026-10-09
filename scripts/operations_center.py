@@ -273,6 +273,32 @@ def render_html(snapshot: dict) -> str:
         if s["enabled"] and s["latest_run_failed"] is None
     ]
     unknown_runs = table(("Desk", "Source without latest run evidence"), unknown)
+    overlay = snapshot.get("shadow_evidence_overlay")
+    overlay_section = ""
+    if overlay is not None:
+        candidate_rows = []
+        for source in overlay["source_families"]:
+            candidate = source["slot_candidate_summary"]
+            details = ("Not supplied" if candidate is None else
+                       ("%s candidate-supported; %s review required; %s missing "
+                        "from supplied evidence; as of %s" %
+                        (candidate["candidate_supported_slots"],
+                         candidate["review_required_slots"],
+                         candidate["missing_from_supplied_evidence"],
+                         candidate["checked_at_utc"])))
+            candidate_rows.append((
+                source["source_slug"], source["state_branch"],
+                source["trigger"], source["slot_evidence_status"], details,
+            ))
+        overlay_section = (
+            "<section><h2>Shadow collection evidence candidates</h2>"
+            "<p class='notice'>Operator-supplied, unauthenticated evidence. "
+            "No live run, source-use right, production readiness or editor "
+            "approval is certified.</p>%s</section>" %
+            table(("Source family", "State branch", "Collection mode",
+                   "Evidence classification", "Candidate-slot summary"),
+                  candidate_rows)
+        )
     notes = "".join("<li>%s</li>" % val(note) for note in snapshot["limits"])
     css = """
     :root{color-scheme:light;--navy:#142a38;--teal:#247e7d;--paper:#f7f5f0}
@@ -307,12 +333,13 @@ def render_html(snapshot: dict) -> str:
             "<section><h2>Shadow source inventory</h2>"
             "<p class='notice'>Configurations only. No live shadow Actions, ledgers, "
             "source-rights reviews, or qualification receipts were checked.</p>%s</section>"
-            "<section><h2>Evidence limits</h2><ul>%s</ul></section>"
+            "%s<section><h2>Evidence limits</h2><ul>%s</ul></section>"
             "</main></body></html>") % (
                 css, val(snapshot["as_of"]), val(snapshot["daily_marker"]["date"]),
                 val(snapshot["daily_marker"]["state"]),
                 val(len(snapshot["source_health_review_flags"])),
-                review, unknown_runs, desks, sources, shadows, notes)
+                review, unknown_runs, desks, sources, shadows,
+                overlay_section, notes)
 
 
 def safe_destination(path: Path) -> Path:
