@@ -324,6 +324,11 @@ class Analyzer:
                 f"(stop_reason=max_tokens). Output is incomplete — raise the ceiling."
             )
         if tool_block is not None:
+            if not isinstance(tool_block.input, dict):
+                self.usage.mark_failed(task, used_model)
+                raise AnalysisError(
+                    f"Invalid `{tool['name']}` tool input type"
+                )
             return dict(tool_block.input)
         raise AnalysisError(
             f"Model returned no `{tool['name']}` tool call "
@@ -431,7 +436,7 @@ class Analyzer:
             reason = data.get("reasoning")
             if (isinstance(score, bool)
                     or not isinstance(score, (int, float))
-                    or not math.isfinite(score) or not 0.0 <= score <= 1.0
+                    or not 0.0 <= score <= 1.0 or not math.isfinite(score)
                     or not isinstance(reason, str) or not reason.strip()):
                 # A response can consume tokens yet fail local validation.
                 # Do not log the payload or write an invented score.
