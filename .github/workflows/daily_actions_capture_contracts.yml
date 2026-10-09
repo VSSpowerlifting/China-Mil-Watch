@@ -1,0 +1,45 @@
+name: Daily Actions read-only API capture contracts
+
+on:
+  pull_request:
+    branches:
+      - main
+      - codex/daily-run-evidence-classes-20261008
+    paths:
+      - 'scripts/capture_daily_actions_receipts.py'
+      - 'tests/test_capture_daily_actions_receipts.py'
+      - 'docs/DAILY_ACTIONS_CAPTURE.md'
+      - '.github/workflows/daily_actions_capture_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked database SHA256
+        id: before
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Verify bounded API capture and offline classifier contracts
+        run: |
+          python -m unittest tests.test_capture_daily_actions_receipts -v
+          python -m unittest tests.test_daily_run_receipts -v
+      - name: Confirm archive and published output unchanged
+        if: ${{ !cancelled() && steps.before.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.before.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
