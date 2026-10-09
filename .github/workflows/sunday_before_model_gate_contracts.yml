@@ -1,0 +1,51 @@
+name: Sunday Editorial Before-Model Corpus Readiness Contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/sunday_before_model_gate.py
+      - scripts/sunday_corpus_readiness.py
+      - .github/workflows/sunday_briefs_editorial_handoff.yml
+      - .github/workflows/sunday_before_model_gate_contracts.yml
+      - tests/test_sunday_before_model_gate.py
+      - tests/test_sunday_corpus_readiness.py
+      - docs/SUNDAY_BEFORE_MODEL_CORPUS_GATE.md
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-early-refusal:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing declared offline dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Verify marker, full-text, historical provenance and workflow order
+        run: |
+          python -m unittest tests.test_sunday_before_model_gate tests.test_sunday_corpus_readiness -v
+      - name: Real tracked archive must refuse the unfinished October 10 reporting week
+        shell: bash
+        run: |
+          set -euo pipefail
+          if python -m scripts.sunday_before_model_gate \
+            --week-ending 2026-10-10 --as-of 2026-10-08 \
+            --review-local-day 2026-10-08; then
+            echo "::error::A Thursday corpus must not be model-ready for Sunday."
+            exit 1
+          fi
+          echo "Early no-send refusal verified. No model or SMTP attempted."
+      - name: Confirm tracked database and production output untouched
+        run: |
+          test -z "$(git status --porcelain -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      # No article body in logs, no Anthropic, mail, state push or artifact.
