@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import copy
+import json
 import hashlib
 import json
 import tempfile
@@ -16,7 +17,9 @@ from core.regional_theme_handoff import (
     ThemeHandoffError, sign_choice, verify_choice,
 )
 from core.regional_theme_selector import propose
-from scripts.regional_sunday_theme_preview import build_private_manuscript, _out_text
+from scripts.regional_sunday_theme_preview import (
+    build_private_manuscript, preflight_theme, _out_text, run,
+)
 from scripts.sunday_briefs_auto_writer import choose_evidence, compose
 from tests.test_regional_theme_selector import SECRET, candidate, answer, china_docket
 from tests.test_regional_weekly_inventory import make, row
@@ -341,6 +344,8 @@ class ThemeSundayHandoffTests(unittest.TestCase):
         generated = {"_private_owner_selected_production_ids": [42, 47]}
         with patch("scripts.regional_sunday_theme_preview.prepare_scaffold",
                    return_value=sidecar), patch(
+                   "scripts.regional_sunday_theme_preview.choose_evidence",
+                   return_value=[({"id": 42}, "verified"), ({"id": 47}, "verified")]), patch(
                    "scripts.regional_sunday_theme_preview.compose",
                    return_value=generated) as writer, patch(
                    "scripts.regional_sunday_theme_preview.render_packet",
@@ -359,6 +364,65 @@ class ThemeSundayHandoffTests(unittest.TestCase):
         self.assertTrue(all(len(v["analyst_synopsis"]) >= 65 for v in notes.values()))
         self.assertFalse(any("text_original" in v or "text_english" in v
                              for v in notes.values()))
+
+    def test_no_model_audit_checks_exact_source_pins_and_never_calls_writer(self):
+        inv, review, proposals = scenario()
+        choice = approve(inv, review, proposals)
+        sidecar = {"week_start": "2026-10-04", "week_ending": SAT,
+                   "desks": ["china", "singapore"],
+                   "source_trail": [{"record_id": 42}, {"record_id": 47}]}
+        with patch("scripts.regional_sunday_theme_preview.prepare_scaffold",
+                   return_value=sidecar), patch(
+                   "scripts.regional_sunday_theme_preview.choose_evidence",
+                   return_value=[({"id": 42}, "read"), ({"id": 47}, "read")]) as check, patch(
+                   "scripts.regional_sunday_theme_preview.compose") as writer, patch(
+                   "scripts.sunday_editorial_handoff.send_packet") as mail:
+            receipt, approved, _scaffold, notes = preflight_theme(
+                inventory=inv, signed_review=review, proposal=proposals,
+                choice=choice, secret=SECRET)
+            self.assertEqual(check.call_count, 1)
+            self.assertEqual(check.call_args.kwargs["selected_ids"], [42, 47])
+            self.assertEqual(set(check.call_args.kwargs["selected_pins"]), {42, 47})
+            writer.assert_not_called()
+            mail.assert_not_called()
+        self.assertEqual(receipt["schema"],
+                         "ipr-regional-private-sunday-rehearsal-preflight/1")
+        self.assertEqual(receipt["selected_source_ids"], [42, 47])
+        self.assertFalse(receipt["model_called"])
+        self.assertFalse(receipt["editor_email_authorized"])
+        self.assertFalse(receipt["publication_authorized"])
+        self.assertTrue(receipt["source_audit_only_not_a_reusable_model_authorization"])
+        self.assertNotIn("analyst_synopsis", json.dumps(receipt))
+        self.assertEqual(len(receipt["reviewed_source_pins_sha256"]), 64)
+        self.assertEqual(approved["represented_desks"], ["china", "singapore"])
+        self.assertEqual(set(notes), {42, 47})
+
+    def test_no_model_audit_refuses_missing_current_source_before_any_writer(self):
+        inv, review, proposals = scenario()
+        choice = approve(inv, review, proposals)
+        sidecar = {"source_trail": [{"record_id": 42}]}
+        with patch("scripts.regional_sunday_theme_preview.prepare_scaffold",
+                   return_value=sidecar), patch(
+                   "scripts.regional_sunday_theme_preview.choose_evidence") as source, patch(
+                   "scripts.regional_sunday_theme_preview.compose") as writer:
+            with self.assertRaisesRegex(ValueError, "not present"):
+                preflight_theme(inventory=inv, signed_review=review,
+                                proposal=proposals, choice=choice, secret=SECRET)
+            source.assert_not_called()
+            writer.assert_not_called()
+
+    def test_audit_cli_refuses_paid_flag_and_noninteractive_use(self):
+        common = ["audit", "--week-ending", SAT, "--as-of", SAT,
+                  "--review-local-day", SUN, "--signed-review", "/private/review.json",
+                  "--proposals", "/private/themes.json",
+                  "--choice", "/private/choice.json",
+                  "--out", "/private/audit.json"]
+        with patch("sys.stdin.isatty", return_value=False):
+            with self.assertRaises(SystemExit):
+                run(common)
+        with patch("sys.stdin.isatty", return_value=True):
+            with self.assertRaises(SystemExit):
+                run(common + ["--allow-private-paid-writer"])
 
     def test_preview_file_is_exclusive_private_and_unpublished(self):
         with tempfile.TemporaryDirectory() as root:
