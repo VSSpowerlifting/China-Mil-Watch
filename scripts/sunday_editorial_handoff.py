@@ -15,6 +15,8 @@ from email.message import EmailMessage
 from email.utils import getaddresses
 from pathlib import Path
 
+from scripts.sunday_pilot_owner_review import require_owner_review
+
 
 EDIT_SECTIONS = (
     ("WORKING TITLE", "One concrete development, not a regional roundup"),
@@ -234,6 +236,10 @@ def single_address(value, name):
 
 def send_packet(path, week_ending, *, provisional=False, full_week=False,
                 preview_to_owner=False):
+    require_owner_review(
+        week_ending=week_ending, sending=not preview_to_owner,
+        approved_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
+    )
     editor = single_address(os.environ.get("IPR_EDITOR_TO", ""), "IPR_EDITOR_TO")
     if preview_to_owner:
         recipient = single_address(os.environ.get("IPR_PREVIEW_TO", ""), "IPR_PREVIEW_TO")
@@ -319,6 +325,12 @@ def main(argv=None):
     if args.preview_to_owner and (not args.write_automatic or not args.full_week):
         parser.error("owner-only preview requires automatic full-week manuscript")
     sidecar = json.loads(args.sidecar.read_text(encoding="utf-8"))
+    # Require exact-week owner release BEFORE any source expansion, model
+    # usage, attachment write, or possible SMTP call. Rechecked at send_packet.
+    require_owner_review(
+        week_ending=sidecar["week_ending"], sending=args.send,
+        approved_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
+    )
     if args.full_week and (not args.write_automatic
                            or args.as_of != sidecar["week_ending"]):
         parser.error("--full-week requires Saturday --as-of and --write-automatic")
