@@ -39,6 +39,56 @@ jobs:
             tests.test_japan_shadow_source_row_drift \
             tests.test_japan_sunday_source_attestation \
             tests.test_japan_oct05_brief_source
+      - name: Clone isolated Japan shadow branch for exact row audit
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git -c credential.helper= clone --single-branch --branch shadow/jp-mod \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/japan-source-drift-state"
+          git -C "$RUNNER_TEMP/japan-source-drift-state" \
+            merge-base --is-ancestor \
+            d57f0a94b2134a68b9f13fb35a0a0b8c8a4ffe13 \
+            refs/heads/shadow/jp-mod
+      - name: Compare REAL October 5 source row in newer shadow state
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          set -euo pipefail
+          python -m scripts.japan_shadow_source_row_drift \
+            --state-repo "$RUNNER_TEMP/japan-source-drift-state" \
+            --current-ref refs/heads/shadow/jp-mod \
+            --out "$RUNNER_TEMP/japan-oct05-row-drift-private.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          doc = json.loads(
+              (Path(os.environ["RUNNER_TEMP"]) /
+               "japan-oct05-row-drift-private.json").read_text())
+          allowed = {
+              "same_archived_extracted_text_and_row_identity",
+              "changed_or_inconsistent_current_shadow_source",
+              "held_original_row_missing_in_new_shadow_archive",
+          }
+          assert doc["row_comparison"] in allowed
+          for key in (
+              "archived_original_pdf_bytes_verified",
+              "live_official_publisher_version_verified",
+              "complete_original_pdf_human_checked",
+              "source_reuse_rights_reviewed",
+              "private_regional_model_input_authorized",
+              "dylan_editor_email_authorized",
+              "publication_authorized",
+              "shadow_desk_promoted_to_production",
+          ):
+              assert doc[key] is False
+          assert doc["no_publisher_url_or_article_body_in_receipt"] is True
+          print("Real shadow source row:", doc["row_comparison"])
+          print("Changed field names:", ",".join(doc["changed_fields"]) or "none")
+          print("Current original PDF bytes and rights remain UNVERIFIED")
+          PY
       - name: Check no model, email, publisher fetch or auto-release hooks
         run: |
           python - <<'PY'
