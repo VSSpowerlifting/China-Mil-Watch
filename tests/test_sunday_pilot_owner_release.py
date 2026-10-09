@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 from scripts.sunday_pilot_owner_review import (
     OwnerReviewRequired, PILOT_SATURDAY, require_owner_review,
-    require_exact_reviewed_manuscript,
+    require_approved_digest_format, require_exact_reviewed_manuscript,
 )
 from scripts.sunday_editorial_handoff import main, send_packet
 from scripts.weekly_briefs_sunday_window import SundayHandoffRefused, resolve_sunday_handoff
@@ -63,8 +63,31 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
             event="schedule", now=now, send_email=True,
             sunday_daily_marker="2026-10-11",
             pilot_owner_reviewed_week=PILOT_SATURDAY,
+            pilot_owner_reviewed_sha256="a" * 64,
         )
         self.assertEqual(enabled["IPR_SUNDAY_SHOULD_SEND"], "true")
+
+    def test_digest_is_required_before_model_even_if_week_reviewed(self):
+        now = datetime(2026, 10, 11, 19, 17, tzinfo=timezone.utc)
+        for digest in ("", "TRUE", "b" * 63, "B" * 64):
+            with self.subTest(digest=digest):
+                with self.assertRaisesRegex(
+                    SundayHandoffRefused, "IPR_SUNDAY_OWNER_REVIEWED_SHA256"
+                ):
+                    resolve_sunday_handoff(
+                        event="schedule", now=now, send_email=True,
+                        sunday_daily_marker="2026-10-11",
+                        pilot_owner_reviewed_week=PILOT_SATURDAY,
+                        pilot_owner_reviewed_sha256=digest,
+                    )
+        self.assertTrue(require_approved_digest_format(
+            week_ending=PILOT_SATURDAY, sending=True,
+            approved_sha256="a" * 64,
+        ))
+        self.assertFalse(require_approved_digest_format(
+            week_ending=PILOT_SATURDAY, sending=False,
+            approved_sha256="",
+        ))
 
     def test_later_week_sends_keep_normal_scheduling_rules(self):
         self.assertFalse(require_owner_review(
@@ -200,7 +223,8 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
         text = WORKFLOW.read_text(encoding="utf-8")
         review = "vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK"
         self.assertEqual(text.count(review), 2)
-        self.assertIn("vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256", text)
+        self.assertEqual(text.count("vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256"), 2)
+        self.assertIn("pilot_owner_reviewed_sha256=os.environ.get(", text)
         self.assertIn('pilot_owner_reviewed_week=os.environ.get(', text)
         self.assertIn("python -m scripts.sunday_editorial_handoff", text)
         step = text.index("- name: Verify reporting Saturday and Sunday's successful database update")
