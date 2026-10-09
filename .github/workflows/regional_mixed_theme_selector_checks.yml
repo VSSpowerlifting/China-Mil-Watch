@@ -36,7 +36,7 @@ jobs:
             tests.test_regional_reviewed_typed_slate \
             tests.test_regional_typed_source_use_decision \
             tests.test_regional_theme_selector \
-            tests.test_regional_theme_handoff
+            tests.test_regional_sunday_theme_handoff
       - name: No live model API provider, scheduled workflows or SMTP
         run: |
           python - <<'PY'
