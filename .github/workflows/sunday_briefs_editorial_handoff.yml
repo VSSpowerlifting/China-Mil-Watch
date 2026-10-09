@@ -96,6 +96,7 @@ jobs:
           IPR_HISTORICAL_SEND: ${{ inputs.allow_historical_send == true }}
           IPR_OLD_FRIDAY_ACTIVE: ${{ vars.IPR_EDITOR_DELIVERY_ENABLED == 'true' }}
           IPR_SUNDAY_OWNER_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK }}
+          IPR_SUNDAY_OWNER_REVIEWED_SHA256: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256 }}
         run: |
           python - <<'PY' >> "$GITHUB_ENV"
           import os
@@ -116,6 +117,7 @@ jobs:
               sunday_daily_marker=last_successful_update,
               friday_delivery_enabled=os.environ["IPR_OLD_FRIDAY_ACTIVE"] == "true",
               pilot_owner_reviewed_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
+              pilot_owner_reviewed_sha256=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_SHA256", ""),
           )
           desks = live_editorial_desks()
           if len(desks) < 2:
