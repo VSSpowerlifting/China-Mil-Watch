@@ -27,7 +27,11 @@ directive, only used by the standalone private trial entrypoint. With this
 directive it restricts its actual model evidence to the **exact** 2–10
 owner-chosen IDs, reverifies their source-trail fingerprints against the
 latest read-only SQLite view, and refuses absent, held or truncated original
-text. It still requires **at least two different production-backed desks**:
+text. **The thematic AI prompt itself contains only the owner-reviewed analyst
+synopses and documented limitations**, never the stored article body or full-text
+translation. The source body is read for integrity and availability, not to
+expand synopsis-only third-party source-use permission. It still requires
+**at least two different production-backed desks**:
 a single-desk proposal is visible for human consideration but cannot be
 silently made into a public numbered Brief without its separate authorized
 exception. Without the directive, Sunday's writer retains the exact old
