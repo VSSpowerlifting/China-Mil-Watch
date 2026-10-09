@@ -40,6 +40,32 @@ jobs:
             tests.test_regional_weekly_inventory \
             tests.test_sunday_corpus_readiness \
             tests.test_sunday_before_model_gate
+      - name: Read-only real archive Friday rehearsal must remain on HOLD
+        run: |
+          set -euo pipefail
+          private_dir="$(mktemp -d)"
+          trap 'rm -rf "$private_dir"' EXIT
+          python -m scripts.regional_sunday_operator_readiness \
+            --week-ending 2026-10-10 \
+            --as-of 2026-10-09 \
+            --review-local-day 2026-10-09 \
+            --marker "$private_dir/no-Sunday-marker-exists" \
+            --out "$private_dir/friday-archive.json"
+          python - "$private_dir/friday-archive.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          result = json.loads(Path(sys.argv[1]).read_text())
+          assert result["machine_corpus_gate"] == "hold_before_model_and_editor_delivery"
+          assert "reporting_week_not_complete" in result["blocking_corpus_gates"]
+          assert "sunday_production_update_not_due" in result["blocking_corpus_gates"]
+          assert result["model_called"] is False
+          assert result["model_input_authorized"] is False
+          assert result["editor_email_authorized"] is False
+          assert result["publication_authorized"] is False
+          assert "source_url" not in json.dumps(result)
+          print("Actual tracked archive Friday rehearsal held; no publisher text copied")
+          PY
       - name: Prove no scheduled/model/editor-release pathway
         run: |
           python - <<'PY'
