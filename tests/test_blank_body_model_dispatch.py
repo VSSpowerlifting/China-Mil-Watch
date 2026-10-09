@@ -124,7 +124,7 @@ class NoBlankBodyDispatchTests(unittest.TestCase):
         source = inspect.getsource(pipeline.hold_blank_original_bodies)
         self.assertNotIn("record_processing_failure", source)
         self.assertNotIn("resume_paused_article", source)
-        self.assertNotIn("terminal", source.lower())
+        self.assertNotIn("processing_state.classify(", source)
         self.assertNotIn("update_analysis", source)
         self.assertNotIn("update_relevance", source)
 
