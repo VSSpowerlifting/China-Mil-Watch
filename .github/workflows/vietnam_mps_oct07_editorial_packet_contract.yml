@@ -1,0 +1,75 @@
+name: Vietnam October 7 MPS Current-Source Sunday Packet Proof
+
+# Private, read-only source/version contract. Does not call a model, upload
+# articles, write production, approve source reuse, or send editor email.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json"
+      - "research/briefs_editorial_evidence/2026-10-10.json"
+      - "tests/test_vietnam_oct07_australia_packet.py"
+      - ".github/workflows/vietnam_mps_oct07_editorial_packet_contract.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-current-week-3-source-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  current-source-research-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout proposed private research inputs without credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing offline review dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Verify bounded research packet and source semantics offline
+        run: python -m unittest tests.test_vietnam_oct07_australia_packet tests.test_briefs_editorial_evidence -v
+      - name: Rebuild October 10 research from current original MPS shadow Git state
+        id: current
+        uses: ./.github/actions/vietnam-editorial-evidence
+        with:
+          week-ending: "2026-10-10"
+          notes: "research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json"
+          existing-packet: "research/briefs_editorial_evidence/2026-10-10.json"
+          missing-notes-policy: refuse
+          require-vietnam: "true"
+      - name: Assert three MPS original-source versions plus three preserved Japan records
+        env:
+          PRIVATE_PACKET: ${{ steps.current.outputs.packet }}
+          SOURCE_SHA: ${{ steps.current.outputs.source-commit }}
+          VIETNAM_COUNT: ${{ steps.current.outputs.vietnam-count }}
+        run: |
+          python - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          from core.brief_editorial_evidence import load_editorial_evidence
+          packet=Path(os.environ["PRIVATE_PACKET"])
+          assert packet.is_file() and packet.name=="2026-10-10.json"
+          rows=load_editorial_evidence("2026-10-10","2026-10-10",directory=packet.parent)
+          vn=[x for x in rows if x["desk"]=="vietnam"]
+          jp=[x for x in rows if x["desk"]=="japan"]
+          assert len(vn)==int(os.environ["VIETNAM_COUNT"])==3
+          assert len(jp)==3
+          assert {x["id"] for x in vn}=={
+              "VN-MPS-1791199100","VN-MPS-1791199677","VN-MPS-1791366010"}
+          newest=next(x for x in vn if x["id"]=="VN-MPS-1791366010")
+          assert newest["source_content_sha256"]=="8707eaee31b0423d8b6835fee0d02a25207c2a8e5813718aa57c434c927fd6b5"
+          assert re.fullmatch(r"[0-9a-f]{40}",os.environ["SOURCE_SHA"])
+          assert all(x["status"]=="unapproved-source-linked-editorial-candidate" for x in rows)
+          assert not any("article_body" in x or "text_original" in x for x in rows)
+          print("Actual current MPS state: 3 version-matched unapproved Vietnamese source notes.")
+          print("Japan source notes: 3 unchanged by MPS feeder. No approval, model or mail.")
+          PY
+      - name: Assert original production checkout preserved
+        run: test -z "$(git status --porcelain --untracked-files=all)"

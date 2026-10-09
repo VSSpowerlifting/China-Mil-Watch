@@ -2,6 +2,21 @@
   "schema": "vietnam-editorial-notes/1",
   "entries": [
     {
+      "source_identity": "mps-vi:1791366010",
+      "source_url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010",
+      "published_date": "2026-10-07",
+      "content_sha256": "8707eaee31b0423d8b6835fee0d02a25207c2a8e5813718aa57c434c927fd6b5",
+      "summary": "Vietnam's Ministry of Public Security reported an October 7 meeting in Hanoi between Minister Luong Tam Quang and Australian Ambassador Gillian Bird. The ministry described priorities for law-enforcement and security cooperation, including cyber and border security, transnational crime, technical training and possible peacekeeping-related support; this is a stated cooperation agenda, not evidence of completed implementation.",
+      "caveats": [
+        "The meeting was between the public security minister and Australia's ambassador; it was not a bilateral defense ministry operational agreement.",
+        "Requests for support on cybersecurity, training, peacekeeping and judicial cooperation do not establish new signed commitments, deployments or completed transfers."
+      ],
+      "topics": [
+        "regional_partnerships",
+        "technology_cooperation"
+      ]
+    },
+    {
       "source_identity": "mps-vi:1791199100",
       "source_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
       "published_date": "2026-10-05",
