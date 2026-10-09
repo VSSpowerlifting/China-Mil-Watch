@@ -1,0 +1,46 @@
+name: Operations Center shadow candidate overlay contracts
+
+on:
+  pull_request:
+    branches:
+      - main
+      - codex/ipr-operations-center-readonly-20261008
+    paths:
+      - 'scripts/operations_center_shadow_overlay.py'
+      - 'scripts/operations_center.py'
+      - 'tests/test_operations_center_shadow_overlay.py'
+      - 'docs/IPR_OPERATIONS_CENTER_SHADOW_OVERLAY.md'
+      - '.github/workflows/ipr_ops_shadow_overlay_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  offline-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked production DB hash
+        id: base
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install normal dependencies
+        run: pip install -r requirements.txt
+      - name: Verify isolated source-family candidate overlay
+        run: python -m unittest tests.test_operations_center_shadow_overlay -v
+      - name: Prove archive and website output unchanged
+        if: ${{ !cancelled() && steps.base.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.base.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
