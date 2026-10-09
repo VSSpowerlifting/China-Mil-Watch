@@ -77,6 +77,7 @@ class MODChinaScraper(BaseScraper):
     def get_article_urls(self) -> list[str]:
         window_start = self.target_date - timedelta(days=_LOOKBACK_DATES - 1)
         seen: set[str] = set()
+        ordered_urls: list[str] = []
 
         for section_path, label in _SECTIONS.items():
             listing_url = f"{_BASE}/{section_path}/index.html"
@@ -108,6 +109,7 @@ class MODChinaScraper(BaseScraper):
                     continue
 
                 seen.add(full_url)
+                ordered_urls.append(full_url)
                 count += 1
 
             self.logger.debug(
@@ -121,7 +123,8 @@ class MODChinaScraper(BaseScraper):
             self.source_slug, window_start.isoformat(),
             self.target_date.isoformat(), _LOOKBACK_DATES, len(seen),
         )
-        return list(seen)
+        # Keep first-seen section and listing order; the set only deduplicates.
+        return ordered_urls
 
     # ── Article parsing ───────────────────────────────────────────────────────
 
