@@ -12,8 +12,9 @@ import argparse
 import copy
 import json
 import sys
-from datetime import date
+from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -28,6 +29,15 @@ from scripts import operations_center_shadow_overlay as shadow
 from scripts.source_health_report import build_report
 
 SCHEMA = "ipr-unified-daily-evidence/1"
+NY = ZoneInfo("America/New_York")
+
+
+def current_display_date(now=None):
+    """Use the Daily scheduling guard's New York date, never runner UTC."""
+    instant = datetime.now(timezone.utc) if now is None else now
+    require(instant.tzinfo is not None,
+            "explicit timezone required for Operations Center current date")
+    return instant.astimezone(NY).date().isoformat()
 
 
 class UnifiedError(ValueError):
@@ -108,8 +118,8 @@ def build_unified(registry, production_report, shadow_root, marker_path,
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--as-of", default=date.today().isoformat(),
-                   help="display date, not a historical database time machine")
+    p.add_argument("--as-of", default=current_display_date(),
+                   help="New York display date by default; not a historical DB time machine")
     p.add_argument("--db", type=Path, default=Path(ops.DB_PATH))
     evidence = p.add_mutually_exclusive_group()
     evidence.add_argument("--daily-receipts", type=Path,
