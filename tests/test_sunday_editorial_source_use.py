@@ -57,6 +57,38 @@ class PrivateSourceUseReceiptTests(unittest.TestCase):
         self.assertNotIn("summary", repr(report))
         self.assertNotIn("JP-W41-06 original", repr(report))
 
+    def test_bounded_model_inputs_are_not_confused_with_full_editor_appendix(self):
+        m = manuscript()
+        m["_model_offered_production_ids"] = [1, 2]
+        large_editor_appendix = PROD + [
+            {"record_id": 99, "desk": "china"},
+            {"record_id": 100, "desk": "singapore"},
+        ]
+        report = summarize_source_use(m, large_editor_appendix, self.research)
+        self.assertEqual(report["production_by_desk"]["china"]["appendix_listed"], 2)
+        self.assertEqual(report["production_by_desk"]["china"]["model_offered"], 1)
+        self.assertEqual(report["production_by_desk"]["singapore"]["appendix_listed"], 2)
+        self.assertEqual(report["production_by_desk"]["singapore"]["model_offered"], 1)
+        lines = "\\n".join(format_private_source_use(
+            m, large_editor_appendix, self.research))
+        self.assertIn("2 in human appendix; 1 actually model-offered", lines)
+        self.assertNotIn("2 source(s) offered", lines)
+
+    def test_citation_outside_bounded_model_roster_refused(self):
+        m = manuscript()
+        m["_model_offered_production_ids"] = [2]
+        with self.assertRaises(SourceUseError):
+            summarize_source_use(m, PROD, self.research)
+        for bad in ([1, 1], [1, 5000], ["1", 2], [], None):
+            m["_model_offered_production_ids"] = bad
+            with self.subTest(roster=bad), self.assertRaises(SourceUseError):
+                summarize_source_use(m, PROD, self.research)
+
+    def test_missing_model_selection_is_explicitly_unattested(self):
+        lines = "\\n".join(format_private_source_use(
+            manuscript(), PROD, self.research))
+        self.assertIn("UNATTESTED actually model-offered", lines)
+
     def test_no_forced_inclusion_of_unrelated_japan_vietnam_research(self):
         m = manuscript()
         for field in m["supplemental_citations"]:
