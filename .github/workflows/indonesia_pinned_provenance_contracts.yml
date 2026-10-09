@@ -1,0 +1,43 @@
+# Focused offline tests; full repository PR checks remain the merge gate.
+name: Indonesia pinned shadow provenance contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/audit_indonesia_shadow_provenance.py'
+      - 'tests/test_indonesia_shadow_provenance.py'
+      - 'docs/INDONESIA_PINNED_SHADOW_PROVENANCE.md'
+      - '.github/workflows/indonesia_pinned_provenance_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Preserve tracked database and output baseline
+        id: baseline
+        run: |
+          echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Validate pinned Git state and Actions contract offline
+        run: python -m unittest tests.test_indonesia_shadow_provenance -v
+      - name: Prove no production/archive changes
+        if: ${{ !cancelled() && steps.baseline.outcome == 'success' }}
+        run: |
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.baseline.outputs.db }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
