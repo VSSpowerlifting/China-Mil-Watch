@@ -24,8 +24,14 @@ verifies those candidate claims against the source-bounded slate again.
 
 This proves the supplied proposal matches the reviewed corpus and signed
 model-run context, **NOT that the model genuinely produced those bytes**.
-The provider result has no separately signed, provider-attested output
-receipt; only the editor's explicit choice is authenticated here.
+Before theme choice signing, someone with access to an unsigned preview
+can replace a defensible thesis with another structurally valid claim.
+That will be treated as a revised proposal for owner consideration, not
+as a proved-original model output. The provider result has no separately
+signed, provider-attested output receipt. Once the owner signs a specific
+theme, the proposal fingerprint and chosen thesis are HMAC-bound, and any
+subsequent alteration fails owner-choice verification. Only that editor's
+specific focus choice is authenticated.
 
 An acceptable owner selection requires exactly one existing proposal slug,
 2–10 distinct reviewed source IDs, and source representation from at
