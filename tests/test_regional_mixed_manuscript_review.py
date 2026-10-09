@@ -7,7 +7,7 @@ import unittest
 
 from core.regional_mixed_manuscript_review import (
     PrivateMixedManuscriptError, validate_private_mixed_manuscript,
-    render_private_mixed_manuscript_review,
+    render_private_mixed_manuscript_review, private_mixed_writing_schema,
 )
 from tests.test_regional_mixed_theme_choice import approved_choice
 from tests.test_regional_mixed_theme_selector import RUN_SECRET
@@ -58,6 +58,50 @@ def render(args, draft):
 
 
 class MixedManuscriptReviewTests(unittest.TestCase):
+    def test_strict_owner_source_pinned_schema_matches_mixed_manifest(self):
+        args = scenario()
+        inp, run, preview, choice, _ = args
+        schema = private_mixed_writing_schema(
+            inp, run, RUN_SECRET, preview, choice, CHOICE_SECRET)
+        self.assertFalse(schema["additionalProperties"])
+        self.assertIn("editorial_focus", schema["required"])
+        self.assertEqual(schema["properties"]["editorial_focus"]["enum"],
+                         [choice["choice"]["approved_focus"]])
+        self.assertEqual(
+            schema["properties"]["citations"]["properties"]
+                  ["development"]["items"]["enum"], [42])
+        self.assertEqual(
+            schema["properties"]["supplemental_citations"]
+                  ["properties"]["development"]["items"]["enum"], [JP, VN])
+        for lane in ("citations", "supplemental_citations"):
+            inner = schema["properties"][lane]
+            self.assertFalse(inner["additionalProperties"])
+            self.assertEqual(set(inner["required"]), set(SECTIONS))
+            for key in SECTIONS:
+                self.assertTrue(inner["properties"][key]["uniqueItems"])
+
+    def test_typed_only_schema_forbids_any_numeric_citation(self):
+        args = scenario(ids=(JP, VN))
+        inp, run, preview, choice, _ = args
+        schema = private_mixed_writing_schema(
+            inp, run, RUN_SECRET, preview, choice, CHOICE_SECRET)
+        numeric = schema["properties"]["citations"]["properties"]["development"]
+        self.assertEqual(numeric["items"]["enum"], [])
+        self.assertEqual(numeric["minItems"], 0)
+        self.assertEqual(numeric["maxItems"], 0)
+        typed = schema["properties"]["supplemental_citations"]["properties"]
+        self.assertEqual(typed["cross_desk_comparison"]["items"]["enum"], [JP, VN])
+        self.assertFalse(schema["additionalProperties"])
+
+    def test_schema_generation_refuses_changed_current_capture(self):
+        args = scenario()
+        inp, run, preview, choice, _ = args
+        changed = copy.deepcopy(inp)
+        changed["current_official_captures"][JP] = b"out-of-signature source"
+        with self.assertRaises(PrivateMixedManuscriptError):
+            private_mixed_writing_schema(
+                changed, run, RUN_SECRET, preview, choice, CHOICE_SECRET)
+
     def test_mixed_private_draft_passes_without_any_public_authority(self):
         args = scenario()
         receipt = audit(args, args[-1])
