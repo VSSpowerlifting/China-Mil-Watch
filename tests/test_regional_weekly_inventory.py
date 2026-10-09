@@ -148,6 +148,8 @@ class RegionalInventoryTests(unittest.TestCase):
         with self.assertRaises(InventoryError):
             make(research_rows=[note, copy.deepcopy(note)])
         with self.assertRaises(InventoryError):
+            make(research_rows=[note, dict(note, id="JP-W41-02")])
+        with self.assertRaises(InventoryError):
             make(research_rows=[pending(desk_name="china")])
         with self.assertRaises(InventoryError):
             make(research_rows=[dict(note, status="approved")])
