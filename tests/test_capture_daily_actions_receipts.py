@@ -222,6 +222,43 @@ class CaptureDailyActions(unittest.TestCase):
                 with self.assertRaises(grab.CaptureError):
                     grab.transport(path, {"per_page": 100})
 
+    def test_http_redirect_denied_before_following_other_host(self):
+        handler = grab.RefuseRedirect()
+        with self.assertRaisesRegex(grab.CaptureError, "redirected"):
+            handler.redirect_request(
+                None, None, 302, "Found", {},
+                "https://outside.example.invalid/steal-token")
+
+    def test_api_transport_uses_only_fixed_github_https_host(self):
+        from unittest.mock import patch
+
+        class Response:
+            status = 200
+            def __enter__(self):
+                return self
+            def __exit__(self, *_):
+                return False
+            def geturl(self):
+                return grab.BASE + grab.WORKFLOW_RUNS + "?per_page=100&page=1"
+            def read(self, *_):
+                return b'{"total_count": 0, "workflow_runs": []}'
+
+        class Opener:
+            def open(self, request, timeout):
+                self.url = request.full_url
+                self.timeout = timeout
+                self.headers = request.headers
+                return Response()
+
+        opener = Opener()
+        with patch.object(grab, "build_opener", return_value=opener):
+            result = grab.transport(grab.WORKFLOW_RUNS,
+                                    {"per_page": 100, "page": 1})
+        self.assertEqual(result["workflow_runs"], [])
+        self.assertTrue(opener.url.startswith(
+            "https://api.github.com/repos/VSSpowerlifting/China-Mil-Watch/actions/"))
+        self.assertEqual(opener.timeout, 20)
+
     def test_invalid_api_response_structures_refused(self):
         for doc in (None, {}, {"total_count": "1", "workflow_runs": []},
                     {"total_count": 1, "workflow_runs": "not-a-list"}):
