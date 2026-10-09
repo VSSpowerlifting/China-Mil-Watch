@@ -55,9 +55,10 @@ def _source_record(row, *, known_sources):
         return None, "missing_original_title"
     original = (row["text_original"] or "").strip()
     english = (row["text_english"] or "").strip()
-    # Consistent with Sunday's existing full-text threshold. English machine
-    # renderings still require original-language checking before publication.
-    body = english if len(english) >= MIN_TEXT else original
+    # EXACTLY mirror Sunday's writer: a nonempty stored English rendering
+    # takes precedence even when truncated. Falling back to a longer original
+    # here would inflate the inventory's writer-usable count.
+    body = english or original
     if len(body) < MIN_TEXT:
         return None, "insufficient_stored_full_text"
     lang = row["source_language_tag"] or ""
@@ -75,8 +76,7 @@ def _source_record(row, *, known_sources):
         "published_date": row["published_date"],
         "language": lang,
         "screening": screening_state(row),
-        "body_basis": ("stored_english_rendering" if body == english and
-                       len(english) >= MIN_TEXT else "stored_original"),
+        "body_basis": ("stored_english_rendering" if english else "stored_original"),
         "stored_text_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
         "stored_text_length": len(body),
         "role": "new_week",
