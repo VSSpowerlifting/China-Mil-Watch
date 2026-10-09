@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% set timeline_surface = true %}
+{% from '_timeline_macros.html' import period with context %}
+{% block title %}Evidence Timelines — {{ title }}{% endblock %}
+{% block description %}Source-linked chronologies of Indo-Pacific security developments, with reported event dates, publication dates and differing official accounts kept distinct.{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="timeline-shell.css"><link rel="stylesheet" href="timelines.css">{% endblock %}
+{% block head_scripts %}<script src="reveal.js"></script>{% endblock %}
+{% block main_class %} class="timeline-library"{% endblock %}
+{% block body_open %}<body class="timeline-shell">{% endblock %}
+{% block content %}
+{% set analysis_current = 'timelines' %}{% include '_analysis_nav.html' %}
+<header class="tl-library-head">
+  <p class="evidence evidence--analysis">Analysis</p>
+  <h1>Evidence Timelines</h1>
+  <p class="tl-dek">A development, in sequence. The official accounts beside it.</p>
+  <p>Follow what institutions said happened, when they said it, and where their accounts disagree. Each chronology is a selected reading of preserved records, with its own scope and editorial limits.</p>
+</header>
+{% set lead = timelines[0] %}
+<article class="tl-library-lead" aria-labelledby="tl-lead-title" data-reveal>
+  <div class="tl-library-window">
+    <span>Reported event period</span>
+    {% if lead.event_start[:7] == lead.event_end[:7] %}<strong>{{ lead.event_start[8:]|int }}{% if lead.event_start != lead.event_end %}–{{ lead.event_end[8:]|int }}{% endif %}</strong>
+    <span>{{ lead.event_start[5:7]|int|month_name }} {{ lead.event_start[:4] }}</span>
+    {% else %}<span>{{ period(lead.event_start, lead.event_end) }}</span>{% endif %}
+  </div>
+  <div>
+    {% if lead.is_review %}<p class="tl-status">Unpublished editorial draft</p>{% endif %}
+    <h2 id="tl-lead-title"><a href="{{ lead.route }}">{{ lead.title }}</a></h2>
+    <p class="tl-dek">{{ lead.dek }}</p>
+    <p class="tl-library-meta">{{ lead.source_count }} preserved records · {{ lead.desk_count }} desks · {% if lead.is_review %}Prepared for review{% else %}Reviewed{% endif %} {{ lead.reviewed_on|reader_date }}</p>
+    <a class="tl-read" href="{{ lead.route }}">Read the chronology <span aria-hidden="true">↗</span></a>
+    <ol class="tl-library-dates" aria-label="Chronology in this timeline">
+    {% for e in lead.entries %}<li><a href="{{ lead.route }}#{{ e.id }}">{{ period(e.event.start, e.event.end) }}<span>{{ e.headline }}</span></a></li>{% endfor %}
+    </ol>
+  </div>
+</article>
+{% if timelines|length > 1 %}
+<section class="tl-catalog" aria-labelledby="tl-catalog-heading"><h2 id="tl-catalog-heading">More chronologies</h2>
+{% for item in timelines[1:] %}<article><p>{{ period(item.event_start, item.event_end) }}</p><h3><a href="{{ item.route }}">{{ item.title }}</a></h3><p>{{ item.dek }}</p><p>{{ item.source_count }} preserved records · {{ item.desk_count }} desks · Reviewed {{ item.reviewed_on|reader_date }}</p></article>{% endfor %}
+</section>{% endif %}
+<aside class="tl-library-method"><h2>Read the dates in two ways</h2><p>An event date belongs to the account of what happened. A publication date belongs to the record of who said it and when. The distance between them can matter; neither substitutes for the other.</p><a href="methodology.html">How the record is preserved</a></aside>
+{% endblock %}

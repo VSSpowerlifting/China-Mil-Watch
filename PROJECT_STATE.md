@@ -47,6 +47,20 @@ This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
+**Evidence Timelines (#158):** implementation prepared on
+`codex/evidence-timelines-20261007`, started from main `24924c59d` and refreshed
+to `e0cd41a2e`. Versioned sidecars, strict source reconciliation,
+approved-only static routes and a
+private review command are in source. Maritime Cooperation 2026 is a new,
+unpublished editorial draft using the five records in approved Brief No. 15;
+that Brief's approval is not inherited. No production timeline/tab is admitted
+while the collection has no approved timeline. Preview and verification are
+documented in `docs/EVIDENCE_TIMELINES.md`. Database, tracked output, Brief
+No. 15's approved sidecar, collectors and workflows are unchanged. The
+remaining gate is owner review of the feature and separate approval of the
+timeline's exact editorial content; no merge, deployment or publication is
+authorized by this work.
+
 Durable documents, and what each one governs:
 
 | Document | Governs |

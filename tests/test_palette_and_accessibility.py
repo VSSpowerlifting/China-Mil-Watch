@@ -353,6 +353,8 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
         base = (REPO_ROOT / "site" / "preview" / "templates"
                 / "base.html").read_text(encoding="utf-8")
         body = base.split("<body>", 1)[1]
+        # The optional body-class block ends before the shared first focus target.
+        body = re.sub(r"^\s*\{% endblock %\}", "", body)
         self.assertTrue(body.lstrip().startswith('<a class="skip"'))
         self.assertIn(".skip:focus", self.css)
 
@@ -391,6 +393,7 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
                         # opens on and the provenance line above it mark it as
                         # the page's lead, and the rule restores an underline
                         # on hover and on keyboard focus.
+                        # `.analysis-nav a` is the semantic local Analysis navigation.
                         # `.nav-rail-inner a`, `.nav-rail .nav-mobile a` and
                         # `.btn` joined on 2026-09-15 with the CMW revival.
                         # None is a prose link: the rail links are the
@@ -407,7 +410,7 @@ class TestKeyboardAndMotionRules(unittest.TestCase):
                         (".brand", "h3 a", "h2.plain a", ".lead-title",
                          ".record-headline a", ".register-item h3 a",
                          ".desks .card--desk h3 a", ".band .feature h3 a",
-                         ".nav-rail-inner a", ".nav-mobile a",
+                         ".nav-rail-inner a", ".nav-mobile a", ".analysis-nav a",
                          ".btn", ".editions", "nav.primary", ".skip",
                          ".footer-col a", ".trail-tag")),
                     "%s removes the underline from prose links" % flat)

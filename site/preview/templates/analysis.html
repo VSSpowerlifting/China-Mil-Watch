@@ -72,6 +72,7 @@
 {% endblock %}
 
 {% block content %}
+{% if timelines %}{% set analysis_current = 'briefs' %}{% include '_analysis_nav.html' %}{% endif %}
 {% if collection.rows %}
 {% set n_rows = collection.rows|length %}
 <section class="briefs-index" aria-labelledby="briefs-published">
