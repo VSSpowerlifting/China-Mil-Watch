@@ -215,6 +215,35 @@ class OverlayContracts(unittest.TestCase):
         with self.assertRaisesRegex(overlay.OverlayError, "source count"):
             self.report()
 
+    def test_real_repository_binding_report_joins_exact_shadow_manifests(self):
+        # Before source-binding PR #257 lands this dependency is absent.
+        # Once present on main, this becomes a REAL configuration contract,
+        # rather than assuming independently invented fixture field names.
+        native = ops.ROOT / "scripts/audit_shadow_workflow_bindings.py"
+        if not native.is_file():
+            self.skipTest("separate binding-audit PR not in checkout yet")
+        from scripts import audit_shadow_workflow_bindings as bindings
+
+        production_snapshot = copy.deepcopy(self.base)
+        production_snapshot["shadow_source_manifests"] = ops.shadow_inventory(
+            ops.SHADOW_ROOT, {})
+        native_report = bindings.validate(ops.ROOT)
+        joined = overlay.attach(
+            production_snapshot, native_report, [], root=ops.ROOT)
+        families = joined["shadow_evidence_overlay"]["source_families"]
+        self.assertEqual(native_report["source_families_checked"], len(families))
+        self.assertEqual(
+            len(production_snapshot["shadow_source_manifests"]),
+            native_report["manifests_checked"])
+        self.assertEqual(
+            {f["source_slug"] for f in families},
+            {f["source_slug"] for f in native_report["sources"]})
+        self.assertEqual(0, joined["shadow_evidence_overlay"]["families_with_slot_candidates"])
+        self.assertTrue(all(f["slot_evidence_status"] == "not_supplied"
+                            for f in families))
+        self.assertFalse(joined["shadow_evidence_overlay"]["collection_verified"])
+        self.assertFalse(joined["publication_authorized"])
+
     def test_snapshot_authorization_is_not_overridden(self):
         self.base["publication_authorized"] = True
         with self.assertRaisesRegex(overlay.OverlayError, "editorial authorization"):
