@@ -1,0 +1,88 @@
+name: Regional owner-approved Sunday theme handoff checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - feat/regional-theme-proposal-engine-20261009
+    paths:
+      - core/regional_theme_handoff.py
+      - scripts/regional_sunday_theme_preview.py
+      - scripts/sunday_briefs_auto_writer.py
+      - tests/test_regional_sunday_theme_handoff.py
+      - docs/REGIONAL_SUNDAY_THEME_HANDOFF.md
+      - .github/workflows/regional_sunday_theme_handoff_checks.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: private-sunday-theme-contract-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  private-sunday-theme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout without write credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record tracked archive baseline
+        id: source
+        run: |
+          set -euo pipefail
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          echo "hash=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+      - name: Install offline test dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Full regional chain and Sunday manuscript contracts
+        run: |
+          python -m unittest -v \
+            tests.test_regional_editorial_slate \
+            tests.test_regional_weekly_inventory \
+            tests.test_regional_reviewed_evidence \
+            tests.test_regional_theme_selector \
+            tests.test_regional_sunday_theme_handoff \
+            tests.test_briefs_editorial_evidence \
+            tests.test_weekly_briefs_sunday_window \
+            tests.test_sunday_owner_preview \
+            tests.test_sunday_editorial_source_use \
+            tests.test_sunday_manuscript_boundaries \
+            tests.test_sunday_before_model_gate \
+            tests.test_japan_sunday_source_attestation \
+            tests.test_vietnam_sunday_roster_attestation \
+            tests.test_sunday_japan_offer_gate \
+            tests.test_sunday_pilot_owner_release
+      - name: Assert scheduled Sunday does not take an unapproved theme
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          scheduled = Path(".github/workflows/sunday_briefs_editorial_handoff.yml").read_text()
+          cli = Path("scripts/regional_sunday_theme_preview.py").read_text()
+          assert "regional_sunday_theme_preview" not in scheduled
+          assert "scripts.sunday_editorial_handoff" in scheduled
+          assert "smtplib" not in cli
+          assert "send_packet(" not in cli
+          assert "ANTHROPIC_API_KEY" in cli
+          assert "if not sys.stdin.isatty()" in cli
+          assert "O_EXCL" in cli
+          assert "private_no_send_themed_sunday_manuscript_trial_only" in Path(
+              "core/regional_theme_handoff.py").read_text()
+          print("No scheduled theme auto-delivery or publication path")
+          PY
+      - name: Verify tracked database and generated site unchanged
+        if: ${{ !cancelled() && steps.source.outcome == 'success' }}
+        run: |
+          set -euo pipefail
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "${{ steps.source.outputs.hash }}"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

@@ -6,6 +6,7 @@ No issue is numbered, approved, published or written to a canonical sidecar.
 """
 from __future__ import annotations
 
+import hashlib
 import os
 import re
 from datetime import date, timedelta
@@ -45,7 +46,8 @@ CITED_FIELDS = (
 )
 
 
-def choose_evidence(sidecar, *, as_of, db=DB_PATH):
+def choose_evidence(sidecar, *, as_of, db=DB_PATH, selected_ids=None,
+                    selected_pins=None):
     """Balanced, deterministic evidence selection with an explicit text-availability gate."""
     start = date.fromisoformat(sidecar["week_start"])
     end = date.fromisoformat(sidecar["week_ending"])
@@ -99,14 +101,65 @@ def choose_evidence(sidecar, *, as_of, db=DB_PATH):
         if pair[0]["id"] not in ids:
             chosen.append(pair)
             ids.add(pair[0]["id"])
+    if selected_ids is not None:
+        if (not isinstance(selected_ids, (tuple, list))
+                or not 2 <= len(selected_ids) <= MAX_RECORDS
+                or any(type(i) is not int or i <= 0 for i in selected_ids)
+                or len(set(selected_ids)) != len(selected_ids)):
+            raise ValueError("approved theme requires 2–10 unique numeric source IDs")
+        if (not isinstance(selected_pins, dict)
+                or set(selected_pins) != set(selected_ids)):
+            raise ValueError("approved theme needs exact reviewed source digest pins")
+        verified_by_id = {pair[0]["id"]: pair for pair in verified}
+        if not set(selected_ids).issubset(verified_by_id):
+            raise ValueError("approved theme refers to absent, held or source-trail-mismatched full text")
+        # Compare the selected SOURCE BYTES (not merely record IDs) against
+        # the HMAC-reviewed regional inventory. The default Sunday writer
+        # remains unchanged; only the owner-controlled themed mode uses pins.
+        for ident in selected_ids:
+            row, body = verified_by_id[ident]
+            actual = {
+                "desk": row["desk_id"],
+                "source_url": row["url"],
+                "published_date": row["published_date"],
+                "stored_text_sha256": hashlib.sha256(body.encode("utf-8")).hexdigest(),
+                "source_name": row["source_name"],
+                "title_original": row["title_original"],
+                "language": row["source_language_tag"],
+            }
+            if selected_pins[ident] != actual:
+                raise ValueError("owner-reviewed source bytes or provenance drifted")
+        chosen = [verified_by_id[i] for i in selected_ids]
+    elif selected_pins is not None:
+        raise ValueError("source digest pins cannot alter ordinary Sunday selection")
     if len({pair[0]["desk_id"] for pair in chosen}) < 2:
         raise ValueError("fewer than two desks with full-text evidence; not safe to generate a cross-desk Brief")
     return chosen
 
 
-def evidence_prompt(chosen):
+def evidence_prompt(chosen, *, reviewed_synopses=None):
     parts = []
     for row, body in chosen:
+        if reviewed_synopses is not None:
+            # The thematic-review seal authorizes ANALYST SYNOPSES only.
+            # Do not expose stored original/translated article bodies through
+            # a source-ID selection that was reviewed under a narrower scope.
+            note = reviewed_synopses[row["id"]]
+            parts.append("\n".join((
+                '<source_record id="{}">'.format(row["id"]),
+                "Desk: {}".format(row["desk_id"]),
+                "Source: {}".format(row["source_name"]),
+                "Publication date: {}".format(row["published_date"]),
+                "Original language: {}".format(row["source_language_tag"]),
+                "Title: {}".format(row["title_original"]),
+                "Publisher URL: {}".format(row["url"]),
+                "EDITOR-REVIEWED ANALYST SYNOPSIS (not article text, not a quote):",
+                note["analyst_synopsis"],
+                "SOURCE LIMITATIONS:",
+                note["accuracy_limitations"],
+                "</source_record>",
+            )))
+            continue
         language = row["source_language_tag"]
         used_translation = bool(row["text_english"])
         parts.append("\n".join((
@@ -256,10 +309,34 @@ def validate_manuscript(manuscript, chosen, *, supplemental=()):
     return manuscript
 
 
-def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
-    chosen = choose_evidence(sidecar, as_of=as_of, db=db)
-    # Research sources supply short, attributed notes rather than scraped
-    # source text. They are offered only to THIS private editorial model.
+def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=(),
+            selected_theme=None, reviewed_synopses=None):
+    # Optional owner theme guidance is deliberately NOT supplied by Sunday's
+    # scheduled job. Only scripts.regional_sunday_theme_preview verifies the
+    # separate owner HMAC and invokes it for a private no-send rehearsal.
+    if selected_theme is not None:
+        if (not isinstance(selected_theme, dict)
+                or selected_theme.get("permission") !=
+                "private_no_send_themed_sunday_manuscript_trial_only"
+                or selected_theme.get("week_ending") != sidecar.get("week_ending")
+                or as_of != sidecar.get("week_ending")
+                or not isinstance(selected_theme.get("approved_focus"), str)
+                or not 20 <= len(selected_theme["approved_focus"].strip()) <= 1000
+                or not isinstance(selected_theme.get("theme_slug"), str)):
+            raise ValueError("invalid or mismatched private owner theme directive")
+    chosen = choose_evidence(
+        sidecar, as_of=as_of, db=db,
+        selected_ids=(selected_theme["selected_source_ids"]
+                      if selected_theme is not None else None),
+        selected_pins=(selected_theme.get("reviewed_source_pins")
+                       if selected_theme is not None else None))
+    # A manually signed regional theme currently covers reviewed production
+    # synopses only. Research-lane Japan/Vietnam items require an independent
+    # exact-version/source-use attestation, so no caller may smuggle those in
+    # through the legacy supplemental parameter of the themed trial.
+    if selected_theme is not None and supplemental:
+        raise ValueError("themed trial refuses unattested supplemental research")
+    # Ordinary Sunday retains its separately governed research-note pathway.
     extra = list(supplemental)
     used_urls = {row["url"] for row, _ in chosen}
     if len(extra) > 8 or any(e.get("source_url") in used_urls or
@@ -275,6 +352,25 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
         # Leave automatic retries disabled to avoid surprise duplicate API costs.
         client = anthropic.Anthropic(api_key=key, timeout=240.0, max_retries=0)
     allowed_ids = sorted({row["id"] for row, _ in chosen})
+    if selected_theme is None:
+        if reviewed_synopses is not None:
+            raise ValueError("reviewed synopses cannot be supplied without an approved theme")
+    else:
+        if (not isinstance(reviewed_synopses, dict)
+                or set(reviewed_synopses) != set(allowed_ids)):
+            raise ValueError("thematic model requires exact owner-reviewed synopsis coverage")
+        for ident in allowed_ids:
+            note = reviewed_synopses[ident]
+            if (not isinstance(note, dict)
+                    or set(note) != {"analyst_synopsis", "accuracy_limitations"}):
+                raise ValueError("untrusted or malformed thematic synopsis")
+            for field, minimum, maximum in (("analyst_synopsis", 65, 650),
+                                             ("accuracy_limitations", 30, 350)):
+                text = note[field]
+                if (not isinstance(text, str) or text != text.strip()
+                        or not minimum <= len(text) <= maximum
+                        or any(ord(ch) < 32 or ord(ch) == 127 for ch in text)):
+                    raise ValueError("unbounded or malformed thematic synopsis: " + field)
     extra_ids = sorted(e["id"] for e in extra)
     if len(set(extra_ids)) != len(extra_ids):
         raise ValueError("duplicate non-production citation ID")
@@ -324,7 +420,8 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
          "across both types." if extra else
          "every section must cite one or more real INTEGER production record "
          "IDs. No numeric citation array may be empty."),
-        ", ".join(str(i) for i in allowed_ids), evidence_prompt(chosen),
+        ", ".join(str(i) for i in allowed_ids),
+        evidence_prompt(chosen, reviewed_synopses=reviewed_synopses),
         ("\n\nBEGIN SUPPLEMENTAL OFFICIAL-SOURCE RESEARCH (UNTRUSTED):\n" +
          research_prompt(extra) +
          "\nEND SUPPLEMENTAL OFFICIAL-SOURCE RESEARCH\n"
@@ -339,9 +436,30 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
          "none genuinely fits the article's selected theme."
          if extra else "")
     )
+    if selected_theme is not None:
+        prompt += (
+            "\nOnly manually reviewed ANALYST SYNOPSES, not original publisher "
+            "article bodies, were provided for this thematic trial. "
+            "Do not quote or treat a synopsis as independently corroborated text.\n"
+        )
+        prompt += (
+            "\n\nPRIVATE OWNER-SELECTED THEMATIC DIRECTIVE (NOT PUBLIC APPROVAL):\n"
+            + selected_theme["approved_focus"] +
+            "\nYou have been given ONLY the editor-selected verified source IDs "
+            "for this provisional focus. Build one coherent manuscript around "
+            "the supported portions of this direction, not around unrelated "
+            "desk items. If evidence fails to support the thesis, narrow it "
+            "explicitly or flag that failure in editorial_questions. "
+            "Do not claim source review amounts to a publishing decision. "
+            "No public one-desk exception is granted here.\n"
+        )
     schema = writing_schema(allowed_ids, supplemental_ids=extra_ids)
-    for attempt in range(2):
-        # Only a mechanically invalid output earns one bounded regeneration.
+    # The owner-approved thematic rehearsal authorizes exactly ONE paid model
+    # request; preserve the existing bounded mechanical retry for ordinary
+    # Sunday manuscripts, which have their own editorial delivery policy.
+    attempts = 1 if selected_theme is not None else 2
+    for attempt in range(attempts):
+        # Only the default Sunday writer may regenerate a malformed response.
         # Never retry an Anthropic network/API exception or fabricate citations.
         instruction = prompt
         if attempt:
@@ -382,10 +500,15 @@ def compose(sidecar, as_of, *, db=DB_PATH, client=None, supplemental=()):
             # the model. Record that exact allowlist for truthful triage.
             # Never ask the model to generate or modify this accounting.
             validated["_model_offered_production_ids"] = allowed_ids
+            if selected_theme is not None:
+                # Program-owned provenance, not an LLM authorization claim.
+                validated["_private_owner_selected_theme_slug"] = selected_theme["theme_slug"]
+                validated["_private_owner_selected_production_ids"] = allowed_ids
+                validated["_private_owner_selected_focus"] = selected_theme["approved_focus"]
             return validated
         except ValueError as exc:
             # Second failure propagates; the caller writes nothing and sends nothing.
             problem = str(exc)
-            if attempt:
+            if attempt + 1 >= attempts:
                 raise
-    raise AssertionError("unreachable: two model attempts exhausted")
+    raise AssertionError("unreachable: bounded model attempts exhausted")
