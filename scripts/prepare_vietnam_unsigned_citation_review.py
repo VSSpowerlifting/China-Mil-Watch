@@ -34,6 +34,8 @@ def build_unsigned(draft, packet):
     cited = REFERENCE.findall(_prose(draft))
     require(cited and 1 <= len(set(cited)) <= MAX_ITEMS,
             "draft has no bounded Vietnam external source citations")
+    require(all(cited.count(ident) <= 8 for ident in set(cited)),
+            "excessively repeated external source citations")
     # Do not silently accept a generic or ambiguous external-source citation.
     require(all(isinstance(x, str) and x.startswith("mps-vi:") for x in cited),
             "only cited Vietnam MPS identities can enter this worksheet")
