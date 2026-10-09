@@ -1,0 +1,233 @@
+{
+ "access_failures": 0,
+ "anomalies": [],
+ "cap": 40,
+ "captures": [
+  {
+   "content_type": "text/plain; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 68,
+   "payload_sha256": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+   "retrieved_at": "2026-10-09T22:38:59+00:00",
+   "role": "robots",
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "content_type": "application/xml; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 13072,
+   "payload_sha256": "f1d5c3d0d7b13a174326136cfe1c2564f5f6dcc878df8e370108a0053f606bf8",
+   "retrieved_at": "2026-10-09T22:39:02+00:00",
+   "role": "listing",
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "content_sha256": "8775cb700db1dddfb17209c292b7a03864c65683cc190792c88939a9dd7740ef",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 420156,
+   "payload_sha256": "9cc96839082c6c4b67c365a12015e9ee530986e82e5bba42a3d1a4242744a28e",
+   "retrieved_at": "2026-10-09T22:39:06+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791535381",
+   "url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381"
+  },
+  {
+   "content_sha256": "8707eaee31b0423d8b6835fee0d02a25207c2a8e5813718aa57c434c927fd6b5",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 425332,
+   "payload_sha256": "5c57a7b423837f002af4a795dde0ee0da16afd8416047ea61beee922bd5165a7",
+   "retrieved_at": "2026-10-09T22:39:08+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791366010",
+   "url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010"
+  },
+  {
+   "content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 421865,
+   "payload_sha256": "68e5eeebf68fbedf70da5376ae3121723217fd4ef768a81e01b502fb57fdda76",
+   "retrieved_at": "2026-10-09T22:39:12+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791199677",
+   "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+  },
+  {
+   "content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 428139,
+   "payload_sha256": "ea85d836570b004af2c470f22559653aec5b869c802b7ca5d34e25d754996eb9",
+   "retrieved_at": "2026-10-09T22:39:15+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791199100",
+   "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+  }
+ ],
+ "challenged": 0,
+ "changed": 0,
+ "collector_commit": "6fb28fb8c60209b75b535247971cd6dd1a0835bc",
+ "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+ "content_hash_rule": "mps-vi-content-v1",
+ "corpus_range": [
+  "2026-10-02",
+  "2026-10-09"
+ ],
+ "day_zero_utc": "2026-10-07T17:16:33+00:00",
+ "desk_id": "vietnam",
+ "discovered": 4,
+ "error_detail": null,
+ "extraction_failures": 0,
+ "failures": [],
+ "fetch_failures": 0,
+ "finished_utc": "2026-10-09T22:39:15+00:00",
+ "health": "ok",
+ "listing_report": {
+  "coverage": "proven",
+  "items_listed": 10,
+  "listed": [
+   [
+    "1791535381",
+    "2026-10-09"
+   ],
+   [
+    "1791366010",
+    "2026-10-07"
+   ],
+   [
+    "1791199677",
+    "2026-10-05"
+   ],
+   [
+    "1791199100",
+    "2026-10-05"
+   ],
+   [
+    "1790933646",
+    "2026-10-02"
+   ],
+   [
+    "1790758318",
+    "2026-09-30"
+   ],
+   [
+    "1790748442",
+    "2026-09-30"
+   ],
+   [
+    "1790579880",
+    "2026-09-28"
+   ],
+   [
+    "1790397583",
+    "2026-09-26"
+   ],
+   [
+    "1790323608",
+    "2026-09-24"
+   ]
+  ],
+  "listed_after_window": 0,
+  "listing_url": "https://bocongan.gov.vn/api/rss/34.xml",
+  "newest_listed": "2026-10-09",
+  "oldest_listed": "2026-09-24",
+  "pages_read": 1,
+  "pagination": "finite RSS snapshot; no archive or older endpoint requested",
+  "selected": 4,
+  "window_end": "2026-10-09",
+  "window_start": "2026-10-03"
+ },
+ "listing_status": "ok",
+ "lookback_days": 6,
+ "new_records": 1,
+ "request_ceiling": 42,
+ "requests": [
+  {
+   "bytes": 68,
+   "ended_utc": "2026-10-09T22:38:59.730360+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-09T22:38:59+00:00",
+   "started_utc": "2026-10-09T22:38:59.247872+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "bytes": 13072,
+   "ended_utc": "2026-10-09T22:39:02.069056+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-09T22:39:01+00:00",
+   "started_utc": "2026-10-09T22:39:01.733247+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "bytes": 420156,
+   "ended_utc": "2026-10-09T22:39:06.031192+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-09T22:39:04+00:00",
+   "started_utc": "2026-10-09T22:39:04.071978+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381"
+  },
+  {
+   "bytes": 425332,
+   "ended_utc": "2026-10-09T22:39:08.985855+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-09T22:39:08+00:00",
+   "started_utc": "2026-10-09T22:39:08.033966+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010"
+  },
+  {
+   "bytes": 421865,
+   "ended_utc": "2026-10-09T22:39:12.250698+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-09T22:39:10+00:00",
+   "started_utc": "2026-10-09T22:39:10.988727+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677"
+  },
+  {
+   "bytes": 428139,
+   "ended_utc": "2026-10-09T22:39:15.576394+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-09T22:39:14+00:00",
+   "started_utc": "2026-10-09T22:39:14.253417+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100"
+  }
+ ],
+ "result": "ok",
+ "retrieved": 4,
+ "reverted": 0,
+ "robots_status": "read",
+ "run_id": "38000282894-1",
+ "selected": 4,
+ "shadow_day": 2,
+ "source_slug": "vn_mps_foreign_affairs_vi",
+ "started_utc": "2026-10-09T22:38:59+00:00",
+ "state_sha256_after": "f0e19364fab9ee2420aa5761e2a4f377f050cc813a0ba36347e4a0d4a661c1ec",
+ "state_sha256_before": "3636c885a5bddb143ff0d1fcde97a0b18a0578642fb4df7e0de5d7131c325d5f",
+ "stored_total": 5,
+ "target_date": "2026-10-09",
+ "target_date_source": "schedule-slot",
+ "unchanged": 3,
+ "versions_total": 5,
+ "window_start": "2026-10-03"
+}
