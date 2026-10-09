@@ -561,6 +561,24 @@ class ThemeSundayHandoffTests(unittest.TestCase):
             self.assertEqual(target.read_text(encoding="utf-8"), "UNRELATED")
             self.assertTrue(successor.exists())
 
+    def test_private_output_replaced_with_dangling_symlink_at_resolve(self):
+        with tempfile.TemporaryDirectory() as root:
+            target = Path(root) / "unsent.txt"
+            victim = Path(root) / "must-not-create.txt"
+            original_resolve = Path.resolve
+
+            def swap_just_before_resolve(path, *args, **kwargs):
+                if path == target:
+                    target.symlink_to(victim)
+                return original_resolve(path, *args, **kwargs)
+
+            with patch.object(Path, "resolve", autospec=True,
+                              side_effect=swap_just_before_resolve):
+                with self.assertRaises(FileExistsError):
+                    _out_text(target, "PRIVATE")
+            self.assertTrue(target.is_symlink())
+            self.assertFalse(victim.exists())
+
     def test_private_output_existing_symlink_is_not_modified(self):
         with tempfile.TemporaryDirectory() as root:
             original = Path(root) / "another-document.txt"

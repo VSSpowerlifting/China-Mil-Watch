@@ -35,11 +35,13 @@ CONFIRM_MODEL = "I AUTHORIZE ONE PRIVATE THEMATIC MANUSCRIPT MODEL CALL"
 
 
 def _out_text(path, content):
-    target = Path(path).expanduser()
+    # Resolve only for the repository boundary, not the exclusive open:
+    # a symlink substituted after the initial check must remain an EEXIST.
+    target = Path(path).expanduser().absolute()
     if target.is_symlink() or target.exists():
         raise ValueError("private manuscript output must be a new file")
-    target = target.resolve()
-    if target == ROOT.resolve() or ROOT.resolve() in target.parents:
+    resolved = target.resolve()
+    if resolved == ROOT.resolve() or ROOT.resolve() in resolved.parents:
         raise ValueError("private manuscript cannot be written in the repository")
     if not target.parent.is_dir():
         raise ValueError("private output directory must already exist")

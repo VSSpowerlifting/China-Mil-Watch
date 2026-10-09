@@ -229,6 +229,16 @@ class SourceReviewGateTests(unittest.TestCase):
         with self.assertRaises(ReviewGateError):
             private_model_packet(inventory, sealed, b"another-secret" + b"Z" * 40)
 
+    def test_private_review_output_refuses_dangling_symlink(self):
+        with tempfile.TemporaryDirectory() as root:
+            dest = Path(root) / "review.json"
+            victim = Path(root) / "must-not-create.json"
+            dest.symlink_to(victim)
+            with self.assertRaisesRegex(ReviewGateError, "must be new"):
+                _out(dest, {"private": True})
+            self.assertTrue(dest.is_symlink())
+            self.assertFalse(victim.exists())
+
     def test_private_review_output_failing_fdopen_closes_and_unlinks(self):
         with tempfile.TemporaryDirectory() as root:
             dest = Path(root) / "review.json"

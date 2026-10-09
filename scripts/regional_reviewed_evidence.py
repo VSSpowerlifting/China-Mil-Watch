@@ -44,8 +44,11 @@ def _json(path):
 
 
 def _out(path, data):
-    target = Path(path).expanduser().resolve()
-    if target == ROOT.resolve() or ROOT.resolve() in target.parents:
+    # Keep the requested leaf pathname for O_EXCL / O_NOFOLLOW. Resolving
+    # it for the actual open could follow a dangling symlink to a new target.
+    target = Path(path).expanduser().absolute()
+    resolved = target.resolve()
+    if resolved == ROOT.resolve() or ROOT.resolve() in resolved.parents:
         raise ReviewGateError("private review output may not be in the repository")
     if target.exists() or target.is_symlink() or not target.parent.is_dir():
         raise ReviewGateError("private review output must be new in an existing directory")
