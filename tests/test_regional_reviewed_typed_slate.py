@@ -72,6 +72,12 @@ def build(*, approved=("JP-W41-01", "VN-MPS-1791199100")):
     return build_reviewed_mixed_context(
         inv, signed(inv), SECRET, rows, seal, TYPED_SECRET, **kw)
 
+def manual_result(proposal, *, approved=("JP-W41-01", "VN-MPS-1791199100")):
+    """No mutable cached slate: human candidate triggers fresh HMAC+capture review."""
+    inv, rows, seal, kw = assemble(approved=approved)
+    return validate_manual_mixed_theme(
+        proposal, inv, signed(inv), SECRET, rows, seal, TYPED_SECRET, **kw)
+
 
 class MixedRegionalSlateTests(unittest.TestCase):
     def test_all_held_produces_production_only_no_false_japan_coverage(self):
@@ -110,7 +116,7 @@ class MixedRegionalSlateTests(unittest.TestCase):
     def test_manual_cross_desk_theme_can_cite_production_and_typed(self):
         ctx = build()
         response = answer(candidate([42, "JP-W41-01", "VN-MPS-1791199100"]))
-        preview = validate_manual_mixed_theme(ctx, response)
+        preview = manual_result(response)
         self.assertEqual(preview["candidate_analysis"][0]["represented_desks"],
                          ["china", "japan", "vietnam"])
         self.assertFalse(preview["candidate_analysis"][0]
@@ -125,7 +131,7 @@ class MixedRegionalSlateTests(unittest.TestCase):
         for ids in (["JP-W41-02"], [47], [42, "JP-W41-02"],
                     [42, "VN-MPS-1791199677"], [42, True], [42, 42]):
             with self.subTest(ids=ids), self.assertRaises(ReviewedTypedSlateError):
-                validate_manual_mixed_theme(ctx, answer(candidate(ids)))
+                manual_result(answer(candidate(ids)))
         assert "JP-W41-02" in ctx["held_typed_ids"]
 
     def test_unsigned_forged_or_wrong_key_fails_before_offering(self):
@@ -193,7 +199,30 @@ class MixedRegionalSlateTests(unittest.TestCase):
             answer(candidate([42, "JP-W41-01", "JP-W41-01"])),
         ):
             with self.assertRaises(ReviewedTypedSlateError):
-                validate_manual_mixed_theme(ctx, edited)
+                manual_result(edited)
+
+    def test_manual_proposal_rechecks_capture_and_not_cached_context(self):
+        inv, rows, seal, kw = assemble()
+        response = answer(candidate([42, "JP-W41-01"]))
+        original = build_reviewed_mixed_context(
+            inv, signed(inv), SECRET, rows, seal, TYPED_SECRET, **kw)
+        original["editorial_slate"]["evidence"].append({
+            "id": "JP-W41-99", "desk": "japan",
+            "lane": "private_research", "scope": "private_drafting_candidate",
+            "source_url": "https://www.mod.go.jp/j/forged",
+            "published_date": "2026-10-09", "role": "new_week",
+            "topic_suggestions": [],
+        })
+        edited = answer(candidate([42, "JP-W41-99"]))
+        with self.assertRaises(ReviewedTypedSlateError):
+            validate_manual_mixed_theme(
+                edited, inv, signed(inv), SECRET, rows, seal, TYPED_SECRET, **kw)
+        mismatched = copy.deepcopy(kw)
+        mismatched["current_official_captures"]["JP-W41-01"] = b"changed bytes"
+        with self.assertRaises(ReviewedTypedSlateError):
+            validate_manual_mixed_theme(
+                response, inv, signed(inv), SECRET, rows, seal, TYPED_SECRET,
+                **mismatched)
 
     def test_no_original_pdf_or_html_bytes_leak_into_context_or_preview(self):
         inv, rows, seal, kw = assemble()
