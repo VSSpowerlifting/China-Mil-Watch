@@ -120,7 +120,7 @@ class SundayJapanOfferIntegrity(unittest.TestCase):
             with self.assertRaises(SystemExit):
                 main(["--week-ending", "2026-10-17",
                       "--as-of", "2026-10-17", "--packet", str(path)])
-            with patch("scripts.sunday_japan_offer_gate.print") as out:
+            with patch("builtins.print") as out:
                 self.assertEqual(main([
                     "--week-ending", FIRST_SATURDAY,
                     "--as-of", FIRST_SATURDAY,
