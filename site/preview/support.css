@@ -431,6 +431,8 @@ a[href^="#"]::after, a[href^="mailto:"]::after { content: ""; }
 .record-row, .register-item, tr, .stat-row, dd, .cite-block { break-inside: avoid; }
 thead { break-after: avoid; break-inside: avoid; }
 .table-scroll { overflow: visible; }
+.dictionary { min-width: 0; width: 100%; }
+.dictionary th, .dictionary td, .dictionary .fieldname { white-space: normal; overflow-wrap: anywhere; }
 h1, h2, h3 { break-after: avoid; }
 }
 

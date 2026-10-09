@@ -241,16 +241,22 @@ def settle_document_animations(page,timeout=6):
         page.wait_for_timeout(50)
 
 
+def color_luminance(color):
+    channels=[float(value)/255 for value in re.findall(r'[\d.]+',color)[:3]]
+    channels=[c/12.92 if c<=.04045 else ((c+.055)/1.055)**2.4 for c in channels]
+    return sum(c*w for c,w in zip(channels,(.2126,.7152,.0722)))
+
+
+def color_contrast(first,second):
+    a,b=color_luminance(first),color_luminance(second)
+    return (max(a,b)+.05)/(min(a,b)+.05)
+
+
 def focus_contrast(page, target, ground):
     target.focus();page.keyboard.press('Tab');page.keyboard.press('Shift+Tab')
     assert target.evaluate('(e)=>e.matches(":focus-visible")')
     values=target.evaluate('''(e,selector)=>{const s=getComputedStyle(e),b=getComputedStyle(document.querySelector(selector));return {outline:s.outlineColor,outline_width:parseFloat(s.outlineWidth),style:s.outlineStyle,background:b.backgroundColor}}''',ground)
-    def luminance(color):
-        channels=[float(value)/255 for value in re.findall(r'[\d.]+',color)[:3]]
-        channels=[c/12.92 if c<=.04045 else ((c+.055)/1.055)**2.4 for c in channels]
-        return sum(c*w for c,w in zip(channels,(.2126,.7152,.0722)))
-    a,b=luminance(values['outline']),luminance(values['background'])
-    values['contrast']=round((max(a,b)+.05)/(min(a,b)+.05),3)
+    values['contrast']=round(color_contrast(values['outline'],values['background']),3)
     assert values['outline_width']>=2 and values['style']=='solid' and values['contrast']>=3,values
     return values
 
@@ -316,7 +322,9 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
                     if profile in ('print', 'forced-colors'):
                         assert page.locator('.terrain-stage').evaluate_all('(els)=>els.every(e=>getComputedStyle(e).display==="none")'), (route, width, profile, 'printed decoration')
                     if profile == 'print':
-                        assert page.locator('h1').evaluate('(e)=>getComputedStyle(e).color') == 'rgb(0, 0, 0)', (route,width,'print heading contrast')
+                        foreground=page.locator('h1').evaluate('(e)=>getComputedStyle(e).color')
+                        ground=page.evaluate('getComputedStyle(document.body).backgroundColor')
+                        assert color_contrast(foreground,ground)>=7,(route,width,'print heading contrast',foreground,ground)
                     if profile == 'no-js' and label == 'archive':
                         assert page.locator('#results .record-row').count() == 50
                         assert not page.locator('#controls').is_visible()
