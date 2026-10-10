@@ -1,13 +1,15 @@
 """The Sunday source-offer auditor reproduces writer choices without model/SMTP."""
 
+import io
 import json
+from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import patch
 
 from scripts.audit_sunday_source_offer import (
-    explain_offer, inspect_offer, parse_watch_ids,
+    explain_offer, inspect_offer, main, parse_watch_ids,
 )
 from scripts.author_brief import build_draft
 from scripts.sunday_briefs_auto_writer import choose_evidence
@@ -70,6 +72,10 @@ class SundayOfferAuditTests(TestCase):
         self.assertEqual(len(report["selected_numeric_record_ids"]), 10)
         self.assertEqual(report["selected_desk_counts"],
                          {"china": 8, "singapore": 2})
+        self.assertEqual(report["eligible_full_text_by_desk"],
+                         {"china": 8, "singapore": 3})
+        self.assertEqual(report["eligible_but_ranked_out_by_desk"],
+                         {"singapore": 1})
         states = {w["record_id"]: w["outcome"]
                   for w in report["watched_records"]}
         self.assertEqual(states[4911], "eligible_but_omitted_by_default_ranking")
@@ -127,6 +133,45 @@ class SundayOfferAuditTests(TestCase):
                             str(i) for i in range(1, 27))):
             with self.subTest(invalid=invalid), self.assertRaises(ValueError):
                 parse_watch_ids(invalid)
+
+    def test_optional_strict_id_assertion_returns_failure_without_approval(self):
+        args = [
+            "--week-ending", SAT, "--as-of", SAT,
+            "--review-local-day", SAT, "--watch-ids", "4911,4937",
+            "--require-in-offer", "4911,4937",
+        ]
+        observation = {"watched_records": [
+            {"record_id": 4911,
+             "outcome": "eligible_but_omitted_by_default_ranking"},
+            {"record_id": 4937,
+             "outcome": "selected_for_default_model_offer"},
+        ], "model_called": False, "editor_email_authorized": False,
+            "publication_authorized": False}
+        with patch("scripts.audit_sunday_source_offer.inspect_offer",
+                   return_value=observation), redirect_stdout(io.StringIO()) as out:
+            result = main(args)
+        report = json.loads(out.getvalue())
+        self.assertEqual(result, 2)
+        self.assertFalse(report["required_ids_met"])
+        self.assertEqual(report["required_ids_not_offered"], [4911])
+        self.assertFalse(report["model_called"])
+
+        with patch("scripts.audit_sunday_source_offer.inspect_offer",
+                   return_value={"watched_records": [
+                       {"record_id": 4911,
+                        "outcome": "selected_for_default_model_offer"},
+                       {"record_id": 4937,
+                        "outcome": "selected_for_default_model_offer"},
+                   ]}), redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(main(args), 0)
+        self.assertTrue(json.loads(out.getvalue())["required_ids_met"])
+
+    def test_strict_assertion_cannot_name_unwatched_source(self):
+        with self.assertRaises(SystemExit) as exc, redirect_stdout(io.StringIO()):
+            main(["--week-ending", SAT, "--as-of", SAT,
+                  "--review-local-day", SAT, "--watch-ids", "4911",
+                  "--require-in-offer", "4937"])
+        self.assertEqual(exc.exception.code, 2)
 
     def test_actual_inspector_keeps_health_hold_and_no_authorizations(self):
         rows = [row(4911, "singapore"), row(4937, "china", analyzed=True)]
