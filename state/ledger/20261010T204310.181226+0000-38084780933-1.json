@@ -1,0 +1,113 @@
+{
+  "desk": "korea",
+  "run_id": "38084780933-1",
+  "collector_commit": "00a58b8b7b22a33e7e9403e1c6894004eb95c5d3",
+  "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+  "started_utc": "2026-10-10T20:42:52.179526+00:00",
+  "target_date": "2026-10-10",
+  "target_date_source": "schedule-slot",
+  "window_start": "2026-10-04",
+  "lookback_days": 6,
+  "cap": 40,
+  "robots_status": "read",
+  "listing_status": "ok",
+  "listing_report": {
+    "pages_walked": 1,
+    "items_listed": 2,
+    "window_start": "2026-10-04",
+    "window_end": "2026-10-10",
+    "window_proven": true
+  },
+  "requests": [
+    {
+      "requested_url": "https://www.korea.kr/robots.txt",
+      "final_url": "https://www.korea.kr/robots.txt",
+      "method": "GET",
+      "form": null,
+      "http_status": 200,
+      "retrieved_at": "2026-10-10T20:42:52.801997+00:00",
+      "capture_sha256": "98d411637ae27a333b95d03c7b691eae06992f5d0d061ff6e3a77ffaace7ebf8",
+      "content_type": "text/plain; charset=UTF-8",
+      "payload_bytes": 262
+    },
+    {
+      "requested_url": "https://www.korea.kr/briefing/pressReleaseList.do",
+      "final_url": "https://www.korea.kr/briefing/pressReleaseList.do",
+      "method": "POST",
+      "form": {
+        "repCode": "A00005",
+        "pageIndex": "1",
+        "startDate": "2026-10-04",
+        "endDate": "2026-10-10"
+      },
+      "http_status": 200,
+      "retrieved_at": "2026-10-10T20:42:56.320808+00:00",
+      "capture_sha256": "1b95d721de9054a151238cb04f582b9441582013a284799b8050cacbe6e12602",
+      "content_type": "text/html;charset=UTF-8",
+      "payload_bytes": 141376
+    },
+    {
+      "requested_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784652",
+      "final_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784652",
+      "method": "GET",
+      "form": null,
+      "http_status": 200,
+      "retrieved_at": "2026-10-10T20:42:59.989987+00:00",
+      "capture_sha256": "2687e82762d72fef1bdf6eb05401f8ac4b115a931ce5e6ca383272e883376967",
+      "content_type": "text/html;charset=UTF-8",
+      "payload_bytes": 149983
+    },
+    {
+      "requested_url": "https://www.korea.kr/common/download.do?fileId=198567229&tblKey=GMN",
+      "final_url": "https://www.korea.kr/common/download.do?fileId=198567229&tblKey=GMN",
+      "method": "GET",
+      "form": null,
+      "http_status": 200,
+      "retrieved_at": "2026-10-10T20:43:03.610679+00:00",
+      "capture_sha256": "4cdc5332b6b383b402811db492a3c00b1f899c1888bed97c4138ccbea0fe7b60",
+      "content_type": "application/x-download",
+      "payload_bytes": 245699
+    },
+    {
+      "requested_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297",
+      "final_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297",
+      "method": "GET",
+      "form": null,
+      "http_status": 200,
+      "retrieved_at": "2026-10-10T20:43:06.877971+00:00",
+      "capture_sha256": "9e6638f6cb5b49d7d1fa81a6c49fde558b4bf6d7244297fd7b0507c89634131e",
+      "content_type": "text/html;charset=UTF-8",
+      "payload_bytes": 150010
+    },
+    {
+      "requested_url": "https://www.korea.kr/common/download.do?fileId=198565537&tblKey=GMN",
+      "final_url": "https://www.korea.kr/common/download.do?fileId=198565537&tblKey=GMN",
+      "method": "GET",
+      "form": null,
+      "http_status": 200,
+      "retrieved_at": "2026-10-10T20:43:10.095462+00:00",
+      "capture_sha256": "d1b8c4d21f97c9a33da1602ec9433487c591e49e442f3b4a5960410bda145be4",
+      "content_type": "application/x-download",
+      "payload_bytes": 228813
+    }
+  ],
+  "discovered": 2,
+  "selected": 2,
+  "retrieved": 2,
+  "extracted": 2,
+  "inserted": 0,
+  "updated": 0,
+  "duplicates": 2,
+  "fetch_failures": 0,
+  "extraction_failures": 0,
+  "access_failures": 0,
+  "failures": [],
+  "state_sha256_before": "80969bb7ca19b2d13d999f9cad270e94a720b3d2f3619549a889dec597e31788",
+  "result": "ok_all_duplicates",
+  "health": "ok",
+  "stored_total": 5,
+  "finished_utc": "2026-10-10T20:43:10.181226+00:00",
+  "state_sha256_after": "80969bb7ca19b2d13d999f9cad270e94a720b3d2f3619549a889dec597e31788",
+  "day_zero_utc": "2026-10-06T16:52:01.420713+00:00",
+  "shadow_day": 4
+}
