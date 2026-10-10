@@ -46,7 +46,7 @@ The October 9 Vietnam shadow state `2c9960ec` now has **four** in-window machine
 
 ---
 
-## Owner/editor decision card — read this first (updated October 10)
+## Earlier owner/editor decision card — superseded by the Vietnam-centered direction above
 
 **Preferred editorial subject on merits:** *Beyond the Golden Jubilee: How Singapore and Brunei Are Building Practical Military Interoperability.* Singapore records [4983](https://indopacificrecord.org/record/4983.html) and [5071](https://indopacificrecord.org/record/5071.html) document the **completed Oct. 2–6 Exercise Pelican**, an **Oct. 8 underwater-demolition range opening/demonstration**, and a wider defense-anniversary exercise architecture. Independent Royal Brunei Land Forces reporting on **Oct. 5** identifies real engineer/IED/drone response tasks with Singapore Army. Brunei Air Force's **Oct. 1–2** Vanguard reporting provides background but **does not fall within the Oct. 4–10 Sunday reporting week**. Claim training specificity and institutional arrangements, **not measured combat effectiveness**.
 
