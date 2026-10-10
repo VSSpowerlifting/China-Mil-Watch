@@ -63,16 +63,22 @@ class PublicationParity(unittest.TestCase):
             ('the-pla-watch/archive.html', 'historical-enrichment.css'),
             ('the-pla-watch/terms.html', 'historical-enrichment.css'),
         )
-        for route, expected in cases:
-            self.put(self.baseline, route, self.source)
+        for index, (route, expected) in enumerate(cases):
+            # Each route is an independent publication comparison; otherwise
+            # a deliberately broken earlier case contaminates the next case.
+            baseline = self.root / ('baseline-%d' % index)
+            candidate = self.root / ('candidate-%d' % index)
+            baseline.mkdir()
+            candidate.mkdir()
+            self.put(baseline, route, self.source)
             for sheet in ('historical-enrichment.css', 'enrichment.css'):
                 with self.subTest(route=route, sheet=sheet):
                     linked = self.source.replace(
                         '</head>', '<link rel="stylesheet" href="../../'
                         + sheet + '"></head>'
                     )
-                    self.put(self.candidate, route, linked)
-                    result = compare_publication(self.candidate, self.baseline)
+                    self.put(candidate, route, linked)
+                    result = compare_publication(candidate, baseline)
                     self.assertEqual(not result['failures'], sheet == expected)
 
 
