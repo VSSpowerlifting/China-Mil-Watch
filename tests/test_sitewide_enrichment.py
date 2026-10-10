@@ -4,7 +4,7 @@ from html.parser import HTMLParser
 import tempfile
 import unittest
 
-from scripts.verify_enrichment_frontend import compare_publication, read_body, representative_routes
+from scripts.verify_enrichment_frontend import compare_publication, read_body, representative_routes,historical_routes
 
 
 class PublicationParity(unittest.TestCase):
@@ -55,17 +55,29 @@ class PublicationParity(unittest.TestCase):
         self.assertIn(['missing enrichment stylesheet'],changed)
 
     def test_historical_routes_require_their_bounded_stylesheet(self):
-        route='the-pla-watch/posts/fixture.html'
-        self.put(self.baseline,route,self.source)
-        for sheet,passes in [('historical-enrichment.css',True),('enrichment.css',False)]:
-            with self.subTest(sheet=sheet):
-                linked=self.source.replace('</head>','<link rel="stylesheet" href="../../'+sheet+'"></head>')
-                self.put(self.candidate,route,linked)
-                result=compare_publication(self.candidate,self.baseline)
-                self.assertEqual(not result['failures'],passes)
+        for route,required in [('the-pla-watch/posts/fixture.html','enrichment.css'),('the-pla-watch/index.html','historical-enrichment.css'),('the-pla-watch/archive.html','historical-enrichment.css'),('the-pla-watch/terms.html','historical-enrichment.css')]:
+            self.put(self.baseline,route,self.source)
+            for sheet in ('historical-enrichment.css','enrichment.css'):
+                with self.subTest(route=route,sheet=sheet):
+                    linked=self.source.replace('</head>','<link rel="stylesheet" href="../../'+sheet+'"></head>')
+                    self.put(self.candidate,route,linked)
+                    result=compare_publication(self.candidate,self.baseline)
+                    self.assertEqual(not result['failures'],sheet==required)
+            self.put(self.candidate,route,self.source.replace('</head>','<link rel="stylesheet" href="../../'+required+'"></head>'))
 
 
 class RepresentativeCoverage(unittest.TestCase):
+    def test_historical_replacement_discovers_every_post_once(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            routes=['the-pla-watch/posts/fixture-'+str(n)+'.html' for n in range(14)]
+            routes+=['the-pla-watch/'+name+'.html' for name in ('index','archive','terms')]
+            for route in routes:
+                path=root/route;path.parent.mkdir(parents=True,exist_ok=True);path.write_text('<h1>Fixture</h1>')
+            selected=historical_routes(root)
+            self.assertEqual(set(selected.values()),set(routes))
+            self.assertEqual(len(selected),17)
+            self.assertIn('historical-largest',selected)
     def test_discovers_real_briefs_historical_sources_and_largest_records(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)

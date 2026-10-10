@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="{{ root }}fonts.css">
 <link rel="stylesheet" href="{{ root }}styles.css">
 {% endblock %}
-{% if not timeline_surface | default(false) %}<link rel="stylesheet" href="{{ '../' if nested else '' }}enrichment.css">{% endif %}
+{% if not timeline_surface | default(false) %}<link rel="stylesheet" href="{{ root }}enrichment.css">{% endif %}
 {# Head scripts, declared per page rather than inherited by all of them. The
    week shards carry a contract that they ship no <script> at all, and the
    record pages carry no bytes for behaviour they do not have. #}

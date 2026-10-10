@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_terrain.html" import terrain %}
 {# Earlier Briefs: current site identity, unchanged historical evidence. #}
 {% block title %}{{ display_title }} — Indo-Pacific Record{% endblock %}
 {% block description %}{{ edition.dek }}{% endblock %}
@@ -35,6 +36,7 @@
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
 {% block hero %}
 <section class="band brief-hero{% if edition.pw_veil or (edition.cover_media_item and edition.cover_media_item.src) %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
+  {{ terrain('brief-edge') }}
   <div class="wrap brief-hero-inner">
     <div class="brief-heading">
       <p class="brief-eyebrow"><a href="{{ root }}analysis.html">{{ collection_name }}</a></p>

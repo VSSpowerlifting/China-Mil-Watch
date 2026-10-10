@@ -114,7 +114,8 @@ def compare_publication(candidate, baseline, require_enrichment=True):
             if current.script_count:
                 failures.append({'route': route, 'changed': ['script-free week']})
         if require_enrichment and not current.redirect:
-            sheet='historical-enrichment.css' if route.startswith('the-pla-watch/') else 'enrichment.css'
+            compatibility=route in ('the-pla-watch/index.html','the-pla-watch/archive.html','the-pla-watch/terms.html')
+            sheet='historical-enrichment.css' if compatibility else 'enrichment.css'
             if not any(Path(urlsplit(url).path).name == sheet
                        for url in current.stylesheets):
                 failures.append({'route': route, 'changed': ['missing enrichment stylesheet']})
@@ -181,6 +182,18 @@ def delivery_inventory(root):
     result = verify(root)
     assert not result['failures'], result['failures'][:10]
     return {key: value for key, value in result.items() if key != 'routes'}
+
+
+def historical_routes(root):
+    """Every actual current-shell post plus surviving compatibility hubs."""
+    root=Path(root)
+    posts=sorted((root/'the-pla-watch/posts').glob('*.html'))
+    largest=max(posts,key=lambda p:p.stat().st_size) if posts else None
+    routes={('historical-largest' if path==largest else 'historical-post-'+path.stem):path.relative_to(root).as_posix() for path in posts}
+    for name in ('index','archive','terms'):
+        route='the-pla-watch/'+name+'.html'
+        if (root/route).is_file():routes['historical-'+name]=route
+    return routes
 
 
 def full_capture(page, path):
@@ -261,11 +274,11 @@ def focus_contrast(page, target, ground):
     return values
 
 
-def browser_review(url, root, out, baseline_url=None, released_url=None, widths=WIDTHS, private_url=None):
+def browser_review(url, root, out, baseline_url=None, released_url=None, widths=WIDTHS, private_url=None, historical_only=False):
     from playwright.sync_api import sync_playwright
     root, out = Path(root), Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    routes = representative_routes(root)
+    routes = historical_routes(root) if historical_only else representative_routes(root)
     receipt = {'captures': 'Actual Chromium implementation images', 'routes': routes,
                'cases': [], 'flows': [], 'errors': [], 'delivery': []}
     def progress():
@@ -335,7 +348,7 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
                     if profile == 'default' and not label.startswith('redirect-'):
                         device = 'mobile' if width == 375 else 'tablet' if width == 768 else 'desktop'
                         page.screenshot(path=str(out / (label + '-' + device + '.png')))
-                        if width in (375, 1440) and label in ('home', 'archive', 'catalog', 'desks-map', 'historical-largest', 'brief-maritime-cooperation-2026'):
+                        if width in (375, 1440) and (label in ('home', 'archive', 'catalog', 'desks-map', 'historical-largest', 'brief-maritime-cooperation-2026') or historical_only and route.startswith('the-pla-watch/posts/')):
                             full_capture(page,out / (label + '-' + device + '-full.jpg'))
                     if profile != 'print' and not label.startswith('redirect-'):
                         menu = page.locator('.shell-menu>summary')
@@ -366,6 +379,8 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
             receipt['flows'].append({'skip_link': routes[label]})
         for width in widths:
             page.set_viewport_size({'width':width,'height':844 if width<600 else 1000})
+            if 'home' not in routes or 'archive' not in routes:
+                continue
             page.goto(urljoin(url.rstrip('/')+'/',routes['home']),wait_until='networkidle')
             menu=next(item for item in page.locator('.shell-menu>summary').all() if item.is_visible())
             for name,target,ground in [('menu',menu,'.pacific-opening'),
@@ -433,6 +448,21 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
             assert page.locator('h1').count()==1
             receipt['flows'].append({'keyboard_desk_map_destination':destination})
         context.close()
+        if historical_only and baseline_url:
+            context=browser.new_context()
+            page=context.new_page()
+            for width in widths:
+                page.set_viewport_size({'width':width,'height':844 if width<600 else 1000})
+                device='mobile' if width==375 else 'tablet' if width==768 else 'desktop'
+                for label,route in routes.items():
+                    if not route.startswith('the-pla-watch/posts/'):
+                        continue
+                    page.goto(urljoin(baseline_url.rstrip('/')+'/',route),wait_until='networkidle')
+                    page.evaluate('document.fonts.ready');settle_document_animations(page)
+                    page.screenshot(path=str(out/('current-main-'+label+'-'+device+'.png')))
+                    if width in (375,1440):
+                        full_capture(page,out/('current-main-'+label+'-'+device+'-full.jpg'))
+            context.close()
         if private_url:
             context=browser.new_context(viewport={'width':1440,'height':1000})
             page=context.new_page()
@@ -447,7 +477,7 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
             receipt['private_review']={'route':private_route,'desktop_date_tracks_open':True,'menu_escape_restores_focus':True,'published':False}
             page.screenshot(path=str(out/'private-timeline-desktop.png'))
             context.close()
-        for label in ('home', 'archive', 'catalog', 'record-largest', 'historical-largest'):
+        for label in ('home', 'archive', 'catalog', 'record-largest', 'historical-largest','historical-index'):
             if label not in routes:
                 continue
             for name, base in [('candidate',url), ('current-main',baseline_url), ('released',released_url)]:
@@ -473,8 +503,9 @@ def browser_review(url, root, out, baseline_url=None, released_url=None, widths=
                         device='mobile' if width==375 else 'tablet'
                         page.screenshot(path=str(out/(name+'-'+label+'-'+device+'.png')))
                 context.close()
-        if 'historical-largest' in routes:
-            receipt['external_font_delivery']=external_font_delivery(browser,url,routes['historical-largest'],out)
+        probe='historical-index' if 'historical-index' in routes else 'historical-largest'
+        if probe in routes:
+            receipt['external_font_delivery']=external_font_delivery(browser,url,routes[probe],out)
         browser.close()
     assert not receipt['errors'], receipt['errors'][:20]
     receipt['external_font_mode'] = 'Matrix blocks Google font endpoints; local font requests remain enabled. Separate network probe reports actual loaded faces and any remote delivery.'
@@ -487,6 +518,7 @@ def main():
     parser.add_argument('--root', required=True); parser.add_argument('--baseline', required=True)
     parser.add_argument('--url'); parser.add_argument('--baseline-url'); parser.add_argument('--released-url');parser.add_argument('--private-url')
     parser.add_argument('--out', required=True); parser.add_argument('--static-only', action='store_true')
+    parser.add_argument('--historical-only',action='store_true',help='Review every actual historical post and compatibility hub')
     args = parser.parse_args()
     out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
     parity = compare_publication(args.root, args.baseline)
@@ -498,7 +530,7 @@ def main():
     if not args.static_only:
         if not args.url:
             parser.error('--url is required unless --static-only')
-        browser = browser_review(args.url,args.root,out,args.baseline_url,args.released_url,private_url=args.private_url)
+        browser = browser_review(args.url,args.root,out,args.baseline_url,args.released_url,private_url=args.private_url,historical_only=args.historical_only)
         (out / 'BROWSER_QA.json').write_text(json.dumps(browser,indent=2)+'\n')
         print('Verified %s browser cases across %s representatives' % (len(browser['cases']),len(browser['routes'])))
     print('Compared %s public routes, %s links and %s anchors; complete delivery gate passes' % (parity['routes_checked'],parity['links_checked'],parity['anchors_checked']))
