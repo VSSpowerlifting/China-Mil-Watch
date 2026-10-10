@@ -1,6 +1,8 @@
 # IPR Briefs — October 11 private multi-desk editorial handoff
 
 **Reporting window:** Sunday, October 4–Saturday, October 10, 2026. **Prepared:** October 10.  
+**October 10 owner decision on editor workload:** This detailed source ledger and the private article sketch are **BEN-ONLY INTERNAL RESEARCH AND QA**, not default email attachments, recurring weekly products or assigned homework for Dylan. Dylan's routine role is **language, argument clarity, rhythm and structure** on **ONE reviewed Sunday automated manuscript**. Source-rights, claim-level checks, technical citations, version hashes and publication approval stay with Ben/automated internal checks. Any Dylan source question below is OPTIONAL and must be separately requested, not automatically sent. The October 10 short idea email is the only additional message already delivered. If the scheduled Sunday manuscript cannot pass the owner/source gates, **do not substitute this research sketch or send multiple drafts to Dylan**.
+
 **Status:** **Research and editorial guidance only** — not a source-use approval, complete corpus assessment, generated model draft, reviewed manuscript, Dylan email, release authorization or production desk promotion. Earlier Oct 10 naval-port-call and Singapore–Brunei-only slates are subordinate alternatives. Owner direction favors substantive Vietnam work and multiple country desks.
 
 ## Decision in one paragraph
