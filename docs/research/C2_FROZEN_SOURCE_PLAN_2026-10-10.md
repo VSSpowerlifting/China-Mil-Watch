@@ -16,6 +16,14 @@ The new `storage/evidence_source_plan.py` establishes the *pre-collection* inten
 
 No real desk adapters are invoked, no sources are fetched, no APIs or models are called, no production DB or output is used, and no Daily, publishing, deployment or provider configuration is modified. Direct C2-A APIs remain fictional and are not security tokens. The future C2 runtime must make this frozen-plan facade the only eligible entrypoint, with independent identity/worker validation.
 
+## CI execution note
+
+The source-plan branch carries C2-A and C2-B as parents. For combined
+A+B+C exact-head offline coverage, this PR is briefly targeted at `main`
+while the full repository checks are queued; its review base is restored to
+C2-B immediately afterward so the incremental diff remains exactly three
+new files. A queued or running check is **not** acceptance.
+
 ## Test contracts
 
 - Missing or changed pre-collection selection is refused.
