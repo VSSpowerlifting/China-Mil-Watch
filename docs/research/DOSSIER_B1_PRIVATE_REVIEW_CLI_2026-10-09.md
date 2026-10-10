@@ -29,7 +29,7 @@ A private review file must be **new, absolute, JSON-suffixed, outside the reposi
   "dossier_count": 1,
   "mechanically_valid_count": 1,
   "error_count": 0,
-  "hold_count": 7,
+  "hold_count": 8,
   "errors": [],
   "dossiers": [
     {
