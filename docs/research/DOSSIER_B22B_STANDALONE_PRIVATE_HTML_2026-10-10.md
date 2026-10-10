@@ -5,7 +5,7 @@
 ## Implementation
 
 - `core/dossier_private_html.py` renders an **HTML string only**, from the actual B2.2a `build_private_dossier_view()` call. It never accepts a caller-supplied view blob in lieu of the gated source, and never writes to disk, registers a route, accesses a source DB, reads files or renders any site template.
-- `tests/test_dossier_private_html.py` contains 21 synthetic tests, including actual B1.2 fictional SQLite → B2.1 gate → B2.2a projection → B2.2b HTML string with unchanged DB bytes.
+- `tests/test_dossier_private_html.py` contains 26 synthetic/browser tests, including actual B1.2 fictional SQLite → B2.1 gate → B2.2a projection → B2.2b HTML string with unchanged DB bytes.
 - This scope document.
 
 The prototype presents a clearly watermarked invented title/dek, bounded research question, scope and explicitly disclosed collection limitations, editorial claim/issuer distinctions, source-level supporting and counterevidence links, unresolved disagreements, dated revisions and language-aware source ledger. It includes a responsive two-column/one-column layout, keyboard-visible focus, a skip link, no JavaScript and a print stylesheet.
@@ -43,3 +43,11 @@ Acceptance: the full synthetic stack passes on real repository modules, stable H
 [GitHub Actions run #38065127259](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38065127259) completed with **207/207 synthetic tests passing** on Python 3.9: 67 B1.1, 23 B1.2, 21 B1.3, 33 B2.1, 42 B2.2a, and 21 B2.2b tests. It compiled the actual six-slice stack and confirmed tracked SQLite/output/Briefs/Timelines were unchanged. The one-time workflow was deleted in commit `6a1fc177740a5e07395e20bc32dddd4491cac51a` after success, leaving only the three source/test/documentation files in the PR. This receipt applies to the **temporary testing commit** and is not exact-final-head full repository CI after the upstream stack is integrated.
 
 Separately, the parent reader's [canonical full offline Actions #38063789367](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38063789367) succeeded with **5,462 discovered tests, nine skips**, actual Chromium launch, rendered-output validation (ten nonfatal warnings), and unchanged tracked SQLite and output. It covered the **earlier** parent revision, before its two claim-relocation regressions. The completed 207-test six-slice focused run includes those regressions but is not a full-suite substitute.
+
+## Chromium acceptance receipt — October 10, 2026
+
+Five additional **actual Chromium** regressions now exercise the in-memory page without a web server: 375 px mobile and 1280 px desktop horizontal overflow, visible keyboard focus on the skip link, citation-to-source fragment navigation, absence of external network requests, and print-media layout. The test suite deliberately checks there were **no skipped tests**, so a missing browser cannot silently produce a green result. No screenshot or HTML file is uploaded to a publicly accessible artifact store.
+
+[GitHub Actions #38065392650](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38065392650) **passed all 212 tests with zero skips** on Python 3.9, running the real inherited B1.1–B2.2a stack and 26 B2.2b cases; Chromium launched successfully, Python compilation passed, and tracked `pla_watch.db`, `output/`, Briefs and Timelines remained unchanged. The one-time browser workflow was deleted after success in commit `2c9b4cf73be9b897b67fbc9a5468dbe1c5f2807b`, restoring the intended three-file PR diff.
+
+**Test limitation:** This is a focused six-slice/browser run on a temporary testing commit, not final exact-head full repository CI. It does not review the future production design system, authenticate permissions, establish editor approval, or implement private browser access control. The parent B2.2a full offline CI [#38063789367](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38063789367) independently passed 5,462 tests with 9 skips, output validation, and DB preservation on its earlier pinned head.
