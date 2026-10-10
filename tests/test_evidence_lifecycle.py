@@ -204,7 +204,24 @@ class CollectionBarrierContracts(unittest.TestCase):
             FictionalCollectionBarrier(
                 self.session, ["fictional_custody", "fictional_custody"]))
         self.assert_code("c2_expected_sources_invalid", lambda:
-            FictionalCollectionBarrier(self.session, []))
+            FictionalCollectionBarrier(self.session, None))
+
+    def test_backlog_only_run_can_seal_explicitly_empty_collection(self):
+        first = self.barrier.seal_collection()
+        scratch = tempfile.TemporaryDirectory(prefix="ipr-custody-c2-backlog-")
+        self.addCleanup(scratch.cleanup)
+        next_run = RehearsalCustodySession(
+            self.coordinator, scratch.name, run_id="fictional-backlog",
+            logical_date="2026-10-11", enabled=True)
+        self.assertEqual(next_run.bootstrap()["generation"], first["generation"])
+        with next_run.application():
+            db.start_scrape_run()
+        backlog_gate = FictionalCollectionBarrier(next_run, [])
+        receipt = backlog_gate.seal_collection()
+        self.assertEqual(receipt["source_count"], 0)
+        self.assertEqual(receipt["new_article_count"], 0)
+        self.assertTrue(backlog_gate.verify_before_analysis()[
+            "analysis_dispatch_eligible_fictional_only"])
 
     def test_actual_private_pipeline_still_refuses_execution(self):
         import pipeline
