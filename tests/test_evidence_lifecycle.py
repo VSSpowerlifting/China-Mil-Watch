@@ -129,6 +129,22 @@ class CollectionBarrierContracts(unittest.TestCase):
         self.assert_code("c2_collection_attribution_invalid",
                          self.barrier.seal_collection)
 
+    def test_sealing_detects_a_writer_racing_after_initial_ledger_read(self):
+        original_checkpoint = self.session.checkpoint
+
+        def race(stage):
+            receipt = original_checkpoint(stage)
+            self.update("UPDATE source_run_results SET status='ok_all_duplicates'")
+            return receipt
+
+        from unittest.mock import patch
+        with patch.object(self.session, "checkpoint", side_effect=race):
+            self.assert_code("c2_working_copy_diverged",
+                             self.barrier.seal_collection)
+        self.assertIsNotNone(self.coordinator.current()[0])
+        self.assert_code("c2_working_copy_diverged",
+                         self.barrier.verify_before_analysis)
+
     def test_mutated_source_receipt_after_seal_blocks_paid_gate(self):
         self.barrier.seal_collection()
         self.update(
