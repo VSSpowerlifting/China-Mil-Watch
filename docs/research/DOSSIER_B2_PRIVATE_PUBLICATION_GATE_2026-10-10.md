@@ -25,13 +25,15 @@ Synthetic preview is intentionally limited to fictional-* slugs whose source URL
 
 ## Tests
 
-28 focused synthetic tests in tests/test_dossier_publication.py cover valid fake preview, production fail-closed behavior, forged or missing authority, body-use and link disaggregation, author/claim screening, stale digest, report mismatch, input IDs, amendment history, malformed action policies, and body/link nonleakage.
+33 synthetic-only tests in tests/test_dossier_publication.py, including five real B1.2-to-B2.1 handoff tests cover valid fake preview, production fail-closed behavior, forged or missing authority, body-use and link disaggregation, author/claim screening, stale digest, report mismatch, input IDs, amendment history, malformed action policies, and body/link nonleakage.
 
 Run with the full dependency stack in a checkout:
 
     python -m unittest tests.test_dossier_contract tests.test_dossier_sources tests.test_validate_dossiers tests.test_dossier_publication -v
 
-**Verified with real repository B1 sources:** [focused GitHub Actions run #38055640626](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38055640626) completed successfully on Python 3.9: **139/139 tests** (67 B1.1, 23 B1.2, 21 B1.3, 28 B2.1), plus Python compilation and unchanged tracked SQLite, Briefs, Timelines and output. The temporary one-time workflow was removed after the passing run and is not in the lasting PR diff. The resulting no-workflow PR commit needs an independent exact-head full repository CI run after its upstream dependencies are integrated. The earlier local B1 stub run remains preliminary evidence only, superseded by this real-code focused verification.
+**Verified with real repository B1 sources:** [focused GitHub Actions run #38056142639](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38056142639) completed on Python 3.9 with **144/144 passing tests** (67 B1.1, 23 B1.2, 21 B1.3, 33 B2.1). Five B2.1 cases now call the real B1.2 `reconcile_dossier_sources` against an entirely fictional scratch SQLite database before handing its report to the B2 publication gate. They verify clean private-synthetic preview, changed archived source body, disabled collecting source, negatively screened record requiring separate synthetic review, and no source text or original database/sidecar mutation. Python compilation and tracked DB/output/Briefs/Timelines preservation also passed in the workflow.
+
+**Verification boundary:** The one-time CI workflow was removed from the branch after its successful receipt; there are no lasting workflow edits in the PR. That focused success is not full exact-head repository CI and does not establish rights, actual source eligibility, human approval or release. Final full CI is required after the B1 stack merges and B2.1 is rebased. The earlier 139-test run is superseded by this 144-test integration result.
 
 ## Hard stop and future phases
 
