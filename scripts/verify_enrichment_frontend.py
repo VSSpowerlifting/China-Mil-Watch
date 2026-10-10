@@ -114,7 +114,11 @@ def compare_publication(candidate, baseline, require_enrichment=True):
             if current.script_count:
                 failures.append({'route': route, 'changed': ['script-free week']})
         if require_enrichment and not current.redirect:
-            sheet='historical-enrichment.css' if route.startswith('the-pla-watch/') else 'enrichment.css'
+            # #287 moved published posts into the unified IPR Briefs shell.
+            # Historical index, archive, and terms still use the predecessor skin.
+            predecessor_surface = (route.startswith('the-pla-watch/')
+                                   and not route.startswith('the-pla-watch/posts/'))
+            sheet = 'historical-enrichment.css' if predecessor_surface else 'enrichment.css'
             if not any(Path(urlsplit(url).path).name == sheet
                        for url in current.stylesheets):
                 failures.append({'route': route, 'changed': ['missing enrichment stylesheet']})
