@@ -14,6 +14,7 @@ test_missing_routes_redirect_changes_and_exposed_timeline_fail (tests.test_sitew
 test_script_free_weeks_and_shared_delivery_are_checked (tests.test_sitewide_enrichment.PublicationParity) ... ok
 test_text_links_and_anchor_tampering_are_reported_independently (tests.test_sitewide_enrichment.PublicationParity) ... ok
 test_discovers_real_briefs_historical_sources_and_largest_records (tests.test_sitewide_enrichment.RepresentativeCoverage) ... ok
+test_historical_replacement_discovers_every_post_once (tests.test_sitewide_enrichment.RepresentativeCoverage) ... ok
 test_actual_base_preserves_private_timeline_shell_and_script_free_weeks (tests.test_sitewide_enrichment.SharedShellRendering) ... ok
 test_linked_css_is_compact_local_and_uses_the_same_axes (tests.test_historical_font_delivery.HistoricalFontIntegrity) ... ok
 test_original_faces_and_licenses_match_the_provenance_receipt (tests.test_historical_font_delivery.HistoricalFontIntegrity) ... ok
@@ -26,6 +27,6 @@ test_machine_unscreened_state_does_not_deny_human_brief_judgment (tests.test_fro
 test_delivered_variant_digest_and_source_are_bound_to_approved_photo (tests.test_frontend_production.PhotoDelivery) ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 22.971s
+Ran 27 tests in 21.747s
 
 OK

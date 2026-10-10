@@ -1,10 +1,12 @@
 # Actual production browser review
 
-These are Chromium 147.0.7727.15 captures of the implemented production renderer output, not generated concepts. Desktop is 1440px, tablet 768px and mobile 375px. Source/output head: `6a18744e0289792f174eb1cfc20730d53e396fc4`. Screens remain identical after the parallel test-only #316 fixes.
+Actual Chromium implementation captures, not generated concepts. Desktop 1440px, tablet 768px, mobile 375px. Final source/output head `de6cecef4e3af3bf410e2b99a9b8038c94ca7ad9`; reconciled main `0487bfc04`. Unchanged non-historical captures retain their earlier provenance.
 
-693 cases pass: 33 representatives × three widths × seven profiles. See [BROWSER_QA.json](BROWSER_QA.json) for cases, 40 flow entries, resource requests, private timeline review and exact rerun/retention methodology. The separate [READER_QA.json](READER_QA.json) holds 75 additional cases and 13 interaction journeys.
+[BROWSER_QA.json](BROWSER_QA.json) records 924 cases: 44 representatives × three widths × seven profiles, zero errors. It explicitly retains 567 unchanged non-historical cases and reruns 357 historical cases (all 14 articles + three compatibility hubs). [READER_QA.json](READER_QA.json) adds 75 cases / 13 journeys. Fresh all 7,462-route parity/delivery receipts accompany the matrix.
 
-Full captures naturally scroll to trigger real reveals and lazy images. Baseline captures compare current main `61eee2786` and released `4dbf42c5`. Matrix requests block Google fonts; the separate candidate font probe permits network requests and confirms actual local faces with no Google requests. Historical baseline transfer totals therefore omit blocked remote fonts and cannot establish a complete baseline delivery saving. Cold/repeat loopback requests returned the same bytes; this server did not demonstrate CDN caching.
+Newer main consolidated historical articles into the current IPR shell. Those final captures replace earlier historical chrome; [prior-historical-chrome](prior-historical-chrome/) and [PRE_CONSOLIDATION_BROWSER_QA.json](PRE_CONSOLIDATION_BROWSER_QA.json) are historical checkpoints, not final article captures. Released baseline remains 4dbf42c5; fresh historical main comparisons use 0487bfc04.
+
+Full screenshots naturally scroll to trigger actual reveals and lazy images. Matrix blocks Google font requests; a separate network-enabled compatibility probe proves local historical faces and zero Google requests. Cold/repeat loopback totals do not establish production CDN caching.
 
 | Route | Desktop | Mobile | Tablet |
 |---|---|---|---|
@@ -33,53 +35,75 @@ Full captures naturally scroll to trigger real reveals and lazy images. Baseline
 | `source/jp_mod_news_ja.html` | [desktop](source-shadow-desktop.png) | [mobile](source-shadow-mobile.png) | [tablet](source-shadow-tablet.png) |
 | `week-2026-07-27.html` | [desktop](week-desktop.png) | [mobile](week-mobile.png) | [tablet](week-tablet.png) |
 | `week-2026-05-04-2.html` | [desktop](week-pagination-desktop.png) | [mobile](week-pagination-mobile.png) | [tablet](week-pagination-tablet.png) |
-| `the-pla-watch/posts/2026-05-09.html` | [desktop](historical-oldest-desktop.png) | [mobile](historical-oldest-mobile.png) | [tablet](historical-oldest-tablet.png) |
+| `the-pla-watch/posts/2026-05-09.html` | [desktop](historical-post-2026-05-09-desktop.png) | [mobile](historical-post-2026-05-09-mobile.png) | [tablet](historical-post-2026-05-09-tablet.png) |
+| `the-pla-watch/posts/2026-05-16.html` | [desktop](historical-post-2026-05-16-desktop.png) | [mobile](historical-post-2026-05-16-mobile.png) | [tablet](historical-post-2026-05-16-tablet.png) |
+| `the-pla-watch/posts/2026-05-23.html` | [desktop](historical-post-2026-05-23-desktop.png) | [mobile](historical-post-2026-05-23-mobile.png) | [tablet](historical-post-2026-05-23-tablet.png) |
+| `the-pla-watch/posts/2026-05-30.html` | [desktop](historical-post-2026-05-30-desktop.png) | [mobile](historical-post-2026-05-30-mobile.png) | [tablet](historical-post-2026-05-30-tablet.png) |
+| `the-pla-watch/posts/2026-06-06.html` | [desktop](historical-post-2026-06-06-desktop.png) | [mobile](historical-post-2026-06-06-mobile.png) | [tablet](historical-post-2026-06-06-tablet.png) |
+| `the-pla-watch/posts/2026-06-13.html` | [desktop](historical-post-2026-06-13-desktop.png) | [mobile](historical-post-2026-06-13-mobile.png) | [tablet](historical-post-2026-06-13-tablet.png) |
+| `the-pla-watch/posts/2026-06-20.html` | [desktop](historical-post-2026-06-20-desktop.png) | [mobile](historical-post-2026-06-20-mobile.png) | [tablet](historical-post-2026-06-20-tablet.png) |
+| `the-pla-watch/posts/2026-06-27.html` | [desktop](historical-post-2026-06-27-desktop.png) | [mobile](historical-post-2026-06-27-mobile.png) | [tablet](historical-post-2026-06-27-tablet.png) |
+| `the-pla-watch/posts/2026-07-04.html` | [desktop](historical-post-2026-07-04-desktop.png) | [mobile](historical-post-2026-07-04-mobile.png) | [tablet](historical-post-2026-07-04-tablet.png) |
+| `the-pla-watch/posts/2026-07-11.html` | [desktop](historical-post-2026-07-11-desktop.png) | [mobile](historical-post-2026-07-11-mobile.png) | [tablet](historical-post-2026-07-11-tablet.png) |
+| `the-pla-watch/posts/2026-07-18.html` | [desktop](historical-post-2026-07-18-desktop.png) | [mobile](historical-post-2026-07-18-mobile.png) | [tablet](historical-post-2026-07-18-tablet.png) |
 | `the-pla-watch/posts/2026-08-01.html` | [desktop](historical-largest-desktop.png) | [mobile](historical-largest-mobile.png) | [tablet](historical-largest-tablet.png) |
-| `the-pla-watch/posts/2026-08-15.html` | [desktop](historical-latest-desktop.png) | [mobile](historical-latest-mobile.png) | [tablet](historical-latest-tablet.png) |
+| `the-pla-watch/posts/2026-08-08.html` | [desktop](historical-post-2026-08-08-desktop.png) | [mobile](historical-post-2026-08-08-mobile.png) | [tablet](historical-post-2026-08-08-tablet.png) |
+| `the-pla-watch/posts/2026-08-15.html` | [desktop](historical-post-2026-08-15-desktop.png) | [mobile](historical-post-2026-08-15-mobile.png) | [tablet](historical-post-2026-08-15-tablet.png) |
 | `the-pla-watch/index.html` | [desktop](historical-index-desktop.png) | [mobile](historical-index-mobile.png) | [tablet](historical-index-tablet.png) |
 | `the-pla-watch/archive.html` | [desktop](historical-archive-desktop.png) | [mobile](historical-archive-mobile.png) | [tablet](historical-archive-tablet.png) |
 | `the-pla-watch/terms.html` | [desktop](historical-terms-desktop.png) | [mobile](historical-terms-mobile.png) | [tablet](historical-terms-tablet.png) |
 
-## Full documents
+## Full documents and comparison states
 
-- home: [desktop](home-desktop-full.jpg), [mobile](home-mobile-full.jpg)
-- archive: [desktop](archive-desktop-full.jpg), [mobile](archive-mobile-full.jpg)
-- catalog: [desktop](catalog-desktop-full.jpg), [mobile](catalog-mobile-full.jpg)
-- desks-map: [desktop](desks-map-desktop-full.jpg), [mobile](desks-map-mobile-full.jpg)
-- brief-maritime-cooperation-2026: [desktop](brief-maritime-cooperation-2026-desktop-full.jpg), [mobile](brief-maritime-cooperation-2026-mobile-full.jpg)
-- historical-largest: [desktop](historical-largest-desktop-full.jpg), [mobile](historical-largest-mobile-full.jpg)
-
-## Interaction and baseline captures
-
+- [archive-desktop-full](archive-desktop-full.jpg)
 - [archive-expanded-filters-1440](archive-expanded-filters-1440.png)
 - [archive-expanded-filters-375](archive-expanded-filters-375.png)
 - [archive-expanded-filters-768](archive-expanded-filters-768.png)
+- [archive-mobile-full](archive-mobile-full.jpg)
+- [brief-maritime-cooperation-2026-desktop-full](brief-maritime-cooperation-2026-desktop-full.jpg)
+- [brief-maritime-cooperation-2026-mobile-full](brief-maritime-cooperation-2026-mobile-full.jpg)
+- [catalog-desktop-full](catalog-desktop-full.jpg)
+- [catalog-mobile-full](catalog-mobile-full.jpg)
 - [current-main-archive-desktop](current-main-archive-desktop.png)
 - [current-main-archive-mobile](current-main-archive-mobile.png)
 - [current-main-archive-tablet](current-main-archive-tablet.png)
 - [current-main-catalog-desktop](current-main-catalog-desktop.png)
 - [current-main-catalog-mobile](current-main-catalog-mobile.png)
 - [current-main-catalog-tablet](current-main-catalog-tablet.png)
+- [current-main-historical-largest-desktop-full](current-main-historical-largest-desktop-full.jpg)
 - [current-main-historical-largest-desktop](current-main-historical-largest-desktop.png)
+- [current-main-historical-largest-mobile-full](current-main-historical-largest-mobile-full.jpg)
 - [current-main-historical-largest-mobile](current-main-historical-largest-mobile.png)
 - [current-main-historical-largest-tablet](current-main-historical-largest-tablet.png)
+- [current-main-historical-post-2026-05-09-desktop-full](current-main-historical-post-2026-05-09-desktop-full.jpg)
+- [current-main-historical-post-2026-05-09-desktop](current-main-historical-post-2026-05-09-desktop.png)
+- [current-main-historical-post-2026-05-09-mobile-full](current-main-historical-post-2026-05-09-mobile-full.jpg)
+- [current-main-historical-post-2026-05-09-mobile](current-main-historical-post-2026-05-09-mobile.png)
+- [current-main-historical-post-2026-05-09-tablet](current-main-historical-post-2026-05-09-tablet.png)
 - [current-main-home-desktop](current-main-home-desktop.png)
 - [current-main-home-mobile](current-main-home-mobile.png)
 - [current-main-home-tablet](current-main-home-tablet.png)
 - [current-main-record-largest-desktop](current-main-record-largest-desktop.png)
 - [current-main-record-largest-mobile](current-main-record-largest-mobile.png)
 - [current-main-record-largest-tablet](current-main-record-largest-tablet.png)
+- [desks-map-desktop-full](desks-map-desktop-full.jpg)
 - [desks-map-focus-mobile](desks-map-focus-mobile.png)
-- [historical-citation-mobile](historical-citation-mobile.png)
+- [desks-map-mobile-full](desks-map-mobile-full.jpg)
+- [historical-largest-desktop-full](historical-largest-desktop-full.jpg)
+- [historical-largest-mobile-full](historical-largest-mobile-full.jpg)
+- [historical-post-2026-05-09-desktop-full](historical-post-2026-05-09-desktop-full.jpg)
+- [historical-post-2026-05-09-mobile-full](historical-post-2026-05-09-mobile-full.jpg)
 - [home-coast-focus-1440](home-coast-focus-1440.png)
 - [home-coast-focus-375](home-coast-focus-375.png)
 - [home-coast-focus-768](home-coast-focus-768.png)
+- [home-desktop-full](home-desktop-full.jpg)
 - [home-hero-focus-1440](home-hero-focus-1440.png)
 - [home-hero-focus-375](home-hero-focus-375.png)
 - [home-hero-focus-768](home-hero-focus-768.png)
 - [home-menu-focus-1440](home-menu-focus-1440.png)
 - [home-menu-focus-375](home-menu-focus-375.png)
 - [home-menu-focus-768](home-menu-focus-768.png)
+- [home-mobile-full](home-mobile-full.jpg)
 - [private-timeline-desktop](private-timeline-desktop.png)
 - [record-citation-mobile](record-citation-mobile.png)
 - [record-history-mobile](record-history-mobile.png)
@@ -99,10 +123,8 @@ Full captures naturally scroll to trigger real reveals and lazy images. Baseline
 - [released-record-largest-mobile](released-record-largest-mobile.png)
 - [released-record-largest-tablet](released-record-largest-tablet.png)
 
-## Review verdict
+## Visual verdict
 
-The homepage gains depth from the unchanged credited fleet image meeting the tactile finder; the catalog and native Briefs carry the strongest flowing compositions. Desktop margin contours remain quiet beside evidence. Mobile controls have visible focus, readable expanded filters and citation/custody layouts. Tables and prose stay on clean grounds. The material seams are unobtrusive in reviewed captures. Long no-photo Brief decks and the largest record heading remain tall; supporting pages are deliberately subtler. Historical low-resolution photographs and inherited citation styling remain unchanged.
+The strongest gains are the photograph-led home meeting its tactile finder, asymmetrical catalog and native/current-shell historical Brief openings. Mobile filters, record custody/citation and focus remain readable. Evidence rails, maps and longform stay clean; contours occupy bounded margins. Historical photo-credit text/links were visibly weak on navy and were corrected and measured at ≥4.5:1. Long unchanged decks remain tall and inherited low-resolution archival photos remain a limitation.
 
-Print overflow in native Brief coverage and the corpus-guide dictionary was found and corrected; all final print cases pass. No new sustained animation was introduced. Reduced motion/no-JS/CSP/forced-colors profiles retain finished usable content. Private timeline checks do not publish it.
-
-Cross-browser Safari/Firefox, physical touch devices and production CDN caching were not measured. Receipts and complete conservative all-route budgets are supplied separately.
+All final print cases pass after correcting coverage/dictionary overflow. No sustained decorative animation was added. Reduced-motion/no-JS/CSP/forced-color states retain usable content. The timeline is reviewed privately and remains unpublished. Safari/Firefox, physical touch devices and production CDN caching were not measured.

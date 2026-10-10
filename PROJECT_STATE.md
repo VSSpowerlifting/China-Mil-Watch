@@ -51,7 +51,7 @@ reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 `4dbf42c5ca778eb5c55a9134fc51cac4fdc16a4f`. The owner expanded the subsequent
 Briefs pilot to all public page families. Pilot PR #296 was merged externally;
 site-wide PR #314 is on `codex/ipr-sitewide-enrichment-20261009`, based on
-current main `61eee2786`. It preserves the daily update’s 5,020 records and
+initial main `61eee2786`, reconciled through `0487bfc04` including the owner-directed historical IPR shell. It preserves the daily update’s 5,020 records and
 all 7,462 routes, adding route-specific contours, localized paper/navy materials,
 restrained interactions and exact local historical font delivery through source
 renderers. Publication copy/evidence, selected ipr identity and canonical sidecars
