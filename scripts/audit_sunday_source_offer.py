@@ -66,6 +66,19 @@ def explain_offer(*, rows, sidecar, chosen, watched_ids):
     trail = {r["record_id"]: r for r in sidecar["source_trail"]}
     if len(trail) != len(sidecar["source_trail"]):
         raise ValueError("duplicate source trail ID")
+    # Reveal desk-level selection pressure without exposing excluded publisher
+    # text, URLs or full record metadata.
+    eligible_counts = Counter()
+    excluded_by_cap = Counter()
+    for row in rows:
+        ident = row["id"]
+        if (screening_state(row) != SCREENING_NOT_SELECTED
+                and trail.get(ident) == trail_entry(row)
+                and len((row["text_english"] or row["text_original"] or "").strip())
+                >= MIN_BODY_CHARS):
+            eligible_counts[row["desk_id"]] += 1
+            if ident not in selected_set:
+                excluded_by_cap[row["desk_id"]] += 1
     results = []
     for ident in watched_ids:
         row = by_id.get(ident)
@@ -93,6 +106,8 @@ def explain_offer(*, rows, sidecar, chosen, watched_ids):
         "selected_numeric_record_ids": selected,
         "selected_desk_counts": dict(sorted(Counter(
             row["desk_id"] for row, _body in chosen).items())),
+        "eligible_full_text_by_desk": dict(sorted(eligible_counts.items())),
+        "eligible_but_ranked_out_by_desk": dict(sorted(excluded_by_cap.items())),
         "watched_records": results,
     }
 
@@ -158,20 +173,35 @@ def main(argv=None):
     parser.add_argument("--review-local-day", required=True)
     parser.add_argument("--watch-ids", required=True,
                         help="1–25 numeric IDs, comma-separated; never URLs")
+    parser.add_argument("--require-in-offer",
+                        help="Optional watched ID subset; exit 2 if any are ranked "
+                             "out or ineligible (audit only, never approval)")
     parser.add_argument("--db", type=Path, default=DB_PATH)
     parser.add_argument("--marker", type=Path,
                         default=Path(".github/state/last_daily_run_date.txt"))
     args = parser.parse_args(argv)
     try:
         watched = parse_watch_ids(args.watch_ids)
+        required = (parse_watch_ids(args.require_in_offer)
+                    if args.require_in_offer else [])
+        if not set(required).issubset(watched):
+            raise ValueError("--require-in-offer must be a subset of --watch-ids")
         report = inspect_offer(
             week_ending=args.week_ending, as_of=args.as_of,
             review_local_day=args.review_local_day, watched_ids=watched,
             database=args.db, marker_path=args.marker)
     except (ValueError, ReadinessError, OSError, KeyError) as exc:
         parser.error("read-only audit refused: " + str(exc))
+    if required:
+        by_id = {row["record_id"]: row["outcome"]
+                 for row in report["watched_records"]}
+        missing = [ident for ident in required if
+                   by_id.get(ident) != "selected_for_default_model_offer"]
+        report["required_ids_met"] = not missing
+        report["required_ids_not_offered"] = missing
     print(json.dumps(report, sort_keys=True, indent=2))
-    return 0
+    # A source-offer assertion is *not* an editorial or release approval.
+    return 2 if required and missing else 0
 
 
 if __name__ == "__main__":
