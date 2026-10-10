@@ -1,5 +1,7 @@
 # Briefs visual-enrichment pilot — 9 October 2026
 
+Historical checkpoint: the owner subsequently expanded the task to the entire public frontend. Pilot PR #296 was merged externally; the current work, reconciled corpus, final verification and PR #314 are documented in [the site-wide handoff](FRONTEND_ENRICHMENT_2026-10-09.md). The scope, pending checks and measurements below describe the earlier pilot, not the final site-wide candidate.
+
 Scope: the Briefs catalog at `analysis.html`, plus opt-in decorative primitives,
 asset preparation and complete delivery verification. This is a reviewed PR
 candidate. It authorizes no merge, deployment, wider route treatment or timeline

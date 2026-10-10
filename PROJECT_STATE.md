@@ -47,19 +47,19 @@ This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
-**Frontend (9 October 2026):** the reviewed frontend was merged and released
-at `4dbf42c5ca778eb5c55a9134fc51cac4fdc16a4f` (owner checkpoint). The
-Briefs visual-enrichment pilot starts from current main `fe5e25064` in the
-isolated `codex/ipr-briefs-enrichment-20261009` worktree, with current main
-`38e1b3162` reconciled. It adds opt-in original
-contours, optimized paper material and finite decorative motion to the catalog
-through production source templates. Publication copy, all 60 catalog links,
-4,980 preserved records, selected ipr identity and historical issues are unchanged.
-Desktop/tablet/mobile visual review and 42 browser fallback/interaction cases
-pass; all 7,395 routes satisfy complete HTML/CSS/JS delivery budgets. Validator
-retains its 10 governed warnings. Full-suite result and final commits are in
-`docs/BRIEFS_VISUAL_ENRICHMENT_2026-10-09.md`. The pilot is a PR candidate,
-not merged or deployed. Wider route treatments are subsequent work.
+**Frontend (9 October 2026):** the reviewed frontend was released at
+`4dbf42c5ca778eb5c55a9134fc51cac4fdc16a4f`. The owner expanded the subsequent
+Briefs pilot to all public page families. Pilot PR #296 was merged externally;
+site-wide PR #314 is on `codex/ipr-sitewide-enrichment-20261009`, based on
+current main `61eee2786`. It preserves the daily update’s 5,020 records and
+all 7,462 routes, adding route-specific contours, localized paper/navy materials,
+restrained interactions and exact local historical font delivery through source
+renderers. Publication copy/evidence, selected ipr identity and canonical sidecars
+are unchanged. Complete parity and delivery gates pass; validator retains its
+10 governed warnings. Browser captures, coverage, resource provenance and final
+verification are in `docs/FRONTEND_ENRICHMENT_2026-10-09.md` and its review directory.
+Exact-head offline CI and PR review remain the merge gate. This task has not
+merged or deployed the site-wide candidate. Timeline remains unpublished.
 
 **Evidence Timelines (#181):** the inspected prerequisite at head
 `657e9f264` is integrated into this candidate in separate commit `b80b3e4`,

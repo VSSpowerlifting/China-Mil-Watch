@@ -39,11 +39,14 @@ re-render. Sidecar JSON under `output/.../posts/*.json` is generated at
 publish but is the *canonical record* — edit only via deliberate,
 validated migration scripts, never casually.
 
-The shared decorative background source is `site/preview/topography.css`;
-the record renderer copies it to the site root. Both the record base and
-historical Night Desk base link that stylesheet. `core/topography.py` supplies
-deterministic address-specific profiles to both Jinja environments. Historical
-HTML still requires its normal sidecar re-render to pick up base-template edits.
+Modern decorative primitives are source-owned in `site/preview/templates/_terrain.html`
+and `site/preview/enrichment.css`, with prepared materials under `site/assets/material/`.
+The record renderer copies those sources and exact local font kits into production.
+Historical pages preserve `topography.css` and deterministic `core/topography.py`
+profiles, with a smaller `historical-enrichment.css` treatment and local original
+font delivery. Historical HTML still requires the normal sidecar re-render to pick
+up base-template edits. See `docs/FRONTEND_ENRICHMENT_2026-10-09.md` for coverage,
+provenance, delivery measurements and browser review.
 
 ## 3. Commands
 

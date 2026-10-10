@@ -1,0 +1,31 @@
+test_all_route_gate_catches_large_record_and_combined_scripts (tests.test_briefs_enrichment.CompleteDelivery) ... ok
+test_every_committed_generated_route_meets_complete_budgets (tests.test_briefs_enrichment.CompleteDelivery) ... ok
+test_fonts_css_graphics_srcset_icons_and_inline_bytes (tests.test_briefs_enrichment.CompleteDelivery) ... ok
+test_missing_graphic_or_font_fails_closed (tests.test_briefs_enrichment.CompleteDelivery) ... ok
+test_curves_are_original_and_no_operational_marks_are_added (tests.test_briefs_enrichment.MaterialIntegrity) ... ok
+test_material_receipt_and_seamless_edges (tests.test_briefs_enrichment.MaterialIntegrity) ... ok
+test_builder_reproduces_decoded_asset_and_provenance (tests.test_surface_material.SurfaceMaterial) ... ok
+test_changed_source_or_master_chain_fails_closed (tests.test_surface_material.SurfaceMaterial) ... ok
+test_finished_material_is_seamless_low_contrast_and_small_to_decode (tests.test_surface_material.SurfaceMaterial) ... ok
+test_receipt_binds_source_chain_and_delivered_asset (tests.test_surface_material.SurfaceMaterial) ... ok
+test_decorative_subtrees_and_script_changes_preserve_contract (tests.test_sitewide_enrichment.PublicationParity) ... ok
+test_historical_routes_require_their_bounded_stylesheet (tests.test_sitewide_enrichment.PublicationParity) ... ok
+test_missing_routes_redirect_changes_and_exposed_timeline_fail (tests.test_sitewide_enrichment.PublicationParity) ... ok
+test_script_free_weeks_and_shared_delivery_are_checked (tests.test_sitewide_enrichment.PublicationParity) ... ok
+test_text_links_and_anchor_tampering_are_reported_independently (tests.test_sitewide_enrichment.PublicationParity) ... ok
+test_discovers_real_briefs_historical_sources_and_largest_records (tests.test_sitewide_enrichment.RepresentativeCoverage) ... ok
+test_actual_base_preserves_private_timeline_shell_and_script_free_weeks (tests.test_sitewide_enrichment.SharedShellRendering) ... ok
+test_linked_css_is_compact_local_and_uses_the_same_axes (tests.test_historical_font_delivery.HistoricalFontIntegrity) ... ok
+test_original_faces_and_licenses_match_the_provenance_receipt (tests.test_historical_font_delivery.HistoricalFontIntegrity) ... ok
+test_fresh_assets_win_and_historical_assets_survive_without_nesting (tests.test_frontend_production.AssetExchange) ... ok
+test_all_stylesheets_nested_imports_and_scripts_are_counted_once (tests.test_frontend_production.DependencyBudget) ... ok
+test_external_dependencies_remain_visible_to_gate (tests.test_frontend_production.DependencyBudget) ... ok
+test_missing_dependency_and_escape_fail_closed (tests.test_frontend_production.DependencyBudget) ... ok
+test_exact_urls_native_anchors_and_review_draft_exclusion (tests.test_frontend_production.NativeRelations) ... ok
+test_machine_unscreened_state_does_not_deny_human_brief_judgment (tests.test_frontend_production.NativeRelations) ... ok
+test_delivered_variant_digest_and_source_are_bound_to_approved_photo (tests.test_frontend_production.PhotoDelivery) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 22.971s
+
+OK
