@@ -9,22 +9,72 @@ import json
 import logging
 import sqlite3
 from contextlib import contextmanager
+from contextvars import ContextVar
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Generator, Optional
+from typing import Callable
 
 from config import DB_PATH
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class DatabaseContext:
+    """Explicit fictional runtime authority; no environment/default activation.
+
+    Every connection revalidates the selected working copy. ContextVar keeps
+    nested/concurrent sessions independent; this does not wire Daily or readers
+    outside this DAO. C2 must explicitly integrate those callers separately.
+    """
+    path: Path
+    validate: Callable[[], None]
+    execution_id: Optional[str] = None
+    logical_date: Optional[str] = None
+    read_only: bool = False
+
+
+_database_context = ContextVar("ipr_database_context", default=None)
+
+
+def current_database_context():
+    return _database_context.get()
+
+
+@contextmanager
+def use_database_context(context):
+    context.validate()
+    token = _database_context.set(context)
+    try:
+        yield context
+    finally:
+        _database_context.reset(token)
+
+
+def _open_connection(*, writing=False):
+    context = current_database_context()
+    if context is None:
+        return sqlite3.connect(DB_PATH)
+    from core.evidence_snapshot import require
+    context.validate()
+    require(not writing or not context.read_only, "custody_read_only")
+    mode = "ro" if context.read_only else "rw"
+    connection = sqlite3.connect(context.path.as_uri() + "?mode=" + mode, uri=True)
+    if context.read_only:
+        connection.execute("PRAGMA query_only=ON")
+    return connection
 
 # ── Connection ────────────────────────────────────────────────────────────────
 
 @contextmanager
 def get_conn() -> Generator[sqlite3.Connection, None, None]:
     """Yield a connection that auto-commits on clean exit, rolls back on error."""
-    conn = sqlite3.connect(DB_PATH)
+    conn = _open_connection()
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
-    conn.execute("PRAGMA journal_mode = WAL")
+    if not (current_database_context() and current_database_context().read_only):
+        conn.execute("PRAGMA journal_mode = WAL")
     try:
         yield conn
         conn.commit()
@@ -58,6 +108,10 @@ def init_db(apply_migrations: bool = True) -> None:
     exactly as `schema.sql` defines it (the migration tests use this to build
     pre-migration fixtures).
     """
+    if current_database_context() is not None:
+        from core.evidence_snapshot import EvidenceContractError
+        current_database_context().validate()
+        raise EvidenceContractError("custody_migration_disabled")
     schema_path = Path(__file__).parent / "schema.sql"
     sql = schema_path.read_text(encoding="utf-8")
     with get_conn() as conn:
@@ -117,10 +171,20 @@ def hash_exists(content_hash: str) -> bool:
 
 def start_scrape_run() -> int:
     with get_conn() as conn:
+        context = current_database_context()
+        if context and context.execution_id:
+            row = conn.execute("SELECT native_run_id FROM ipr_custody_execution "
+                               "WHERE execution_id=?", (context.execution_id,)).fetchone()
+            if row is not None:
+                return row[0]
         cur = conn.execute(
             "INSERT INTO scrape_runs (status) VALUES ('running')"
         )
-        return cur.lastrowid
+        native_id = cur.lastrowid
+        if context and context.execution_id:
+            conn.execute("INSERT INTO ipr_custody_execution VALUES(?,?,?)",
+                         (context.execution_id, context.logical_date, native_id))
+        return native_id
 
 
 def complete_scrape_run(
@@ -209,7 +273,7 @@ def insert_articles_atomic(
     Raises on genuine failure -- the caller decides how to record that; this
     function's only job is the transaction boundary.
     """
-    conn = sqlite3.connect(DB_PATH)
+    conn = _open_connection(writing=True)
     conn.row_factory = sqlite3.Row
     inserted: list = []
     try:
