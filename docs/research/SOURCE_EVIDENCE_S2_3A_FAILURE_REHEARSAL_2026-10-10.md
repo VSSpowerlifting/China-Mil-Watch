@@ -22,7 +22,7 @@ Do not implement a production task scheduler, authorized-retention policy, LLM r
 ## Files
 
 - \`core/evidence_checkpoint_rehearsal.py\` — fictional-only checkpoint transition/restore/status contract.
-- \`tests/test_evidence_checkpoint_rehearsal.py\` — 21 controlled failure scenarios and recovery checks.
+- \`tests/test_evidence_checkpoint_rehearsal.py\` — 23 controlled failure scenarios and recovery checks, including CLI fail-closed invocation and end-to-end fictional execution.
 - \`scripts/rehearse_evidence_checkpoint_failures.py\` — standalone no-arguments (except \`--synthetic-only\`) demonstration, creates and destroys its own fake SQLite database.
 - This design and stop-gate note.
 
