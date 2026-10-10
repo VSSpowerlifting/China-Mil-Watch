@@ -123,8 +123,20 @@ class PrivateDossierReviewTests(unittest.TestCase):
         result = self.read()
         self.assertIn("source-original-body-drift",
                       [e["code"] for e in result["dossiers"][0]["errors"]])
+        matching = [e for e in result["dossiers"][0]["errors"]
+                    if e["code"] == "source-original-body-drift"]
+        self.assertEqual(matching, [{"code": "source-original-body-drift", "record_id": 900001}])
         self.assertNotIn("PRIVATE_FAKE_PUBLISHER_BODY", self.output.read_text())
         self.assertNotIn("PRIVATE_FAKE_PUBLISHER_BODY", out + err)
+
+    def test_diagnostic_serializer_refuses_untrusted_numeric_ids(self):
+        from scripts.validate_dossiers import _safe_error
+        self.assertEqual(_safe_error("archive-unavailable"), {"code": "archive-unavailable"})
+        for bad in (True, False, -1, 0, 2 ** 63, "900001", 900001.0):
+            self.assertEqual(_safe_error("source-original-body-drift", bad),
+                             {"code": "source-original-body-drift"})
+        self.assertEqual(_safe_error("source-original-body-drift", 900001),
+                         {"code": "source-original-body-drift", "record_id": 900001})
 
     def test_malformed_input_does_not_echo_secret_in_report(self):
         source = draft()
@@ -165,6 +177,11 @@ class PrivateDossierReviewTests(unittest.TestCase):
         self.assertEqual(self.call()[0], 0)
         self.assertIn("screening-not-selected-human-review",
                       [h["code"] for h in self.read()["dossiers"][0]["holds"]])
+        held = [h for h in self.read()["dossiers"][0]["holds"]
+                if h["code"] == "screening-not-selected-human-review"]
+        self.assertEqual(held, [{
+            "code": "screening-not-selected-human-review", "record_id": 900001
+        }])
         with sqlite3.connect(self.db_path) as db:
             self.assertEqual(db.execute(
                 "SELECT passed_relevance FROM articles WHERE id=900001"
