@@ -9,7 +9,7 @@ A maintained Dossier should answer: what exact bounded question is being reviewe
 ## Files and ownership
 
 - `core/dossier_private_view.py`: pure, deterministic Python 3.9 reader projection. Calls the real B2.1 preview gate. Rejects all ordinary/real-world sidecars, invalid B1.2 archive reports, stale versions, uncleared links and missing fictional review packets. No disk, network, model or renderer invocation.
-- `tests/test_dossier_private_view.py`: 17 offline fictional cases, including two real B1.2 synthetic SQLite reconciliations.
+- `tests/test_dossier_private_view.py`: 29 offline fictional cases, including two real B1.2 synthetic SQLite reconciliations.
 - This document.
 
 **Explicit no-touch files:** `site/render.py`, `site/preview/generate_preview.py`, `site/preview/templates/base.html`, `analysis.html`, `brief.html`, `timeline.html`, `output/`, `pla_watch.db`, existing Briefs/Timelines sidecars, collector workflows and deployment configuration. The Timeline #181 and frontend #323 owners retain their files.
@@ -48,3 +48,9 @@ Green synthetic CI is mechanical confidence in the private view contract, **not*
 [Focused GitHub Actions #38060837428](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38060837428) ran the actual inherited B1/B2 Python modules under Python 3.9 and **passed 161/161 synthetic tests** (67 B1.1 + 23 B1.2 + 21 B1.3 + 33 B2.1 + 17 B2.2a). Python compilation and unchanged tracked SQLite/output/Briefs/Timelines checks also passed. The test executed only wholly fictional local SQLite fixtures and produced no site output.
 
 The temporary PR workflow was removed in commit `329656d2f31a5c4b1f5c26b18cb7ba32dba92ab2`, preserving a three-file lasting diff. This focused result is **not** full repository exact-final-head CI and does not satisfy unresolved #328→#329→#330→#335 dependency integrations, frontend #323 / Timeline #181 ownership, B0 subject/source acceptance #319, or legal/source-use decisions #326. Release remains hard-disabled.
+
+## Two-edition structural comparison (B2.2a extension)
+
+The private reader now requires a real, separately supplied **fictional immediate predecessor** for any revision 2+, rather than treating an author-written `history_checked=true` flag as proof of continuity. It checks B1-valid prior approval shape, same subject and consecutive revisions, preservation of all earlier revision notes, and an actual substantive change beyond an incremented number. Its `revision_comparison` projects exact previous digest, added/modified/removed claim IDs and substantive field names. If a claim was added or altered but omitted from the latest revision's affected-claim list, the view refuses to assemble. Twelve additional fictional regression cases check missing/relabelled predecessors, rewritten prior notes, unchanged-substance revisions, claim omissions and scope-only changes.
+
+**Important limit:** This is a structural comparison between two **caller-supplied** objects, not independently authenticated publication history. B1's existing schema disallows removed IDs in `changes[].affected_claim_ids`; the comparison reports removed IDs separately without representing the author's note as a verified deletion acknowledgment. The later authenticated release provider must pin historical versions in a durable, owner-controlled source store. No production authority is implemented, and no real archive content can enter the private fictional mode.
