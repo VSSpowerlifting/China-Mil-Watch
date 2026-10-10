@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 import sqlite3
 import tempfile
 import unittest
@@ -161,6 +162,29 @@ class StoreTests(unittest.TestCase):
         with self.assertRaisesRegex(EvidenceContractError, "restore_target_invalid"):
             self.store.recover(target)
         self.assertEqual(target.read_bytes(), b"do not overwrite")
+
+    def test_racing_same_run_stage_conflict_is_serialized(self):
+        p1, m1 = self.generation(1)
+        self.db.execute("INSERT INTO articles VALUES(43,'FAKE_COMPETING_SNAPSHOT')")
+        self.db.commit()
+        p2 = self.root / "racing-run.sqlite"
+        capture_backup(self.db, p2)
+        m2 = manifest_for_backup(p2, run_id="synthetic-run-1", stage="rehearsal")
+        self.store.put_snapshot(p1, m1)
+        self.store.put_snapshot(p2, m2)
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            futures = [executor.submit(self.store.put_manifest, manifest)
+                       for manifest in (m1, m2)]
+            outcomes = []
+            for future in futures:
+                try:
+                    outcomes.append(("ok", future.result()))
+                except EvidenceContractError as exc:
+                    outcomes.append(("error", str(exc)))
+        self.assertEqual(sorted(kind for kind, _ in outcomes), ["error", "ok"])
+        self.assertEqual([value for kind, value in outcomes if kind == "error"],
+                         ["run_stage_conflict"])
+        self.assertEqual(len(list((self.store_path / "manifests").glob("*.json"))), 1)
 
     def test_unapproved_storage_path_rejected(self):
         unsafe = self.root / "not-an-authorized-store"
