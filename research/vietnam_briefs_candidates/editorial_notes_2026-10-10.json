@@ -2,6 +2,21 @@
   "schema": "vietnam-editorial-notes/1",
   "entries": [
     {
+      "source_identity": "mps-vi:1791535381",
+      "source_url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381",
+      "published_date": "2026-10-09",
+      "content_sha256": "8775cb700db1dddfb17209c292b7a03864c65683cc190792c88939a9dd7740ef",
+      "summary": "Vietnam's Ministry of Public Security reported an October 9 meeting in Vientiane between Minister Luong Tam Quang and Lao Public Security Minister Vanthong Kongmany. It described ongoing information exchange and past joint investigations, especially drug cases, and an agreement to continue cooperation against transnational drug trafficking, human trafficking and high-tech crime. The ministry gave no independently verified case totals or newly signed operational agreement.",
+      "caveats": [
+        "The described joint investigations are retrospective claims by Vietnam's ministry; the article does not independently verify specific cases, results or agency effectiveness.",
+        "The meeting was between public security ministries, not military services, and is distinct from China's planned October 13 border-defense exchange with Laos.",
+        "An agreement to continue cooperation is not proof that new joint operations have begun or that particular legal instruments were signed on October 9."
+      ],
+      "topics": [
+        "regional_partnerships"
+      ]
+    },
+    {
       "source_identity": "mps-vi:1791366010",
       "source_url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010",
       "published_date": "2026-10-07",
