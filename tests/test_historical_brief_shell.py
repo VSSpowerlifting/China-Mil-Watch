@@ -195,7 +195,7 @@ class HistoricalBriefShellTests(unittest.TestCase):
             self.assertEqual(soup.select_one('.brand')["href"], '../../index.html')
             self.assertIn('../../analysis.html', [a["href"] for a in soup.header.select('a[href]')])
             self.assertEqual([s["href"] for s in soup.select('link[rel="stylesheet"]')],
-                             ['../../fonts.css', '../../styles.css', '../../briefs.css'])
+                             ['../../fonts.css', '../../styles.css', '../../enrichment.css', '../../briefs.css'])
             self.assertEqual(soup.select_one('script[src]')["src"], '../../shell.js')
             self.assertFalse(soup.select('.publication-freshness'))
             for neighbor in (ctx["prev_post"], ctx["next_post"]):
@@ -224,7 +224,7 @@ class HistoricalBriefBrowserTests(unittest.TestCase):
         from playwright.sync_api import sync_playwright
         cls.tmp = tempfile.TemporaryDirectory(prefix='ipr-historical-browser-')
         cls.root = Path(cls.tmp.name)
-        for name in ('fonts.css', 'styles.css', 'briefs.css', 'shell.js'):
+        for name in ('fonts.css', 'styles.css', 'enrichment.css', 'briefs.css', 'shell.js'):
             shutil.copy2(ROOT / 'output' / name, cls.root / name)
         shutil.copytree(ROOT / 'output/assets', cls.root / 'assets')
         for name in ('media', 'covers'):
