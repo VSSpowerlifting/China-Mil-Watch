@@ -50,9 +50,12 @@ def _private_destination(path):
     return target
 
 
-def _safe_error(code):
-    """Only fixed internal codes, never user-authored text or source body."""
-    return {"code": code}
+def _safe_error(code, record_id=None):
+    """Only fixed internal codes and validated numeric IDs, never source prose."""
+    issue = {"code": code}
+    if type(record_id) is int and 0 < record_id <= (1 << 63) - 1:
+        issue["record_id"] = record_id
+    return issue
 
 
 def _validate_one(path, source_dir, db_path, registry):
@@ -88,8 +91,10 @@ def _validate_one(path, source_dir, db_path, registry):
         archive_reconciled=reviewed["archive_reconciled"],
         content_sha256=reviewed["content_sha256"],
         selected_record_ids=reviewed["selected_record_ids"],
-        errors=[_safe_error(it["code"]) for it in reviewed["errors"]],
-        holds=[_safe_error(it["code"]) for it in reviewed["holds"]],
+        errors=[_safe_error(it["code"], it.get("record_id"))
+                for it in reviewed["errors"]],
+        holds=[_safe_error(it["code"], it.get("record_id"))
+               for it in reviewed["holds"]],
     )
     entry["status"] = "error" if entry["errors"] else "review_hold"
     # Do not inherit a permissive flag from an input or future API. B1.3 is
