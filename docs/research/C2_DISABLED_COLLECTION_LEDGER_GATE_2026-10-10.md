@@ -18,7 +18,9 @@ It is not hooked to `pipeline.run()`, which still refuses non-dry private execut
   `source_run_results` completeness contract; a missing, extra, wrong-status,
   misflagged or malformed receipt refuses collection promotion.
 - Source receipts with `ok_no_publications`, disabled/stub or known failure outcomes
-  remain separately represented. A collector outage is never silently converted to
+  remain separately represented. False healthy silence/inert-source claims are rejected
+  when their own counters show collection; `ok_all_duplicates` and `ok_all_filtered`
+  cannot claim newly stored documents. Text-unavailable counts cannot exceed extracted. A collector outage is never silently converted to
   "no publication." Newly inserted records must be attributed to requested sources.
 - The barrier asks **C1** to seal `collected`, then independently confirms the immutable
   current generation and its run identity before returning a redacted receipt.
