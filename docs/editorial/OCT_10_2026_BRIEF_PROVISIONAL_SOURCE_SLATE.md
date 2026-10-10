@@ -130,6 +130,21 @@ This card applies [the separate general C1 editorial standard in PR #325](https:
 
 Public IPR [record **5039**](https://indopacificrecord.org/record/5039.html), Chinese MOD Oct. 10, says in original text **“10月13日…将在…举行”** (a China–Laos fifth border defense exchange **will be held October 13**), but its English machine summary incorrectly says it **“held”** on October 13. That event has **not** occurred as of the report's Oct. 10 date. Any draft using the record must state it was **announced/scheduled** and put Oct. 13 outside this week; independently review the original. Tracked in [#353](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/353). This issue is a fidelity defect; editing the brief does not itself repair the machine-generated public summary.
 
+## Publication-worthiness decision — recommend no automatic thematic claim
+
+The preceding source audits show that **archival validity**, **cross-desk citation structure** and **a worthwhile article** are different tests. The Oct. 5/8 PLAN accounts identify a real same-vessel event, but the confirmed 2019 ADESC and the September 2026 XMC mean an October technical stop is **continuity first**, not demonstrable escalation or a new access milestone. This reduces its novelty. A specialist reader deserves more than the headline “naval access does not always equal alignment.” The decisive added value would be a careful *before/after* contrast of the policy instruments and precisely what new act is (or is not) documented.
+
+### Owner/editor selection order for the first pilot
+
+| Candidate | Journalistic/editorial merit | Technical/rights gate | Recommendation |
+| --- | --- | --- | --- |
+| **PLAN 48th escort stop: how Singapore classifies naval access** | Precise same-event cross-desk evidence, but **weak proof of a novel change**; editorial importance lies in distinguishing technical stop from the existing ADESC/XMC background | **4911** is excluded from current default top-ten; requires approved owner-selected exact-ID theme *and* rights-reviewed historical context if used in material claims | **Conditional** only. Proceed if approved anchors and contextual sources are secured; otherwise do not inflate into a regional strategic shift |
+| **Singapore–Brunei's anniversary turns into training infrastructure** | Stronger independently distinguishable *new acts* in current week: **Oct. 8 operational range opening** and new Exercise Vanguard framework, plus completed Exercise Pelican; all within official Singapore sources | Primarily **one production desk**; editor may not falsely add China merely to meet ordinary two-desk contract. Requires a separately governed single-desk exception and original-source/rights review | **Better novelty per factual claim**, but technically not a normal two-desk Sunday issue |
+| **A different topic from Sunday's actual eligible source slate** | Unknown until final Saturday cutoff, same-Sunday collection and actual selected citations. Cannot be rated by memory or partial week browsing | Read-only real corpus audit and a no-send preview remain required. No sender configuration confirmed | **Default if independently better supported**; do not give preferential treatment to our October 10 research |
+| **No defensible, cleared thesis** | Quality control is stronger than a formulaic release | Keep precise hold reasons/source backlog for next issue | **Abstain** rather than publish a speculative weak Brief |
+
+**Editorial stop rule:** Do not designate a final lead or approve a publication from this Markdown alone. If the single-event PLAN technical-stop piece cannot say what the documents newly *establish*, it should remain a short contextual item or a future timeline entry, not be stretched to a full numbered analytical issue. This judgement does **not** authorize a new format or timeline route.
+
 ## Sunday no-send review before Dylan delivery
 
 - Preserve the normal Sunday workflow [source](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/main/.github/workflows/sunday_briefs_editorial_handoff.yml): Sunday **19:17 UTC** nominal schedule; it runs only through its delivery/preview switches. Exact same-Sunday successful Daily marker, full Saturday cutoff and two live desks with usable full text are hard gates. No assumption these gates or editor-mail/owner-review settings are presently enabled.
