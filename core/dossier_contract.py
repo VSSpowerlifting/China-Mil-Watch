@@ -63,6 +63,8 @@ def _fail(location, reason):
 def _object(value, fields, location, optional=frozenset()):
     if type(value) is not dict:
         _fail(location, "expected an object")
+    if any(type(key) is not str for key in value):
+        _fail(location, "all object keys must be strings")
     missing = set(fields) - set(value)
     unknown = set(value) - set(fields) - set(optional)
     if missing or unknown:
@@ -242,7 +244,7 @@ def validate_dossier_shape(sc):
             where = f"{at}.claims[{j}]"
             _object(claim, CLAIM_FIELDS, where)
             all_claim_ids.append(_slug(claim["id"], where + ".id"))
-            if claim["claim_kind"] not in KINDS:
+            if type(claim["claim_kind"]) is not str or claim["claim_kind"] not in KINDS:
                 _fail(where + ".claim_kind", "invalid attribution class")
             _text(claim["text"], where + ".text")
             _text(claim["limits"], where + ".limits")
@@ -257,7 +259,7 @@ def validate_dossier_shape(sc):
                 end = _day(event["end"], where + ".event_period.end")
                 if start > end or start < period_start or end > period_end:
                     _fail(where + ".event_period", "out of selected scope or reversed interval")
-                if event["basis"] not in EVENT_BASES:
+                if type(event["basis"]) is not str or event["basis"] not in EVENT_BASES:
                     _fail(where + ".event_period.basis", "unsupported temporal basis")
                 _text(event["date_basis"], where + ".event_period.date_basis")
     _unique(section_ids, "sections")
@@ -308,6 +310,8 @@ def validate_dossier_shape(sc):
         _object(sc.get("approval"), APPROVAL_FIELDS, "approval")
         receipt = sc["approval"]
         _text(receipt["approved_by"], "approval.approved_by", limit=160)
+        if receipt["reference"] is None:
+            _fail("approval.reference", "a specific review receipt reference is required")
         _receipt(receipt["reference"], "approval.reference")
         if receipt["approved_by"] != sc["editor_name"] or re.search(
             r"\b(pending|unreviewed|codex|chatgpt|model|unknown)\b",
