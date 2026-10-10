@@ -11,3 +11,20 @@
 @media(max-width:900px){.archive-page .records-day{grid-template-columns:85px minmax(0,1fr);gap:20px}.archive-page .record-row{grid-template-columns:1fr;gap:14px}.archive-page .day-num{font-size:47px}.archive-page .record-row h3{font-size:26px}.archive-page .row-side{flex-direction:row;flex-wrap:wrap;gap:4px 12px}.archive-page .row-who{width:100%}.finder-more-body{grid-template-columns:1fr}}
 @media(max-width:600px){.archive-page .page-head{padding-block:52px 8px}.archive-page h1{font-size:50px}.archive-page .lede{font-size:13px}.finder-row{gap:12px}.finder-field--q{margin-bottom:0}#f-q{height:50px}.finder-more>summary{padding:12px 16px}.finder-status:empty{display:none}.finder{margin-bottom:20px}.result-range{margin:20px 0 28px}.archive-page .records-day{grid-template-columns:1fr;gap:0;margin-bottom:30px}.archive-page .day-date{padding-top:0;border-top:2px solid var(--ink);padding-bottom:12px}.archive-page .day-date time{display:flex;align-items:baseline;gap:7px}.archive-page .day-num{font-size:36px}.archive-page .day-week{display:none}.archive-page .record-row{padding-block:21px}.archive-page .record-row h3{font-size:28px}.finder-row>.btn{min-width:145px}.archive-page .row-side{gap:4px 12px}}
 @media print{.finder,.pager{display:none!important}.archive-page .records-day,.archive-page .record-row{display:block}.archive-page h1{font-size:30pt}}
+/* A broad profile is the archive's edge, never a field behind record text. */
+.archive-page>.wrap{position:relative;isolation:isolate}
+.archive-page .page-head{padding-block:35px 105px;margin-bottom:0;min-height:270px;border-bottom:0}
+.archive-page .page-head h1{font-size:clamp(64px,7vw,96px);max-width:14ch}
+.archive-page .page-head::after{width:43%;inset:-20px -30px -170px auto;background-size:auto 700px;background-position:right 55%}
+.archive-page #browse{position:relative;max-width:72%;margin-bottom:34px}
+.archive-page .finder{padding:22px;background:var(--surface);border:1px solid var(--rule)}
+.archive-page .finder-more[open]{position:relative;z-index:3;background:var(--surface)}
+.archive-page #results{background:var(--bg) url('assets/material/chart-paper.png');position:relative;padding-top:14px}
+.archive-page .processing-plate-head{padding-bottom:100px}
+.archive-page .processing-engraving{display:none}
+.archive-page .processing-plate-head::after{content:'';position:absolute;inset:auto 0 0;height:80px;background:url('assets/material/chart-shelf.svg') no-repeat center 50%/700px auto;pointer-events:none}
+@media(max-width:900px){.archive-page #browse{max-width:100%}.archive-page .page-head{min-height:240px;padding-bottom:85px}.archive-page .page-head::after{width:30%;bottom:0}}
+@media(max-width:700px){.archive-page .page-head{min-height:0;padding-block:22px 65px}.archive-page .page-head h1{font-size:56px}.archive-page .page-head::after{width:100%;inset:auto -22px 0;height:44px;background-size:700px auto}.archive-page .finder{padding:15px}}
+.archive-page .page-head{min-height:240px;padding-bottom:75px}
+.archive-page .page-head::after{inset:-1px -22px -180px auto;background-position:right 55%;mask-image:linear-gradient(black 87%,transparent)}
+@media(max-width:700px){.archive-page .page-head{min-height:0;padding-bottom:65px}.archive-page .page-head::after{inset:auto -22px 0;height:44px;mask-image:none}}
