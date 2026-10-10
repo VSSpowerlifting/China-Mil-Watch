@@ -285,6 +285,38 @@ class ObjectProtocolTests(unittest.TestCase):
         with self.assertRaises(EvidenceContractError):
             self.coordinator.prepare(p, m)
 
+    def test_racing_same_run_identity_claim_has_exactly_one_winner(self):
+        p1, first = self.generation("one", run_id="synthetic-contended")
+        self.db.execute("INSERT INTO articles VALUES(103,'FAKE_RACING_GENERATION')")
+        self.db.commit()
+        p2, second = self.generation("two", run_id="synthetic-contended")
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            tasks = [pool.submit(self.coordinator.prepare, p, m)
+                     for p, m in ((p1, first), (p2, second))]
+            outcomes = []
+            for task in tasks:
+                try:
+                    outcomes.append(("ok", task.result()))
+                except EvidenceContractError as exc:
+                    outcomes.append(("error", str(exc)))
+        self.assertEqual(sorted(kind for kind, _ in outcomes), ["error", "ok"])
+        self.assertEqual([value for kind, value in outcomes if kind == "error"],
+                         ["object_readback_mismatch"])
+        self.assertIsNone(self.coordinator.current()[0])
+
+    def test_reader_outage_during_restore_keeps_destination_absent(self):
+        m = self.register()
+        self.coordinator.advance(m["generation"])
+        target = self.root / "retryable.sqlite"
+        self.fake.fail_next("get")
+        with self.assertRaisesRegex(EvidenceContractError, "synthetic_storage_unavailable"):
+            self.coordinator.restore_to_temp(target)
+        self.assertFalse(target.exists())
+        self.coordinator.restore_to_temp(target)
+        with sqlite3.connect(str(target)) as restored:
+            self.assertEqual(restored.execute(
+                "SELECT id FROM articles").fetchone()[0], 57)
+
     def test_transport_has_no_network_credentials(self):
         self.assertFalse(hasattr(self.fake, "access_key"))
         self.assertFalse(hasattr(self.fake, "endpoint"))
