@@ -599,6 +599,18 @@ class BrowserCase(WeeklySurfaces):
         for name, html in cls().all_pages().items():
             (cls.tmp / name).write_text(html, encoding="utf-8")
 
+        # Rendered weekly HTML references owned styles and local font faces.
+        # Serve the same checked-in files: a bare-HTML fixture silently 404s
+        # its fonts, making an apparent loaded-vs-fallback test meaningless.
+        preview = REPO_ROOT / "site" / "preview"
+        for stylesheet in ("topography.css", "historical-enrichment.css",
+                           "historical-fonts.css"):
+            shutil.copyfile(preview / stylesheet, cls.tmp / stylesheet)
+        shutil.copytree(
+            REPO_ROOT / "site" / "assets" / "fonts" / "historical",
+            cls.tmp / "assets" / "fonts" / "historical",
+        )
+
         class Quiet(http.server.SimpleHTTPRequestHandler):
             def log_message(self, *a):
                 pass
@@ -635,10 +647,9 @@ class BrowserCase(WeeklySurfaces):
         """
         Measures one page at one width.
 
-        `block_webfonts` aborts the Google Fonts requests, which is the
-        condition the CI runner reproduces and a developer machine with a warm
-        font cache does not. A fresh context per call means a font cached by an
-        earlier measurement cannot leak in and quietly re-run the webfont path.
+        `block_webfonts` aborts owned WOFF2 and historical remote font URLs.
+        A fresh context per measurement prevents warm cached faces from leaking
+        into a real fallback-font probe.
 
         `extra_css` injects a stylesheet after load. It exists so a test can
         restore a pre-fix condition and prove a diagnostic still names the
@@ -653,6 +664,7 @@ class BrowserCase(WeeklySurfaces):
                 def abort(route):
                     blocked["n"] += 1
                     route.abort()
+                page.route("**/*.woff2*", abort)
                 page.route("**://fonts.googleapis.com/**", abort)
                 page.route("**://fonts.gstatic.com/**", abort)
             page.goto("http://127.0.0.1:%d/%s" % (self.port, page_path),
