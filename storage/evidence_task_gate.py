@@ -28,8 +28,12 @@ class FictionalAnalysisTaskGate:
                 "c2_task_policy_required")
         self.policy = manifest_policy
         self.session = manifest_policy.session
-        self.journal = FictionalSpendIntentJournal(
-            manifest_policy.plan.barrier())
+        # Construction must not require a plan or collected checkpoint yet.
+        # Resolve C2-C's verified frozen plan at task-use time, after preflight.
+
+    @property
+    def journal(self):
+        return FictionalSpendIntentJournal(self.policy.plan.barrier())
 
     def _native_relevance_passed(self, article_id):
         with self.session.application(read_only=True):
