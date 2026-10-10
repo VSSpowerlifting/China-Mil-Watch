@@ -217,6 +217,19 @@ class PureDossierContractTests(unittest.TestCase):
         d = synthetic(); d["sections"][0]["claims"][0]["claim_kind"] = "verified_event"
         self.assert_bad(d, "invalid attribution class")
 
+    def test_unhashable_claim_kind_is_controlled_validation_error(self):
+        d = synthetic(); d["sections"][0]["claims"][0]["claim_kind"] = ["issuer_statement"]
+        self.assert_bad(d, "invalid attribution class")
+
+    def test_unhashable_event_basis_is_controlled_validation_error(self):
+        d = synthetic()
+        d["sections"][0]["claims"][0]["event_period"]["basis"] = ["planned"]
+        self.assert_bad(d, "unsupported temporal basis")
+
+    def test_unexpected_nonstring_object_key_rejected_cleanly(self):
+        d = synthetic(); d[17] = "invalid"
+        self.assert_bad(d, "object keys must be strings")
+
     def test_claim_limits_mandatory(self):
         d = synthetic(); d["sections"][1]["claims"][0]["limits"] = ""
         self.assert_bad(d)
@@ -291,6 +304,11 @@ class PureDossierContractTests(unittest.TestCase):
     def test_approval_name_mismatch(self):
         d = approved(); d["approval"]["approved_by"] = "Another editor"
         self.assert_bad(d, "human editor")
+
+    def test_approved_receipt_reference_required(self):
+        d = approved()
+        d["approval"]["reference"] = None
+        self.assert_bad(d, "specific review receipt reference")
 
     def test_approval_rejects_pre_review(self):
         d = approved(); d["approval"]["approved_on"] = "2026-10-08"
