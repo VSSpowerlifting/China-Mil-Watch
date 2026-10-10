@@ -1,0 +1,53 @@
+name: Frontend owned-font and material regression
+
+on:
+  push:
+    branches:
+      - fix/314-owned-font-fallback-and-png-contracts-20261009
+  pull_request:
+    branches:
+      - main
+      - codex/ipr-sitewide-enrichment-20261009
+    paths:
+      - 'tests/test_pla_watch_reading_ergonomics.py'
+      - 'tests/test_surface_material.py'
+      - 'docs/FRONTEND_OWNED_FONT_AND_MATERIAL_CI.md'
+      - '.github/workflows/frontend_owned_font_material_regression.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  frontend-branch-fallback-and-material:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Hash stored evidence
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/archive.sha256"
+          sha256sum site/assets/material/navy-paper.png > "$RUNNER_TEMP/material.sha256"
+          sha256sum site/assets/material/NAVY_RECEIPT.json > "$RUNNER_TEMP/receipt.sha256"
+      - name: Install test dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
+      - name: Test material provenance, pixels, fallback geometry
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_surface_material -v
+          python -m unittest tests.test_pla_watch_reading_ergonomics.TestSourceTrailDomainsWrap -v
+      - name: Confirm archive and approved visual asset unchanged
+        run: |
+          sha256sum -c "$RUNNER_TEMP/archive.sha256"
+          sha256sum -c "$RUNNER_TEMP/material.sha256"
+          sha256sum -c "$RUNNER_TEMP/receipt.sha256"
+          git diff --exit-code -- pla_watch.db site/assets/material/navy-paper.png site/assets/material/NAVY_RECEIPT.json output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
