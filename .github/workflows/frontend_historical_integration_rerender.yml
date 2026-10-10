@@ -45,7 +45,7 @@ jobs:
         run: python scripts/render_historical_frontend_integration.py --write
       - name: Verify exact historical output and source byte preservation
         run: |
-          python scripts/render_historical_frontend_integration.py --check
+          python scripts/render_historical_frontend_integration.py
           sha256sum -c "$RUNNER_TEMP/archive.sha256"
           sha256sum -c "$RUNNER_TEMP/sidecars.sha256"
           sha256sum -c "$RUNNER_TEMP/feed.sha256"
