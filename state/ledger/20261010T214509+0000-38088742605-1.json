@@ -1,0 +1,157 @@
+{
+ "access_failures": 0,
+ "anomalies": [],
+ "cap": 40,
+ "captures": [
+  {
+   "content_type": "text/html; charset=UTF-8",
+   "http_status": 200,
+   "payload_bytes": 166,
+   "payload_sha256": "5416fb23b6b5ecd1b7f984fd7ef2c662506ace48f9caac98eef40a6a5a838b8a",
+   "retrieved_at": "2026-10-10T21:45:06+00:00",
+   "role": "robots",
+   "url": "https://moit.gov.vn/robots.txt"
+  },
+  {
+   "content_type": "text/html; charset=UTF-8",
+   "http_status": 200,
+   "payload_bytes": 115735,
+   "payload_sha256": "a8a7b22deb470e0c85d210c947a2a6665b5de25900faad560086b5d0a41e9bb2",
+   "retrieved_at": "2026-10-10T21:45:09+00:00",
+   "role": "listing",
+   "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+  }
+ ],
+ "challenged": 0,
+ "changed": 0,
+ "collector_commit": "8cdc6b035762d7c04ee7fc266a5725388877a19f",
+ "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+ "content_hash_rule": "moit-vi-content-v1",
+ "corpus_range": [
+  "2026-09-30",
+  "2026-09-30"
+ ],
+ "day_zero_utc": "2026-10-07T17:16:53+00:00",
+ "desk_id": "vietnam",
+ "discovered": 0,
+ "error_detail": null,
+ "extraction_failures": 0,
+ "failures": [],
+ "fetch_failures": 0,
+ "finished_utc": "2026-10-10T21:45:09+00:00",
+ "health": "ok",
+ "listing_report": {
+  "coverage": "proven",
+  "items_listed": 12,
+  "listed": [
+   [
+    "/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+    "2026-09-30"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/bo-cong-thuong-ban-hanh-quyet-dinh-thanh-lap-to-soan-thao-va-to-bien-tap-xay-dung-luat-cong-nghiep-trong-diem.html",
+    "2026-05-08"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/ket-noi-doanh-nghiep-cong-nghiep-ho-tro-viet-nam-nhat-ban.html",
+    "2022-07-05"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/thuc-day-cong-nghiep-ho-tro-nganh-co-khi-phat-trien.html",
+    "2022-06-15"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/quang-nam-tap-trung-nhieu-giai-phap-phat-trien-cong-nghiep-ho-tro-quy-mo-lon.html",
+    "2022-06-15"
+   ],
+   [
+    "/tin-tuc/hoat-dong/nganh-cong-nghiep-ho-tro-nhin-tu-cac-cuoc-cach-mang-cong-nghiep.html",
+    "2022-01-12"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/trung-uong-dia-phuong-va-doanh-nghiep-chung-tay-phat-trien-nganh-cong-nghiep-che-bien-che-tao-va-cong-nghiep-ho-tro.html",
+    "2021-11-25"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang/dieu-gi-se-xay-ra-neu-san-giao-dich-kim-loai-chu-luc-cua-the-gioi-khong-co-du-hang-de-giao-.html",
+    "2021-10-22"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/viet-nam-day-manh-dau-tu-vao-tri-tue-nhan-tao.html",
+    "2021-10-13"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/lam-gi-de-vuc-day-nganh-dong-tau-viet-nam-.html",
+    "2021-09-29"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/thuc-trang-phat-trien-cua-cnht-nganh-o-to-viet-nam.html",
+    "2021-09-15"
+   ],
+   [
+    "/tin-tuc/phat-trien-cong-nghiep/vai-tro-quan-trong-cua-cnht-trong-su-phat-trien-nganh-o-to-ky-2-.html",
+    "2021-09-06"
+   ]
+  ],
+  "listed_after_window": 0,
+  "listing_url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang",
+  "newest_listed": "2026-09-30",
+  "oldest_listed": "2021-09-06",
+  "pages_read": 1,
+  "pagination": {
+   "older_pages": "script-only; not requested",
+   "page": 1,
+   "page_size": 12,
+   "total_items": 26
+  },
+  "selected": 0,
+  "window_end": "2026-10-10",
+  "window_start": "2026-10-04"
+ },
+ "listing_status": "ok_no_publications",
+ "lookback_days": 6,
+ "new_records": 0,
+ "request_ceiling": 42,
+ "requests": [
+  {
+   "bytes": 166,
+   "ended_utc": "2026-10-10T21:45:06.180140+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 1.899,
+   "requested_at": "2026-10-10T21:45:05+00:00",
+   "started_utc": "2026-10-10T21:45:05.352475+00:00",
+   "status": 200,
+   "url": "https://moit.gov.vn/robots.txt"
+  },
+  {
+   "bytes": 115735,
+   "ended_utc": "2026-10-10T21:45:09.293856+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-10T21:45:08+00:00",
+   "started_utc": "2026-10-10T21:45:08.183048+00:00",
+   "status": 200,
+   "url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
+  }
+ ],
+ "result": "ok_no_publications",
+ "retrieved": 0,
+ "reverted": 0,
+ "robots_status": "read",
+ "run_id": "38088742605-1",
+ "selected": 0,
+ "shadow_day": 3,
+ "source_anomalies": [
+  "robots_content_type: https://moit.gov.vn/robots.txt is a rules file served as 'text/html; charset=UTF-8'"
+ ],
+ "source_slug": "vn_moit_foundational_industry_vi",
+ "started_utc": "2026-10-10T21:45:03+00:00",
+ "state_sha256_after": "2be016f0561bb533089727a85620c77770ab208c4de3520b2a75febfa03c38e0",
+ "state_sha256_before": "2be016f0561bb533089727a85620c77770ab208c4de3520b2a75febfa03c38e0",
+ "stored_total": 1,
+ "target_date": "2026-10-10",
+ "target_date_source": "schedule-slot",
+ "unchanged": 0,
+ "versions_total": 1,
+ "window_start": "2026-10-04"
+}
