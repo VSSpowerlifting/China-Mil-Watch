@@ -1,0 +1,1499 @@
+{
+  "checks": 234,
+  "failures": [],
+  "results": [
+    {
+      "name": "1440px index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px record/3924.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px record/3924.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px analysis.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px analysis.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px briefs/maritime-cooperation-2026.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px briefs/maritime-cooperation-2026.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px desks.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px desks.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px china.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px china.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px methodology.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px methodology.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px the-pla-watch/posts/2026-08-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px the-pla-watch/terms.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px the-pla-watch/terms.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px source/pla_daily.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px source/pla_daily.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px coverage.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px coverage.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px sources.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px sources.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px about.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px about.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px corpus-guide.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px corpus-guide.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px corpus.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px corpus.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px japan.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px japan.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px vietnam.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px vietnam.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px singapore.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px singapore.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px us-indopacific.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px us-indopacific.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px the-pla-watch/index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px the-pla-watch/index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px the-pla-watch/archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px the-pla-watch/archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "1440px week-2026-06-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px week-2026-06-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px record/3924.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px record/3924.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px analysis.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px analysis.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px briefs/maritime-cooperation-2026.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px briefs/maritime-cooperation-2026.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px desks.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px desks.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px china.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px china.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px methodology.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px methodology.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/posts/2026-08-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px the-pla-watch/terms.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/terms.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px source/pla_daily.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px source/pla_daily.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px coverage.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px coverage.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px sources.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px sources.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px about.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px about.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px corpus-guide.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px corpus-guide.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px corpus.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px corpus.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px japan.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px japan.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px vietnam.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px vietnam.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px singapore.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px singapore.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px us-indopacific.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px us-indopacific.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px the-pla-watch/index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px the-pla-watch/archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "768px week-2026-06-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px week-2026-06-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px record/3924.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px record/3924.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px analysis.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px analysis.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px briefs/maritime-cooperation-2026.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px briefs/maritime-cooperation-2026.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px desks.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px desks.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px china.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px china.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px methodology.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px methodology.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/posts/2026-08-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px the-pla-watch/terms.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/terms.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px source/pla_daily.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px source/pla_daily.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px coverage.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px coverage.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px sources.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px sources.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px about.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px about.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px corpus-guide.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px corpus-guide.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px corpus.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px corpus.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px japan.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px japan.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px vietnam.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px vietnam.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px singapore.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px singapore.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px us-indopacific.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px us-indopacific.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px the-pla-watch/index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px the-pla-watch/archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "375px week-2026-06-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px week-2026-06-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px record/3924.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px record/3924.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px analysis.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px analysis.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px briefs/maritime-cooperation-2026.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px briefs/maritime-cooperation-2026.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px desks.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px desks.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px china.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px china.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px methodology.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px methodology.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/posts/2026-08-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px the-pla-watch/terms.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/terms.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px source/pla_daily.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px source/pla_daily.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px coverage.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px coverage.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px sources.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px sources.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px about.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px about.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px corpus-guide.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px corpus-guide.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px corpus.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px corpus.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px japan.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px japan.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px vietnam.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px vietnam.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px singapore.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px singapore.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px us-indopacific.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px us-indopacific.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px the-pla-watch/index.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/index.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px the-pla-watch/archive.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/archive.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "320px week-2026-06-08.html: route and width",
+      "passed": true,
+      "detail": {
+        "status": 200,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px week-2026-06-08.html: single heading",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "sampled routes: JavaScript errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "sampled routes: local resource responses",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "home photographic composition, title and credit unchanged",
+      "passed": true,
+      "detail": [
+        {
+          "text": "Independent, source-grounded monitoring and analysis\n\nThe region,\nin its own words.\n\nOfficial defense and security texts, preserved\nas published and read in context.\n\nExplore official records\n\nIllustrative context \u00b7 U.S. Navy / Nathan Burke \u00b7 23 November 2015 \u00b7 Public domain Image source",
+          "height": 700,
+          "photo": "assets/editorial/reagan-jmsdf-2015.jpg",
+          "title": {
+            "x": 80,
+            "y": 233.09375,
+            "width": 850,
+            "height": 203.21875,
+            "top": 233.09375,
+            "right": 930,
+            "bottom": 436.3125,
+            "left": 80
+          }
+        },
+        {
+          "text": "Independent, source-grounded monitoring and analysis\n\nThe region,\nin its own words.\n\nOfficial defense and security texts, preserved\nas published and read in context.\n\nExplore official records\n\nIllustrative context \u00b7 U.S. Navy / Nathan Burke \u00b7 23 November 2015 \u00b7 Public domain Image source",
+          "height": 700,
+          "photo": "assets/editorial/reagan-jmsdf-2015.jpg",
+          "title": {
+            "x": 80,
+            "y": 233.09375,
+            "width": 850,
+            "height": 203.21875,
+            "top": 233.09375,
+            "right": 930,
+            "bottom": 436.3125,
+            "left": 80
+          }
+        }
+      ]
+    },
+    {
+      "name": "map china: linked selected states",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map china: announced status and recorded count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map singapore: linked selected states",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map singapore: announced status and recorded count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map japan: linked selected states",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map japan: announced status and recorded count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map vietnam: linked selected states",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map vietnam: announced status and recorded count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map us-indopacific: linked selected states",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map us-indopacific: announced status and recorded count",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map arrow keys move to next native button",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map Space selects focused desk",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "map Escape resets and focuses All desks",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "real country click selects entry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "real seat click selects entry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "All desks resets chart and scope",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "existing desk hash initializes selection",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "phone coordinate ticks omitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "phone seat hit targets at least 44px",
+      "passed": true,
+      "detail": {
+        "x": 115.7199935913086,
+        "y": -432.6076354980469,
+        "width": 55.544044494628906,
+        "height": 55.544036865234375
+      }
+    },
+    {
+      "name": "forced colors preserves selected control and entry",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "archive title search returns records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "archive reset restores newest records",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "record citation anchor works",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "Brief evidence disclosure opens",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mobile native Menu opens",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "mobile Escape closes Menu",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "print keeps prose and removes contour overlay",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JavaScript index.html: reading and width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JavaScript archive.html: reading and width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JavaScript desks.html: reading and width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JavaScript record/3924.html: reading and width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JavaScript briefs/maritime-cooperation-2026.html: reading and width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JavaScript the-pla-watch/posts/2026-08-08.html: reading and width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JavaScript map register and entry links",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "contour scroll entrance is assigned",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "control press provides movement",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 320px index.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 320px methodology.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 480px index.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 480px methodology.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 600px index.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 600px methodology.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 768px index.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "normal motion 768px methodology.html: width",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reduced motion removes control transition",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reduced motion contour is static",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "blocked fonts preserve reading and width",
+      "passed": true,
+      "detail": [
+        "http://127.0.0.1:8787/assets/fonts/inter-0.woff2",
+        "http://127.0.0.1:8787/assets/fonts/inter-1.woff2",
+        "http://127.0.0.1:8787/assets/fonts/instrument-serif-1.woff2",
+        "http://127.0.0.1:8787/assets/fonts/source-serif-4-1.woff2"
+      ]
+    }
+  ],
+  "screenshots": 52,
+  "before": "http://127.0.0.1:8786",
+  "after": "http://127.0.0.1:8787",
+  "limitations": [
+    "Chromium browser checks; real assistive technology and Safari/Firefox not exercised"
+  ]
+}

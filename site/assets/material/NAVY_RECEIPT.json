@@ -1,0 +1,76 @@
+{
+  "purpose": "Generated abstract navy material; no evidence, geography or documentary imagery",
+  "builder": "scripts/build_surface_material.py",
+  "source": {
+    "path": "site/assets/material/chart-paper.png",
+    "sha256": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
+    "bytes": 14086,
+    "receipt": "site/assets/material/ASSET_RECEIPT.json",
+    "receipt_sha256": "cc8d4541ed1026d24bde11d02a669c06b80376d2a28db052ff2a3c4d8f609130",
+    "master": {
+      "bundle": "IPR_Visual_Enrichment_2026-10-09 (2).zip",
+      "path": "assets/chart-paper.png",
+      "sha256": "61002883e45fd8418f5544a2fd27656cef2c656c1566c0b1def250953879c672",
+      "bytes": 2600875,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "generation": "Supplied generated chart-paper review material; original prompt/model not supplied"
+    }
+  },
+  "method": "Preserve verified seamless tile indices; replace eight paper tones with eight navy RGB tones around #142E38",
+  "palette_rgb": [
+    [
+      16,
+      42,
+      52
+    ],
+    [
+      17,
+      43,
+      53
+    ],
+    [
+      18,
+      44,
+      54
+    ],
+    [
+      19,
+      45,
+      55
+    ],
+    [
+      20,
+      46,
+      56
+    ],
+    [
+      21,
+      47,
+      57
+    ],
+    [
+      22,
+      48,
+      58
+    ],
+    [
+      23,
+      49,
+      59
+    ]
+  ],
+  "dimensions": [
+    256,
+    256
+  ],
+  "decoded_rgba_bytes": 262144,
+  "delivery_cap_bytes": 16000,
+  "asset": {
+    "path": "navy-paper.png",
+    "bytes": 14086,
+    "sha256": "6ad2d6aae126462f5917033bb7714a1af38802e4ef085cac352e4e81f3e065d4"
+  }
+}

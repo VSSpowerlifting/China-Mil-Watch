@@ -2862,7 +2862,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js"):
+    for name in ("fonts.css", "support.css", "home.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
     # The full-color JPEG fallback must travel in fresh trees too; production
@@ -2884,7 +2884,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             written.append(route)
     # Decorative pilot assets are explicitly delivered from source. The review
     # master/receipt never becomes a browser dependency; other routes opt out.
-    for name in ("chart-paper.png", "contours-hero.svg", "contours-paper.svg"):
+    for name in ("chart-paper.png", "navy-paper.png", "contours-hero.svg", "contours-paper.svg", "coast-profile.svg", "reading-profile.svg", "chart-shelf.svg"):
         route = "assets/material/" + name
         target = out_dir / route
         target.parent.mkdir(parents=True, exist_ok=True)

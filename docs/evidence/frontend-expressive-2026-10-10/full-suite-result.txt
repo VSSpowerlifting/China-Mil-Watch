@@ -1,0 +1,6 @@
+Initial integrated run: 5,278 tests in 1093.233s; 29 failures, one existing skip.
+All failures investigated: outward decorative motion caused 26 horizontal-overflow failures; selected scope titles caused two heading failures; one test matched an accessible map name instead of the intended directory entry.
+Final integrated run: 5,280 tests in 1142.075s; OK (skipped=1).
+Full command: /Users/benjaminyang/pla-watch/.venv/bin/python -m unittest discover -s tests
+Final log: /private/tmp/ipr-expressive-full-tests-final.log
+No CI or deployment occurred.

@@ -11,3 +11,19 @@
 @media(max-width:1200px){.record-page{grid-template-columns:6rem minmax(0,1fr);gap:32px}.record-rail{grid-column:2;grid-row:2;display:grid;grid-template-columns:1fr 1fr;gap:24px}.record-rail .record-head{grid-column:1/-1;margin:0}.record-rail .atlas-breadcrumb{grid-column:1/-1}}
 @media(max-width:700px){.record-page{display:flex;flex-direction:column;padding-block:20px 48px;gap:0}.record-body{width:100%}.record-body>h1{font-size:clamp(38px,10.5vw,46px);line-height:1.04;margin-top:8px}.record-source-line{font-size:13px;line-height:1.7}.record-title-pair .original{font-size:18px}.record-title-pair .meta{font-size:14px}.record-actions{margin-block:0 16px}.record-history{margin-block:16px}.reader-contents{margin-block:8px;padding-block:8px}.record-section{margin-top:28px}.record-section>h2,.layer-head h2{font-size:36px}.record-date{margin-top:40px}.record-rail{display:block;width:100%;margin-top:32px}.interpretation p{font-size:18px}.provenance th{width:auto}}
 @media print{.record-page{display:block;padding:0}.record-body>h1{font-size:24pt}.record-history::details-content{content-visibility:visible}.record-history .custody{display:block}.reader-contents,.record-actions{display:none}.record-rail{display:block}.record-date{margin-top:24px}.original-text,.interpretation{border-color:black}.original-text p,.interpretation p{font-size:11pt}}
+/* A quiet reading sheet with a substantial profile on its date margin. */
+.record-page{position:relative;isolation:isolate}
+.record-date{border:0;position:relative;padding-top:22px;align-self:start;padding-bottom:230px}
+.record-date::after{content:'';position:absolute;inset:auto -10px 0 -70px;height:210px;background:url('assets/material/coast-profile.svg') no-repeat right 85%/auto 380px;pointer-events:none}
+.record-body{background:var(--bg);padding-bottom:28px}
+.record-rail{padding:24px 20px;background:var(--surface-inset) url('assets/material/chart-paper.png');border-radius:0 0 70px 0;align-self:start}
+.record-rail .rail-block:first-of-type{border-top:0}
+.record-section>h2,.layer-head{padding-top:12px;border-top:1px solid var(--rule)}
+@media(max-width:1200px){.record-rail{padding:24px;border-radius:0 0 45px 0}}
+@media(max-width:700px){.record-date{padding-bottom:76px;width:100%}.record-date::after{inset:auto -22px 0;height:50px;background-image:url('assets/material/chart-shelf.svg');background-size:700px auto}.record-rail{padding:22px}.record-body{background:transparent}}
+@media print,(forced-colors:active){.record-date::after{display:none}.record-date{padding-bottom:0}.record-rail{background-image:none;border-radius:0}}
+.record-rail{background-image:linear-gradient(#dde7e3d9,#dde7e3d9),url('assets/material/chart-paper.png')}
+.record-date{padding-bottom:380px}
+.record-date::after{inset:auto 15px 0 -55px;height:350px;background-image:url('assets/material/reading-profile.svg');background-size:auto 580px;background-position:center 70%;mask-image:linear-gradient(transparent,black 10%,black 85%,transparent)}
+@media(max-width:700px){.record-date{padding-bottom:76px}.record-date::after{inset:auto -22px 0;height:50px;background-image:url('assets/material/chart-shelf.svg');background-size:700px auto;mask-image:none}}
+@media print,(forced-colors:active){.record-date{padding-bottom:0}.record-rail{background-image:none}}

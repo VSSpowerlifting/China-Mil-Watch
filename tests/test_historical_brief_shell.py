@@ -13,9 +13,9 @@ import unittest
 
 from bs4 import BeautifulSoup
 
-from scripts.historical_brief_render import render_historical_brief, SECTIONS
+from scripts.historical_brief_render import render_historical_brief, render_historical_utility, SECTIONS
 from scripts.pw_env import inline_markup, make_pw_env
-from scripts.rerender_pla_watch import _build_post_context
+from scripts.rerender_pla_watch import _build_post_context, _flatten_term
 
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "output/the-pla-watch/posts"
@@ -43,6 +43,38 @@ class HistoricalBriefShellTests(unittest.TestCase):
     def test_every_real_issue_is_exercised(self):
         self.assertEqual(len(self.posts), len(list(POSTS.glob("*.json"))))
         self.assertGreaterEqual(len(self.posts), 14)
+
+    def test_historical_utility_register_preserves_titles_deks_and_identity(self):
+        sides = [json.loads(p.read_text()) for p in sorted(POSTS.glob('*.json'), reverse=True)]
+        before = copy.deepcopy(sides)
+        for route in ('the-pla-watch/', 'the-pla-watch/archive.html'):
+            soup = BeautifulSoup(render_historical_utility('Earlier Briefs', route, posts=sides), 'html.parser')
+            self.assertEqual(soup.select_one('link[rel=canonical]')['href'], 'https://indopacificrecord.org/'+route)
+            rows = soup.select('.issue-ledger-row')
+            self.assertEqual(len(rows), len(sides))
+            for row, side in zip(rows, sides):
+                self.assertEqual(row.h2.get_text(), side['title'])
+                self.assertEqual(row.h2.a['href'], 'posts/'+side['date']+'.html')
+                self.assertEqual(row.select_one('.issue-ledger-copy>p').get_text(), side['dek'])
+                if side.get('publication_timing') == 'retrospective':
+                    self.assertIn('Retrospective edition', row.get_text())
+        self.assertEqual(sides, before)
+
+    def test_glossary_shell_preserves_exact_terms_explanations_and_issue_urls(self):
+        terms = []
+        for side in [json.loads(p.read_text()) for p in sorted(POSTS.glob('*.json'), reverse=True)]:
+            word, explanation = _flatten_term(side)
+            if word.strip():
+                terms.append(dict(term=word, explanation=explanation, date=side['date'],
+                                  issue_number=side.get('issue_number'), week_ending=side.get('week_ending') or side['date']))
+        soup = BeautifulSoup(render_historical_utility('Terms to Know', 'the-pla-watch/terms.html', terms=terms), 'html.parser')
+        for row, term in zip(soup.select('.term-entry'), terms):
+            self.assertEqual(row.h2.get_text(), term['term'])
+            actual = [p.get_text() for p in row.select('.term-entry-expl>p')]
+            expected = [BeautifulSoup(str(inline_markup(p.strip())), 'html.parser').get_text()
+                        for p in term['explanation'].split('\n\n') if p.strip()]
+            self.assertEqual(actual, expected)
+            self.assertEqual(row.select_one('.term-entry-src a')['href'], 'posts/'+term['date']+'.html')
 
     def test_current_shell_and_collection_on_every_direct_article(self):
         for ctx, page, soup in self.posts:
@@ -188,14 +220,24 @@ class HistoricalBriefShellTests(unittest.TestCase):
         for ctx, rendered, _ in self.posts:
             with self.subTest(issue=ctx["issue_number"]):
                 published = POSTS / (ctx["date"] + ".html")
-                self.assertEqual(published.read_text(encoding="utf-8"), rendered)
+                # Source-only candidates may add these two inert presentation hooks
+                # and the owned stylesheet before an authorized output refresh.
+                # Every other byte (including source trails/citations) must match.
+                candidate = rendered.replace(' data-surface="historical" data-route="analysis.html"', '')
+                candidate = candidate.replace('<link rel="stylesheet" href="../../surfaces.css">\n', '')
+                # Apply the same narrow normalization after a later authorized
+                # output refresh; all other bytes still have to be identical.
+                checked_in = published.read_text(encoding="utf-8").replace(
+                    ' data-surface="historical" data-route="analysis.html"', '').replace(
+                    '<link rel="stylesheet" href="../../surfaces.css">\n', '')
+                self.assertEqual(checked_in, candidate)
 
     def test_links_and_assets_use_the_correct_two_level_root(self):
         for ctx, page, soup in self.posts:
             self.assertEqual(soup.select_one('.brand')["href"], '../../index.html')
             self.assertIn('../../analysis.html', [a["href"] for a in soup.header.select('a[href]')])
             self.assertEqual([s["href"] for s in soup.select('link[rel="stylesheet"]')],
-                             ['../../fonts.css', '../../styles.css', '../../briefs.css'])
+                             ['../../fonts.css', '../../styles.css', '../../surfaces.css', '../../briefs.css'])
             self.assertEqual(soup.select_one('script[src]')["src"], '../../shell.js')
             self.assertFalse(soup.select('.publication-freshness'))
             for neighbor in (ctx["prev_post"], ctx["next_post"]):
@@ -224,9 +266,10 @@ class HistoricalBriefBrowserTests(unittest.TestCase):
         from playwright.sync_api import sync_playwright
         cls.tmp = tempfile.TemporaryDirectory(prefix='ipr-historical-browser-')
         cls.root = Path(cls.tmp.name)
-        for name in ('fonts.css', 'styles.css', 'briefs.css', 'shell.js'):
-            shutil.copy2(ROOT / 'output' / name, cls.root / name)
+        for name in ('fonts.css', 'styles.css', 'surfaces.css', 'briefs.css', 'shell.js'):
+            shutil.copy2(ROOT / 'site/preview' / name, cls.root / name)
         shutil.copytree(ROOT / 'output/assets', cls.root / 'assets')
+        shutil.copytree(ROOT / 'site/assets/material', cls.root / 'assets/material', dirs_exist_ok=True)
         for name in ('media', 'covers'):
             shutil.copytree(ROOT / 'output/the-pla-watch' / name,
                             cls.root / 'the-pla-watch' / name)

@@ -14,7 +14,7 @@ from urllib.parse import urlsplit
 from jinja2 import Environment, FileSystemLoader
 
 from config import SITE_ORIGIN
-from core.edition_identity import COLLECTION_NAME
+from core.edition_identity import COLLECTION_NAME, resolve_identity
 from core.topography import topography_style
 from scripts.pw_env import format_date, inline_markup
 
@@ -102,3 +102,33 @@ def render_historical_brief(context: dict) -> str:
     if rendered.count(marker) != 1:
         raise ValueError("current IPR shell must carry exactly one preview marker")
     return rendered.replace(marker, metadata, 1)
+
+
+def render_historical_utility(title: str, route: str, **context) -> str:
+    """Current shell for existing series utility URLs; verbatim sidecar fields."""
+    if 'posts' in context:
+        context['posts'] = [{**post, **resolve_identity(post)} for post in context['posts']]
+    gp = _site_definition()
+    env = Environment(loader=FileSystemLoader(str(gp.TEMPLATES)),
+                      autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    env.filters.update(reader_date=format_date, inline_markup=inline_markup,
+                       count=lambda n: format(n, ',') if isinstance(n, int) else n,
+                       has_cjk=lambda value: bool(re.search(r'[一-鿿㐀-䶿]', value or '')))
+    env.globals['topography_style'] = topography_style
+    rendered = env.get_template('historical-utility.html').render(
+        title=gp.PUBLIC_TITLE, tagline=gp.TAGLINE, maintainer=gp.MAINTAINER,
+        collection_name=COLLECTION_NAME, mode=gp.BUILD_MODE,
+        live_base=SITE_ORIGIN, page='analysis.html', root_path='../',
+        desks=[], timelines=[], review_mode=False, historical_utility=True,
+        utility_title=title, **context)
+    url = html.escape(f'{SITE_ORIGIN}/{route}', quote=True)
+    metadata = '\n'.join([
+        f'<link rel="canonical" href="{url}">',
+        f'<meta property="og:url" content="{url}">',
+        f'<meta property="og:image" content="{html.escape(SITE_ORIGIN, quote=True)}/social-card.png">',
+        f'<meta name="twitter:image" content="{html.escape(SITE_ORIGIN, quote=True)}/social-card.png">',
+        f'<link rel="alternate" type="application/atom+xml" title="The PLA Watch — original feed" href="{html.escape(SITE_ORIGIN, quote=True)}/the-pla-watch/feed.xml">',
+    ])
+    if rendered.count('<meta name="robots" content="noindex, nofollow">') != 1:
+        raise ValueError('current IPR shell must carry exactly one preview marker')
+    return rendered.replace('<meta name="robots" content="noindex, nofollow">', metadata, 1)
