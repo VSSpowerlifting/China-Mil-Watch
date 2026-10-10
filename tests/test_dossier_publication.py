@@ -161,6 +161,22 @@ class DossierPublicationGateTests(unittest.TestCase):
                                         private_synthetic_preview=True)
         self.assertIn("dossier-contract-invalid", names(result))
 
+    def test_draft_cannot_become_approved_preview(self):
+        d = copy.deepcopy(self.d)
+        d["editorial_status"] = "draft"
+        d.pop("approval")
+        report = assess_dossier_release(d, fake_archive(d),
+                                        synthetic_authority=fake_authority(d),
+                                        private_synthetic_preview=True)
+        self.assertFalse(report["private_synthetic_preview_ready"])
+        self.assertIn("dossier-not-approved", names(report))
+
+    def test_archive_status_mismatch_refused(self):
+        a = copy.deepcopy(self.a); a["editorial_status"] = "draft"
+        result = assess_dossier_release(self.d, a, synthetic_authority=self.t,
+                                        private_synthetic_preview=True)
+        self.assertIn("archive-parity-or-digest-not-verified", names(result))
+
     def test_archive_digest_must_match_current_content(self):
         a = copy.deepcopy(self.a); a["content_sha256"] = "0" * 64
         self.assertIn("archive-parity-or-digest-not-verified", names(assess_dossier_release(
