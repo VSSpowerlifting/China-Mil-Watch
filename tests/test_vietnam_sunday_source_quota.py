@@ -123,7 +123,7 @@ class VietnamSundayCandidateQuotaTests(unittest.TestCase):
                 "editorial_notes_2026-10-10.json")
         data = json.loads(path.read_text(encoding="utf-8"))
         notes = {x["source_identity"]: x for x in data["entries"]}
-        self.assertEqual(len(notes), 4)
+        self.assertEqual(len(notes), 5)
         lao = notes["mps-vi:1791535381"]
         self.assertEqual(lao["published_date"], "2026-10-09")
         self.assertEqual(
@@ -132,6 +132,13 @@ class VietnamSundayCandidateQuotaTests(unittest.TestCase):
         self.assertIn("public security ministries", " ".join(lao["caveats"]))
         self.assertIn("not proof", " ".join(lao["caveats"]))
         self.assertNotIn("text_original", lao)
+        cambodia = notes["mps-vi:1791608910"]
+        self.assertEqual(cambodia["published_date"], "2026-10-10")
+        self.assertEqual(cambodia["content_sha256"],
+                         "d5b372499a12ff3df54c74d768d93d20da1913280eb2b4c4cda851345f731224")
+        self.assertIn("Cambodia", cambodia["summary"])
+        self.assertTrue(any("not the Lao" in c for c in cambodia["caveats"]))
+        self.assertNotIn("text_original", cambodia)
 
 
 if __name__ == "__main__":
