@@ -5,6 +5,14 @@
 **Parent:** [#318](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/318) | [B0 audit #319 / PR #324](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/324) | [B1 implementation #321](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/321) | [Source-use audit #326](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/326).  
 **Dependency:** the owner must accept a pilot scope and resolve rights/eligibility before any real Dossier sidecar is authored or any publication integration begins.
 
+## Engineering handoff package
+
+- [Normative v1 field contract](DOSSIER_B1_NORMATIVE_FIELD_CONTRACT_2026-10-09.md): strict root, scope, source, claim, disagreement, revision and approval objects; canonical digest details; explicit rights and human-screening authority boundaries.
+- [Implementer cut list and owner signoff](DOSSIER_B1_IMPLEMENTER_HANDOFF_2026-10-09.md): four **serial** B1.0–B1.3 steps, proposed Python API and diagnostic CLI contract; no overlapping frontend/Timeline files.
+- [52-case B1 test matrix and nine B2 checks](DOSSIER_B1_VALIDATION_MATRIX_2026-10-09.md), plus [fictional fixture](examples/dossier-v1-synthetic.json) and its [nonpublication rules](examples/README.md).
+
+**Status clarification:** This RFC is planning code/design, not a production `core/dossier_contract.py` implementation. The JSON fixture has been checked for internal field compatibility, but cannot reconcile to real archived sources. No pilot scope/rights exception/approval is represented as granted by these docs.
+
 ## 1. Architectural decision
 
 **One Dossier is a durable, human-edited answer to a bounded research question**, revised as new official evidence arrives. It is **not** a chronology, new Brief number, article-length research paper, automated news stream, or issuer claim promoted to verified fact.
