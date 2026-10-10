@@ -143,11 +143,7 @@ class ManifestSelectionContracts(unittest.TestCase):
         from storage.evidence_spend import FictionalSpendIntentJournal
 
         self.freeze()
-        with self.session.application(), db.get_conn() as conn:
-            conn.execute(
-                "INSERT INTO sources(slug,display_name,base_url,language,desk_id) "
-                "VALUES('pla_daily','Fictional official source',"
-                "'https://fixture.invalid/','en','china')")
+        # db.init_db() seeds pla_daily; reuse the native source row.
         fictional = normalize_article({
             "source_slug": "pla_daily",
             "url": "https://fixture.invalid/c2-native/1",
