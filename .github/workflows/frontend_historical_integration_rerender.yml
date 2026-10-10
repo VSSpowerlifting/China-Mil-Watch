@@ -1,0 +1,76 @@
+name: Historical Briefs integration - branch-only rerender
+
+on:
+  push:
+    branches:
+      - integration/314-after-historical-briefs-20261009
+    paths:
+      - 'scripts/render_historical_frontend_integration.py'
+      - 'site/preview/templates/base.html'
+      - 'site/preview/templates/historical-brief.html'
+      - 'docs/FRONTEND_AFTER_HISTORICAL_BRIEFS_INTEGRATION.md'
+      - '.github/workflows/frontend_historical_integration_rerender.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: historical-integration-only
+  cancel-in-progress: false
+
+jobs:
+  rerender-original-historical-html:
+    if: github.repository == 'VSSpowerlifting/China-Mil-Watch' && github.ref == 'refs/heads/integration/314-after-historical-briefs-20261009'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin immutable evidence
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/archive.sha256"
+          sha256sum output/the-pla-watch/posts/*.json > "$RUNNER_TEMP/sidecars.sha256"
+          sha256sum output/the-pla-watch/feed.xml > "$RUNNER_TEMP/feed.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install offline renderer dependencies
+        run: pip install -r requirements.txt
+      - name: Render only the fourteen historical IPR Brief HTML pages
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: python scripts/render_historical_frontend_integration.py --write
+      - name: Verify exact historical output and source byte preservation
+        run: |
+          python scripts/render_historical_frontend_integration.py --check
+          sha256sum -c "$RUNNER_TEMP/archive.sha256"
+          sha256sum -c "$RUNNER_TEMP/sidecars.sha256"
+          sha256sum -c "$RUNNER_TEMP/feed.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+          changes = subprocess.check_output(
+              ['git','diff','--name-only'], text=True).splitlines()
+          expected = {str(p) for p in
+                      Path('output/the-pla-watch/posts').glob('*.html')}
+          assert len(expected) == 14, len(expected)
+          assert set(changes).issubset(expected), sorted(set(changes) - expected)
+          assert len(changes) in (0, 14), changes
+          print('Historical-only changed files:', len(changes))
+          PY
+      - name: Commit regenerated historical HTML only to candidate branch
+        run: |
+          if ! git diff --quiet -- output/the-pla-watch/posts; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -- 'output/the-pla-watch/posts/*.html'
+            git commit -m "render(frontend): align 14 unified IPR Brief pages with owned surfaces"
+            git push origin HEAD:integration/314-after-historical-briefs-20261009
+          else
+            echo "No historical HTML drift; no commit needed."
+          fi
