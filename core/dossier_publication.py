@@ -82,6 +82,7 @@ def _valid_archive(sidecar, archive, digest, issues):
     ids = [src["record_id"] for src in sidecar["sources"]]
     if (archive.get("dossier_slug") != sidecar["slug"]
             or archive.get("content_sha256") != digest
+            or archive.get("editorial_status") != sidecar["editorial_status"]
             or archive.get("selected_record_ids") != ids
             or archive.get("archive_reconciled") is not True
             or archive.get("eligible_for_publication") is not False
@@ -128,6 +129,8 @@ def assess_dossier_release(sidecar, archive_review, *, synthetic_authority=None,
     slug = sidecar["slug"]
     issues = []
     screenings = _valid_archive(sidecar, archive_review, digest, issues)
+    if sidecar["editorial_status"] != "approved":
+        issues.append(_code("dossier-not-approved"))
 
     if not private_synthetic_preview:
         issues.append(_code("independent-production-authority-not-implemented"))
