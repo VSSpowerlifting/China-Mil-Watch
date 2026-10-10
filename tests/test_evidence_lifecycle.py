@@ -104,6 +104,28 @@ class CollectionBarrierContracts(unittest.TestCase):
         self.update("UPDATE source_run_results SET new_documents=-1")
         self.assert_code("c2_source_counters_invalid", self.barrier.seal_collection)
 
+    def test_healthy_silence_cannot_hide_new_documents(self):
+        self.update("UPDATE source_run_results SET status='ok_no_publications'")
+        self.assert_code("c2_source_status_counter_conflict",
+                         self.barrier.seal_collection)
+        self.update("UPDATE source_run_results SET status='ok_all_duplicates'")
+        self.assert_code("c2_source_status_counter_conflict",
+                         self.barrier.seal_collection)
+        self.update("UPDATE source_run_results SET status='ok_all_filtered'")
+        self.assert_code("c2_source_status_counter_conflict",
+                         self.barrier.seal_collection)
+        self.assertIsNone(self.coordinator.current()[0])
+
+    def test_disabled_source_cannot_claim_actual_collection(self):
+        self.update("UPDATE source_run_results SET status='skipped_disabled'")
+        self.assert_code("c2_source_status_counter_conflict",
+                         self.barrier.seal_collection)
+
+    def test_unreadable_body_count_cannot_exceed_extracted(self):
+        self.update("UPDATE source_run_results SET text_unavailable=2")
+        self.assert_code("c2_source_counters_invalid",
+                         self.barrier.seal_collection)
+
     def test_unattributed_extra_native_row_blocks(self):
         # An article attributed to the same run but a different source must
         # not pass by simply omitting that source from expected_sources.
