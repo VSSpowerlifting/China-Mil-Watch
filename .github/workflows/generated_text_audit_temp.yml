@@ -1,0 +1,38 @@
+name: One-time generated third-party text audit
+on:
+  push:
+    branches:
+      - audit/sg-mindef-generated-text-exposure-20261009
+    paths:
+      - .github/workflows/generated_text_audit_temp.yml
+permissions:
+  contents: read
+jobs:
+  read-only-exposure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Prove tracked archive and output unchanged
+        run: |
+          sha256sum pla_watch.db > /tmp/ipr-db-original-sha
+          git status --porcelain -- pla_watch.db output/ briefs/ timelines/ >/tmp/ipr-public-status
+      - name: Synthetic parser tests (no publisher bodies)
+        run: python -m unittest tests.test_audit_generated_record_text -v
+      - name: Read-only Singapore MINDEF static HTML inventory
+        run: |
+          python scripts/audit_generated_record_text.py --db pla_watch.db --output output --source sg_mindef_releases > /tmp/ipr-sg-record-exposure.json
+          python -c 'import json; d=json.load(open("/tmp/ipr-sg-record-exposure.json")); print(json.dumps({"source_slug":d["source_slug"],"surface":d["surface"],"counts":d["counts"],"missing_pages":d["record_ids"]["missing_pages"],"body_mismatch":d["record_ids"]["body_mismatch"],"body_not_rendered":d["record_ids"]["body_not_rendered"],"missing_official_link":d["record_ids"]["missing_official_link"]},sort_keys=True))'
+      - name: Ensure archive, publication, and SQLite directory untouched
+        if: always()
+        run: |
+          sha256sum -c /tmp/ipr-db-original-sha
+          git diff --exit-code -- pla_watch.db output/ briefs/ timelines/
+          diff -u /tmp/ipr-public-status <(git status --porcelain -- pla_watch.db output/ briefs/ timelines/)
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
