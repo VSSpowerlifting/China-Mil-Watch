@@ -14,7 +14,7 @@ The native repository manifest source inventory is **read-only**. A desk's actua
 
 ## Independent tests
 
-The `tests/test_evidence_manifest_policy.py` module exercises the declared China and Singapore manifest *metadata* as examples without collecting from them. Collection outcomes are fictional `ok_no_publications` receipts in a temporary native C1 database. The tests verify missing-source refusal, all-source durability, manifest digest mismatch, escaped desk IDs, lost write acknowledgement, immutable tampering, local-copy file drift, and restart restoration of an already collected generation.
+The `tests/test_evidence_manifest_policy.py` module exercises the declared China and Singapore manifest *metadata* as examples without collecting from them. It also runs a complete fictional C2-A/B/C/D sequence: a fixture-only record attributed to a manifest-derived slug, all expected source-run outcomes, immutable collected checkpoint, write-ahead paid-intent reservation, measured **fictional token usage**, native relevance update and a nonpublishing analyzed generation. Every operation runs through the existing C1 test database and never calls a real source or provider. Collection outcomes are fictional `ok_no_publications` receipts in a temporary native C1 database. The tests verify missing-source refusal, all-source durability, manifest digest mismatch, escaped desk IDs, lost write acknowledgement, immutable tampering, local-copy file drift, and restart restoration of an already collected generation.
 
 ## **Critical unresolved authority / security limits**
 
