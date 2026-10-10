@@ -1,0 +1,27 @@
+# Temporary focused dossier compatibility verification; delete after receipt.
+name: Dossier integration targeted compatibility check
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+permissions:
+  contents: read
+jobs:
+  dossier-stack:
+    if: ${{ github.event.pull_request.head.ref == 'feat/dossiers-main-integration-20261010' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Compile full private dossier stack
+        run: python -m compileall -q core/dossier_contract.py core/dossier_sources.py core/dossier_publication.py core/dossier_private_view.py core/dossier_private_html.py scripts/validate_dossiers.py tests/test_dossier_contract.py tests/test_dossier_sources.py tests/test_validate_dossiers.py tests/test_dossier_publication.py tests/test_dossier_private_view.py tests/test_dossier_private_html.py
+      - name: Test actual B1-B2 modules with 7 contract regressions
+        run: python -m unittest tests.test_dossier_contract tests.test_dossier_sources tests.test_validate_dossiers tests.test_dossier_publication tests.test_dossier_private_view tests.test_dossier_private_html -v
+      - name: Verify tracked corpus and site untouched
+        run: |
+          git diff --exit-code -- pla_watch.db output briefs timelines
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
