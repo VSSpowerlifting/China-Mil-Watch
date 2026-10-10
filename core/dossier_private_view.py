@@ -11,7 +11,8 @@ receipt strings and source-review metadata are not real permission documents.
 """
 from __future__ import annotations
 
-from core.dossier_publication import assess_dossier_release
+from core.dossier_contract import dossier_content_digest, validate_dossier_shape
+from core.dossier_publication import _is_synthetic_fixture, assess_dossier_release
 
 VIEW_SCHEMA = "ipr-dossier-private-reader-view/1"
 MARKER = "FICTIONAL — PRIVATE REVIEW ONLY — NOT FOR PUBLICATION"
@@ -26,8 +27,83 @@ class PrivateDossierViewHold(ValueError):
     """A synthetic preview cannot safely be assembled from these inputs."""
 
 
-def build_private_dossier_view(sidecar, archive_review, *, synthetic_authority):
+def _revision_comparison(sidecar, previous_sidecar):
+    """Synthetic structural comparison, never authenticated revision history."""
+    current_revision = sidecar["revision"]
+    if current_revision == 1:
+        if previous_sidecar is not None:
+            raise PrivateDossierViewHold("initial-revision-cannot-have-predecessor")
+        return {
+            "kind": "initial-fictional-revision",
+            "previous_revision": None,
+            "previous_content_sha256": None,
+            "changed_fields": [],
+            "added_claim_ids": [],
+            "modified_claim_ids": [],
+            "removed_claim_ids": [],
+        }
+    if previous_sidecar is None:
+        raise PrivateDossierViewHold("previous-fictional-revision-required")
+    try:
+        validate_dossier_shape(previous_sidecar)
+        prior_digest = dossier_content_digest(previous_sidecar)
+    except (ValueError, TypeError, KeyError, UnicodeError, OverflowError, RecursionError):
+        raise PrivateDossierViewHold("previous-fictional-revision-invalid") from None
+    if (not _is_synthetic_fixture(previous_sidecar)
+            or previous_sidecar["editorial_status"] != "approved"
+            or previous_sidecar["slug"] != sidecar["slug"]
+            or previous_sidecar["revision"] != current_revision - 1
+            or previous_sidecar["updated_on"] > sidecar["updated_on"]
+            or previous_sidecar["changes"] != sidecar["changes"][:-1]):
+        raise PrivateDossierViewHold("fictional-revision-lineage-mismatch")
+
+    old_claims = {
+        c["id"]: c
+        for section in previous_sidecar["sections"] for c in section["claims"]
+    }
+    new_claims = {
+        c["id"]: c
+        for section in sidecar["sections"] for c in section["claims"]
+    }
+    added = sorted(new_claims.keys() - old_claims.keys())
+    removed = sorted(old_claims.keys() - new_claims.keys())
+    modified = sorted(
+        cid for cid in old_claims.keys() & new_claims.keys()
+        if old_claims[cid] != new_claims[cid]
+    )
+    substantive_fields = (
+        "title", "dek", "research_question", "overview", "author_name",
+        "editor_name", "scope", "sources", "sections", "disagreements",
+        "related_briefs", "related_timelines",
+    )
+    changed = [field for field in substantive_fields
+               if previous_sidecar[field] != sidecar[field]]
+    if not changed:
+        raise PrivateDossierViewHold("fictional-revision-without-substantive-change")
+    # B1's v1 note cannot cite removed claims because it requires all affected
+    # IDs to exist in the current version. Preserve removals as factual *diff*
+    # metadata, never assert that the author disclosed a removal in the note.
+    noted = set(sidecar["changes"][-1]["affected_claim_ids"])
+    if not set(added + modified) <= noted:
+        raise PrivateDossierViewHold("fictional-revision-omits-claim-changes")
+    return {
+        "kind": "compared-fictional-revisions",
+        "previous_revision": previous_sidecar["revision"],
+        "previous_content_sha256": prior_digest,
+        "changed_fields": changed,
+        "added_claim_ids": added,
+        "modified_claim_ids": modified,
+        "removed_claim_ids": removed,
+    }
+
+
+def build_private_dossier_view(sidecar, archive_review, *, synthetic_authority,
+                               previous_sidecar=None):
     """Return a deterministic fictional view model; refuse all non-fictional data.
+
+    Revision 2+ also requires an independently supplied fictional immediate
+    predecessor, whose canonical contract and change-log ancestry are checked.
+    This is structural comparison, not cryptographic history authentication.
 
     The caller MUST construct archive_review freshly using the real B1.2
     reconciler and a synthetic, isolated SQLite test corpus. This function is
@@ -42,6 +118,8 @@ def build_private_dossier_view(sidecar, archive_review, *, synthetic_authority):
         raise PrivateDossierViewHold("public-authority-state-rejected")
     if not release["private_synthetic_preview_ready"]:
         raise PrivateDossierViewHold("private-synthetic-review-hold")
+
+    history = _revision_comparison(sidecar, previous_sidecar)
 
     sources = sidecar["sources"]
     policies = release["synthetic_preview_link_policy"]
@@ -158,6 +236,7 @@ def build_private_dossier_view(sidecar, archive_review, *, synthetic_authority):
         "disagreements": disagreements,
         "source_ledger": ledger,
         "changes": changes,
+        "revision_comparison": history,
         # Even an approved Brief/Timeline slug in authored JSON is not proof
         # that the target artifact is public; no related link is created here.
         "related_research_links": [],
