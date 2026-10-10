@@ -8,7 +8,7 @@ and approve its digest/week, configure existing SMTP secrets locally, then:
   python -m scripts.sunday_first_pilot_reviewed_replay --file /private/approved.txt
   python -m scripts.sunday_first_pilot_reviewed_replay --file /private/approved.txt --send
 
---send additionally requires IPR_SUNDAY_EDITOR_DELIVERY_ENABLED=true and all
+--send additionally requires a SEPARATE LOCAL IPR_SUNDAY_REPLAY_DELIVERY_APPROVED=true and all
 existing owner-week / exact SHA authorizations. Do not retry an uncertain
 SMTP result without inspecting Sent; this manual path is not idempotent.
 """
@@ -83,8 +83,8 @@ def replay(path: Path, *, send: bool = False, week_ending: str = PILOT_SATURDAY)
     original, info = inspect_file(path, week_ending)
     if not send:
         return {"state": "review-only", **info}
-    if os.environ.get("IPR_SUNDAY_EDITOR_DELIVERY_ENABLED", "") != "true":
-        raise ReplayRefused("explicit editor delivery opt-in missing")
+    if os.environ.get("IPR_SUNDAY_REPLAY_DELIVERY_APPROVED", "") != "true":
+        raise ReplayRefused("explicit local replay delivery opt-in missing")
     require_owner_review(
         week_ending=week_ending, sending=True,
         approved_week=os.environ.get("IPR_SUNDAY_OWNER_REVIEWED_WEEK", ""),
