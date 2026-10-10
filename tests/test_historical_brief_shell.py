@@ -195,7 +195,7 @@ class HistoricalBriefShellTests(unittest.TestCase):
             self.assertEqual(soup.select_one('.brand')["href"], '../../index.html')
             self.assertIn('../../analysis.html', [a["href"] for a in soup.header.select('a[href]')])
             self.assertEqual([s["href"] for s in soup.select('link[rel="stylesheet"]')],
-                             ['../../fonts.css', '../../styles.css', '../../briefs.css'])
+                             ['../../fonts.css', '../../styles.css', '../../enrichment.css', '../../briefs.css'])
             self.assertEqual(soup.select_one('script[src]')["src"], '../../shell.js')
             self.assertFalse(soup.select('.publication-freshness'))
             for neighbor in (ctx["prev_post"], ctx["next_post"]):

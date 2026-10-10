@@ -29,8 +29,10 @@ jobs:
         run: |
           sha256sum pla_watch.db > "$RUNNER_TEMP/briefs-db.sha256"
           find output/the-pla-watch/posts -maxdepth 1 -type f -name '*.json' -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/briefs-sidecars.sha256"
-      - name: Install offline test dependencies
-        run: pip install -r requirements.txt
+      - name: Install offline test dependencies and Chromium
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium --with-deps
       - name: Verify canonical historical shell and source evidence
         env:
           ANTHROPIC_API_KEY: ''
