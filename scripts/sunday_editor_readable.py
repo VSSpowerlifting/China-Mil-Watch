@@ -91,6 +91,8 @@ def prose_only_text(original):
     sections = editable_sections(original)
     out = [INTRO.rstrip(), ""]
     for key, text in sections:
+        # Plain-text mail clients also deserve prose without Markdown stars.
+        text = re.sub(r"\*\*([^\n*]+)\*\*", r"\1", text)
         if key == "WORKING TITLE":
             out.append(text)
         elif key == "DEK":
@@ -125,7 +127,8 @@ def prose_only_html(original):
         "Indo-Pacific Record / Working Brief</div>",
         '<div style="font:14px Arial,sans-serif;color:#435664;line-height:1.6;'
         'padding:0 0 18px;border-bottom:1px solid #d8e1e6;margin-bottom:20px;">'
-        + html.escape(INTRO.strip()).replace("\n\n", "<p>").replace("\n", " ") +
+        + "".join("<p>" + html.escape(p, quote=True).replace("\n", " ") +
+                  "</p>" for p in INTRO.strip().split("\n\n")) +
         "</div>",
     ]
     for key, text in sections:
