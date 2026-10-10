@@ -1,0 +1,52 @@
+# Temporary offline browser validation for fictional private HTML. Delete after receipt.
+name: B2.2b fictional HTML real browser checks
+on:
+  pull_request:
+    branches: [feat/dossier-b22-private-reader-model-20261010]
+    types: [opened, reopened, synchronize, ready_for_review]
+permissions:
+  contents: read
+jobs:
+  private-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install browser support
+        run: pip install 'playwright>=1.59.0' && playwright install chromium --with-deps
+      - name: Confirm Chromium actually launches
+        run: |
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as engine:
+              browser = engine.chromium.launch()
+              print('Chromium launched:', browser.version)
+              browser.close()
+          PY
+      - name: Compile all Dossier slices
+        run: python -m compileall -q core/dossier_contract.py core/dossier_sources.py core/dossier_publication.py core/dossier_private_view.py core/dossier_private_html.py scripts/validate_dossiers.py tests/test_dossier_contract.py tests/test_dossier_sources.py tests/test_validate_dossiers.py tests/test_dossier_publication.py tests/test_dossier_private_view.py tests/test_dossier_private_html.py
+      - name: Execute all synthetic suites including actual browser
+        run: |
+          python - <<'PY'
+          import sys, unittest
+          suites = [
+              'tests.test_dossier_contract', 'tests.test_dossier_sources',
+              'tests.test_validate_dossiers', 'tests.test_dossier_publication',
+              'tests.test_dossier_private_view', 'tests.test_dossier_private_html',
+          ]
+          cases = unittest.defaultTestLoader.loadTestsFromNames(suites)
+          result = unittest.TextTestRunner(verbosity=2).run(cases)
+          if not result.wasSuccessful() or result.skipped:
+              print('FAILED OR SKIPPED: Browser+synthetic suite must execute fully')
+              sys.exit(1)
+          print('B2.2b all synthetic and browser tests executed without skips')
+          PY
+      - name: Verify tracked archive and generated output unchanged
+        run: |
+          git diff --exit-code -- pla_watch.db output briefs timelines
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
