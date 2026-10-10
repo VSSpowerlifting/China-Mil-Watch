@@ -150,7 +150,8 @@ class FictionalPrivateHTMLTests(unittest.TestCase):
         self.assertIn("@media print", page)
         self.assertIn('class="skip" href="#main"', page)
         self.assertIn('aria-label="On this fictional dossier"', page)
-        self.assertIn('role=', page if 'role=' in page else 'role=')
+        self.assertIn('<main id="main">', page)
+        self.assertIn('<nav aria-label="On this fictional dossier">', page)
 
     def test_invalid_archive_prevents_html_creation(self):
         archive = fake_archive(fake_dossier())
