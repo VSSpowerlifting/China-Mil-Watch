@@ -40,3 +40,9 @@ Run with the full dependency stack in a checkout:
 Do not merge B2.1 ahead of #328, #329, #330; do not advertise fake receipt flags as verified rights or human authentication. Actual Dossier sidecars remain gated under B0 #319 and MINDEF rights review #326. Shared frontend owners must first reconcile Timeline #181 and sitewide frontend #323 before work on B2.2 (private view model / Jinja prototype) or B2.3 (Analysis links).
 
 This engineering slice deliberately does **not** create a public Dossier reader, route, renderer, sitemap entry, feed, CLI approval command or deployment path. Its acceptance gate is review of the new pure source and tests, exact-head full CI, source/archive preservation, and explicit human decision on integrating the dependency stack.
+
+## October 10 complete repository integration receipt
+
+[GitHub Actions full offline run #38058386494](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38058386494) **succeeded** using an isolated, read-only temporary copy of the canonical PR workflow, on B2.1 testing head `b42e5268e1783636ef19162f6b878818f24c5c61`. The workflow executed the bounded taxonomy/source preflight, installed and launched Chromium, passed **5,422 tests (9 documented skips)**, passed `scripts/validate_output.py` with **10 pre-existing historical/content warnings**, and verified tracked database/output bytes, Git status and no SQLite WAL/SHM sidecar residue. No collection, external-source fetch, model purchase, email, deployment or publishing ran.
+
+The temporary workflow was removed in cleanup commit `cb87f6c4d5893e1d93a8a4c366cf83d4a6046a18`, restoring the 3-file PR diff. The test receipt is for the **pre-cleanup** commit; it does **not** count as final exact-head CI after upstream B1 integration or PR rebase. Publication eligibility remains unconditionally false.
