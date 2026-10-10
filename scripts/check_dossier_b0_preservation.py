@@ -40,6 +40,28 @@ RECORDS = {
 }
 
 
+# Freeze extracted directly from the tracked October 9 archive as attested in
+# Actions #38011850371. These are stored UTF-8 field digests, NOT current live
+# publisher bytes and NOT permissions or an editorial approval.
+# record_id: (original-title SHA-256, stored-original-body SHA-256)
+FROZEN_SHA256 = {
+    4428: ("32735782d12cd31a7613d6acd21aa83e1c270a24cfa996e04a139ed771979761",
+           "414935d1bcf719d117e6c3342cc0fdb955a2580bd5d16aac523e610e06f1ae29"),
+    4452: ("93755fdca78aba593bf4d5881915f6e7f3f08bcdb22369b05206d6a61c206467",
+           "3f84c0d0c26a900f34b068c4c5f29967fd2864ea41821051323b180e24a15b02"),
+    4454: ("10350cb9b2f0d12b9d9dd40f521114c7fb67a87cf16ec0fe7874bef5f1da69d9",
+           "e7ba778857ecf0fea62e95a7920864650a138227f07f1ae4c52b4edb0d7a8bab"),
+    4466: ("d9e2a8fa63ffbb5254098f438600901be05f15698543dead06222d21bd44be5a",
+           "ef18634fd29ff57894eb35d35339cd60bf6b1d2339fe6038875bc7b5bea49878"),
+    4472: ("be2bcd573a98bf0f6ce8724673769b409b01fc0d1283f913c615675bd7516c22",
+           "0e4d1a580c8267e9f2b486f742c17e95551761943cac53013fa4f292dc87d078"),
+    4849: ("86c69325e667ffb5a38fba14544c42c598b601a83f0793808e8c2d7c5be432cb",
+           "ced43fd969de5301f2297ec64867b7a2a88e2870b071d743a540ac1e1cb2ef77"),
+    4983: ("6f79d6441401a6516bb1511cd13c32df5e5a26efcc95d12bf55cfbf24966a41a",
+           "7eabfff1c6cd89df11309b2ec956dcafd7a4e0b46620c1e368466de7a7b2ccce"),
+}
+
+
 class EvidenceAuditError(ValueError):
     pass
 
@@ -48,7 +70,8 @@ def normalized(text):
     return " ".join((text or "").casefold().split())
 
 
-def verify_record(row, spec, *, valid_manifest=True, expected_record_id=None):
+def verify_record(row, spec, *, valid_manifest=True, expected_record_id=None,
+                  frozen_sha256=None):
     """Pure check, easily tested with synthetic rows; no original body emitted."""
     pub_date, slug, anchors, event_group = spec
     expected = BASE + slug + "/"
@@ -74,6 +97,13 @@ def verify_record(row, spec, *, valid_manifest=True, expected_record_id=None):
         errors.append("untrusted-publisher-url")
     title = row.get("title_original") or ""
     original = row.get("text_original") or ""
+    title_sha = hashlib.sha256(title.encode("utf-8")).hexdigest()
+    original_sha = hashlib.sha256(original.encode("utf-8")).hexdigest()
+    if frozen_sha256 is not None:
+        if title_sha != frozen_sha256[0]:
+            errors.append("frozen-original-title-drift")
+        if original_sha != frozen_sha256[1]:
+            errors.append("frozen-original-body-drift")
     lang = row.get("source_language_tag")
     if lang not in ("en", "en-SG"):
         errors.append("unexpected-language-tag")
@@ -96,8 +126,8 @@ def verify_record(row, spec, *, valid_manifest=True, expected_record_id=None):
         "event_group": event_group,
         "publisher_date": row.get("published_date"),
         "source_slug": row.get("source_slug"),
-        "stored_title_sha256": hashlib.sha256(title.encode("utf-8")).hexdigest(),
-        "stored_original_sha256": hashlib.sha256(original.encode("utf-8")).hexdigest(),
+        "stored_title_sha256": title_sha,
+        "stored_original_sha256": original_sha,
         "stored_original_characters": len(original),
         "title_present": bool(title.strip()),
         "all_anchors_present": not missing,
@@ -170,10 +200,12 @@ def scan(db_path, manifest_path):
         "record_4428_analysis_timestamp_present": bool(finding[3]),
     }
     by_id = {row["id"]: dict(row) for row in rows}
+    if set(FROZEN_SHA256) != set(RECORDS):
+        raise EvidenceAuditError("frozen source digests do not exactly cover candidate record IDs")
     reports = []
     for rid, spec in sorted(RECORDS.items()):
         result = verify_record(by_id.get(rid), spec, valid_manifest=manifest_ok,
-                               expected_record_id=rid)
+                               expected_record_id=rid, frozen_sha256=FROZEN_SHA256[rid])
         result["record_id"] = rid
         reports.append(result)
     # The same exercise can appear in multiple source releases. Count declared
@@ -188,7 +220,7 @@ def scan(db_path, manifest_path):
     return {
         "schema": SCHEMA,
         "snapshot_db_sha256": sha,
-        "verified_as": "stored_source_reconciliation_only",
+        "verified_as": "frozen_stored_source_parity_only",
         "not_verified": [
             "live-publisher-body-byte-parity", "rights-and-full-text-reuse",
             "human-claim-interpretation", "publisher-independent-corroboration",
