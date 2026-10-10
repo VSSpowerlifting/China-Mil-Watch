@@ -6,6 +6,8 @@ import json
 import sqlite3
 import tempfile
 import unittest
+import threading
+from unittest.mock import patch
 from pathlib import Path
 
 from core.evidence_snapshot import (
@@ -50,6 +52,53 @@ class SnapshotTests(unittest.TestCase):
                              [(42,), (89,)])
         self.assertEqual(manifest["article_count"], 2)
         self.assertEqual(manifest["max_article_id"], 89)
+        self.assertFalse(Path(str(path) + "-wal").exists())
+        self.assertFalse(Path(str(path) + "-shm").exists())
+
+    def test_caller_transaction_rejected_before_destination_and_not_committed(self):
+        self.conn.execute("INSERT INTO articles VALUES(99,1,'FICTIONAL_UNCOMMITTED')")
+        path = self.root / "refused.sqlite"
+        with self.assertRaisesRegex(EvidenceContractError, "^backup_source_transaction$"):
+            capture_backup(self.conn, path)
+        self.assertTrue(self.conn.in_transaction)
+        self.assertFalse(path.exists())
+        self.conn.rollback()
+
+    def test_deadline_progress_refusal_removes_exclusive_artifact(self):
+        path = self.root / "deadline.sqlite"
+        with patch("core.evidence_snapshot.time.monotonic", side_effect=[1.0, 3.0]):
+            with self.assertRaisesRegex(EvidenceContractError, "^backup_timeout$"):
+                capture_backup(self.conn, path, timeout_seconds=1)
+        self.assertFalse(path.exists())
+        self.assertEqual(self.conn.execute("SELECT count(*) FROM articles").fetchone()[0], 1)
+
+    def test_concurrent_wal_writer_and_truncate_have_no_torn_snapshot(self):
+        started = threading.Event()
+        errors = []
+        def writer():
+            c = sqlite3.connect(str(self.source))
+            try:
+                started.set()
+                for n in range(20):
+                    c.executemany("INSERT INTO articles VALUES(?,1,'FICTIONAL_PAIR')",
+                                  [(200 + n * 2,), (201 + n * 2,)])
+                    c.commit()
+                    c.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            except Exception as exc:
+                errors.append(type(exc).__name__)
+            finally:
+                c.close()
+        worker = threading.Thread(target=writer); worker.start(); started.wait(5)
+        for n in range(5):
+            path = self.root / ("concurrent-%d.sqlite" % n)
+            capture_backup(self.conn, path)
+            with sqlite3.connect(str(path)) as c:
+                ids = [r[0] for r in c.execute("SELECT id FROM articles ORDER BY id")]
+            self.assertIn(42, ids)
+            self.assertEqual((len(ids) - 1) % 2, 0)
+            self.assertEqual(ids[1:], list(range(200, 200 + len(ids) - 1)))
+        worker.join(10)
+        self.assertFalse(worker.is_alive()); self.assertEqual(errors, [])
 
     def test_uncommitted_writes_not_in_capture(self):
         self.conn.execute("INSERT INTO articles VALUES(100,1,'UNCOMMITTED_FAKE')")
@@ -169,6 +218,20 @@ class SnapshotTests(unittest.TestCase):
         _, m = self.make()
         self.assertEqual(m["article_count"], 0)
         self.assertEqual(m["max_article_id"], 0)
+
+    def test_frozen_snapshot_verification_never_creates_sidecars(self):
+        path, manifest = self.make()
+        verify_snapshot(path, manifest)
+        self.assertFalse(Path(str(path) + "-wal").exists())
+        self.assertFalse(Path(str(path) + "-shm").exists())
+
+    def test_snapshot_with_sidecars_is_not_treated_as_immutable(self):
+        path, manifest = self.make()
+        Path(str(path) + "-wal").write_bytes(b"fictional sidecar")
+        with self.assertRaisesRegex(EvidenceContractError, "snapshot_not_standalone"):
+            verify_snapshot(path, manifest)
+        with self.assertRaisesRegex(EvidenceContractError, "snapshot_not_standalone"):
+            manifest_for_backup(path, run_id="fake-run", stage="collected")
 
 
 if __name__ == "__main__":

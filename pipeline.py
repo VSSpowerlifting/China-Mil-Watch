@@ -238,6 +238,16 @@ def run(
     dry_run:         bool = False,
     no_analysis:     bool = False,
 ) -> None:
+    # C1 provides only a validated private-mode inspection seam. Collection,
+    # analysis and checkpoint lifecycle wiring belongs to separately reviewed
+    # C2. Refuse before directories, initialization, collector or model work.
+    private_context = db.current_database_context()
+    if private_context is not None:
+        from core.evidence_snapshot import require
+        private_context.validate()
+        require(dry_run is True, "custody_pipeline_not_integrated")
+        logger.info("Fictional custody dry run: verified database; no execution")
+        return
     start_time = datetime.now()
     logger.info("=== PLA Watch pipeline — %s ===", target_date.isoformat())
     logger.info("Sources: %s | dry-run: %s", sources, dry_run)

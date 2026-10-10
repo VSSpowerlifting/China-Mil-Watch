@@ -171,12 +171,37 @@ class EvidenceObjectCoordinator:
                 "snapshot_object_corrupt")
         return manifest, encoded, data
 
+    def inspect_generation(self, generation):
+        """Public verified manifest interface; payload remains transport-private."""
+        return self._registered(generation)[0]
+
+    def claimed_generation(self, run_id, stage):
+        """Locate a prepared stage for explicit recovery, never promote it."""
+        from core.evidence_snapshot import ID_PATTERN, SHA_PATTERN
+        import json
+        require(type(run_id) is str and bool(ID_PATTERN.fullmatch(run_id)) and
+                stage in ("collected", "analyzed"), "snapshot_identity_invalid")
+        data, _ = self._read("claims/" + run_id + "/" + stage + ".json",
+                             "run_claim_missing")
+        try:
+            claim = json.loads(data)
+            require(type(claim) is dict and set(claim) == {"generation"} and
+                    type(claim["generation"]) is str and
+                    bool(SHA_PATTERN.fullmatch(claim["generation"])), "run_claim_invalid")
+            require(data == canonical_bytes(claim), "run_claim_invalid")
+        except (ValueError, TypeError, UnicodeError, RecursionError):
+            raise EvidenceContractError("run_claim_invalid") from None
+        manifest = self.inspect_generation(claim["generation"])
+        require(manifest["run_id"] == run_id and manifest["stage"] == stage,
+                "run_stage_conflict")
+        return manifest
+
     def current(self):
         obj = self.transport.get(self.REF_KEY)
         if obj is None:
             return None, None
         encoded, revision = obj
-        require(type(encoded) is bytes and type(revision) is str,
+        require(type(encoded) is bytes and type(revision) is str and bool(revision),
                 "invalid_transport_reply")
         ref = parse_ref(encoded)
         manifest, raw, _ = self._registered(ref["generation"])
