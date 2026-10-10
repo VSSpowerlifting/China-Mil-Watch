@@ -1,0 +1,61 @@
+name: Frontend human visual-review captures
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/capture_frontend_review.py'
+      - 'site/preview/**'
+      - 'output/enrichment.css'
+      - 'output/historical-enrichment.css'
+      - 'output/the-pla-watch/posts/**'
+      - '.github/workflows/frontend_visual_review_evidence.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  capture-frontend-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record original archive and rendered-output state
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/archive.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install offline browser dependencies
+        run: |
+          python -m pip install playwright
+          playwright install chromium --with-deps
+      - name: Capture candidate desktop/mobile/no-JS/reduced-motion pages
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python scripts/capture_frontend_review.py \
+            --root output \
+            --out "$RUNNER_TEMP/frontend-review"
+      - name: Confirm archive and published tree remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/archive.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Upload reproducible screenshots and review manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-visual-review-${{ github.event.pull_request.number }}
+          path: ${{ runner.temp }}/frontend-review/
+          if-no-files-found: warn
+          retention-days: 7
