@@ -109,6 +109,50 @@ class PureDossierContractTests(unittest.TestCase):
         d = synthetic(); d["title"] = "a\u0301"
         self.assert_bad(d, "NFC")
 
+    def test_registered_source_ids_may_contain_underscores(self):
+        # The live Singapore public manifest uses sg_mindef_releases and
+        # sg_mindef; this remains a wholly fictional Dossier structure.
+        d = synthetic()
+        d["sources"][0]["desk"] = "singapore"
+        d["sources"][0]["source_id"] = "sg_mindef_releases"
+        d["sources"][0]["institution_id"] = "sg_mindef"
+        d["scope"]["institutions"] = [
+            "fictional-service-alpha", "fictional-service-beta", "sg_mindef"
+        ]
+        self.assertIs(validate_dossier_shape(d), d)
+
+    def test_source_identity_still_rejects_path_or_whitespace(self):
+        for bad in ("../outside", "a/b", "UPPER", "foo bar", ""):
+            with self.subTest(bad=bad):
+                d = synthetic()
+                d["sources"][0]["source_id"] = bad
+                self.assert_bad(d, "internal identifier")
+
+    def test_public_dossier_slug_stays_stricter_than_internal_ids(self):
+        d = synthetic()
+        d["slug"] = "fictional_dossier"
+        self.assert_bad(d, "slug")
+
+    def test_unpaired_unicode_surrogate_is_controlled_validation_error(self):
+        d = synthetic()
+        d["overview"] = "imaginary \\ud800 evidence".replace("\\ud800", chr(0xD800))
+        self.assert_bad(d, "surrogate")
+
+    def test_raw_json_unicode_surrogate_cannot_crash_digest(self):
+        d = approved()
+        d["title"] = "fictional " + chr(0xD800) + " heading"
+        self.assert_bad(d, "surrogate")
+
+    def test_sqlite_id_overflow_rejected_in_source_ledger(self):
+        d = synthetic()
+        d["sources"][1]["record_id"] = 2 ** 63
+        self.assert_bad(d, "SQLite signed ID range")
+
+    def test_sqlite_id_overflow_rejected_in_cited_record_ids(self):
+        d = synthetic()
+        d["sections"][0]["claims"][0]["source_record_ids"] = [2 ** 63]
+        self.assert_bad(d, "SQLite signed ID range")
+
     def test_nonblank_research_question(self):
         d = synthetic(); d["research_question"] = " "
         self.assert_bad(d)
