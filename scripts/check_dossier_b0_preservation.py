@@ -48,7 +48,7 @@ def normalized(text):
     return " ".join((text or "").casefold().split())
 
 
-def verify_record(row, spec, *, valid_manifest=True):
+def verify_record(row, spec, *, valid_manifest=True, expected_record_id=None):
     """Pure check, easily tested with synthetic rows; no original body emitted."""
     pub_date, slug, anchors, event_group = spec
     expected = BASE + slug + "/"
@@ -60,6 +60,8 @@ def verify_record(row, spec, *, valid_manifest=True):
         return {"record_id": None, "event_group": event_group,
                 "errors": ["missing-record"], "review_holds": []}
     rid = row.get("id")
+    if expected_record_id is not None and (type(rid) is not int or rid != expected_record_id):
+        errors.append("record-id-mismatch")
     for key, value in (
         ("source_slug", SOURCE), ("desk_id", DESK),
         ("institution_id", INSTITUTION), ("published_date", pub_date),
@@ -170,7 +172,8 @@ def scan(db_path, manifest_path):
     by_id = {row["id"]: dict(row) for row in rows}
     reports = []
     for rid, spec in sorted(RECORDS.items()):
-        result = verify_record(by_id.get(rid), spec, valid_manifest=manifest_ok)
+        result = verify_record(by_id.get(rid), spec, valid_manifest=manifest_ok,
+                               expected_record_id=rid)
         result["record_id"] = rid
         reports.append(result)
     # The same exercise can appear in multiple source releases. Count declared
@@ -178,6 +181,10 @@ def scan(db_path, manifest_path):
     grouping = {}
     for entry in reports:
         grouping.setdefault(entry["event_group"], []).append(entry["record_id"])
+        if entry["record_id"] == 4849:
+            # This *one source* discusses two separately identified multilateral
+            # activities; do not mistake two themes for two independent sources.
+            grouping.setdefault("admm-plus-maritime-security-jca-2026", []).append(4849)
     return {
         "schema": SCHEMA,
         "snapshot_db_sha256": sha,
@@ -191,6 +198,7 @@ def scan(db_path, manifest_path):
         "screening_context": screening_context,
         "selected_source_records": len(reports),
         "research_activity_groups": grouping,
+        "research_activity_count": len(grouping),
         "all_stored_checks_passed": all(not x["errors"] for x in reports),
         "editorial_screening_holds": sum(bool(x["review_holds"]) for x in reports),
         "screening_clear_for_editorial_use": all(not x["review_holds"] for x in reports),
