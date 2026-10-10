@@ -1,0 +1,33 @@
+{
+  "initial_integrated": {
+    "tests": 5278,
+    "failures": 29,
+    "errors": 0,
+    "skipped": 1,
+    "seconds": 1093.233
+  },
+  "final_integrated": {
+    "tests": 5280,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "seconds": 1142.075
+  },
+  "regression_modules": {
+    "tests": 508,
+    "failures": 0,
+    "skipped": 1
+  },
+  "historical_final": {
+    "tests": 21,
+    "failures": 0
+  },
+  "browser_chromium": 234,
+  "browser_extra_native_interactions": 4,
+  "browser_firefox_webkit": 98,
+  "routes_budgeted": 7461,
+  "records_preserved": 5020,
+  "validator_warnings": 10,
+  "ci_run": false,
+  "deployment": false
+}

@@ -1,0 +1,78 @@
+{
+  "pla_watch.db": {
+    "unchanged": true,
+    "sha256": "443e5c477e515da4a0408b631dbaeec7638b98d85573a4bacd95c49fff941420"
+  },
+  "timelines/maritime-cooperation-2026.json": {
+    "unchanged": true,
+    "sha256": "0e922865856addb24786b088ee925c35ebab3809659fb252462a66090c9da332"
+  },
+  "site/preview/templates/_desk_map_geo.svg": {
+    "unchanged": true,
+    "sha256": "93589bc0ae7456317d77ca0a33806f5b074b4e3ada54f74c88e6de31da0c29da"
+  },
+  "desks/registry.json": {
+    "unchanged": true,
+    "sha256": "55fa7080ac5e49723044564bfb4a9221aa7fabe8b7a4dbbf53b5c225ae27913a"
+  },
+  "desks/geography.json": {
+    "unchanged": true,
+    "sha256": "69273d980a0f8af99a0e9213c67d8e689334639d787184e9cabdf08856056152"
+  },
+  "site/assets/identity/selected-ipr/ipr-accent-180.png": {
+    "unchanged": true,
+    "sha256": "d26dea808721999c004409ac6b6ea0525016adc524a291875e48c489104ac5d5"
+  },
+  "site/assets/identity/selected-ipr/ipr-accent-64.png": {
+    "unchanged": true,
+    "sha256": "36b000065e53643d44afcea6c55475b951382502d4882dd5428ae64c919f19f1"
+  },
+  "site/assets/identity/selected-ipr/ipr-navy-160.png": {
+    "unchanged": true,
+    "sha256": "561fdb9e03af6502b5c5ddf0d33aa9c8452c40f2f66b4b3e14a0a21f5ddf8fe0"
+  },
+  "site/assets/identity/selected-ipr/ipr-ivory-160.png": {
+    "unchanged": true,
+    "sha256": "a875d7650d0b46ac0c2c2552fd6b938da4ece6a27f4254b76addbeb100e1e5ed"
+  },
+  "site/assets/identity/selected-ipr/ASSET_RECEIPT.json": {
+    "unchanged": true,
+    "sha256": "28249b606775e0cc81ffd8a28e3ead35a8632fed00fceb664a59cbd2ccd71ec5"
+  },
+  "site/assets/identity/selected-ipr/ipr-ivory-master.png": {
+    "unchanged": true,
+    "sha256": "e55c3ca208127eaeda6b96d02682e271a36e45f2527399d757c26301195222db"
+  },
+  "site/assets/identity/selected-ipr/ipr-navy-master.png": {
+    "unchanged": true,
+    "sha256": "65f6d9f4c45d63f9d3e2a4d70a0609a9ffddb6f3f5c1e1e893a22dd19e9559ee"
+  },
+  "site/assets/identity/selected-ipr/ipr-accent-32.png": {
+    "unchanged": true,
+    "sha256": "e5db248ad4219d9839228dcdc0ada0c6a45ddb7cafdef3eafd63c42500d21c74"
+  },
+  "site/assets/identity/selected-ipr/ipr-navy-320.png": {
+    "unchanged": true,
+    "sha256": "ea2dc07b68b76861e6337a22cfa47239ab4f4f4cf246fc29be5df9942f896ffa"
+  },
+  "site/assets/identity/selected-ipr/ipr-ivory-640.png": {
+    "unchanged": true,
+    "sha256": "3bba46fd8ed714d887bcc5e2255e004e0510a04c78fdd0daa177a5b8bf6f5d71"
+  },
+  "site/assets/identity/selected-ipr/2.png": {
+    "unchanged": true,
+    "sha256": "cafe176d7452edb2dcbf72dba8864924e70e48b2da04c6112d96b1096a1f6c6b"
+  },
+  "site/assets/identity/selected-ipr/ipr-ivory-320.png": {
+    "unchanged": true,
+    "sha256": "45c937000666d52ec6c196702c88134a0a32bf7cc75bdcd0e3de8ca58ed1b8ca"
+  },
+  "site/assets/identity/selected-ipr/1.png": {
+    "unchanged": true,
+    "sha256": "18ae5c15fc593048f8112944b657fbb2760cbad314bce57ee3a1fa702db04647"
+  },
+  "site/assets/identity/selected-ipr/ipr-navy-640.png": {
+    "unchanged": true,
+    "sha256": "eb6546a57c55e8bf3ace9671aee0bdc7b49b87812622aabc29324730b4779c14"
+  }
+}

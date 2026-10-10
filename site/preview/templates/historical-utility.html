@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ utility_title }} — {{ title }}{% endblock %}
+{% block content %}
+<header class="page-head"><h1>{{ utility_title }}</h1>
+{% if terms is defined %}
+<p class="lede">Each weekly edition of The PLA Watch explains one piece of vocabulary from that week's Chinese military-media coverage — collected here, newest first, with a link back to the edition where the term appeared in context.</p>
+{% else %}
+<p class="lede">The earlier Briefs in Indo-Pacific Record Briefs, first published as The PLA Watch. Original publication identity remains in each article's provenance and citation.</p>
+<p><a href="../analysis.html">Browse the complete Briefs collection</a></p>
+{% endif %}</header>
+{% if terms is defined %}
+<div class="terms-list">
+{% for t in terms %}<article class="term-entry" style="padding:24px 0;border-top:1px solid var(--rule);max-width:68ch">
+<h2 class="term-entry-word"{% if t.term | has_cjk %} lang="zh-Hans"{% endif %}>{{ t.term }}</h2>
+<div class="term-entry-expl">{% for para in (t.explanation or '').split('\n\n') %}{% if para.strip() %}<p>{{ para.strip() | inline_markup }}</p>{% endif %}{% endfor %}</div>
+<p class="term-entry-src">From <a href="posts/{{ t.date }}.html">{% if t.issue_number %}No. {{ t.issue_number }} · {% endif %}week ending {{ t.week_ending | reader_date }}</a></p>
+</article>{% else %}<p>No terms recorded yet.</p>{% endfor %}
+</div>
+<p class="terms-note">Terms and explanations are reproduced exactly as published in each edition; nothing here is re-derived or re-translated. The original Chinese usage in the underlying source is always the authoritative text.</p>
+{% else %}
+<p class="meta">Links follow the listed issues; they do not imply uninterrupted weekly coverage. The archive has each issue's summary and source-trail context.</p>
+<ol class="issue-ledger issue-ledger--briefs" style="list-style:none;padding:0">
+{% for e in posts %}<li><article class="issue-ledger-row"><div class="issue-ledger-meta"><span class="issue-no">No. {{ e.issue_number }}</span><time datetime="{{ e.week_ending or e.date }}">{{ (e.week_ending or e.date) | reader_date }}</time>{% if e.edition_label %}<span>{{ e.edition_label }}</span>{% endif %}{% if e.is_retrospective %}<span>{{ e.retrospective_label }}</span>{% endif %}</div><div class="issue-ledger-copy"><h2><a href="posts/{{ e.date }}.html">{{ e.title }}</a></h2><p>{{ e.dek }}</p><p class="meta">{{ e.author_name }} · {{ e.publication }}</p></div></article></li>{% endfor %}
+</ol>
+<p><a href="terms.html">Terms to Know</a> · <a href="feed.xml">Original feed</a></p>
+{% endif %}
+{% endblock %}

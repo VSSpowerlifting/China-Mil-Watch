@@ -47,19 +47,23 @@ This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
-**Frontend (9 October 2026):** the reviewed frontend was merged and released
-at `4dbf42c5ca778eb5c55a9134fc51cac4fdc16a4f` (owner checkpoint). The
-Briefs visual-enrichment pilot starts from current main `fe5e25064` in the
-isolated `codex/ipr-briefs-enrichment-20261009` worktree, with current main
-`38e1b3162` reconciled. It adds opt-in original
-contours, optimized paper material and finite decorative motion to the catalog
-through production source templates. Publication copy, all 60 catalog links,
-4,980 preserved records, selected ipr identity and historical issues are unchanged.
-Desktop/tablet/mobile visual review and 42 browser fallback/interaction cases
-pass; all 7,395 routes satisfy complete HTML/CSS/JS delivery budgets. Validator
-retains its 10 governed warnings. Full-suite result and final commits are in
-`docs/BRIEFS_VISUAL_ENRICHMENT_2026-10-09.md`. The pilot is a PR candidate,
-not merged or deployed. Wider route treatments are subsequent work.
+**Frontend (10 October 2026):** the assigned isolated source candidate starts
+from consolidated main HEAD `0487bfc0480bd94a9d4471f927c449c506f07cbf`.
+The photograph-led homepage opening, supplied selected ipr identity and
+established type families remain. Shared paper/chart material, substantial
+contour boundaries, varied page-family treatments and finite motion now extend
+through the lower homepage, archives, records, Briefs, historical articles and
+utilities, desks, sources, weeks and utility subpages. The map retains actual
+geography/status/counts and adds native selection, scope context, URL fragments,
+reset and keyboard operation. Canonical text/evidence, tracked output, the DB,
+selected identity, desk registry/geography and timeline sidecar remain unchanged.
+A complete private build passes all 7,461 route budgets and the validator's ten
+governed warnings. The browser gallery, full-suite result, changed-file inventory,
+resource influences and reproduction commands are in
+`docs/FRONTEND_EXPRESSIVE_CANDIDATE_2026-10-10.md`. Source changes remain
+uncommitted in this worktree; no push, PR, merge or deployment has occurred.
+Owner visual review is the next action. Earlier frontend/pilot evidence remains
+in the linked 9 October documents; it is not this candidate's baseline.
 
 **Evidence Timelines (#181):** the inspected prerequisite at head
 `657e9f264` is integrated into this candidate in separate commit `b80b3e4`,

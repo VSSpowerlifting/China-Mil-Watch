@@ -10,3 +10,14 @@
 @media(max-width:600px){.brief-hero-inner{padding-top:24px}.brief-title{font-size:clamp(39px,10.5vw,48px);line-height:1.04}.brief-opening-photo figcaption{font-size:12px;line-height:1.65}.brief-byline{margin-top:16px}.brief-meta{font-size:13px}.brief-status{margin-left:0}.brief-badge{font-size:12px}.brief-signal{padding:24px}.brief-signal>p:last-child{font-size:20px}.brief-section>p,.brief-term>p,.brief-claim>p{font-size:18px;line-height:1.85}.brief-section>h2{font-size:34px}.brief-section{margin-top:32px}.brief-record-title{font-size:26px}}
 @media print{.brief-hero-inner,.brief-layout{display:block;padding-block:0}.brief-reading-navigation{display:none}.brief-title{font-size:26pt;max-width:none}.brief-signal{background:white;border-color:black}.brief-section>p{font-size:11pt}.brief-evidence::details-content,.brief-photo-credit-detail::details-content{content-visibility:visible}.brief-evidence>*:not(summary){display:block}.brief-opening-photo img{max-height:50mm;width:auto}.brief-hero,.brief-hero *{color:black!important}.brief-section{margin-top:20px}}
 @media(forced-colors:active){.brief-signal{background:Canvas;border-color:CanvasText}.brief-hero{background:Canvas;color:CanvasText}.brief-hero *{color:CanvasText}.brief-opening-photo{forced-color-adjust:none}}
+/* Navy chart opening, then a curved paper reading shelf. Photos remain intact. */
+.brief-hero{position:relative;isolation:isolate;background:var(--band) url('assets/material/navy-paper.png');padding-bottom:65px}
+.brief-hero::before{content:'';position:absolute;inset:auto 0 0;height:180px;z-index:-1;background-image:url('assets/material/chart-shelf.svg');background-size:max(1200px,100%) auto;background-position:center 54%;background-repeat:no-repeat;opacity:1;animation:none!important;mask-image:linear-gradient(transparent 12%,black 48%)}
+.brief-hero::after{content:'';position:absolute;inset:auto 0 -1px;height:48px;background:var(--bg) url('assets/material/chart-paper.png');border-radius:70% 0 0 0;pointer-events:none}
+.brief-reading-navigation{background:var(--surface-inset) url('assets/material/chart-paper.png');padding:16px 20px 32px;border-radius:0 0 50px 0}
+.brief-main{background:var(--bg)}
+.brief-hero .historical-veil figcaption{color:var(--band-muted);background:var(--band)}
+.brief-hero .historical-veil figcaption a{color:var(--focus-band)}
+@media(max-width:600px){.brief-hero{padding-bottom:48px}.brief-hero::after{height:32px;border-radius:90% 0 0 0}.brief-reading-navigation{padding:14px 20px 24px}.brief-main{background:transparent}}
+@media print,(forced-colors:active){.brief-hero{padding-bottom:0;background-image:none}.brief-hero::before,.brief-hero::after{display:none}.brief-reading-navigation{background-image:none;border-radius:0}}
+@media(forced-colors:active){.brief-hero .historical-veil figcaption{color:CanvasText;background:Canvas}.brief-hero .historical-veil figcaption a{color:LinkText}}
