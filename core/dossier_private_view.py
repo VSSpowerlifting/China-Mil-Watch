@@ -41,6 +41,8 @@ def _revision_comparison(sidecar, previous_sidecar):
             "added_claim_ids": [],
             "modified_claim_ids": [],
             "removed_claim_ids": [],
+            "added_source_record_ids": [],
+            "removed_source_record_ids": [],
         }
     if previous_sidecar is None:
         raise PrivateDossierViewHold("previous-fictional-revision-required")
@@ -56,6 +58,36 @@ def _revision_comparison(sidecar, previous_sidecar):
             or previous_sidecar["updated_on"] > sidecar["updated_on"]
             or previous_sidecar["changes"] != sidecar["changes"][:-1]):
         raise PrivateDossierViewHold("fictional-revision-lineage-mismatch")
+
+    # The numeric record ID is a permanent archive identity. Repointing the
+    # same ID to another issuer, URL, date, language or preserved body breaks
+    # citation continuity even if the latest archive snapshot also matches.
+    old_sources = {s["record_id"]: s for s in previous_sidecar["sources"]}
+    new_sources = {s["record_id"]: s for s in sidecar["sources"]}
+    added_sources = sorted(new_sources.keys() - old_sources.keys())
+    removed_sources = sorted(old_sources.keys() - new_sources.keys())
+    immutable = (
+        "desk", "source_id", "institution_id", "language",
+        "published_on", "url", "stored_original_sha256",
+    )
+    for rid in old_sources.keys() & new_sources.keys():
+        if any(old_sources[rid][k] != new_sources[rid][k] for k in immutable):
+            raise PrivateDossierViewHold("fictional-source-identity-drift")
+
+    # The proposed v1 sidecar has no independent, authenticated source-removal
+    # reason or retired-source ledger. Silently losing a source could erase
+    # contrary evidence; don't simulate a successful private update here.
+    if removed_sources:
+        raise PrivateDossierViewHold("fictional-source-removal-requires-review")
+
+    current_citation_ids = {
+        rid
+        for section in sidecar["sections"]
+        for claim in section["claims"]
+        for rid in claim["source_record_ids"] + claim["counterevidence_ids"]
+    }
+    if not set(added_sources) <= current_citation_ids:
+        raise PrivateDossierViewHold("fictional-added-source-uncited")
 
     old_claims = {
         c["id"]: c
@@ -94,6 +126,8 @@ def _revision_comparison(sidecar, previous_sidecar):
         "added_claim_ids": added,
         "modified_claim_ids": modified,
         "removed_claim_ids": removed,
+        "added_source_record_ids": added_sources,
+        "removed_source_record_ids": removed_sources,
     }
 
 
