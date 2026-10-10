@@ -1,0 +1,63 @@
+/* The geographic chart is intentionally distinct from abstract page profiles. */
+[data-route='desks.html'] .page-head{padding-bottom:3rem}
+[data-route='desks.html'] .page-head::after{background-size:auto 520px;width:31%}
+.deskmap{margin-block:0 3rem}
+.deskmap-controls{margin-bottom:20px}.deskmap-controls[hidden]{display:none}
+.deskmap-selectors{display:flex;flex-wrap:wrap;gap:8px}
+.deskmap-selectors button{font:600 14px/1.4 var(--sans);padding:12px 18px;min-height:46px;border:1px solid var(--rule-strong);background:var(--surface);color:var(--ink);cursor:pointer;border-radius:30px}
+.deskmap-selectors button[aria-pressed=true]{background:var(--band);color:var(--band-ink);border-color:var(--band)}
+.deskmap-selectors button:hover{border-color:var(--accent)}
+.deskmap-selection{font:14px/1.7 var(--sans);color:var(--ink-2);min-height:48px;margin:12px 0 0;max-width:none}
+.deskmap-stage{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(240px,1fr);gap:0;margin:0;align-items:start;background:var(--surface);border:1px solid var(--rule)}
+.deskmap-chart{position:relative;min-width:0;background:var(--band) url('assets/material/navy-paper.png');align-self:stretch;display:flex;flex-direction:column;justify-content:center;padding-block:20px}
+.deskmap-svg{border:0;overflow:hidden;width:100%;height:auto}
+.dm-sea{fill:var(--band)}.dm-graticule{stroke:#77a8ac;stroke-opacity:.35;stroke-width:.6px}
+.dm-land{fill:#c8d6cc;stroke:#597b7d;stroke-width:.65px}.dm-borders{stroke:#658183;stroke-width:.45px}
+.dm-scale{display:inline}.dm-scale text{fill:#b8ccc9;font:19px var(--sans)}
+.dm-country use{fill:#eef0dc;stroke:#a0bcb4;stroke-width:1px}
+.dm-country.is-selected use{fill:#92d5cc;stroke:#f3f2ec;stroke-width:2px}
+.dm-leader--wide,.dm-leader--mid{display:none}
+.dm-anchor{pointer-events:auto;cursor:pointer}.dm-country{cursor:pointer}
+.dm-dot{transform:scale(11);fill:#f3f2ec;stroke:#142e38;stroke-width:1.3px}
+.dm-anchor.is-quiet .dm-dot{fill:#142e38;stroke:#f3f2ec;stroke-width:1.6px}
+.dm-ring{fill:none;stroke:#92d5cc;stroke-width:1.5px;vector-effect:non-scaling-stroke;opacity:0}
+.dm-hit{fill:transparent;stroke:none}
+.dm-anchor.is-selected .dm-ring{opacity:1}.dm-anchor.is-selected .dm-dot{transform:scale(14)}
+.dm-label{display:block;font:600 38px var(--sans);fill:#f3f2ec;stroke:#142e38;stroke-width:12px;paint-order:stroke;pointer-events:none}
+.dm-ocean{font:400 italic 65px var(--display);fill:#b8ccc9;letter-spacing:1px;pointer-events:none}
+.deskmap-chart-note{font:12px/1.6 var(--sans);color:var(--band-muted);margin:20px 25px 0;max-width:none}
+.deskmap-register{min-width:0}
+.deskmap-plate{position:relative!important;left:auto!important;top:auto!important;transform:none!important;width:auto!important;border:0;border-bottom:1px solid var(--rule);padding:20px 24px;background:var(--surface);border-radius:0}
+.deskmap-plate:last-child{border-bottom:0}
+.deskmap-plate.is-selected{background:var(--surface-inset);outline:2px solid var(--accent);outline-offset:-2px}
+.deskmap-plate h2.plain{font:400 29px/1.1 var(--display);margin:6px 0 8px}
+.deskmap-stats dt{font:12px/1.6 var(--sans);text-transform:none;letter-spacing:0;color:var(--muted)}
+.deskmap-stats dd{font-size:13px}
+.deskmap-enter a{min-height:44px;font-size:13px}
+.deskmap-seat{font-size:13px}.deskmap-seat span{font:12px var(--sans)}
+.deskmap-selected-label{font:600 12px/1.6 var(--sans);color:var(--accent-ink)}
+.deskmap-key{padding:12px 0;font-size:13px}.deskmap-key-note{max-width:90ch}
+@media(prefers-reduced-motion:no-preference){.dm-ring,.deskmap-plate{transition:opacity 180ms var(--ease-rule),background 180ms var(--ease-rule)}.deskmap-selectors button{transition:background 180ms var(--ease-rule),transform 180ms var(--ease-rule)}}
+@media(max-width:1100px){.deskmap-stage{margin:0}.deskmap-plate{padding:16px 18px}.dm-label{font-size:43px}}
+@media(max-width:900px){.deskmap-stage{grid-template-columns:1fr}.deskmap-chart{padding-block:14px}.deskmap-register{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.deskmap-plate{border:1px solid var(--rule);margin:-1px}.dm-dot{transform:scale(13)}.dm-label{font-size:40px}.dm-ocean{font-size:60px}}
+@media(max-width:520px){.deskmap-register{display:block}.deskmap-selectors{gap:8px}.deskmap-selectors button{padding:11px 13px;font-size:13px}.dm-label{font-size:48px}.dm-dot{transform:scale(15)}.deskmap-chart-note{font-size:11px;margin-inline:15px}.deskmap-selection{font-size:13px}}
+@media print,(forced-colors:active){.deskmap-chart{background-image:none}.deskmap-controls{display:none}.deskmap-stage{display:block}.dm-sea{fill:Canvas}.dm-land{fill:Canvas;stroke:CanvasText}.dm-country use{fill:Canvas;stroke:CanvasText}.dm-country.is-selected use{fill:Highlight}.dm-label,.dm-ocean,.dm-scale text{fill:CanvasText;stroke:none}.dm-dot{fill:CanvasText;stroke:Canvas}.deskmap-plate.is-selected{outline-color:Highlight}}
+/* Start geography at the top of its frame; scope details occupy the chart foot. */
+[data-route='desks.html'] .page-head{padding-block:24px 28px;min-height:0;margin-bottom:24px}
+.deskmap-chart{justify-content:flex-start;padding-block:24px;align-self:stretch}
+.deskmap-context{padding:25px;color:var(--band-ink);font:14px/1.8 var(--sans)}
+.deskmap-context p{max-width:62ch;margin:0 0 16px}.deskmap-context .deskmap-context-title{font:400 32px/1.1 var(--display);margin:0 0 16px;color:var(--band-ink)}
+.deskmap-context a{color:var(--focus-band);display:inline-flex;min-height:44px;align-items:center}
+.deskmap-context a:focus-visible{outline-color:var(--focus-band)}
+.deskmap-context-entry[hidden],.deskmap-context-default[hidden]{display:none}
+.deskmap-plate{padding:12px 18px}.deskmap-plate h2.plain{font-size:27px;margin:5px 0}
+.deskmap-plate .card-meta{font-size:12px}.deskmap-enter{margin:0}.deskmap-stats{margin-top:5px}
+@media(max-width:900px){.deskmap-context{padding:18px 22px}.deskmap-context p{font-size:13px}.deskmap-context .deskmap-context-title{font-size:28px}}
+@media print,(forced-colors:active){.deskmap-context,.deskmap-context .deskmap-context-title{color:CanvasText}.deskmap-context a{color:LinkText}}
+[data-route='desks.html'] .page-head::after{background-image:url('assets/material/chart-shelf.svg');inset:auto -22px 0 auto;width:45%;height:70px;background-size:850px auto;background-position:center 54%}
+[data-route='desks.html'] .page-head{padding-bottom:65px}
+@media(forced-colors:active){.deskmap-controls{display:block}.deskmap-selectors button{background:ButtonFace;color:ButtonText;border-color:ButtonText}.deskmap-selectors button[aria-pressed=true]{background:Highlight;color:HighlightText}.deskmap-reset{display:inline-flex}}
+@media(max-width:700px){[data-route='desks.html'] .page-head::after{width:100%;height:44px;background-size:700px auto}}
+/* Coordinate ticks are supplementary at phone scale. HTML desk controls keep
+   every seat operable, while larger invisible targets retain real positions. */
+@media(max-width:700px){.dm-scale{display:none}.dm-hit{r:130px}.dm-label{font-size:64px}}
