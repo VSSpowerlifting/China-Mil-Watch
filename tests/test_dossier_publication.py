@@ -136,6 +136,29 @@ class DossierPublicationGateTests(unittest.TestCase):
         self.assertEqual([x["record_id"] for x in result["synthetic_preview_link_policy"]],
                          [900001, 900002])
 
+    def test_real_archive_record_id_cannot_be_relabelled_as_fictional(self):
+        d = copy.deepcopy(self.d)
+        d["sources"][0]["record_id"] = 4428
+        d["sections"][0]["claims"][0]["source_record_ids"] = [4428]
+        d["sections"][1]["claims"][0]["source_record_ids"] = [4428, 900002]
+        d["approval"]["content_sha256"] = dossier_content_digest(d)
+        result = assess_dossier_release(d, fake_archive(d), synthetic_authority=fake_authority(d),
+                                        private_synthetic_preview=True)
+        self.assertIn("nonfictional-preview-refused", names(result))
+        self.assertFalse(result["private_synthetic_preview_ready"])
+
+    def test_counterevidence_requires_navigable_source_clearance(self):
+        d = copy.deepcopy(self.d)
+        d["sections"][1]["claims"][0]["source_record_ids"] = [900001]
+        d["sections"][1]["claims"][0]["counterevidence_ids"] = [900002]
+        d["approval"]["content_sha256"] = dossier_content_digest(d)
+        authority = fake_authority(d)
+        authority["sources"]["900002"]["publisher_link"] = False
+        result = assess_dossier_release(d, fake_archive(d), synthetic_authority=authority,
+                                        private_synthetic_preview=True)
+        self.assertIn("claim-has-uncleared-citation", names(result))
+        self.assertFalse(result["private_synthetic_preview_ready"])
+
     def test_no_fake_authority_denies_preview(self):
         result = assess_dossier_release(self.d, self.a, private_synthetic_preview=True)
         self.assertIn("synthetic-review-packet-missing-or-invalid", names(result))
