@@ -95,8 +95,13 @@ class FictionalSourcePlan:
         require(getattr(self.session, "_collected", None) is None,
                 "c2_source_plan_too_late")
         active, _ = self.session.coordinator.current()
-        require(active is None or active["run_id"] != self.session.run_id,
-                "c2_source_plan_too_late")
+        # C1's current ref contains a generation and manifest digest only;
+        # the run identity is in the VERIFIED immutable manifest, not the ref.
+        if active is not None:
+            manifest = self.session.coordinator.inspect_generation(
+                active["generation"])
+            require(manifest["run_id"] != self.session.run_id,
+                    "c2_source_plan_too_late")
         with self.session.application(read_only=True), db.get_conn() as conn:
             rows = conn.execute(
                 "SELECT native_run_id,logical_date FROM ipr_custody_execution "
