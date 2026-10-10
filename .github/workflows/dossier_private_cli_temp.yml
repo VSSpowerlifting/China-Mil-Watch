@@ -1,0 +1,36 @@
+name: One-time B1.3 private Dossier CLI proof
+on:
+  push:
+    branches:
+      - feat/dossier-v1-private-review-cli-20261009
+    paths:
+      - .github/workflows/dossier_private_cli_temp.yml
+permissions:
+  contents: read
+jobs:
+  synthetic-cli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check archive and publication fingerprints
+        run: |
+          sha256sum pla_watch.db > /tmp/ipr-b13-db-before.sha
+          git status --porcelain -- pla_watch.db output/ briefs/ timelines/ > /tmp/ipr-b13-before.txt
+      - name: Compile private CLI and offline validators
+        run: python -m py_compile core/dossier_contract.py core/dossier_sources.py scripts/validate_dossiers.py tests/test_dossier_contract.py tests/test_dossier_sources.py tests/test_validate_dossiers.py
+      - name: Run all B1.1-B1.3 fictional-fixture tests
+        run: python -m unittest tests.test_dossier_contract tests.test_dossier_sources tests.test_validate_dossiers -v
+      - name: Verify originals untouched and no SQLite sidecars
+        if: always()
+        run: |
+          sha256sum -c /tmp/ipr-b13-db-before.sha
+          git diff --exit-code -- pla_watch.db output/ briefs/ timelines/
+          diff -u /tmp/ipr-b13-before.txt <(git status --porcelain -- pla_watch.db output/ briefs/ timelines/)
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
