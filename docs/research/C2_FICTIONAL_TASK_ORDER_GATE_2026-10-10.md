@@ -40,6 +40,15 @@ translation-before-summary, two real Python worker threads reserving the
 parallel tasks through explicit context binding, source-result tampering,
 forbidden private `pipeline.run()`, and invalid/unrecognized articles.
 
+## Constructor preflight / recovery ordering
+
+The C2-E facade may be constructed before source-plan freeze, but the C2-B
+journal is resolved **lazily only when a task is used**. Its constructor no
+longer dereferences a nonexistent C2-C plan. Every actual reservation still
+revalidates the pinned manifest, frozen plan, and durable collected checkpoint
+before writing an intent. This repairs the eight test-setup errors seen on the
+superseded full A+B+C+D+E run; tests must still pass at the corrected head.
+
 ## Explicit remaining blockers
 
 - Measured model usage is caller-supplied fictional accounting, not provider-
