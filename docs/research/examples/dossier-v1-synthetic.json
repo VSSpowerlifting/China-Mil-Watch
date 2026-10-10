@@ -70,7 +70,8 @@
           "event_period": {
             "start": "2026-08-12",
             "end": "2026-08-12",
-            "basis": "planned"
+            "basis": "planned",
+            "date_basis": "Fictional Alpha release dated 2026-08-12 is depicted as announcing a planned activity; not a real-world event."
           },
           "limits": "A ministry assertion would not independently establish that the drill was conducted.",
           "counterevidence_ids": []
