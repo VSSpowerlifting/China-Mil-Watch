@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import sqlite3
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from core.desk_registry import load_registry
 from core.dossier_contract import dossier_content_digest, validate_dossier_shape
@@ -92,6 +93,21 @@ def reconcile_dossier_sources(sidecar, db_path, registry=None):
                 or declared.institution_id != original["institution_id"]
                 or declared.language_tag != original["language"]):
             errors.append(_issue("source-not-public-eligible", rid))
+        # Archive URL equality is NOT proof that the stored record originally
+        # came from the registered government publisher. A conflicting host
+        # needs human origin review; compatible hosts do not confer rights.
+        declared_base = getattr(declared, "base_url", None) if declared is not None else None
+        try:
+            published_host = urlsplit(original["url"]).hostname
+            registered_host = urlsplit(declared_base).hostname if declared_base else None
+            if (not published_host or not registered_host
+                    or not isinstance(declared_base, str)):
+                holds.append(_issue("publisher-origin-unverified-human-review", rid))
+            elif (published_host != registered_host and
+                  not published_host.endswith("." + registered_host)):
+                holds.append(_issue("publisher-origin-differs-from-registry", rid))
+        except (ValueError, TypeError):
+            holds.append(_issue("publisher-origin-unverified-human-review", rid))
         for wanted, stored in (
             ("desk", "desk"), ("source_id", "source_id"),
             ("institution_id", "institution_id"),
@@ -104,6 +120,11 @@ def reconcile_dossier_sources(sidecar, db_path, registry=None):
         body = original["text_original"]
         if not isinstance(title, str) or not title.strip():
             errors.append(_issue("source-original-title-missing", rid))
+        else:
+            # B1 stores only a body digest: presence of the original title
+            # is checked, but earlier title bytes are NOT pinned independently.
+            # An unchanged title cannot be asserted from this sidecar.
+            holds.append(_issue("publisher-title-continuity-unpinned", rid))
         if not isinstance(body, str) or not body.strip():
             errors.append(_issue("source-original-text-missing", rid))
         else:
