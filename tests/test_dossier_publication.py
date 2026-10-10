@@ -4,7 +4,10 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
 
 from core.dossier_contract import dossier_content_digest
 from core.dossier_publication import (
@@ -317,6 +320,106 @@ class DossierPublicationGateTests(unittest.TestCase):
                                             private_synthetic_preview=True)
             self.assertFalse(report["private_synthetic_preview_ready"])
             self.assertIn("archive-report-missing-or-invalid", names(report))
+
+
+class B12ToB21RealIntegrationTests(unittest.TestCase):
+    """End-to-end on actual B1.2 code; all archives and sources are fictional."""
+
+    def setUp(self):
+        from tests.test_dossier_contract import approved
+        from tests.test_dossier_sources import BODIES, fake_registry, synthetic_sqlite
+
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.path = Path(self.tmp.name) / "fictional.db"
+        synthetic_sqlite(self.path)
+        self.registry = fake_registry()
+        self.bodies = BODIES
+        self.d = approved()
+        for src in self.d["sources"]:
+            src["stored_original_sha256"] = hashlib.sha256(
+                self.bodies[src["record_id"]].encode("utf-8")
+            ).hexdigest()
+        self.d["approval"]["content_sha256"] = dossier_content_digest(self.d)
+        self.t = fake_authority(self.d)
+        self.t["claim_ids"] = sorted(
+            claim["id"]
+            for section in self.d["sections"]
+            for claim in section["claims"]
+        )
+
+    def actual_archive(self):
+        from core.dossier_sources import reconcile_dossier_sources
+        return reconcile_dossier_sources(self.d, self.path, registry=self.registry)
+
+    def review(self, archive=None, packet=None):
+        return assess_dossier_release(
+            self.d,
+            self.actual_archive() if archive is None else archive,
+            synthetic_authority=self.t if packet is None else packet,
+            private_synthetic_preview=True,
+        )
+
+    def test_actual_b12_reconciliation_can_feed_private_b21_preview(self):
+        archive = self.actual_archive()
+        self.assertTrue(archive["archive_reconciled"])
+        self.assertTrue(archive["holds"])
+        self.assertEqual(archive["errors"], [])
+        result = self.review(archive)
+        self.assertTrue(result["private_synthetic_preview_ready"])
+        self.assertFalse(result["eligible_for_publication"])
+        self.assertFalse(result["production_authority_configured"])
+        self.assertEqual(names(result), ["public-release-disabled-by-design"])
+
+    def test_actual_sqlite_body_drift_blocks_private_preview(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE articles SET text_original=? WHERE id=?",
+                       ("CHANGED FICTIONAL BODY " * 8, 900001))
+            db.commit()
+        archive = self.actual_archive()
+        self.assertIn("source-original-body-drift",
+                      [entry["code"] for entry in archive["errors"]])
+        result = self.review(archive)
+        self.assertFalse(result["private_synthetic_preview_ready"])
+        self.assertIn("archive-parity-or-digest-not-verified", names(result))
+        self.assertEqual(result["synthetic_preview_link_policy"], [])
+
+    def test_actual_sqlite_source_disablement_blocks_private_preview(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE sources SET enabled=0 WHERE id=2")
+            db.commit()
+        archive = self.actual_archive()
+        self.assertIn("source-not-public-eligible",
+                      [entry["code"] for entry in archive["errors"]])
+        self.assertFalse(self.review(archive)["private_synthetic_preview_ready"])
+
+    def test_actual_negative_screen_requires_distinct_review(self):
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE articles SET passed_relevance=0 WHERE id=900001")
+            db.commit()
+        archive = self.actual_archive()
+        self.assertTrue(archive["archive_reconciled"])
+        self.assertIn("screening-not-selected-human-review",
+                      [entry["code"] for entry in archive["holds"]])
+        packet = copy.deepcopy(self.t)
+        packet["sources"]["900001"]["screening_reviewed"] = False
+        result = self.review(archive, packet)
+        self.assertFalse(result["private_synthetic_preview_ready"])
+        self.assertIn("source-screening-disposition-missing", names(result))
+        self.assertFalse(result["eligible_for_publication"])
+
+    def test_actual_b12_handoff_preserves_bytes_and_hides_publisher_text(self):
+        initial = hashlib.sha256(self.path.read_bytes()).hexdigest()
+        archive = self.actual_archive()
+        result = self.review(archive)
+        self.assertEqual(hashlib.sha256(self.path.read_bytes()).hexdigest(), initial)
+        self.assertFalse(Path(str(self.path) + "-wal").exists())
+        self.assertFalse(Path(str(self.path) + "-shm").exists())
+        serialized = json.dumps({"archive": archive, "release": result})
+        for text in self.bodies.values():
+            self.assertNotIn(text, serialized)
+        self.assertNotIn("https://example.org/", json.dumps(result))
+        self.assertFalse(result["eligible_for_publication"])
 
 
 if __name__ == "__main__":
