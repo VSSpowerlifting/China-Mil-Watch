@@ -3,9 +3,9 @@
 **Prepared:** 2026-10-09 (US Eastern)  
 **Status:** EDITOR REVIEW — conditional research go; no dossier created, approved or published  
 **Parent:** [#318](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/318) · **Gate:** [#319](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/319)  
-**Reproducible runner:** [Actions #38010490752](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38010490752) · \`scripts/audit_dossier_candidates.py\`  
-**Exact runner commit:** \`3ab5dc889dffbcf51d6f8e3dba367493ed3b22c5\`  
-**Tracked DB SHA-256:** \`443e5c477e515da4a0408b631dbaeec7638b98d85573a4bacd95c49fff941420\`
+**Reproducible runner:** [Actions #38010490752](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38010490752) · `scripts/audit_dossier_candidates.py`  
+**Exact runner commit:** `3ab5dc889dffbcf51d6f8e3dba367493ed3b22c5`  
+**Tracked DB SHA-256:** `443e5c477e515da4a0408b631dbaeec7638b98d85573a4bacd95c49fff941420`
 
 ## Executive research decision
 
@@ -35,7 +35,7 @@ No completeness percentage is claimed. The category labels are model-originated 
 
 ### Frozen seven-record source shortlist
 
-All seven records are stored under the live Singapore Desk / \`sg_mindef_releases\`. The external official pages were separately opened and checked for title/date/source content during scoping; **the exact archived original-body bytes and source-use rights still require formal reconciliation**.
+All seven records are stored under the live Singapore Desk / `sg_mindef_releases`. The external official pages were separately opened and checked for title/date/source content during scoping; **the exact archived original-body bytes and source-use rights still require formal reconciliation**.
 
 | Archived record | MINDEF published | Program or activity (issuer description) | Status in release | Original official source |
 | --- | --- | --- | --- | --- |
@@ -52,6 +52,24 @@ The shortlist describes **seven exercise/program activities, supported by seven 
 **Explicit rejection:** record **4440** is the Singapore–Malaysia *air-force* SAREX MALSING announcement, and therefore does **not** belong in the naval pilot despite a broad initial lexical match. The tightened repeatable audit now returns seven naval records, not the initial eight.
 
 **Source diversity caveat:** MINDEF is the *single* originating institution for all seven. Multiple foreign counterparts do not make them independent sources. China Desk records 3924, 4102 and 4164 provide a relevant separately issued perspective for Maritime Cooperation but are already governed by the unapproved Timeline pilot; they are **not** imported as automatically approved dossier statements. Do not claim Japanese, Bruneian, Australian, Chinese or multilateral institutional endorsement absent their separately verified source records.
+
+## October 9 original-publisher crosscheck (metadata and attributed accounts only)
+
+The following seven **live first-party MINDEF releases** were opened independently of the preserved SQLite text, and their titles, issuing ministry, publisher dates and *broad descriptions of the attributed activities* matched the shortlist's metadata. **This is not byte-for-byte original-body parity:** rendered live HTML, image captions, site components and captured archive text may legitimately differ, and no text diff or publisher-approved reuse has been asserted. Each release still needs an editor's exact claim/excerpt check before it is used in public research.
+
+| Record | Live MINDEF metadata and attribution confirmed | Interpretation boundary |
+| --- | --- | --- |
+| [4454](https://www.mindef.gov.sg/news-and-events/latest-releases/30jul26-nr2/) | 30 July; RSS Steadfast **participating** in RIMPAC 2026, scheduled 25 June–1 August | Source published during exercise; cannot label entire event retrospectively completed as of 30 July |
+| [4452](https://www.mindef.gov.sg/news-and-events/latest-releases/29aug26-nr/) | 29 August; RSN/JMSDF Singapan described as **concluded**, held 27–28 August | Singapore-issued assessment; no separate JMSDF corroboration admitted |
+| [4466](https://www.mindef.gov.sg/news-and-events/latest-releases/5sep26-nr2/) | 5 September; opening of Maritime Cooperation; **planned** shore/sea phases, 5–9 September | Opening announcement must not be substituted for verification of later planned serials |
+| [4472](https://www.mindef.gov.sg/news-and-events/latest-releases/9sep26-nr/) | 9 September; same Maritime Cooperation exercise **concluded** | Two documents, **one** identified exercise; preserve unresolved different start dates in Chinese ministry account |
+| [4428](https://www.mindef.gov.sg/news-and-events/latest-releases/18sep26-nr2/) | 18 September; Singapore/Australia Singaroo **concluded**, 15–18 September | MINDEF calls it a maritime exercise but describes **shore-based** activities; do not invent an at-sea warfare serial. Archive screening remains on hold |
+| [4849](https://www.mindef.gov.sg/news-and-events/latest-releases/2oct26-nr3/) | 2 October; **AIME** and **ADMM-Plus maritime security JCA**, with different dates and partners | **Two activities in one issuing release**, not two independent sources; do not duplicate evidence counts |
+| [4983](https://www.mindef.gov.sg/news-and-events/latest-releases/8oct26-nr2/) | 8 October; Pelican described as **concluded**, 2–6 October | Separate 8 October diving demonstration and future 10 October anniversary events must not be confused with the exercise window |
+
+All seven releases were accessible on the publisher's first-party website as checked on 9 October 2026. The site's own footer carried a 9 October website update date, which is **not the release date**. The seven archived original-title and original-body **SHA-256 values are frozen** in `scripts/check_dossier_b0_preservation.py` and compared to the selected archived rows; that only attests to the preserved October 9 version. **It does not establish correspondence to the current online full text**, permission to reproduce it, policy intent, or operational outcomes.
+
+A source-use decision remains necessary under [MINDEF Terms of Use, updated 15 July 2026](https://www.mindef.gov.sg/terms-of-use/), particularly §§5–6 on hyperlinks, caching, reproduction and public reuse. Treat this as a rights review flag, not conclusive legal advice.
 
 ## What makes this a dossier rather than a timeline
 
@@ -70,7 +88,7 @@ This is nonchronological, maintained *subject research*: users can compare forms
 
 ## Additional preserved-body inspection and screening exception
 
-The bounded source parity scan `scripts/check_dossier_b0_preservation.py` reopens all seven selected records via the repository's scratch-copy SQLite helper and checks exact stored record ID, issuing desk and institution, official source URL, publication date, source language, nonempty original-language body and two source-specific content anchors. It prints only record-level digests and diagnostic categories—not the original bodies. **This proves preserved-content consistency in IPR's archive, not byte parity with current MINDEF web HTML, accuracy of the issuer, translation quality, source-use clearance or human editorial admission.**
+The bounded source parity scan `scripts/check_dossier_b0_preservation.py` reopens all seven selected records via the repository's scratch-copy SQLite helper and checks exact stored record ID, issuing desk and institution, official source URL, publication date, source language, nonempty original-language body, two source-specific content anchors, and **both original-title and original-body hashes against the frozen October 9 snapshot**. It prints only record-level digests and diagnostic categories—not the original bodies. **This proves preserved-content consistency in IPR's archive, not byte parity with current MINDEF web HTML, accuracy of the issuer, translation quality, source-use clearance or human editorial admission.**
 
 **Screening cohort context (real preserved DB):** among the 84 archived `sg_mindef_releases` records, 70 have `passed_relevance = NULL` (pending/unscored) and **14** are marked `passed_relevance = 0`. The specific Singaroo Record 4428 has a stored numeric relevance score and recorded reasoning, but no model ID or final analysis timestamp. That strongly suggests a substantive screening judgment was recorded for this item; the automated audit deliberately does **not** expose or endorse the model's reasoning. A human editor should inspect the actual stored reasoning and original before deciding whether an exception is justified. No entries were changed or re-screened.
 
@@ -93,7 +111,7 @@ This is a **6 unheld + 1 human-hold** source shortlist for editorial considerati
 - [ ] Owner selects this specific narrow subject, period and source restrictions. Research recommendation alone is not owner approval.
 - [x] Check seven archived original bodies, record URLs, IDs, dates and manifest identity through read-only scratch SQLite; store SHA-256 digests and reject missing/truncated originals. **Completed for stored-archive consistency only; direct publisher-to-archive full-body byte parity and phrase interpretation still need independent review.**
 - [ ] Resolve existing `passed_relevance = 0` human-screening hold on Singaroo Record 4428 (or exclude it and revisit pilot scope); do not silently change the production screening state.
-- [ ] Review copyright/source-use and any media rights, per \`CONTENT_AND_DATA_RIGHTS.md\`; don't republish full third-party bodies or images.
+- [ ] Review copyright/source-use and any media rights, per `CONTENT_AND_DATA_RIGHTS.md`; don't republish full third-party bodies or images.
 - [ ] Produce an **editor-reviewed** claim-to-excerpt/source matrix. Every proposed public assertion must be explicitly attributable; distinguish a stated future phase from an after-action report.
 - [ ] Verify context, duplication, and negative cases; a high count or lexical similarity cannot establish coordination or significance.
 - [ ] Explicitly decide how an approved Dossier references *approved* Brief No. 15 and the still-**draft/unpublished** Maritime Timeline. Never auto-admit or link a private timeline as public.
@@ -101,6 +119,6 @@ This is a **6 unheld + 1 human-hold** source shortlist for editorial considerati
 
 ## Mechanical verification and scope isolation
 
-The branch-only GitHub Actions job compiles the Python script, reads the existing DB through \`scripts.reconcile_db.read_only\`, checks SQLite integrity and foreign keys, inventories actual registered desk state, and compares SHA-256 plus Git status before and after. It does not scrape, use models, send mail, modify \`pla_watch.db\`, render \`output/\` or run a public publish path. All checks passed in [run #38010490752](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38010490752).
+The branch-only GitHub Actions job compiles the Python script, reads the existing DB through `scripts.reconcile_db.read_only`, checks SQLite integrity and foreign keys, inventories actual registered desk state, and compares SHA-256 plus Git status before and after. It does not scrape, use models, send mail, modify `pla_watch.db`, render `output/` or run a public publish path. All checks passed in [run #38010490752](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38010490752).
 
 **Stop condition:** source audit and owner decision packet. Do **not** continue automatically into B1, B2, Timeline merges, or Sunday Brief production. This research audit has no journal or extra publication format.
