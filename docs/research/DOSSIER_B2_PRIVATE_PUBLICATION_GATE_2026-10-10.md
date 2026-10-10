@@ -20,12 +20,12 @@ Synthetic preview is intentionally limited to fictional-* slugs whose source URL
 - Metadata use, publisher hyperlink, official-origin review, local record hyperlink, and review of an existing local page that publicly distributes full captured publisher text are distinct booleans. A metadata grant does not authorize quotations, full bodies, images or hyperlinks.
 - Every positively cited record must have a cleared navigable citation channel. An uncleared record link cannot be replaced with an uncited material claim.
 - The fake owner and claim-review packet must refer to the exact authored Dossier digest and revision. Synthetic revision 2 or later requires a separately asserted predecessor-history check; a change-log entry alone is not proof.
-- Diagnostic results carry only approved machine codes, numeric fixture IDs, a slug, a content digest and synthetic link-policy booleans. No original publisher body, source URL, permissions correspondence or unpublished inference is echoed.
+- Diagnostic results carry only approved machine codes, numeric fixture IDs, a slug, a content digest and synthetic link-policy booleans. No original publisher body, source URL, permissions correspondence or unpublished inference is echoed. The synthetic-only preview additionally refuses IDs outside the reserved 900000–999999 fixture range and checks that contrary/counterevidence citations have cleared navigation, not just supporting citations.
 - The production path never has a conditional branch that returns publication eligibility true. A real release provider must be designed and approved separately, including trust anchor, signatures/identity, action-specific publisher-use scope, revocation, and incident response.
 
 ## Tests
 
-26 focused synthetic tests in tests/test_dossier_publication.py cover valid fake preview, production fail-closed behavior, forged or missing authority, body-use and link disaggregation, author/claim screening, stale digest, report mismatch, input IDs, amendment history, malformed action policies, and body/link nonleakage.
+28 focused synthetic tests in tests/test_dossier_publication.py cover valid fake preview, production fail-closed behavior, forged or missing authority, body-use and link disaggregation, author/claim screening, stale digest, report mismatch, input IDs, amendment history, malformed action policies, and body/link nonleakage.
 
 Run with the full dependency stack in a checkout:
 
