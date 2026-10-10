@@ -24,6 +24,15 @@ The `tests/test_evidence_manifest_policy.py` module exercises the declared China
 - There is no real source fetching, external provider, LLM API call, paid model dispatch or validated spend pricing, and no binding to Daily or any scheduled workflow.
 - Main's `pipeline.run()` retains its **non-dry private refusal**. Source rights #326, provider security, retention policy, release/projection and deployment are all still outside authorization.
 
+## Validation receipt rule
+
+Because this is stacked on A+B+C, the combined exact-head Python 3.9
+workflow may be launched by temporarily comparing this branch to `main`.
+Immediately after the combined run is queued, the pull request is retargeted
+back to the C2-C feature branch to retain a **three-file incremental diff**.
+Only the actual final Actions result (all tests, output validation and DB/output
+preservation) counts; a queued/in-progress run never counts as a pass.
+
 ## Review and CI gates
 
 Do not merge this stacked PR before #359, #360 and #361 are individually accepted and merged in order. Run exact-head Python 3.9 full offline CI, output validation and tracked database/output preservation; review its **three-file incremental diff**. No production cutover or further rights assumptions.
