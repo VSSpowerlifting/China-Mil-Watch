@@ -31,7 +31,7 @@ Run with the full dependency stack in a checkout:
 
     python -m unittest tests.test_dossier_contract tests.test_dossier_sources tests.test_validate_dossiers tests.test_dossier_publication -v
 
-A separate non-repository local harness used a *minimal testing stand-in* for the B1 contract and passed the 24 new cases. That is not proof of full compatibility with the actual B1 implementation; GitHub CI must run the four real modules together on this exact branch and after every later rebase.
+**Verified with real repository B1 sources:** [focused GitHub Actions run #38055640626](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38055640626) completed successfully on Python 3.9: **139/139 tests** (67 B1.1, 23 B1.2, 21 B1.3, 28 B2.1), plus Python compilation and unchanged tracked SQLite, Briefs, Timelines and output. The temporary one-time workflow was removed after the passing run and is not in the lasting PR diff. The resulting no-workflow PR commit needs an independent exact-head full repository CI run after its upstream dependencies are integrated. The earlier local B1 stub run remains preliminary evidence only, superseded by this real-code focused verification.
 
 ## Hard stop and future phases
 
