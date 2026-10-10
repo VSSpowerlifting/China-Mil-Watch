@@ -78,6 +78,14 @@ Do not change the production relevance state or bypass `core.brief_contract.scre
 
 This is a **6 unheld + 1 human-hold** source shortlist for editorial consideration, *not* seven publication-admitted research records. Two Maritime Cooperation reports remain one separately described exercise, and the single October 2 MINDEF release describes two distinct multilateral activities.
 
+## MINDEF official source-use terms — hard review gate
+
+**Publisher terms checked:** [Singapore Ministry of Defence, Terms of Use](https://www.mindef.gov.sg/terms-of-use/) (page identifies **15 July 2026** as last terms revision; retrieved 2026-10-09). Sections **5 (Hyperlinks)** and **6 (Intellectual Property)** contain consequential express restrictions. Section 5 says prior permission should be requested for hyperlinking or framing, subject to the site's terms; section 6 restricts public reproduction and re-posting of materials (text, imagery, audiovisual content) unless prior written permission is obtained. This is not equivalent to an open government licence for IPR to reproduce full text, photographs or substantial excerpts.
+
+**Implication:** A published dossier must not assume IPR can redistribute MINDEF full source bodies or images merely because the ministry is an official publisher. Original factual descriptions, separately written IPR analysis and links are conceptually different from reproducing source material, but whether and how IPR's existing record URLs and proposed new links comply with the terms requires a documented rights/permissions review. Avoid implying a legal resolution from this audit; consult appropriate counsel if needed. Existing live record pages/linking practices require separate review rather than silently deleting or changing historic evidence during B0. No further publisher crawling or copying is authorized by this finding.
+
+**Operational rule for B0/B1:** keep the source evidence references *internal review only*, avoid committing or exposing the full publisher bodies in sidecars/reports/model prompts, do not ship publisher photos, quote sparingly only after legal review, and require an explicit human rights decision before publication. Record the terms URL and reviewed date; seek direct permission if necessary. If this cannot be resolved, restrict or change the pilot instead of treating the archive's possession of text as a republication licence.
+
 ## Go/no-go gates before B1
 
 - [ ] Owner selects this specific narrow subject, period and source restrictions. Research recommendation alone is not owner approval.
