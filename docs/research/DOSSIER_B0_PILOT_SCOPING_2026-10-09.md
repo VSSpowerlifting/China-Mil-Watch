@@ -68,10 +68,21 @@ The shortlist describes **seven exercise/program activities, supported by seven 
 
 This is nonchronological, maintained *subject research*: users can compare forms of cooperation and cited training domains without treating IPR's lexical inventory as comprehensive.
 
+## Additional preserved-body inspection and screening exception
+
+The bounded source parity scan `scripts/check_dossier_b0_preservation.py` reopens all seven selected records via the repository's scratch-copy SQLite helper and checks exact stored record ID, issuing desk and institution, official source URL, publication date, source language, nonempty original-language body and two source-specific content anchors. It prints only record-level digests and diagnostic categories—not the original bodies. **This proves preserved-content consistency in IPR's archive, not byte parity with current MINDEF web HTML, accuracy of the issuer, translation quality, source-use clearance or human editorial admission.**
+
+**One substantive eligibility hold:** archived Singapore MINDEF Record **4428** (Exercise Singaroo, 2026-09-18) has `passed_relevance = 0`, even though its preserved original source identity and body checks pass. This is an existing screening disposition, not a text extraction failure. The first source verification correctly failed a stricter combined gate; the checker now separates **stored-original parity** from **editorial-screening clearance**, retaining an explicit `screened-not-selected-human-review-required` hold.
+
+Do not change the production relevance state or bypass `core.brief_contract.screening_state`. Before a public Dossier could include that record as evidence, a human must inspect the preserved original, explain whether this prior screening outcome should be an approved exception, and record that decision in the Dossier's own editorial review. If approval is withheld, exclude #4428, revise the subject/evidence scope and reassess whether the remaining set still justifies a Dossier. An eligible archived record is not automatically an approved public claim.
+
+This is a **6 unheld + 1 human-hold** source shortlist for editorial consideration, *not* seven publication-admitted research records. Two Maritime Cooperation reports remain one separately described exercise, and the single October 2 MINDEF release describes two distinct multilateral activities.
+
 ## Go/no-go gates before B1
 
 - [ ] Owner selects this specific narrow subject, period and source restrictions. Research recommendation alone is not owner approval.
-- [ ] Independently re-open each of the seven preserved original bodies via read-only scratch SQLite and compare precise stored original wording/metadata/URL with the current first-party releases; record hashes and any drift, truncation or missing bodies.
+- [x] Check seven archived original bodies, record URLs, IDs, dates and manifest identity through read-only scratch SQLite; store SHA-256 digests and reject missing/truncated originals. **Completed for stored-archive consistency only; direct publisher-to-archive full-body byte parity and phrase interpretation still need independent review.**
+- [ ] Resolve existing `passed_relevance = 0` human-screening hold on Singaroo Record 4428 (or exclude it and revisit pilot scope); do not silently change the production screening state.
 - [ ] Review copyright/source-use and any media rights, per \`CONTENT_AND_DATA_RIGHTS.md\`; don't republish full third-party bodies or images.
 - [ ] Produce an **editor-reviewed** claim-to-excerpt/source matrix. Every proposed public assertion must be explicitly attributable; distinguish a stated future phase from an after-action report.
 - [ ] Verify context, duplication, and negative cases; a high count or lexical similarity cannot establish coordination or significance.
