@@ -1,0 +1,26 @@
+# Temporary, read-only synthetic test for B2.2a; removed after receipt.
+name: B2.2a synthetic private reader verification
+on:
+  pull_request:
+    branches: [feat/dossier-b2-private-release-gate-20261010]
+    types: [opened, reopened, synchronize, ready_for_review]
+permissions:
+  contents: read
+jobs:
+  private-reader:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Compile B1 B2 modules
+        run: python -m compileall -q core/dossier_contract.py core/dossier_sources.py core/dossier_publication.py core/dossier_private_view.py scripts/validate_dossiers.py tests/test_dossier_contract.py tests/test_dossier_sources.py tests/test_validate_dossiers.py tests/test_dossier_publication.py tests/test_dossier_private_view.py
+      - name: Run synthetic integration suites
+        run: python -m unittest tests.test_dossier_contract tests.test_dossier_sources tests.test_validate_dossiers tests.test_dossier_publication tests.test_dossier_private_view -v
+      - name: Verify tracked archive and output untouched
+        run: |
+          git diff --exit-code -- pla_watch.db output briefs timelines
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
