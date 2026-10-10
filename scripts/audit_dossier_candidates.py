@@ -53,7 +53,7 @@ TOPICS = {
     "Singapore naval exercise diplomacy": {
         "terms": ("exercise", "演习"),
         "desk": "singapore",
-        "second": ("navy", "navies", "maritime", "naval", "bilateral", "fleet", "海军"),
+        "second": ("navy", "navies", "maritime", "naval", "rsn", "fleet", "海军"),
         "purpose": "MINDEF announcements about Singapore naval exercises with foreign partners; a single issuing perspective.",
     },
     "Taiwan Strait military messaging (contrast)": {
@@ -82,8 +82,15 @@ def match_topic(row, categories, query):
     if query.get("bilateral"):
         # A Singapore MINDEF headline routinely says "Singapore"; require a
         # China counterpart as well, not any MINDEF exercise with another state.
-        china = any(t in title for t in ("中国", "中方", "中新", "解放军", "china", "chinese", "pla"))
-        singapore = any(t in title for t in ("新加坡", "中新", "singapore"))
+        china = any(t in title for t in (
+            "中国", "中方", "解放军", "china", "chinese", "pla",
+            "people’s liberation army", "people's liberation army"))
+        # 新 may abbreviate Singapore *or* New Zealand in a Chinese
+        # bilateral headline. Treat 中新 as Singapore only for the named
+        # Maritime Cooperation series, never in generic strategic-dialogue titles.
+        xmc = ("中新" in title and "海上合作" in title)
+        singapore = any(t in title for t in ("新加坡", "singapore")) or xmc
+        china = china or xmc
         title_match = title_match and china and singapore
     if query.get("regional"):
         partner = any(t in title for t in (
