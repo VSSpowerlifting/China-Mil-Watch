@@ -55,14 +55,25 @@ class PublicationParity(unittest.TestCase):
         self.assertIn(['missing enrichment stylesheet'],changed)
 
     def test_historical_routes_require_their_bounded_stylesheet(self):
-        route='the-pla-watch/posts/fixture.html'
-        self.put(self.baseline,route,self.source)
-        for sheet,passes in [('historical-enrichment.css',True),('enrichment.css',False)]:
-            with self.subTest(sheet=sheet):
-                linked=self.source.replace('</head>','<link rel="stylesheet" href="../../'+sheet+'"></head>')
-                self.put(self.candidate,route,linked)
-                result=compare_publication(self.candidate,self.baseline)
-                self.assertEqual(not result['failures'],passes)
+        # #287 consolidated published posts into the current Briefs shell;
+        # predecessor landing, archive and terms retain historical materials.
+        cases = (
+            ('the-pla-watch/posts/fixture.html', 'enrichment.css'),
+            ('the-pla-watch/index.html', 'historical-enrichment.css'),
+            ('the-pla-watch/archive.html', 'historical-enrichment.css'),
+            ('the-pla-watch/terms.html', 'historical-enrichment.css'),
+        )
+        for route, expected in cases:
+            self.put(self.baseline, route, self.source)
+            for sheet in ('historical-enrichment.css', 'enrichment.css'):
+                with self.subTest(route=route, sheet=sheet):
+                    linked = self.source.replace(
+                        '</head>', '<link rel="stylesheet" href="../../'
+                        + sheet + '"></head>'
+                    )
+                    self.put(self.candidate, route, linked)
+                    result = compare_publication(self.candidate, self.baseline)
+                    self.assertEqual(not result['failures'], sheet == expected)
 
 
 class RepresentativeCoverage(unittest.TestCase):
