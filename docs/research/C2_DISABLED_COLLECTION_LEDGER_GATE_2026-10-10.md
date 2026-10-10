@@ -14,7 +14,7 @@ The **new** `storage/evidence_lifecycle.py` is a fail-closed *fictional-only* C2
 barrier over the **actual native schema and C1 DAO**, not a second scraper/LLM pipeline.
 It is not hooked to `pipeline.run()`, which still refuses non-dry private execution.
 
-- An explicit, nonempty set of requested source slugs determines the expected native
+- An explicit set of requested source slugs (including an empty set for backlog-only runs) determines the expected native
   `source_run_results` completeness contract; a missing, extra, wrong-status,
   misflagged or malformed receipt refuses collection promotion.
 - Source receipts with `ok_no_publications`, disabled/stub or known failure outcomes
@@ -48,7 +48,8 @@ No publisher text, website, media, provider credentials, external requests or mo
    reconciles an actually committed immutable generation.
 8. Analysis-only field changes => allowed; analyzed generation separately sealed.
 9. No public URLs, bodies, titles, per-source errors or secrets in the handoff receipt.
-10. Actual private `pipeline.run()` continues to refuse non-dry execution.
+10. Backlog-only runs may have zero new source outcomes while still sealing a native run.
+11. Actual private `pipeline.run()` continues to refuse non-dry execution.
 
 ## Deliberately outside this PR
 
