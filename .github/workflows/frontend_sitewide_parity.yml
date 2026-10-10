@@ -1,0 +1,71 @@
+name: Frontend sitewide publication parity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/verify_enrichment_frontend.py'
+      - 'scripts/verify_frontend_delivery.py'
+      - 'core/frontend_budget.py'
+      - 'site/preview/**'
+      - 'output/**'
+      - 'tests/test_sitewide_enrichment.py'
+      - '.github/workflows/frontend_sitewide_parity.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  full-publication-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out candidate merge tree
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: candidate
+      - name: Check out exact base commit independently
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: baseline
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin candidate publication and database state
+        working-directory: candidate
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Compare all checked-in routes, text, links, anchors, redirects and delivery
+        working-directory: candidate
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python scripts/verify_enrichment_frontend.py \
+            --root output \
+            --baseline ../baseline/output \
+            --out "$RUNNER_TEMP/frontend-sitewide-parity" \
+            --static-only
+      - name: Assert candidate database and published tree unchanged
+        if: always()
+        working-directory: candidate
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Attach route parity and delivery receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-sitewide-parity-${{ github.event.pull_request.number }}
+          path: ${{ runner.temp }}/frontend-sitewide-parity/
+          if-no-files-found: warn
+          retention-days: 7
