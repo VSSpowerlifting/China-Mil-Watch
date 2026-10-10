@@ -129,7 +129,6 @@ class VietnamSundayCandidateQuotaTests(unittest.TestCase):
         self.assertEqual(
             lao["content_sha256"],
             "8775cb700db1dddfb17209c292b7a03864c65683cc190792c88939a9dd7740ef")
-        self.assertIn("not military", "not military")  # Typing guard below.
         self.assertIn("public security ministries", " ".join(lao["caveats"]))
         self.assertIn("not proof", " ".join(lao["caveats"]))
         self.assertNotIn("text_original", lao)
