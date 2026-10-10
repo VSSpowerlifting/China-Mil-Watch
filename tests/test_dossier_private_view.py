@@ -248,6 +248,34 @@ def fictional_revision_two():
     return before, later, packet
 
 
+def fictional_archive_for(d):
+    """Sidecar-aligned fictional B1.2-shaped report, NEVER a real DB receipt."""
+    report = fake_archive(d)
+    report["selected_record_ids"] = [src["record_id"] for src in d["sources"]]
+    report["evidence"] = [{
+        "record_id": src["record_id"],
+        "archive_identity_reconciled": True,
+        "model_screening": "selected",
+    } for src in d["sources"]]
+    return report
+
+
+def recalculate_fictional_review(d, packet):
+    d["approval"]["content_sha256"] = dossier_content_digest(d)
+    auth = fake_authority(d)
+    auth["history_checked"] = True
+    auth["claim_ids"] = sorted(c["id"] for sec in d["sections"] for c in sec["claims"])
+    # All receipts/decisions here are fabricated in-process test values.
+    template_policy = next(iter(packet["sources"].values()))
+    auth["sources"] = {
+        str(src["record_id"]): copy.deepcopy(
+            packet["sources"].get(str(src["record_id"]), template_policy)
+        )
+        for src in d["sources"]
+    }
+    return auth
+
+
 class TwoEditionReaderHistoryTests(unittest.TestCase):
     def test_two_edition_diff_has_actual_modified_claim_and_prior_digest(self):
         old, new, packet = fictional_revision_two()
@@ -352,6 +380,121 @@ class TwoEditionReaderHistoryTests(unittest.TestCase):
         original = copy.deepcopy((old, new, packet))
         build(new, authority=packet, previous=old)
         self.assertEqual((old, new, packet), original)
+
+
+class SourceLedgerContinuityTests(unittest.TestCase):
+    def setUp(self):
+        self.old, self.new, self.packet = fictional_revision_two()
+
+    def evaluate(self):
+        return build(
+            self.new,
+            archive=fictional_archive_for(self.new),
+            authority=recalculate_fictional_review(self.new, self.packet),
+            previous=self.old,
+        )
+
+    def test_same_archive_id_repointed_to_different_url_refused(self):
+        self.new["sources"][0]["url"] = "https://example.org/replaced-citation"
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-source-identity-drift"):
+            self.evaluate()
+
+    def test_same_archive_id_with_changed_original_body_digest_refused(self):
+        self.new["sources"][0]["stored_original_sha256"] = "d" * 64
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-source-identity-drift"):
+            self.evaluate()
+
+    def test_same_archive_id_with_changed_issuer_refused(self):
+        self.new["sources"][0]["institution_id"] = "fixture-ministry-alternate"
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-source-identity-drift"):
+            self.evaluate()
+
+    def test_same_archive_id_with_changed_language_refused(self):
+        self.new["sources"][0]["language"] = "fr"
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-source-identity-drift"):
+            self.evaluate()
+
+    def test_same_archive_id_with_changed_publication_date_refused(self):
+        self.new["sources"][0]["published_on"] = "2026-09-06"
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-source-identity-drift"):
+            self.evaluate()
+
+    def test_source_removal_requires_independent_disposition(self):
+        self.new["sources"] = self.new["sources"][:1]
+        self.new["sections"][1]["claims"][0]["source_record_ids"] = [900001]
+        self.new["changes"][-1]["affected_claim_ids"] = [
+            "alpha-statement", "shared-framing"
+        ]
+        with self.assertRaisesRegex(
+            PrivateDossierViewHold, "fictional-source-removal-requires-review"
+        ):
+            self.evaluate()
+
+    def test_new_source_cannot_enter_ledger_without_any_claim_citation(self):
+        added = copy.deepcopy(self.new["sources"][1])
+        added.update({
+            "record_id": 900003, "source_id": "fake-gamma",
+            "institution_id": "fixture-ministry-gamma",
+            "url": "https://example.org/fake-gamma",
+        })
+        self.new["sources"].append(added)
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-added-source-uncited"):
+            self.evaluate()
+
+    def test_new_source_used_by_claim_is_reported_as_added(self):
+        added = copy.deepcopy(self.new["sources"][1])
+        added.update({
+            "record_id": 900003, "source_id": "fake-gamma",
+            "institution_id": "fixture-ministry-gamma",
+            "url": "https://example.org/fake-gamma",
+        })
+        self.new["sources"].append(added)
+        self.new["sections"][1]["claims"][0]["source_record_ids"] = [
+            900001, 900002, 900003
+        ]
+        self.new["changes"][-1]["affected_claim_ids"] = [
+            "alpha-statement", "shared-framing"
+        ]
+        view = self.evaluate()
+        comparison = view["revision_comparison"]
+        self.assertEqual(comparison["added_source_record_ids"], [900003])
+        self.assertEqual(comparison["removed_source_record_ids"], [])
+        self.assertEqual(comparison["modified_claim_ids"], [
+            "alpha-statement", "shared-framing"
+        ])
+        self.assertFalse(view["eligible_for_publication"])
+
+    def test_new_counterevidence_source_is_counted_as_cited(self):
+        added = copy.deepcopy(self.new["sources"][1])
+        added.update({
+            "record_id": 900003, "source_id": "fake-gamma",
+            "institution_id": "fixture-ministry-gamma",
+            "url": "https://example.org/fake-gamma",
+        })
+        self.new["sources"].append(added)
+        self.new["sections"][1]["claims"][0]["counterevidence_ids"] = [900003]
+        self.new["changes"][-1]["affected_claim_ids"] = [
+            "alpha-statement", "shared-framing"
+        ]
+        view = self.evaluate()
+        self.assertEqual(view["revision_comparison"]["added_source_record_ids"], [900003])
+        self.assertEqual(
+            view["sections"][1]["claims"][0]["counterevidence_citations"][0]["record_id"],
+            900003,
+        )
+        self.assertFalse(view["eligible_for_publication"])
+
+    def test_initial_revision_source_delta_is_empty(self):
+        view = build(fake_dossier())
+        self.assertEqual(view["revision_comparison"]["added_source_record_ids"], [])
+        self.assertEqual(view["revision_comparison"]["removed_source_record_ids"], [])
+
+    def test_source_delta_comparison_never_mutates_prior_versions(self):
+        old_snapshot = copy.deepcopy(self.old)
+        new_snapshot = copy.deepcopy(self.new)
+        self.evaluate()
+        self.assertEqual(self.old, old_snapshot)
+        self.assertEqual(self.new, new_snapshot)
 
 
 if __name__ == "__main__":
