@@ -152,6 +152,8 @@ def _url(value, location):
                 or p.username is not None or p.password is not None or p.fragment):
             _fail(location, "requires safe original HTTP(S) URL")
         p.port  # Invalid ports fail as ValueError.
+    except DossierValidationError:
+        raise
     except ValueError:
         _fail(location, "malformed original source URL")
 
