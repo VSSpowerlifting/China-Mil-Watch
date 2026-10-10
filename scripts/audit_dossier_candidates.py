@@ -13,6 +13,7 @@ import json
 import re
 import subprocess
 import sys
+from datetime import date
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -103,6 +104,13 @@ def match_topic(row, categories, query):
     return title_match or via_category, title_match
 
 
+def iso_week(value):
+    """ISO week *year* and week, not approximate 7-day calendar-month bins."""
+    d = date.fromisoformat(value)
+    yr, wk, _day = d.isocalendar()
+    return (yr, wk)
+
+
 def cover_span(rows):
     dates = [r["published_date"] for r in rows if r["published_date"]]
     return (min(dates), max(dates)) if dates else ("unavailable", "unavailable")
@@ -185,7 +193,7 @@ def audit(database, max_examples):
                 only += int(in_title)
         reports[label] = matches
         dates = {r["published_date"] for r in matches if r["published_date"]}
-        weeks = {d[:7] + "-w" + str((int(d[8:10])-1)//7 + 1) for d in dates}
+        weeks = {iso_week(d) for d in dates}
         groups = {r["desk_id"] for r in matches}
         sources = {r["source_slug"] for r in matches}
         span = " – ".join(cover_span(matches))
@@ -213,11 +221,14 @@ def audit(database, max_examples):
         for r in sorted(title_matches or matches, key=lambda item: ((item["published_date"] or ""), item["id"]), reverse=True):
             month = (r["published_date"] or "")[:7]
             if month not in used_months:
-                chosen.append(r); used_months.add(month)
+                chosen.append(r)
+                used_months.add(month)
+                if r["published_date"]:
+                    used_weeks.add(iso_week(r["published_date"]))
             if len(chosen) >= max_examples:
                 break
         for r in sorted(title_matches or matches, key=lambda item: ((item["published_date"] or ""), item["id"]), reverse=True):
-            week = (r["published_date"] or "")[:8] + str((int((r["published_date"] or "0000-00-01")[8:10])-1)//7)
+            week = iso_week(r["published_date"]) if r["published_date"] else None
             if r in chosen or week in used_weeks:
                 continue
             chosen.append(r); used_weeks.add(week)
