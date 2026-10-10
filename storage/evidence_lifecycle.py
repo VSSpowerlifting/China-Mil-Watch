@@ -135,6 +135,12 @@ class FictionalCollectionBarrier:
         manifest = self._collected_head()
         require(manifest["generation"] == receipt["generation"],
                 "c2_collection_not_durable")
+        # The source ledger was checked before the snapshot; now compare the
+        # actual sealed generation against the live copy. Never authorize
+        # analysis on a pre-checkpoint observation that raced with a writer.
+        durable = self.verify_before_analysis()
+        require(durable["source_ledger_sha256"] == evidence["ledger_sha256"],
+                "c2_source_ledger_changed")
         return {
             "schema": SCHEMA, "stage": "collected",
             "execution_id": self.session.run_id,
