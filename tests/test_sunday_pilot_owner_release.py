@@ -178,7 +178,9 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
                 send_packet(path, PILOT_SATURDAY, full_week=True)
                 email = smtp.return_value.__enter__.return_value.send_message.call_args.args[0]
                 self.assertEqual(email["To"], "editor@example.com")
-                self.assertEqual(next(email.iter_attachments()).get_content().encode(),
+                # Raw MIME payload bytes, not text-decoding with the email
+                # library's default charset, must match the owner's SHA.
+                self.assertEqual(next(email.iter_attachments()).get_payload(decode=True),
                                  original)
 
     def test_owner_preview_contains_exact_attachment_digest_for_verification(self):
