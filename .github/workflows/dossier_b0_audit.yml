@@ -6,6 +6,7 @@ on:
       - research/dossier-pilot-audit-20261009
     paths:
       - scripts/audit_dossier_candidates.py
+      - tests/test_dossier_candidate_audit.py
       - .github/workflows/dossier_b0_audit.yml
 
 permissions:
@@ -35,6 +36,8 @@ jobs:
           git status --porcelain --untracked-files=all -- pla_watch.db output/ > /tmp/dossier-b0-before.txt
       - name: Compile bounded audit script
         run: python -m py_compile scripts/audit_dossier_candidates.py
+      - name: Test discovery hard negatives
+        run: python -m unittest tests.test_dossier_candidate_audit -v
       - name: Execute read-only discovery and show metadata report
         shell: bash
         run: |
