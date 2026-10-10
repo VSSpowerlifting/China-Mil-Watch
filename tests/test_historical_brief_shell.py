@@ -224,7 +224,7 @@ class HistoricalBriefBrowserTests(unittest.TestCase):
         from playwright.sync_api import sync_playwright
         cls.tmp = tempfile.TemporaryDirectory(prefix='ipr-historical-browser-')
         cls.root = Path(cls.tmp.name)
-        for name in ('fonts.css', 'styles.css', 'briefs.css', 'shell.js'):
+        for name in ('fonts.css', 'styles.css', 'enrichment.css', 'briefs.css', 'shell.js'):
             shutil.copy2(ROOT / 'output' / name, cls.root / name)
         shutil.copytree(ROOT / 'output/assets', cls.root / 'assets')
         for name in ('media', 'covers'):
