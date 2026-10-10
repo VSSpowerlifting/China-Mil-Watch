@@ -9,9 +9,9 @@ Parent: [IPR source/publication architecture #332](https://github.com/VSSpowerli
 ### New isolated code
 
 - `core/evidence_snapshot.py`: version `ipr-evidence-snapshot/1` manifest; `sqlite3.Connection.backup` for WAL-consistent snapshots; exact structural checks (`PRAGMA integrity_check`, foreign keys, positive stable article IDs, record count/max ID and user_version); SHA-256 file digest; parent generation and immutable generation digest; read-only restore verification.
-- `storage/evidence_store.py`: POSIX **temporary-directory only** local rehearsal adapter. Content-addressed snapshots and immutable generation manifests, idempotent duplicate writes, conflicting run/stage rejection, active pointer with OS file lock and atomic compare-and-swap, old-generation restore and safe non-clobbering destination handling. It is deliberately limited to 32 MiB artificial fixture snapshots, **not** a future production storage adapter.
+- `storage/evidence_store.py`: POSIX **temporary-directory only** local rehearsal adapter. Content-addressed snapshots and immutable generation manifests, idempotent duplicate writes, locked conflicting run/stage rejection under racing writers, active pointer with OS file lock and atomic compare-and-swap, old-generation restore and safe non-clobbering destination handling. It is deliberately limited to 32 MiB artificial fixture snapshots, **not** a future production storage adapter.
 - `scripts/rehearse_evidence_recovery.py`: only CLI mode `--synthetic-only`; creates and deletes its entire fake database/store in a new temporary directory, never accepts real inputs; emits `eligible_for_publication: false`.
-- `tests/test_evidence_snapshot.py`, `tests/test_evidence_store.py`: 38 isolated fictional tests for committed WAL and uncommitted visibility, integrity/foreign keys, manifest tampering, ID continuity, immutable artifact semantics, pointer conflicts/stale writers, competing run identity, failed restore and historical snapshot recovery.
+- `tests/test_evidence_snapshot.py`, `tests/test_evidence_store.py`: 39 isolated fictional tests for committed WAL and uncommitted visibility, integrity/foreign keys, manifest tampering, ID continuity, immutable artifact semantics, pointer conflicts/stale writers, competing run identity, failed restore and historical snapshot recovery.
 
 ### Commands
 
@@ -21,7 +21,7 @@ python scripts/rehearse_evidence_recovery.py --synthetic-only
 python -m compileall -q core/evidence_snapshot.py storage/evidence_store.py scripts/rehearse_evidence_recovery.py tests/test_evidence_snapshot.py tests/test_evidence_store.py
 ```
 
-Local Python 3.13 run: **38/38 tests passed**, rehearsal returned passed=true with `eligible_for_publication=false`, and compileall passed. GitHub's exact-head full offline PR suite on Python 3.9 is still a required independent gate; do not claim green until the run finishes.
+Local Python 3.13 run: **39/39 tests passed**, rehearsal returned passed=true with `eligible_for_publication=false`, and compileall passed. GitHub's exact-head full offline PR suite on Python 3.9 is still a required independent gate; do not claim green until the run finishes.
 
 ## Invariants and operational cautions
 
