@@ -61,6 +61,13 @@ def _is_synthetic_fixture(sidecar):
     if not sidecar["sources"]:
         return False
     for source in sidecar["sources"]:
+        # Existing production record IDs are outside the synthetic fixture
+        # namespace: never accept a relabelled live archive record ID.
+        rid = source["record_id"]
+        if type(rid) is not int or not 900000 <= rid <= 999999:
+            return False
+        if not source["desk"].startswith("fixture-"):
+            return False
         try:
             url = urlsplit(source["url"])
         except ValueError:
@@ -192,11 +199,13 @@ def assess_dossier_release(sidecar, archive_review, *, synthetic_authority=None,
         allowed.append({"record_id": rid, "publisher_link": publisher_link,
                         "local_record_link": local_link})
 
-    # Positive citations, not merely bibliography entries, must be resolvable.
+    # Both supporting and counterevidence citations must have safe navigable
+    # destinations; a contrary source cannot bypass the action-scoped policy.
     cleared = {x["record_id"] for x in allowed if x["publisher_link"] or x["local_record_link"]}
     for section in sidecar["sections"]:
         for claim in section["claims"]:
-            if not set(claim["source_record_ids"]) <= cleared:
+            all_citations = set(claim["source_record_ids"] + claim["counterevidence_ids"])
+            if not all_citations <= cleared:
                 issues.append(_code("claim-has-uncleared-citation", claim_id=claim["id"]))
 
     issues.append(_code("public-release-disabled-by-design"))
