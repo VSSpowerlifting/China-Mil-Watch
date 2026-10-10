@@ -6,9 +6,9 @@
 ## What is implemented
 
 - \`core/dossier_contract.py\`: pure \`validate_dossier_shape(sc)\`, \`read_dossier(path, source_dir)\`, and \`dossier_content_digest(sc)\`, plus \`DossierValidationError\`. Python standard library only; **no database import, publisher fetch, model, email, site-renderer hook or file write**.
-- \`tests/test_dossier_contract.py\`: **63** focused tests using made-up source records, invalid JSON, deliberately forged permissions-style strings, malformed dates and references, and version digest mutations.
+- \`tests/test_dossier_contract.py\`: **67** focused tests using made-up source records, invalid JSON, deliberately forged permissions-style strings, malformed dates and references, and version digest mutations.
 - \`tests/fixtures/dossiers/fictional-exercise-reporting.json\`: a completely **fictional** draft with two invented example.org sources and two thematic sections. The ID numbers 900001 and 900002 **are not production sources**, and the fixture must never be placed under the future \`dossiers/\` directory, imported into public site output or used to infer source admission.
-- A branch-only one-time smoke workflow ran, passed all **63** tests and proved no changed \`pla_watch.db\`, \`output/\`, \`briefs/\`, \`timelines/\` or SQLite WAL/SHM sidecars. It was **removed from this PR** after execution. See [run #38015955086](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38015955086).
+- A branch-only one-time smoke workflow ran, passed all **63** initial tests and proved no changed \`pla_watch.db\`, \`output/\`, \`briefs/\`, \`timelines/\` or SQLite WAL/SHM sidecars. It was **removed from this PR** after execution. See [run #38015955086](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38015955086). A subsequent Python 3.9 hardening pass added four negative tests for malformed unhashable classes/keys and missing approval receipt references: **67/67 passed** in [run #38016178630](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38016178630). Its temporary workflow was also removed.
 
 ## Reader contract / implementation properties
 
