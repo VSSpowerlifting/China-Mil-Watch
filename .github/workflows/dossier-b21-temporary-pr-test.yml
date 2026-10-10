@@ -1,0 +1,25 @@
+# Temporary synthetic-only B2.1 test, removed from lasting PR after receipt.
+name: B2.1 temporary synthetic PR verification
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [feat/dossier-v1-private-review-cli-20261009]
+jobs:
+  synthetic-contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Compile offline modules
+        run: python -m compileall -q core/dossier_contract.py core/dossier_sources.py core/dossier_publication.py scripts/validate_dossiers.py tests/test_dossier_contract.py tests/test_dossier_sources.py tests/test_validate_dossiers.py tests/test_dossier_publication.py
+      - name: Run B1 and B2 synthetic suites against real repository sources
+        run: python -m unittest tests.test_dossier_contract tests.test_dossier_sources tests.test_validate_dossiers tests.test_dossier_publication -v
+      - name: Confirm no tracked DB/output mutations
+        shell: bash
+        run: |
+          git diff --exit-code -- pla_watch.db output briefs timelines
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
