@@ -316,6 +316,45 @@ class TwoEditionReaderHistoryTests(unittest.TestCase):
         with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-revision-lineage-mismatch"):
             build(new, authority=packet, previous=old)
 
+    def test_claim_section_relocation_requires_revision_acknowledgment(self):
+        old, new, packet = fictional_revision_two()
+        # Exchange the two claims so both thematic sections remain nonempty.
+        a = new["sections"][0]["claims"][0]
+        b = new["sections"][1]["claims"][0]
+        new["sections"][0]["claims"] = [b]
+        new["sections"][1]["claims"] = [a]
+        # The older note names alpha, but shared-framing also moved.
+        new["approval"]["content_sha256"] = dossier_content_digest(new)
+        packet = fake_authority(new)
+        packet["history_checked"] = True
+        with self.assertRaisesRegex(
+            PrivateDossierViewHold, "fictional-revision-omits-claim-changes"
+        ):
+            build(new, authority=packet, previous=old)
+
+    def test_acknowledged_section_relocation_is_explicit_in_revision_diff(self):
+        old, new, packet = fictional_revision_two()
+        a = new["sections"][0]["claims"][0]
+        b = new["sections"][1]["claims"][0]
+        new["sections"][0]["claims"] = [b]
+        new["sections"][1]["claims"] = [a]
+        new["changes"][-1]["affected_claim_ids"] = [
+            "alpha-statement", "shared-framing"
+        ]
+        new["approval"]["content_sha256"] = dossier_content_digest(new)
+        packet = fake_authority(new)
+        packet["history_checked"] = True
+        view = build(new, authority=packet, previous=old)
+        self.assertEqual(
+            view["revision_comparison"]["relocated_claim_ids"],
+            ["alpha-statement", "shared-framing"],
+        )
+        self.assertEqual(
+            view["revision_comparison"]["modified_claim_ids"],
+            ["alpha-statement", "shared-framing"],
+        )
+        self.assertFalse(view["eligible_for_publication"])
+
     def test_prior_change_history_cannot_be_rewritten(self):
         old, new, packet = fictional_revision_two()
         old["changes"][0]["summary"] = "Edited earlier issue after the fact."
