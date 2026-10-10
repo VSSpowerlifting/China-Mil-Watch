@@ -249,5 +249,82 @@ class FictionalPrivateHTMLTests(unittest.TestCase):
             self.assertFalse(Path(str(database) + "-shm").exists())
 
 
+class FictionalPrivateHTMLBrowserTests(unittest.TestCase):
+    """True Chromium behavior, in-memory only; never serves a preview URL."""
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            raise unittest.SkipTest("Optional Playwright package unavailable") from None
+        cls.playwright = sync_playwright().start()
+        try:
+            cls.browser = cls.playwright.chromium.launch()
+        except Exception:
+            cls.playwright.stop()
+            raise unittest.SkipTest("Optional local Chromium unavailable") from None
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.browser.close()
+        cls.playwright.stop()
+
+    def make_page(self, width=1280):
+        page = self.browser.new_page(viewport={"width": width, "height": 850})
+        self.addCleanup(page.close)
+        page.set_content(render(), wait_until="load")
+        return page
+
+    def test_real_browser_desktop_has_no_horizontal_overflow(self):
+        page = self.make_page(1280)
+        geometry = page.evaluate("""() => ({
+            scroll: document.documentElement.scrollWidth,
+            client: document.documentElement.clientWidth
+        })""")
+        self.assertLessEqual(geometry["scroll"], geometry["client"] + 2)
+        self.assertTrue(page.locator("h1").is_visible())
+        self.assertTrue(page.locator("aside nav").is_visible())
+
+    def test_real_browser_375px_layout_has_no_horizontal_overflow(self):
+        page = self.make_page(375)
+        geometry = page.evaluate("""() => ({
+            scroll: document.documentElement.scrollWidth,
+            client: document.documentElement.clientWidth
+        })""")
+        self.assertLessEqual(geometry["scroll"], geometry["client"] + 2)
+        self.assertTrue(page.locator("header h1").is_visible())
+        self.assertTrue(page.locator(".banner").is_visible())
+
+    def test_keyboard_skip_link_receives_visible_focus(self):
+        page = self.make_page()
+        page.keyboard.press("Tab")
+        self.assertEqual(page.evaluate("document.activeElement.className"), "skip")
+        self.assertNotEqual(
+            page.evaluate("getComputedStyle(document.activeElement).outlineStyle"),
+            "none",
+        )
+
+    def test_citation_click_reaches_matching_fragment_in_browser(self):
+        page = self.make_page()
+        page.locator('a[href="#source-900001"]').first.click()
+        self.assertEqual(page.evaluate("location.hash"), "#source-900001")
+        self.assertTrue(page.locator("#source-900001").is_visible())
+
+    def test_browser_issues_no_remote_requests_and_print_layout_exists(self):
+        page = self.browser.new_page(viewport={"width": 375, "height": 850})
+        self.addCleanup(page.close)
+        requests = []
+        page.on("request", lambda req: requests.append(req.url))
+        page.set_content(render(), wait_until="load")
+        self.assertEqual(requests, [])
+        page.emulate_media(media="print")
+        self.assertEqual(
+            page.evaluate("getComputedStyle(document.querySelector('aside')).display"),
+            "none",
+        )
+        self.assertTrue(page.locator("main").is_visible())
+
+
 if __name__ == "__main__":
     unittest.main()
