@@ -107,24 +107,25 @@ class CollectionBarrierContracts(unittest.TestCase):
     def test_unattributed_extra_native_row_blocks(self):
         # An article attributed to the same run but a different source must
         # not pass by simply omitting that source from expected_sources.
-        with self.session.application(), db.get_conn() as connection:
-            connection.execute(
-                "INSERT INTO sources(slug,display_name,base_url,language,desk_id)"
-                "VALUES('fictional_other','Other fixture',"
-                "'https://fixture.invalid/other','en','china')")
+        with self.session.application():
             native = db.start_scrape_run()
-            other_id = connection.execute(
-                "SELECT id FROM sources WHERE slug='fictional_other'"
-            ).fetchone()[0]
-            connection.execute(
-                "INSERT INTO articles("
-                "url,content_hash,source_id,scrape_run_id,"
-                "title_original,text_original,published_date) "
-                "VALUES(?,?,?,?,?,?,?)",
-                ("https://fixture.invalid/other/1",
-                 compute_content_hash("Other", "Fictional text"),
-                 other_id, native, "Other", "Fictional text", "2026-10-10"),
-            )
+            with db.get_conn() as connection:
+                connection.execute(
+                    "INSERT INTO sources(slug,display_name,base_url,language,desk_id)"
+                    "VALUES('fictional_other','Other fixture',"
+                    "'https://fixture.invalid/other','en','china')")
+                other_id = connection.execute(
+                    "SELECT id FROM sources WHERE slug='fictional_other'"
+                ).fetchone()[0]
+                connection.execute(
+                    "INSERT INTO articles("
+                    "url,content_hash,source_id,scrape_run_id,"
+                    "title_original,text_original,published_date) "
+                    "VALUES(?,?,?,?,?,?,?)",
+                    ("https://fixture.invalid/other/1",
+                     compute_content_hash("Other", "Fictional text"),
+                     other_id, native, "Other", "Fictional text", "2026-10-10"),
+                )
         self.assert_code("c2_collection_attribution_invalid",
                          self.barrier.seal_collection)
 
