@@ -29,6 +29,9 @@ class UnifiedOperationsContracts(unittest.TestCase):
         self.shadow_root = self.temp / "shadow"
         self.shadow_root.mkdir()
         self.marker = self.temp / "absent-marker.txt"
+        marker_patch = patch.object(unified.ops, "DAILY_MARKER", self.marker)
+        marker_patch.start()
+        self.addCleanup(marker_patch.stop)
         self.registry = load_registry()
         self.day = date(2026, 10, 9)
 
