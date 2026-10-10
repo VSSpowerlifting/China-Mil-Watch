@@ -1,7 +1,7 @@
 """Offline negative-control tests for B0 dossier *discovery*, not publication."""
 import unittest
 
-from scripts.audit_dossier_candidates import TOPICS, match_topic
+from scripts.audit_dossier_candidates import TOPICS, match_topic, iso_week
 
 
 def lead(title, desk="singapore", categories=()):
@@ -13,6 +13,15 @@ def lead(title, desk="singapore", categories=()):
 
 
 class DossierCandidateAuditTests(unittest.TestCase):
+    def test_iso_week_crosses_calendar_year(self):
+        self.assertEqual(iso_week("2026-12-31"), (2026, 53))
+        self.assertEqual(iso_week("2027-01-01"), (2026, 53))
+        self.assertEqual(iso_week("2027-01-04"), (2027, 1))
+
+    def test_invalid_publisher_date_rejected(self):
+        with self.assertRaises(ValueError):
+            iso_week("2026-02-30")
+
     def test_china_singapore_does_not_confuse_china_new_zealand(self):
         r, cats = lead("中新（西兰）两军举行第13次战略对话", "china")
         self.assertEqual(match_topic(r, cats, TOPICS["China–Singapore military contact"]), (False, False))
