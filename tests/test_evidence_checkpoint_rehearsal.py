@@ -1,6 +1,8 @@
 """S2.3a: fictional only, fail-closed Daily checkpoint/recovery simulation."""
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import sqlite3
 import tempfile
@@ -246,6 +248,28 @@ class CheckpointRehearsalTests(unittest.TestCase):
         self.assertNotIn(FAKE_TOKEN, serialized)
         self.assertTrue(all(x["eligible_for_publication"] is False
                             for x in report))
+
+    def test_cli_fictional_failure_matrix_success_and_redaction(self):
+        from scripts.rehearse_evidence_checkpoint_failures import main
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            exit_code = main(["--synthetic-only"])
+        self.assertEqual(exit_code, 0)
+        report = json.loads(stream.getvalue())
+        self.assertTrue(report["success"])
+        self.assertTrue(report["analysis_failure_retained_collection"])
+        self.assertEqual(report["historical_article_count"], 1)
+        self.assertFalse(report["eligible_for_publication"])
+        self.assertNotIn("FICTIONAL_PUBLISHER_BODY", stream.getvalue())
+
+    def test_cli_refuses_invocation_without_explicit_fake_flag(self):
+        from scripts.rehearse_evidence_checkpoint_failures import main
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            exit_code = main([])
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(json.loads(stream.getvalue())["error"],
+                         "synthetic_flag_required")
 
     def test_existing_restore_target_not_overwritten(self):
         first = self.checkpoint()
