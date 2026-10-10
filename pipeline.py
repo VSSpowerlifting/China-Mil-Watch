@@ -140,6 +140,22 @@ def hold_blank_original_bodies(candidates: list) -> tuple[list, int]:
     return ready, withheld
 
 
+def prior_processing_attempts(*stored_queue_lanes) -> dict[int, int]:
+    """Carry recorded failure counts into every stored Daily retry lane.
+
+    Previously only passed-relevance pending articles retained their counter.
+    Never-scored backlog entries started again from attempt 1 on every run,
+    so repeated model-format failures could not exhaust the five-attempt
+    human-review pause budget. Do not invent history for newly scraped rows.
+    """
+    return {
+        row["id"]: row["processing_attempts"]
+        for lane in stored_queue_lanes
+        for row in lane
+        if row["processing_attempts"] is not None
+    }
+
+
 # ── Atomic-batch sources ─────────────────────────────────────────────────────
 #
 # Every source defaults to insert_article()'s per-article-own-commit design:
@@ -289,6 +305,18 @@ def run(
             )
             continue
 
+        # Identify unreadable source pages before dedup/filtering can hide
+        # whether they were previously stored, rejected or newly inserted.
+        # Public official-source locator only; never the body or title.
+        from core.collection.text_gap_receipts import log_unreadable_source_receipts
+        no_text_count = log_unreadable_source_receipts(slug, documents, logger)
+        if (result.text_unavailable is not None
+                and no_text_count != result.text_unavailable):
+            logger.warning(
+                "%s: source text-gap receipt count (%d) disagrees with "
+                "adapter result (%d); investigate collection accounting",
+                slug, no_text_count, result.text_unavailable,
+            )
         all_scraped.extend(doc.as_article_dict() for doc in documents)
         source_results.append(result)
 
@@ -523,14 +551,6 @@ def run(
         for r in pending_rows
         if r["id"] not in inserted_ids
     ]
-    # How many times each queued record has already been observed failing, so
-    # a failure this run advances the count rather than restarting it. Absent
-    # for records scraped this run: they have no history yet.
-    attempts_before: dict[int, int] = {
-        r["id"]: r["processing_attempts"]
-        for r in pending_rows
-        if r["processing_attempts"] is not None
-    }
     # Deterministic content verdicts, available only for records scraped this
     # run because only the adapter saw the markup and nothing stores the
     # verdict. Absent for backlog records, which is why those can never reach a
@@ -547,6 +567,10 @@ def run(
         if r["id"] not in queued_ids
         and _in_daily_queue(backlog_desks.get(r["id"]))
     ]
+    # Both backlog lanes can fail and retry. Keep each recorded count so the
+    # existing reversible budget can eventually pause recurring failures.
+    # The newly inserted lane has no prior retry history.
+    attempts_before = prior_processing_attempts(pending_rows, unscored_rows)
     for desk_id, held in sorted(held_desks.items(), key=lambda kv: str(kv[0])):
         logger.info(
             "Held out of the daily analysis queue: %d %s-desk record(s) — the "

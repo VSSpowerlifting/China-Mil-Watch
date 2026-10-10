@@ -1,5 +1,11 @@
 """
-The PLA Watch identity boundary, asserted through the real render path.
+The PLA Watch identity boundary, asserted through the legacy reference templates.
+
+Since the 2026-10-09 owner ruling, production article rendering uses
+scripts/historical_brief_render.py and is covered by test_historical_brief_shell.
+These assertions retain coverage of the legacy rollback surface and the
+unchanged index/archive/feed compatibility paths. The account below records
+the reason this older coverage was introduced; it is not the current post path.
 
 Why this module exists
 ----------------------
@@ -13,7 +19,7 @@ builds a fresh tree with `generate_preview.build()`, which renders the record
 site and never emits `the-pla-watch/` at all. The weekly pages come from
 `scripts/rerender_pla_watch.py`, and nothing rendered them under test.
 
-So this module renders through the actual weekly path — `make_pw_env()`, the
+So this module originally rendered through the weekly path — `make_pw_env()`, the
 real `pla-watch-*.html` templates, and `_build_post_context()` over the real
 committed sidecars — into a temporary directory. It asserts the boundary that
 `core/edition_identity.py` defines, from both sides.

@@ -111,8 +111,13 @@ PR remains draft pending owner review.
   the predecessor published to its counterpart on the current domain.
 * **Indo-Pacific Record Briefs is the continuing analytical collection**
   (DECISION_LOG 2026-09-23). "The PLA Watch" is predecessor attribution: the
-  existing issues keep it, with their addresses, issue numbers and original
-  masthead, and no new issue is authored or published under it.
+  existing issues keep it in provenance and citations, with their addresses
+  and issue numbers. The 2026-10-09 owner ruling supersedes original-masthead
+  preservation. The review candidate now renders all 14 existing weekly issues
+  through the shared current IPR shell, from both authoring and sidecar re-render
+  paths. See `docs/BRIEFS_CONSOLIDATION_2026-10-09.md` for preservation and browser
+  evidence. This is not yet a deployed change. No new issue is published under
+  The PLA Watch.
 * **Renderer:** `.venv/bin/python site/render.py`. `DEFAULT_SITE_MODE` is
   `indo-pacific-record`. `site/generator.py` is the `legacy` renderer and is
   the rollback path only — it is not the production renderer.

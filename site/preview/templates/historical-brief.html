@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{# Earlier Briefs: current site identity, unchanged historical evidence. #}
+{% block title %}{{ display_title }} — Indo-Pacific Record{% endblock %}
+{% block description %}{{ edition.dek }}{% endblock %}
+{% block og_type %}article{% endblock %}
+{% block head_scripts %}
+<link rel="stylesheet" href="{{ root }}briefs.css">
+<style>
+.historical-provenance{color:var(--band-muted);font-size:.875rem;max-width:68ch;margin-top:1rem}
+.historical-provenance a{color:var(--focus-band)}
+.historical-snapshot{display:flex;flex-wrap:wrap;gap:1rem 2rem;margin:1rem 0}
+.historical-snapshot dt{font-size:.875rem;color:var(--muted)}
+.historical-snapshot dd{font-size:1.25rem;color:var(--ink);margin:0}
+.historical-section p{white-space:pre-line}
+.historical-author{margin:2rem 0;padding:1rem 0;border-top:1px solid var(--rule)}
+.historical-author summary{min-height:44px;cursor:pointer}
+.historical-source-list{list-style:none;padding:0}
+.historical-source-list li{padding:1rem 0;border-top:1px solid var(--rule);overflow-wrap:anywhere}
+.historical-source-list .source-card-original{display:block;margin:.35rem 0;color:var(--ink-2)}
+.brief-section .historical-source-meta{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
+.brief-citation{overflow-wrap:anywhere;font:15px/1.8 var(--sans)}
+.historical-issue-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin:2rem 0}
+.historical-issue-nav a{min-height:44px;display:inline-flex;align-items:center}
+.historical-media img{width:100%;height:auto}
+.historical-media figcaption{font-size:.875rem;color:var(--muted)}
+.historical-veil{grid-area:photo;margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
+.historical-veil img{display:block;width:100%;height:clamp(190px,27vw,360px);object-fit:cover}
+.historical-veil figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--muted);overflow-wrap:anywhere}
+.historical-veil a{color:inherit;text-underline-offset:.2em}
+.historical-author-links{display:flex;gap:.5rem 1.25rem;flex-wrap:wrap}
+.historical-author-links a{display:inline-flex;align-items:center;min-height:44px}
+@media print{.historical-author>div{display:block!important}.historical-source-list a::after{content:" (" attr(href) ")";font-size:.75rem;overflow-wrap:anywhere}}
+</style>
+{% endblock %}
+{% block main_class %} class="leads-with-hero brief-page"{% endblock %}
+{% block hero %}
+<section class="band brief-hero{% if edition.pw_veil or (edition.cover_media_item and edition.cover_media_item.src) %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
+  <div class="wrap brief-hero-inner">
+    <div class="brief-heading">
+      <p class="brief-eyebrow"><a href="{{ root }}analysis.html">{{ collection_name }}</a></p>
+      <p class="brief-edition">{% if edition.issue_number %}<span class="ed-no">No. {{ edition.issue_number }}</span> · {% endif %}Week ending <time datetime="{{ edition.week_ending }}">{{ edition.week_ending|reader_date }}</time>{% if edition.edition_label %} <span class="brief-badge">{{ edition.edition_label }}</span>{% endif %}{% if edition.is_retrospective %} <span class="brief-badge">{{ edition.retrospective_label }}</span>{% endif %}</p>
+      <h1 id="brief-title" class="brief-title">{{ display_title }}</h1>
+    </div>
+    <div class="brief-context">
+      <p class="brief-dek">{{ edition.dek }}</p>
+      <p class="brief-byline">By <span class="byline-name">{{ edition.author_name }}</span></p>
+      <p class="historical-provenance">Originally published as {{ edition.series_name }}{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %} under {{ edition.publication }}. Part of <a href="{{ root }}analysis.html">Indo-Pacific Record Briefs</a>.</p>
+    </div>
+{% if edition.pw_veil %}    <figure class="historical-veil" data-editorial-id="{{ edition.pw_veil.id }}" aria-label="Historical visual context, not evidence">
+      <img src="{{ edition.pw_veil.duo }}" alt="{{ edition.pw_veil.alt }}" style="object-position:{{ edition.pw_veil.mask_focus }}" loading="eager" decoding="async">
+      <figcaption>Image: <a href="{{ edition.pw_veil.source_page }}" rel="noopener nofollow">{{ edition.pw_veil.source_id }}</a>{% if edition.pw_veil.subject %} · {{ edition.pw_veil.subject }}{% endif %} · Context, not evidence.</figcaption>
+    </figure>
+{% endif %}
+    {% if edition.cover_media_item and edition.cover_media_item.src and not edition.pw_veil %}
+    <figure class="brief-opening-photo"><img src="{{ edition.cover_media_item.src }}" alt="{{ edition.cover_media_item.alt }}" fetchpriority="high"><figcaption>{% if edition.cover_media_item.credit %}{{ edition.cover_media_item.credit }} · {% endif %}<a href="{{ edition.cover_media_item.source_page or edition.cover_media_item.source_url }}" rel="noopener nofollow">Source photograph</a> · Context, not evidence.{% if edition.cover_media_item.caption %} <span>{{ edition.cover_media_item.caption }}</span>{% endif %}</figcaption></figure>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+{% macro paragraphs(text) %}{% for para in (text or '').split('\n\n') %}{% if para.strip() %}<p>{{ para.strip()|inline_markup }}</p>{% endif %}{% endfor %}{% endmacro %}
+{% block content %}
+<div class="brief-layout">
+  <details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
+    <nav class="brief-toc" aria-label="In this brief"><ol>
+      <li><a href="#s-snapshot">Coverage snapshot</a></li>
+      {% for key, anchor, heading in sections %}<li><a href="#{{ anchor }}">{{ heading }}</a></li>{% endfor %}
+      {% if edition.term_to_know_term %}<li><a href="#s-term">Term to know</a></li>{% endif %}
+      {% if edition.what_im_watching_next %}<li><a href="#s-watching">What I'm watching next</a></li>{% endif %}
+      <li><a href="#s-sources">Source trail</a></li><li><a href="#pw-cite">Citation</a></li>
+    </ol></nav>
+  </details>
+  <article class="brief-main">
+    {% if edition.signal %}<aside class="brief-signal" aria-label="This week's signal"><p class="brief-signal-label">This week's signal</p><p>{{ edition.signal }}</p></aside>{% endif %}
+    <section class="brief-section" id="s-snapshot" aria-labelledby="h-snapshot">
+      <h2 id="h-snapshot">Coverage Snapshot</h2>
+      <p>Covers <time datetime="{{ edition.week_start }}">{{ edition.week_start|reader_date }}</time> – <time datetime="{{ edition.week_ending }}">{{ edition.week_ending|reader_date }}</time>.</p>
+      <dl class="historical-snapshot">
+        <div><dt>Articles analyzed</dt><dd>{{ edition.n_articles|count }}</dd></div>
+        <div><dt>Model-flagged</dt><dd>{{ edition.n_significant|count }}</dd></div>
+        {% if edition.days_covered %}<div><dt>Days observed</dt><dd>{{ edition.days_covered }}</dd></div>{% endif %}
+      </dl>
+      <p class="historical-source-meta">These figures describe the articles analyzed for this issue, not institutional output or complete collection. “Model-flagged” is an automated triage cue, not an editorial judgment. <a href="{{ root }}methodology.html#model-flagged">How flagging works</a>.</p>
+      {% if edition.cover_media_item and (not edition.cover_media_item.src or edition.pw_veil) %}<p class="historical-source-meta">Edition cover (link-preview image): {% if edition.cover_media_item.credit %}{{ edition.cover_media_item.credit }} · {% endif %}<a href="{{ edition.cover_media_item.source_page or edition.cover_media_item.source_url }}" rel="noopener nofollow">Source</a> · visual context only.</p>{% endif %}
+    </section>
+    {% for key, anchor, heading in sections %}
+    <section class="brief-section historical-section" id="{{ anchor }}" aria-labelledby="h-{{ anchor }}">
+      <h2 id="h-{{ anchor }}">{{ heading }}</h2>{{ paragraphs(edition[key]) }}
+    </section>
+    {% endfor %}
+    {% if edition.term_to_know_term %}<section class="brief-section historical-section" id="s-term" aria-labelledby="h-term"><h2 id="h-term">Term to Know</h2><p class="term-word">{{ edition.term_to_know_term }}</p>{{ paragraphs(edition.term_to_know_explanation) }}</section>{% endif %}
+    {% if edition.what_im_watching_next %}<section class="brief-section historical-section" id="s-watching" aria-labelledby="h-watching"><h2 id="h-watching">What I'm Watching Next</h2>{{ paragraphs(edition.what_im_watching_next) }}</section>{% endif %}
+    <section class="brief-section" id="s-sources" aria-labelledby="h-sources">
+      <h2 id="h-sources">Source Trail</h2>
+      <p>{{ edition.articles|length }} selected record{{ 's' if edition.articles|length != 1 }} used in this analysis. Original sources remain authoritative.</p>
+      <ol class="historical-source-list">
+        {% for item in edition.articles %}<li>
+          <a class="source-card-title brief-record-title" href="{{ item.url }}" rel="noopener">{{ item.title }}</a>
+          {% if item.title_zh %}<span class="source-card-original"{% if item.title_zh|has_cjk %} lang="zh-Hans"{% endif %}>{{ item.title_zh }}</span>{% endif %}
+          <p class="historical-source-meta">{{ item.source }}{% if item.date %} · <time datetime="{{ item.date }}">{{ item.date }}</time>{% endif %}{% if item.is_significant %} · Model-flagged{% endif %}</p>
+        </li>{% endfor %}
+      </ol>
+      {% if edition.source_trail_truncated %}<p>The trail is a selected subset. <a href="{{ root }}archive.html">Explore the preserved records</a>.</p>{% endif %}
+    </section>
+    {% if edition.media_items %}<section class="brief-section" aria-labelledby="h-media"><h2 id="h-media">Visual context</h2>
+      {% for media in edition.media_items %}<figure class="historical-media"><img src="{{ media.src }}" alt="{{ media.alt }}" loading="lazy"><figcaption>{% if media.caption %}{{ media.caption }} · {% endif %}{{ media.credit }}{% if media.source_page or media.source_url %} · <a href="{{ media.source_page or media.source_url }}" rel="noopener nofollow">Source</a>{% endif %}{% if media.license %} · {{ media.license }}{% endif %} · Context, not evidence.</figcaption></figure>{% endfor %}
+    </section>{% endif %}
+    <details class="historical-author"><summary>Author information at original publication</summary><div>
+      <p class="author-block-name">{{ edition.author_name }}</p>
+      {% if edition.author_title %}<p class="author-block-title">{{ edition.author_title }}</p>{% endif %}
+      {% if edition.author_bio %}<p class="author-block-bio">{{ edition.author_bio }}</p>{% endif %}
+{% if historical_author_links %}      <p class="historical-author-links">{% for link in historical_author_links %}<a href="{{ link.url }}"{% if link.external %} rel="noopener noreferrer"{% endif %}>{{ link.label }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>
+{% endif %}
+      <p>This is the historical author information for this issue. <a href="{{ root }}about.html">About Indo-Pacific Record today</a>.</p>
+    </div></details>
+    <section class="brief-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>
+      <p class="brief-citation" id="pw-cite">{% if edition.author_name %}{{ edition.author_name }}, {% endif %}“{{ edition.title }},” <em>{{ edition.series_name }}</em>{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %}, {{ edition.publication }}, {{ edition.week_ending|reader_date }}. {{ edition.page_url }}</p>
+    </section>
+    <nav class="historical-issue-nav" aria-label="Adjacent historical issues">
+      {% if edition.prev_post %}<a href="{{ edition.prev_post.date }}.html">← No. {{ edition.prev_post.issue_number }} · {{ edition.prev_post.week_ending|reader_date }}</a>{% endif %}
+      {% if edition.next_post %}<a href="{{ edition.next_post.date }}.html">No. {{ edition.next_post.issue_number }} · {{ edition.next_post.week_ending|reader_date }} →</a>{% endif %}
+    </nav>
+    <p><a href="{{ root }}analysis.html">All Indo-Pacific Record Briefs</a></p>
+  </article>
+</div>
+{% endblock %}

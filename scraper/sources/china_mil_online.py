@@ -54,6 +54,7 @@ class ChinaMilOnlineScraper(BaseScraper):
     def get_article_urls(self) -> list[str]:
         today_str = self.target_date.strftime("%Y-%m-%d")
         seen: set[str] = set()
+        ordered_urls: list[str] = []
 
         for section_path, label in _SECTIONS.items():
             listing_url = f"{_BASE}/{section_path}/index.html"
@@ -85,11 +86,13 @@ class ChinaMilOnlineScraper(BaseScraper):
                 full_url = urljoin(listing_url, href)
                 if _is_article_url(full_url) and full_url not in seen:
                     seen.add(full_url)
+                    ordered_urls.append(full_url)
                     count += 1
 
             self.logger.debug("Section %s: %d today's articles", label, count)
 
-        return list(seen)
+        # Preserve authored section/DOM order while the set handles membership.
+        return ordered_urls
 
     # ── Article parsing ───────────────────────────────────────────────────────
 

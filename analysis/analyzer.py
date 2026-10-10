@@ -18,6 +18,7 @@ Token budgets and temperatures per task:
 
 import json
 import logging
+import math
 import re
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
@@ -26,6 +27,7 @@ import anthropic
 
 from analysis.prompts import (
     PROMPT_VERSION,
+    RELEVANCE_SCHEMA,
     SYSTEM_PROMPT,
     VALID_CATEGORIES,
     build_category_messages,
@@ -45,6 +47,7 @@ from config import (
     ANTHROPIC_API_KEY,
     RELEVANCE_MODEL,
     RELEVANCE_THRESHOLD,
+    RELEVANCE_TOOL_OUTPUT_ENABLED,
     TRANSLATION_MAX_TOKENS,
 )
 
@@ -232,6 +235,15 @@ class Analyzer:
     # escaped by the API, so the whole class of failure disappears. Sonnet 4.6
     # supports tool use (it does NOT support the `output_config.format`
     # structured-outputs path — that would require a different model).
+    # A private, opt-in path for relevance. The daily pipeline still uses the
+    # legacy raw-JSON response until the owner explicitly enables it.
+    # Haiku's forced tool input is parsed by the SDK, not by _parse_json.
+    _RELEVANCE_TOOL: dict = {
+        "name": "emit_relevance",
+        "description": "Return a Chinese military/security relevance score and concise reason.",
+        "input_schema": {**RELEVANCE_SCHEMA, "additionalProperties": False},
+    }
+
     _TRANSLATION_TOOL: dict = {
         "name": "emit_translation",
         "description": "Return the English translation of the article's title and body.",
@@ -262,18 +274,22 @@ class Analyzer:
         temperature: float,
         *,
         task: str,
+        model: Optional[str] = None,
+        system: Optional[list] = None,
     ) -> dict:
         """
         Forced-tool call. Returns the tool input already parsed by the SDK.
 
         Streams, because the callers that need a tool are the ones producing
         long output. Raises AnalysisError on truncation or a missing tool block.
-        `task` is the usage-telemetry label; see `_call`.
+        `task` is the usage-telemetry label; see `_call`. Model/system default
+        to the historical translation settings, unchanged for existing callers.
         """
+        used_model = model or ANALYSIS_MODEL
         try:
             with self._client.messages.stream(
-                model=ANALYSIS_MODEL,
-                system=self._SYSTEM_WITH_CACHE,
+                model=used_model,
+                system=system if system is not None else self._SYSTEM_WITH_CACHE,
                 messages=messages,
                 max_tokens=max_tokens,
                 temperature=temperature,
@@ -282,13 +298,13 @@ class Analyzer:
             ) as s:
                 response = s.get_final_message()
         except anthropic.APIStatusError as exc:
-            self.usage.record_failure(task, ANALYSIS_MODEL)
+            self.usage.record_failure(task, used_model)
             raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
-            self.usage.record_failure(task, ANALYSIS_MODEL)
+            self.usage.record_failure(task, used_model)
             raise AnalysisError(f"API connection error: {exc}") from exc
         except Exception:
-            self.usage.record_failure(task, ANALYSIS_MODEL)
+            self.usage.record_failure(task, used_model)
             raise
 
         tool_block = next(
@@ -299,7 +315,7 @@ class Analyzer:
         truncated = response.stop_reason == "max_tokens"
         # Reported tokens are real spend even if the output is rejected below.
         self.usage.record_response(
-            task, ANALYSIS_MODEL, getattr(response, "usage", None),
+            task, used_model, getattr(response, "usage", None),
             failed=truncated or tool_block is None)
 
         if truncated:
@@ -308,6 +324,11 @@ class Analyzer:
                 f"(stop_reason=max_tokens). Output is incomplete — raise the ceiling."
             )
         if tool_block is not None:
+            if not isinstance(tool_block.input, dict):
+                self.usage.mark_failed(task, used_model)
+                raise AnalysisError(
+                    f"Invalid `{tool['name']}` tool input type"
+                )
             return dict(tool_block.input)
         raise AnalysisError(
             f"Model returned no `{tool['name']}` tool call "
@@ -405,12 +426,44 @@ class Analyzer:
             system = (None if desk_system is None else
                       [{"type": "text", "text": desk_system,
                         "cache_control": {"type": "ephemeral"}}])
-        raw  = self._call(messages, max_tokens=500, temperature=0.0,
-                          model=RELEVANCE_MODEL, system=system,
-                          task=TASK_RELEVANCE)
+        if RELEVANCE_TOOL_OUTPUT_ENABLED:
+            data = self._call_tool(
+                messages, self._RELEVANCE_TOOL, max_tokens=500,
+                temperature=0.0, task=TASK_RELEVANCE,
+                model=RELEVANCE_MODEL, system=system,
+            )
+            score = data.get("score")
+            reason = data.get("reasoning")
+            if (isinstance(score, bool)
+                    or not isinstance(score, (int, float))
+                    or not 0.0 <= score <= 1.0 or not math.isfinite(score)
+                    or not isinstance(reason, str) or not reason.strip()):
+                # A response can consume tokens yet fail local validation.
+                # Do not log the payload or write an invented score.
+                self.usage.mark_failed(TASK_RELEVANCE, RELEVANCE_MODEL)
+                raise AnalysisError("Invalid relevance tool values (score/reasoning)")
+            return float(score), reason
+        raw = self._call(messages, max_tokens=500, temperature=0.0,
+                         model=RELEVANCE_MODEL, system=system,
+                         task=TASK_RELEVANCE)
         data = self._parse_task_json(raw, TASK_RELEVANCE, RELEVANCE_MODEL)
-        score = float(max(0.0, min(1.0, data["score"])))
-        return score, str(data.get("reasoning", ""))
+        # Valid JSON is not necessarily a valid relevance judgment. Under the
+        # historical path, a missing/string score raised an uncaught Python
+        # error AFTER the usage ledger marked this paid response successful;
+        # bool scores silently became 0/1 and NaN could be clamped to 1.
+        # Treat a malformed semantic response as a failed *spent* model call.
+        score = data.get("score") if isinstance(data, dict) else None
+        reason = data.get("reasoning") if isinstance(data, dict) else None
+        if (isinstance(score, bool)
+                or not isinstance(score, (int, float))
+                or (isinstance(score, float) and not math.isfinite(score))
+                or not isinstance(reason, str) or not reason.strip()):
+            self.usage.mark_failed(TASK_RELEVANCE, RELEVANCE_MODEL)
+            raise AnalysisError("Invalid relevance JSON values (score/reasoning)")
+        # Keep legacy clamping for valid numerical out-of-range scores. Unlike
+        # the optional forced-tool path, this is not a new strict-range rule.
+        score = float(max(0.0, min(1.0, score)))
+        return score, reason
 
     def translate(self, title: str, body: str) -> tuple[str, str]:
         """

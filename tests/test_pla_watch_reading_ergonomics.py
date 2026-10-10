@@ -1,6 +1,10 @@
 """
 Reading ergonomics on The PLA Watch surfaces — measured, never estimated.
 
+Legacy rollback/reference coverage after the 2026-10-09 shell consolidation.
+The current production post path is measured in test_historical_brief_shell;
+the legacy index/archive/terms compatibility surfaces still use these templates.
+
 Why this module exists
 ----------------------
 The 2026-09-05 frontend audit reproduced three defects on the weekly surfaces,

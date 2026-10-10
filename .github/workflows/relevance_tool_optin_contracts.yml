@@ -1,0 +1,50 @@
+name: Relevance tool opt-in offline contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'analysis/analyzer.py'
+      - 'config.py'
+      - 'tests/test_relevance_tool_optin.py'
+      - 'docs/RELEVANCE_TOOL_OPTIN.md'
+      - '.github/workflows/relevance_tool_optin_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  relevance-tool-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin tracked database
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/relevance-tool-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install project dependencies
+        run: pip install -r requirements.txt
+      - name: Test opt-in path and untouched default analysis behavior
+        env:
+          ANTHROPIC_API_KEY: ''
+          RELEVANCE_TOOL_OUTPUT_ENABLED: '0'
+        run: |
+          python -m unittest tests.test_relevance_tool_optin -v
+          python -m unittest tests.test_translation_tool_value_validation -v
+          python -m unittest tests.test_llm_usage_telemetry -v
+          python -m unittest tests.test_model_parse_error_redaction -v
+          python -m unittest tests.test_analysis_failure_causes -v
+      - name: Assert tracked DB and published output preserved
+        run: |
+          sha256sum -c "$RUNNER_TEMP/relevance-tool-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

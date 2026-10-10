@@ -1,5 +1,6 @@
 {% from "_terrain.html" import terrain %}
 <!DOCTYPE html>
+{% set root = root_path | default('../' if nested else '') %}
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -11,8 +12,8 @@
 <meta name="generator" content="{{ title }} — {{ mode }} build">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#142E38">
-<link rel="icon" type="image/png" sizes="32x32" href="{{ '../' if nested else '' }}assets/identity/selected-ipr/ipr-accent-32.png">
-<link rel="apple-touch-icon" href="{{ '../' if nested else '' }}assets/identity/selected-ipr/ipr-accent-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ root }}assets/identity/selected-ipr/ipr-accent-32.png">
+<link rel="apple-touch-icon" href="{{ root }}assets/identity/selected-ipr/ipr-accent-180.png">
 {# Link-preview identity. The absolute URL and image need an origin the
    template does not have, so they are written in the post-processing pass
    that writes the canonical — one source of truth for a page's address. #}
@@ -24,17 +25,16 @@
 <meta name="twitter:title" content="{{ self.title() }}">
 <meta name="twitter:description" content="{{ self.description() }}">
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ '../' if nested else '' }}fonts.css">
-<link rel="stylesheet" href="{{ '../' if nested else '' }}styles.css">
+<link rel="stylesheet" href="{{ root }}fonts.css">
+<link rel="stylesheet" href="{{ root }}styles.css">
 {% endblock %}
 {% if not timeline_surface | default(false) %}<link rel="stylesheet" href="{{ '../' if nested else '' }}enrichment.css">{% endif %}
 {# Head scripts, declared per page rather than inherited by all of them. The
    week shards carry a contract that they ship no <script> at all, and the
    record pages carry no bytes for behaviour they do not have. #}
-{% if record is not defined and brief is not defined and not timeline_surface | default(false) and page != 'index.html' %}<link rel="stylesheet" href="{{ '../' if nested else '' }}support.css">{% endif %}
+{% if record is not defined and brief is not defined and not timeline_surface | default(false) and page != 'index.html' %}<link rel="stylesheet" href="{{ root }}support.css">{% endif %}
 {% block head_scripts %}{% endblock %}
 </head>
-{% set root = '../' if nested else '' %}
 {% set shell_dark = page == 'index.html' or timeline_surface | default(false) %}
 {% set surface = 'record' if record is defined else 'brief' if brief is defined else 'week' if week is defined else 'desk' if desk is defined else 'source' if source is defined else 'home' if page == 'index.html' else 'archive' if page == 'archive.html' else 'catalog' if page == 'analysis.html' else 'support' %}
 {% block body_open %}<body{% if not timeline_surface | default(false) %} data-surface="{{ surface }}" data-route="{{ page }}"{% endif %}{% if page == 'index.html' %} class="page-home"{% endif %}>{% endblock %}
@@ -86,8 +86,8 @@
   </div>
 {% block after_content %}{% endblock %}
 </main>
-<details class="publication-freshness wrap"><summary>Collection and processing dates</summary>
 {% if run_status %}
+<details class="publication-freshness wrap"><summary>Collection and processing dates</summary>
 <aside class="freshness-bar" aria-label="How current the record is">
   <div class="wrap">
     {# The labels are not shortened: these three dates exist precisely because
@@ -117,8 +117,8 @@
       {{ run_status.run_id }} in full</a></p>
   </div>
 </aside>
-{% endif %}
 </details>
+{% endif %}
 <footer class="site">
   <div class="wrap">
     {# The colophon opens on the publication's name. A div rather than a

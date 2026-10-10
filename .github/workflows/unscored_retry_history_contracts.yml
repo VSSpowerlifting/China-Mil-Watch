@@ -1,0 +1,79 @@
+name: Unscored backlog retry history contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'pipeline.py'
+      - 'tests/test_unscored_retry_history.py'
+      - 'docs/UNSCORED_RETRY_ATTEMPT_HISTORY.md'
+      - '.github/workflows/unscored_retry_history_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  retry-budget-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin tracked database before read-only tests
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/unscored-retry-db.sha256"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install normal project dependencies
+        run: pip install -r requirements.txt
+      - name: Verify unscored/pending failure counter and pause contracts
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_unscored_retry_history -v
+          python -m unittest tests.test_processing_state -v
+          python -m unittest tests.test_blank_body_model_dispatch -v
+      - name: Compare pure retry history with the real stored SQLite rows
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pipeline import prior_processing_attempts
+          from scripts.reconcile_db import read_only
+          with read_only("pla_watch.db") as conn:
+              conn.row_factory = sqlite3.Row
+              rows = conn.execute("""
+                  SELECT id, processing_attempts
+                  FROM articles
+                  WHERE passed_relevance IS NULL
+                    AND COALESCE(processing_state, '') NOT IN ('paused', 'terminal')
+              """).fetchall()
+              history = prior_processing_attempts(rows)
+              expected = {r["id"]:r["processing_attempts"] for r in rows
+                          if r["processing_attempts"] is not None}
+              assert history == expected
+              for identifier in (1077, 1635):
+                  row = conn.execute(
+                      "SELECT passed_relevance, processing_state,"
+                      " processing_attempts FROM articles WHERE id=?",
+                      (identifier,)).fetchone()
+                  assert row is not None
+                  print("recurring_relevance_failure=%d recorded_state=%r"
+                        " recorded_attempts=%r" %
+                        (identifier, row["processing_state"],
+                         row["processing_attempts"]))
+              print("read-only real unscored rows=%d retained_attempt_histories=%d" %
+                    (len(rows), len(history)))
+          PY
+      - name: Assert tracked DB/output byte preservation
+        run: |
+          sha256sum -c "$RUNNER_TEMP/unscored-retry-db.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

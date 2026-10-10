@@ -15,8 +15,8 @@ separation of evidence from inference — not story collection.
 
 **Naming.** The public identity is *Indo-Pacific Record*. "China Mil Watch" is
 the **retired predecessor name** (renamed 2026-08-27) and is correct only in
-historical statements — including on the thirteen editions published under it,
-which keep their original masthead. **Indo-Pacific Record Briefs** is the
+historical statements — including the original-publication notes and citations
+of the thirteen editions published under it. **Indo-Pacific Record Briefs** is the
 continuing collection of analysis (2026-09-23). **"The PLA Watch" is
 predecessor attribution**: the name the existing issues (Nos. 1–14) were
 published as, which they keep for good. It is not a term to scrub from them,
@@ -141,9 +141,8 @@ viewport. Depth is progressive; no overlong hero.
 ### PLA Watch edition (Night Desk surface)
 
 The page of the existing issues, published as the China Desk's series *The PLA
-Watch*; briefs use the same anatomy (§5b). Editions published before 2026-08-27 carry
-the predecessor masthead and keep their addresses; that is a preserved
-historical fact, not a naming inconsistency to correct.
+Watch*; briefs use the same anatomy (§5b). Historical issues retain their
+addresses and original attribution within the current IPR shell (§5a).
 Hierarchy: edition identity (No., week ending, badge) → title + dek + byline
 → this week's signal (≤28 words) → coverage snapshot (stats, labeled
 model-flagged) → analytical body in the standing sections (opening note →
@@ -197,10 +196,14 @@ Record*. The series name, *The PLA Watch*, did not change. One module,
 `core/edition_identity.py`, decides which publication published a given edition;
 templates and scripts read it and never hard-code a name.
 
-**Editions 1–13 keep the predecessor identity.** An edition is a dated artifact
-of record. Re-rendering one must reproduce the page that was published — its
-masthead, its citation, its parent links and its stored author information — not
-restate it under whatever the project is called today.
+**Editions 1–13 keep predecessor attribution, not predecessor chrome.** The
+2026-10-09 owner ruling supersedes the earlier requirement to reproduce the
+original masthead and parent navigation. Every article uses the current IPR
+masthead, navigation, footer and visual system. Preserve its original title,
+issue number, dates, URL, text, sources and citation. A concise note states
+that it was originally published as The PLA Watch under China Mil Watch (or
+under Indo-Pacific Record where the resolved identity says so). Never describe
+a historical issue as newly published by the current collection.
 
 **Editions 14 onward are Indo-Pacific Record.** The boundary is the issue number
 (`LAST_HISTORICAL_ISSUE = 13`), not the week the edition covers. Edition 14
@@ -214,12 +217,38 @@ archive, the terms page, navigation, and site-level metadata carry the current
 identity even though the archive lists historical editions. That is a property
 of the site the reader is on, not of any edition.
 
-**Author identity.** Stored sidecar fields win. Where a sidecar is silent — as
+**Author identity.** Stored sidecar fields win for historical attribution. Where a sidecar is silent — as
 editions 1 and 2 are — the era supplies the default, so a historical page cannot
 inherit the current identity by accident. New editions use the identity on the
 About page: Creator and Editor of Indo-Pacific Record, studying International
 Affairs at George Washington University's Elliott School. The retired "incoming
-student" wording survives only inside historical editions.
+student" wording survives only as explicitly labelled historical author
+information. Current site navigation must not imply China Mil Watch is active.
+
+**Frontend integration (review candidate).** The historical post renderer now
+uses the shared current IPR shell, logo and typography. Both authoring and
+sidecar re-render paths use `scripts/historical_brief_render.py`; all 14 existing
+weekly article HTML pages have been regenerated. Evidence and the boundary with
+the active frontend work are in `docs/BRIEFS_CONSOLIDATION_2026-10-09.md`.
+When integrating further frontend changes, keep this correction within that shell.
+Do not launch extra public components. Inspect `site/templates/pla-watch-base.html`,
+`site/templates/pla-watch-post.html`, `scripts/rerender_pla_watch.py` and the
+current native Brief template before choosing the smallest shared-shell change.
+Keep `core/edition_identity.py`'s historical publisher resolution and all canonical
+sidecars unchanged. Site-level metadata identifies IPR; historical publication
+metadata and citation still identify the publisher of the original issue.
+Normal navigation returns to `/analysis.html`; compatibility URLs remain valid.
+Retain existing feed entry IDs and URLs; changing feed membership is out of scope.
+
+Verification must render all historical and native approved Briefs through the
+governed paths, prove sidecar/database and article/source/citation integrity,
+check direct links and catalog/previous/next navigation, and review old/new
+articles at mobile and desktop widths, no-JS, keyboard and reduced motion.
+Update tests that enforce the superseded masthead rule; preserve historical
+citation tests and accessibility thresholds. Run focused tests, full offline
+CI and the output validator (10 governed warnings). Regenerate only through
+the renderers; do not hand-edit output. Stop at a reviewed implementation
+candidate; no deployment or new editorial publication follows from this ruling.
 
 ### Publication timing
 
@@ -264,13 +293,23 @@ by that ruling. Current publication state lives in PROJECT_STATE.md.
 **One collection, provenance intact.** *Indo-Pacific Record Briefs* includes the
 existing issues and every future issue. Each existing issue keeps its sidecar,
 published title, URL, feed entry ID and original *The PLA Watch* attribution —
-and editions 1–13 their China Mil Watch masthead (§5a). A unified collection may
+and editions 1–13 their China Mil Watch original-publication note (§5a). A unified collection may
 display that provenance; it never rewrites it. Membership is not attribution: an
 existing issue is *in* the collection and still *published as* The PLA Watch.
 No new issue is authored or published as The PLA Watch. A brief says what it is
 by recording `collection: "Indo-Pacific Record Briefs"`; a sidecar that looks
 like a brief without saying so, or any issue after No. 14 that names no
 collection, is refused rather than read as The PLA Watch.
+
+**Keep the structure small (2026-10-09).** Records and IPR Briefs are the public
+research/editorial layers. The weekly regional review is internal: consider
+available admissible evidence, then select one coherent theme without desk
+quotas. This changes no evidence-admission or approval contract. Specialist
+subjects and bilateral relationships may later be curated collections within
+IPR; PLA Watch is a possible future collection, not an activated publication.
+No additional journal, public review, schedule, feed or numbering sequence is
+created here. Timelines/dossiers support the research under their own approval
+rules. Regional Assessments remain future scope, not an implementation task.
 
 **What a brief is.** It uses the existing article anatomy (§5, edition page) and
 begins with a concrete Indo-Pacific development, recorded as `development` with

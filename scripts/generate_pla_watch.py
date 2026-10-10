@@ -599,8 +599,6 @@ def _build_context(*sources: dict, **extra) -> dict:
 
 
 def render_post(result: dict, meta: dict) -> str:
-    env = make_pw_env()
-    template = env.get_template("pla-watch-post.html")
     post_date = meta.get("date", meta["week_ending"])
     pw_veil = veil_for_edition(post_date, sidecar=meta)
     # result and meta both carry a "title" key (post title vs. sidecar title).
@@ -647,7 +645,10 @@ def render_post(result: dict, meta: dict) -> str:
         "pw_veil":       pw_veil,
     }
     context = _build_context(result, layout_meta, root_path="../../")
-    return template.render(**context)
+    from scripts.historical_brief_render import render_historical_brief
+    # Use the same current shell as the sidecar-only re-render path.
+    context["page_url"] = f"{SITE_ORIGIN}/the-pla-watch/posts/{post_date}.html"
+    return render_historical_brief(context)
 
 
 def render_index(posts_meta: list[dict]) -> str:
