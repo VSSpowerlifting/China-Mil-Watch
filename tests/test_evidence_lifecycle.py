@@ -156,7 +156,9 @@ class CollectionBarrierContracts(unittest.TestCase):
 
         def race(stage):
             receipt = original_checkpoint(stage)
-            self.update("UPDATE source_run_results SET status='ok_all_duplicates'")
+            # Mutate to a *self-consistent* failure receipt; the live copy
+            # still must be refused because the collected snapshot is sealed.
+            self.update("UPDATE source_run_results SET status='listing_failure',is_failure=1")
             return receipt
 
         from unittest.mock import patch
@@ -170,7 +172,7 @@ class CollectionBarrierContracts(unittest.TestCase):
     def test_mutated_source_receipt_after_seal_blocks_paid_gate(self):
         self.barrier.seal_collection()
         self.update(
-            "UPDATE source_run_results SET status='ok_all_duplicates'")
+            "UPDATE source_run_results SET status='listing_failure',is_failure=1")
         self.assert_code("c2_working_copy_diverged",
                          self.barrier.verify_before_analysis)
 
