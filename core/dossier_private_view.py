@@ -40,6 +40,7 @@ def _revision_comparison(sidecar, previous_sidecar):
             "changed_fields": [],
             "added_claim_ids": [],
             "modified_claim_ids": [],
+            "relocated_claim_ids": [],
             "removed_claim_ids": [],
             "added_source_record_ids": [],
             "removed_source_record_ids": [],
@@ -99,9 +100,24 @@ def _revision_comparison(sidecar, previous_sidecar):
     }
     added = sorted(new_claims.keys() - old_claims.keys())
     removed = sorted(old_claims.keys() - new_claims.keys())
+    # A claim's thematic section is part of its editorial context. Moving the
+    # same words and citations to another section is still a substantive
+    # framing change and must appear in the reviewed revision note.
+    old_location = {
+        claim["id"]: section["id"]
+        for section in previous_sidecar["sections"] for claim in section["claims"]
+    }
+    new_location = {
+        claim["id"]: section["id"]
+        for section in sidecar["sections"] for claim in section["claims"]
+    }
+    relocated = sorted(
+        cid for cid in old_claims.keys() & new_claims.keys()
+        if old_location[cid] != new_location[cid]
+    )
     modified = sorted(
         cid for cid in old_claims.keys() & new_claims.keys()
-        if old_claims[cid] != new_claims[cid]
+        if old_claims[cid] != new_claims[cid] or old_location[cid] != new_location[cid]
     )
     substantive_fields = (
         "title", "dek", "research_question", "overview", "author_name",
@@ -125,6 +141,7 @@ def _revision_comparison(sidecar, previous_sidecar):
         "changed_fields": changed,
         "added_claim_ids": added,
         "modified_claim_ids": modified,
+        "relocated_claim_ids": relocated,
         "removed_claim_ids": removed,
         "added_source_record_ids": added_sources,
         "removed_source_record_ids": removed_sources,
