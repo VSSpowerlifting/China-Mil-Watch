@@ -37,6 +37,7 @@ def fake_registry():
             sources=[SimpleNamespace(
                 slug=f"fixture-{name}-releases",
                 institution_id=f"fixture-ministry-{name}",
+                base_url="https://example.org",
                 language_tag="en", enabled=True, contract_validated=True,
             )],
         ))
@@ -160,6 +161,73 @@ class SourceParitySyntheticTests(unittest.TestCase):
         report = self.scan(doc)
         self.assertFalse(report["archive_reconciled"])
         self.assertIn("source-record-missing", codes(report, "errors"))
+
+    def test_title_bytes_are_not_pinned_by_body_only_sha(self):
+        first = self.scan()
+        self.assertTrue(first["archive_reconciled"])
+        title_holds = [h for h in first["holds"]
+                       if h["code"] == "publisher-title-continuity-unpinned"]
+        self.assertEqual([x["record_id"] for x in title_holds], [900001, 900002])
+        # Deliberately alter the archived title without touching original body.
+        # A body-only pin cannot make an integrity claim about title continuity.
+        self.change_db(
+            "UPDATE articles SET title_original=? WHERE id=?",
+            ("Different imaginary title", 900001)
+        )
+        changed = self.scan()
+        self.assertTrue(changed["archive_reconciled"])
+        self.assertIn(
+            {"code": "publisher-title-continuity-unpinned", "record_id": 900001},
+            changed["holds"],
+        )
+        self.assertFalse(changed["eligible_for_publication"])
+
+    def test_registered_publisher_hostname_mismatch_is_review_hold(self):
+        registry = fake_registry()
+        registry[0].sources[0].base_url = "https://official-fiction.example.invalid"
+        review = self.scan(registry=registry)
+        self.assertTrue(review["archive_reconciled"])
+        self.assertIn(
+            {"code": "publisher-origin-differs-from-registry", "record_id": 900001},
+            review["holds"],
+        )
+        self.assertFalse(review["eligible_for_publication"])
+
+    def test_lookalike_host_not_treated_as_registered_subdomain(self):
+        self.change_db(
+            "UPDATE articles SET url=? WHERE id=900001",
+            ("https://example.org.evil.invalid/fake",)
+        )
+        d = copy.deepcopy(self.doc)
+        d["sources"][0]["url"] = "https://example.org.evil.invalid/fake"
+        review = self.scan(doc=d)
+        self.assertTrue(review["archive_reconciled"])
+        self.assertIn("publisher-origin-differs-from-registry", codes(review, "holds"))
+
+    def test_missing_registered_origin_is_not_silently_verified(self):
+        registry = fake_registry()
+        registry[0].sources[0].base_url = None
+        review = self.scan(registry=registry)
+        self.assertTrue(review["archive_reconciled"])
+        self.assertIn(
+            {"code": "publisher-origin-unverified-human-review", "record_id": 900001},
+            review["holds"],
+        )
+
+    def test_registered_publisher_subdomain_can_match_without_rights_grant(self):
+        self.change_db(
+            "UPDATE articles SET url=? WHERE id=900001",
+            ("https://news.example.org/fake-release",)
+        )
+        d = copy.deepcopy(self.doc)
+        d["sources"][0]["url"] = "https://news.example.org/fake-release"
+        review = self.scan(doc=d)
+        self.assertTrue(review["archive_reconciled"])
+        self.assertNotIn(
+            "publisher-origin-differs-from-registry", codes(review, "holds")
+        )
+        self.assertIn("independent-source-use-decision-required", codes(review, "holds"))
+        self.assertFalse(review["eligible_for_publication"])
 
     def test_title_missing_rejected(self):
         self.change_db("UPDATE articles SET title_original='' WHERE id=900001")
