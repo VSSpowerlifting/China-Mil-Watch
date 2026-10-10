@@ -1,3 +1,4 @@
+{% from "_terrain.html" import terrain %}
 <!DOCTYPE html>
 {% set root = root_path | default('../' if nested else '') %}
 <html lang="en">
@@ -27,6 +28,7 @@
 <link rel="stylesheet" href="{{ root }}fonts.css">
 <link rel="stylesheet" href="{{ root }}styles.css">
 {% endblock %}
+{% if not timeline_surface | default(false) %}<link rel="stylesheet" href="{{ root }}enrichment.css">{% endif %}
 {# Head scripts, declared per page rather than inherited by all of them. The
    week shards carry a contract that they ship no <script> at all, and the
    record pages carry no bytes for behaviour they do not have. #}
@@ -34,7 +36,8 @@
 {% block head_scripts %}{% endblock %}
 </head>
 {% set shell_dark = page == 'index.html' or timeline_surface | default(false) %}
-{% block body_open %}<body{% if page == 'index.html' %} class="page-home"{% endif %}>{% endblock %}
+{% set surface = 'record' if record is defined else 'brief' if brief is defined else 'week' if week is defined else 'desk' if desk is defined else 'source' if source is defined else 'home' if page == 'index.html' else 'archive' if page == 'archive.html' else 'catalog' if page == 'analysis.html' else 'support' %}
+{% block body_open %}<body{% if not timeline_surface | default(false) %} data-surface="{{ surface }}" data-route="{{ page }}"{% endif %}{% if page == 'index.html' %} class="page-home"{% endif %}>{% endblock %}
 <a class="skip" href="#main">Skip to content</a>
 <div class="publication-status"><span>Independent publication</span>{% if snapshot is defined and corpus_total is defined %}<span>Corpus snapshot: {{ snapshot.date | reader_date }} · {{ corpus_total | count }} records</span>{% endif %}</div>
 <header class="masthead{% if shell_dark %} masthead--dark{% endif %}">
@@ -74,6 +77,7 @@
 {% elif week is defined %}{% set terrain_key = week.path ~ '-' ~ (page_no | default(1)) %}
 {% else %}{% set terrain_key = page %}{% endif %}
 <main id="main"{% if topography_style is defined %} style="{{ topography_style(terrain_key) }}"{% endif %}{% block main_class %}{% endblock %}>
+{% if not timeline_surface | default(false) and surface in ['record','week','desk','source','support','archive'] %}{{ terrain('edge') }}{% endif %}
 
 {% if review_mode %}<p class="wrap review-banner" role="note">Private editorial preview · draft content is unapproved and unpublished.</p>{% endif %}
 {% block hero %}{% endblock %}
