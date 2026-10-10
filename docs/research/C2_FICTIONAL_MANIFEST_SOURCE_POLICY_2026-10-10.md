@@ -24,6 +24,15 @@ The `tests/test_evidence_manifest_policy.py` module exercises the declared China
 - There is no real source fetching, external provider, LLM API call, paid model dispatch or validated spend pricing, and no binding to Daily or any scheduled workflow.
 - Main's `pipeline.run()` retains its **non-dry private refusal**. Source rights #326, provider security, retention policy, release/projection and deployment are all still outside authorization.
 
+## 2026-10-10 fixture correction
+
+The C1 native schema already seeds the `pla_daily` source. The combined
+fictional lifecycle test now reuses that row instead of attempting a duplicate
+`INSERT`, which the strict native schema correctly rejects. The initial
+A+B+C+D full CI failed one setup error (`UNIQUE constraint failed:
+sources.slug`), while the DB/output preservation step passed. The replacement
+exact-head run must pass before acceptance; the old failure is not waived.
+
 ## Validation receipt rule
 
 Because this is stacked on A+B+C, the combined exact-head Python 3.9
