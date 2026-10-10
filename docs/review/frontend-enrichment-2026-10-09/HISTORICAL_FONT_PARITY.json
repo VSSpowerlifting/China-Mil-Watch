@@ -1,0 +1,8 @@
+{
+  "browser": "147.0.7727.15",
+  "font_matching_cases": 48,
+  "result": "PASS: exact original/local width, ascent and descent across all retained weights/styles and Latin/extended/Vietnamese punctuation samples",
+  "local_css_bytes": 4971,
+  "total_font_bytes": 738140,
+  "method": "Both CSS selections loaded the same original WOFF2 bytes via controlled browser routes; this checks matching and glyph metrics, not network delivery"
+}

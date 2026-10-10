@@ -1,0 +1,1206 @@
+{
+  "cases": [
+    {
+      "route": "home",
+      "width": 320,
+      "profile": "default",
+      "h1_y": 239.2
+    },
+    {
+      "route": "archive",
+      "width": 320,
+      "profile": "default",
+      "h1_y": 164,
+      "first_result_y": 704.0
+    },
+    {
+      "route": "record",
+      "width": 320,
+      "profile": "default",
+      "h1_y": 140,
+      "summary_y": 841.0
+    },
+    {
+      "route": "brief",
+      "width": 320,
+      "profile": "default",
+      "h1_y": 234.6
+    },
+    {
+      "route": "timeline",
+      "width": 320,
+      "profile": "default",
+      "h1_y": 345.4,
+      "chronology_y": 841.4
+    },
+    {
+      "route": "home",
+      "width": 320,
+      "profile": "no-js",
+      "h1_y": 239.2
+    },
+    {
+      "route": "archive",
+      "width": 320,
+      "profile": "no-js",
+      "h1_y": 164,
+      "first_result_y": 445.0
+    },
+    {
+      "route": "record",
+      "width": 320,
+      "profile": "no-js",
+      "h1_y": 140,
+      "summary_y": 841.0
+    },
+    {
+      "route": "brief",
+      "width": 320,
+      "profile": "no-js",
+      "h1_y": 234.6
+    },
+    {
+      "route": "timeline",
+      "width": 320,
+      "profile": "no-js",
+      "h1_y": 345.4,
+      "chronology_y": 841.4
+    },
+    {
+      "route": "home",
+      "width": 320,
+      "profile": "reduced-motion",
+      "h1_y": 239.2
+    },
+    {
+      "route": "archive",
+      "width": 320,
+      "profile": "reduced-motion",
+      "h1_y": 164,
+      "first_result_y": 704.0
+    },
+    {
+      "route": "record",
+      "width": 320,
+      "profile": "reduced-motion",
+      "h1_y": 140,
+      "summary_y": 841.0
+    },
+    {
+      "route": "brief",
+      "width": 320,
+      "profile": "reduced-motion",
+      "h1_y": 234.6
+    },
+    {
+      "route": "timeline",
+      "width": 320,
+      "profile": "reduced-motion",
+      "h1_y": 345.4,
+      "chronology_y": 841.4
+    },
+    {
+      "route": "home",
+      "width": 375,
+      "profile": "default",
+      "h1_y": 221.6
+    },
+    {
+      "route": "archive",
+      "width": 375,
+      "profile": "default",
+      "h1_y": 164,
+      "first_result_y": 704.0
+    },
+    {
+      "route": "record",
+      "width": 375,
+      "profile": "default",
+      "h1_y": 140,
+      "summary_y": 759.4
+    },
+    {
+      "route": "brief",
+      "width": 375,
+      "profile": "default",
+      "h1_y": 234.6
+    },
+    {
+      "route": "timeline",
+      "width": 375,
+      "profile": "default",
+      "h1_y": 345.4,
+      "chronology_y": 783.8
+    },
+    {
+      "route": "home",
+      "width": 375,
+      "profile": "no-js",
+      "h1_y": 221.6
+    },
+    {
+      "route": "archive",
+      "width": 375,
+      "profile": "no-js",
+      "h1_y": 164,
+      "first_result_y": 445.0
+    },
+    {
+      "route": "record",
+      "width": 375,
+      "profile": "no-js",
+      "h1_y": 140,
+      "summary_y": 759.4
+    },
+    {
+      "route": "brief",
+      "width": 375,
+      "profile": "no-js",
+      "h1_y": 234.6
+    },
+    {
+      "route": "timeline",
+      "width": 375,
+      "profile": "no-js",
+      "h1_y": 345.4,
+      "chronology_y": 783.8
+    },
+    {
+      "route": "home",
+      "width": 375,
+      "profile": "reduced-motion",
+      "h1_y": 221.6
+    },
+    {
+      "route": "archive",
+      "width": 375,
+      "profile": "reduced-motion",
+      "h1_y": 164,
+      "first_result_y": 704.0
+    },
+    {
+      "route": "record",
+      "width": 375,
+      "profile": "reduced-motion",
+      "h1_y": 140,
+      "summary_y": 759.4
+    },
+    {
+      "route": "brief",
+      "width": 375,
+      "profile": "reduced-motion",
+      "h1_y": 234.6
+    },
+    {
+      "route": "timeline",
+      "width": 375,
+      "profile": "reduced-motion",
+      "h1_y": 345.4,
+      "chronology_y": 783.8
+    },
+    {
+      "route": "home",
+      "width": 768,
+      "profile": "default",
+      "h1_y": 236.3
+    },
+    {
+      "route": "archive",
+      "width": 768,
+      "profile": "default",
+      "h1_y": 182,
+      "first_result_y": 692.7
+    },
+    {
+      "route": "record",
+      "width": 768,
+      "profile": "default",
+      "h1_y": 178,
+      "summary_y": 738.1
+    },
+    {
+      "route": "brief",
+      "width": 768,
+      "profile": "default",
+      "h1_y": 237.8
+    },
+    {
+      "route": "timeline",
+      "width": 768,
+      "profile": "default",
+      "h1_y": 383.5,
+      "chronology_y": 789.8
+    },
+    {
+      "route": "home",
+      "width": 768,
+      "profile": "no-js",
+      "h1_y": 236.3
+    },
+    {
+      "route": "archive",
+      "width": 768,
+      "profile": "no-js",
+      "h1_y": 182,
+      "first_result_y": 409.7
+    },
+    {
+      "route": "record",
+      "width": 768,
+      "profile": "no-js",
+      "h1_y": 178,
+      "summary_y": 738.1
+    },
+    {
+      "route": "brief",
+      "width": 768,
+      "profile": "no-js",
+      "h1_y": 237.8
+    },
+    {
+      "route": "timeline",
+      "width": 768,
+      "profile": "no-js",
+      "h1_y": 383.5,
+      "chronology_y": 789.8
+    },
+    {
+      "route": "home",
+      "width": 768,
+      "profile": "reduced-motion",
+      "h1_y": 236.3
+    },
+    {
+      "route": "archive",
+      "width": 768,
+      "profile": "reduced-motion",
+      "h1_y": 182,
+      "first_result_y": 692.7
+    },
+    {
+      "route": "record",
+      "width": 768,
+      "profile": "reduced-motion",
+      "h1_y": 178,
+      "summary_y": 738.1
+    },
+    {
+      "route": "brief",
+      "width": 768,
+      "profile": "reduced-motion",
+      "h1_y": 237.8
+    },
+    {
+      "route": "timeline",
+      "width": 768,
+      "profile": "reduced-motion",
+      "h1_y": 383.5,
+      "chronology_y": 789.8
+    },
+    {
+      "route": "home",
+      "width": 1280,
+      "profile": "default",
+      "h1_y": 244.4
+    },
+    {
+      "route": "archive",
+      "width": 1280,
+      "profile": "default",
+      "h1_y": 182,
+      "first_result_y": 713.8
+    },
+    {
+      "route": "record",
+      "width": 1280,
+      "profile": "default",
+      "h1_y": 178,
+      "summary_y": 1032.8
+    },
+    {
+      "route": "brief",
+      "width": 1280,
+      "profile": "default",
+      "h1_y": 281.8
+    },
+    {
+      "route": "timeline",
+      "width": 1280,
+      "profile": "default",
+      "h1_y": 383.5,
+      "chronology_y": 740
+    },
+    {
+      "route": "home",
+      "width": 1280,
+      "profile": "no-js",
+      "h1_y": 244.4
+    },
+    {
+      "route": "archive",
+      "width": 1280,
+      "profile": "no-js",
+      "h1_y": 182,
+      "first_result_y": 430.8
+    },
+    {
+      "route": "record",
+      "width": 1280,
+      "profile": "no-js",
+      "h1_y": 178,
+      "summary_y": 780.1
+    },
+    {
+      "route": "brief",
+      "width": 1280,
+      "profile": "no-js",
+      "h1_y": 281.8
+    },
+    {
+      "route": "timeline",
+      "width": 1280,
+      "profile": "no-js",
+      "h1_y": 383.5,
+      "chronology_y": 740
+    },
+    {
+      "route": "home",
+      "width": 1280,
+      "profile": "reduced-motion",
+      "h1_y": 244.4
+    },
+    {
+      "route": "archive",
+      "width": 1280,
+      "profile": "reduced-motion",
+      "h1_y": 182,
+      "first_result_y": 713.8
+    },
+    {
+      "route": "record",
+      "width": 1280,
+      "profile": "reduced-motion",
+      "h1_y": 178,
+      "summary_y": 1032.8
+    },
+    {
+      "route": "brief",
+      "width": 1280,
+      "profile": "reduced-motion",
+      "h1_y": 281.8
+    },
+    {
+      "route": "timeline",
+      "width": 1280,
+      "profile": "reduced-motion",
+      "h1_y": 383.5,
+      "chronology_y": 740
+    },
+    {
+      "route": "home",
+      "width": 1440,
+      "profile": "default",
+      "h1_y": 233.1
+    },
+    {
+      "route": "archive",
+      "width": 1440,
+      "profile": "default",
+      "h1_y": 182,
+      "first_result_y": 723.4
+    },
+    {
+      "route": "record",
+      "width": 1440,
+      "profile": "default",
+      "h1_y": 178,
+      "summary_y": 1055.1
+    },
+    {
+      "route": "brief",
+      "width": 1440,
+      "profile": "default",
+      "h1_y": 281.8
+    },
+    {
+      "route": "timeline",
+      "width": 1440,
+      "profile": "default",
+      "h1_y": 383.5,
+      "chronology_y": 758.4
+    },
+    {
+      "route": "home",
+      "width": 1440,
+      "profile": "no-js",
+      "h1_y": 233.1
+    },
+    {
+      "route": "archive",
+      "width": 1440,
+      "profile": "no-js",
+      "h1_y": 182,
+      "first_result_y": 440.4
+    },
+    {
+      "route": "record",
+      "width": 1440,
+      "profile": "no-js",
+      "h1_y": 178,
+      "summary_y": 802.3
+    },
+    {
+      "route": "brief",
+      "width": 1440,
+      "profile": "no-js",
+      "h1_y": 281.8
+    },
+    {
+      "route": "timeline",
+      "width": 1440,
+      "profile": "no-js",
+      "h1_y": 383.5,
+      "chronology_y": 758.4
+    },
+    {
+      "route": "home",
+      "width": 1440,
+      "profile": "reduced-motion",
+      "h1_y": 233.1
+    },
+    {
+      "route": "archive",
+      "width": 1440,
+      "profile": "reduced-motion",
+      "h1_y": 182,
+      "first_result_y": 723.4
+    },
+    {
+      "route": "record",
+      "width": 1440,
+      "profile": "reduced-motion",
+      "h1_y": 178,
+      "summary_y": 1055.1
+    },
+    {
+      "route": "brief",
+      "width": 1440,
+      "profile": "reduced-motion",
+      "h1_y": 281.8
+    },
+    {
+      "route": "timeline",
+      "width": 1440,
+      "profile": "reduced-motion",
+      "h1_y": 383.5,
+      "chronology_y": 758.4
+    }
+  ],
+  "flows": [
+    {
+      "search": "English titles",
+      "result": "Showing 1–13 of 13 matching records"
+    },
+    {
+      "search": "Original Chinese titles",
+      "result": "Showing 1–6 of 6 matching records"
+    },
+    {
+      "filter_history": "Desk selection and Back restore URL, control and records"
+    },
+    {
+      "approved_trails": "Showing 1–50 of 182 matching records · page 1 of 4"
+    },
+    {
+      "pagination": "Second page, range focus and Back restore"
+    },
+    {
+      "empty_state": "Nonmatching date interval"
+    },
+    {
+      "citations": "Exact source citation copied; record backlink reaches native Brief trail anchor"
+    },
+    {
+      "brief": "Natural source photo credit and section navigation"
+    },
+    {
+      "timeline": "Native context/date tracks, anchor navigation and keyboard evidence disclosure"
+    },
+    {
+      "menu": "Escape closes native menu and restores focus"
+    },
+    {
+      "fallbacks": "Forced colors focus and print reading on record, Brief and timeline"
+    },
+    {
+      "image_fallback": "Natural JPEG images load in fresh public and private trees when WebP sources are unavailable"
+    },
+    {
+      "freshness": "Three independent dates stay unbroken in the open 320px disclosure"
+    }
+  ],
+  "delivery": [
+    {
+      "route": "home",
+      "cached": false,
+      "transfer": 432895,
+      "body": 427795,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/index.html",
+          "transfer": 15715,
+          "body": 15415
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 2155,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/home.css",
+          "transfer": 11038,
+          "body": 10738
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 30849,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/enrichment.css",
+          "transfer": 9068,
+          "body": 8768
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/intro.js",
+          "transfer": 11868,
+          "body": 11568
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-ivory-160.png",
+          "transfer": 8052,
+          "body": 7752
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/frontend/pacific-fleet-1600.webp",
+          "transfer": 99170,
+          "body": 98870
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 672,
+          "body": 372
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 3331,
+          "body": 3031
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 3331,
+          "body": 3031
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs/media/maritime-cooperation-2026-1200.webp",
+          "transfer": 112058,
+          "body": 111758
+        }
+      ],
+      "timing": 8.900000005960464,
+      "fonts": "loaded"
+    },
+    {
+      "route": "home",
+      "cached": true,
+      "transfer": 0,
+      "body": 427795,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/index.html",
+          "transfer": 0,
+          "body": 15415
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 0,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 0,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/enrichment.css",
+          "transfer": 0,
+          "body": 8768
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/home.css",
+          "transfer": 0,
+          "body": 10738
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/intro.js",
+          "transfer": 0,
+          "body": 11568
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-ivory-160.png",
+          "transfer": 0,
+          "body": 7752
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/frontend/pacific-fleet-1600.webp",
+          "transfer": 0,
+          "body": 98870
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 0,
+          "body": 372
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs/media/maritime-cooperation-2026-1200.webp",
+          "transfer": 0,
+          "body": 111758
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 0,
+          "body": 3031
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 0,
+          "body": 3031
+        }
+      ],
+      "timing": 3.7000000178813934,
+      "fonts": "loaded"
+    },
+    {
+      "route": "archive",
+      "cached": false,
+      "transfer": 268133,
+      "body": 263933,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/archive.html",
+          "transfer": 60142,
+          "body": 59842
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 2155,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/enrichment.css",
+          "transfer": 9068,
+          "body": 8768
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/support.css",
+          "transfer": 28208,
+          "body": 27908
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 30849,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/archive.css",
+          "transfer": 5587,
+          "body": 5287
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 672,
+          "body": 372
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/browse.js",
+          "transfer": 9775,
+          "body": 9475
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 3331,
+          "body": 3031
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248
+        }
+      ],
+      "timing": 10.800000011920929,
+      "fonts": "loaded"
+    },
+    {
+      "route": "archive",
+      "cached": true,
+      "transfer": 0,
+      "body": 263933,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/archive.html",
+          "transfer": 0,
+          "body": 59842
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 0,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 0,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/enrichment.css",
+          "transfer": 0,
+          "body": 8768
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/support.css",
+          "transfer": 0,
+          "body": 27908
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/archive.css",
+          "transfer": 0,
+          "body": 5287
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/browse.js",
+          "transfer": 0,
+          "body": 9475
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/shell.js",
+          "transfer": 0,
+          "body": 372
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-paper.svg",
+          "transfer": 0,
+          "body": 3031
+        }
+      ],
+      "timing": 5.0999999940395355,
+      "fonts": "loaded"
+    },
+    {
+      "route": "brief",
+      "cached": false,
+      "transfer": 361143,
+      "body": 356643,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/briefs/maritime-cooperation-2026.html",
+          "transfer": 30146,
+          "body": 29846
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 2155,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/enrichment.css",
+          "transfer": 9068,
+          "body": 8768
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs.css",
+          "transfer": 7390,
+          "body": 7090
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 30849,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs/media/maritime-cooperation-2026-1200.webp",
+          "transfer": 112058,
+          "body": 111758
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/citation.js",
+          "transfer": 5250,
+          "body": 4950
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 3331,
+          "body": 3031
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864
+        }
+      ],
+      "timing": 26.400000005960464,
+      "fonts": "loaded"
+    },
+    {
+      "route": "brief",
+      "cached": true,
+      "transfer": 0,
+      "body": 356643,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/production/briefs/maritime-cooperation-2026.html",
+          "transfer": 0,
+          "body": 29846
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/fonts.css",
+          "transfer": 0,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/styles.css",
+          "transfer": 0,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/enrichment.css",
+          "transfer": 0,
+          "body": 8768
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs.css",
+          "transfer": 0,
+          "body": 7090
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/briefs/media/maritime-cooperation-2026-1200.webp",
+          "transfer": 0,
+          "body": 111758
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/citation.js",
+          "transfer": 0,
+          "body": 4950
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086
+        },
+        {
+          "url": "http://127.0.0.1:8767/production/assets/material/contours-hero.svg",
+          "transfer": 0,
+          "body": 3031
+        }
+      ],
+      "timing": 3.9000000059604645,
+      "fonts": "loaded"
+    },
+    {
+      "route": "timeline",
+      "cached": false,
+      "transfer": 250836,
+      "body": 247236,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/private/timeline/maritime-cooperation-2026.html",
+          "transfer": 35965,
+          "body": 35665
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/fonts.css",
+          "transfer": 2155,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/styles.css",
+          "transfer": 30849,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/identity/selected-ipr/ipr-ivory-160.png",
+          "transfer": 8052,
+          "body": 7752
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/reveal.js",
+          "transfer": 3046,
+          "body": 2746
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/timelines.css",
+          "transfer": 15577,
+          "body": 15277
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/shell.js",
+          "transfer": 672,
+          "body": 372
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240
+        }
+      ],
+      "timing": 9.700000017881393,
+      "fonts": "loaded"
+    },
+    {
+      "route": "timeline",
+      "cached": true,
+      "transfer": 0,
+      "body": 247236,
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8767/private/timeline/maritime-cooperation-2026.html",
+          "transfer": 0,
+          "body": 35665
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/fonts.css",
+          "transfer": 0,
+          "body": 1855
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/styles.css",
+          "transfer": 0,
+          "body": 30549
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/timelines.css",
+          "transfer": 0,
+          "body": 15277
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/reveal.js",
+          "transfer": 0,
+          "body": 2746
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/identity/selected-ipr/ipr-ivory-160.png",
+          "transfer": 0,
+          "body": 7752
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/shell.js",
+          "transfer": 0,
+          "body": 372
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864
+        },
+        {
+          "url": "http://127.0.0.1:8767/private/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240
+        }
+      ],
+      "timing": 3.9000000059604645,
+      "fonts": "loaded"
+    }
+  ],
+  "errors": [],
+  "browser": "147.0.7727.15"
+}

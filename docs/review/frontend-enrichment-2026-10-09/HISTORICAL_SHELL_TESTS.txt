@@ -1,0 +1,49 @@
+test_all_historical_articles_fit_mobile_tablet_and_desktop (tests.test_historical_brief_shell.HistoricalBriefBrowserTests) ... ok
+test_historical_image_credits_are_readable_on_dark_hero (tests.test_historical_brief_shell.HistoricalBriefBrowserTests) ... ok
+test_keyboard_menu_escape_and_skip_link (tests.test_historical_brief_shell.HistoricalBriefBrowserTests) ... ok
+test_local_styles_fonts_scripts_and_photos_resolve (tests.test_historical_brief_shell.HistoricalBriefBrowserTests) ... ok
+test_no_javascript_and_reduced_motion_keep_sources_and_navigation (tests.test_historical_brief_shell.HistoricalBriefBrowserTests) ... ok
+test_all_stored_body_paragraphs_remain_identical (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_checked_in_pages_equal_current_sidecar_render (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_current_ipr_title_and_social_sharing_preserve_original_citation (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_current_shell_and_collection_on_every_direct_article (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_every_real_issue_is_exercised (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_every_source_title_original_url_outlet_date_and_flag_survives (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_historical_author_information_is_labelled_and_unmodified (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_links_and_assets_use_the_correct_two_level_root (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_no_invented_dates_source_fields_or_unsafe_markup (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_original_author_links_preserved_and_unsafe_hrefs_rejected (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_original_citation_is_exactly_the_existing_citation (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_render_is_deterministic_and_canonical_bytes_do_not_change (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_replaced_cover_photographs_keep_original_source_credit (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_signal_veil_without_cover_uses_photo_grid (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+test_signal_veils_and_credit_survive_all_real_issues (tests.test_historical_brief_shell.HistoricalBriefShellTests) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 9.334s
+
+OK
+[cover:2026-05-09] selected background via media_items[src]: 2026-05-10-auto-image-optimized.jpg
+[cover:2026-05-16] selected background via media_items[src]: 2026-05-16-source-image.jpg
+[cover:2026-05-23] selected background via media_items[src]: 2026-05-23-source-image.jpg
+[cover:2026-06-06] selected background via media_items[src]: 2026-06-06-source-image.jpg
+[cover:2026-06-13] selected background via media_items[src]: 2026-06-13-source-image.jpg
+[cover:2026-06-20] selected background via media_items[src]: 2026-06-20-source-image.jpg
+[cover:2026-06-27] selected background via media_items[src]: 2026-06-27-source-image.jpg
+[cover:2026-07-04] selected background via media_items[src]: 2026-07-04-source-image.jpg
+[cover:2026-07-11] selected background via media_items[src]: 2026-07-11-source-image.jpg
+[cover:2026-07-18] selected background via media_items[src]: 2026-07-18-source-image.jpg
+[cover:2026-08-01] selected background via media_items[src]: 2026-08-01-source-image.jpg
+[cover:2026-08-08] selected background via media_items[src]: 2026-08-08-source-image.jpg
+[cover:2026-05-09] selected background via media_items[src]: 2026-05-10-auto-image-optimized.jpg
+[cover:2026-05-16] selected background via media_items[src]: 2026-05-16-source-image.jpg
+[cover:2026-05-23] selected background via media_items[src]: 2026-05-23-source-image.jpg
+[cover:2026-06-06] selected background via media_items[src]: 2026-06-06-source-image.jpg
+[cover:2026-06-13] selected background via media_items[src]: 2026-06-13-source-image.jpg
+[cover:2026-06-20] selected background via media_items[src]: 2026-06-20-source-image.jpg
+[cover:2026-06-27] selected background via media_items[src]: 2026-06-27-source-image.jpg
+[cover:2026-07-04] selected background via media_items[src]: 2026-07-04-source-image.jpg
+[cover:2026-07-11] selected background via media_items[src]: 2026-07-11-source-image.jpg
+[cover:2026-07-18] selected background via media_items[src]: 2026-07-18-source-image.jpg
+[cover:2026-08-01] selected background via media_items[src]: 2026-08-01-source-image.jpg
+[cover:2026-08-08] selected background via media_items[src]: 2026-08-08-source-image.jpg

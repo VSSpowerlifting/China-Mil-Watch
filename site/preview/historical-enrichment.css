@@ -1,0 +1,9 @@
+/* Preserved historical typography and evidence; owned material, static terrain. */
+[data-surface=historical] .pw-masthead,[data-surface=historical] .site-footer{background-image:url('assets/material/navy-paper.png');background-size:256px}
+[data-surface=historical] .topography,[data-surface=historical] .topography::before,[data-surface=historical] .topography::after,[data-surface=historical] .nd-veil-band::before,[data-surface=historical] .brief-hero::before{animation:none!important}
+[data-surface=historical] :is(a,button,summary):focus-visible{outline:2px solid #92d5cc;outline-offset:3px}
+[data-surface=historical] button:active{outline:1px solid currentColor;outline-offset:-5px}
+[data-surface=historical] details[open]>summary{font-weight:600}
+html.no-anim [data-surface=historical] *,html.no-anim [data-surface=historical] *::before,html.no-anim [data-surface=historical] *::after{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){[data-surface=historical] *,[data-surface=historical] *::before,[data-surface=historical] *::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+@media print,(forced-colors:active){[data-surface=historical] .topography{display:none!important}[data-surface=historical] :is(.pw-masthead,.site-footer){background-image:none!important}}

@@ -137,9 +137,11 @@ MOVED_PAGE_STUB = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <title>Moved</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <link rel="canonical" href="%(target)s">
 <meta http-equiv="refresh" content="0; url=%(target)s">
+<style>html{color:#142e38;background:#f3f2ec;font:20px/1.6 Georgia,serif}body{max-width:40rem;margin:12vh auto;padding:2rem;border-top:3px double #899391}a{color:inherit;text-underline-offset:.2em}a:hover{text-decoration-thickness:2px}a:focus-visible{outline:2px solid #245e62;outline-offset:4px}@media(forced-colors:active){html{color:CanvasText;background:Canvas}a{color:LinkText}}</style>
 </head>
 <body>
 <p>This page has moved to <a href="%(target)s">%(target)s</a>.</p>

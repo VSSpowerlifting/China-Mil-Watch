@@ -25,7 +25,7 @@
 <meta name="twitter:description" content="Five of the twelve model-flagged records in the week ending 15 August 2026 refer to a single China–Indonesia naval passage exercise. Their captured headlines ran across three outlets on three publication dates, and all five named the operating area east of Taiwan.">
 <link rel="stylesheet" href="../../fonts.css">
 <link rel="stylesheet" href="../../styles.css">
-<link rel="stylesheet" href="../../briefs.css">
+<link rel="stylesheet" href="../../enrichment.css"><link rel="stylesheet" href="../../briefs.css">
 <style>
 .historical-provenance{color:var(--band-muted);font-size:.875rem;max-width:68ch;margin-top:1rem}
 .historical-provenance a{color:var(--focus-band)}
@@ -46,14 +46,15 @@
 .historical-media figcaption{font-size:.875rem;color:var(--muted)}
 .historical-veil{grid-area:photo;margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
 .historical-veil img{display:block;width:100%;height:clamp(190px,27vw,360px);object-fit:cover}
-.historical-veil figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--muted);overflow-wrap:anywhere}
-.historical-veil a{color:inherit;text-underline-offset:.2em}
+.historical-veil figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--band-muted);overflow-wrap:anywhere}
+.historical-veil a{color:var(--focus-band);text-underline-offset:.2em}
+@media print{.historical-veil figcaption,.historical-veil a{color:var(--ink)}}
 .historical-author-links{display:flex;gap:.5rem 1.25rem;flex-wrap:wrap}
 .historical-author-links a{display:inline-flex;align-items:center;min-height:44px}
 @media print{.historical-author>div{display:block!important}.historical-source-list a::after{content:" (" attr(href) ")";font-size:.75rem;overflow-wrap:anywhere}}
 </style>
 </head>
-<body><a class="skip" href="#main">Skip to content</a>
+<body data-surface="brief" data-route="analysis.html"><a class="skip" href="#main">Skip to content</a>
 <div class="publication-status"><span>Independent publication</span></div>
 <header class="masthead">
   <div class="wrap header-inner">
@@ -78,6 +79,9 @@
 <main id="main" style="--topo-size: 1208px; --topo-offset: -562px; --topo-x: 50%; --topo-flip: 1; --topo-wash-x: 40%; --topo-wash-y: 35%; --topo-duration: 40s" class="leads-with-hero brief-page">
 
 <section class="band brief-hero" aria-labelledby="brief-title">
+  <div class="terrain-stage terrain-stage--brief-edge" aria-hidden="true">
+  <div class="terrain-lines"></div>
+</div>
   <div class="wrap brief-hero-inner">
     <div class="brief-heading">
       <p class="brief-eyebrow"><a href="../../analysis.html">Indo-Pacific Record Briefs</a></p>

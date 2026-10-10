@@ -1,0 +1,519 @@
+{
+  "routes_checked": 7462,
+  "failures": [],
+  "largest_html_css": {
+    "route": "desks.html",
+    "html_css_limit": 300000,
+    "js_limit": 10000,
+    "html_css_bytes": 167358,
+    "js_bytes": 372,
+    "css": [
+      "enrichment.css",
+      "fonts.css",
+      "styles.css",
+      "support.css"
+    ],
+    "js": [
+      "shell.js"
+    ],
+    "external": [],
+    "asset_bytes": 276459,
+    "assets": [
+      "assets/fonts/instrument-serif-0.woff2",
+      "assets/fonts/instrument-serif-1.woff2",
+      "assets/fonts/inter-0.woff2",
+      "assets/fonts/inter-1.woff2",
+      "assets/fonts/source-serif-4-0.woff2",
+      "assets/fonts/source-serif-4-1.woff2",
+      "assets/fonts/source-serif-4-2.woff2",
+      "assets/identity/selected-ipr/ipr-accent-180.png",
+      "assets/identity/selected-ipr/ipr-accent-32.png",
+      "assets/identity/selected-ipr/ipr-navy-160.png",
+      "assets/identity/selected-ipr/ipr-navy-320.png",
+      "assets/material/chart-paper.png",
+      "assets/material/contours-hero.svg",
+      "assets/material/contours-paper.svg",
+      "assets/material/navy-paper.png"
+    ],
+    "external_assets": [],
+    "local_delivery_bytes": 444189
+  },
+  "largest_local_delivery": {
+    "route": "index.html",
+    "html_css_limit": 300000,
+    "js_limit": 12000,
+    "html_css_bytes": 66835,
+    "js_bytes": 11940,
+    "css": [
+      "enrichment.css",
+      "fonts.css",
+      "home.css",
+      "styles.css"
+    ],
+    "js": [
+      "intro.js",
+      "shell.js"
+    ],
+    "external": [],
+    "asset_bytes": 2619429,
+    "assets": [
+      "assets/editorial/reagan-jmsdf-2015.jpg",
+      "assets/fonts/instrument-serif-0.woff2",
+      "assets/fonts/instrument-serif-1.woff2",
+      "assets/fonts/inter-0.woff2",
+      "assets/fonts/inter-1.woff2",
+      "assets/fonts/source-serif-4-0.woff2",
+      "assets/fonts/source-serif-4-1.woff2",
+      "assets/fonts/source-serif-4-2.woff2",
+      "assets/frontend/pacific-fleet-1600.webp",
+      "assets/frontend/pacific-fleet-2500.webp",
+      "assets/frontend/pacific-fleet-800.webp",
+      "assets/identity/selected-ipr/ipr-accent-180.png",
+      "assets/identity/selected-ipr/ipr-accent-32.png",
+      "assets/identity/selected-ipr/ipr-ivory-160.png",
+      "assets/identity/selected-ipr/ipr-ivory-320.png",
+      "assets/identity/selected-ipr/ipr-navy-160.png",
+      "assets/material/chart-paper.png",
+      "assets/material/contours-hero.svg",
+      "assets/material/contours-paper.svg",
+      "assets/material/navy-paper.png",
+      "briefs/media/maritime-cooperation-2026-1200.webp",
+      "briefs/media/maritime-cooperation-2026-600.webp",
+      "briefs/media/maritime-cooperation-2026-source-image.jpg"
+    ],
+    "external_assets": [],
+    "local_delivery_bytes": 2698204
+  },
+  "all_routes_uncompressed_sha256": "732d7246fab8aa86fbe01d7007fbc730c2e7a4ba97c172dcd419bc909bfe7ee2",
+  "representatives": [
+    {
+      "route": "about.html",
+      "html_css_limit": 120000,
+      "js_limit": 10000,
+      "html_css_bytes": 78511,
+      "js_bytes": 372,
+      "css": [
+        "enrichment.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 276459,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 355342
+    },
+    {
+      "route": "analysis.html",
+      "html_css_limit": 300000,
+      "js_limit": 10000,
+      "html_css_bytes": 103834,
+      "js_bytes": 3118,
+      "css": [
+        "briefs-catalog.css",
+        "enrichment.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "reveal.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 276459,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 383411
+    },
+    {
+      "route": "archive.html",
+      "html_css_limit": 300000,
+      "js_limit": 10000,
+      "html_css_bytes": 133867,
+      "js_bytes": 9847,
+      "css": [
+        "archive.css",
+        "enrichment.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "browse.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 276459,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 420173
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "html_css_limit": 120000,
+      "js_limit": 10000,
+      "html_css_bytes": 77800,
+      "js_bytes": 5322,
+      "css": [
+        "briefs.css",
+        "enrichment.css",
+        "fonts.css",
+        "styles.css"
+      ],
+      "js": [
+        "citation.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 1244950,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png",
+        "briefs/media/maritime-cooperation-2026-1200.webp",
+        "briefs/media/maritime-cooperation-2026-600.webp",
+        "briefs/media/maritime-cooperation-2026-source-image.jpg"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 1328072
+    },
+    {
+      "route": "china.html",
+      "html_css_limit": 120000,
+      "js_limit": 10000,
+      "html_css_bytes": 86598,
+      "js_bytes": 372,
+      "css": [
+        "enrichment.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 276459,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 363429
+    },
+    {
+      "route": "desks.html",
+      "html_css_limit": 300000,
+      "js_limit": 10000,
+      "html_css_bytes": 167358,
+      "js_bytes": 372,
+      "css": [
+        "enrichment.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 276459,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 444189
+    },
+    {
+      "route": "index.html",
+      "html_css_limit": 300000,
+      "js_limit": 12000,
+      "html_css_bytes": 66835,
+      "js_bytes": 11940,
+      "css": [
+        "enrichment.css",
+        "fonts.css",
+        "home.css",
+        "styles.css"
+      ],
+      "js": [
+        "intro.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 2619429,
+      "assets": [
+        "assets/editorial/reagan-jmsdf-2015.jpg",
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/frontend/pacific-fleet-1600.webp",
+        "assets/frontend/pacific-fleet-2500.webp",
+        "assets/frontend/pacific-fleet-800.webp",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-ivory-160.png",
+        "assets/identity/selected-ipr/ipr-ivory-320.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png",
+        "briefs/media/maritime-cooperation-2026-1200.webp",
+        "briefs/media/maritime-cooperation-2026-600.webp",
+        "briefs/media/maritime-cooperation-2026-source-image.jpg"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 2698204
+    },
+    {
+      "route": "record/476.html",
+      "html_css_limit": 120000,
+      "js_limit": 10000,
+      "html_css_bytes": 118767,
+      "js_bytes": 5322,
+      "css": [
+        "enrichment.css",
+        "fonts.css",
+        "record.css",
+        "styles.css"
+      ],
+      "js": [
+        "citation.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 276459,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 400548
+    },
+    {
+      "route": "the-pla-watch/index.html",
+      "html_css_limit": 300000,
+      "js_limit": 10000,
+      "html_css_bytes": 71616,
+      "js_bytes": 1307,
+      "css": [
+        "historical-enrichment.css",
+        "historical-fonts.css",
+        "topography.css"
+      ],
+      "js": [],
+      "external": [],
+      "asset_bytes": 777112,
+      "assets": [
+        "apple-touch-icon.png",
+        "assets/fonts/historical/il.woff2",
+        "assets/fonts/historical/iv.woff2",
+        "assets/fonts/historical/ix.woff2",
+        "assets/fonts/historical/m4l.woff2",
+        "assets/fonts/historical/m4v.woff2",
+        "assets/fonts/historical/m4x.woff2",
+        "assets/fonts/historical/m5l.woff2",
+        "assets/fonts/historical/m5v.woff2",
+        "assets/fonts/historical/m5x.woff2",
+        "assets/fonts/historical/m6l.woff2",
+        "assets/fonts/historical/m6v.woff2",
+        "assets/fonts/historical/m6x.woff2",
+        "assets/fonts/historical/sil.woff2",
+        "assets/fonts/historical/siv.woff2",
+        "assets/fonts/historical/six.woff2",
+        "assets/fonts/historical/srl.woff2",
+        "assets/fonts/historical/srv.woff2",
+        "assets/fonts/historical/srx.woff2",
+        "assets/material/navy-paper.png",
+        "icon-16.png",
+        "icon-32.png",
+        "mark.svg"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 850035
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "html_css_limit": 120000,
+      "js_limit": 10000,
+      "html_css_bytes": 83575,
+      "js_bytes": 372,
+      "css": [
+        "briefs.css",
+        "enrichment.css",
+        "fonts.css",
+        "styles.css"
+      ],
+      "js": [
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 327843,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png",
+        "the-pla-watch/media/2026-08-01-veil.jpg"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 411790
+    },
+    {
+      "route": "week-2026-10-05.html",
+      "html_css_limit": 120000,
+      "js_limit": 10000,
+      "html_css_bytes": 107118,
+      "js_bytes": 0,
+      "css": [
+        "enrichment.css",
+        "fonts.css",
+        "styles.css",
+        "support.css"
+      ],
+      "js": [],
+      "external": [],
+      "asset_bytes": 276459,
+      "assets": [
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/contours-hero.svg",
+        "assets/material/contours-paper.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 383577
+    }
+  ]
+}
