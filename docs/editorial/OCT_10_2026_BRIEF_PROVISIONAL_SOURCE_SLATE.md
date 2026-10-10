@@ -12,6 +12,18 @@
 
 **Provisional claim, narrowly expressed:** Singapore's **October 5** reply says the PLAN **48th Escort Task Force “is in Singapore”** for a routine technical stop under normal diplomatic clearances. China Military Online's **October 8** account of the **same numbered task force** retrospectively dates the Singapore stop to **October 2–4**, citing equipment maintenance and replenishment, and reports the task force's **October 8** arrival in Kota Kinabalu, Malaysia, on a **goodwill visit**. These accounts agree on the stop's **technical/logistical function**, but their date language **does not definitively reconcile**: do not declare October 4 an independently agreed departure date or infer that MINDEF proved the ships remained at berth on October 5. A September 14 Chinese defense announcement had listed intended **Bangladesh, Myanmar and Malaysia goodwill visits**, but not the Singapore technical stop; that is evidence of different *announced categories*, not secrecy or a policy shift. MINDEF's contemporaneous Singapore–Brunei coverage documents enduring bilateral exercises and jointly developed training facilities, useful only as an explicit **separate comparator**, not causally linked to the Chinese deployment.
 
+### Internal IPR record-page parity check (October 10, tracked `main`)
+
+A separate read-only inspection of **generated `output/record/<ID>.html` on main**, rather than search-result titles alone, matched the canonical stored source URL and source text of **4911, 4937, 4951, 4983, 5070, 5071, 4957 and 5039** to the editorial pointers here. All are actual IPR record pages, not provisional invented IDs. This **does not** independently authenticate current publisher originals, legal reuse permission or exact manuscript source pins.
+
+**Crucial asymmetry:**
+- [4911](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/main/output/record/4911.html) is **awaiting screening**, with stored original English MINDEF wording and no analyzed model score. Its text is substantive but the ordinary Sunday ranking prefers analyzed material.
+- [4937](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/main/output/record/4937.html) is **analyzed**, with stored English Xinhua-dateline article text carried by China Military Online and the **Oct. 2–4 Singapore technical-stop passage**. Its machine summary extrapolates an “established pattern,” which is **not** a source-grounded longitudinal trend by itself; use the stored original, not that inference.
+- [4951](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/main/output/record/4951.html) contains the original Chinese PLA Daily **Oct. 8 Malaysian arrival** account, but its stored text **does not mention Singapore or Changi**. Therefore **4951 cannot substitute for 4937** when supporting the Singapore stop, its exact dates or its replenishment rationale.
+- [4983](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/main/output/record/4983.html) and [5071](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/main/output/record/5071.html) point exactly to MINDEF's exercise release and anniversary fact sheet respectively; one issuer and related activities, no claim of independent corroboration.
+
+**Actual minimum viable lead source trail:** **4911 + 4937** across Singapore and China. **4951** may support Malaysia arrival in original Chinese but not Changi logistics. **4983** and **5071** support a separately labeled Singapore–Brunei comparator if used; their inclusion should earn its place in the argument, not fill a desk quota.
+
 ### Primary source pins — read the source itself before citing
 
 | Record | Publisher/date | What it specifically supports | Source-use or interpretation limit |
