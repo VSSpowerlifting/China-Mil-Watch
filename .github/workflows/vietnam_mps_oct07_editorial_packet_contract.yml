@@ -63,14 +63,17 @@ jobs:
           vn=[x for x in rows if x["desk"]=="vietnam"]
           jp=[x for x in rows if x["desk"]=="japan"]
           assert len(vn)==int(os.environ["VIETNAM_COUNT"])==int(os.environ["VIETNAM_ELIGIBLE"])
-          assert 4<=len(vn)<=5
+          assert len(vn)==5
           assert len(jp)==3
           must_have={
               "VN-MPS-1791199100","VN-MPS-1791199677",
-              "VN-MPS-1791366010","VN-MPS-1791535381"}
+              "VN-MPS-1791366010","VN-MPS-1791535381",
+              "VN-MPS-1791608910"}
           assert must_have.issubset({x["id"] for x in vn})
           laos=next(x for x in vn if x["id"]=="VN-MPS-1791535381")
           assert laos["source_content_sha256"]=="8775cb700db1dddfb17209c292b7a03864c65683cc190792c88939a9dd7740ef"
+          cambodia=next(x for x in vn if x["id"]=="VN-MPS-1791608910")
+          assert cambodia["source_content_sha256"]=="d5b372499a12ff3df54c74d768d93d20da1913280eb2b4c4cda851345f731224"
           australia=next(x for x in vn if x["id"]=="VN-MPS-1791366010")
           assert australia["source_content_sha256"]=="8707eaee31b0423d8b6835fee0d02a25207c2a8e5813718aa57c434c927fd6b5"
           assert re.fullmatch(r"[0-9a-f]{40}",os.environ["SOURCE_SHA"])
