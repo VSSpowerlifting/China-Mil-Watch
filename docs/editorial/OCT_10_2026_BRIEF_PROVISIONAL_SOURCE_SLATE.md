@@ -54,6 +54,33 @@ The following are **separate official publisher texts**, not automatically appro
 
 **Possible editorial lede concept (not approved prose):** Open with the Singapore MOD's brief answer to a press question about a Chinese task force at Changi, then follow the same group's later arrival in Malaysia. The opening distinction should be what the governments **said the ships were doing**, not an unsupported claim about Beijing's diplomatic breakthrough or Singapore's strategic alignment.
 
+## Specific editorial thesis review — avoid an obvious or inflated take
+
+**Weak version to reject:** “China's port visit shows expanding regional influence,” or its equally unsupported opposite, “Singapore's technical-stop designation proves the visit meant nothing.” Neither inference follows from the source. **Also reject** a formulaic list of three categories of naval contact without explaining what matters analytically.
+
+**Better contestable thesis (still provisional):** *On a task group's return from the Gulf of Aden, Singapore's routine technical facilitation and China's account of the subsequent Malaysian goodwill call show why the strategic utility of overseas naval access cannot automatically be translated into formal political alignment. Routine maintenance and replenishment can still materially support a deployed fleet's movements, while joint exercises and shared training infrastructure demonstrate a different, more institutionalized relationship.* All broader claims about Chinese regional access patterns need outside-week longitudinal evidence and must be clearly labeled as interpretation; **one transit cannot establish a network**.
+
+**Best counterargument:** A routine port call can have logistical and diplomatic value even without a new treaty, and states can acquire experience with visiting foreign naval vessels through ordinary clearances. The Brief should acknowledge this without converting it into proof of a host-country policy change, exclusive privilege or operational collaboration. Singapore's ministry gives no data on the *frequency or recipients* of foreign clearances in the Oct. 5 reply; refrain from quantitative or trend claims.
+
+**Concrete question to answer:** What exactly do the Singapore and China publishers each choose to *identify*—institutional clearance, servicing, goodwill and announced exchanges—and what distinct forms of evidence would be required to move from a service stop to a claim about partnership? Show this through the Oct. 5 and Oct. 8 primary documents and, only if it adds insight, the independent Singapore–Brunei exercise relationship.
+
+### October 10 edition-specific six-question editor card
+
+This card applies [the separate general C1 editorial standard in PR #325](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/325) to this week's case; that PR is **not** a merged dependency or an enacted doctrine change.
+
+| Test | Required evidence-based answer or hold |
+| --- | --- |
+| Development | Same PLAN 48th task group at Changi then Kota Kinabalu, with *different kinds* of official classification; Singapore–Brunei is an independent contrast, not part of that task group's itinerary |
+| Pivotal records | Numeric Singapore **4911**, China **4937** and optionally **4951**, with **4983/5071** for the deeper-training comparator; check the chosen source list before model drafting |
+| Source independence | Singapore MINDEF statement is an institutional source; China Military/PLA Daily share a reporting lineage; Malaysia local photography supports arrival but Malaysian government site reposts are not independently issued military accounts |
+| Contrary evidence | Technical replenishment has material logistical use; chronological language MINDEF Oct. 5 present tense vs China Oct. 2–4 retrospective range unresolved; goodwill call entails *planned* professional exchanges as of Oct. 8 |
+| Publication boundary | This week **Oct. 4–10** contains **publication dates** Oct. 5/8/10 but some underlying events Oct. 2–3 preceded the window; older Sep. 14 and 2025 sources are explicitly labeled *historical context* and are not smuggled into numeric within-week citations |
+| Next verification | Timestamped shipping/port call/departure receipt if available; Malaysian navy's own outcome account after completion; distinguish realized exchanges from announced intent and avoid unsupported port-access policy claims |
+
+**Reader value test:** After this Brief, an informed policy analyst should be able to explain why *access*, *diplomacy*, and *interoperability* are not interchangeable observations, with real source details for each. If the manuscript merely states “naval relations are complex,” abstain or change focus.
+
+**Workflow/expense warning:** A manual `workflow_dispatch` with `send_email=false` prevents Dylan delivery, **but the Sunday workflow's `--write-automatic` step still makes a paid Anthropic model call** after the readiness gates. Similarly, a `preview_to_owner` request emails a *private owner preview*, not an offline/no-spend report. Run a truly read-only readiness audit first; invoke a model draft only when source eligibility and owner review are justified. The opt-in owner-selected thematic rehearsal is a **separate** paid private step, not an automatic replacement for this Sunday's scheduled writer.
+
 ## Alternative provisional slates (do not force)
 
 **Second choice — Singapore–Brunei exercise architecture.** *Beyond the Jubilee: The Naval Training Infrastructure Behind Singapore and Brunei's Defense Ties*. Materially stronger concrete Singapore evidence in 4983, 5071 and 5070, including the new demolition range, but primarily **one production desk**, plus overlapping same-issuer publications. It needs a separately approved exception to the normal two-production-desk Brief rule or a genuinely pertinent second-desk source; **no unrelated Chinese record to meet a desk quota**. Strong standalone editorial analysis does not imply current Sunday writer can deliver it.
