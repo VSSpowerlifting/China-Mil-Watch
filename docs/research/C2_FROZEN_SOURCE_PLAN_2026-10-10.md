@@ -24,6 +24,16 @@ while the full repository checks are queued; its review base is restored to
 C2-B immediately afterward so the incremental diff remains exactly three
 new files. A queued or running check is **not** acceptance.
 
+## Verified historical-head fix
+
+A later review found that C1's `refs/current.json` contains only a generation
+identifier and manifest digest. Its run ID belongs to the verified immutable
+manifest, not to the ref itself. The pre-collection frozen-plan gate now looks
+up the active manifest to compare execution identity, so a second fictional
+execution can start after a previous generation without a missing-key error.
+Dedicated tests cover that transition and reject a late freeze of the same
+completed run. The modified exact-head CI is required before acceptance.
+
 ## Test contracts
 
 - Missing or changed pre-collection selection is refused.
