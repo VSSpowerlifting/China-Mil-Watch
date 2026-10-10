@@ -308,6 +308,19 @@ class HistoricalBriefBrowserTests(unittest.TestCase):
         self.assertFalse(page.locator('.nav-mobile').evaluate('(e)=>e.open'))
         page.close()
 
+    def test_historical_image_credits_are_readable_on_dark_hero(self):
+        from scripts.verify_enrichment_frontend import color_contrast
+        page = self.browser.new_page()
+        for route in self.routes:
+            self.visit(page, route)
+            for caption in page.locator('.historical-veil figcaption').all():
+                colors = caption.evaluate('(e)=>[getComputedStyle(e).color,getComputedStyle(e.closest(".brief-hero")).backgroundColor]')
+                self.assertGreaterEqual(color_contrast(*colors), 4.5, (route, colors))
+                for link in caption.locator('a').all():
+                    foreground = link.evaluate('(e)=>getComputedStyle(e).color')
+                    self.assertGreaterEqual(color_contrast(foreground, colors[1]), 4.5, route)
+        page.close()
+
     def test_local_styles_fonts_scripts_and_photos_resolve(self):
         page = self.browser.new_page()
         failed = []
