@@ -26,6 +26,7 @@ class TestDossierB0Preservation(unittest.TestCase):
     def test_valid_synthetic_preserved_row(self):
         r = verify_record(valid(), RECORDS[4454])
         self.assertEqual(r["errors"], [])
+        self.assertEqual(r["review_holds"], [])
         self.assertTrue(r["all_anchors_present"])
         self.assertEqual(len(r["stored_original_sha256"]), 64)
 
@@ -73,8 +74,11 @@ class TestDossierB0Preservation(unittest.TestCase):
     def test_screened_negative_is_review_hold(self):
         r = valid()
         r["passed_relevance"] = 0
-        self.assertIn("screened-not-selected-review-required",
-                      verify_record(r, RECORDS[4454])["errors"])
+        result = verify_record(r, RECORDS[4454])
+        self.assertIn("screened-not-selected-human-review-required", result["review_holds"])
+        self.assertEqual(result["errors"], [])
+        # Preserved body is sound; the source's selection permission is NOT.
+        self.assertFalse(not result["review_holds"])
 
     def test_no_original_text_leaks_to_result(self):
         r = valid()
