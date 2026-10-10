@@ -2,7 +2,7 @@
 
 **Private editorial manuscript sketch — NOT an approved IPR Brief.** This is an independent research-based proposal for Ben and Dylan to criticize, **not** the production Sunday model's output. It has not undergone Vietnamese original-language signoff, source-rights review, exact-source citation approval, final corpus/model preview or issue numbering. Do not send, publish, or copy into the live sidecar as an approved manuscript. The private review packet still depends on PR #358 and Sunday gates.
 
-**Working title:** *What Security Partnerships Actually Build: From Laos to Brunei*
+**Working title (revised):** *What Is Being Built in Laos?* — Vietnam's civil-identity project, China's aviation-training site, and the limits of security-cooperation claims
 
 **Working dek:** A Vietnamese-assisted identification system, a Chinese-supported aviation training center, and a newly opened Singapore–Brunei naval range offer three different measures of regional cooperation. Government accounts reveal concrete institutions—but far less about who controls them or what they can deliver.
 
