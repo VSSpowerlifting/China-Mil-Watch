@@ -129,6 +129,32 @@ class FictionalPlanContracts(unittest.TestCase):
         self.assertEqual(replay.verify_before_analysis()[
             "collected_generation"], original["generation"])
 
+    def test_new_execution_freezes_after_prior_generation_exists(self):
+        self.plan.freeze(["fictional_custody"])
+        self.collected()
+        original = self.plan.seal_collection()
+        tmp = tempfile.TemporaryDirectory(prefix="ipr-custody-plan-next-")
+        self.addCleanup(tmp.cleanup)
+        other = RehearsalCustodySession(
+            self.coordinator, tmp.name, run_id="fictional-plan-2",
+            logical_date="2026-10-11", enabled=True)
+        self.assertEqual(other.bootstrap()["generation"], original["generation"])
+        with other.application():
+            db.start_scrape_run()
+        next_plan = FictionalSourcePlan(other)
+        self.assertEqual(next_plan.freeze([])["source_count"], 0)
+        next_receipt = next_plan.seal_collection()
+        self.assertEqual(next_receipt["source_count"], 0)
+        self.assertNotEqual(next_receipt["generation"], original["generation"])
+
+    def test_current_generation_same_run_cannot_freeze_retroactively(self):
+        # Legacy C2-A can create a generation without the C2-C plan; a late
+        # plan cannot be forged to satisfy a now-completed collection.
+        self.collected()
+        self.session.checkpoint("collected")
+        self.assert_code("c2_source_plan_too_late", lambda:
+            self.plan.freeze(["fictional_custody"]))
+
     def test_zero_source_backlog_is_valid_only_when_frozen(self):
         self.plan.freeze([])
         receipt = self.plan.seal_collection()
