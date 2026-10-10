@@ -65,6 +65,14 @@ supplied, asserted or implied by this increment. No real request id,
 cost, prompt, article text, model response, source-use authorization or
 publication output is stored.
 
+## Dependency constructor fix incorporated
+
+The preceding E/F modules now construct their facades without demanding a
+source plan before it can be frozen. Each **operation** still resolves and
+verifies the source plan and collected-generation snapshot before writes or
+audits. This correction addresses eight old E constructor/setup errors and
+must be revalidated together with the G fence at this new exact head.
+
 ## Exact-head combined-stack validation
 
 Because the PR is stacked on five other C2 increments, its complete CI can
