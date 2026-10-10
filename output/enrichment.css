@@ -1,0 +1,62 @@
+/* Owned IPR surfaces: art frames entrances; evidence stays still and clean. */
+[data-surface] main,[data-surface] .footer,[data-surface] .brief-hero,[data-surface] .home-coast-band{position:relative;isolation:isolate}
+.terrain-stage{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1;contain:strict}
+.terrain-lines{position:absolute;inset:-20px;background-repeat:no-repeat}
+.terrain-stage--edge{inset:0 0 auto auto;width:48%;height:580px}
+.terrain-stage--edge .terrain-lines{background-image:url('assets/material/contours-paper.svg');background-size:var(--topo-size,1100px) auto;background-position:var(--topo-x,80%) -80px;opacity:.85;mask-image:linear-gradient(90deg,transparent,#0005 70%,#000);transform:scaleX(var(--topo-flip,1))}
+[data-surface=record] .terrain-stage--edge{width:25%;height:450px;opacity:.65}
+[data-surface=week] .terrain-stage--edge{height:300px;opacity:.5}
+[data-surface=archive] .terrain-stage--edge{height:390px;width:34%}
+[data-surface=desk] .terrain-stage--edge{width:58%;height:660px}
+[data-surface=source] .terrain-stage--edge{height:400px;opacity:.6}
+[data-route='coverage.html'] .terrain-stage--edge{opacity:.35;height:380px}
+[data-route='about.html'] .terrain-stage--edge{width:42%;height:580px}
+[data-route='desks.html'] .terrain-stage--edge{display:none}
+[data-surface] .masthead:not(.masthead--dark),[data-surface] .footer{background-image:url('assets/material/chart-paper.png');background-size:256px}
+[data-surface] .footer{overflow:hidden;border-top:1px solid var(--rule)}
+[data-surface] .footer::before,[data-surface=home] .home-method::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:-1;background:url('assets/material/contours-paper.svg') no-repeat right bottom/1100px auto;mask-image:linear-gradient(90deg,transparent 75%,#0006)}
+[data-surface] :is(.btn,button,summary,select,input):focus-visible{outline:2px solid var(--focus,var(--accent));outline-offset:3px}
+[data-surface] :is(.masthead--dark,.pacific-opening,.home-coast-band,.brief-hero,.band) :is(.btn,button,summary):focus-visible{outline-color:var(--focus-band)}
+[data-surface] :is(button,.btn):not(:disabled):hover{border-color:var(--focus,var(--accent));text-decoration-thickness:2px}
+[data-surface] :is(button,.btn):not(:disabled):active{outline:1px solid currentColor;outline-offset:-5px;transition:none}
+[data-surface] :is(input,select):focus{border-color:var(--focus,var(--accent))}
+[data-surface] button:disabled{border-style:dashed}
+[data-surface] .shell-menu[open]>summary{border-bottom:1px solid currentColor}
+[data-surface] .shell-menu>summary:hover{background:var(--surface)}
+[data-surface=home] .masthead .shell-menu>summary:hover{background:#ffffff18}
+[data-surface] :is(.record-section,.brief-section):target>h2{ text-decoration:underline;text-decoration-color:var(--focus);text-underline-offset:.2em;text-decoration-thickness:1px}
+[data-surface] :is(.record-row,.issue-ledger-row,.stat-row){position:relative}
+[data-surface] :is(.record-row,.stat-row):hover,[data-surface] :is(.record-row,.stat-row):focus-within{background-color:var(--surface)}
+[data-surface] :is(.source-table,.provenance) tr:has(a:hover),[data-surface] :is(.source-table,.provenance) tr:focus-within{background:var(--surface)}
+[data-surface] details[open]>summary{font-weight:600}
+[data-surface=home] .home-finder{background-image:url('assets/material/chart-paper.png');background-size:256px;border-top:3px double var(--rule-strong)}
+[data-surface=home] .home-search:focus-within{outline:2px solid var(--focus);outline-offset:3px}
+[data-surface=home] .home-coast-band{background-image:url('assets/material/navy-paper.png');background-size:256px}
+.terrain-stage--coast .terrain-lines,.terrain-stage--photo-edge .terrain-lines,.terrain-stage--brief-edge .terrain-lines{background-image:url('assets/material/contours-hero.svg');background-size:1450px auto;opacity:.7}
+.terrain-stage--coast .terrain-lines{background-position:80% 40%;mask-image:linear-gradient(90deg,transparent 35%,#0005 80%,#0009)}
+.terrain-stage--photo-edge{inset:auto 0 0 auto;width:60%;height:230px;z-index:0;opacity:.65}
+.terrain-stage--photo-edge .terrain-lines{background-position:right 75%;mask-image:linear-gradient(90deg,transparent 50%,#0007)}
+[data-surface=home] .home-method{position:relative;isolation:isolate}
+[data-surface=home] .home-brief-photo img{border:1px solid var(--rule);padding:4px;background:var(--surface)}
+[data-surface=archive] .finder{padding-block:22px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);background:url('assets/material/chart-paper.png') repeat center/256px}
+[data-surface=archive] .finder-more{grid-column:1/-1;grid-row:2}
+[data-surface=archive] .finder-row>.btn{grid-column:2;grid-row:2;z-index:1}
+[data-surface=archive] .day-date{border-left:1px solid var(--rule);padding-left:14px}
+[data-surface=archive] .chips button:hover,[data-surface=archive] .pager button:not(:disabled):hover{background:var(--ink);color:var(--bg)}
+[data-surface=record] :is(.rail-block,.record-history){background:linear-gradient(180deg,var(--surface),transparent 160px)}
+[data-surface=record] .rail-block{padding-inline:12px;border-left:1px solid var(--rule);background:var(--surface)}
+[data-surface=brief] .brief-hero{background-image:url('assets/material/navy-paper.png');background-size:256px}
+.terrain-stage--brief-edge .terrain-lines{background-position:0 80%;mask-image:linear-gradient(90deg,#000a,transparent 38%)}
+[data-surface=brief] main>.wrap{position:relative;isolation:isolate}
+[data-surface=brief] main>.wrap::before{content:'';position:absolute;inset:0 calc(-1 * var(--gutter)) auto;height:160px;background:url('assets/material/chart-paper.png') repeat center/256px;mask-image:linear-gradient(#000,transparent);z-index:-1;pointer-events:none}
+[data-surface=desk] .status-panel{border-top-width:2px;background-image:linear-gradient(120deg,var(--surface),transparent)}
+[data-surface=support] .deskmap{background-image:url('assets/material/chart-paper.png');background-size:256px;border:1px solid var(--rule)}
+[data-surface=support] .deskmap-plate{border-top-width:2px}
+@media(min-width:701px){[data-surface=home] .home-finder{padding-inline:24px}[data-surface=archive] .finder{padding-inline:20px}}
+@media(max-width:700px){[data-surface] .terrain-stage--edge{height:220px;opacity:.55;width:55%}[data-surface=record] .terrain-stage--edge{display:none}[data-surface=desk] .terrain-stage--edge{height:300px;opacity:.55}.terrain-stage--photo-edge{display:none}.terrain-stage--brief-edge .terrain-lines{background-position:70% 38%;opacity:.35;mask-image:linear-gradient(#0006,transparent 50%)}[data-surface=archive] .day-date{border-left:0;padding-left:0}[data-surface] .footer::before{opacity:.4}}
+@media(prefers-reduced-motion:no-preference) and (scripting:enabled){html:not(.no-anim) [data-surface] :is(.terrain-stage--coast,.terrain-stage--brief-edge,.terrain-stage--photo-edge) .terrain-lines{animation:ipr-art-arrive 720ms var(--ease-rule,ease-out) both}html:not(.no-anim) [data-surface] :is(.shell-menu[open]>div,.shell-menu[open]>nav,.finder-more[open]>.finder-more-body,.record-history[open]>.custody){animation:ipr-disclose 150ms ease-out} [data-surface] :is(.btn,button,input,select){transition:border-color 140ms ease-out,color 140ms ease-out,background-color 140ms ease-out}}
+@keyframes ipr-art-arrive{from{opacity:.25;translate:8px 3px}to{translate:0 0}}
+@keyframes ipr-disclose{from{opacity:.6;translate:0 -3px}to{opacity:1;translate:0 0}}
+html.no-anim [data-surface] *,html.no-anim [data-surface] *::before,html.no-anim [data-surface] *::after{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){[data-surface] *,[data-surface] *::before,[data-surface] *::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+@media print,(forced-colors:active){[data-surface] .terrain-stage,[data-surface] .footer::before,[data-surface=home] .home-method::before,[data-surface=brief] main>.wrap::before{display:none!important}[data-surface] :is(.footer,.masthead,.finder,.home-finder,.home-coast-band,.brief-hero,.pw-masthead,.site-footer,.deskmap){background-image:none!important}[data-surface=record] :is(.rail-block,.record-history){background-image:none}}

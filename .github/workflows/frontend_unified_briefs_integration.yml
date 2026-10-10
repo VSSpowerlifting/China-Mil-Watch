@@ -1,0 +1,48 @@
+name: Unified historical frontend integration contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'site/preview/templates/base.html'
+      - 'site/preview/enrichment.css'
+      - 'output/the-pla-watch/posts/**'
+      - 'tests/test_frontend_unified_shell_integration.py'
+      - 'docs/FRONTEND_UNIFIED_BRIEFS_INTEGRATION.md'
+      - '.github/workflows/frontend_unified_briefs_integration.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  unified-briefs-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin the tracked archive and original issue sidecars
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/briefs-db.sha256"
+          find output/the-pla-watch/posts -maxdepth 1 -type f -name '*.json' -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/briefs-sidecars.sha256"
+      - name: Install offline test dependencies
+        run: pip install -r requirements.txt
+      - name: Verify canonical historical shell and source evidence
+        env:
+          ANTHROPIC_API_KEY: ''
+        run: |
+          python -m unittest tests.test_frontend_unified_shell_integration -v
+          python -m unittest tests.test_historical_brief_shell -v
+          python -m unittest tests.test_surface_material -v
+      - name: Verify archive, sidecars and published output unchanged during tests
+        run: |
+          sha256sum -c "$RUNNER_TEMP/briefs-db.sha256"
+          sha256sum -c "$RUNNER_TEMP/briefs-sidecars.sha256"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

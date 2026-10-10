@@ -58,7 +58,7 @@ def build(master):
     paper.putpalette(palette)
     paper.save(out / 'chart-paper.png', optimize=True)
     assets = {p.name: {'sha256': hashlib.sha256(p.read_bytes()).hexdigest(), 'bytes': p.stat().st_size}
-              for p in sorted(out.iterdir()) if p.suffix in ('.svg', '.png')}
+              for p in (out / name for name in ('chart-paper.png', 'contours-hero.svg', 'contours-paper.svg'))}
     receipt = {'purpose': 'Generated decorative material and original abstract IPR curves; no evidence or geography',
                'master': {'bundle': 'IPR_Visual_Enrichment_2026-10-09 (2).zip', 'path': 'assets/chart-paper.png',
                           'sha256': MASTER_SHA, 'bytes': master.stat().st_size, 'dimensions': [1254, 1254],
