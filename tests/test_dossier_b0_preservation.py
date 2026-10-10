@@ -1,11 +1,12 @@
 """Pure, offline B0 source-parity controls. Does not contact publishers."""
 from __future__ import annotations
 
-import copy
+import hashlib
 import unittest
 
 from scripts.check_dossier_b0_preservation import (
-    BASE, DESK, INSTITUTION, RECORDS, SOURCE, verify_record,
+    BASE, DESK, INSTITUTION, FROZEN_SHA256, RECORDS, ROOT, SOURCE, scan,
+    verify_record,
 )
 
 
@@ -41,6 +42,48 @@ class TestDossierB0Preservation(unittest.TestCase):
         row["id"] = True
         v = verify_record(row, RECORDS[4454], expected_record_id=4454)
         self.assertIn("record-id-mismatch", v["errors"])
+
+    def test_frozen_digest_matches_exact_synthetic_title_and_body(self):
+        row = valid()
+        frozen = (hashlib.sha256(row["title_original"].encode("utf-8")).hexdigest(),
+                  hashlib.sha256(row["text_original"].encode("utf-8")).hexdigest())
+        self.assertEqual(verify_record(row, RECORDS[4454],
+                                       frozen_sha256=frozen)["errors"], [])
+
+    def test_changed_archived_body_invalidates_frozen_digest(self):
+        row = valid()
+        frozen = (hashlib.sha256(row["title_original"].encode("utf-8")).hexdigest(),
+                  hashlib.sha256(row["text_original"].encode("utf-8")).hexdigest())
+        row["text_original"] += " Extra publisher sentence."
+        self.assertIn("frozen-original-body-drift",
+                      verify_record(row, RECORDS[4454],
+                                    frozen_sha256=frozen)["errors"])
+
+    def test_changed_archived_title_invalidates_frozen_digest(self):
+        row = valid()
+        frozen = (hashlib.sha256(row["title_original"].encode("utf-8")).hexdigest(),
+                  hashlib.sha256(row["text_original"].encode("utf-8")).hexdigest())
+        row["title_original"] += " updated"
+        self.assertIn("frozen-original-title-drift",
+                      verify_record(row, RECORDS[4454],
+                                    frozen_sha256=frozen)["errors"])
+
+    def test_frozen_snapshot_covers_exact_shortlist(self):
+        self.assertEqual(set(FROZEN_SHA256), set(RECORDS))
+        self.assertTrue(all(len(pair) == 2 and all(len(x) == 64 for x in pair)
+                            for pair in FROZEN_SHA256.values()))
+
+    def test_real_tracked_archive_originals_against_frozen_baseline(self):
+        """Uses scratch SQLite only; no publisher fetch, output or DB edits."""
+        report = scan(ROOT / "pla_watch.db",
+                      ROOT / "desks/singapore/manifest.json")
+        self.assertTrue(report["all_stored_checks_passed"],
+                        {x["record_id"]: x["errors"] for x in report["evidence"]})
+        self.assertEqual(report["selected_source_records"], 7)
+        self.assertEqual(report["research_activity_count"], 7)
+        self.assertEqual(report["editorial_screening_holds"], 1)
+        self.assertFalse(report["screening_clear_for_editorial_use"])
+        self.assertEqual(report["verified_as"], "frozen_stored_source_parity_only")
 
     def test_wrong_url_never_accepted(self):
         r = valid()
