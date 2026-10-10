@@ -96,20 +96,26 @@ class LocalEvidenceStore:
         validate_manifest(manifest)
         snapshot = self.snapshot_path(manifest["snapshot_sha256"])
         verify_snapshot(snapshot, manifest)
-        # Same run/stage may never be assigned two different payloads.
-        for prior_path in (self.root / "manifests").glob("*.json"):
-            require(not prior_path.is_symlink(), "symlink_artifact")
+        # Serialize run/stage uniqueness checks with other writers. An identical
+        # run identity must not acquire competing snapshots under contention.
+        with self.lock_path.open("a+b") as lock:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
             try:
-                previous = parse_manifest(prior_path.read_bytes())
-            except OSError:
-                raise EvidenceContractError("manifest_read_failed") from None
-            if (previous["run_id"], previous["stage"]) == (
-                    manifest["run_id"], manifest["stage"]):
-                require(previous["generation"] == manifest["generation"],
-                        "run_stage_conflict")
-        path = self.manifest_path(manifest["generation"])
-        self._persist_bytes(path, canonical_bytes(manifest))
-        return path
+                for prior_path in (self.root / "manifests").glob("*.json"):
+                    require(not prior_path.is_symlink(), "symlink_artifact")
+                    try:
+                        previous = parse_manifest(prior_path.read_bytes())
+                    except OSError:
+                        raise EvidenceContractError("manifest_read_failed") from None
+                    if (previous["run_id"], previous["stage"]) == (
+                            manifest["run_id"], manifest["stage"]):
+                        require(previous["generation"] == manifest["generation"],
+                                "run_stage_conflict")
+                path = self.manifest_path(manifest["generation"])
+                self._persist_bytes(path, canonical_bytes(manifest))
+                return path
+            finally:
+                fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
 
     def current(self):
         path = self.root / "refs" / "current.json"
