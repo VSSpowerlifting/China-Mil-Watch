@@ -375,18 +375,19 @@ class TestFixtureRenders(unittest.TestCase):
         meta.setdefault("n_significant", 0)
         return self.gen.render_post(result, meta)
 
-    def test_edition_13_renders_the_historical_masthead(self):
+    def test_edition_13_keeps_historical_attribution_in_current_shell(self):
         html = self.render(sidecar("2026-08-08"))
         self.assertIn(HISTORICAL_NAME, html)
         self.assertIn(f"<em>{SERIES_NAME}</em>", html)
-        # The masthead tag states the publishing identity of the page it is on.
-        self.assertIn(f"A weekly publication of {HISTORICAL_NAME}", html)
-        self.assertNotIn(f"A weekly publication of {CURRENT_NAME}", html)
+        self.assertIn(f"under {HISTORICAL_NAME}", html)
+        header = re.search(r"<header\b.*?</header>", html, re.S).group(0)
+        self.assertIn(CURRENT_NAME, header)
+        self.assertNotIn(HISTORICAL_NAME, header)
 
     def test_a_new_edition_renders_the_current_masthead(self):
         html = self.render({"date": "2026-08-15", "issue_number": 14,
                             "title": "T", "dek": "D"})
-        self.assertIn(f"A weekly publication of {CURRENT_NAME}", html)
+        self.assertIn(f"under {CURRENT_NAME}", html)
         self.assertNotIn(f"A weekly publication of {HISTORICAL_NAME}", html)
 
     def test_site_chrome_stays_current_on_a_historical_page(self):
@@ -396,9 +397,9 @@ class TestFixtureRenders(unittest.TestCase):
         footer — the site the reader is actually on — are current.
         """
         html = self.render(sidecar("2026-08-08"))
-        self.assertIn(f'class="pw-nav-back">{CURRENT_NAME}', html)
-        self.assertIn(f"{CURRENT_NAME} — Home", html)
-        self.assertIn(f"{CURRENT_NAME} — Records", html)
+        self.assertIn(f'aria-label="{CURRENT_NAME} home"', html)
+        self.assertIn('href="../../analysis.html"', html)
+        self.assertIn('href="../../archive.html"', html)
 
     def test_an_early_edition_remains_historical(self):
         """No. 1 — the one with no stored author fields."""
@@ -407,14 +408,14 @@ class TestFixtureRenders(unittest.TestCase):
 
     def test_historical_citation_names_the_predecessor(self):
         html = self.render(sidecar("2026-07-11"))
-        cite = re.search(r'id="pw-cite">(.*?)</div>', html, re.S).group(1)
+        cite = re.search(r'id="pw-cite">(.*?)</p>', html, re.S).group(1)
         self.assertIn(HISTORICAL_NAME, cite)
         self.assertNotIn(CURRENT_NAME, cite)
 
     def test_a_post_rename_edition_renders_indo_pacific_record(self):
         html = self.render({"date": "2026-08-15", "issue_number": 14,
                             "title": "T", "dek": "D"})
-        cite = re.search(r'id="pw-cite">(.*?)</div>', html, re.S).group(1)
+        cite = re.search(r'id="pw-cite">(.*?)</p>', html, re.S).group(1)
         self.assertIn(CURRENT_NAME, cite)
         self.assertNotIn(HISTORICAL_NAME, cite)
 
@@ -472,14 +473,15 @@ class RerenderCase(unittest.TestCase):
 
     def render(self, sc):
         ctx = self.context(sc)
-        return ctx, self.env.get_template("pla-watch-post.html").render(**ctx)
+        from scripts.historical_brief_render import render_historical_brief
+        return ctx, render_historical_brief(ctx)
 
     def masthead_tag(self, html):
-        m = re.search(r"A weekly publication of ([^<]+)", html)
+        m = re.search(r'aria-label="([^\"]+) home"', html)
         return m.group(1).strip() if m else None
 
     def citation(self, html):
-        m = re.search(r'id="pw-cite">(.*?)</div>', html, re.S)
+        m = re.search(r'id="pw-cite">(.*?)</p>', html, re.S)
         return m.group(1) if m else ""
 
 
@@ -496,16 +498,16 @@ class TestRerenderPathPreservesHistoricalEditions(RerenderCase):
         self.assertEqual(ctx["publication_home_label"], HISTORICAL_NAME)
         self.assertEqual(ctx["series_name"], SERIES_NAME)
         self.assertIn(HISTORICAL_NAME, ctx["author_title"])
-        self.assertEqual(self.masthead_tag(html), HISTORICAL_NAME)
+        self.assertEqual(self.masthead_tag(html), CURRENT_NAME)
         self.assertIn(HISTORICAL_NAME, self.citation(html))
         self.assertNotIn(CURRENT_NAME, self.citation(html))
-        self.assertIn(f'>Visit {HISTORICAL_NAME}', html)
+        self.assertIn('href="../../analysis.html"', html)
 
     def test_edition_13_rerenders_historical(self):
         ctx, html = self.render(sidecar("2026-08-08"))
         self.assertEqual(ctx["publication"], HISTORICAL_NAME)
         self.assertIn(HISTORICAL_NAME, ctx["author_title"])
-        self.assertEqual(self.masthead_tag(html), HISTORICAL_NAME)
+        self.assertEqual(self.masthead_tag(html), CURRENT_NAME)
         self.assertIn(HISTORICAL_NAME, self.citation(html))
         self.assertNotIn(CURRENT_NAME, self.citation(html))
 
@@ -514,14 +516,14 @@ class TestRerenderPathPreservesHistoricalEditions(RerenderCase):
             with self.subTest(edition=sc.get("issue_number")):
                 ctx, html = self.render(sc)
                 self.assertEqual(ctx["publication"], HISTORICAL_NAME)
-                self.assertEqual(self.masthead_tag(html), HISTORICAL_NAME)
+                self.assertEqual(self.masthead_tag(html), CURRENT_NAME)
                 self.assertIn(HISTORICAL_NAME, self.citation(html))
                 self.assertNotIn(RETROSPECTIVE_LABEL, html)
 
     def test_site_chrome_stays_current_on_a_rerendered_historical_page(self):
         _, html = self.render(sidecar("2026-08-08"))
-        self.assertIn(f'class="pw-nav-back">{CURRENT_NAME}', html)
-        self.assertIn(f"{CURRENT_NAME} — Records", html)
+        self.assertIn(f'aria-label="{CURRENT_NAME} home"', html)
+        self.assertIn('href="../../archive.html"', html)
 
 
 class TestRerenderPathHandlesNewEditions(RerenderCase):
@@ -538,9 +540,9 @@ class TestRerenderPathHandlesNewEditions(RerenderCase):
         self.assertEqual(ctx["publication_timing"], TIMING_RETROSPECTIVE)
         self.assertEqual(self.masthead_tag(html), CURRENT_NAME)
         self.assertIn(CURRENT_NAME, self.citation(html))
-        # Every post-level retrospective surface: masthead line, badge, sidebar.
-        self.assertGreaterEqual(html.count(RETROSPECTIVE_LABEL), 3)
-        self.assertIn("pw-badge--retrospective", html)
+        # Current Brief shell keeps one visible edition-level timing label.
+        self.assertIn(RETROSPECTIVE_LABEL, html)
+        self.assertIn('class="brief-badge"', html)
 
     def test_a_regular_14_has_no_retrospective_surface(self):
         ctx, html = self.render(dict(self.BASE))
@@ -986,6 +988,7 @@ class TestNoNetworkOrProductionWrites(unittest.TestCase):
                    "core.edition_identity", "ast", "importlib.util",
                    "scripts.generate_pla_watch", "scripts.rerender_pla_watch",
                    "scripts.generate_pla_watch_cover", "scripts.pw_env",
+                   "scripts.historical_brief_render",
                    "PIL", "inspect"}
         self.assertTrue(self._imports() <= allowed,
                         "unexpected import(s): %s" % sorted(self._imports() - allowed))

@@ -4,6 +4,34 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-09 — One IPR article experience; keep the editorial structure small
+
+The owner confirmed that grouping old issues on the IPR Briefs index while
+individual articles still present The PLA Watch / China Mil Watch does not
+complete the requested consolidation. All articles should use the current
+Indo-Pacific Record masthead, navigation, footer and visual system. Historical
+publication identity belongs in an explicit original-publication note and
+original citation, not the current site chrome. This supersedes earlier
+instructions to reproduce predecessor mastheads and parent navigation.
+
+Preserve original titles, numbers, dates, URLs, sidecars, article text, source
+trails and historical citation attribution. Stored author information remains
+historical information and must be labelled as such; do not silently update it
+or invent a current biography. The reader should browse one Briefs collection.
+
+Keep the public editorial structure to Records and IPR Briefs. The regional
+review is internal and informs selection of one defensible thematic Brief;
+there are no country quotas. Existing evidence/admission and approval contracts
+remain binding. PLA Watch may later become a curated specialist collection
+within IPR, but this ruling creates no specialist page, journal, cadence, feed,
+new numbering sequence or new publication format. Timelines and dossiers remain
+supporting resources with their existing independent approval requirements.
+
+Integrate this correction with the active frontend work rather than replacing
+its selected visual direction. This ruling records authorization and acceptance
+criteria only; it does not assert template implementation, publication or
+deployment. Implementation and verification handoff: editorial doctrine §5a.
+
 ## 2026-10-08 UTC — Desktop Vietnam National Defence Journal access proved; publication held
 
 A single bounded GitHub Actions experiment (PR #130, run

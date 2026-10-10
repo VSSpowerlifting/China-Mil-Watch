@@ -9,6 +9,9 @@ retired predecessor name and is used only when describing history.
 **Indo-Pacific Record Briefs** is the continuing analytical collection. "The
 PLA Watch" is the predecessor attribution its existing issues keep; no new
 issue is authored or published under it (DECISION_LOG 2026-09-23).
+The 2026-10-09 owner ruling supersedes preservation of historical page chrome:
+all article pages should use the current IPR shell, with original publication
+identity retained in a provenance note and citation. See editorial doctrine §5a.
 
 Summary of the non-negotiables:
 

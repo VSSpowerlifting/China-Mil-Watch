@@ -438,7 +438,6 @@ def _parse_args():
 def main() -> int:
     args = _parse_args()
     env = make_pw_env()
-    post_tmpl = env.get_template("pla-watch-post.html")
     index_tmpl = env.get_template("pla-watch-index.html")
     archive_tmpl = env.get_template("pla-watch-archive.html")
 
@@ -512,7 +511,8 @@ def main() -> int:
         ctx = _build_post_context(sidecar)
         ctx["prev_post"] = by_date_asc[i - 1] if i > 0 else None
         ctx["next_post"] = by_date_asc[i + 1] if i + 1 < len(by_date_asc) else None
-        html = post_tmpl.render(**ctx)
+        from scripts.historical_brief_render import render_historical_brief
+        html = render_historical_brief(ctx)
         out_path = POSTS_DIR / f"{sidecar['date']}.html"
         out_path.write_text(html, encoding="utf-8")
         print(f"Wrote {out_path.relative_to(ROOT)}")
