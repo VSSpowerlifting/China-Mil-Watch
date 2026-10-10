@@ -35,7 +35,7 @@ class FirstSundayPrivateReplayTests(unittest.TestCase):
 
     def test_explicit_send_is_exact_original_and_no_model_generation(self):
         env = {
-            "IPR_SUNDAY_EDITOR_DELIVERY_ENABLED": "true",
+            "IPR_SUNDAY_REPLAY_DELIVERY_APPROVED": "true",
             "IPR_SUNDAY_OWNER_REVIEWED_WEEK": SAT,
             "IPR_SUNDAY_OWNER_REVIEWED_SHA256": hashlib.sha256(self.original).hexdigest(),
         }
@@ -65,7 +65,7 @@ class FirstSundayPrivateReplayTests(unittest.TestCase):
             ("", correct), ("2026-10-03", correct), (SAT, "0" * 64), (SAT, "")
         ):
             env = {
-                "IPR_SUNDAY_EDITOR_DELIVERY_ENABLED": "true",
+                "IPR_SUNDAY_REPLAY_DELIVERY_APPROVED": "true",
                 "IPR_SUNDAY_OWNER_REVIEWED_WEEK": approved_week,
                 "IPR_SUNDAY_OWNER_REVIEWED_SHA256": digest,
             }
@@ -81,7 +81,7 @@ class FirstSundayPrivateReplayTests(unittest.TestCase):
         edited = self.original.replace(b"## WHAT STOOD OUT", b"## WHAT STOOD OUT\nNew paragraph.")
         self.path.write_bytes(edited)
         env = {
-            "IPR_SUNDAY_EDITOR_DELIVERY_ENABLED": "true",
+            "IPR_SUNDAY_REPLAY_DELIVERY_APPROVED": "true",
             "IPR_SUNDAY_OWNER_REVIEWED_WEEK": SAT,
             "IPR_SUNDAY_OWNER_REVIEWED_SHA256": original_digest,
         }
