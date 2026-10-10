@@ -141,6 +141,32 @@ def scan(db_path, manifest_path):
             """, sorted(RECORDS)).fetchall()
         except sqlite3.OperationalError as e:
             raise EvidenceAuditError("archive schema missing expected provenance fields") from e
+    # Context helps distinguish an isolated deliberate screening rejection
+    # from a widespread migration/default-value artifact. No model text output.
+    with read_only(db_path) as conn:
+        cohort = {
+            ("pending" if flag is None else "selected" if flag == 1 else "not_selected"): count
+            for flag, count in conn.execute("""
+                SELECT a.passed_relevance, COUNT(*)
+                FROM articles AS a JOIN sources AS s ON s.id = a.source_id
+                WHERE s.slug = ?
+                GROUP BY a.passed_relevance
+            """, (SOURCE,)).fetchall()
+        }
+        finding = conn.execute("""
+            SELECT relevance_score IS NOT NULL, relevance_reasoning IS NOT NULL,
+                   model_id IS NOT NULL, analyzed_at IS NOT NULL
+            FROM articles WHERE id = 4428
+        """).fetchone()
+    if finding is None:
+        raise EvidenceAuditError("screening review record missing")
+    screening_context = {
+        "singapore_source_dispositions": cohort,
+        "record_4428_score_present": bool(finding[0]),
+        "record_4428_reasoning_present": bool(finding[1]),
+        "record_4428_model_id_present": bool(finding[2]),
+        "record_4428_analysis_timestamp_present": bool(finding[3]),
+    }
     by_id = {row["id"]: dict(row) for row in rows}
     reports = []
     for rid, spec in sorted(RECORDS.items()):
@@ -162,6 +188,7 @@ def scan(db_path, manifest_path):
             "public-publication-approval",
         ],
         "manifest_source_enabled": manifest_ok,
+        "screening_context": screening_context,
         "selected_source_records": len(reports),
         "research_activity_groups": grouping,
         "all_stored_checks_passed": all(not x["errors"] for x in reports),
