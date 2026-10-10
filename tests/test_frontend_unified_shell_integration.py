@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 
 from bs4 import BeautifulSoup
+from config import SITE_ORIGIN
 from scripts.historical_brief_render import render_historical_brief
 from scripts.rerender_pla_watch import _build_post_context
 
@@ -75,7 +76,7 @@ class UnifiedHistoricalEnrichment(unittest.TestCase):
                 canonical = soup.select_one('link[rel="canonical"]')
                 self.assertEqual(
                     canonical["href"],
-                    "https://chinamilwatch.org/the-pla-watch/posts/"
+                    SITE_ORIGIN + "/the-pla-watch/posts/"
                     + side["date"] + ".html",
                 )
                 if side.get("pw_veil"):
