@@ -42,3 +42,9 @@ python -m unittest tests.test_dossier_contract tests.test_dossier_sources tests.
 Stop at the plain-data model and tests. Do **not** create a page, CSS, shared site template, route, sitemap entry, index, alternate media format, deploy preview, editorial approval tool or source/copyright rule. B2.2b Jinja HTML authoring and responsive inspection requires frontend #323 and Timeline #181 ownership reconciliation plus explicit review of a future authenticated/public source-use contract. B0 #319, MINDEF rights #326 and specific editorial permission gates remain open.
 
 Green synthetic CI is mechanical confidence in the private view contract, **not** public Dossier eligibility.
+
+## Execution receipt — 2026-10-10
+
+[Focused GitHub Actions #38060837428](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38060837428) ran the actual inherited B1/B2 Python modules under Python 3.9 and **passed 161/161 synthetic tests** (67 B1.1 + 23 B1.2 + 21 B1.3 + 33 B2.1 + 17 B2.2a). Python compilation and unchanged tracked SQLite/output/Briefs/Timelines checks also passed. The test executed only wholly fictional local SQLite fixtures and produced no site output.
+
+The temporary PR workflow was removed in commit `329656d2f31a5c4b1f5c26b18cb7ba32dba92ab2`, preserving a three-file lasting diff. This focused result is **not** full repository exact-final-head CI and does not satisfy unresolved #328→#329→#330→#335 dependency integrations, frontend #323 / Timeline #181 ownership, B0 subject/source acceptance #319, or legal/source-use decisions #326. Release remains hard-disabled.
