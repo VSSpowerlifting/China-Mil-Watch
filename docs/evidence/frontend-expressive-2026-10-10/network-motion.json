@@ -1,0 +1,1254 @@
+{
+  "cold_routes": [
+    {
+      "phase": "before",
+      "width": 1440,
+      "route": "index.html",
+      "bytes": 384473,
+      "requests": [
+        {
+          "url": "index.html",
+          "bytes": 15095
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "home.css",
+          "bytes": 10738
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-ivory-160.png",
+          "bytes": 7752
+        },
+        {
+          "url": "assets/frontend/pacific-fleet-1600.webp",
+          "bytes": 98870
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "intro.js",
+          "bytes": 11568
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-1200.webp",
+          "bytes": 111758
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 1440,
+      "route": "archive.html",
+      "bytes": 237845,
+      "requests": [
+        {
+          "url": "archive.html",
+          "bytes": 59639
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "archive.css",
+          "bytes": 5287
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "browse.js",
+          "bytes": 9475
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 1440,
+      "route": "desks.html",
+      "bytes": 318557,
+      "requests": [
+        {
+          "url": "desks.html",
+          "bytes": 98381
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/source-serif-4-2.woff2",
+          "bytes": 29240
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 1440,
+      "route": "record/3924.html",
+      "bytes": 193206,
+      "requests": [
+        {
+          "url": "record/3924.html",
+          "bytes": 19013
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "record.css",
+          "bytes": 5843
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 1440,
+      "route": "briefs/maritime-cooperation-2026.html",
+      "bytes": 316871,
+      "requests": [
+        {
+          "url": "briefs/maritime-cooperation-2026.html",
+          "bytes": 29673
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "briefs.css",
+          "bytes": 7090
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-1200.webp",
+          "bytes": 111758
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 1440,
+      "route": "index.html",
+      "bytes": 427584,
+      "requests": [
+        {
+          "url": "index.html",
+          "bytes": 15183
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-ivory-160.png",
+          "bytes": 7752
+        },
+        {
+          "url": "home.css",
+          "bytes": 14921
+        },
+        {
+          "url": "assets/frontend/pacific-fleet-1600.webp",
+          "bytes": 98870
+        },
+        {
+          "url": "intro.js",
+          "bytes": 11568
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/material/navy-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/coast-profile.svg",
+          "bytes": 2604
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-1200.webp",
+          "bytes": 111758
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 1440,
+      "route": "archive.html",
+      "bytes": 264628,
+      "requests": [
+        {
+          "url": "archive.html",
+          "bytes": 59732
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "archive.css",
+          "bytes": 7223
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "browse.js",
+          "bytes": 9475
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/coast-profile.svg",
+          "bytes": 2604
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 1440,
+      "route": "desks.html",
+      "bytes": 395409,
+      "requests": [
+        {
+          "url": "desks.html",
+          "bytes": 105636
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "desk-map.css",
+          "bytes": 6988
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "desk-map.js",
+          "bytes": 2681
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/material/navy-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        },
+        {
+          "url": "assets/fonts/instrument-serif-0.woff2",
+          "bytes": 23692
+        },
+        {
+          "url": "assets/fonts/source-serif-4-2.woff2",
+          "bytes": 29240
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 1440,
+      "route": "record/3924.html",
+      "bytes": 219727,
+      "requests": [
+        {
+          "url": "record/3924.html",
+          "bytes": 19108
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "record.css",
+          "bytes": 7788
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/reading-profile.svg",
+          "bytes": 2331
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 1440,
+      "route": "briefs/maritime-cooperation-2026.html",
+      "bytes": 354829,
+      "requests": [
+        {
+          "url": "briefs/maritime-cooperation-2026.html",
+          "bytes": 29768
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "briefs.css",
+          "bytes": 8717
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-1200.webp",
+          "bytes": 111758
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/material/navy-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 375,
+      "route": "index.html",
+      "bytes": 229217,
+      "requests": [
+        {
+          "url": "index.html",
+          "bytes": 15095
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "home.css",
+          "bytes": 10738
+        },
+        {
+          "url": "assets/frontend/pacific-fleet-800.webp",
+          "bytes": 21284
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-ivory-160.png",
+          "bytes": 7752
+        },
+        {
+          "url": "intro.js",
+          "bytes": 11568
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-600.webp",
+          "bytes": 34088
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 375,
+      "route": "archive.html",
+      "bytes": 237845,
+      "requests": [
+        {
+          "url": "archive.html",
+          "bytes": 59639
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "archive.css",
+          "bytes": 5287
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "browse.js",
+          "bytes": 9475
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 375,
+      "route": "desks.html",
+      "bytes": 318557,
+      "requests": [
+        {
+          "url": "desks.html",
+          "bytes": 98381
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/source-serif-4-2.woff2",
+          "bytes": 29240
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 375,
+      "route": "record/3924.html",
+      "bytes": 193206,
+      "requests": [
+        {
+          "url": "record/3924.html",
+          "bytes": 19013
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "record.css",
+          "bytes": 5843
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        }
+      ]
+    },
+    {
+      "phase": "before",
+      "width": 375,
+      "route": "briefs/maritime-cooperation-2026.html",
+      "bytes": 239201,
+      "requests": [
+        {
+          "url": "briefs/maritime-cooperation-2026.html",
+          "bytes": 29673
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "briefs.css",
+          "bytes": 7090
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-600.webp",
+          "bytes": 34088
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 375,
+      "route": "index.html",
+      "bytes": 269724,
+      "requests": [
+        {
+          "url": "index.html",
+          "bytes": 15183
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "home.css",
+          "bytes": 14921
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-ivory-160.png",
+          "bytes": 7752
+        },
+        {
+          "url": "assets/frontend/pacific-fleet-800.webp",
+          "bytes": 21284
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/material/navy-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "intro.js",
+          "bytes": 11568
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-600.webp",
+          "bytes": 34088
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 375,
+      "route": "archive.html",
+      "bytes": 262024,
+      "requests": [
+        {
+          "url": "archive.html",
+          "bytes": 59732
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "archive.css",
+          "bytes": 7223
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "browse.js",
+          "bytes": 9475
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 375,
+      "route": "desks.html",
+      "bytes": 395409,
+      "requests": [
+        {
+          "url": "desks.html",
+          "bytes": 105636
+        },
+        {
+          "url": "support.css",
+          "bytes": 27908
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "desk-map.css",
+          "bytes": 6988
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "desk-map.js",
+          "bytes": 2681
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/material/navy-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/instrument-serif-0.woff2",
+          "bytes": 23692
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        },
+        {
+          "url": "assets/fonts/source-serif-4-2.woff2",
+          "bytes": 29240
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 375,
+      "route": "record/3924.html",
+      "bytes": 217396,
+      "requests": [
+        {
+          "url": "record/3924.html",
+          "bytes": 19108
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "record.css",
+          "bytes": 7788
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        }
+      ]
+    },
+    {
+      "phase": "after",
+      "width": 375,
+      "route": "briefs/maritime-cooperation-2026.html",
+      "bytes": 277159,
+      "requests": [
+        {
+          "url": "briefs/maritime-cooperation-2026.html",
+          "bytes": 29768
+        },
+        {
+          "url": "fonts.css",
+          "bytes": 1855
+        },
+        {
+          "url": "surfaces.css",
+          "bytes": 5630
+        },
+        {
+          "url": "briefs.css",
+          "bytes": 8717
+        },
+        {
+          "url": "styles.css",
+          "bytes": 30549
+        },
+        {
+          "url": "briefs/media/maritime-cooperation-2026-600.webp",
+          "bytes": 34088
+        },
+        {
+          "url": "assets/identity/selected-ipr/ipr-navy-160.png",
+          "bytes": 6844
+        },
+        {
+          "url": "assets/material/chart-shelf.svg",
+          "bytes": 2434
+        },
+        {
+          "url": "assets/material/navy-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "assets/material/chart-paper.png",
+          "bytes": 14086
+        },
+        {
+          "url": "citation.js",
+          "bytes": 4950
+        },
+        {
+          "url": "shell.js",
+          "bytes": 372
+        },
+        {
+          "url": "assets/fonts/source-serif-4-1.woff2",
+          "bytes": 27864
+        },
+        {
+          "url": "assets/fonts/inter-0.woff2",
+          "bytes": 35920
+        },
+        {
+          "url": "assets/fonts/instrument-serif-1.woff2",
+          "bytes": 22748
+        },
+        {
+          "url": "assets/fonts/inter-1.woff2",
+          "bytes": 37248
+        }
+      ]
+    }
+  ],
+  "motion": {
+    "before_scroll": {
+      "transform": "matrix(1, 0, 0, 1, -24, 14)",
+      "opacity": "0.65"
+    },
+    "after_scroll": {
+      "transform": "matrix(1, 0, 0, 1, 0, 0)",
+      "opacity": "1"
+    }
+  },
+  "credit_contrast": {
+    "color": "rgb(184, 204, 201)",
+    "background": "rgb(20, 46, 56)"
+  }
+}

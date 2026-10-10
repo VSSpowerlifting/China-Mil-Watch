@@ -1,0 +1,29 @@
+.....................
+----------------------------------------------------------------------
+Ran 21 tests in 10.227s
+
+OK
+[cover:2026-05-09] selected background via media_items[src]: 2026-05-10-auto-image-optimized.jpg
+[cover:2026-05-16] selected background via media_items[src]: 2026-05-16-source-image.jpg
+[cover:2026-05-23] selected background via media_items[src]: 2026-05-23-source-image.jpg
+[cover:2026-06-06] selected background via media_items[src]: 2026-06-06-source-image.jpg
+[cover:2026-06-13] selected background via media_items[src]: 2026-06-13-source-image.jpg
+[cover:2026-06-20] selected background via media_items[src]: 2026-06-20-source-image.jpg
+[cover:2026-06-27] selected background via media_items[src]: 2026-06-27-source-image.jpg
+[cover:2026-07-04] selected background via media_items[src]: 2026-07-04-source-image.jpg
+[cover:2026-07-11] selected background via media_items[src]: 2026-07-11-source-image.jpg
+[cover:2026-07-18] selected background via media_items[src]: 2026-07-18-source-image.jpg
+[cover:2026-08-01] selected background via media_items[src]: 2026-08-01-source-image.jpg
+[cover:2026-08-08] selected background via media_items[src]: 2026-08-08-source-image.jpg
+[cover:2026-05-09] selected background via media_items[src]: 2026-05-10-auto-image-optimized.jpg
+[cover:2026-05-16] selected background via media_items[src]: 2026-05-16-source-image.jpg
+[cover:2026-05-23] selected background via media_items[src]: 2026-05-23-source-image.jpg
+[cover:2026-06-06] selected background via media_items[src]: 2026-06-06-source-image.jpg
+[cover:2026-06-13] selected background via media_items[src]: 2026-06-13-source-image.jpg
+[cover:2026-06-20] selected background via media_items[src]: 2026-06-20-source-image.jpg
+[cover:2026-06-27] selected background via media_items[src]: 2026-06-27-source-image.jpg
+[cover:2026-07-04] selected background via media_items[src]: 2026-07-04-source-image.jpg
+[cover:2026-07-11] selected background via media_items[src]: 2026-07-11-source-image.jpg
+[cover:2026-07-18] selected background via media_items[src]: 2026-07-18-source-image.jpg
+[cover:2026-08-01] selected background via media_items[src]: 2026-08-01-source-image.jpg
+[cover:2026-08-08] selected background via media_items[src]: 2026-08-08-source-image.jpg

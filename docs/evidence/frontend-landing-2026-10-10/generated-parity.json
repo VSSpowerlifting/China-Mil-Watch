@@ -1,0 +1,11 @@
+{
+  "protected_files": 43,
+  "protected_mismatches": [],
+  "approved_candidate_file_differences": [
+    "sitemap.xml"
+  ],
+  "approved_candidate_missing_files": [],
+  "additional_html": [
+    "signals.html"
+  ]
+}

@@ -31,7 +31,6 @@ from scripts.pw_env import (
     editorial_items_for_edition,
     ensure_editorial_derivatives,
     ensure_source_veils,
-    make_pw_env,
     veil_for_edition,
 )
 
@@ -437,9 +436,6 @@ def _parse_args():
 
 def main() -> int:
     args = _parse_args()
-    env = make_pw_env()
-    index_tmpl = env.get_template("pla-watch-index.html")
-    archive_tmpl = env.get_template("pla-watch-archive.html")
 
     # Read and validate every sidecar BEFORE creating a derivative, a cover or
     # a page. One unreadable identity stops the run here rather than leaving a
@@ -520,29 +516,14 @@ def main() -> int:
     # Sort newest-first for index/archive.
     sidecars.sort(key=lambda s: s.get("date", ""), reverse=True)
 
-    latest = sidecars[0] if sidecars else None
-    archive_posts = sidecars[1:] if len(sidecars) > 1 else []
-
-    # index.html sits at the-pla-watch/index.html, one level shallower than
-    # a post page, so the editorial-asset prefix drops one "../".
-    latest_veil = (
-        veil_for_edition(latest["date"], sidecar=latest,
-                         editorial_prefix="../assets/editorial/",
-                         media_prefix="media/")
-        if latest else None
-    )
-    index_html = index_tmpl.render(
-        latest_post=latest, archive_posts=archive_posts, root_path="../",
-        page_url=f"{SITE_ORIGIN}/the-pla-watch/",
-        latest_veil=latest_veil,
-    )
+    from scripts.historical_brief_render import render_historical_utility
+    index_html = render_historical_utility(
+        'Earlier Briefs', 'the-pla-watch/', posts=sidecars)
     (PLA_WATCH_DIR / "index.html").write_text(index_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'index.html').relative_to(ROOT)}")
 
-    archive_html = archive_tmpl.render(
-        posts=sidecars, root_path="../",
-        page_url=f"{SITE_ORIGIN}/the-pla-watch/archive.html",
-    )
+    archive_html = render_historical_utility(
+        'Earlier Briefs', 'the-pla-watch/archive.html', posts=sidecars)
     (PLA_WATCH_DIR / "archive.html").write_text(archive_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'archive.html').relative_to(ROOT)}")
 
@@ -559,11 +540,8 @@ def main() -> int:
                 "issue_number": s.get("issue_number"),
                 "week_ending": s.get("week_ending", "") or s["date"],
             })
-    terms_tmpl = env.get_template("pla-watch-terms.html")
-    terms_html = terms_tmpl.render(
-        terms=terms, root_path="../",
-        page_url=f"{SITE_ORIGIN}/the-pla-watch/terms.html",
-    )
+    terms_html = render_historical_utility(
+        'Terms to Know', 'the-pla-watch/terms.html', terms=terms)
     (PLA_WATCH_DIR / "terms.html").write_text(terms_html, encoding="utf-8")
     print(f"Wrote {(PLA_WATCH_DIR / 'terms.html').relative_to(ROOT)} "
           f"({len(terms)} terms)")

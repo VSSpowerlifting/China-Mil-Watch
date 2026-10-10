@@ -47,19 +47,25 @@ This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
-**Frontend (9 October 2026):** the reviewed frontend was merged and released
-at `4dbf42c5ca778eb5c55a9134fc51cac4fdc16a4f` (owner checkpoint). The
-Briefs visual-enrichment pilot starts from current main `fe5e25064` in the
-isolated `codex/ipr-briefs-enrichment-20261009` worktree, with current main
-`38e1b3162` reconciled. It adds opt-in original
-contours, optimized paper material and finite decorative motion to the catalog
-through production source templates. Publication copy, all 60 catalog links,
-4,980 preserved records, selected ipr identity and historical issues are unchanged.
-Desktop/tablet/mobile visual review and 42 browser fallback/interaction cases
-pass; all 7,395 routes satisfy complete HTML/CSS/JS delivery budgets. Validator
-retains its 10 governed warnings. Full-suite result and final commits are in
-`docs/BRIEFS_VISUAL_ENRICHMENT_2026-10-09.md`. The pilot is a PR candidate,
-not merged or deployed. Wider route treatments are subsequent work.
+**Frontend (10 October 2026):** the owner visually approved the expressive
+sitewide candidate and explicitly authorized commit, output regeneration and
+landing. The release branch is `codex/ipr-approved-sitewide-frontend-20261010`,
+from candidate base `0487bfc0480bd94a9d4471f927c449c506f07cbf`, reconciled with
+current main `f25378fba` without changing its MINDEF audit or concurrent
+operational/editorial work. This approved candidate supersedes the earlier
+visual treatments in unmerged #314/#323; those branches are not merged here.
+The documentary hero, supplied selected ipr artwork, established fonts, canonical
+evidence and timeline draft status remain unchanged. Production and historical
+renderers regenerated output; all 7,462 routes fit budgets, all 5,020 records
+pass integrity and the validator retains ten governed warnings. The extra route
+compared with the private 7,461-route build is the normal publication-stage
+`signals.html` → `methodology.html` redirect. Final generated pages match the
+approved private build; the production sitemap adds the carried historical URLs.
+All 336 browser checks were repeated successfully on regenerated output.
+Full offline CI must pass on the final PR head before merge; no separate deployment
+is authorized or triggered. Original review/export evidence remains in
+`docs/FRONTEND_EXPRESSIVE_CANDIDATE_2026-10-10.md`; reconciliation and fresh receipts
+are in `docs/FRONTEND_LANDING_2026-10-10.md`.
 
 **Evidence Timelines (#181):** the inspected prerequisite at head
 `657e9f264` is integrated into this candidate in separate commit `b80b3e4`,

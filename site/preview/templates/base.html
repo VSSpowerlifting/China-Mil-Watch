@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% set root = root_path | default('../' if nested else '') %}
-<html lang="en">
+{% set surface = 'utility' if historical_utility | default(false) else 'home' if page == 'index.html' else 'record' if record is defined else 'historical' if edition is defined else 'brief' if brief is defined else 'catalog' if page == 'analysis.html' else 'archive' if page == 'archive.html' else 'desk' if desk is defined else 'source' if source is defined else 'week' if week is defined else 'utility' %}
+<html lang="en" data-surface="{{ surface }}" data-route="{{ page }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,6 +32,7 @@
    week shards carry a contract that they ship no <script> at all, and the
    record pages carry no bytes for behaviour they do not have. #}
 {% if record is not defined and brief is not defined and not timeline_surface | default(false) and page != 'index.html' %}<link rel="stylesheet" href="{{ root }}support.css">{% endif %}
+<link rel="stylesheet" href="{{ root }}surfaces.css">
 {% block head_scripts %}{% endblock %}
 </head>
 {% set shell_dark = page == 'index.html' or timeline_surface | default(false) %}

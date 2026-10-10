@@ -1,0 +1,414 @@
+{
+  "checks": 98,
+  "failures": [],
+  "engine_errors": [],
+  "results": [
+    {
+      "name": "firefox 1440 index.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 archive.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 desks.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 china.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 1440 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 index.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 archive.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 desks.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 china.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 768 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 index.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 archive.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 desks.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 china.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 375 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 index.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 archive.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 desks.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 china.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "firefox 320 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "firefox selected state",
+      "passed": true
+    },
+    {
+      "name": "firefox native keyboard selection",
+      "passed": true
+    },
+    {
+      "name": "firefox Escape reset",
+      "passed": true
+    },
+    {
+      "name": "firefox mobile marker target",
+      "passed": true,
+      "detail": {
+        "x": 115.71666717529297,
+        "y": 777.4332885742188,
+        "width": 55.54999542236328,
+        "height": 55.56671142578125
+      }
+    },
+    {
+      "name": "firefox reduced motion static",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 index.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 archive.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 desks.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 china.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 1440 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 index.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 archive.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 desks.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 china.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 768 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 index.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 archive.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 desks.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 china.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 375 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 index.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 archive.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 analysis.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 desks.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 china.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 record/3924.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 briefs/maritime-cooperation-2026.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 methodology.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 source/pla_daily.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 the-pla-watch/posts/2026-08-08.html",
+      "passed": true
+    },
+    {
+      "name": "webkit 320 the-pla-watch/terms.html",
+      "passed": true
+    },
+    {
+      "name": "webkit selected state",
+      "passed": true
+    },
+    {
+      "name": "webkit native keyboard selection",
+      "passed": true
+    },
+    {
+      "name": "webkit Escape reset",
+      "passed": true
+    },
+    {
+      "name": "webkit mobile marker target",
+      "passed": true,
+      "detail": {
+        "x": 115.7199935913086,
+        "y": 777.392333984375,
+        "width": 55.544044494628906,
+        "height": 55.5440673828125
+      }
+    },
+    {
+      "name": "webkit reduced motion static",
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Playwright Firefox/WebKit; real Safari app, iOS hardware and assistive technology not exercised"
+  ]
+}

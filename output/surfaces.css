@@ -1,0 +1,58 @@
+/* Pacific material grammar. Abstract curves never encode geography or data.
+   One shared small sheet; composed family treatments live in route sheets. */
+[data-surface] body{background:var(--bg) url('assets/material/chart-paper.png') repeat}
+[data-surface] .masthead:not(.masthead--dark){background:transparent}
+[data-surface] main#main>.wrap{background:transparent;border-inline:0}
+[data-surface] .page-head{position:relative;isolation:isolate;margin-bottom:2rem;padding-block:2rem 4.5rem;border-bottom:1px solid var(--rule)}
+[data-surface] .page-head::after{content:'';position:absolute;z-index:-1;inset:0 calc(-1 * var(--gutter)) 0 auto;width:36%;background:url('assets/material/coast-profile.svg') no-repeat right 35%/auto 620px;pointer-events:none}
+[data-surface] .page-head>:is(h1,p){max-width:68%}
+[data-surface] .page-head h1{font:400 clamp(48px,5.8vw,82px)/1.04 var(--display);letter-spacing:-.02em;text-transform:none}
+[data-surface=source] .page-head h1{font-size:clamp(40px,4.5vw,64px)}
+[data-surface=desk] .page-head::after{width:43%;background-position:right 60%;background-size:auto 780px}
+[data-surface=week] .page-head::after{background-position:right 85%;background-size:auto 470px}
+[data-surface] .reader-contents{background:var(--surface-inset);padding:12px 20px;border:0}
+[data-surface] footer.site{position:relative;isolation:isolate;background:var(--footer-ground) url('assets/material/chart-paper.png');border-top:0;padding-top:65px}
+[data-surface] footer.site::before{content:'';position:absolute;inset:0 0 auto;height:48px;background:url('assets/material/chart-shelf.svg') no-repeat center 54%/max(900px,100%) auto;pointer-events:none}
+[data-surface] .table-scroll{background:var(--surface);padding:8px 18px;margin-block:20px}
+[data-surface] :is(.processing-plate-head,.source-contributions figcaption,.extraction-figure figcaption){background:var(--surface-inset) url('assets/material/chart-paper.png')}
+[data-surface] .status-panel{border:1px solid var(--rule);background:var(--surface-inset) url('assets/material/chart-paper.png');padding:24px}
+[data-surface] :is(.btn,button,summary){touch-action:manipulation}
+[data-surface] :is(.btn,button):not(:disabled):active{transform:translateY(2px)}
+[data-surface] summary{min-height:44px}
+[data-surface] details[open]>summary{color:var(--accent-ink)}
+[data-surface] .band details[open]>summary{color:var(--focus-band)}
+[data-surface] :is(.shell-menu[open]>div,.shell-menu[open]>nav){animation:disclose-arrive 180ms var(--ease-rule)}
+@keyframes disclose-arrive{from{opacity:.6;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:no-preference) and (scripting:enabled){
+  [data-surface] .btn{transition:transform 160ms var(--ease-rule),background 160ms var(--ease-rule)}
+  [data-surface] details[open]>:not(summary){animation:disclose-arrive 180ms var(--ease-rule)}
+  @supports(animation-timeline:view()){
+    [data-surface] .page-head::after{animation:profile-settle linear both;animation-timeline:view();animation-range:entry 0% entry 100%}
+  }
+}
+/* Enter inward from the outer edge: positive X expanded phone scroll width. */
+@keyframes profile-settle{from{opacity:.65;transform:translate(-24px,14px)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+  [data-surface] .page-head{padding-block:1.5rem 3rem;margin-bottom:1.5rem}
+  [data-surface] .page-head>:is(h1,p){max-width:none}
+  [data-surface] .page-head::after{inset:auto calc(-1 * var(--gutter)) -1px auto;width:100%;height:44px;background:url('assets/material/chart-shelf.svg') no-repeat center 40%/700px auto}
+  [data-surface] .page-head h1{font-size:clamp(42px,11vw,58px)}
+  [data-surface] .table-scroll{padding:4px 12px}
+}
+html.no-anim *,html.no-anim *::before,html.no-anim *::after{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){[data-surface] *,[data-surface] *::before,[data-surface] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+@media print,(forced-colors:active){
+  [data-surface] body,[data-surface] footer.site,[data-surface] .status-panel{background-image:none}
+  [data-surface] .page-head::after,[data-surface] footer.site::before{display:none}
+  [data-surface] .page-head>:is(h1,p){max-width:none}
+}
+[data-surface] .reader-contents,[data-surface] .status-panel,[data-surface] :is(.processing-plate-head,.source-contributions figcaption,.extraction-figure figcaption){background-image:linear-gradient(#dde7e3d9,#dde7e3d9),url('assets/material/chart-paper.png')}
+[data-surface] footer.site{background-image:linear-gradient(#e9ede5bb,#e9ede5bb),url('assets/material/chart-paper.png')}
+@media print,(forced-colors:active){[data-surface] .reader-contents,[data-surface] .status-panel,[data-surface] footer.site,[data-surface] :is(.processing-plate-head,.source-contributions figcaption,.extraction-figure figcaption){background-image:none}}
+/* Utilities use a horizontal cut; archive and desk/source scopes keep profiles. */
+[data-surface=utility] .page-head{padding-bottom:110px}
+[data-surface=utility] .page-head::after{inset:auto calc(-1 * var(--gutter)) 0 auto;width:70%;height:100px;background-image:url('assets/material/chart-shelf.svg');background-size:1100px auto;background-position:right 54%}
+[data-surface=utility] .page-head>:is(h1,p){max-width:100%}
+[data-surface=utility] .page-head h1{max-width:22ch}
+[data-surface=source] .page-head::after{background-position:right 82%}
+@media(max-width:700px){[data-surface=utility] .page-head{padding-bottom:75px}[data-surface=utility] .page-head::after{width:100%;height:55px;background-size:750px auto}}

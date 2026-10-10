@@ -1,0 +1,18 @@
+{
+  "purpose": "Original abstract material boundaries; no geography, elevation or evidence",
+  "generator": "scripts/build_profile_material.py",
+  "assets": {
+    "coast-profile.svg": {
+      "bytes": 2604,
+      "sha256": "a7c94c95c1667a75e9bdb63555128b12b71e37e60f3910544243e4976417c58e"
+    },
+    "reading-profile.svg": {
+      "bytes": 2331,
+      "sha256": "17a9df7baf3c9f759694a334c2555b27864822275cce97cb00da1d89d1b4055e"
+    },
+    "chart-shelf.svg": {
+      "bytes": 2434,
+      "sha256": "adb199c75d25c7222aa432d223116a8a52b25664d67f408320077aa828859fa0"
+    }
+  }
+}

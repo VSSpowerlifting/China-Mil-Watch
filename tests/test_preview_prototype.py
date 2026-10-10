@@ -1812,7 +1812,9 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         # The directory entry is the registry's own words, not a second copy.
         self.assertIn(entry.scope, html)
         self.assertIn(entry.status_explanation, html)
-        japan = html.split("Japan Desk", 1)[1].split("</section>", 1)[0]
+        # The map's accessible label and selected-scope preview also name
+        # Japan. Inspect its actual registry entry rather than the first name.
+        japan = html.split('id="desk-japan"', 1)[1].split("</section>", 1)[0]
         for word in ("adapter", "no data has been collected"):
             with self.subTest(word=word):
                 self.assertNotIn(word, japan)

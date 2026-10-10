@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% from "_atlas.html" import spine %}
 {% block title %}Desks — {{ title }}{% endblock %}
+{% block head_scripts %}<link rel="stylesheet" href="desk-map.css">{% endblock %}
 {% block content %}
 <header class="page-head">
 <h1 class="page-name">Desks</h1>
@@ -24,7 +25,15 @@ its scope is declared, and is labeled according to what it actually does.</p>
    a measurement nothing made. #}
 {% set placed = desk_map.desks %}
 <figure class="deskmap" aria-labelledby="deskmap-key">
+  <div class="deskmap-controls" hidden>
+    <div class="deskmap-selectors" role="group" aria-label="Select a desk on the map">
+    {% for d in desks if d.slug in placed %}<button type="button" data-select-desk="{{ d.slug }}" aria-pressed="false" aria-controls="desk-{{ d.slug }}">{{ d.name|replace(' Desk', '')|replace(' Reference', '') }}</button>{% endfor %}
+    <button type="button" class="deskmap-reset" aria-pressed="true">All desks</button>
+    </div>
+    <p class="deskmap-selection" role="status" aria-live="polite">All declared desks. Select a country, point or desk name.</p>
+  </div>
   <div class="deskmap-stage">
+    <div class="deskmap-chart">
     <svg class="deskmap-svg" viewBox="0 0 {{ desk_map.width }} {{ desk_map.height }}"
          role="img" aria-label="Map of the Indo-Pacific marking where each desk's publishing institutions are based:{% for d in desks if d.slug in placed %} {{ d.name }}, {{ placed[d.slug].seat }}{{ '.' if loop.last else ';' }}{% endfor %}"
          preserveAspectRatio="xMidYMid meet" focusable="false">
@@ -32,7 +41,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
       <g clip-path="url(#dm-frame)">
 {% include "_desk_map_geo.svg" %}
       {% for d in desks if d.slug in placed %}
-      <a class="dm-country" href="{{ d.route }}" tabindex="-1" data-desk="{{ d.slug }}"><use href="#dm-geo-{{ d.slug }}"/></a>
+      <a class="dm-country" href="#desk-{{ d.slug }}" tabindex="-1" data-desk="{{ d.slug }}"><use href="#dm-geo-{{ d.slug }}"/></a>
       {% endfor %}
       </g>
       <g class="dm-leaders">
@@ -41,16 +50,27 @@ its scope is declared, and is labeled according to what it actually does.</p>
         <polyline class="dm-leader dm-leader--mid{{ ' is-quiet' if not d.is_collecting }}" data-desk="{{ d.slug }}" points="{{ placed[d.slug].mid.points }}"/>
       {% endfor %}
       </g>
+      <text class="dm-ocean" x="{{ desk_map.width * 0.67 }}" y="{{ desk_map.height * 0.60 }}" text-anchor="middle">Pacific Ocean</text>
       {% for d in desks if d.slug in placed %}
-      <g class="dm-anchor{{ ' is-quiet' if not d.is_collecting }}" data-desk="{{ d.slug }}" transform="translate({{ placed[d.slug].x }} {{ placed[d.slug].y }})">
+      <a href="#desk-{{ d.slug }}" tabindex="-1" class="dm-anchor{{ ' is-quiet' if not d.is_collecting }}" data-desk="{{ d.slug }}" transform="translate({{ placed[d.slug].x }} {{ placed[d.slug].y }})">
+        <circle class="dm-hit" r="50"/>
+        <circle class="dm-ring" r="25"/>
         <circle class="dm-dot" r="1"/>
         <text class="dm-label{{ ' is-west' if placed[d.slug].label_west }}" x="{{ -30 if placed[d.slug].label_west else 30 }}" y="18">{{ d.name|replace(' Desk', '')|replace(' Reference', '') }}</text>
-      </g>
+      </a>
       {% endfor %}
     </svg>
+    <p class="deskmap-chart-note">Institutional seats · Miller projection</p>
+    <div class="deskmap-context" aria-label="Selected desk scope">
+      <p class="deskmap-context-default">Each point locates a desk's publishing institutions. Select a desk to read its scope and current limitations; use its entry to open the desk.</p>
+      {% for d in desks if d.slug in placed %}<div class="deskmap-context-entry" data-context-desk="{{ d.slug }}" hidden><p class="deskmap-context-title">{{ d.name }}</p><p>{{ d.scope }}</p><p>{{ d.status_explanation }}</p><a href="{{ d.route }}">Open {{ d.name }}</a></div>{% endfor %}
+    </div>
+    </div>
+    <div class="deskmap-register">
     {% for d in desks if d.slug in placed %}{% set m = placed[d.slug] %}
     <section class="desk desk--{{ d.status }} deskmap-plate {{ 'is-collecting' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}{{ ' is-mid-side' if m.mid.hang in ('left', 'right') }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
       style="--wl:{{ m.wide.left }};--wt:{{ m.wide.top }};--wtx:{{ m.wide.tx }};--wty:{{ m.wide.ty }};--ml:{{ m.mid.left }};--mt:{{ m.mid.top }};--mtx:{{ m.mid.tx }};--mty:{{ m.mid.ty }}">
+      <span class="deskmap-selected-label" hidden>Selected desk</span>
       <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
       <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
       <p class="deskmap-seat">{{ m.seat }} <span>{{ m.coords }}</span></p>
@@ -61,6 +81,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
       <p class="deskmap-enter"><a href="{{ d.route }}" aria-label="Enter the {{ d.name }}">Enter desk <span aria-hidden="true">→</span></a></p>
     </section>
     {% endfor %}
+    </div>
   </div>
   <figcaption id="deskmap-key" class="deskmap-key">
     <span class="deskmap-key-item"><svg viewBox="0 0 28 10" aria-hidden="true"><line x1="0" y1="5" x2="20" y2="5"/><circle cx="23" cy="5" r="3.2"/></svg>Collecting into the record</span>
@@ -155,3 +176,4 @@ its scope is declared, and is labeled according to what it actually does.</p>
 <p class="meta">A desk that does not collect shows no record count at all. Zero would say the record
 was checked and found empty; the truth is that no record exists to check.</p>
 {% endblock %}
+{% block scripts %}<script src="desk-map.js" defer></script>{% endblock %}
