@@ -1,0 +1,88 @@
+{
+  "routes_checked": 7462,
+  "failures": [],
+  "largest_html_css": {
+    "route": "desks.html",
+    "html_css_limit": 300000,
+    "js_limit": 10000,
+    "html_css_bytes": 178566,
+    "js_bytes": 2681,
+    "css": [
+      "desk-map.css",
+      "fonts.css",
+      "styles.css",
+      "support.css",
+      "surfaces.css"
+    ],
+    "js": [
+      "desk-map.js"
+    ],
+    "external": [],
+    "asset_bytes": 275435,
+    "assets": [
+      "assets/fonts/instrument-serif-0.woff2",
+      "assets/fonts/instrument-serif-1.woff2",
+      "assets/fonts/inter-0.woff2",
+      "assets/fonts/inter-1.woff2",
+      "assets/fonts/source-serif-4-0.woff2",
+      "assets/fonts/source-serif-4-1.woff2",
+      "assets/fonts/source-serif-4-2.woff2",
+      "assets/identity/selected-ipr/ipr-accent-180.png",
+      "assets/identity/selected-ipr/ipr-accent-32.png",
+      "assets/identity/selected-ipr/ipr-navy-160.png",
+      "assets/identity/selected-ipr/ipr-navy-320.png",
+      "assets/material/chart-paper.png",
+      "assets/material/chart-shelf.svg",
+      "assets/material/coast-profile.svg",
+      "assets/material/navy-paper.png"
+    ],
+    "external_assets": [],
+    "local_delivery_bytes": 456682
+  },
+  "largest_local_delivery": {
+    "route": "index.html",
+    "html_css_limit": 300000,
+    "js_limit": 12000,
+    "html_css_bytes": 68138,
+    "js_bytes": 11940,
+    "css": [
+      "fonts.css",
+      "home.css",
+      "styles.css",
+      "surfaces.css"
+    ],
+    "js": [
+      "intro.js",
+      "shell.js"
+    ],
+    "external": [],
+    "asset_bytes": 2618405,
+    "assets": [
+      "assets/editorial/reagan-jmsdf-2015.jpg",
+      "assets/fonts/instrument-serif-0.woff2",
+      "assets/fonts/instrument-serif-1.woff2",
+      "assets/fonts/inter-0.woff2",
+      "assets/fonts/inter-1.woff2",
+      "assets/fonts/source-serif-4-0.woff2",
+      "assets/fonts/source-serif-4-1.woff2",
+      "assets/fonts/source-serif-4-2.woff2",
+      "assets/frontend/pacific-fleet-1600.webp",
+      "assets/frontend/pacific-fleet-2500.webp",
+      "assets/frontend/pacific-fleet-800.webp",
+      "assets/identity/selected-ipr/ipr-accent-180.png",
+      "assets/identity/selected-ipr/ipr-accent-32.png",
+      "assets/identity/selected-ipr/ipr-ivory-160.png",
+      "assets/identity/selected-ipr/ipr-ivory-320.png",
+      "assets/identity/selected-ipr/ipr-navy-160.png",
+      "assets/material/chart-paper.png",
+      "assets/material/chart-shelf.svg",
+      "assets/material/coast-profile.svg",
+      "assets/material/navy-paper.png",
+      "briefs/media/maritime-cooperation-2026-1200.webp",
+      "briefs/media/maritime-cooperation-2026-600.webp",
+      "briefs/media/maritime-cooperation-2026-source-image.jpg"
+    ],
+    "external_assets": [],
+    "local_delivery_bytes": 2698483
+  }
+}

@@ -47,23 +47,25 @@ This file is state, not history. It is deliberately short and is rewritten
 rather than appended to. Superseded state, incident narratives and the
 reasoning behind past decisions live in Git history and in `DECISION_LOG.md`.
 
-**Frontend (10 October 2026):** the assigned isolated source candidate starts
-from consolidated main HEAD `0487bfc0480bd94a9d4471f927c449c506f07cbf`.
-The photograph-led homepage opening, supplied selected ipr identity and
-established type families remain. Shared paper/chart material, substantial
-contour boundaries, varied page-family treatments and finite motion now extend
-through the lower homepage, archives, records, Briefs, historical articles and
-utilities, desks, sources, weeks and utility subpages. The map retains actual
-geography/status/counts and adds native selection, scope context, URL fragments,
-reset and keyboard operation. Canonical text/evidence, tracked output, the DB,
-selected identity, desk registry/geography and timeline sidecar remain unchanged.
-A complete private build passes all 7,461 route budgets and the validator's ten
-governed warnings. The browser gallery, full-suite result, changed-file inventory,
-resource influences and reproduction commands are in
-`docs/FRONTEND_EXPRESSIVE_CANDIDATE_2026-10-10.md`. Source changes remain
-uncommitted in this worktree; no push, PR, merge or deployment has occurred.
-Owner visual review is the next action. Earlier frontend/pilot evidence remains
-in the linked 9 October documents; it is not this candidate's baseline.
+**Frontend (10 October 2026):** the owner visually approved the expressive
+sitewide candidate and explicitly authorized commit, output regeneration and
+landing. The release branch is `codex/ipr-approved-sitewide-frontend-20261010`,
+from candidate base `0487bfc0480bd94a9d4471f927c449c506f07cbf`, reconciled with
+current main `f25378fba` without changing its MINDEF audit or concurrent
+operational/editorial work. This approved candidate supersedes the earlier
+visual treatments in unmerged #314/#323; those branches are not merged here.
+The documentary hero, supplied selected ipr artwork, established fonts, canonical
+evidence and timeline draft status remain unchanged. Production and historical
+renderers regenerated output; all 7,462 routes fit budgets, all 5,020 records
+pass integrity and the validator retains ten governed warnings. The extra route
+compared with the private 7,461-route build is the normal publication-stage
+`signals.html` → `methodology.html` redirect. Final generated pages match the
+approved private build; the production sitemap adds the carried historical URLs.
+All 336 browser checks were repeated successfully on regenerated output.
+Full offline CI must pass on the final PR head before merge; no separate deployment
+is authorized or triggered. Original review/export evidence remains in
+`docs/FRONTEND_EXPRESSIVE_CANDIDATE_2026-10-10.md`; reconciliation and fresh receipts
+are in `docs/FRONTEND_LANDING_2026-10-10.md`.
 
 **Evidence Timelines (#181):** the inspected prerequisite at head
 `657e9f264` is integrated into this candidate in separate commit `b80b3e4`,
