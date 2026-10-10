@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_terrain.html" import terrain %}
 {% from "_atlas.html" import breadcrumb %}
 {#- One Indo-Pacific Record Brief, at briefs/<slug>.html.
 
@@ -30,6 +31,7 @@
 
 {% block hero %}
 <section class="band brief-hero{% if brief.photo %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
+  {{ terrain('brief-edge') }}
   <div class="wrap brief-hero-inner">
     {% if brief.is_review %}<p class="brief-fixture" role="note">Editorial review candidate · unapproved, unnumbered and unpublished.</p>{% endif %}
     {% if brief.synthetic %}
