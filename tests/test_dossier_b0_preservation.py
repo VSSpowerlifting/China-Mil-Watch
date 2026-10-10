@@ -30,6 +30,18 @@ class TestDossierB0Preservation(unittest.TestCase):
         self.assertTrue(r["all_anchors_present"])
         self.assertEqual(len(r["stored_original_sha256"]), 64)
 
+    def test_expected_id_rejects_unrelated_stored_row(self):
+        row = valid()
+        row["id"] = 4999
+        v = verify_record(row, RECORDS[4454], expected_record_id=4454)
+        self.assertIn("record-id-mismatch", v["errors"])
+
+    def test_expected_id_rejects_bool(self):
+        row = valid()
+        row["id"] = True
+        v = verify_record(row, RECORDS[4454], expected_record_id=4454)
+        self.assertIn("record-id-mismatch", v["errors"])
+
     def test_wrong_url_never_accepted(self):
         r = valid()
         r["url"] = "https://www.mindef.gov.sg/news-and-events/latest-releases/OTHER/"
