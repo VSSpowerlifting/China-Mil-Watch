@@ -81,8 +81,19 @@ class FictionalCollectionBarrier:
                         for i in range(3, 10)),
                     "c2_source_counters_invalid")
             require(row[10] is None or
-                    (type(row[10]) is int and row[10] >= 0),
+                    (type(row[10]) is int and 0 <= row[10] <= row[5]),
                     "c2_source_counters_invalid")
+            # A truthful source status cannot contradict its own recorded
+            # collection counters. Partial failures may retain good records;
+            # intentionally skipped/inert sources may not claim collection.
+            if status in (collection_status.OK_NO_PUBLICATIONS,
+                          collection_status.SKIPPED_DISABLED,
+                          collection_status.NOT_IMPLEMENTED):
+                require(all(row[i] == 0 for i in range(3, 10)),
+                        "c2_source_status_counter_conflict")
+            if status in (collection_status.OK_ALL_DUPLICATES,
+                          collection_status.OK_ALL_FILTERED):
+                require(row[7] == 0, "c2_source_status_counter_conflict")
         actual = dict(conn.execute(
             "SELECT s.slug, COUNT(*) FROM articles a "
             "JOIN sources s ON a.source_id=s.id "
