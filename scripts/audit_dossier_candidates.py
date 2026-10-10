@@ -29,7 +29,8 @@ TOPICS = {
         "purpose": "Recurring official accounts of maritime developments, not event adjudication.",
     },
     "China–Singapore military contact": {
-        "terms": ("新加坡", "singapore"),
+        "terms": ("新加坡", "singapore", "中新"),
+        "bilateral": True,
         "second": ("军", "防", "部队", "海军", "联合", "战舰", "exercise",
                    "military", "navy", "defence", "defense", "maritime", "cooperation"),
         "purpose": "Bilateral exchanges/exercises, not all Singapore defence news.",
@@ -43,10 +44,17 @@ TOPICS = {
     },
     "Regional exercise diplomacy": {
         "terms": ("联合演习", "联演", "联合训练", "军事交流", "防务合作",
-                  "军演", "joint exercise", "bilateral exercise",
+                  "军演", "演习", "joint exercise", "bilateral exercise", "exercise",
                   "maritime cooperation", "defence cooperation",
                   "defense cooperation", "military exercise"),
+        "regional": True,
         "purpose": "Exercises/cooperation reported by official publishers across desks.",
+    },
+    "Singapore naval exercise diplomacy": {
+        "terms": ("exercise", "演习"),
+        "desk": "singapore",
+        "second": ("navy", "navies", "maritime", "naval", "bilateral", "fleet", "海军"),
+        "purpose": "MINDEF announcements about Singapore naval exercises with foreign partners; a single issuing perspective.",
     },
     "Taiwan Strait military messaging (contrast)": {
         "terms": ("台湾", "台海", "台岛", "taiwan strait", "taiwan"),
@@ -69,6 +77,21 @@ def match_topic(row, categories, query):
     via_category = bool(query.get("category") in categories)
     secondary = query.get("second")
     title_match = primary and (secondary is None or any(t in title for t in secondary))
+    if query.get("desk") and row["desk_id"] != query["desk"]:
+        title_match = False
+    if query.get("bilateral"):
+        # A Singapore MINDEF headline routinely says "Singapore"; require a
+        # China counterpart as well, not any MINDEF exercise with another state.
+        china = any(t in title for t in ("中国", "中方", "中新", "解放军", "china", "chinese", "pla"))
+        singapore = any(t in title for t in ("新加坡", "中新", "singapore"))
+        title_match = title_match and china and singapore
+    if query.get("regional"):
+        partner = any(t in title for t in (
+            "联合", "中泰", "中老", "中新", "中柬", "中越", "与", "东盟",
+            "bilateral", "joint", "multinational", "foreign", "singapore",
+            "malays", "philippin", "brunei", "indones", "laos", "vietnam",
+            "cambod", "thailand", "australia", "russia"))
+        title_match = title_match and partner
     # Category assignment is model-originated and is merely a discovery lead.
     return title_match or via_category, title_match
 
@@ -166,6 +189,7 @@ def audit(database, max_examples):
     for label, matches in reports.items():
         query = TOPICS[label]
         lines += [f"### {label}", "", query["purpose"], ""]
+        title_matches = [r for r in matches if match_topic(r, category_map[r["id"]], query)[1]]
         by_desk = Counter(r["desk_id"] for r in matches)
         by_source = Counter(r["source_slug"] for r in matches)
         lines += [
@@ -179,13 +203,13 @@ def audit(database, max_examples):
         # Spread over publication months; within each month take latest record,
         # then fill remaining slots with distinct publication weeks (metadata only).
         chosen, used_months, used_weeks = [], set(), set()
-        for r in sorted(matches, key=lambda item: ((item["published_date"] or ""), item["id"]), reverse=True):
+        for r in sorted(title_matches or matches, key=lambda item: ((item["published_date"] or ""), item["id"]), reverse=True):
             month = (r["published_date"] or "")[:7]
             if month not in used_months:
                 chosen.append(r); used_months.add(month)
             if len(chosen) >= max_examples:
                 break
-        for r in sorted(matches, key=lambda item: ((item["published_date"] or ""), item["id"]), reverse=True):
+        for r in sorted(title_matches or matches, key=lambda item: ((item["published_date"] or ""), item["id"]), reverse=True):
             week = (r["published_date"] or "")[:8] + str((int((r["published_date"] or "0000-00-01")[8:10])-1)//7)
             if r in chosen or week in used_weeks:
                 continue
