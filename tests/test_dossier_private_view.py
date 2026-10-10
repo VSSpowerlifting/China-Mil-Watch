@@ -16,11 +16,12 @@ from core.dossier_private_view import (
 from tests.test_dossier_publication import fake_archive, fake_authority, fake_dossier
 
 
-def build(doc=None, archive=None, authority=None):
+def build(doc=None, archive=None, authority=None, previous=None):
     d = fake_dossier() if doc is None else doc
     a = fake_archive(d) if archive is None else archive
     t = fake_authority(d) if authority is None else authority
-    return build_private_dossier_view(d, a, synthetic_authority=t)
+    return build_private_dossier_view(d, a, synthetic_authority=t,
+                                      previous_sidecar=previous)
 
 
 class PrivateReaderProjectionTests(unittest.TestCase):
@@ -226,6 +227,131 @@ class PrivateReaderProjectionTests(unittest.TestCase):
             auth["claim_ids"] = sorted(c["id"] for s in doc["sections"] for c in s["claims"])
             with self.assertRaises(PrivateDossierViewHold):
                 build_private_dossier_view(doc, received, synthetic_authority=auth)
+
+
+def fictional_revision_two():
+    """Create an approved-looking edited successor; still wholly imaginary."""
+    before = fake_dossier()
+    later = copy.deepcopy(before)
+    later["revision"] = 2
+    later["sections"][0]["claims"][0]["text"] = (
+        "A fictional issuer described a differently phrased planned exchange."
+    )
+    later["changes"].append({
+        "revision": 2, "changed_on": later["updated_on"],
+        "summary": "Revised the imaginary attribution for the first claim.",
+        "affected_claim_ids": ["alpha-statement"],
+    })
+    later["approval"]["content_sha256"] = dossier_content_digest(later)
+    packet = fake_authority(later)
+    packet["history_checked"] = True
+    return before, later, packet
+
+
+class TwoEditionReaderHistoryTests(unittest.TestCase):
+    def test_two_edition_diff_has_actual_modified_claim_and_prior_digest(self):
+        old, new, packet = fictional_revision_two()
+        view = build(new, authority=packet, previous=old)
+        info = view["revision_comparison"]
+        self.assertEqual(info["kind"], "compared-fictional-revisions")
+        self.assertEqual(info["previous_revision"], 1)
+        self.assertEqual(info["previous_content_sha256"], dossier_content_digest(old))
+        self.assertEqual(info["modified_claim_ids"], ["alpha-statement"])
+        self.assertEqual(info["changed_fields"], ["sections"])
+        self.assertEqual(info["added_claim_ids"], [])
+        self.assertEqual(info["removed_claim_ids"], [])
+        self.assertFalse(view["eligible_for_publication"])
+
+    def test_revision_two_must_have_a_real_supplied_predecessor(self):
+        old, new, packet = fictional_revision_two()
+        with self.assertRaisesRegex(PrivateDossierViewHold, "previous-fictional-revision-required"):
+            build(new, authority=packet)
+
+    def test_revision_one_refuses_invented_prior_version(self):
+        doc = fake_dossier()
+        with self.assertRaisesRegex(
+            PrivateDossierViewHold, "initial-revision-cannot-have-predecessor"
+        ):
+            build(doc, previous=copy.deepcopy(doc))
+
+    def test_prior_revision_must_be_valid_approved_fictional_document(self):
+        old, new, packet = fictional_revision_two()
+        old["editorial_status"] = "draft"
+        old.pop("approval")
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-revision-lineage-mismatch"):
+            build(new, authority=packet, previous=old)
+
+    def test_prior_slug_change_requires_continuous_subject(self):
+        old, new, packet = fictional_revision_two()
+        old["slug"] = "fictional-different-subject"
+        old["approval"]["content_sha256"] = dossier_content_digest(old)
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-revision-lineage-mismatch"):
+            build(new, authority=packet, previous=old)
+
+    def test_prior_change_history_cannot_be_rewritten(self):
+        old, new, packet = fictional_revision_two()
+        old["changes"][0]["summary"] = "Edited earlier issue after the fact."
+        old["approval"]["content_sha256"] = dossier_content_digest(old)
+        with self.assertRaisesRegex(PrivateDossierViewHold, "fictional-revision-lineage-mismatch"):
+            build(new, authority=packet, previous=old)
+
+    def test_changelog_only_revision_is_not_a_substantive_update(self):
+        old, new, packet = fictional_revision_two()
+        new["sections"][0]["claims"][0]["text"] = old["sections"][0]["claims"][0]["text"]
+        new["approval"]["content_sha256"] = dossier_content_digest(new)
+        packet = fake_authority(new)
+        packet["history_checked"] = True
+        with self.assertRaisesRegex(
+            PrivateDossierViewHold, "fictional-revision-without-substantive-change"
+        ):
+            build(new, authority=packet, previous=old)
+
+    def test_silent_modified_claim_missing_from_note_is_refused(self):
+        old, new, packet = fictional_revision_two()
+        new["changes"][-1]["affected_claim_ids"] = ["shared-framing"]
+        new["approval"]["content_sha256"] = dossier_content_digest(new)
+        packet = fake_authority(new)
+        packet["history_checked"] = True
+        with self.assertRaisesRegex(
+            PrivateDossierViewHold, "fictional-revision-omits-claim-changes"
+        ):
+            build(new, authority=packet, previous=old)
+
+    def test_review_flags_cannot_replace_actual_prior_version(self):
+        old, new, packet = fictional_revision_two()
+        packet["history_checked"] = True
+        with self.assertRaises(PrivateDossierViewHold):
+            build(new, authority=packet, previous=None)
+
+    def test_scope_only_update_is_reported_without_inventing_claim_diff(self):
+        old, new, packet = fictional_revision_two()
+        new["sections"][0]["claims"][0]["text"] = old["sections"][0]["claims"][0]["text"]
+        new["scope"]["collection_limits"] = "A revised limitation for an invented desk."
+        new["changes"][-1]["affected_claim_ids"] = []
+        new["approval"]["content_sha256"] = dossier_content_digest(new)
+        packet = fake_authority(new)
+        packet["history_checked"] = True
+        view = build(new, authority=packet, previous=old)
+        self.assertEqual(view["revision_comparison"]["changed_fields"], ["scope"])
+        self.assertEqual(view["revision_comparison"]["modified_claim_ids"], [])
+        self.assertFalse(view["eligible_for_publication"])
+
+    def test_prior_real_archive_ids_refused_even_when_named_fictional(self):
+        old, new, packet = fictional_revision_two()
+        old["sources"][0]["record_id"] = 4428
+        old["sections"][0]["claims"][0]["source_record_ids"] = [4428]
+        old["sections"][1]["claims"][0]["source_record_ids"] = [4428, 900002]
+        old["approval"]["content_sha256"] = dossier_content_digest(old)
+        with self.assertRaisesRegex(
+            PrivateDossierViewHold, "fictional-revision-lineage-mismatch"
+        ):
+            build(new, authority=packet, previous=old)
+
+    def test_original_sidecars_and_packets_unchanged(self):
+        old, new, packet = fictional_revision_two()
+        original = copy.deepcopy((old, new, packet))
+        build(new, authority=packet, previous=old)
+        self.assertEqual((old, new, packet), original)
 
 
 if __name__ == "__main__":
