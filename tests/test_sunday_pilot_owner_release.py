@@ -152,7 +152,10 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
     def test_direct_smtp_requires_review_of_exact_bytes_not_just_week(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "first-edition.txt"
-            original = b"Owner-reviewed exact thematic manuscript\\n"
+            # Dylan-facing sends now require a structured article.
+            # Keep checking that only the owner's exact reviewed bytes go out.
+            from tests.test_sunday_editor_readable import reviewed_packet
+            original = reviewed_packet().encode("utf-8")
             path.write_bytes(original)
             approved = hashlib.sha256(original).hexdigest()
             with patch.dict(os.environ, {
