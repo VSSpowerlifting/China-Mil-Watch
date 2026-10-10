@@ -53,10 +53,12 @@ def verify_record(row, spec, *, valid_manifest=True):
     pub_date, slug, anchors, event_group = spec
     expected = BASE + slug + "/"
     errors = []
+    review_holds = []
     if not valid_manifest:
         errors.append("source-not-enabled-in-declared-manifest")
     if row is None:
-        return {"record_id": None, "event_group": event_group, "errors": ["missing-record"]}
+        return {"record_id": None, "event_group": event_group,
+                "errors": ["missing-record"], "review_holds": []}
     rid = row.get("id")
     for key, value in (
         ("source_slug", SOURCE), ("desk_id", DESK),
@@ -86,7 +88,7 @@ def verify_record(row, spec, *, valid_manifest=True):
     if row.get("passed_relevance") == 0:
         # A negative model relevance filter is an editorial lead to inspect,
         # not a reason to rewrite or exclude a preserved original silently.
-        errors.append("screened-not-selected-review-required")
+        review_holds.append("screened-not-selected-human-review-required")
     return {
         "record_id": rid,
         "event_group": event_group,
@@ -99,6 +101,7 @@ def verify_record(row, spec, *, valid_manifest=True):
         "all_anchors_present": not missing,
         "checks": len(anchors),
         "errors": sorted(set(errors)),
+        "review_holds": sorted(set(review_holds)),
     }
 
 
@@ -162,6 +165,8 @@ def scan(db_path, manifest_path):
         "selected_source_records": len(reports),
         "research_activity_groups": grouping,
         "all_stored_checks_passed": all(not x["errors"] for x in reports),
+        "editorial_screening_holds": sum(bool(x["review_holds"]) for x in reports),
+        "screening_clear_for_editorial_use": all(not x["review_holds"] for x in reports),
         "evidence": reports,
     }
 
@@ -170,12 +175,18 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", type=Path, default=ROOT / "pla_watch.db")
     parser.add_argument("--manifest", type=Path, default=ROOT / "desks/singapore/manifest.json")
-    parser.add_argument("--strict", action="store_true", help="exit nonzero if any stored parity check fails")
+    parser.add_argument("--strict", action="store_true", help="exit nonzero if any stored identity/body parity check fails")
+    parser.add_argument("--require-no-editorial-holds", action="store_true",
+                        help="fail if any record has outstanding editorial-screening holds")
     args = parser.parse_args(argv)
     result = scan(args.db, args.manifest)
     # Safe metadata only: never print publisher original text or private bodies.
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2))
-    return 0 if result["all_stored_checks_passed"] or not args.strict else 1
+    if args.strict and not result["all_stored_checks_passed"]:
+        return 1
+    if args.require_no_editorial_holds and not result["screening_clear_for_editorial_use"]:
+        return 2
+    return 0
 
 
 if __name__ == "__main__":
