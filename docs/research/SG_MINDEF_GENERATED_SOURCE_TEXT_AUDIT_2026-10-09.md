@@ -74,3 +74,17 @@ python scripts/audit_generated_record_text.py \
 ## Disposition
 
 This source-specific technical scoping phase is **complete for the tracked generated HTML snapshot**: the previously unknown count is now known (83/84). Keep [#326](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/326) **open** until the separate rights assessment, production site delivery confirmation and owner-authorized remediation decision are recorded. Do not accidentally close the source-use ticket based on 13 passing synthetic tests.
+
+## Follow-up: independent public-page retrieval (October 9, 2026)
+
+**This is additional evidence collected after the original Actions inventory, not a rerun of that audit.** On October 9, three IPR record pages were retrieved through the publicly navigable publication-week pages; the web retrieval returned HTML content from a public URL and a visible `Stored source text` section. These are independent of GitHub's tracked `output/` inspection:
+
+| Record | Public IPR page | Navigated from | Observed |
+| --- | --- | --- | --- |
+| #4428 — Singaroo (18 September) | https://indopacificrecord.org/record/4428.html | https://indopacificrecord.org/week-2026-09-14.html | Captured MINDEF English body visibly rendered; original-source link and provenance present; screened *not selected* |
+| #4452 — Singapan (29 August) | https://indopacificrecord.org/record/4452.html | https://indopacificrecord.org/week-2026-08-24.html | Captured MINDEF English body visibly rendered; original-source link and provenance present; awaiting screening |
+| #4466 — Maritime Cooperation (5 September) | https://indopacificrecord.org/record/4466.html | https://indopacificrecord.org/week-2026-08-31.html | Captured MINDEF English body visibly rendered; original-source link and provenance present; in Brief No. 15 source trail |
+
+The public-page responses identified the **9 October 2026, 5,020-record corpus snapshot**, agreeing with the current audit context. Direct first-attempt URL requests through the research retrieval tool had failed, but *following the links from week indexes succeeded*. This verifies externally retrievable **public record content for these three routes** and corrects the narrower earlier observation that no individual public record page could be independently retrieved. It does **not** test HTTP response headers, original network delivery logs, cache status, every one of the 83 records, or live CDN behavior globally. No publisher full text is copied into this memo.
+
+**Disposition update:** owner/source-rights review is now grounded in both the **83/84 generated-file inventory** and three **publicly retrieved affected record pages**. This does not resolve permissions, legality, or the signed publication decision; the approval gate in #326 remains open. Keep all underlying captured originals and canonical record IDs unchanged. The distinction between original outbound hyperlinks, limited quotations, full-text public display and photos remains mandatory.
