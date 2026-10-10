@@ -25,7 +25,7 @@ Synthetic preview is intentionally limited to fictional-* slugs whose source URL
 
 ## Tests
 
-24 focused synthetic tests in tests/test_dossier_publication.py cover valid fake preview, production fail-closed behavior, forged or missing authority, body-use and link disaggregation, author/claim screening, stale digest, report mismatch, input IDs, amendment history, malformed action policies, and body/link nonleakage.
+26 focused synthetic tests in tests/test_dossier_publication.py cover valid fake preview, production fail-closed behavior, forged or missing authority, body-use and link disaggregation, author/claim screening, stale digest, report mismatch, input IDs, amendment history, malformed action policies, and body/link nonleakage.
 
 Run with the full dependency stack in a checkout:
 
