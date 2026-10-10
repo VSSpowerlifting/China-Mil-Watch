@@ -8,6 +8,8 @@ on:
       - 'site/preview/enrichment.css'
       - 'output/the-pla-watch/posts/**'
       - 'tests/test_frontend_unified_shell_integration.py'
+      - 'tests/test_sitewide_enrichment.py'
+      - 'scripts/verify_enrichment_frontend.py'
       - 'docs/FRONTEND_UNIFIED_BRIEFS_INTEGRATION.md'
       - '.github/workflows/frontend_unified_briefs_integration.yml'
 
@@ -37,6 +39,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ''
         run: |
+          python -m unittest tests.test_sitewide_enrichment -v
           python -m unittest tests.test_frontend_unified_shell_integration -v
           python -m unittest tests.test_historical_brief_shell -v
           python -m unittest tests.test_surface_material -v
