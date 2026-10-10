@@ -1,0 +1,98 @@
+# Singapore MINDEF generated-record text — measured technical exposure
+
+**Audit date:** 2026-10-09 (Eastern), GitHub execution shortly after midnight UTC on October 10.  
+**Subject:** [Source-use issue #326](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/326), independent of the Living Dossier publication decisions in [#319](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/319) and [#321](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/321).  
+**Evidence:** [Successful read-only Actions run #38017599987](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38017599987). The base repository commit was `0487bfc0480bd94a9d4471f927c449c506f07cbf`. The one-time workflow was removed from the lasting audit PR.
+
+## Executive result
+
+A new read-only checker, `scripts/audit_generated_record_text.py`, reconciled `pla_watch.db` rows for the **exact** `sg_mindef_releases` source against the corresponding `output/record/<id>.html` files. It verified captured-text visibility through the generated HTML's `div.original-text` content and a normalized rendering comparison against the corresponding full **available captured** `articles.text_original` field, without printing or writing any publisher body.
+
+| Measured property | Result |
+| --- | ---: |
+| Singapore MINDEF records in tracked DB | **84** |
+| Corresponding generated `record/<id>.html` pages found | **84** |
+| Missing generated record pages | **0** |
+| Records with nonempty captured original-text field | **83** |
+| Pages containing `div.original-text` | **83** |
+| Pages whose displayed original-text container equals the **entire available captured stored body** (normalized) | **83** |
+| Pages with displayed body different from archived original | **0** |
+| Pages with no original text rendered | **1** — record **#4936** |
+| Pages with a link matching the stored publisher original URL | **84** |
+| Missing original-source links | **0** |
+
+**Exact interpretation:** this is **83 instances of full captured archival body displayed by the generated static HTML**, not a finding that 83 official first-party websites' complete current articles have been copied byte-for-byte. The capture can be partial or contain page furniture, as the existing record template warns. **The live CDN distribution could not independently be confirmed** through external retrieval of record URLs in this audit. The results certify tracked generated artifacts, not requests served to users or crawler indexing.
+
+An archive/body match does **not** establish ownership, licence, permission, infringement or a legal exception. This is a bounded technical inventory for qualified owner/legal review.
+
+## Method and reproducibility
+
+1. Read the tracked SQLite database using `scripts.reconcile_db.read_only`, which copies the original and its SQLite sidecars to scratch before querying. Select exactly `articles` belonging to the stored source slug `sg_mindef_releases`.
+2. For each numeric ID, open the corresponding generated HTML **only if present**. Parse `div.original-text` with Python's standard-library `HTMLParser`; collect only its decoded text. Normalize whitespace in the rendered text and in the archived paragraph text, matching the current Jinja record template's stripped nonblank `<p>` generation. Separately verify that the exact original publisher URL appears as an `a[href]` anchor.
+3. Return only **aggregate counts, safe status labels and numeric record IDs**. No raw source title, article text, screenshot, photo, model reasoning, copied passages or personal contact is emitted. The checker itself never writes a report file.
+4. Compare the original `pla_watch.db` SHA-256 before/after. The Actions run additionally confirmed unchanged archive and generated output via `git diff`, no WAL/SHM residue, and a reproducible **13/13 synthetic parsing/checker test suite**.
+5. A separate Python/HTML validation pass on any proposed remediation must preserve the canonical record ID and citation route, source metadata and links permitted after legal review, while explicitly testing the chosen public-text policy.
+
+Reproduce, read-only:
+
+```sh
+python -m unittest tests.test_audit_generated_record_text -v
+python scripts/audit_generated_record_text.py \
+  --db pla_watch.db --output output --source sg_mindef_releases
+```
+
+### Controls, limits and caveats
+
+- Source scope is **one** source slug only. This does not count all IPR sources, China Desk pages, or other institutions' full-text display; don't extrapolate Singapore percentages to the corpus.
+- A successful original-body equality test validates the static renderer's **captured text parity**, not that the original publisher's current HTML body is the same, that no extra captured text is present, or that the excerpt/quotation permissions are sufficient.
+- HTMLParser audits ordinary generated markup, not CSS/JS/network/CDN policy, actual search-engine indexing, HTTP caching, robots headers, or live visitor exposure.
+- No automated lawyer, fair-use/fair-dealing determination, permission grants, contact or source-rights assumptions are produced. The official [MINDEF Terms of Use](https://www.mindef.gov.sg/terms-of-use/) §§5–6 must be assessed by a qualified human for linking and reuse actions.
+- The current IPR [content/data rights declaration](https://github.com/VSSpowerlifting/China-Mil-Watch/blob/main/CONTENT_AND_DATA_RIGHTS.md) correctly disclaims third-party text ownership but **is not itself a permission grant** from MINDEF.
+- The proposed Dossier B1 pure validator, source reconciler and private CLI are in separate, stacked PRs [#328](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/328), [#329](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/329) and [#330](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/330). This issue is independent and does not import their contracts, approve Singaroo #4428 or authorize a public Dossier.
+
+## Policy/design alternatives for an owner-facing decision
+
+| Option | Benefits | Costs / risks | Decision authority |
+| --- | --- | --- | --- |
+| **A. Permission-backed full displayed capture** | Retains public original-language document inspection and current researcher experience | Needs defensible action-specific permission/rights basis; capture fidelity and image rights separately assessed | Qualified source-use reviewer, documented publisher scope, owner approval |
+| **B. Limited excerpts and metadata** | Source trail remains useful; lower distributed textual volume | Excerpt choice and licence/legal limits require actual source-by-source review; no universal safe character limit can be assumed | Qualified review + editor selection |
+| **C. Public metadata-only, with separately secured private preservation** | Preserves ID, metadata and citations while a separately authorized archive stores evidence | **Not fulfilled by changing HTML alone:** this repository is public and currently tracks the source-text SQLite database; requires separate data-distribution/storage work, historical exposure assessment and renderer policy | Owner + legal/permissions review; controlled storage/publishing separation plus narrow renderer PR |
+| **D. Restrict public access to affected record bodies pending decision** | Limits potential ongoing redistribution while facts are reviewed | Could break reader links, weaken indexing, mislead users and alter published citation expectations if not done carefully | Owner + qualified reviewer; explicit reversible rollout/rollback plan |
+
+**No option is selected by this audit.** A metadata-only public default might be an appropriate future safeguard, but *do not preemptively alter the existing live renderer* or remove the archived private evidence. An unauthorized blanket suppression can itself damage research continuity.
+
+## Technical acceptance for any future renderer amendment
+
+- Source- or rights-decision-scoped behavior with **default-deny for unapproved raw body output**, subject to explicit owner policy choice, rather than geographic inference (“Singapore = prohibited”). Other government issuers' rights are distinct.
+- Maintain exact existing record identity `record/<id>.html`, provenance information, citation text, captured body hash and reported original-language status, even where public original text is not displayed. Retain authorized outbound links according to their specific terms.
+- Distinguish “archive has original text privately” from “original text is publicly displayed.” Never show “Original unavailable” merely because the public presentation intentionally withholds it; that would falsify capture status. Add precise attribution.
+- No changes to archival SQLite, capture/checkpoint logic, publication dates, machine screening outcomes, historical Briefs, existing Timeline sidecars or unrelated desks.
+- Deterministic static HTML generation: synthetically test both display-allowed and metadata-only cases; a denied source **must have zero third-party original text in HTML, feeds, snippet metadata or JSON-LD**, not just visually hidden CSS. Verify no raw-body excerpt is echoed into serialized client data.
+- Verify source identity, canonical and sitemap routes, keyword/search snippets, accessibility, no-JS, print, existing backlinks, bytewise preservation where expected, and full exact-head CI after the frontend #323 and Timeline #181 integration.
+- Human review of legal/source-use decision must precede permission ledger entry; machine audit and CI are **not** evidence of licence or human approval.
+
+## Disposition
+
+This source-specific technical scoping phase is **complete for the tracked generated HTML snapshot**: the previously unknown count is now known (83/84). Keep [#326](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/326) **open** until the separate rights assessment, production site delivery confirmation and owner-authorized remediation decision are recorded. Do not accidentally close the source-use ticket based on 13 passing synthetic tests.
+
+## Follow-up: independent public-page retrieval (October 9, 2026)
+
+**This is additional evidence collected after the original Actions inventory, not a rerun of that audit.** On October 9, three IPR record pages were retrieved through the publicly navigable publication-week pages; the web retrieval returned HTML content from a public URL and a visible `Stored source text` section. These are independent of GitHub's tracked `output/` inspection:
+
+| Record | Public IPR page | Navigated from | Observed |
+| --- | --- | --- | --- |
+| #4428 — Singaroo (18 September) | https://indopacificrecord.org/record/4428.html | https://indopacificrecord.org/week-2026-09-14.html | Captured MINDEF English body visibly rendered; original-source link and provenance present; screened *not selected* |
+| #4452 — Singapan (29 August) | https://indopacificrecord.org/record/4452.html | https://indopacificrecord.org/week-2026-08-24.html | Captured MINDEF English body visibly rendered; original-source link and provenance present; awaiting screening |
+| #4466 — Maritime Cooperation (5 September) | https://indopacificrecord.org/record/4466.html | https://indopacificrecord.org/week-2026-08-31.html | Captured MINDEF English body visibly rendered; original-source link and provenance present; in Brief No. 15 source trail |
+
+The public-page responses identified the **9 October 2026, 5,020-record corpus snapshot**, agreeing with the current audit context. Direct first-attempt URL requests through the research retrieval tool had failed, but *following the links from week indexes succeeded*. This verifies externally retrievable **public record content for these three routes** and corrects the narrower earlier observation that no individual public record page could be independently retrieved. It does **not** test HTTP response headers, original network delivery logs, cache status, every one of the 83 records, or live CDN behavior globally. No publisher full text is copied into this memo.
+
+**Disposition update:** owner/source-rights review is now grounded in both the **83/84 generated-file inventory** and three **publicly retrieved affected record pages**. This does not resolve permissions, legality, or the signed publication decision; the approval gate in #326 remains open. Keep all underlying captured originals and canonical record IDs unchanged. The distinction between original outbound hyperlinks, limited quotations, full-text public display and photos remains mandatory.
+
+## Critical distribution distinction: repository is also public
+
+**Verified October 9:** `VSSpowerlifting/China-Mil-Watch` is a **public** GitHub repository. The read-only audit opens its **tracked** `pla_watch.db`, whose `articles.text_original` field holds the archived originals, while generated `output/record/*.html` pages are also tracked. Consequently the technical distribution channels are **(1) deployed static website**, **(2) public tracked HTML**, and **(3) the public SQLite database**, at minimum. Public Git history may preserve older versions of tracked files regardless of later changes to the latest tree. A renderer-only metadata display would **not** make preserved source bodies private.
+
+This matters for any future choice of option C. A legitimate *private archive* requires a distinct, access-controlled source-evidence storage and publication architecture, not merely hiding the `original-text` div. A responsible design review must separately address public repository checkout/download paths, raw history and forks/caches where applicable, workflow artifacts/backups, deployment provenance, downstream generated content, and reproducible build inputs. No claim is made that history can be erased everywhere or that every possible copy has been found. Nor does this technical finding resolve permissions, fair use, or any legal obligation.
+
+**Required new gate for later remediation:** before describing the retained originals as private, produce a narrowly authorized storage/distribution migration plan with explicit tests that no disallowed raw body reaches the public git tree, site HTML, search/feed/JSON assets or deployment artifacts; record the limits of historic distribution candidly. Preserve record identities, captured hashes and human-approved evidence access. **Do not delete records, rewrite Git history, make broad access changes, or alter deployments under this audit PR.** Those actions need separate owner decisions and operational coordination.
