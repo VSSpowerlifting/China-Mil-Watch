@@ -41,8 +41,8 @@ class NewMPSResearchTests(unittest.TestCase):
         self.assertNotIn("article_body", new)
         self.assertNotIn("human_review", new)
         self.assertNotIn("rights_approval", new)
-        self.assertEqual(len(notes["entries"]), 3)
-        self.assertEqual(len({x["source_identity"] for x in notes["entries"]}), 3)
+        self.assertEqual(len(notes["entries"]), 5)
+        self.assertEqual(len({x["source_identity"] for x in notes["entries"]}), 5)
 
     def test_no_fake_new_agreement_in_short_source_summary(self):
         notes = json.loads((ROOT / "research/vietnam_briefs_candidates" /
