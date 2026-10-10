@@ -37,7 +37,9 @@ class FictionalCollectionBarrier:
     def __init__(self, session, expected_sources):
         require(isinstance(session, RehearsalCustodySession),
                 "c2_fictional_session_required")
-        require(type(expected_sources) in (tuple, list) and expected_sources,
+        # Backlog-only runs legitimately request zero new source collections.
+        # They still need an execution mapping and an empty source-run ledger.
+        require(type(expected_sources) in (tuple, list),
                 "c2_expected_sources_invalid")
         require(all(type(s) is str and s and len(s) <= 128 and
                     all(ch.isascii() and (ch.isalnum() or ch in "._:-")
