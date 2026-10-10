@@ -136,6 +136,67 @@ class ManifestSelectionContracts(unittest.TestCase):
             self.policy.key, canonical_bytes(state))
         self.assert_code("c2_manifest_policy_changed", self.policy.load)
 
+    def test_full_fictional_manifest_collection_spend_analysis_sequence(self):
+        # The entire C2 A/B/C/D stack operates on the native C1 application
+        # schema with NO actual collection, model, source text or publication.
+        from processing.metadata import normalize_article
+        from storage.evidence_spend import FictionalSpendIntentJournal
+
+        self.freeze()
+        with self.session.application(), db.get_conn() as conn:
+            conn.execute(
+                "INSERT INTO sources(slug,display_name,base_url,language,desk_id) "
+                "VALUES('pla_daily','Fictional official source',"
+                "'https://fixture.invalid/','en','china')")
+        fictional = normalize_article({
+            "source_slug": "pla_daily",
+            "url": "https://fixture.invalid/c2-native/1",
+            "title_original": "Fictional intake",
+            "text_original": "CUSTODY_SYNTHETIC_NONPUBLISHABLE",
+            "published_date": "2026-10-10",
+        })
+        with self.session.application():
+            aid = db.insert_article(fictional, self.native)
+            self.assertIsNotNone(aid)
+            for slug in self.policy.load()["sources"]:
+                if slug == "pla_daily":
+                    outcome = SourceRunResult(
+                        source_slug=slug, desk_id="china", status="ok",
+                        references_discovered=1, fetched=1, extracted=1,
+                        new_documents=1)
+                else:
+                    outcome = SourceRunResult(
+                        source_slug=slug, desk_id="china",
+                        status="ok_no_publications")
+                db.record_source_run_result(self.native, outcome)
+
+        collection = self.policy.seal_collection()
+        self.assertEqual(collection["new_article_count"], 1)
+        self.assertTrue(self.policy.verify_before_analysis()[
+            "analysis_dispatch_eligible_fictional_only"])
+        journal = FictionalSpendIntentJournal(self.plan.barrier())
+        intent = journal.reserve(aid, "relevance", "fictional-model")
+        self.assertEqual(intent["state"], "reserved_spend_unknown")
+        self.assertFalse(intent["provider_call_executed"])
+        tokens = {
+            "input_tokens": 11, "output_tokens": 7,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+        }
+        self.assertEqual(journal.record_outcome(
+            aid, "relevance", state="measured", usage=tokens)["usage"], tokens)
+        with self.session.application():
+            db.update_relevance(aid, 0.8, "fictional-only", True)
+        analysis = self.plan.barrier().seal_analysis()
+        self.assertEqual(analysis["collected_generation"],
+                         collection["generation"])
+        self.assertNotEqual(analysis["analyzed_generation"],
+                            collection["generation"])
+        self.assertFalse(analysis["usage_receipt_durable"])
+        self.assertFalse(analysis["eligible_for_publication"])
+        self.assertFalse(journal.inspect(
+            aid, "relevance")["automatic_retry_authorized"])
+
     def test_policy_reloads_after_application_restart(self):
         self.freeze()
         self.insert_fictional_receipts()
