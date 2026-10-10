@@ -71,6 +71,21 @@ The comparison is **not** “Vietnam does Lao policing while China does Lao mili
 
 **Editor-to-owner handoff:** an annotated ledger, a decision **retain Laos / retain Laos + Singapore / abstain**, the key unverified claims, and a source-use/rights register. No unsolicited editor email should go out until the existing approved channel and owner review allow it.
 
+## Sunday model-to-editor receipt: prove Vietnam was substantive, not merely offered
+
+The existing `core/brief_editorial_source_use.py` and `scripts/sunday_editorial_handoff.py` generate the **private manuscript source-use receipt**. It distinguishes numeric China/Singapore production evidence in the editor appendix from what the model **actually received and cited**, and typed Japan/Vietnam research **offered vs cited by manuscript section**. Do **not** mistake five Vietnam items offered to the model for five Vietnamese contributions to the article.
+
+**After (not before) the reviewed, authorized source-pinned Sunday preview:**
+1. Verify **exact Vietnam source IDs cited**, by manuscript section, in the receipt. If all five are *offered but unused*, report **“Vietnam not incorporated”** and do not claim a substantive Vietnam Desk contribution. That outcome is a legitimate thematic rejection, not evidence the desk published nothing.
+2. If at least one Vietnam ID is cited, Dylan should perform **claim-level review**: quote-check original Vietnamese source text privately, test ministry attributions and event timing, and determine whether the claim changes the article's inference. A token sentence, appendix listing or unsupported topic label does **not** count as meaningful analysis.
+3. Check whether production numeric **China 5039** is actually in the *model-offered* roster and cited correctly as an **Oct. 10 announcement of Oct. 13 future action**. The stored machine past tense remains wrong. If absent, the draft must not claim the planned exchange based on another unrelated record.
+4. If Singapore **4983/5071** is cited, demand a direct analytical contribution to the implementation test. If it only pads a three-desk count, remove the paragraph and retain those records in the weekly inventory instead.
+5. Typed Japan citations must be human-reviewed against Japanese originals where relevant; the `JP-W41-06` Tsuiki PDF has an outstanding full-fidelity gate. The model's citation receipt cannot clear source rights or original-language meaning.
+6. Keep a separate **external attribution register** for Reuters Oct. 6 imagery reporting, Lao News Agency and Vietnam's Oct. 8 government handover. These are **not** entries in the existing Sunday numeric or Japan/Vietnam typed model roster, so a generated draft cannot be presumed to know their content or cite them lawfully without a separately governed external-context source-use path.
+7. Reject a manuscript if its central analysis cannot stand **without a disallowed context source**, even if the model generates elegant prose. Do not fabricate citations, append a Reuters picture, or send a source-unstable provisional edition to Dylan.
+
+**Decision standard:** Prefer substantive **Vietnam + China** with an honest, optional Singapore comparison to an artificially multi-desk manuscript. Source-use metadata shows what was cited, **not** whether any factual assertion is true. Only Dylan/owner source-claim review can make the latter judgment. No rerun or model expenditure is authorized by this card.
+
 ## Implementation and release gates
 
 - [PR #358](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/358) fixes the **now five eligible Vietnam sources vs historical three-item research cap**. It keeps the private eight-source combined Japan/Vietnam envelope, original-version hash matching and strict one-week completeness. Its merge/CI status must be verified against the **latest exact head**; a green narrow test is not sufficient for CI release.
