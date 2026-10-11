@@ -28,6 +28,7 @@ tied at the top on 16 of 17 production groups.
 
 import hashlib
 import re
+from dataclasses import dataclass
 from typing import Optional
 from urllib.parse import urlparse
 
@@ -423,7 +424,28 @@ def _field(obj, name):
 
 # ── Dedup ────────────────────────────────────────────────────────────────────
 
+@dataclass(frozen=True)
+class DedupDecision:
+    """Position-based algorithm evidence; no source prose or event assertion."""
+
+    position: int
+    reason: str
+    representative: Optional[int] = None
+
+
+@dataclass
+class DedupResult:
+    articles: list[dict]
+    positions: list[int]
+    decisions: list[DedupDecision]
+
+
 def dedup_articles(articles: list[dict]) -> list[dict]:
+    """Compatibility wrapper for the pure, batch-local title engine."""
+    return dedup_articles_detailed(articles).articles
+
+
+def dedup_articles_detailed(articles: list[dict]) -> DedupResult:
     """
     Group articles by Chinese-title hash and keep the highest-priority copy
     from each group. PLA Daily reposts the same piece across multiple
@@ -449,31 +471,40 @@ def dedup_articles(articles: list[dict]) -> list[dict]:
     storage / document versioning, Phase 3 of the Defense Discourse
     foundation), not something a title-dedup filter should invent.
     """
-    groups: dict[str, list[dict]] = {}
-    passthrough: list[dict] = []
+    groups: dict[str, list[int]] = {}
+    passthrough: list[int] = []
+    decisions = [DedupDecision(i, "missing_title_passthrough")
+                 for i in range(len(articles))]
 
-    for article in articles:
+    for position, article in enumerate(articles):
         title = article.get("title_zh") or article.get("title_original") or ""
         h = title_hash(title)
         if not h:
-            passthrough.append(article)
+            passthrough.append(position)
             continue
-        groups.setdefault(h, []).append(article)
+        groups.setdefault(h, []).append(position)
 
-    deduped: list[dict] = []
+    deduped: list[int] = []
     for h, group in groups.items():
-        if len(group) == 1:
-            deduped.append(group[0])
-            continue
         # Canonical selection uses the shared key — see canonical_sort_key().
         # scripts/cleanup_duplicates.py ranks with the same function, so a
         # destructive cleanup can never disagree with what the pipeline stored.
-        winner = select_canonical(group)
+        if len(group) == 1:
+            # The legacy singleton path never reads ranking fields.
+            winner = group[0]
+        else:
+            selected = select_canonical([articles[i] for i in group])
+            winner = next(i for i in group if articles[i] is selected)
         deduped.append(winner)
+        for position in group:
+            decisions[position] = DedupDecision(
+                position, "title_selected" if position == winner else
+                "title_suppressed", winner)
 
     # Preserve input order roughly: re-sort by first appearance.
     order = {id(a): i for i, a in enumerate(articles)}
-    deduped.sort(key=lambda a: order.get(id(a), 0))
-    passthrough.sort(key=lambda a: order.get(id(a), 0))
+    deduped.sort(key=lambda i: order.get(id(articles[i]), 0))
+    passthrough.sort(key=lambda i: order.get(id(articles[i]), 0))
 
-    return deduped + passthrough
+    positions = deduped + passthrough
+    return DedupResult([articles[i] for i in positions], positions, decisions)
