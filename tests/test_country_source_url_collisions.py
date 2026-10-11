@@ -196,7 +196,7 @@ class CountrySourceCanonicalURLContracts(unittest.TestCase):
     def test_fake_S3_permissions_and_preflight_counts_refused(self):
         s3, inv = self.paired()
         s3["record_promotion_authorized"] = True
-        with self.assertRaisesRegex(audit.CollisionRefused, "preflight_claims_unauthorized_approval"):
+        with self.assertRaisesRegex(audit.CollisionRefused, "unexpected_or_missing_S3_report_fields"):
             audit.compare(s3, inv, self.db)
         s3, inv = self.paired()
         s3["production_source_slug_collisions"] = 1
