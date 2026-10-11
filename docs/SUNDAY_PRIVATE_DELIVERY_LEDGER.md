@@ -52,6 +52,17 @@ government text, prompt or full email body is written.
 An operator example using FAKE identifiers — **do not run this with real
 email credentials or mistake it for authorization to send**:
 
+    python -m scripts.sunday_delivery_ledger initialize \
+      --ledger /private/ipr-editor-ledger/editions.sqlite3 \
+      --week-ending 2026-10-17 --recipient editor@example.invalid
+
+**Initialize exactly once after provisioning secure durable storage.**
+All later reserve/start/record operations refuse a missing journal rather
+than creating a new blank database when a runner loses its storage.
+A missing existing ledger requires forensic recovery, not reinitialization
+as a routine automatic fallback. `inspect` on a missing path emits
+`LEDGER_MISSING_STOP` and does not create one.
+
     python -m scripts.sunday_delivery_ledger inspect \
       --ledger /private/ipr-editor-ledger/editions.sqlite3 \
       --week-ending 2026-10-17 --recipient editor@example.invalid
@@ -75,8 +86,9 @@ verify the actual Gmail Sent item before any attestation.
 - SQLite uses BEGIN IMMEDIATE and a unique (week, HMAC recipient) index to
   serialize competing reservations and transitions.
 - A missing, inaccessible, world-readable, symlinked or lost journal is
-  a STOP for any future integrated sender, not a reason to invent a new
-  empty ledger and send another draft.
+  a STOP for any future integrated sender. The parent directory must also
+  exclude group/world permissions. Never invent a new blank ledger and send
+  another draft.
 - Changing a digest, date, recipient identity or stable key refuses a
   repeated attempt. SMTP exceptions/timeouts must remain `UNCERTAIN`,
   including cases where the network may have accepted the payload.
