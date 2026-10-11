@@ -12,6 +12,7 @@ import json
 import re
 import sqlite3
 import sys
+from contextlib import closing
 from datetime import date
 from pathlib import Path
 
@@ -136,7 +137,14 @@ def bind_checkpoint(checkpoint, source):
            and "separate_source_action_rights_and_robots_review" in external,
            "missing_external_release_holds")
     as_of = checkpoint.get("as_of_utc")
-    canonical_day(as_of)
+    observed_day = canonical_day(as_of)
+    # Do not turn a forged pre-checkpoint status into a mechanically clean
+    # source-registration rehearsal. The full source review remains external.
+    earliest = ("2026-10-13" if source == "ph_afp_articles" else
+                {"day-07": "2026-10-14", "day-14": "2026-10-21",
+                 "day-30": "2026-11-06"}.get(checkpoint.get("checkpoint")))
+    ensure(earliest is not None and observed_day >= canonical_day(earliest),
+           "source_checkpoint_not_yet_due")
     evidence = checkpoint.get("machine_evidence")
     ensure(type(evidence) is dict, "missing_checkpoint_machine_evidence")
     if source == "ph_afp_articles":
@@ -207,7 +215,8 @@ def inspect_database(path, source):
            "production_database_has_live_sidecars")
     db = path.resolve()
     try:
-        with sqlite3.connect(db.as_uri() + "?mode=ro&immutable=1", uri=True) as conn:
+        with closing(sqlite3.connect(
+                db.as_uri() + "?mode=ro&immutable=1", uri=True)) as conn:
             conn.execute("PRAGMA query_only=ON")
             tables = {row[0] for row in conn.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
