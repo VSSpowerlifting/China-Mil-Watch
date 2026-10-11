@@ -135,7 +135,8 @@ def inspect_provisional_article(html, article_url, expected_listing_date=None):
         raise DAPASourceHold("listing and article posting dates disagree")
     attached = []
     seen = set()
-    for a in soup.select('a[href*="/common/download.do"]'):
+    container = _one(soup.select("div.files"), "explicit attachment list")
+    for a in container.select("a[href]"):
         label = a.get_text(" ", strip=True).lower()
         match = re.search(r"\.(hwpx|pdf)$", label)
         if not match:
