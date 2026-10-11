@@ -15,6 +15,7 @@ from zipfile import BadZipFile, ZipFile
 
 from docx import Document
 
+from scripts.sunday_editor_docx import render_editor_docx
 from scripts.sunday_editor_readable import (
     BEGIN, APPENDIX, HEADINGS, PROSE_TITLES, editable_sections,
 )
@@ -97,6 +98,11 @@ def reconstruct_return(original, edited_word):
     """Return candidate TXT and mechanical receipt; NEVER call publish/send."""
     editable_sections(original)
     new_text = _word_sections(edited_word)
+    # The DOCX projection normalizes line wrapping and Markdown emphasis.
+    # Such presentation changes are NOT Dylan's edits. Compare against the
+    # generated Word baseline, rather than the differently formatted TXT.
+    if new_text == _word_sections(render_editor_docx(original)):
+        raise ReturnValidationError("no edits or editorial notes detected in Word return")
     header, manuscript, appendix = _split(original)
     source_sections = _sections(manuscript)
     rebuilt = []
