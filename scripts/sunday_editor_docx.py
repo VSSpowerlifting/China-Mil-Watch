@@ -23,9 +23,9 @@ from scripts.sunday_editor_readable import (
 
 RECORD_PREFIX = "SOURCE RECORD IDS:"
 EXTERNAL_PREFIX = "EXTERNAL SOURCE IDS:"
-RECORD_LINE = re.compile(r"^Record ([0-9]+) \\|")
-EXTERNAL_LINE = re.compile(r"^External source ([A-Za-z0-9_-]+) \\|")
-BOLD = re.compile(r"\\*\\*([^\\n*]+)\\*\\*")
+RECORD_LINE = re.compile(r"^Record ([0-9]+) \|")
+EXTERNAL_LINE = re.compile(r"^External source ([A-Za-z0-9_-]+) \|")
+BOLD = re.compile(r"\*\*([^\n*]+)\*\*")
 
 
 def _references(packet):
@@ -150,7 +150,7 @@ def render_editor_docx(worksheet):
             _rich_paragraph(p, value)
         else:
             doc.add_heading(PROSE_TITLES[key], level=2)
-            for block in re.split(r"\\n\\s*\\n", value):
+            for block in re.split(r"\n\s*\n", value):
                 if block.strip():
                     p = doc.add_paragraph()
                     _rich_paragraph(p, block)
