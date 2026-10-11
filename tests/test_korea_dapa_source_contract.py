@@ -96,6 +96,10 @@ class KoreanDAPAIdentityTests(unittest.TestCase):
         for html in (
             page(issuer="국방부"),
             page(code="A00005"),
+            page().replace('/news/ministryNewsList.do?repCode=B00008',
+                           'https://evil.example/news/ministryNewsList.do?repCode=B00008'),
+            page().replace('/news/ministryNewsList.do?repCode=B00008',
+                           'http://www.korea.kr/news/ministryNewsList.do?repCode=B00008'),
             page(date="bad"),
             page().replace("<h1>합동 방산정책 보도자료</h1>", ""),
             page().replace(ATTACH_HWPX, ATTACH_PDF),
