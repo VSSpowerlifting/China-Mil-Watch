@@ -1,0 +1,37 @@
+name: Vietnam source-family run/state attestation — offline proof
+
+# Only synthetic network fixtures in PR. No GitHub API token or publisher reads.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/attest_vietnam_run_state.py"
+      - "tests/test_vietnam_run_state_attestation.py"
+      - "docs/engineering/VIETNAM_FIRST_SOURCE_ATTESTATION_2026-10-10.md"
+      - ".github/workflows/vietnam_run_state_attestation_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  negative-provenance-proofs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out no-write repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pure offline source/action/ref proof
+        run: python -m unittest tests.test_vietnam_run_state_attestation -v
+      - name: Assert all databases, outputs and source manifests remain untouched
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json config/shadow_source_workflow_bindings.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
