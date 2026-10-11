@@ -130,6 +130,24 @@ class DeliveryJournal:
             ]
             if columns != expected:
                 raise DeliveryHold("send journal schema mismatch; manual review required")
+            # Old journals with identical columns but no per-week uniqueness
+            # could silently allow a second draft. Refuse until a separately
+            # governed migration/reconciliation is approved.
+            protected = False
+            for item in db.execute('PRAGMA index_list("intents")'):
+                if not item[2]:
+                    continue
+                quoted = item[1].replace('"', '""')
+                names = tuple(
+                    row[2] for row in db.execute(
+                        'PRAGMA index_info("' + quoted + '")'
+                    )
+                )
+                if names == ("reporting_week", "recipient_sha256"):
+                    protected = True
+                    break
+            if not protected:
+                raise DeliveryHold("journal missing week-recipient uniqueness; recovery required")
 
     def _connect(self):
         # mode=rw forbids creating an alternate database through SQLite.
