@@ -1,0 +1,37 @@
+{
+ "access_failures": 0,
+ "cap": 40,
+ "collector_commit": "54cd3d22be3ead28b31f0f4f6bca8e5b340545e4",
+ "content_hashes": [
+  "ae270976f5dde9f89841d0fad0fc6128467b2ff27bd6d4e1ba3aace6e7f4237d",
+  "808a70c4730f890ab16411a53cdb37e1e722e9e3fa8afc0a0a9811c3f519b36f"
+ ],
+ "corpus_range": [
+  "2026-07-21",
+  "2026-10-10"
+ ],
+ "day_zero_utc": "2026-08-19T23:03:09+00:00",
+ "discovered": 36,
+ "duplicates": 33,
+ "error_detail": null,
+ "extraction_failures": 1,
+ "fetch_failures": 0,
+ "filtered": 0,
+ "finished_utc": "2026-10-11T00:15:10+00:00",
+ "health": "ok",
+ "inserted": 2,
+ "listing_status": "ok",
+ "lookback_days": 30,
+ "result": "ok",
+ "retrieved": 36,
+ "robots_status": "allowed",
+ "run_id": "38097670092",
+ "selected": 36,
+ "shadow_day": 52,
+ "started_utc": "2026-10-11T00:13:32+00:00",
+ "state_sha256_after": "5ce96259d0918b74ef4543e9f08eebc36d2a67d5b188cee28127f8c19fdde729",
+ "state_sha256_before": "f8b13f5eaca375b28f9fa72ee909cabffd33415a4c790ea37466e4caf9f741ef",
+ "stored_total": 88,
+ "target_date": "2026-10-10",
+ "target_date_source": "schedule-slot"
+}
