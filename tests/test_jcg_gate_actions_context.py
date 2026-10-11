@@ -111,7 +111,7 @@ class ActionsGateObservationTests(unittest.TestCase):
         self.assertIn("actions: read", workflow)
         self.assertIn("${{ vars.JCG_SHADOW_DAILY_ENABLED }}", workflow)
         for prohibited in (
-            "\\n  schedule:", "contents: write", "workflow_call:",
+            "\n  schedule:", "contents: write", "workflow_call:",
             "shadow_collect_desk", "git push ", "curl ", "wget ",
         ):
             with self.subTest(prohibited=prohibited):
