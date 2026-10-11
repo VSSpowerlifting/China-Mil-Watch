@@ -20,7 +20,7 @@ class JournalTests(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.path = Path(self.tmp.name) / "private.sqlite"
-        self.journal = DeliveryJournal(self.path)
+        self.journal = DeliveryJournal(self.path, initialize_new=True)
         self.fields = {
             "week": "2026-10-10", "manuscript_sha256": sha("fictional article"),
             "source_receipt_sha256": sha("fictional source receipt"),
@@ -112,6 +112,51 @@ class JournalTests(unittest.TestCase):
         self.journal.hold_before_send(key)
         with self.assertRaises(DeliveryHold):
             self.journal.reserve_attempt(key)
+
+    def test_vanished_journal_must_not_be_recreated(self):
+        key = self.register()
+        self.journal.reserve_attempt(key)
+        self.path.unlink()
+        with self.assertRaises(DeliveryHold):
+            DeliveryJournal(self.path)
+        self.assertFalse(self.path.exists())
+        # Even explicitly initializing a replacement would be an owner action,
+        # not the default recovery behavior. No silent successful restart.
+
+    def test_preexisting_empty_file_not_new_history(self):
+        self.path.unlink()
+        self.path.write_bytes(b"")
+        os.chmod(self.path, 0o600)
+        with self.assertRaises(DeliveryHold):
+            DeliveryJournal(self.path)
+        with self.assertRaises(DeliveryHold):
+            DeliveryJournal(self.path, initialize_new=True)
+
+    def test_initialize_existing_journal_refused(self):
+        key = self.register()
+        self.journal.reserve_attempt(key)
+        with self.assertRaises(DeliveryHold):
+            DeliveryJournal(self.path, initialize_new=True)
+        self.assertEqual(DeliveryJournal(self.path).state(key), "attempt_reserved")
+
+    def test_unexpected_schema_does_not_reset_state(self):
+        key = self.register()
+        self.journal.reserve_attempt(key)
+        with closing(sqlite3.connect(str(self.path))) as db, db:
+            db.execute("ALTER TABLE intents RENAME TO intents_old")
+        with self.assertRaises(DeliveryHold):
+            DeliveryJournal(self.path)
+        with closing(sqlite3.connect(str(self.path))) as db:
+            self.assertIsNotNone(db.execute(
+                "SELECT identity FROM intents_old WHERE identity=?", (key,)).fetchone())
+
+    def test_hardlinked_journal_refused(self):
+        alias = Path(self.tmp.name) / "alias.sqlite"
+        os.link(str(self.path), str(alias))
+        with self.assertRaises(DeliveryHold):
+            DeliveryJournal(self.path)
+        alias.unlink()
+        self.assertEqual(DeliveryJournal(self.path).state(self.register()), "registered")
 
     def test_private_metadata_only(self):
         key = self.register()
