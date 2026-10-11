@@ -1,0 +1,44 @@
+name: Country source URL collisions S4 — offline contracts
+
+on:
+  pull_request:
+    paths:
+      - "scripts/audit_country_source_url_collisions.py"
+      - "tests/test_country_source_url_collisions.py"
+      - "docs/engineering/COUNTRY_SOURCE_CANONICAL_URL_COLLISION_S4_2026-10-11.md"
+      - ".github/workflows/country_source_url_collision_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  url-collision-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Snapshot public corpus and generated output
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/s4-db.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/s4-output.sha"
+      - name: Exercise S3 schema and S4 URL-collision contracts offline
+        run: |
+          python -m unittest \
+            tests.test_country_source_admission_schema \
+            tests.test_country_source_url_collisions -v
+      - name: Confirm no production or source changes
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/s4-db.sha"
+          sha256sum -c "$RUNNER_TEMP/s4-output.sha" > /dev/null
+          git diff --exit-code -- pla_watch.db output/ shadow/ desks/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/ desks/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test ! -e pla_watch.db-journal
