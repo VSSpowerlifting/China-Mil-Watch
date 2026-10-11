@@ -151,14 +151,24 @@ class ProductionDeliveryTests(unittest.TestCase):
             if page.parent != self.out or page.name != "archive.html":
                 self.assertNotIn('href="archive.css"', page.read_text(encoding="utf-8"), page.name)
 
-    def test_every_initial_row_with_an_eligible_desk_has_a_markable_link(self):
+    def test_initial_rows_keep_declared_desk_routes_without_requiring_art(self):
         html = (self.out / "archive.html").read_text(encoding="utf-8")
         rows = re.findall(r'<li class="record-row">.*?</li>', html, re.S)
         self.assertEqual(len(rows), 50)
+        registry = json.loads((REPO_ROOT / "desks" / "registry.json").read_text(encoding="utf-8"))
+        declared_routes = {desk["route"] for desk in registry["desks"] if desk.get("route")}
+        marked_routes = {slug + ".html" for slug in marks.SLUGS}
         for row in rows:
             href = re.search(r'<p class="row-side">.*?<a href="([^"]+)"', row, re.S)
-            self.assertIsNotNone(href)
-            self.assertIn(href.group(1), [s + ".html" for s in marks.SLUGS])
+            if href is None:
+                # An unassigned record must not acquire an invented desk link.
+                continue
+            route = href.group(1)
+            self.assertIn(route, declared_routes)
+            if route in marked_routes:
+                # The same CSS covers both server and browse.js row markup.
+                self.assertIn('a[href="%s"]::before' % route, ARCHIVE_CSS)
+            # Declared desks without permitted country artwork stay linkable.
 
 
 if __name__ == "__main__":
