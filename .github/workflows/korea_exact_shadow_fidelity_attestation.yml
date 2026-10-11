@@ -8,6 +8,7 @@ on:
     paths:
       - ".github/workflows/korea_exact_shadow_fidelity_attestation.yml"
       - "docs/engineering/KOREA_EXACT_SHADOW_FIDELITY_ATTESTATION_2026-10-11.md"
+      - "docs/engineering/KOREA_MND_SOURCE_RIGHTS_SPOTCHECK_2026-10-11.md"
       - "scripts/audit_korea_source_fidelity.py"
       - "scripts/review_desk_shadow.py"
       - "tests/test_korea_source_fidelity.py"
