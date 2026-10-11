@@ -152,7 +152,10 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
     def test_direct_smtp_requires_review_of_exact_bytes_not_just_week(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "first-edition.txt"
-            original = b"Owner-reviewed exact thematic manuscript\\n"
+            # Dylan-facing sends now require a structured article.
+            # Keep checking that only the owner's exact reviewed bytes go out.
+            from tests.test_sunday_editor_readable import reviewed_packet
+            original = reviewed_packet().encode("utf-8")
             path.write_bytes(original)
             approved = hashlib.sha256(original).hexdigest()
             with patch.dict(os.environ, {
@@ -175,7 +178,9 @@ class FirstSundayOwnerReleaseTests(unittest.TestCase):
                 send_packet(path, PILOT_SATURDAY, full_week=True)
                 email = smtp.return_value.__enter__.return_value.send_message.call_args.args[0]
                 self.assertEqual(email["To"], "editor@example.com")
-                self.assertEqual(next(email.iter_attachments()).get_content().encode(),
+                # Raw MIME payload bytes, not text-decoding with the email
+                # library's default charset, must match the owner's SHA.
+                self.assertEqual(next(email.iter_attachments()).get_payload(decode=True),
                                  original)
 
     def test_owner_preview_contains_exact_attachment_digest_for_verification(self):
