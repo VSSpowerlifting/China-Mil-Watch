@@ -1,0 +1,461 @@
+{
+  "schema": "ipr-desk-capability-execution-plan/1",
+  "as_of": "2026-10-10",
+  "purpose": "Offline planning dependencies only. No collection, human review, rights, model use, source admission, status promotion, SMTP or deployment.",
+  "waves": [
+    {
+      "id": 0,
+      "name": "Attested observation backbone"
+    },
+    {
+      "id": 1,
+      "name": "Vietnam existing families and MOD entrance gates"
+    },
+    {
+      "id": 2,
+      "name": "Japan lawful retrieval and narrower reliable scope"
+    },
+    {
+      "id": 3,
+      "name": "Korea original text and second independent issuer"
+    },
+    {
+      "id": 4,
+      "name": "Cross-desk cited evidence, timelines and dossiers"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "REG-01",
+      "wave": 0,
+      "scope": "regional",
+      "registry_desk": null,
+      "gate": "observe",
+      "title": "Attest per-source shadow slots and state heads",
+      "issue": 250,
+      "dependencies": [],
+      "declared_source_slugs": [
+        "vn_mps_foreign_affairs_vi",
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi",
+        "jp_jcg_press_en",
+        "jp_mod_news_ja",
+        "kr_policy_mnd_releases"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "For each family join declared schedule, actual run attempt and immutable state ledger; distinguish skipped, delayed, manual and partial publication.",
+      "stop_if": "Missing attempt/state or unresolved mismatch stays unobserved, never healthy.",
+      "human_decision_required": false,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-01",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "verify",
+      "title": "Review October 14 Day 7 MPS/MOIT packets",
+      "issue": 186,
+      "dependencies": [
+        "REG-01"
+      ],
+      "declared_source_slugs": [
+        "vn_mps_foreign_affairs_vi",
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "After completed October 14 logical slot, pin separate heads and complete three source-specific original-language checks, attempt timeline and human signoffs.",
+      "stop_if": "Any incomplete, late, inconsistent, unreviewed or source-mismatched receipt holds that family.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-02",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "verify",
+      "title": "Adjudicate MOIT robots MIME anomaly",
+      "issue": 186,
+      "dependencies": [],
+      "declared_source_slugs": [
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Review publisher-served robots bytes, MIME anomaly and crawler-policy interpretation under existing permitted process; issue a source-specific exception or stop decision.",
+      "stop_if": "Green workflow or zero new records cannot erase robots anomaly, waive policy or assert ministry silence.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-03",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "observe",
+      "title": "Observe Vietnam MOD official listing access",
+      "issue": 236,
+      "dependencies": [],
+      "declared_source_slugs": [],
+      "proposed_source_families": [
+        "mod-en-defence-relations"
+      ],
+      "acceptance": "Owner separately authorizes merged manual robots-first #369 canary; pin actual Actions run, ref, attempt and observed block/result without article-body retrieval.",
+      "stop_if": "403, unreadable robots, challenge, redirects or uncertain policy mean blocked, not zero publications.",
+      "human_decision_required": false,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-04",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "verify",
+      "title": "Decide rights for MPS/MOIT use and individual editorial citations",
+      "issue": 196,
+      "dependencies": [
+        "VN-01"
+      ],
+      "declared_source_slugs": [
+        "vn_mps_foreign_affairs_vi",
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Source-specific original-version, publisher permission/rights and metadata/short attributed-synopsis scopes; real named human and dates for each reviewed record.",
+      "stop_if": "Metadata-use, private-model synopsis, full-text retention and public translation rights require distinct decisions.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-05",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "verify",
+      "title": "Prove MOD article identity and legally reusable parser truth table",
+      "issue": 236,
+      "dependencies": [
+        "VN-03"
+      ],
+      "declared_source_slugs": [],
+      "proposed_source_families": [
+        "mod-en-defence-relations"
+      ],
+      "acceptance": "Only after compliant access, independently check stable WCM keys, article title/date/issuer/byline/body and malformed/denial/pagination examples; record publisher rights scope separately.",
+      "stop_if": "No direct first-party article or missing rights means fixture-only/held, never collection activated.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-06",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "qualify",
+      "title": "Complete October 21 Day 14 cohort review",
+      "issue": 186,
+      "dependencies": [
+        "VN-01",
+        "VN-02"
+      ],
+      "declared_source_slugs": [
+        "vn_mps_foreign_affairs_vi",
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Complete October 21 logical slot and verify continuous independent source history, anomalies, original versions and distinct signed checkpoint packets.",
+      "stop_if": "Do not auto-repair missed slots, inherit another family clock or count calendar time as a review.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-07",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "qualify",
+      "title": "Complete November 6 Day 30 cohort review",
+      "issue": 186,
+      "dependencies": [
+        "VN-06"
+      ],
+      "declared_source_slugs": [
+        "vn_mps_foreign_affairs_vi",
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "After actual completed Nov 6 logical slot, close attempt audit, per-family 30-day evidence and human signed Day-30 receipts.",
+      "stop_if": "Any missing successful day, review or licensed use must remain held; no automatic promotion.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-08",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "decide",
+      "title": "Owner adjudicates limited Vietnam desk promotion",
+      "issue": 186,
+      "dependencies": [
+        "VN-04",
+        "VN-07"
+      ],
+      "declared_source_slugs": [
+        "vn_mps_foreign_affairs_vi",
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Compare eligible source subset against C1–C13, document exclusions and review/legal findings, then require separate owner change control and explicit status decision.",
+      "stop_if": "No change to live registry, production DB, source manifests, renderer, deployment or Brief rights in this plan.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "VN-09",
+      "wave": 1,
+      "scope": "vietnam",
+      "registry_desk": "vietnam",
+      "gate": "qualify",
+      "title": "Design independent MOD source shadow clock if warranted",
+      "issue": 236,
+      "dependencies": [
+        "VN-05"
+      ],
+      "declared_source_slugs": [],
+      "proposed_source_families": [
+        "mod-en-defence-relations"
+      ],
+      "acceptance": "Separately review host policy, source adapter, isolated state branch, run-ledger and 7/14/30-day gates; new approval required for any collection activation.",
+      "stop_if": "MOD is not one of the three existing ministry families and cannot share their evidence clock.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "JP-01",
+      "wave": 2,
+      "scope": "japan",
+      "registry_desk": "japan",
+      "gate": "verify",
+      "title": "Qualify accessible Japan JCG article/PDF source scope",
+      "issue": 205,
+      "dependencies": [
+        "REG-01"
+      ],
+      "declared_source_slugs": [
+        "jp_jcg_press_en"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Pin JCG state, source/rights scope, PDF extraction, human reviewer and actual scheduled continuity; name omitted/challenged items.",
+      "stop_if": "Passing one PDF parser or a source listing is not broad Japan defense coverage.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "JP-02",
+      "wave": 2,
+      "scope": "japan",
+      "registry_desk": "japan",
+      "gate": "observe",
+      "title": "Find compliant Japan MOD and additional institutional body routes",
+      "issue": 205,
+      "dependencies": [],
+      "declared_source_slugs": [
+        "jp_mod_news_ja",
+        "jp_mod_siteupdate_ja",
+        "jp_joint_staff_en",
+        "jp_mod_press_en"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Use publisher-authorized robots-readable listing/full-body routes and capture real denial proof; never evade a web challenge.",
+      "stop_if": "403/challenge or RSS metadata without article bytes remains retrieval blocked.",
+      "human_decision_required": false,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "JP-03",
+      "wave": 2,
+      "scope": "japan",
+      "registry_desk": "japan",
+      "gate": "qualify",
+      "title": "Complete Japan desk narrow-scope checkpoint evidence",
+      "issue": 205,
+      "dependencies": [
+        "JP-01"
+      ],
+      "declared_source_slugs": [
+        "jp_jcg_press_en"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Bound actual eligible institution/source scope and produce independently reviewed source-fidelity/reliability/rights signoff for Day 7/14/30 as appropriate.",
+      "stop_if": "Do not silently count inaccessible MOD HTML as working coverage or conflate JCG and MOD.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "JP-04",
+      "wave": 2,
+      "scope": "japan",
+      "registry_desk": "japan",
+      "gate": "decide",
+      "title": "Owner considers Japan production-backed limited scope",
+      "issue": 205,
+      "dependencies": [
+        "JP-03"
+      ],
+      "declared_source_slugs": [
+        "jp_jcg_press_en"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Assess narrow source's real C1–C13 evidence and whether public scope/name accurately describes accessible institutions; record an explicit owner decision.",
+      "stop_if": "Shadow progress is not native production admission, broader ministry coverage or public Brief eligibility.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "KR-01",
+      "wave": 3,
+      "scope": "korea",
+      "registry_desk": null,
+      "gate": "verify",
+      "title": "Human-verify Korean MND HWPX originals",
+      "issue": 221,
+      "dependencies": [
+        "REG-01"
+      ],
+      "declared_source_slugs": [
+        "kr_policy_mnd_releases"
+      ],
+      "proposed_source_families": [],
+      "acceptance": "Verify original Korean source wording, HWPX reading order, tables, publisher/version identity, date semantics and text-only KOGL rights with a real reviewer.",
+      "stop_if": "Parser success or KOGL page label does not license HWPX/images or prove original accuracy.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "KR-02",
+      "wave": 3,
+      "scope": "korea",
+      "registry_desk": null,
+      "gate": "observe",
+      "title": "Design independent Korean DAPA source canary",
+      "issue": 221,
+      "dependencies": [],
+      "declared_source_slugs": [],
+      "proposed_source_families": [
+        "kr_dapa_proposed"
+      ],
+      "acceptance": "First-party robots/access, dated listing, source identity and separately reviewed terms; implement offline fixtures before any new shadow state.",
+      "stop_if": "Cannot infer DAPA facts from syndicated MND metadata or reuse MND's clock.",
+      "human_decision_required": false,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "KR-03",
+      "wave": 3,
+      "scope": "korea",
+      "registry_desk": null,
+      "gate": "qualify",
+      "title": "Evaluate Korea multi-source reliability with separate clocks",
+      "issue": 221,
+      "dependencies": [
+        "KR-01",
+        "KR-02"
+      ],
+      "declared_source_slugs": [
+        "kr_policy_mnd_releases"
+      ],
+      "proposed_source_families": [
+        "kr_dapa_proposed"
+      ],
+      "acceptance": "When sources individually qualify, verify original-language source review, complete slot attempts, source-bounded checks and distinct rights decisions.",
+      "stop_if": "No Korea public desk exists in current registry; a working Korean shadow does not create one.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "KR-04",
+      "wave": 3,
+      "scope": "korea",
+      "registry_desk": null,
+      "gate": "decide",
+      "title": "Owner considers Korea desk registry and source admission",
+      "issue": 221,
+      "dependencies": [
+        "KR-03"
+      ],
+      "declared_source_slugs": [
+        "kr_policy_mnd_releases"
+      ],
+      "proposed_source_families": [
+        "kr_dapa_proposed"
+      ],
+      "acceptance": "Separate formal registry proposal, fully reviewed source scope, 30-day continuity and production/rendering permission after human owner decision.",
+      "stop_if": "No code in this program creates a Korea desk or changes any registry status.",
+      "human_decision_required": true,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "REG-02",
+      "wave": 4,
+      "scope": "regional",
+      "registry_desk": null,
+      "gate": "integrate",
+      "title": "Link admitted desk records to one source-attested weekly brief",
+      "issue": 251,
+      "dependencies": [
+        "REG-01"
+      ],
+      "declared_source_slugs": [],
+      "proposed_source_families": [],
+      "acceptance": "Produce exactly one thematic editorial manuscript using separately permitted production and typed source evidence; independently record offered/cited identities and omissions.",
+      "stop_if": "A draft is not publication-ready; unused sources cannot be claimed as desk contributions.",
+      "human_decision_required": false,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    },
+    {
+      "id": "REG-03",
+      "wave": 4,
+      "scope": "regional",
+      "registry_desk": null,
+      "gate": "integrate",
+      "title": "Extend evidence timelines and dossiers without duplicating sources",
+      "issue": 318,
+      "dependencies": [
+        "REG-02"
+      ],
+      "declared_source_slugs": [],
+      "proposed_source_families": [],
+      "acceptance": "Re-use canonical records, original citations and entity/event taxonomy; preserve separate approval and unpublished states for timelines/dossiers.",
+      "stop_if": "Never treat a topical dossier, media paraphrase or generated summary as a new official source.",
+      "human_decision_required": false,
+      "executable_effect": "none",
+      "status": "planned_not_verified"
+    }
+  ]
+}
