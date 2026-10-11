@@ -95,6 +95,8 @@ class SchemaAdmissionContracts(unittest.TestCase):
         self.assertTrue(report["production_schema_checks"]["schema_compatible"])
         self.assertEqual(report["pinned_source_commit"], "a" * 40)
         self.assertEqual(report["production_source_slug_collisions"], 0)
+        self.assertEqual(report["production_database_sha256"],
+                         hashlib.sha256(before).hexdigest())
         self.assertFalse(report["production_write_authorized"])
         self.assertFalse(report["public_record_projection_authorized"])
         self.assertFalse(report["website_or_model_release_authorized"])
@@ -206,6 +208,11 @@ class SchemaAdmissionContracts(unittest.TestCase):
             plan("ph_afp_articles", checkpoint(), alias)
         wal = Path(str(self.db) + "-wal")
         wal.write_bytes(b"synthetic wal")
+        with self.assertRaisesRegex(AdmissionSchemaRefused, "production_database_has_live_sidecars"):
+            plan("ph_afp_articles", checkpoint(), self.db)
+        wal.unlink()
+        journal = Path(str(self.db) + "-journal")
+        journal.write_bytes(b"synthetic pending rollback")
         with self.assertRaisesRegex(AdmissionSchemaRefused, "production_database_has_live_sidecars"):
             plan("ph_afp_articles", checkpoint(), self.db)
 
