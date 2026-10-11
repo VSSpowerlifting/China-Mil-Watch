@@ -39,6 +39,18 @@ PRICING_USD_PER_MTOK = {
 CACHE_WRITE_5M_MULTIPLIER = 1.25
 CACHE_READ_MULTIPLIER = 0.10
 
+# Conservative strict-admission bounds, not token forecasts. Standard Messages
+# requests cannot bill more input than the model context ceiling. Reserving the
+# full ceiling (without subtracting output) also covers system/tool overhead.
+# No beta headers, extended cache TTL, server tools or custom endpoints allowed.
+# https://platform.claude.com/docs/en/about-claude/models/overview
+# Verified 2026-10-11; deliberately leaves models outside this table unsupported.
+ADMISSION_LIMITS = {
+    "claude-sonnet-4-6": {"context": 1_000_000, "output": 128_000},
+    "claude-haiku-4-5": {"context": 200_000, "output": 64_000},
+    "claude-haiku-4-5-20251001": {"context": 200_000, "output": 64_000},
+}
+
 
 def estimate_usage_cost_usd(
     model: str,

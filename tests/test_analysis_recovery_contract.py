@@ -219,10 +219,10 @@ class TestTheBacklogCannotBeStarved(unittest.TestCase):
         """
         from config import LIVE_BACKLOG_DAYS
         self.assertGreaterEqual(LIVE_BACKLOG_DAYS, 7)
-        source = PIPELINE.read_text(encoding="utf-8")
-        self.assertIn("live_rows", source)
-        self.assertIn("archive_rows", source)
-        self.assertIn("live_rows + archive_rows", source,
+        source = (REPO_ROOT / "core/analysis_plan.py").read_text(encoding="utf-8")
+        self.assertIn("live =", source)
+        self.assertIn("archive =", source)
+        self.assertIn("pending + live + archive", source,
                       "the live/archive ordering was removed; recent "
                       "unscreened records fall behind the archive again")
 
