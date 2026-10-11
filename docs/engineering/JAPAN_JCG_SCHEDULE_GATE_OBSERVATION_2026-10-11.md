@@ -42,6 +42,12 @@ An unset variable, denied Actions metadata, incomplete historical run listing, i
 
 This mode is deliberately not invoked by pull requests, and merge/presence of the workflow does not trigger it. It changes neither the JCG variable nor the guarded source collector. `--approve-github-read` remains necessary inside the explicitly authorized manual Actions job. A separate owner's permission is still needed to activate actual Japan Coast Guard collection.
 
+## Official JCG publication terms: specific rights review still required
+
+The Japan Coast Guard's **current central-website copyright page** is published at https://www.kaiho.mlit.go.jp/questions/post-1.html and states that content generally falls under **Public Data License 1.0 (PDL1.0)** unless another applicable license or exemption is specified. Its instructions call for source attribution (publisher and URL), explicit identification of edits/adaptations, and caution against representing altered material as an unmodified Japanese government publication. It excludes JCG logos/mascot artwork and materials with separately stated use conditions.
+
+This is **material source-policy evidence**, but not yet a verified licence determination for each Oct 8 English `/e/topics_archive/` release or its linked PDFs. Other JCG departmental/subdomain notices may differ; individual images, third-party works, hydrographic materials and explicitly excepted documents can have other rules. Before any public reuse, a human must map the central policy and any local exceptions to the **specific originating document version and use type**, distinguishing a source-linked factual synopsis from retaining publisher text and reusing media/PDF. The owner cannot authorize unreviewed source retention based solely on one general policy page.
+
 ## Decision tree and next engineering milestone
 
 - Variable definitely **false now**: label **held by current gate**; inspect the actual owner's original-source Day 0 and permission decisions. Do not change the variable by automation or count missing scheduled days against the source.
