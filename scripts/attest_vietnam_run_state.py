@@ -178,10 +178,13 @@ def one_family(api, binding, as_of):
             "Actions workflow does not match source binding")
     started = utc(run.get("run_started_at"))
     # Binding map stores five-field GitHub cron; shared date resolver takes HH:MM.
-    match_cron = re.fullmatch(r"([0-5]?[0-9]) (2[0-3]|1[0-9]|[0-9]) \\* \\* \\*",
-                              binding["cron"])
-    require(match_cron is not None, "unsupported source cron declaration")
-    minute, hour = map(int, match_cron.groups())
+    cron_fields = binding["cron"].split(" ")
+    require(len(cron_fields) == 5 and cron_fields[2:] == ["*", "*", "*"]
+            and all(part.isdigit() for part in cron_fields[:2]),
+            "unsupported source cron declaration")
+    minute, hour = map(int, cron_fields[:2])
+    require(0 <= minute <= 59 and 0 <= hour <= 23,
+            "source cron outside valid UTC time")
     expected = scheduled_slot_date(started, "{:02d}:{:02d}".format(hour, minute))
     require(expected == logical, "scheduled-slot logical date mismatch")
     require(ledger.get("target_date_source") == "schedule-slot" and
