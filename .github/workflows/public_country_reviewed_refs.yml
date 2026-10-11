@@ -1,0 +1,49 @@
+name: Public country reviewed references — offline contracts
+
+on:
+  pull_request:
+    paths:
+      - "core/reviewed_source_links.py"
+      - "research/philippines_reviewed_links.json"
+      - "research/vietnam_reviewed_links.json"
+      - "site/preview/templates/desk.html"
+      - "site/preview/generate_preview.py"
+      - "site/preview/desk-references.css"
+      - "site/preview/desk-references.js"
+      - "tests/test_public_desk_references.py"
+      - "tests/test_vietnam_reviewed_links.py"
+      - "tests/test_desk_rollout_contract.py"
+      - ".github/workflows/public_country_reviewed_refs.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-reference-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record production corpus and generated-site checksums
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > /tmp/ipr-ref-db.sha256
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/ipr-ref-output.sha256
+      - name: Install offline test dependencies
+        run: pip install -r requirements.txt
+      - name: Source-review schema and render contracts
+        run: |
+          python -m unittest tests.test_public_desk_references tests.test_vietnam_reviewed_links tests.test_desk_rollout_contract tests.test_desk_map -v
+      - name: Confirm no production, shadow or site mutation
+        run: |
+          set -euo pipefail
+          sha256sum -c /tmp/ipr-ref-db.sha256
+          sha256sum -c /tmp/ipr-ref-output.sha256 > /dev/null
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"

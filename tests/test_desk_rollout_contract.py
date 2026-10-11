@@ -494,6 +494,26 @@ class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
                          ["china", "singapore"])
 
 
+class TestPendingDeskReferenceBrowser(DeskCase):
+    """No publication approvals means a transparent empty public bibliography."""
+
+    def test_metadata_only_reference_lane_is_available_but_empty(self):
+        for slug in ("philippines", "vietnam"):
+            with self.subTest(desk=slug):
+                html = self.page(slug + ".html")
+                self.assertIn("Individually reviewed official-source references", html)
+                self.assertIn("No individual source references have completed", html)
+                self.assertNotIn('data-reference-list', html)
+                self.assertIn("Records</dt><dd>None collected", html)
+                self.assertNotIn("archive.html?desk=" + slug, html)
+
+    def test_progressive_enhancement_files_are_produced(self):
+        for filename in ("desk-references.css", "desk-references.js"):
+            self.assertTrue((self.out / filename).is_file())
+        self.assertIn('href="desk-references.css"', self.page("philippines.html"))
+        self.assertIn('src="desk-references.js"', self.page("vietnam.html"))
+
+
 class TestLegacyChinaRoutesSurvive(DeskCase):
 
     EDITIONS = ("2026-05-09", "2026-05-16", "2026-05-23", "2026-05-30",

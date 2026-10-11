@@ -1,0 +1,12 @@
+/* Metadata-only references: same restrained IPR page surface, no dashboard skin. */
+.desk-references{border-top:1px solid var(--rule);margin-block:32px;padding-top:20px}
+.desk-reference-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin:20px 0}
+.desk-reference-filters[hidden]{display:none}
+.desk-reference-filters label{display:flex;flex-direction:column;gap:6px;font-size:.88rem}
+.desk-reference-filters input,.desk-reference-filters select{font:inherit;min-width:0;width:100%;padding:10px;background:var(--surface);color:var(--ink);border:1px solid var(--rule)}
+.desk-reference-filters input:focus-visible,.desk-reference-filters select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.desk-reference-list{padding-left:1.45rem}
+.desk-reference-list li{border-bottom:1px solid var(--rule);padding:12px 4px}
+.desk-reference-list li[hidden]{display:none}
+.desk-reference-list li p{margin:0 0 5px}
+@media(max-width:520px){.desk-reference-filters{grid-template-columns:1fr}}

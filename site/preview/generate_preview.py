@@ -124,7 +124,7 @@ from core.brief_collection import (                                  # noqa: E40
 from core.brief_contract import validate_readiness
 from core.timelines import load_timelines
 from core.desk_registry import load_registry                         # noqa: E402
-from core.reviewed_source_links import load_reviewed_links            # noqa: E402
+from core.reviewed_source_links import load_public_desk_references    # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
 
 #: Where brief sidecars are kept: source at the repository root, never under
@@ -2781,12 +2781,15 @@ def build(out_dir: Path, title: str, db_path: Path,
     desk_tmpl = env.get_template("desk.html")
     # Individually approved official-source references are distinct from the
     # production corpus and never change a desk's collection status or counts.
-    vietnam_reviewed_links = load_reviewed_links()
     for desk in desks:
+        references = load_public_desk_references(desk.slug)
+        source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
+        languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
             desk_tmpl.render(page=desk.route, desk=desk,
-                             reviewed_source_links=(vietnam_reviewed_links
-                                                    if desk.slug == "vietnam" else []),
+                             public_source_links=references,
+                             public_source_options=source_options,
+                             public_reference_languages=languages,
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
@@ -2890,7 +2893,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js"):
+    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
     # The relief sprites home.html references, named one by one: no folder,

@@ -15,11 +15,17 @@ from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PATH = ROOT / "research" / "vietnam_reviewed_links.json"
+PHILIPPINES_PATH = ROOT / "research" / "philippines_reviewed_links.json"
 SCHEMA = "vietnam-reviewed-source-links/1"
+PHILIPPINES_SCHEMA = "philippines-reviewed-source-links/1"
 SOURCES = {
     "vn_mps_foreign_affairs_vi": ("bocongan.gov.vn", "Ministry of Public Security"),
     "vn_moit_energy_vi": ("moit.gov.vn", "Ministry of Industry and Trade"),
     "vn_moit_foundational_industry_vi": ("moit.gov.vn", "Ministry of Industry and Trade"),
+}
+PHILIPPINES_SOURCES = {
+    "ph_afp_articles": ("www.afp.mil.ph", "Armed Forces of the Philippines"),
+    "ph_nsc_official_statements": ("nsc.gov.ph", "Philippine National Security Council"),
 }
 CHECKS = ("source_page_opened", "title_checked", "publication_date_checked",
           "issuing_institution_checked", "link_publication_approved")
@@ -55,12 +61,16 @@ def _iso_date(value):
     return d
 
 
-def load_reviewed_links(path=DEFAULT_PATH, *, today=None):
+def load_reviewed_links(path=DEFAULT_PATH, *, today=None, desk="vietnam"):
     """Return display-ready, explicitly approved references, newest first.
 
     No field proves independent verification. An actual human must perform the
     stated checks; the schema makes their missing approvals fail closed.
     """
+    _require(desk in ("vietnam", "philippines"), "unrecognized desk")
+    source_specs = SOURCES if desk == "vietnam" else PHILIPPINES_SOURCES
+    schema = SCHEMA if desk == "vietnam" else PHILIPPINES_SCHEMA
+    language = "vi" if desk == "vietnam" else "en"
     path = Path(path)
     if not path.is_file():
         return []
@@ -75,7 +85,7 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None):
         raise ReviewedLinkError("invalid reviewed links JSON") from exc
     _require(isinstance(raw, dict) and set(raw) == {"schema", "entries"},
              "file must contain schema and entries only")
-    _require(raw["schema"] == SCHEMA, "unknown reviewed links schema")
+    _require(raw["schema"] == schema, "unknown reviewed links schema")
     entries = raw["entries"]
     _require(isinstance(entries, list) and len(entries) <= 20,
              "entries must be a list of at most 20 reviewed links")
@@ -93,7 +103,7 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None):
         _require(ident not in seen_ids, "duplicate entry identity")
         seen_ids.add(ident)
         slug = item["source_slug"]
-        _require(slug in SOURCES, "unregistered or research-disabled source")
+        _require(slug in source_specs, "unregistered or research-disabled source")
         url = item["source_url"]
         _require(isinstance(url, str) and len(url) <= 2048, "invalid source URL")
         _require(not any(ord(ch) <= 32 or ord(ch) == 127 for ch in url),
@@ -103,7 +113,7 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None):
             allowed_port = p.port is None
         except ValueError as exc:
             raise ReviewedLinkError("invalid official-source URL") from exc
-        _require(p.scheme == "https" and p.hostname == SOURCES[slug][0]
+        _require(p.scheme == "https" and p.hostname == source_specs[slug][0]
                  and not p.username and not p.password and allowed_port
                  and p.path.startswith("/") and not p.fragment,
                  "URL must be an exact HTTPS official-source URL without fragment")
@@ -113,7 +123,7 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None):
                  and 8 <= len(item["title_original"].strip()) <= 350
                  and item["title_original"] == item["title_original"].strip(),
                  "missing or invalid original-language title")
-        _require(item["language"] == "vi", "source title must remain original Vietnamese")
+        _require(item["language"] == language, "source title must remain original-source language")
         pub, reviewed = _iso_date(item["published_date"]), _iso_date(item["reviewed_on"])
         _require(pub <= reviewed <= current, "publication/review chronology is impossible")
         reviewer = item["reviewed_by"]
@@ -128,10 +138,23 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None):
                  "five explicit human checks and publication approval required")
         accepted.append({
             "id": ident, "source_slug": slug,
-            "source_name": SOURCES[slug][1], "source_url": url,
-            "title_original": item["title_original"], "language": "vi",
+            "source_name": source_specs[slug][1], "source_url": url,
+            "title_original": item["title_original"], "language": language,
             "published_date": item["published_date"],
             "reviewed_by": reviewer.strip(), "reviewed_on": item["reviewed_on"],
             "state_commit": item["state_commit"],
         })
     return sorted(accepted, key=lambda x: (x["published_date"], x["id"]), reverse=True)
+
+
+def load_public_desk_references(desk):
+    """Public metadata only; no shadow body or private Git access."""
+    if desk == "philippines":
+        return load_reviewed_links(PHILIPPINES_PATH, desk="philippines")
+    if desk == "vietnam":
+        references = load_reviewed_links()
+        _require(all(r["source_slug"] == "vn_mps_foreign_affairs_vi"
+                     for r in references),
+                 "MOIT rights hold: cannot publish source references")
+        return references
+    return []
