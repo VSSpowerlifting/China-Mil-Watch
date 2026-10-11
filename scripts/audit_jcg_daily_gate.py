@@ -33,6 +33,10 @@ MAX_LEDGERS = 60
 MAX_RUNS = 30
 MAX_JOBS = 30
 SCHEDULED_AT = "19:13"
+TRUSTED_OBSERVER_REF = (
+    "VSSpowerlifting/China-Mil-Watch/.github/workflows/"
+    "jcg_gate_readonly_observation.yml@refs/heads/main"
+)
 
 
 def _valid_day(value, *, end):
@@ -51,6 +55,26 @@ def _gate(api):
             "repository variable not independently confirmed")
     # Only the current observed value is known; no proof of prior settings.
     return value["value"] == "true"
+
+
+def gate_from_trusted_actions_context(environ):
+    """GitHub's evaluated vars context, not an editable caller-supplied gate.
+
+    This alternative avoids granting token access to repository Variables.
+    It can describe only the gate's value for this one manual Actions run.
+    """
+    require(environ.get("GITHUB_ACTIONS") == "true" and
+            environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch" and
+            environ.get("GITHUB_REPOSITORY") == "VSSpowerlifting/China-Mil-Watch" and
+            environ.get("GITHUB_REF") == "refs/heads/main" and
+            environ.get("GITHUB_WORKFLOW_REF") == TRUSTED_OBSERVER_REF and
+            isinstance(environ.get("GITHUB_SHA"), str) and
+            re.fullmatch(r"[0-9a-f]{40}", environ["GITHUB_SHA"]) is not None,
+            "untrusted GitHub Actions workflow context")
+    raw = environ.get("IPR_JCG_OBSERVED_GATE")
+    require(raw in ("true", "false"),
+            "repository gate unset or unavailable in Actions vars context")
+    return raw == "true"
 
 
 def _source_state(api, *, as_of):
@@ -156,7 +180,7 @@ def _scheduled_runs(api, *, as_of):
     return examined
 
 
-def observe(api, *, as_of):
+def observe(api, *, as_of, actions_gate=None):
     """Run read-only trust checks; never derive past variable values."""
     try:
         cutoff = date.fromisoformat(as_of)
@@ -164,7 +188,9 @@ def observe(api, *, as_of):
         raise AttestationHold("invalid as-of ISO date") from None
     require(date(2026, 10, 8) <= cutoff <= datetime.now(timezone.utc).date(),
             "as-of is before source Day 0 or in the future")
-    enabled_now = _gate(api)
+    require(actions_gate is None or type(actions_gate) is bool,
+            "gate observation must be an exact boolean")
+    enabled_now = _gate(api) if actions_gate is None else actions_gate
     head, clock, ledgers = _source_state(api, as_of=cutoff)
     attempts = _scheduled_runs(api, as_of=cutoff)
     rows = {x["run_id"]: x for x in ledgers
@@ -209,6 +235,10 @@ def observe(api, *, as_of):
         "source": "Japan Coast Guard English official shadow only",
         "observation_as_of": cutoff.isoformat(),
         "current_gate_enabled": enabled_now,
+        "current_gate_observed_via": (
+            "github_rest_repository_variable" if actions_gate is None
+            else "verified_actions_vars_context_at_manual_dispatch"
+        ),
         "historic_gate_values_known": False,
         "state_branch": BRANCH,
         "pinned_state_head": head,
@@ -234,14 +264,20 @@ def main(argv=None):
     p.add_argument("--as-of", required=True, help="UTC YYYY-MM-DD")
     p.add_argument("--approve-github-read", action="store_true",
                    help="manually authorize GitHub Actions variable, run/jobs and source ledger GETs")
+    p.add_argument("--gate-from-actions-context", action="store_true",
+                   help="only in the fixed, main-branch manual GitHub observer workflow")
     args = p.parse_args(argv)
     if not args.approve_github_read:
         p.error("no GitHub API reads without --approve-github-read")
     if not os.environ.get("GITHUB_TOKEN"):
-        p.error("read-only GITHUB_TOKEN is required to inspect repository variables")
+        p.error("read-only GITHUB_TOKEN is required to inspect GitHub Actions and source state")
     try:
+        context_gate = (
+            gate_from_trusted_actions_context(os.environ)
+            if args.gate_from_actions_context else None
+        )
         report = observe(GithubRead(token=os.environ["GITHUB_TOKEN"]),
-                         as_of=args.as_of)
+                         as_of=args.as_of, actions_gate=context_gate)
     except AttestationHold as exc:
         print(json.dumps({"schema": SCHEMA, "state": "blocked",
                           "reason": str(exc), "promotion_authorized": False}))
