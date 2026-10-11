@@ -155,7 +155,9 @@ def _read_snapshot(slug, repo, commit, term):
         raise ReaderHold("source clock malformed") from None
     require(isinstance(clock, dict) and
             isinstance(clock.get("day_zero_run_id"), str) and
-            re.fullmatch(r"[1-9][0-9]*-[1-9][0-9]*", clock["day_zero_run_id"]) and
+            (re.fullmatch(r"[1-9][0-9]*-[1-9][0-9]*", clock["day_zero_run_id"]) or
+             (slug == "kr_policy_mnd_releases" and
+              clock["day_zero_run_id"] == "local-native-20261006-korea")) and
             isinstance(clock.get("day_zero_utc"), str),
             "source clock missing immutable Day 0 provenance")
     # Existing AFP, NSC and MPS/MOIT clock files intentionally have no desk

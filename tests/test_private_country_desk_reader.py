@@ -140,8 +140,8 @@ class PrivateCountryReaderTests(unittest.TestCase):
     def test_korea_metadata_search_at_literal_commit_never_exposes_korean_body(self):
         k = self.fixture("kr_policy_mnd_releases", title="국방부 보도자료",
                          content="한글 원문 군사 협력 " + SECRET,
-                         clock={"desk": "korea", "day_zero_run_id": "37656171920-2",
-                                "day_zero_utc": "2026-10-07T17:16:33+00:00"})
+                         clock={"desk": "korea", "day_zero_run_id": "local-native-20261006-korea",
+                                "day_zero_utc": "2026-10-06T16:52:01.420713+00:00"})
         out = build([k], term="군사", country="korea")
         self.assertEqual(out["matched_total"], 1)
         self.assertEqual(out["results"][0]["identity"], "korea-policy:156784000")
@@ -166,6 +166,8 @@ class PrivateCountryReaderTests(unittest.TestCase):
             {"kr_language": "en"},
             {"kr_bad_sha": True},
             {"kr_state_desk": "indonesia"},
+            {"clock": {"desk": "korea", "day_zero_run_id": "local-native-20261007-korea",
+                       "day_zero_utc": "2026-10-07T16:52:01.420713+00:00"}},
             {"clock": {"desk": "indonesia", "day_zero_run_id": "37656171920-2",
                        "day_zero_utc": "2026-10-07T17:16:33+00:00"}},
         ]

@@ -25,7 +25,7 @@ The output contains original-language titles, official publisher links, dates, i
 
 For Korea, this reader additionally checks:
 
-1. Git *commit* object, Day 0 clock provenance and desk=`korea`; SQLite `shadow_meta.desk=korea`.
+1. Git *commit* object, Day 0 clock provenance and desk=`korea`; SQLite `shadow_meta.desk=korea`. The actual October 11 Korea state was inspected at `dcb43b9c4edb471d6def5876701ec4a2e39d5264`: Day 0 is the literal `local-native-20261006-korea`, not a numeric Actions run. The reader permits **that one exact legacy Korea bootstrap ID only** alongside normal numeric run IDs; other desks do not inherit an exception.
 2. Source slug `kr_policy_mnd_releases` and **exact** canonical `https://www.korea.kr/briefing/pressReleaseView.do?newsId=<id>` matching `korea-policy:<id>` (no extra query, DAPA substitution or alternate host).
 3. Korean `ko` original-language label; MND original issuer `국방부` but government Policy Briefing publisher `대한민국 정책브리핑`; explicit HWPX-text republication metadata, canonical HWPX document URL, capture-hash reference shapes.
 4. The archived original Korean text's SHA-256 parity with its stored `content_sha256`; no title/body export. **This alone does not reproduce the original HWPX extraction** and does not certify rights or editorial fidelity.

@@ -42,8 +42,12 @@ class DeskLauncherTests(unittest.TestCase):
         ]
         self.commits = {}
         for slug, branch, title, url, ident in cases:
+            clock = ({"desk": "korea",
+                      "day_zero_run_id": "local-native-20261006-korea",
+                      "day_zero_utc": "2026-10-06T16:52:01.420713+00:00"}
+                     if slug == "kr_policy_mnd_releases" else None)
             commit = state_commit(self.original, slug, title=title, url=url,
-                                  identity=ident,
+                                  identity=ident, clock=clock,
                                   content="MARITIME PRIVATE BODY MUST NOT EXPORT")
             git(self.original, "branch", branch, commit)
             self.commits[slug] = commit
