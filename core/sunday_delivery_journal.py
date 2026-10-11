@@ -63,7 +63,8 @@ def intent_id(week, manuscript_sha256, recipient):
 class DeliveryJournal:
     """SQLite reservation fence; no SMTP hooks, retries, or approval authority."""
 
-    def __init__(self, db_path):
+    def __init__(self, db_path, *, initialize_new=False):
+        """Explicit initialization only; missing/corrupt journal never resets history."""
         path = Path(db_path)
         if not path.is_absolute() or not path.name or path.name in (".", ".."):
             raise DeliveryHold("journal path must be an absolute private file")
@@ -75,23 +76,38 @@ class DeliveryJournal:
             raise DeliveryHold("journal directory must be owned by caller")
         if path.is_symlink():
             raise DeliveryHold("journal symlink refused")
-        if not path.exists():
+        if initialize_new:
+            # A vanished prior journal is indistinguishable from a first install.
+            # The caller must obtain separate owner authorization to initialize.
+            # Never silently reuse this flag on normal application startup.
             flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
             if hasattr(os, "O_NOFOLLOW"):
                 flags |= os.O_NOFOLLOW
             try:
                 fd = os.open(str(path), flags, 0o600)
-            except FileExistsError:
-                pass  # Another cooperating worker created it; re-verify below.
+            except FileExistsError as exc:
+                raise DeliveryHold("refusing to reinitialize an existing journal") from exc
             else:
                 os.close(fd)
+        elif not path.exists():
+            raise DeliveryHold("missing prior send journal; explicit recovery required")
         if (not path.is_file() or path.is_symlink() or
                 stat.S_IMODE(path.stat().st_mode) & 0o077 or
-                path.stat().st_uid != os.getuid()):
-            raise DeliveryHold("journal file must be caller-owned mode 0600")
+                path.stat().st_uid != os.getuid() or
+                path.stat().st_nlink != 1):
+            raise DeliveryHold("journal must be caller-owned 0600 regular file without hardlinks")
         self.path = path
         with closing(self._connect()) as db, db:
-            db.execute("""CREATE TABLE IF NOT EXISTS intents (
+            if not initialize_new:
+                # SQLite treats an existing zero-byte file as a new empty store.
+                # An absent schema is therefore a lost-history event, not a
+                # permission to manufacture a fresh "no sends" journal.
+                exists = db.execute("""SELECT 1 FROM sqlite_master
+                    WHERE type='table' AND name='intents'""").fetchone()
+                if exists is None:
+                    raise DeliveryHold("send journal schema missing; recovery required")
+            else:
+                db.execute("""CREATE TABLE intents (
                 identity TEXT PRIMARY KEY,
                 reporting_week TEXT NOT NULL,
                 manuscript_sha256 TEXT NOT NULL,
@@ -103,6 +119,16 @@ class DeliveryJournal:
                 revision INTEGER NOT NULL DEFAULT 0,
                 smtp_receipt_sha256 TEXT
             )""")
+            # A structural schema probe is not equivalent to authenticating
+            # data. The private directory and independent backup are assumed.
+            columns = [row[1] for row in db.execute("PRAGMA table_info(intents)")]
+            expected = [
+                "identity", "reporting_week", "manuscript_sha256",
+                "source_receipt_sha256", "recipient_sha256",
+                "owner_approval_sha256", "state", "revision", "smtp_receipt_sha256",
+            ]
+            if columns != expected:
+                raise DeliveryHold("send journal schema mismatch; manual review required")
 
     def _connect(self):
         # mode=rw forbids creating an alternate database through SQLite.
