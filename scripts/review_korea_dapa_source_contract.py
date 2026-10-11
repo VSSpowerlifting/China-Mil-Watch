@@ -122,7 +122,9 @@ def inspect_provisional_article(html, article_url, expected_listing_date=None):
     info = _one(soup.select(".variety .info"), "official provenance")
     source = _one(info.select("a.gotosite"), "issuer link")
     p = urlsplit(source.get("href", ""))
-    if (p.path != "/news/ministryNewsList.do" or
+    if (p.scheme not in ("", "https") or p.netloc not in ("", HOST) or
+            ((p.scheme == "") != (p.netloc == "")) or p.fragment or
+            p.path != "/news/ministryNewsList.do" or
             _query(p, ("repCode",)) != {"repCode": REPCODE} or
             source.get_text(" ", strip=True) != ISSUER):
         raise DAPASourceHold("government release issuer not DAPA")
