@@ -60,7 +60,7 @@ def diagnose(payload, *, now, daily_marker=None):
     if not isinstance(payload, dict):
         raise DeliveryAuditError("expected workflow metadata object")
     state = payload.get("workflow_state", "unknown")
-    if state not in ("active", "disabled_manually", "disabled_inactivity", "unknown"):
+    if state not in ("active", "disabled_manually", "disabled_inactivity", "disabled_fork", "deleted", "unknown"):
         raise DeliveryAuditError("unrecognized workflow state")
     runs = payload.get("workflow_runs")
     if not isinstance(runs, list) or len(runs) > 100:
