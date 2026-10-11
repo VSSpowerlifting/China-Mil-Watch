@@ -1,0 +1,40 @@
+name: Country desk checkpoint intake — offline contracts
+
+on:
+  pull_request:
+    paths:
+      - "scripts/compose_country_desk_checkpoint.py"
+      - "tests/test_country_desk_checkpoint_intake.py"
+      - "docs/engineering/COUNTRY_DESK_CHECKPOINT_INTAKE_2026-10-11.md"
+      - ".github/workflows/country_desk_checkpoint_intake_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  checkpoint-input-consistency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Snapshot production database and generated output
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/ipr-desk-checkpoint-db.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/ipr-desk-checkpoint-output.sha"
+      - name: Offline synthetic country checkpoint identity and negative-contract tests
+        run: python -m unittest tests.test_country_desk_checkpoint_intake -v
+      - name: Preserve tracked DB, public output and shadow declarations
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/ipr-desk-checkpoint-db.sha"
+          sha256sum -c "$RUNNER_TEMP/ipr-desk-checkpoint-output.sha" > /dev/null
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
