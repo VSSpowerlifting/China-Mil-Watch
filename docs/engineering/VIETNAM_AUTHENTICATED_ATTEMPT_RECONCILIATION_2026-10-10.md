@@ -20,7 +20,7 @@ The API reads only the fixed owner/repository and source-bound orphan branches; 
 
 It pins and rechecks each source state branch HEAD, reads **every** published ledger JSON and the Day 0 clock from that immutable commit, verifies returned Git blob SHA-1, checks source family/clock, extracts **only** metadata and hands the resulting packet directly to the existing reconciler.
 
-Bounds: review starts October 7 and extends no more than 45 days; up to 120 workflow runs, eight numbered attempts per run, four pages of 30, 60 ledgers per source, size-limited GitHub JSON, no retries. Missing index pages, denied access, moving branches or version inconsistencies fail closed rather than appearing as publisher silence.
+Bounds: review starts October 7 and extends no more than 45 days; up to 120 workflow runs, eight numbered attempts per run, four pages of 30, 60 ledgers per source, size-limited GitHub JSON, no retries. GitHub's created-date range is percent-encoded to satisfy the shared fail-closed API-path guard. **A job scheduled for the through-date that starts after midnight UTC can fall outside this query**; a human must separately inspect late Actions executions and adjust the review window before signing off the checkpoint. Missing index pages, denied access, moving branches or version inconsistencies fail closed rather than appearing as publisher silence.
 
 ## What a result means
 
