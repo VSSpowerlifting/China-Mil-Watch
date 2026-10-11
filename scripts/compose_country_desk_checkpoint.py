@@ -81,6 +81,10 @@ def read_report(path):
 
     try:
         raw = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=unique)
+    except CheckpointRefused:
+        # Preserve a specific duplicate-key rejection rather than hiding it
+        # behind the generic malformed-JSON error.
+        raise
     except (ValueError, UnicodeError) as exc:
         raise CheckpointRefused("invalid report JSON") from exc
     require(type(raw) is dict, "report root must be an object")
