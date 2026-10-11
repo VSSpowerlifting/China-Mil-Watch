@@ -61,7 +61,7 @@ Other useful work can proceed **without being on that critical path**, provided 
 
 **Owner:** repo/engineering management; no authoring-system rewrite.
 
-Inputs: open PR ledger, relevant historical base/commit, CI jobs, issue comments. Deliver a single state reconciliation and at most one distinct fix per PR. Start with PR #370, whose isolated parser regressions passed but full CI was still running as this plan was written. The required final artifact is the exact tested SHA, changed-file list, test totals/skips, validator result, DB/output SHA/parity evidence, and whether a review/merge has actually occurred. Do not close #333 until the fix has merged and issue resolution is verified.
+Inputs: open PR ledger, relevant historical base/commit, CI jobs, issue comments. Deliver a single state reconciliation and at most one distinct fix per PR. Start with PR #370. **Exact-head verification update:** Actions run #38098487334 at commit d04c8ba6f40eca47aa86b7e7ca53a42f44280f05 completed successfully. The full offline job ran **5,620 tests (nine skips)**, output validation passed with **10 governed warnings**, and the tracked SQLite database/output preservation checks passed without sidecar residue. This is test evidence, **not owner permission to merge**. Re-review the exact diff before integrating and closing #333. The required final artifact is the exact tested SHA, changed-file list, test totals/skips, validator result, DB/output SHA/parity evidence, and whether a review/merge has actually occurred. Do not close #333 until the fix has merged and issue resolution is verified.
 
 Also retire only genuinely superseded PRs whose unique content, source-use, human-review queues, and dependencies have been accounted for. Do not merge or close #133, #325, #324, #327 or #347 simply to reduce PR counts. Archive/close actions must cite replacement and retained unique artifacts. No Git history rewrite.
 
@@ -77,7 +77,7 @@ Also retire only genuinely superseded PRs whose unique content, source-use, huma
 4. Separate (a) frozen model draft, (b) readable prose rendering for Dylan, (c) source and fact-check receipt, (d) exact owner-reviewed SHA, (e) transport/replay receipt. Only (b) should be the editor's primary writing experience; other artifacts support QA without making Dylan administer a machine proof packet.
 5. If no safe owner-reviewed exact attachment exists, **no editor send**. Manual #368 replay is opt-in, locally approved and no-model; do not turn on scheduled send as a workaround.
 
-**Future M1b, not a first-Sunday emergency patch:** durable private reviewed-file store plus idempotent transport/send-attempt journal, no second model after author approval, interruption/lost-ack synthetic tests and manual recovery. Keep this as one coherent post-pilot engineering objective under #366, not an additional parallel writer.
+**Future M1b, not a first-Sunday emergency patch:** durable private reviewed-file store plus a conservative send-intent and attempt journal, no second model after author approval, interruption/lost-ack synthetic tests and manual recovery. Ordinary SMTP cannot guarantee exactly-once delivery; allow at most one *automatic* attempt per reviewed file and recipient, with unknown outcomes held for manual reconciliation. Keep this as one coherent post-pilot engineering objective under #366, not an additional parallel writer.
 
 **Stop condition:** source-checked private editorial candidate or documented abstention; an editor delivery requires a separately recorded matching content digest and explicit send approval. No automatic publication follows.
 
@@ -175,13 +175,67 @@ Keep engineering continuity in branches, commits, issues, PRs and test logs. At 
 
 **Session A — audit closure:** Inspect #370 exact head and latest full CI job steps; verify change scope and actual per-test results; correct only a directly blocking fault. Stop at verified PR and review decision; do not touch renderer, rights or C2.
 
-**Session B — Sunday reviewed-artifact transport:** Under #366, design one durable review-file intake and idempotent no-second-model send, with false-send and lost-ack tests. No editorial rewriting, new sources, provider costs or scheduled enabling. Stop at disabled, test-proven PR.
+**Session B — Sunday reviewed-artifact transport:** Under #366, design one durable review-file intake and a no-second-model send-attempt fence, with dry-run, fail-before-SMTP, accepted-then-ACK-lost and operator reconciliation tests. Do not promise exactly-once delivery without an actual provider-level idempotency guarantee. No editorial rewriting, new sources, provider costs or scheduled enabling. Stop at disabled, test-proven PR.
 
 **Session C — C2 reviewed integration:** Under #342, reconcile stack #360–#367 sequentially against actual main; demand native lineage, immutable source set, paid-intent replay correctness and fail-closed unknown-charge recovery. No real provider calls, new private service, C3/Pages or activation. Stop after integration and independent acceptance evidence.
 
 **Session D — release recovery and cross-writer fencing:** Under #351/#343/#346, implement synthetic fully assembled output transaction and shared release-identity / stale-deploy refusal tests. No deployment or storage migration. Stop at isolated offline release contract, independent review and documented remaining owner choices.
 
 **Session E — separate design/country issue:** Continue actual #371 Phase 1 implementation *or* #373 desk source-family work in its existing dedicated branch, never both within one session. Do not duplicate the desk program DAG.
+
+## 7A. Engineering-ready contracts for the next sessions
+
+These are proposed interface boundaries and negative-test criteria, **not** approved runtime APIs, provider purchases, or deployment instructions. Verify current repository state before implementation.
+
+### A. Sunday artifact custody and delivery (#366)
+
+Verified existing source: scripts/sunday_first_pilot_reviewed_replay.py validates exact UTF-8 worksheet bytes, week and digest, and permits private *manual* no-model delivery only under a separate local opt-in. It deliberately fixes the first pilot to October 10 and states that manual SMTP is **not idempotent**. scripts/sunday_editor_readable.py separately produces Dylan's prose-first email without changing the canonical attached TXT. The active Sunday workflow still regenerates its draft when the scheduled authoring path executes; it cannot treat newly generated bytes as the old owner's signed attachment.
+
+**Candidate private identity:** reporting week + SHA-256 of exact reviewed attachment + SHA-256 of separate source receipt + intended recipient + owner approval reference + immutable private object locator. Public Git, issue comments, workflow logs, and uncontrolled artifacts hold **no manuscript or third-party full text**. Manuscript signoff does not constitute rights authorization for hyperlinks, quotations, bodies, photographs or retained copies.
+
+| State | Proof | Next action |
+| --- | --- | --- |
+| DRAFT_FROZEN | Immutable source-linked draft and exact bytes | Owner can inspect the original record and manuscript |
+| OWNER_APPROVED | Exact week/recipient/hash and genuine approval | Reserve one delivery intent; no second LLM call |
+| SEND_RESERVED | Durable unique intent before SMTP | Exactly one automatic attempt, or cancellation before contact |
+| SMTP_OUTCOME_UNKNOWN | Crash/timeout after contacting SMTP | **Manual hold; no automated resend** |
+| SMTP_ACCEPTED | SMTP server acceptance recorded | Handoff may proceed; not proof of recipient receipt/read |
+| HELD | Hash mismatch, rights issue, duplicate, canceled authorization | Stop until independently resolved |
+
+Do **not** misreport SMTP timeout as "not sent." A local send journal and a remote SMTP server are not one atomic transaction. Any retry after an ambiguous response requires operator comparison against actual Sent/message evidence. A new version or recipient requires distinct approval.
+
+**Synthetic negative tests:** changed/normalized bytes; symlink or unsafe path; incomplete/oversize TXT; wrong Saturday; altered source appendix; missing or revoked owner review; recipient drift; competing workers; duplicate reservation; crash before network; remote SMTP accepts then local record fails; timeout after send; manual reconciliation; dry-run does not call SMTP/model; zero logs containing originals. The first pilot's manually supervised flow is not a mandate to enable automated scheduled sending.
+
+### B. Exact C2 integration ancestry (#342)
+
+Live parent relationship inspected on October 10:
+
+| PR | Implementation module | PR base branch |
+| --- | --- | --- |
+| #360 / C2-B | storage/evidence_spend.py | main |
+| #361 / C2-C | storage/evidence_source_plan.py | #360 head |
+| #362 / C2-D | storage/evidence_manifest_policy.py | #361 head |
+| #363 / C2-E | storage/evidence_task_gate.py | #362 head |
+| #364 / C2-F | storage/evidence_spend_inventory.py | #363 head |
+| #367 / C2-G | storage/evidence_admission_fence.py | #364 head |
+
+Thus the integration order is **#360 → #361 → #362 → #363 → #364 → #367**, subject to updated review and owner gates. All six currently have their own three-file module/test/documentation delta against a feature parent. A green PR whose target is another feature branch is **not** proof that code exists on main. Verify each actual merged blob before retargeting descendants. After individual exact-head CI, require one synthetic cross-module test covering source-plan freeze, native run attribution, queued spend intent, concurrent admission, unknown-charge accounting, CAS recovery, and refusal to claim an analyzed checkpoint from incomplete evidence. Do not silently normalize a fictional stored dollar amount into live provider spend.
+
+### C. Release transaction and publisher freshness (#351/#343/#346)
+
+Verified current paths: site/render.py preserves carried assets, historical issues and the legacy data export through CARRIED_FORWARD. The Daily workflow uses concurrency group daily-update; the separate manual deploy workflow uses pages-deploy. These distinct locks **do not serialize each other**. A valid staged renderer tree does not certify a correct *assembled* public release or live Pages generation.
+
+A future release design should expose independently testable seams, without prescribing final function names:
+
+1. **Assemble** the complete candidate, including approved carry-forward assets, native/canonical routes, redirects, sidecars, sitemap, feeds and search, without deleting the sole valid previous copy.
+2. **Validate** the exact final candidate digest and source-use/public-field allowlists; inspect JSON, HTML, metadata, feeds, index and images as separate permission actions.
+3. **Authorize** a concrete output digest, origin commit, source-use policy version and actual owner release decision. Synthetic receipts are never production authority.
+4. **Fence and publish** through *one* effective writer-serialization/freshness regime across manual and Daily. An older or revoked release may not overwrite a newer one merely because it once passed CI.
+5. **Attest** actual published revision/content and record UNKNOWN rather than assert deployment from an intermediate green step.
+
+**Fictional failure matrix:** partial historical copy; pre-existing orphan output.carried; exception just before/during site exchange; repeat after interruption; missing sidecar; previous output deleted before candidate complete; manual release A paused while Daily B publishes; two writers holding stale state; deliberate separately approved rollback; Pages push succeeded but success marker write failed; CDN content mismatch; third-party body leaked through carried data/search asset. No cutover or live workflow change until an offline synthetic suite proves that recoverable last-good output and release identity survive every injected boundary. An intentional old-release rollback must receive a **new approval**, never reuse a previously green receipt.
+
+---
 
 ## 8. Deferred decisions that cannot be answered by code
 
