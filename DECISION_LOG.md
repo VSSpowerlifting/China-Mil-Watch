@@ -4,6 +4,34 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-11 — Expressive frontend Phase 1 implementation decisions
+
+These are implementation choices made within the Phase 0 §13 ticket and the
+2026-10-10 rulings. They are not visual sign-off, and they change no
+production page. Evidence is in
+`docs/evidence/frontend-refinement-phase1-2026-10-10/`.
+
+- **Three geo sprites, not one.** `site/assets/geo/` holds `emblems.svg`,
+  `strait.svg` and `region.svg`, so a page fetches only the geometry it
+  shows. `geo.receipt.json` records input hashes, parameters, output hashes
+  and the licence, with no timestamp; rebuilding gives identical bytes. Path
+  data and seats match the Phase 0 studies byte for byte.
+- **Water lines live inside each emblem symbol**, coloured through
+  `--rl-w1`…`--rl-w5` and drawn through `--rl-draw`, instead of a separate
+  `water_lines` macro. Custom properties cross into the `<use>` tree; page
+  class selectors do not.
+- **`flag()` and `emblem()` take a desk slug.** The US Indo-Pacific desk
+  maps to the US flag and to a Hawaii emblem, never the sovereign US outline.
+- **The relief specimens are on their own unpublished page,
+  `gallery-relief.html`.** Inline, they pushed `gallery.html` to 123,320 B of
+  HTML + CSS, past the 120,000 B cap for a non-index page. The cap was not
+  raised.
+- **Press darkens a control and casts no inset shadow.** Production
+  `surfaces.css` already sinks `[data-surface]` buttons 2 px on `:active`,
+  which outranks a relief rule, so relief adds no transform of its own. That
+  inherited press ignores `prefers-reduced-motion`. This pre-existing
+  behaviour is outside Phase 1 and is left for a later, separately scoped fix.
+
 ## 2026-10-10 — Expressive frontend Phase 0 owner rulings (B1, B9, B3/B4, B2, B5)
 
 The owner approved the five decisions in

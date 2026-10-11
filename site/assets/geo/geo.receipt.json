@@ -1,0 +1,149 @@
+{
+ "generator": "scripts/build_geo_assets.py",
+ "inputs": {
+  "10m": {
+   "file": "countries-10m.json",
+   "sha256": "3bc6f1d367a9bcec479841bae0e76092f512838411d0cef124e92eec4db45f79"
+  },
+  "50m": {
+   "file": "countries-50m.json",
+   "sha256": "04342cdc1e3016bcd7db1630de95684d67b79fe3c8c460321e87aef469502394"
+  }
+ },
+ "licence": "Natural Earth: public domain. world-atlas: ISC.",
+ "outputs": {
+  "emblems.svg": {
+   "bytes": 15306,
+   "sha256": "a22b88871fbf82370ef2dc97f0d60a0a94d85661d2bedbaa9aa221439fe9be4f"
+  },
+  "region.svg": {
+   "bytes": 49760,
+   "sha256": "54ad2f107ff2f2c9b6b0eef4438bbc00f2aa577e5b4c092d7072e062602639f5"
+  },
+  "strait.svg": {
+   "bytes": 20170,
+   "sha256": "f1a4ff03d0ecd50ce328078a0255671b77c665d75d83e1d8806dc0029ab45e5a"
+  }
+ },
+ "parameters": {
+  "desks": {
+   "china": {
+    "file": "50m",
+    "ids": [
+     "156"
+    ],
+    "min_share": 0.002,
+    "tolerance": 0.12
+   },
+   "japan": {
+    "file": "50m",
+    "ids": [
+     "392"
+    ],
+    "min_share": 0.004,
+    "tolerance": 0.06
+   },
+   "singapore": {
+    "file": "10m",
+    "ids": [
+     "702"
+    ],
+    "min_share": 0.05,
+    "tolerance": 0.0
+   },
+   "vietnam": {
+    "file": "50m",
+    "ids": [
+     "704"
+    ],
+    "min_share": 0.02,
+    "tolerance": 0.03
+   }
+  },
+  "emblem_pad": 9,
+  "hawaii": {
+   "file": "50m",
+   "ids": [
+    "840"
+   ],
+   "keep": "rings within 150-210E (mod 360), 15-25N; seat from us-indopacific"
+  },
+  "region": {
+   "box_lon_lat": [
+    70.0,
+    -4.0,
+    150.0,
+    45.0
+   ],
+   "desks": {
+    "china": [
+     "156"
+    ],
+    "singapore": [
+     "702"
+    ]
+   },
+   "file": "50m",
+   "min_area_share": 2e-05,
+   "tolerance": 0.09,
+   "width": 300.0
+  },
+  "strait": {
+   "box_lon_lat": [
+    103.35,
+    0.75,
+    104.65,
+    1.78
+   ],
+   "file": "10m",
+   "ids": [
+    "702",
+    "458",
+    "360"
+   ],
+   "min_area": 0.02,
+   "tolerance": 0.004
+  }
+ },
+ "projection": "scripts/desk_map.py Miller cylindrical (project)",
+ "seats": {
+  "china": [
+   68.4,
+   29.9
+  ],
+  "hawaii": [
+   43.6,
+   18.6
+  ],
+  "japan": [
+   53.9,
+   52.2
+  ],
+  "region-china": [
+   174.0,
+   23.1
+  ],
+  "region-singapore": [
+   126.8,
+   176.2
+  ],
+  "singapore": [
+   44.6,
+   41.8
+  ],
+  "vietnam": [
+   26.3,
+   18.9
+  ]
+ },
+ "source": "Natural Earth country boundaries (public domain), via world-atlas 2.0.2 (ISC)",
+ "symbols": {
+  "china": "-9 -9 118 88",
+  "hawaii": "-9 -9 118 83",
+  "japan": "-9 -9 101 118",
+  "region": "0 0 300 196",
+  "singapore": "-9 -9 118 73",
+  "strait": "0 0 400 317",
+  "vietnam": "-9 -9 70 118"
+ }
+}

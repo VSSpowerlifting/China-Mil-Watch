@@ -2693,6 +2693,31 @@ def build(out_dir: Path, title: str, db_path: Path,
                 **ctx),
             encoding="utf-8")
         written.append("gallery.html")
+        # The relief primitives get a page of their own, so the component
+        # gallery stays inside its delivery budget. They travel with the
+        # gallery and nowhere else: no production template links them yet, so
+        # a production tree never carries a file nothing references.
+        (out_dir / "gallery-relief.html").write_text(
+            env.get_template("gallery-relief.html").render(
+                page="gallery-relief.html",
+                specimen_records=specimens,
+                relief_boxes=json.loads((REPO_ROOT / "site/assets/geo/geo.receipt.json")
+                                        .read_text(encoding="utf-8"))["symbols"],
+                **ctx),
+            encoding="utf-8")
+        written.append("gallery-relief.html")
+        (out_dir / "relief.css").write_bytes(
+            (Path(__file__).parent / "relief.css").read_bytes())
+        written.append("relief.css")
+        for folder in ("geo", "flags", "glyphs"):
+            for asset in sorted((REPO_ROOT / "site/assets" / folder).iterdir()):
+                if not asset.is_file() or asset.name.endswith(".receipt.json"):
+                    continue
+                route = "assets/%s/%s" % (folder, asset.name)
+                target = out_dir / route
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(asset.read_bytes())
+                written.append(route)
 
     # ── One page per published brief ─────────────────────────────────────────
     # `briefs/<slug>.html`, one level down, in the site's own shell: the
@@ -3233,7 +3258,8 @@ def main(argv=None):
                     help="serve the result on localhost:8770")
     ap.add_argument("--gallery", action="store_true",
                     help="also render the component and state gallery "
-                         "(gallery.html). Maintenance only; never published.")
+                         "(gallery.html, gallery-relief.html). Maintenance only; "
+                         "never published.")
     args = ap.parse_args(argv)
 
     snapshot = (snapshot_from_corpus(Path(args.db))

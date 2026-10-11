@@ -223,7 +223,10 @@ itself and is never restyled from the site sheet; the site borrows from it.
   sanctioned card grid is the Signals "how to read this site" 2×2.
 - Rules (1px `--line`) do the structural work; radius is 2px everywhere;
   **no box-shadows** except the hairline under the sticky nav rail; flat
-  elevation via surface shifts.
+  elevation via surface shifts. One ruled exception (DECISION_LOG
+  2026-10-10, B1): the three lift tokens in `site/preview/relief.css`, on the
+  finder, homepage record cards, the analysis plane, the Brief card, the desk
+  plate and the desk source-scope panel only.
 - Sticky elements: Ledger nav rail (top), PW reading-progress rail. Nothing
   else sticks.
 
@@ -262,7 +265,10 @@ and every component is on the maintenance gallery:
 `generate_preview.py --out <scratch dir> --snapshot-from-corpus --gallery`
 writes `gallery.html` beside a disposable build, from the corpus in the
 database. Without `--snapshot-from-corpus` the release guard refuses to build
-once the database has outgrown the declared snapshot. Never published.
+once the database has outgrown the declared snapshot. Never published. The
+same flag writes `gallery-relief.html`: the relief, tactile-control, motion,
+geographic-art, flag and source-glyph primitives (`relief.css`,
+`_relief.html`), on their own page so each stays within the delivery budget.
 
 - **Day groups and the record row** (`_records.html` `record_days`,
   `record_row`) — records under the source-stated date: a serif numeral,
