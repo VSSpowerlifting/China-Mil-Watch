@@ -45,6 +45,25 @@ class ScheduledOwnerPreviewContracts(unittest.TestCase):
                     sunday_daily_marker=marker,
                 )
 
+    def test_scheduled_editor_send_is_default_but_manual_stays_opt_in(self):
+        src = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn(
+            "if: github.event_name == 'workflow_dispatch' || "
+            "github.event_name == 'schedule'", src,
+        )
+        self.assertIn(
+            "SUNDAY_SEND: ${{ github.event_name == 'schedule' || "
+            "(github.event_name == 'workflow_dispatch' && "
+            "vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true' && "
+            "inputs.send_email == true) }}", src,
+        )
+        # This default must NOT weaken the first-edition human approval,
+        # both scheduled-mode exclusivity and the Sunday corpus freshness.
+        self.assertIn('IPR_SUNDAY_OWNER_REVIEWED_SHA256', src)
+        self.assertIn('IPR_SUNDAY_OWNER_PREVIEW_ENABLED', src)
+        self.assertIn('last_daily_run_date.txt', src)
+        self.assertIn('friday_delivery_enabled=os.environ[', src)
+
     def test_workflow_sends_preview_only_to_owner_and_checks_both_modes(self):
         src = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("vars.IPR_SUNDAY_OWNER_PREVIEW_ENABLED == 'true'", src)
