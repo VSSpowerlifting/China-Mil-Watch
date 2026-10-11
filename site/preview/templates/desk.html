@@ -90,7 +90,7 @@ it is not an analysis queue. <a href="corpus-guide.html#states">Read the four pr
 {% endif %}
 {% else %}
 <dl class="stat-rows">
-  <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
+  <div class="stat-row"><dt>{{ 'Corpus records' if desk.status == 'shadow' else 'Records' }}</dt><dd>{{ 'Not admitted' if desk.status == 'shadow' else 'None collected' }}</dd></div>
   <div class="stat-row"><dt>Sources configured{{ ' in production' if desk.status == 'shadow' and not desk.sources else '' }}</dt><dd>{{ desk.configured_source_count }}</dd></div>
   <div class="stat-row"><dt>{{ 'Sources enabled in production' if desk.status == 'shadow' and not desk.sources else 'Sources enabled in shadow' if desk.status == 'shadow' else 'Sources enabled' }}</dt><dd>{{ desk.enabled_source_count }}</dd></div>
 </dl>
