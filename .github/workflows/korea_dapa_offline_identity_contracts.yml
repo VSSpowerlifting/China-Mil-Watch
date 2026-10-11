@@ -1,0 +1,36 @@
+name: Korea DAPA second-issuer URL and document-shape contract — offline
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/review_korea_dapa_source_contract.py"
+      - "tests/test_korea_dapa_source_contract.py"
+      - "docs/engineering/KOREA_DAPA_OFFICIAL_IDENTITY_PILOT_2026-10-11.md"
+      - ".github/workflows/korea_dapa_offline_identity_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contract-only-no-network:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing minimal document parser dependency
+        run: python -m pip install beautifulsoup4
+      - name: No-network DAPA strict issuer and attachment evidence
+        run: python -m unittest tests.test_korea_dapa_source_contract -v
+      - name: Confirm no production or shadow state writes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json shadow/ config/shadow_source_workflow_bindings.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
