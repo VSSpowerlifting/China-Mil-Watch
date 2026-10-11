@@ -1,0 +1,154 @@
+{
+  "verifier": "scripts/verify_expressive_frontend.py",
+  "candidate_vs_baseline": {
+    "failures": 17
+  },
+  "baseline_vs_baseline": {
+    "failures": 17
+  },
+  "identical_failure_sets": true,
+  "failures": [
+    {
+      "name": "1440px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px the-pla-watch/terms.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px the-pla-watch/index.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "1440px the-pla-watch/archive.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/terms.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/index.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "768px the-pla-watch/archive.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/terms.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/index.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "375px the-pla-watch/archive.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/posts/2026-08-08.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/terms.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/index.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "320px the-pla-watch/archive.html: route and width",
+      "passed": false,
+      "detail": {
+        "status": 404,
+        "overflow": false
+      }
+    },
+    {
+      "name": "sampled routes: local resource responses",
+      "passed": false,
+      "detail": [
+        "http://127.0.0.1:PORT/the-pla-watch/archive.html",
+        "http://127.0.0.1:PORT/the-pla-watch/index.html",
+        "http://127.0.0.1:PORT/the-pla-watch/posts/2026-08-08.html",
+        "http://127.0.0.1:PORT/the-pla-watch/terms.html"
+      ]
+    }
+  ],
+  "classification": "Baseline-matched ERRORS, not passes: legacy the-pla-watch/ routes the scratch preview build does not emit return 404.",
+  "limitations": [
+    "Chromium browser checks; real assistive technology and Safari/Firefox not exercised"
+  ]
+}

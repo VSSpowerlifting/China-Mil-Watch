@@ -117,3 +117,30 @@
 .home-register{padding-top:55px}
 @media(max-width:600px){.home-finder{padding-bottom:85px}.home-finder::after{height:52px;background-size:750px auto}.home-register{padding-top:40px}}
 @media print,(forced-colors:active){.home-finder::after{display:none}.home-finder{padding-bottom:30px}}
+/* Relief (Phase 2). Lift comes only from the relief stylesheet's rl-* surfaces, linked
+   before this file; these rules lay those surfaces out and add no shadow. */
+[data-surface] main#main>.wrap.home-finder{background:var(--bg) url('assets/material/chart-paper.png')}
+.home-finder.rl-finder{margin-top:-40px}
+.home-search:focus-within{border-color:var(--accent)}
+.home-page .home-search .btn.tactile:hover{background:#254f55;border-color:#254f55}
+.home-page .home-search .btn.tactile:active{background:#0b1d24;border-color:#0b1d24}
+@media(prefers-reduced-motion:reduce){[data-surface] .home-page :is(.btn,button):not(:disabled):active{transform:none}}
+.home-recent .record-list{display:grid;gap:22px}
+.home-recent .record-row.home-card{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px 22px;align-items:start;width:88%;padding:22px 26px 20px 22px;background:var(--surface);border:1px solid var(--rule);border-top:2px solid var(--accent)}
+.home-recent .home-card:nth-child(even){margin-left:auto}
+.home-card>.rl-emblem{grid-row:span 2;width:64px;height:64px}
+.home-card>div,.home-card>.row-side{grid-column:2}
+.home-card-date{font:12px/1.5 var(--sans);color:var(--muted);margin:0 0 6px}
+.home-recent .home-card .row-side a{display:inline-flex;align-items:center;min-height:24px}
+.home-latest-analysis.rl-analysis{padding:38px 40px 36px}
+.home-analysis-geo{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:22px;align-items:end;margin:32px 0 0;padding-top:24px;border-top:1px solid #ffffff25}
+.home-analysis-geo figcaption{font:11px/1.6 var(--sans);color:var(--band-muted)}
+.home-analysis-desks{display:flex;gap:10px;margin:0 0 12px}
+.home-analysis-desks .rl-emblem{width:auto;height:30px}
+.home-desks .home-section-head h2{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+.home-desks .home-section-head h2::after{content:'';flex:1 1 60px;height:1px;background:var(--rule)}
+.home-desks-geo{display:inline-flex;align-items:center;gap:10px}
+.home-desks-geo .rl-emblem{width:auto;height:46px}
+.home-desk-list a{border-top:1px solid var(--rule);padding-top:16px}
+@media(max-width:600px){.home-finder.rl-finder{margin-top:-26px}.home-recent .record-row.home-card,.home-recent .home-card:nth-child(even){width:auto;margin-left:0;grid-template-columns:44px minmax(0,1fr);gap:6px 16px;padding:18px 16px}.home-card>.rl-emblem{width:44px;height:44px}.home-latest-analysis.rl-analysis{padding:30px 20px 28px}.home-analysis-geo{grid-template-columns:minmax(0,1fr)}.home-analysis-geo .rl-strait{max-width:220px}.home-desks-geo .rl-emblem{height:36px}}
+@media(forced-colors:active){.home-desks .home-section-head h2::after{background:CanvasText}}

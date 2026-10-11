@@ -4,6 +4,40 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-11 — Expressive frontend Phase 2 (Home) implementation decisions
+
+These choices were made within the owner's Phase 2 Home kickoff and lean
+execution addendum. They are not visual sign-off, and only the homepage
+changes. Evidence is in `docs/evidence/frontend-home-phase2-2026-10-11/`.
+
+- **Publish only what the homepage uses.** The production build copies
+  `relief.css`, `assets/geo/emblems.svg` and `assets/geo/strait.svg`
+  byte for byte (`RELIEF_PRODUCTION_ASSETS`). Flags, glyphs, `region.svg`,
+  `geo.receipt.json` and `gallery-relief.html` stay `--gallery`-only.
+- **The Phase 1 isolation test became a page-scoped allowlist**, not a
+  deletion. `home.html` may reference `relief.css`, `_relief.html`,
+  `rl-finder`, `rl-card` and `rl-analysis`, and the `emblem` and `strait`
+  macros; every other production template, both base templates and every
+  stylesheet stay out. The B1 six-surface shadow audit is unchanged.
+- **Records use a home-only `home_card` macro.** It keeps the `record_row`
+  fields and order and adds the source-stated date and desk emblem;
+  `record_row` stays the shared list contract.
+- **The Strait figure is conditional on the lead Brief's own desks.** It
+  appears only when they include Singapore; otherwise the band shows only
+  that Brief's desk emblems, which mark the countries the Brief analyses and
+  make no collection claim. A fixed relief is never placed beside unrelated
+  analysis. The caption says it is decorative, not a navigation or boundary
+  chart.
+- **`rl-settles` is not applied to the second analysis plane**, which keeps
+  its existing timeline/Briefs layout.
+- **Desk emblems sit in the desks heading only**, drawn from the same
+  `desks if d.record_count` predicate as the list; the list's link targets,
+  counts and caveats are unchanged.
+- **The inherited reduced-motion press is fixed on the homepage** by
+  `[data-surface] .home-page :is(.btn,button):not(:disabled):active{transform:none}`
+  under `prefers-reduced-motion: reduce`. Other pages keep the inherited
+  behaviour until their own phase.
+
 ## 2026-10-11 — Expressive frontend Phase 1 implementation decisions
 
 These are implementation choices made within the Phase 0 §13 ticket and the

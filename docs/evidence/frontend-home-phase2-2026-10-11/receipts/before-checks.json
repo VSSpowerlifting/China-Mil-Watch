@@ -1,0 +1,436 @@
+{
+ "url": "<served scratch build>/index.html",
+ "label": "before",
+ "state": {
+  "recent": [
+   "record/5071.html",
+   "record/5070.html",
+   "record/5069.html",
+   "record/5068.html"
+  ],
+  "selected": "record/5061.html",
+  "selected_id": "selected-title",
+  "selected_original_lang": "zh-Hans",
+  "form": {
+   "action": "archive.html",
+   "method": "get",
+   "inputs": [
+    [
+     "q",
+     "home-q",
+     "search"
+    ]
+   ]
+  },
+  "search_caption": "Search covers titles. Original texts and provenance are available inside each record.",
+  "analysis_branch": "briefs",
+  "analysis_text": "Human-controlled analysis Latest analysis Indo-Pacific Record Briefs · No. 17 Trident Resolve: What the Exercise Looked Like From Singapore and China Singapore described Trident Resolve as a large, multi-part ADMM-Plus exercise bringing together military and civilian participants from across the region. China’s account was narrower, focusing on the disaster-response work its own contingent was expected to carry out. Benjamin Yang · Week ending 26 September 2026 · Retrospective edition Read this Brief Indo-Pacific Record Briefs A reading of the record. Analysis compares official accounts and identifies what each source supports. It remains separate from the preserved evidence. All Briefs",
+  "desks": [
+   [
+    "china.html",
+    "China Desk 4,979 public records in this snapshot"
+   ],
+   [
+    "singapore.html",
+    "Singapore Desk 86 public records in this snapshot"
+   ]
+  ],
+  "desk_note": "This snapshot contains public records from China Desk, Singapore Desk. Coverage is selective and concentrated in Chinese sources. Other desks contribute no public records to this snapshot; their scope and limitations are described in coverage detail.",
+  "credits": [
+   "Illustrative context · U.S. Navy / Nathan Burke · 23 November 2015 · Public domain Image source",
+   "Photo: 葛瀚强 / PLA Daily (via 81.cn). Source and credit. Context, not evidence."
+  ],
+  "scripts": [
+   "intro.js",
+   "shell.js"
+  ],
+  "styles": [
+   "fonts.css",
+   "styles.css",
+   "surfaces.css",
+   "home.css"
+  ],
+  "requests": [
+   "/assets/fonts/instrument-serif-1.woff2",
+   "/assets/fonts/inter-0.woff2",
+   "/assets/fonts/inter-1.woff2",
+   "/assets/frontend/pacific-fleet-1600.webp",
+   "/assets/identity/selected-ipr/ipr-ivory-160.png",
+   "/assets/identity/selected-ipr/ipr-navy-160.png",
+   "/assets/material/chart-paper.png",
+   "/assets/material/chart-shelf.svg",
+   "/assets/material/coast-profile.svg",
+   "/assets/material/navy-paper.png",
+   "/briefs/media/maritime-cooperation-2026-600.webp",
+   "/fonts.css",
+   "/home.css",
+   "/index.html",
+   "/intro.js",
+   "/shell.js",
+   "/styles.css",
+   "/surfaces.css"
+  ],
+  "link_heights_1280": [
+   [
+    "Fact Sheet: 50 Years of Singap",
+    63
+   ],
+   [
+    "Singapore Desk",
+    19
+   ],
+   [
+    "Singapore and Brunei Darussala",
+    63
+   ],
+   [
+    "Singapore Desk",
+    19
+   ],
+   [
+    "商务部：反对个别国家以所谓“产能过剩”为名 行贸易保护主义之",
+    28
+   ],
+   [
+    "China Desk",
+    19
+   ],
+   [
+    "我们的长征路丨从湘江古渡到“长征绿道”",
+    28
+   ],
+   [
+    "China Desk",
+    19
+   ],
+   [
+    "China Desk4,979 public records",
+    65
+   ],
+   [
+    "Singapore Desk86 public record",
+    65
+   ]
+  ],
+  "contrast_1280": {
+   ".home-recent .row-side": 5.15,
+   ".home-recent h3 a": 12.72,
+   ".home-latest-analysis .meta": 9.59,
+   ".home-desk-list a span": 5.15
+  },
+  "press_transform_reduce": "matrix(1, 0, 0, 1, 0, 2)",
+  "press_transform_no-preference": "matrix(1, 0, 0, 1, 0, 2)"
+ },
+ "checks": [
+  {
+   "name": "no horizontal overflow @320",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "no console errors / failed requests @320",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "name": "no request to 81.cn @320",
+   "passed": true,
+   "detail": null
+  },
+  {
+   "name": "no horizontal overflow @375",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "no console errors / failed requests @375",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "name": "no request to 81.cn @375",
+   "passed": true,
+   "detail": null
+  },
+  {
+   "name": "no horizontal overflow @768",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "no console errors / failed requests @768",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "name": "no request to 81.cn @768",
+   "passed": true,
+   "detail": null
+  },
+  {
+   "name": "no horizontal overflow @1280",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "no console errors / failed requests @1280",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "name": "no request to 81.cn @1280",
+   "passed": true,
+   "detail": null
+  },
+  {
+   "name": "no horizontal overflow @1440",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "no console errors / failed requests @1440",
+   "passed": true,
+   "detail": []
+  },
+  {
+   "name": "no request to 81.cn @1440",
+   "passed": true,
+   "detail": null
+  },
+  {
+   "name": "search input keyboard focus visible",
+   "passed": true,
+   "detail": [
+    "home-q",
+    "solid",
+    "2px",
+    "none"
+   ]
+  },
+  {
+   "name": "search button keyboard focus visible",
+   "passed": true,
+   "detail": [
+    "BUTTON",
+    "Search records",
+    "solid",
+    "2px"
+   ]
+  },
+  {
+   "name": "search button touch target >= 44px",
+   "passed": true,
+   "detail": {
+    "x": 1007.046875,
+    "y": 720,
+    "width": 158.953125,
+    "height": 50
+   }
+  },
+  {
+   "name": "search input touch target >= 44px",
+   "passed": true,
+   "detail": {
+    "x": 114,
+    "y": 720,
+    "width": 883.046875,
+    "height": 50
+   }
+  },
+  {
+   "name": "record and desk link targets >= 24px (WCAG 2.5.8)",
+   "passed": false,
+   "detail": [
+    [
+     "Fact Sheet: 50 Years of Singap",
+     63
+    ],
+    [
+     "Singapore Desk",
+     19
+    ],
+    [
+     "Singapore and Brunei Darussala",
+     63
+    ],
+    [
+     "Singapore Desk",
+     19
+    ],
+    [
+     "商务部：反对个别国家以所谓“产能过剩”为名 行贸易保护主义之",
+     28
+    ],
+    [
+     "China Desk",
+     19
+    ],
+    [
+     "我们的长征路丨从湘江古渡到“长征绿道”",
+     28
+    ],
+    [
+     "China Desk",
+     19
+    ],
+    [
+     "China Desk4,979 public records",
+     65
+    ],
+    [
+     "Singapore Desk86 public record",
+     65
+    ]
+   ]
+  },
+  {
+   "name": "hero photo credit link not occluded",
+   "passed": true,
+   "detail": true
+  },
+  {
+   "name": "new text contrast >= 4.5:1",
+   "passed": true,
+   "detail": {
+    ".home-recent .row-side": 5.15,
+    ".home-recent h3 a": 12.72,
+    ".home-latest-analysis .meta": 9.59,
+    ".home-desk-list a span": 5.15
+   }
+  },
+  {
+   "name": "search submits GET archive.html?q=",
+   "passed": true,
+   "detail": "/archive.html?q=exercise"
+  },
+  {
+   "name": "reduced motion: pressed search button does not move",
+   "passed": false,
+   "detail": "matrix(1, 0, 0, 1, 0, 2)"
+  },
+  {
+   "name": "reduced motion: no running animations",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "no-JS: every homepage section visible @375",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "no-JS: every homepage section visible @1280",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "html.no-anim: relief art not animated",
+   "passed": true,
+   "detail": [
+    0,
+    0
+   ]
+  },
+  {
+   "name": "forced colours: no box shadows @375",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "forced colours: no box shadows @1280",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "200% zoom: no horizontal overflow",
+   "passed": true,
+   "detail": 0
+  },
+  {
+   "name": "print: no box shadows",
+   "passed": true,
+   "detail": 0
+  }
+ ],
+ "failures": [
+  {
+   "name": "record and desk link targets >= 24px (WCAG 2.5.8)",
+   "passed": false,
+   "detail": [
+    [
+     "Fact Sheet: 50 Years of Singap",
+     63
+    ],
+    [
+     "Singapore Desk",
+     19
+    ],
+    [
+     "Singapore and Brunei Darussala",
+     63
+    ],
+    [
+     "Singapore Desk",
+     19
+    ],
+    [
+     "商务部：反对个别国家以所谓“产能过剩”为名 行贸易保护主义之",
+     28
+    ],
+    [
+     "China Desk",
+     19
+    ],
+    [
+     "我们的长征路丨从湘江古渡到“长征绿道”",
+     28
+    ],
+    [
+     "China Desk",
+     19
+    ],
+    [
+     "China Desk4,979 public records",
+     65
+    ],
+    [
+     "Singapore Desk86 public record",
+     65
+    ]
+   ]
+  },
+  {
+   "name": "reduced motion: pressed search button does not move",
+   "passed": false,
+   "detail": "matrix(1, 0, 0, 1, 0, 2)"
+  }
+ ],
+ "shots": [
+  "before-full-375.png",
+  "before-finder-375.png",
+  "before-records-375.png",
+  "before-analysis-375.png",
+  "before-photo-brief-375.png",
+  "before-desks-375.png",
+  "before-full-768.png",
+  "before-finder-768.png",
+  "before-records-768.png",
+  "before-analysis-768.png",
+  "before-photo-brief-768.png",
+  "before-desks-768.png",
+  "before-full-1280.png",
+  "before-finder-1280.png",
+  "before-records-1280.png",
+  "before-analysis-1280.png",
+  "before-photo-brief-1280.png",
+  "before-desks-1280.png",
+  "before-focus-input-1280.png",
+  "before-focus-button-1280.png",
+  "before-reduced-motion-1280.png",
+  "before-nojs-375.png",
+  "before-nojs-1280.png",
+  "before-forced-colors-375.png",
+  "before-forced-colors-1280.png",
+  "before-zoom200-full.png"
+ ]
+}

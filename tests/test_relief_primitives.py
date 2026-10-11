@@ -5,8 +5,9 @@ DECISION_LOG 2026-10-10: three editorial lifts on six named surfaces and
 nowhere else (B1=A); full-colour flags vendored with their MIT licence (B9=A);
 geography built deterministically from Natural Earth and recorded in a receipt;
 every illustration decorative; motion only behind reduced-motion, scripting
-and scroll-timeline support. These checks hold those lines, and keep the
-primitives out of production pages until a later phase links them.
+and scroll-timeline support. These checks hold those lines. Phase 2 links the
+primitives into the homepage alone; every other production page stays without
+them, and the production build publishes only the files the homepage uses.
 """
 
 from __future__ import annotations
@@ -245,21 +246,164 @@ class MacroTests(unittest.TestCase):
 
 
 class ProductionIsolationTests(unittest.TestCase):
-    """Only the relief gallery links the primitives in Phase 1."""
+    """Phase 2: the homepage is the one production page allowed the primitives.
 
-    def test_no_production_template_or_stylesheet_reaches_them(self):
-        pattern = re.compile(r"relief\.css|_relief\.html|assets/(geo|flags|glyphs)/|\brl-")
+    A positive allowlist per template: home.html may reach relief.css, the
+    _relief.html macros, the two Natural Earth sprites and the rl-* classes;
+    every other production template reaches none of them. Flags and source
+    glyphs stay gallery-only.
+    """
+
+    PATTERN = re.compile(r"relief\.css|_relief\.html|assets/(geo|flags|glyphs)/[\w.-]*|\brl-[a-z]+")
+    ALLOWED = {"home.html": {"relief.css", "_relief.html", "rl-finder", "rl-card",
+                             "rl-analysis"}}
+
+    def test_only_the_homepage_reaches_them_and_only_what_it_uses(self):
         for path in sorted(TEMPLATES.glob("*.html")):
             if path.name in ("gallery-relief.html", "_relief.html"):
                 continue
-            self.assertIsNone(pattern.search(path.read_text(encoding="utf-8")), path.name)
+            found = {m.group(0) for m in self.PATTERN.finditer(path.read_text(encoding="utf-8"))}
+            self.assertEqual(found - self.ALLOWED.get(path.name, set()), set(), path.name)
+        home = (TEMPLATES / "home.html").read_text(encoding="utf-8")
+        for name in ("relief.css", "_relief.html", "rl-finder", "rl-card", "rl-analysis"):
+            self.assertIn(name, home)
+        # The homepage calls only the emblem and strait macros.
+        self.assertEqual(set(re.findall(r"relief\.(\w+)\(", home)), {"emblem", "strait"})
+
+    def test_stylesheets_and_base_templates_stay_out(self):
         for path in sorted(PREVIEW.glob("*.css")):
             if path != RELIEF_CSS:
                 self.assertNotRegex(path.read_text(encoding="utf-8"), r"relief\.css|--lift-")
         for path in (REPO_ROOT / "site/templates/base.html",
-                     REPO_ROOT / "site/templates/pla-watch-base.html"):
+                     REPO_ROOT / "site/templates/pla-watch-base.html",
+                     TEMPLATES / "base.html"):
             if path.exists():
                 self.assertNotIn("relief.css", path.read_text(encoding="utf-8"))
+
+    def test_relief_css_is_linked_before_the_home_stylesheet(self):
+        home = (TEMPLATES / "home.html").read_text(encoding="utf-8")
+        self.assertLess(home.index('href="relief.css"'), home.index('href="home.css"'))
+
+
+def _production_build(out, **options):
+    sys.path.insert(0, str(PREVIEW))
+    import generate_preview as gp
+    gp.build(out, gp.PUBLIC_TITLE, TRACKED_DB,
+             snapshot=gp.snapshot_from_corpus(TRACKED_DB), legacy_routes=True, **options)
+    return gp
+
+
+class ProductionAssetTests(unittest.TestCase):
+    """A production build publishes the homepage's relief files and nothing more.
+
+    Built with an approved copy of the timeline pilot, so the homepage's
+    Evidence Timelines branch is the one rendered.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        if not TRACKED_DB.exists():
+            raise unittest.SkipTest("production database not present")
+        from tests.test_timelines import approve_fixture
+        cls.tmp = Path(tempfile.mkdtemp(prefix="relief-production-"))
+        sources = cls.tmp / "timelines"
+        sources.mkdir()
+        sc = json.loads((REPO_ROOT / "timelines/maritime-cooperation-2026.json").read_text(encoding="utf-8"))
+        sc["editor_name"] = "Fixture editor"
+        approve_fixture(sc)
+        (sources / (sc["slug"] + ".json")).write_text(json.dumps(sc), encoding="utf-8")
+        cls.out = cls.tmp / "build"
+        cls.gp = _production_build(cls.out, timelines_dir=sources)
+        cls.index = (cls.out / "index.html").read_text(encoding="utf-8")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_exactly_the_homepage_files_are_published_byte_identical(self):
+        self.assertEqual(self.gp.RELIEF_PRODUCTION_ASSETS,
+                         ("assets/geo/emblems.svg", "assets/geo/strait.svg"))
+        self.assertEqual((self.out / "relief.css").read_bytes(), RELIEF_CSS.read_bytes())
+        for route in self.gp.RELIEF_PRODUCTION_ASSETS:
+            self.assertEqual((self.out / route).read_bytes(),
+                             (REPO_ROOT / "site" / route).read_bytes(), route)
+        self.assertEqual(sorted(p.name for p in (self.out / "assets/geo").iterdir()),
+                         ["emblems.svg", "strait.svg"])
+        for absent in ("assets/flags", "assets/glyphs", "gallery-relief.html"):
+            self.assertFalse((self.out / absent).exists(), absent)
+        self.assertFalse(any(self.out.glob("assets/**/*.receipt.json")))
+
+    def test_every_homepage_use_resolves(self):
+        uses = re.findall(r'<use href="(assets/[^"#]+)#([^"]+)"', self.index)
+        self.assertTrue(uses)
+        ids = {}
+        for path, symbol in uses:
+            if path not in ids:
+                doc = xml.dom.minidom.parse(str(self.out / path))
+                ids[path] = {s.getAttribute("id") for s in doc.getElementsByTagName("symbol")}
+            self.assertIn(symbol, ids[path], "%s#%s" % (path, symbol))
+
+    def test_homepage_links_relief_first_and_no_other_page_links_it(self):
+        self.assertLess(self.index.index('href="relief.css"'), self.index.index('href="home.css"'))
+        for page in self.out.rglob("*.html"):
+            if page.name != "index.html" or page.parent != self.out:
+                self.assertNotIn("relief.css", page.read_text(encoding="utf-8"),
+                                 page.relative_to(self.out))
+
+    def test_relief_art_is_decorative(self):
+        for tag in re.findall(r"<svg\b[^>]*>", self.index):
+            if "rl-" in tag:
+                self.assertIn('aria-hidden="true"', tag)
+
+    def test_timeline_branch_survives_beside_the_strait(self):
+        self.assertIn("Follow the dates.", self.index)
+        self.assertIn("Explore the timeline", self.index)
+        self.assertIn('href="timeline/maritime-cooperation-2026.html"', self.index)
+        # The lead Brief lists the Singapore desk, so the strait is drawn and captioned.
+        self.assertIn('class="rl-strait', self.index)
+        self.assertIn("Decorative; not a navigation or boundary chart.", self.index)
+
+
+class StraitScopeTests(unittest.TestCase):
+    """The Singapore Strait is drawn only beside a Brief that lists Singapore.
+
+    The published lead lists china and singapore; this build narrows the lead
+    entry's desks in memory to china alone (no sidecar is touched).
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        if not TRACKED_DB.exists():
+            raise unittest.SkipTest("production database not present")
+        sys.path.insert(0, str(PREVIEW))
+        import generate_preview as gp
+        original = gp.load_collection
+
+        def china_only(*args, **kwargs):
+            collection = original(*args, **kwargs)
+            if collection.lead is not None:
+                collection.lead["desks"] = ["china"]
+            return collection
+
+        cls.tmp = Path(tempfile.mkdtemp(prefix="relief-strait-"))
+        gp.load_collection = china_only
+        try:
+            _production_build(cls.tmp / "build")
+        finally:
+            gp.load_collection = original
+        cls.index = (cls.tmp / "build" / "index.html").read_text(encoding="utf-8")
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.tmp, ignore_errors=True)
+
+    def test_no_strait_without_a_singapore_desk(self):
+        self.assertIn("Read this Brief", self.index)
+        self.assertNotIn("rl-strait", self.index)
+        self.assertNotIn("Singapore Strait", self.index)
+        analysis = self.index[self.index.index('id="analysis"'):self.index.index('home-analysis-second')]
+        self.assertIn("emblems.svg#china", analysis)
+        self.assertNotIn("emblems.svg#singapore", analysis)
 
 
 class GalleryBuildTests(unittest.TestCase):
