@@ -115,10 +115,17 @@ def _read_snapshot(slug, repo, commit, term):
         clock = json.loads(clock_raw.decode("utf-8"))
     except (ValueError, UnicodeDecodeError):
         raise ReaderHold("source clock malformed") from None
-    expected_desk = SOURCES[slug][0]
-    require(clock.get("desk", clock.get("desk_id")) in
-            (expected_desk, "ph-afp", "ph-nsc"),
-            "source clock claims a different desk")
+    require(isinstance(clock, dict) and
+            isinstance(clock.get("day_zero_run_id"), str) and
+            re.fullmatch(r"[1-9][0-9]*-[1-9][0-9]*", clock["day_zero_run_id"]) and
+            isinstance(clock.get("day_zero_utc"), str),
+            "source clock missing immutable Day 0 provenance")
+    # Existing AFP, NSC and MPS/MOIT clock files intentionally have no desk
+    # key. They cannot prove source identity: the SQLite rows must do that.
+    if "desk" in clock or "desk_id" in clock:
+        expected = SOURCES[slug][0]
+        require(clock.get("desk", clock.get("desk_id")) == expected,
+                "source clock claims a different desk")
     size = git(repo, "cat-file", "-s", commit + ":state/shadow.db", cap=32)
     try:
         n = int(size)
