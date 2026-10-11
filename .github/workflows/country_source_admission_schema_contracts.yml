@@ -1,0 +1,40 @@
+name: Country source admission schema — offline read-only preflight
+
+on:
+  pull_request:
+    paths:
+      - "scripts/inspect_country_admission_boundary.py"
+      - "tests/test_country_source_admission_schema.py"
+      - "docs/engineering/COUNTRY_SOURCE_ADMISSION_SCHEMA_PREFLIGHT_2026-10-11.md"
+      - ".github/workflows/country_source_admission_schema_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  source-schema-and-collision-no-write:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Pin production DB and output bytes
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/admission-db.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/admission-output.sha"
+      - name: Test synthetically and inspect only the checked-in schema
+        run: python -m unittest tests.test_country_source_admission_schema -v
+      - name: Refuse all production/shadow/output side effects
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/admission-db.sha"
+          sha256sum -c "$RUNNER_TEMP/admission-output.sha" > /dev/null
+          git diff --exit-code -- pla_watch.db output/ shadow/ desks/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/ desks/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
