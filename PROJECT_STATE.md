@@ -107,8 +107,9 @@ denials consume no retry attempt. This is not a daily/invoice/restart allowance.
 The mocked scratch run completes four calls and reconciles USD 0.015 with
 legacy telemetry; the equal-cap/envelope three-day comparison is explicitly
 fictional/modeled, not historical per-record spend. Private browser checks at
-1280/375 and 189 focused tests pass. Source candidate is `713b72a3c1`; final
-full offline/CI receipts are recorded in the implementation draft PR. Output validation retains ten governed
+1280/375 and 189 focused tests pass; 72 prior blank-body/retry/state/queue
+contracts also pass after updating the moved selection seam. Final full
+offline/CI receipts are recorded in draft PR #395. Output validation retains ten governed
 warnings; DB/output/history preservation is independently hashed. No paid call,
 collection, production mutation, output regeneration, merge or activation.
 Operator contract and reproduction: `docs/ANALYSIS_CAPACITY_RUNBOOK.md`.
