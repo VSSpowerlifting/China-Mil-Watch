@@ -42,6 +42,15 @@ S3_FALSE_FLAGS = (
     "production_write_authorized", "public_record_projection_authorized",
     "website_or_model_release_authorized", "registry_or_manifest_changes_authorized",
 )
+S3_REPORT_KEYS = frozenset((
+    "schema", "candidate_source_slug", "desk_slug", "source_state_branch",
+    "pinned_source_commit", "checkpoint_date", "checkpoint_label",
+    "checkpoint_receipt_sha256", "production_database_sha256",
+    "production_schema_checks", "production_source_slug_collisions",
+    "machine_checkpoint_state", "machine_hold_count", "schema_preflight",
+    "holds", "next_separate_engineering_stages",
+    "candidate_records_imported", "database_or_output_writes",
+)) | frozenset(S3_FALSE_FLAGS)
 CANDIDATE_KEYS = frozenset(("source_identity", "canonical_url", "publisher_date"))
 
 
@@ -68,6 +77,8 @@ def bind_s3(report, source):
     require(source in AUDIT_FAMILIES, "source_not_in_collision_rehearsal_scope")
     require(type(report) is dict and report.get("schema") == S3_SCHEMA,
             "not_a_source_schema_preflight")
+    require(set(report) == S3_REPORT_KEYS,
+            "unexpected_or_missing_S3_report_fields")
     require(report.get("candidate_source_slug") == source and
             report.get("desk_slug") == SOURCE_CONTRACTS[source][1] and
             report.get("source_state_branch") == SOURCE_CONTRACTS[source][2],
