@@ -24,6 +24,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 import anthropic
+from analysis.admission import AdmissionDeferred, ReceiptFailure
 
 from analysis.prompts import (
     PROMPT_VERSION,
@@ -111,13 +112,66 @@ class Analyzer:
     Multiple threads in ThreadPoolExecutor can safely call _call() concurrently.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, *, admission=None) -> None:
         if not ANTHROPIC_API_KEY:
             raise ValueError(
                 "ANTHROPIC_API_KEY is not set. Add it to .env or export it."
             )
         self._client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
         self._usage = UsageLedger()
+        self._admission = admission
+
+    def prepare_article(self, record_id):
+        """Reserve the entire guarded article before its first provider call."""
+        guard = self.__dict__.get("_admission")
+        if guard is not None:
+            guard.prepare(record_id, {
+                TASK_RELEVANCE: (RELEVANCE_MODEL, 500),
+                TASK_TRANSLATION: (ANALYSIS_MODEL, TRANSLATION_MAX_TOKENS),
+                TASK_SUMMARY: (ANALYSIS_MODEL, 1000),
+                TASK_CATEGORIZATION: (ANALYSIS_MODEL, 500),
+            })
+            self._guard_record_id = record_id
+
+    def _provider_response(self, kwargs, task, stream):
+        """The sole raw/tool/stream dispatch boundary; legacy settings unchanged."""
+        guard = self.__dict__.get("_admission")
+        client = self._client
+        ticket = None
+        if guard is not None:
+            from analysis.admission import AdmissionDeferred
+            # Custom providers, beta/priority settings or headers invalidate
+            # the standard-price/context bound. No fallback to the legacy client.
+            if (str(client.base_url).rstrip("/") != "https://api.anthropic.com"
+                    or client.default_query
+                    or any(k.lower() in ("anthropic-beta", "anthropic-version")
+                           for k in client._custom_headers)):
+                raise AdmissionDeferred("unsupported-sdk-configuration")
+            client = client.with_options(max_retries=0)
+            if client.max_retries != 0:
+                raise AdmissionDeferred("sdk-retries-not-disabled")
+            ticket = guard.dispatch(self.__dict__.get("_guard_record_id"), task, kwargs)
+        try:
+            if stream:
+                with client.messages.stream(**kwargs) as s:
+                    response = s.get_final_message()
+            else:
+                response = client.messages.create(**kwargs)
+        except BaseException:
+            self.usage.record_failure(task, kwargs["model"])
+            if guard is not None:
+                guard.failure(ticket)
+            raise
+        failed = response.stop_reason == "max_tokens" or not response.content
+        if kwargs.get("tools"):
+            tool_name = kwargs["tools"][0]["name"]
+            failed = failed or not any(b.type == "tool_use" and b.name == tool_name for b in response.content)
+        # Observability receives the paid response even if strict receipt I/O
+        # subsequently fails. Admission never reads these permissive counters.
+        self.usage.record_response(task, kwargs["model"], getattr(response, "usage", None), failed=failed)
+        if guard is not None:
+            guard.response(ticket, response)
+        return response
 
     @property
     def usage(self) -> UsageLedger:
@@ -182,19 +236,19 @@ class Analyzer:
             temperature=temperature,
         )
         try:
-            if stream:
-                with self._client.messages.stream(**kwargs) as s:
-                    response = s.get_final_message()
-            else:
-                response = self._client.messages.create(**kwargs)
+            response = self._provider_response(kwargs, task, stream)
+        except (AdmissionDeferred, ReceiptFailure):
+            raise
         except anthropic.APIStatusError as exc:
-            self.usage.record_failure(task, used_model)
+            if self.__dict__.get("_admission") is not None:
+                classified = _classify_status_error(exc)
+                raise type(classified)("Guarded provider status error (%s)" % exc.status_code) from exc
             raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
-            self.usage.record_failure(task, used_model)
+            if self.__dict__.get("_admission") is not None:
+                raise AnalysisError("Guarded provider connection error") from exc
             raise AnalysisError(f"API connection error: {exc}") from exc
         except Exception:
-            self.usage.record_failure(task, used_model)
             raise
 
         usage = getattr(response, "usage", None)
@@ -212,8 +266,6 @@ class Analyzer:
         empty = not response.content
         # The response exists, so its reported tokens are real spend even when
         # the output is then rejected below.
-        self.usage.record_response(task, used_model, usage,
-                                   failed=truncated or empty)
 
         if truncated:
             raise AnalysisError(
@@ -286,8 +338,7 @@ class Analyzer:
         to the historical translation settings, unchanged for existing callers.
         """
         used_model = model or ANALYSIS_MODEL
-        try:
-            with self._client.messages.stream(
+        kwargs = dict(
                 model=used_model,
                 system=system if system is not None else self._SYSTEM_WITH_CACHE,
                 messages=messages,
@@ -295,16 +346,21 @@ class Analyzer:
                 temperature=temperature,
                 tools=[tool],
                 tool_choice={"type": "tool", "name": tool["name"]},
-            ) as s:
-                response = s.get_final_message()
+            )
+        try:
+            response = self._provider_response(kwargs, task, True)
+        except (AdmissionDeferred, ReceiptFailure):
+            raise
         except anthropic.APIStatusError as exc:
-            self.usage.record_failure(task, used_model)
+            if self.__dict__.get("_admission") is not None:
+                classified = _classify_status_error(exc)
+                raise type(classified)("Guarded provider status error (%s)" % exc.status_code) from exc
             raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
-            self.usage.record_failure(task, used_model)
+            if self.__dict__.get("_admission") is not None:
+                raise AnalysisError("Guarded provider connection error") from exc
             raise AnalysisError(f"API connection error: {exc}") from exc
         except Exception:
-            self.usage.record_failure(task, used_model)
             raise
 
         tool_block = next(
@@ -314,9 +370,6 @@ class Analyzer:
         )
         truncated = response.stop_reason == "max_tokens"
         # Reported tokens are real spend even if the output is rejected below.
-        self.usage.record_response(
-            task, used_model, getattr(response, "usage", None),
-            failed=truncated or tool_block is None)
 
         if truncated:
             raise AnalysisError(
@@ -505,6 +558,11 @@ class Analyzer:
         raw  = self._call(messages, max_tokens=1000, temperature=0.3,
                           task=TASK_SUMMARY)
         data = self._parse_task_json(raw, TASK_SUMMARY, ANALYSIS_MODEL)
+        if self.__dict__.get("_admission") is not None and (
+                not isinstance(data, dict) or not isinstance(data.get("summary"), str)
+                or not data["summary"].strip()):
+            self.usage.mark_failed(TASK_SUMMARY, ANALYSIS_MODEL)
+            raise AnalysisError("Invalid summary values")
         return str(data["summary"])
 
     def categorize(
@@ -519,6 +577,14 @@ class Analyzer:
         raw  = self._call(messages, max_tokens=500, temperature=0.0,
                           task=TASK_CATEGORIZATION)
         data = self._parse_task_json(raw, TASK_CATEGORIZATION, ANALYSIS_MODEL)
+        if self.__dict__.get("_admission") is not None and (
+                not isinstance(data, dict) or not isinstance(data.get("categories"), list)
+                or any(not isinstance(c, str) or c not in VALID_CATEGORIES for c in data["categories"])
+                or type(data.get("significance")) is not bool
+                or (data["significance"] and (not isinstance(data.get("significance_reason"), str)
+                                              or not data["significance_reason"].strip()))):
+            self.usage.mark_failed(TASK_CATEGORIZATION, ANALYSIS_MODEL)
+            raise AnalysisError("Invalid categorization values")
 
         categories = [c for c in data.get("categories", []) if c in VALID_CATEGORIES]
         is_significant = bool(data.get("significance", False))
@@ -593,20 +659,34 @@ class Analyzer:
             f_categories = pool.submit(self.categorize, title_en, body_en)
 
             fatal: Optional[FatalAPIError] = None
+            deferred = None
+            unexpected = None
+            stage_failed = False
+            from analysis.admission import AdmissionDeferred
 
             try:
                 summary = f_summary.result()
             except FatalAPIError as exc:
                 fatal = exc
+            except AdmissionDeferred as exc:
+                deferred = exc
             except AnalysisError as exc:
+                stage_failed = True
                 logger.error("Summary generation failed: %s", exc)
+            except BaseException as exc:
+                unexpected = exc
 
             try:
                 categories, is_significant, significance_reason = f_categories.result()
             except FatalAPIError as exc:
                 fatal = fatal or exc
+            except AdmissionDeferred as exc:
+                deferred = deferred or exc
             except AnalysisError as exc:
+                stage_failed = True
                 logger.error("Categorization failed: %s", exc)
+            except BaseException as exc:
+                unexpected = unexpected or exc
 
         # Both futures are resolved before raising, so neither thread is
         # abandoned mid-flight. The paid translation is discarded rather than
@@ -616,6 +696,12 @@ class Analyzer:
         # 2026-07-31. Leaving the article unanalyzed keeps it retryable.
         if fatal is not None:
             raise fatal
+        if unexpected is not None:
+            raise unexpected
+        if deferred is not None:
+            raise deferred
+        if stage_failed and self.__dict__.get("_admission") is not None:
+            summary = ""  # guarded completion requires both parallel results
 
         return {
             "relevance_score":        score,

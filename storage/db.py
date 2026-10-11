@@ -411,6 +411,19 @@ def update_analysis(
 
 # ── Queries for pipeline resume ───────────────────────────────────────────────
 
+def get_analysis_inventory(conn):
+    """Complete stored planner inputs on an explicitly chosen connection.
+
+    Private snapshots pass reconcile_db.read_only's scratch connection; Daily
+    passes get_conn(). No context binding, migration or recovery policy change.
+    """
+    conn.row_factory = sqlite3.Row
+    return conn.execute("""SELECT a.id, a.url, a.title_original, a.text_original,
+        a.scraped_at, a.processing_state, a.processing_attempts,
+        a.processing_reason, a.processing_first_failed_at, a.processing_last_failed_at,
+        a.analyzed_at, a.passed_relevance, s.slug AS source_slug, s.desk_id
+        FROM articles a LEFT JOIN sources s ON a.source_id=s.id ORDER BY a.id""").fetchall()
+
 def get_articles_pending_analysis() -> list[sqlite3.Row]:
     """
     Return articles that passed relevance but haven't been fully analyzed yet.

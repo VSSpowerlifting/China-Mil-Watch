@@ -237,6 +237,12 @@ def run(
     target_date:     date,
     dry_run:         bool = False,
     no_analysis:     bool = False,
+    *,
+    analysis_policy=None,
+    budget_usd=None,
+    receipt_sink=None,
+    expected_plan=None,
+    generate_output=True,
 ) -> None:
     # C1 provides only a validated private-mode inspection seam. Collection,
     # analysis and checkpoint lifecycle wiring belongs to separately reviewed
@@ -248,6 +254,13 @@ def run(
         require(dry_run is True, "custody_pipeline_not_integrated")
         logger.info("Fictional custody dry run: verified database; no execution")
         return
+    if budget_usd is not None:
+        from analysis.admission import money
+        money(budget_usd)
+        if not callable(receipt_sink):
+            raise ValueError("guarded execution requires a private receipt sink")
+        if dry_run or no_analysis:
+            raise ValueError("guarded execution cannot be a skipped analysis run")
     start_time = datetime.now()
     logger.info("=== PLA Watch pipeline — %s ===", target_date.isoformat())
     logger.info("Sources: %s | dry-run: %s", sources, dry_run)
@@ -527,60 +540,37 @@ def run(
     # records keep passed_relevance NULL, "awaiting screening", until a
     # reviewed desk-scoped screening (scripts/rescreen_desk.py) — see
     # processing/screening.py.
-    held_desks: dict[str, int] = {}
-
-    def _in_daily_queue(desk_id: Optional[str]) -> bool:
-        if profile_for_desk(desk_id).daily_queue:
-            return True
-        held_desks[desk_id] = held_desks.get(desk_id, 0) + 1
-        return False
-
-    # Format: (article_id, title_zh, body_zh, url)
-    new_queue: list[tuple[int, str, str, str]] = [
-        (aid,
-         a.get("title_original", ""),
-         a.get("text_original",  ""),
-         a.get("url", "?"))
-        for aid, a in inserted
-        if _in_daily_queue(desk_for_source(a.get("source_slug")))
-    ]
-
-    inserted_ids = {aid for aid, _ in inserted}
-
-    pending_all  = db.get_articles_pending_analysis()
-    unscored_all = db.get_articles_unscored()
-    backlog_desks = db.get_article_desks(
-        {r["id"] for r in pending_all} | {r["id"] for r in unscored_all})
-    pending_rows = [r for r in pending_all
-                    if _in_daily_queue(backlog_desks.get(r["id"]))]
-    pending: list[tuple[int, str, str, str]] = [
-        (r["id"],
-         r["title_original"] or "",
-         r["text_original"]  or "",
-         r["url"]            or "?")
-        for r in pending_rows
-        if r["id"] not in inserted_ids
-    ]
-    # Deterministic content verdicts, available only for records scraped this
-    # run because only the adapter saw the markup and nothing stores the
-    # verdict. Absent for backlog records, which is why those can never reach a
-    # terminal state — see `_record_failure`.
-    content_verdicts: dict[int, str] = {
-        aid: a.get("content_verdict")
-        for aid, a in inserted
-        if a.get("content_verdict")
-    }
-
-    queued_ids = inserted_ids | {aid for aid, *_ in pending}
-    unscored_rows = [
-        r for r in unscored_all
-        if r["id"] not in queued_ids
-        and _in_daily_queue(backlog_desks.get(r["id"]))
-    ]
-    # Both backlog lanes can fail and retry. Keep each recorded count so the
-    # existing reversible budget can eventually pause recurring failures.
-    # The newly inserted lane has no prior retry history.
-    attempts_before = prior_processing_attempts(pending_rows, unscored_rows)
+    from core.analysis_plan import Policy, build_plan, inventory, revalidate, code_identity
+    from analysis.admission import AdmissionController, AdmissionDeferred, pricing_identity, task_settings, capacity_estimate
+    with db.get_conn() as conn:
+        candidates = inventory(conn, [aid for aid, _ in inserted])
+    policy = analysis_policy or Policy(
+        evaluated_at=datetime.now(timezone.utc).isoformat(),
+        cap=DAILY_ANALYSIS_CAP, reserve=BACKLOG_RESERVE_FRACTION,
+        live_days=LIVE_BACKLOG_DAYS, budget_usd=budget_usd,
+    )
+    if policy.budget_usd != budget_usd:
+        raise ValueError("plan/runtime budget mismatch")
+    identities = dict(code_identity=code_identity(), pricing_identity=pricing_identity(),
+                      snapshot_kind="after collection", snapshot_identity={"native_run_id": run_id},
+                      execution_settings=task_settings(), capacity=capacity_estimate(task_settings(), budget_usd))
+    plan = build_plan(candidates, policy, **identities)
+    if expected_plan is not None and expected_plan != plan:
+        raise ValueError("stale preview is not execution authority")
+    # Immediately reread content/state, configuration and prices before dispatch.
+    with db.get_conn() as conn:
+        fresh_candidates = inventory(conn, [aid for aid, _ in inserted])
+    revalidate(plan, fresh_candidates, policy, **{**identities,
+               "code_identity": code_identity(), "pricing_identity": pricing_identity(),
+               "execution_settings": task_settings(), "capacity": capacity_estimate(task_settings(), budget_usd)})
+    by_id = {c.record_id: c for c in fresh_candidates}
+    queue = [(i, by_id[i].title, by_id[i].body, by_id[i].url) for i in plan["selected_ids"]]
+    attempts_before = {c.record_id: c.attempts for c in candidates if c.attempts is not None}
+    content_verdicts = {aid: a.get("content_verdict") for aid, a in inserted if a.get("content_verdict")}
+    pre_cap = plan["counts"]["eligible"]
+    backlog_remaining = sum(r["lane"] in ("pending", "unscored") and
+                            r["reason"] in ("cap-deferral", "allocation-deferral") for r in plan["records"])
+    held_desks = Counter(r["desk_id"] for r in plan["records"] if r["reason"] == "desk-policy-hold")
     for desk_id, held in sorted(held_desks.items(), key=lambda kv: str(kv[0])):
         logger.info(
             "Held out of the daily analysis queue: %d %s-desk record(s) — the "
@@ -588,104 +578,32 @@ def run(
             "(processing/screening.py); they stay awaiting screening.",
             held, desk_id,
         )
-
-    # Unscored articles are NOT drained in plain FIFO order. Oldest-first buries
-    # whatever is recency-critical: on 2026-08-02 the recovered 07-30/07-31
-    # articles sat behind 1,106 older unscored rows — ~2 months of draining — so
-    # they could not be screened in time for edition No. 12, which covers their
-    # own week. Pure FIFO spends the whole backlog reserve on material too old to
-    # reach any unwritten edition (DECISION_LOG 2026-08-02).
-    #
-    # Live articles (scraped within LIVE_BACKLOG_DAYS) go first, oldest-first
-    # among themselves so a week fills chronologically. Everything older keeps
-    # FIFO behind them, so the archive is deferred but never starved.
-    # scraped_at is written by SQLite's datetime('now'), which is UTC.
-    live_cutoff = (
-        datetime.now(timezone.utc) - timedelta(days=LIVE_BACKLOG_DAYS)
-    ).strftime("%Y-%m-%d")
-    live_rows    = [r for r in unscored_rows if (r["scraped_at"] or "")[:10] >= live_cutoff]
-    archive_rows = [r for r in unscored_rows if (r["scraped_at"] or "")[:10] <  live_cutoff]
-
-    unscored: list[tuple[int, str, str, str]] = [
-        (r["id"],
-         r["title_original"] or "",
-         r["text_original"]  or "",
-         r["url"]            or "?")
-        for r in live_rows + archive_rows
-    ]
-
-    # Check the ACTUAL original body that the model would receive before
-    # giving it a paid queue slot. Blank bodies can result from historical
-    # extraction/template drift, so this is an *in-run dispatch hold*, not a
-    # terminal verdict, deletion, invented source silence or DB state change.
-    # Keep all three queue sources distinct for transparent cap accounting.
-    new_queue, blank_new = hold_blank_original_bodies(new_queue)
-    pending, blank_pending = hold_blank_original_bodies(pending)
-    unscored, blank_unscored = hold_blank_original_bodies(unscored)
-    blank_withheld = blank_new + blank_pending + blank_unscored
-    if blank_withheld:
+    blank_lanes = Counter(r["lane"] for r in plan["records"] if r["reason"] == "blank-body")
+    if blank_lanes:
         logger.warning(
             "Withheld %d stored article(s) with blank original bodies from "
             "paid analysis dispatch: %d new, %d pending, %d unscored. "
             "Rows and processing states were not changed; original text "
             "requires source/extraction review before analysis.",
-            blank_withheld, blank_new, blank_pending, blank_unscored,
+            sum(blank_lanes.values()), blank_lanes["new"], blank_lanes["pending"], blank_lanes["unscored"],
         )
-
-    backlog       = pending + unscored
-    backlog_total = len(backlog)
-
-    logger.info(
-        "Unscored backlog: %d live (scraped since %s), %d archive — live first",
-        len(live_rows), live_cutoff, len(archive_rows),
-    )
-
-    # Reserve a share of the cap for the backlog. A plain
-    # `(new + backlog)[:cap]` starves it completely whenever a single run
-    # scrapes more than the cap — which is every run — so the reservation is
-    # what makes the "can't stay invisible forever" claim above actually true.
-    backlog_slots = 0
-    if backlog:
-        backlog_slots = min(
-            len(backlog),
-            max(1, round(DAILY_ANALYSIS_CAP * BACKLOG_RESERVE_FRACTION)),
-        )
-    new_take = new_queue[: DAILY_ANALYSIS_CAP - backlog_slots]
-    # Slots the fresh scrapes didn't need spill back to the backlog.
-    backlog_take = backlog[: DAILY_ANALYSIS_CAP - len(new_take)]
-    queue = new_take + backlog_take
-
-    pre_cap = len(new_queue) + backlog_total
-    if pre_cap > DAILY_ANALYSIS_CAP:
-        logger.warning(
-            "Queue has %d articles (%d new + %d backlog); capping to %d "
-            "(DAILY_ANALYSIS_CAP). Set env var DAILY_ANALYSIS_CAP=N to raise it.",
-            pre_cap, len(new_queue), backlog_total, DAILY_ANALYSIS_CAP,
-        )
-
-    deferred_new      = len(new_queue) - len(new_take)
-    backlog_remaining = backlog_total - len(backlog_take)
+    new_total = sum(r["lane"] == "new" and
+                    (r["selected"] or r["reason"] in ("cap-deferral", "allocation-deferral"))
+                    for r in plan["records"])
     logger.info(
         "Analysis queue: %d/%d new + %d/%d backlog this run (cap=%d, reserve=%.0f%%)",
-        len(new_take), len(new_queue), len(backlog_take), backlog_total,
-        DAILY_ANALYSIS_CAP, BACKLOG_RESERVE_FRACTION * 100,
+        plan["counts"]["new_planned"], new_total, plan["counts"]["backlog_planned"],
+        pre_cap - new_total, policy.cap, policy.reserve * 100,
     )
-    if deferred_new > 0:
-        # Deferred new articles keep passed_relevance NULL and re-enter as
-        # `unscored` on a later run. If this is nonzero every day, the cap is
-        # below the scrape rate and the backlog grows without bound.
-        logger.warning(
-            "%d newly scraped article(s) deferred by the cap — they become "
-            "backlog. Sustained deferral means DAILY_ANALYSIS_CAP (%d) is below "
-            "the daily scrape rate.",
-            deferred_new, DAILY_ANALYSIS_CAP,
-        )
-    if backlog_remaining > 0:
-        logger.warning(
-            "%d backlog article(s) still unprocessed after today's cap — they will "
-            "drain on later runs (raise DAILY_ANALYSIS_CAP to clear them faster).",
-            backlog_remaining,
-        )
+    logger.info("Analysis plan %s: %d planned / %d eligible; %d held; %d deferred",
+                plan["plan_id"], len(queue), pre_cap, plan["counts"]["held"], plan["counts"]["deferred"])
+    guard = None
+    if budget_usd is not None:
+        if no_analysis or dry_run:
+            raise ValueError("guarded execution cannot be a skipped analysis run")
+        guard = AdmissionController(budget_usd, plan_id=plan["plan_id"],
+                                    execution_id="scrape-run:%s" % run_id,
+                                    sink=lambda receipt: receipt_sink({"plan": plan, "run": receipt}))
 
     if no_analysis:
         logger.info(
@@ -701,20 +619,32 @@ def run(
         logger.info("No articles to analyze — all up to date.")
     else:
         from analysis.analyzer import Analyzer, FatalAPIError
-        analyzer = Analyzer()
+        analyzer = Analyzer(admission=guard) if guard is not None else Analyzer()
 
         for i, (aid, title_zh, body_zh, url) in enumerate(queue, 1):
             logger.info(
                 "[%d/%d] Analyzing: %s",
-                i, len(queue), title_zh[:70],
+                i, len(queue), "record %d" % aid if guard is not None else title_zh[:70],
             )
+            if guard is not None:
+                url = "private locator withheld"
 
             try:
+                if guard is not None:
+                    analyzer.prepare_article(aid)
                 result = analyzer.analyze(title_zh, body_zh)
+            except AdmissionDeferred as exc:
+                if guard is not None:
+                    outcome = "incomplete" if any(c["record_id"] == aid for c in guard.snapshot()["calls"]) else "budget-deferred"
+                    guard.finish_article(aid, outcome, reason=str(exc))
+                logger.info("Article %d operationally deferred; processing attempts unchanged", aid)
+                continue
             except FatalAPIError as exc:
                 # Account-level failure: every remaining call would fail the
                 # same way. On 2026-07-31 the spend limit was reached mid-run
                 # and the loop made 40 further doomed calls before finishing.
+                if guard is not None:
+                    guard.finish_article(aid, "incomplete")
                 account_blocked = str(exc)
                 logger.error(
                     "ABORTING analysis at %d/%d — account-level API failure, not "
@@ -727,7 +657,12 @@ def run(
                 errors.append(f"Analysis aborted: {account_blocked}")
                 break
 
+            if result is not None and guard is not None and guard.blocked:
+                result = {k: v for k, v in result.items()
+                          if k not in ("title_english", "text_english", "summary_english")}
             if result is None:
+                if guard is not None:
+                    guard.finish_article(aid, "incomplete")
                 msg = f"Analysis failed entirely for article {aid} ({url})"
                 logger.error(msg)
                 errors.append(msg)
@@ -769,14 +704,18 @@ def run(
                     prompt_version         = result["prompt_version"],
                 )
                 articles_analyzed += 1
+                if guard is not None:
+                    guard.finish_article(aid, "fully-analyzed")
                 db.clear_processing_failure(aid)
 
                 if result.get("is_significant"):
                     logger.info(
                         "  ★ SIGNIFICANT: %s",
-                        result.get("significance_reasoning", ""),
+                        "private model reasoning withheld" if guard is not None else result.get("significance_reasoning", ""),
                     )
             elif result["passed_relevance"]:
+                if guard is not None:
+                    guard.finish_article(aid, "incomplete")
                 # Passed relevance but translation/summary failed → no publishable
                 # output. analyzed_at stays NULL so this becomes pending backlog
                 # and a later run retries it.
@@ -793,6 +732,12 @@ def run(
                 errors.append(msg)
                 _record_failure(aid, body_zh, "analysis_incomplete",
                                 attempts_before, content_verdicts)
+
+            elif guard is not None:
+                guard.finish_article(aid, "relevance-rejected")
+
+    if guard is not None:
+        guard.finish_run(plan["selected_ids"])
 
     # ── Stage 13: Close run record ────────────────────────────────────────────
     # --no-analysis is a deliberate skip, not a failure: it must not trip the
@@ -934,7 +879,7 @@ def run(
     # for review. An unreviewed template is not protected by being uncommitted.
     # Second, regenerating from a DB whose analysis is knowingly incomplete
     # rewrites the published site from a partial record.
-    if not dry_run and not no_analysis:
+    if not dry_run and not no_analysis and generate_output:
         try:
             import importlib.util
             from pathlib import Path as _Path
@@ -1103,14 +1048,32 @@ if __name__ == "__main__":
             "empty value as unset and falls back to .env."
         ),
     )
+    parser.add_argument("--analysis-policy", choices=("compatibility", "age-aware"), default="compatibility")
+    parser.add_argument("--analysis-budget-usd", help="opt-in strict per-run estimated USD envelope; separate spend approval required")
+    parser.add_argument("--analysis-run-receipt", help="new private journal outside repository; required with budget")
     args = parser.parse_args()
+    if bool(args.analysis_budget_usd is not None) != bool(args.analysis_run_receipt):
+        parser.error("strict budget and private run receipt must be supplied together")
 
     target   = args.date or date.today()
     sources  = [args.source] if args.source else list(SCRAPERS.keys())
 
-    run(
-        sources=sources,
-        target_date=target,
-        dry_run=args.dry_run,
-        no_analysis=args.no_analysis,
-    )
+    from core.analysis_plan import Policy
+    journal = None
+    try:
+        if args.analysis_budget_usd is not None:
+            from analysis.admission import money
+            from scripts.analysis_capacity import PrivateRunJournal
+            money(args.analysis_budget_usd)
+            if args.dry_run or args.no_analysis:
+                parser.error("strict admission requires actual analysis, not a skipped run")
+            journal = PrivateRunJournal(args.analysis_run_receipt)
+        policy = Policy(datetime.now(timezone.utc).isoformat(), DAILY_ANALYSIS_CAP,
+                        BACKLOG_RESERVE_FRACTION, LIVE_BACKLOG_DAYS, args.analysis_policy,
+                        budget_usd=args.analysis_budget_usd)
+        run(sources=sources, target_date=target, dry_run=args.dry_run,
+            no_analysis=args.no_analysis, analysis_policy=policy,
+            budget_usd=args.analysis_budget_usd, receipt_sink=journal)
+    finally:
+        if journal is not None:
+            journal.close()

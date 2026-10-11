@@ -94,7 +94,36 @@ separately approved. Private review is noindex and rejected by the deploy gate.
 Owner implementation review, merge/deployment decisions and separate approval
 of exact timeline editorial content remain outstanding.
 
+**Analysis capacity (11 October 2026, private implementation candidate):**
+`codex/ipr-analysis-capacity-20261011` from fresh main `59bb2eb0e8` integrates
+the shared compatibility/age-aware planner, optional strict per-run admission
+at raw/tool/stream analyzer boundaries, scratch DAO execution, private receipts
+and the existing Operations Center. Production defaults, prompts, models,
+limits, schedules and custody binding/recovery remain unchanged. All four
+stages are funded before relevance; default-model worst-case exposure is
+USD 12.005 per article, using full context ceilings and pinned cache-write
+rates. Unknown usage/failures retain exposure and block further guarded calls;
+denials consume no retry attempt. This is not a daily/invoice/restart allowance.
+The mocked scratch run completes four calls and reconciles USD 0.015 with
+legacy telemetry; the equal-cap/envelope three-day comparison is explicitly
+fictional/modeled, not historical per-record spend. Private browser checks at
+1280/375 and 189 focused tests pass; 72 prior blank-body/retry/state/queue
+contracts also pass after updating the moved selection seam. Final full
+offline/CI receipts are recorded in draft PR #395. The first completed full run
+reported 5,764 tests and one desk-hold log compatibility failure; the original
+desk-hold/allocation messages are restored from shared plan counts. Output validation retains ten governed
+warnings; DB/output/history preservation is independently hashed. No paid call,
+collection, production mutation, output regeneration, merge or activation.
+Independent review found a planner identity failure on malformed SQLite BLOB
+bodies. The scoped correction now binds BLOB type/length/digest privately,
+retains empty BLOBs in the inventory, and preserves ordinary text identities;
+held records and retry state remain unchanged. Two planner and three actual
+scratch-runtime regressions cover the repair. Fresh final-head CI is required
+before review acceptance; the earlier green head does not approve this change.
+Operator contract and reproduction: `docs/ANALYSIS_CAPACITY_RUNBOOK.md`.
+
 Durable documents, and what each one governs:
+
 
 | Document | Governs |
 |---|---|

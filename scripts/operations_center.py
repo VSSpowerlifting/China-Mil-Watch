@@ -228,7 +228,8 @@ def render_html(snapshot: dict) -> str:
         top = "".join("<th scope='col'>%s</th>" % val(v) for v in headings)
         body = "".join("<tr>%s</tr>" % "".join(
             "<td>%s</td>" % val(value) for value in row) for row in rows)
-        return "<table><thead><tr>%s</tr></thead><tbody>%s</tbody></table>" % (
+        return "<div class='table-scroll' role='region' tabindex='0' aria-label='%s table'><table><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>" % (
+            val(headings[0]),
             top, body or "<tr><td colspan='%d'>No observations</td></tr>" % len(headings))
 
     desks = table(
@@ -398,6 +399,77 @@ def render_html(snapshot: dict) -> str:
                     r["rows_total"]) for r in rows]),
             readiness_html,
         )
+    capacity_section = ""
+    if snapshot.get("analysis_capacity") is not None:
+        from scripts.analysis_capacity import validate_packet
+        packet = validate_packet(snapshot["analysis_capacity"])
+        plan, run = packet["plan"], packet["run"]
+        counts, policy = plan["counts"], plan["policy"]
+        capacity_section = (
+            "<section id='analysis-capacity' tabindex='0'><h2>Analysis capacity — %s</h2>"
+            "<p class='notice'>Private local evidence. Origin authentication: unknown. "
+            "A digest binds these bytes; it does not authenticate collection, provider billing, "
+            "output validation or deployment. Planning is not dispatch.</p>"
+            "<h3>Overview</h3><p>%s stored · %s eligible/body-ready · %s planned · %s deferred · %s held.</p>"
+            "<p>Cap %s · per-run estimated envelope USD %s · policy %s · evaluation %s (%s).</p>"
+            "<p>Capacity uncertainty: %s. Strict reservations use full model context ceilings, "
+            "5-minute cache-write exposure and unchanged output limits.</p>"
+            "<p class='meta'>Plan %s · input %s · code %s · pricing %s</p>"
+            "<h3>Allocation and queue</h3><p>%s new + %s backlog planned. Queue age: %s.</p>"
+            "<p>Age-aware comparison orders only backlog by scraped timestamp (missing last), "
+            "then record ID; older archive work can displace live/pending work.</p>%s"
+        ) % (tuple(val(x) for x in (
+            plan["snapshot_kind"], counts["stored"], counts["eligible"], counts["planned"],
+            counts["deferred"], counts["held"], policy["cap"], policy["budget_usd"] or "not configured",
+            policy["mode"], policy["evaluated_at"], policy["timezone"], plan["capacity_evidence"],
+            plan["plan_id"], plan["input_identity"], plan["code_identity"], plan["pricing_identity"],
+            counts["new_planned"], counts["backlog_planned"], plan["queue_age_measure"])) + (table(
+                ("Record", "Desk", "Source", "Lane", "Stored timestamp", "Selection / reason"),
+                [(r["record_id"], r["desk_id"], r["source_slug"], r["lane"], r["scraped_at"],
+                         "planned" if r["selected"] else r["reason"]) for r in plan["records"]]),))
+        if not plan["selected_ids"]:
+            capacity_section += "<p>No records planned; held and deferred reasons remain visible.</p>"
+        if plan["capacity"] is not None:
+            c = plan["capacity"]
+            capacity_section += "<p>%s · USD %s reserved per admitted article · %s initially fundable. Valid usage can release capacity; this is not a completed-work forecast.</p>" % (val(c["evidence"]), val(c["article_reservation_usd"]), val(c["initial_articles_funded"]))
+        capacity_section += "<h3>Execution evidence</h3>"
+        if run is None:
+            capacity_section += "<p>No run receipt: attempted, fully analyzed and cost are unknown.</p>"
+        else:
+            capacity_section += (
+                "<p>Execution %s · status %s · blocked %s.</p>"
+                "<p>USD known estimated cost %s · pending reservations %s · unresolved exposure %s "
+                "· unused capacity %s. %s</p>%s%s"
+            ) % (val(run["execution_id"]), val(run["status"]), val(run["blocked"] or "none"),
+                 val(run["known_cost_usd"]), val(run["pending_usd"]), val(run["unresolved_usd"]),
+                 val(run["unused_usd"]), val(run["limits"]),
+                 table(("Record", "Admitted", "Attempted", "Outcome", "Deferral reason"),
+                       [(r["record_id"], r["admitted"], r["attempted"], r["outcome"], r["deferral_reason"]) for r in run["articles"]]),
+                 table(("Record", "Task", "Model", "State", "Reserved USD", "Known USD"),
+                       [(r["record_id"], r["task"], r["model"], r["state"], r["reserved_usd"],
+                         r["known_cost_usd"]) for r in run["calls"]]))
+        capacity_section += "</section>"
+    if snapshot.get("analysis_replay") is not None:
+        from scripts.analysis_capacity import validate_replay
+        replay = validate_replay(snapshot["analysis_replay"])
+        rows = []
+        for result in replay["results"]:
+            for day in result["days"]:
+                p, r = day["packet"]["plan"], day["packet"]["run"]
+                outcomes = [a["outcome"] for a in r["articles"]]
+                rows.append((result["policy"], p["policy"]["evaluated_at"][:10],
+                             p["counts"]["new_planned"], p["counts"]["backlog_planned"],
+                             sum(a["attempted"] for a in r["articles"]), outcomes.count("fully-analyzed"),
+                             outcomes.count("relevance-rejected"), outcomes.count("budget-deferred"),
+                             day["waiting_days"], r["known_cost_usd"], r["unresolved_usd"]))
+        capacity_section += (
+            "<section tabindex='0'><h2>Simulation — equal-cap capacity comparison</h2>"
+            "<p class='notice'>Modeled fictional arrivals and token/outcome assumptions; "
+            "no measured policy improvement or historical per-record spend.</p>"
+            "<p>Cap %s · per-run estimated envelope USD %s · %s</p>%s</section>"
+        ) % (val(replay["cap"]), val(replay["budget_usd"]), val(replay["scenario"]),
+             table(("Policy", "Day", "New planned", "Backlog planned", "Attempted", "Fully analyzed",
+                    "Rejected", "Budget deferred", "Waiting days", "Modeled USD", "Unknown exposure USD"), rows))
     notes = "".join("<li>%s</li>" % val(note) for note in snapshot["limits"])
     css = """
     :root{color-scheme:light;--navy:#142a38;--teal:#247e7d;--paper:#f7f5f0}
@@ -408,6 +480,8 @@ def render_html(snapshot: dict) -> str:
     text-transform:uppercase;color:var(--teal)}h1{font:normal 42px/1.1 Georgia,serif;
     margin:9px 0}h2{font:normal 26px/1.2 Georgia,serif;margin:34px 0 12px}
     p{max-width:800px}small{color:#52626c}section{overflow-x:auto}
+    .table-scroll{overflow-x:auto;max-width:100%}.table-scroll:focus{outline:2px solid var(--teal);outline-offset:2px}
+    .meta{overflow-wrap:anywhere}
     table{border-collapse:collapse;width:100%;background:#fff;font-size:13px}
     th,td{padding:11px 12px;border-bottom:1px solid #d8dddf;text-align:left;
     vertical-align:top}th{background:#e8edf0;color:var(--navy);font-weight:700}
@@ -417,6 +491,7 @@ def render_html(snapshot: dict) -> str:
     """
     return ("<!doctype html><html lang='en'><head><meta charset='utf-8'>"
             "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+            "<meta name='robots' content='noindex,nofollow'>"
             "<title>IPR Operations Center — offline snapshot</title><style>%s</style>"
             "</head><body><main><header><span class='eyebrow'>Internal / offline evidence</span>"
             "<h1>Operations Center</h1><p>Read-only inspection, not a green light for "
@@ -432,13 +507,13 @@ def render_html(snapshot: dict) -> str:
             "<section><h2>Shadow source inventory</h2>"
             "<p class='notice'>Configurations only. No live shadow Actions, ledgers, "
             "source-rights reviews, or qualification receipts were checked.</p>%s</section>"
-            "%s%s%s<section><h2>Evidence limits</h2><ul>%s</ul></section>"
+            "%s%s%s%s<section><h2>Evidence limits</h2><ul>%s</ul></section>"
             "</main></body></html>") % (
                 css, val(snapshot["as_of"]), val(snapshot["daily_marker"]["date"]),
                 val(snapshot["daily_marker"]["state"]),
                 val(len(snapshot["source_health_review_flags"])),
                 review, unknown_runs, desks, sources, shadows,
-                overlay_section, daily_section, queue_section, notes)
+                overlay_section, daily_section, queue_section, capacity_section, notes)
 
 
 def safe_destination(path: Path) -> Path:

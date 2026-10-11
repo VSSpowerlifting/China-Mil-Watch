@@ -339,6 +339,11 @@ def main(argv=None):
                    help="opt-in source-attributed read-only stored SQLite queue; not a live monitor")
     p.add_argument("--include-dispatch-readiness", action="store_true",
                    help="opt-in extra body-ready/withheld SQLite scan; requires --include-analysis-queue")
+    p.add_argument("--analysis-plan", action="store_true", help="shared stored-only planner; no provider calls")
+    p.add_argument("--analysis-policy", choices=("compatibility", "age-aware"), default="compatibility")
+    p.add_argument("--analysis-budget-usd", help="optional per-run estimate, does not authorize spending")
+    p.add_argument("--analysis-run", type=Path, help="private plan/run JSON or journal; unsigned local evidence")
+    p.add_argument("--analysis-replay", type=Path, help="modeled equal-cap/envelope comparison; no historical per-record spend")
     evidence = p.add_mutually_exclusive_group()
     evidence.add_argument("--daily-receipts", type=Path,
                           help="operator-supplied raw Actions receipt JSON, no network")
@@ -372,7 +377,7 @@ def main(argv=None):
         # Both locally derived SQLite observations must describe the same
         # pinned input bytes. Refuse a concurrent change rather than blend them.
         hashes_before = (queue_audit._snapshot_file_hashes(args.db)
-                         if args.include_analysis_queue else None)
+                         if args.include_analysis_queue or args.analysis_plan else None)
         production_report = build_report(args.db)
         queue_report = (queue_audit.snapshot(args.db)
                         if args.include_analysis_queue else None)
@@ -394,6 +399,24 @@ def main(argv=None):
             dispatch_report,
             root=ROOT,
         )
+        if args.analysis_plan or args.analysis_run:
+            from core.analysis_plan import Policy
+            from config import DAILY_ANALYSIS_CAP, BACKLOG_RESERVE_FRACTION, LIVE_BACKLOG_DAYS
+            from scripts.analysis_capacity import stored_plan, read_packet, validate_packet
+            require(not (args.analysis_plan and args.analysis_run), "choose stored plan or run evidence")
+            packet = (read_packet(args.analysis_run) if args.analysis_run else {
+                "plan": stored_plan(args.db, Policy(
+                    as_of.isoformat() + "T00:00:00+00:00", DAILY_ANALYSIS_CAP,
+                    BACKLOG_RESERVE_FRACTION, LIVE_BACKLOG_DAYS, args.analysis_policy,
+                    budget_usd=args.analysis_budget_usd)), "run": None})
+            validate_packet(packet)
+            if args.analysis_plan:
+                require(packet["plan"]["snapshot_identity"] == hashes_before,
+                        "database changed between source health and planning")
+            report["analysis_capacity"] = packet
+        if args.analysis_replay:
+            from scripts.analysis_capacity import validate_replay
+            report["analysis_replay"] = validate_replay(json.loads(args.analysis_replay.read_text(encoding="utf-8")))
         json_text = json.dumps(report, ensure_ascii=False,
                                indent=2, sort_keys=True) + "\n"
         html_text = ops.render_html(report)

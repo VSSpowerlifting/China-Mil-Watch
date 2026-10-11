@@ -99,26 +99,32 @@ class NoBlankBodyDispatchTests(unittest.TestCase):
         self.assertTrue(all(a[2].strip() for a in selected))
 
     def test_all_three_lanes_are_guarded_before_cost_selection(self):
+        from core.analysis_plan import Candidate, Policy, build_plan
+
+        rows = [Candidate(i, "fictional", "china", "https://fictional.invalid/%d" % i,
+                          lane, "FICTIONAL title", body)
+                for i, lane, body in ((1, "new", ""), (2, "new", "prose"),
+                                     (3, "pending", "\u3000"), (4, "pending", "prose"),
+                                     (5, "unscored", None), (6, "unscored", "prose"))]
+        plan = build_plan(rows, Policy("2026-10-11T00:00:00Z", cap=3),
+                          code_identity="code", pricing_identity="prices")
+        self.assertEqual(plan["selected_ids"], [2, 4, 6])
+        self.assertEqual(plan["reasons"], {"blank-body": 3})
+        self.assertEqual(plan["counts"]["held"], 3)
         source = inspect.getsource(pipeline.run)
-        selection = source.index("backlog_slots = 0")
-        self.assertLess(
-            source.index("new_queue, blank_new = hold_blank_original_bodies(new_queue)"),
-            selection)
-        self.assertLess(
-            source.index("pending, blank_pending = hold_blank_original_bodies(pending)"),
-            selection)
-        self.assertLess(
-            source.index("unscored, blank_unscored = hold_blank_original_bodies(unscored)"),
-            selection)
-        self.assertIn("Rows and processing states were not changed", source)
+        self.assertLess(source.index("plan = build_plan(candidates, policy"),
+                        source.index('for i in plan["selected_ids"]'))
+        self.assertLess(source.index('for i in plan["selected_ids"]'),
+                        source.index("analyzer.analyze(title_zh, body_zh)"))
 
     def test_new_source_documents_remain_in_database_insert_path(self):
         source = inspect.getsource(pipeline.run)
         self.assertLess(
             source.index("db.insert_article(article, run_id)"),
-            source.index("hold_blank_original_bodies(new_queue)"))
-        self.assertIn("inserted_ids = {aid for aid, _ in inserted}", source)
-        self.assertIn("if r[\"id\"] not in queued_ids", source)
+            source.index("candidates = inventory(conn, [aid for aid, _ in inserted])"))
+        from core.analysis_plan import inventory
+        inventory_source = inspect.getsource(inventory)
+        self.assertIn('r["id"] not in set(new_ids)', inventory_source)
 
     def test_no_new_terminal_content_verdict_or_retry_reset(self):
         source = inspect.getsource(pipeline.hold_blank_original_bodies)
