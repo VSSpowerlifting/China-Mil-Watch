@@ -45,7 +45,7 @@ changes. Evidence is in `docs/evidence/frontend-home-phase2-2026-10-11/`.
   forced colours. Link targets, counts and caveats are unchanged; the
   silhouettes are `aria-hidden`.
 - **Review revision: record geography is a 96 px plate** on desktop, 64 px
-  at 600 px and below, and 52 px at 380 px and below. The plate is
+  at 600 px and below (375 included), and 52 px only below 360 px. The plate is
   decorative; the record's desk link is the textual source of the
   attribution.
 - **The inherited reduced-motion press is fixed on the homepage** by

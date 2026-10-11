@@ -62,7 +62,7 @@
       "route": "index.html",
       "html_css_limit": 300000,
       "js_limit": 12000,
-      "html_css_bytes": 76734,
+      "html_css_bytes": 78892,
       "js_bytes": 11940,
       "css": [
         "fonts.css",
@@ -103,7 +103,8 @@
         "briefs/media/maritime-cooperation-2026-source-image.jpg"
       ],
       "external_assets": [],
-      "local_delivery_bytes": 2707079
+      "local_delivery_bytes": 2709237
     }
-  }
+  },
+  "revision": "Candidate row and counts refreshed at the PR #391 review revision; baseline unchanged."
 }
