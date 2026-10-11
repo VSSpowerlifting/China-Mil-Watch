@@ -158,6 +158,33 @@ class JournalTests(unittest.TestCase):
         alias.unlink()
         self.assertEqual(DeliveryJournal(self.path).state(self.register()), "registered")
 
+    def test_same_week_revised_manuscript_cannot_enable_second_send(self):
+        first = self.register()
+        self.journal.reserve_attempt(first)
+        for modified in (
+            dict(manuscript_sha256=sha("modified after owner approval")),
+            dict(manuscript_sha256=sha("another version"), owner_approval_sha256=sha("new owner ref")),
+        ):
+            with self.subTest(modified=modified), self.assertRaises(DeliveryHold):
+                self.journal.register(**dict(self.fields, **modified))
+        self.assertEqual(DeliveryJournal(self.path).state(first), "attempt_reserved")
+
+    def test_same_week_two_recipients_are_distinct_intents(self):
+        first = self.register()
+        other = self.journal.register(**dict(self.fields, recipient="different@example.invalid"))
+        self.assertNotEqual(first, other)
+        self.journal.reserve_attempt(first)
+        self.journal.reserve_attempt(other)
+        self.assertEqual(self.journal.state(other), "attempt_reserved")
+        # The independent recipient does not automatically satisfy editorial approval.
+
+    def test_same_week_revision_refused_even_before_attempt(self):
+        first = self.register()
+        with self.assertRaises(DeliveryHold):
+            self.journal.register(**dict(
+                self.fields, manuscript_sha256=sha("revision before SMTP")))
+        self.assertEqual(self.journal.state(first), "registered")
+
     def test_private_metadata_only(self):
         key = self.register()
         with closing(sqlite3.connect(str(self.path))) as db:
