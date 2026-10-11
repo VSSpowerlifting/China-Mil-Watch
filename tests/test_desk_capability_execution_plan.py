@@ -46,8 +46,12 @@ class DeskCapabilityPlanTests(unittest.TestCase):
         self.assertTrue(all(x["executable_effect"] == "none" for x in plan["tasks"]))
         self.assertEqual({x["scope"] for x in plan["tasks"]},
                          {"regional", "vietnam", "japan", "korea"})
+        declared_slugs = {x["source_slug"] for x in self.bindings["sources"]}
+        baseline = next(x for x in plan["tasks"] if x["id"] == "REG-01")
+        self.assertEqual(set(baseline["declared_source_slugs"]), declared_slugs)
         self.assertTrue(all(x["human_decision_required"] for x in plan["tasks"]
-                            if x["gate"] in ("qualify", "decide", "verify")))
+                            if x["gate"] in ("qualify", "decide", "verify", "integrate")
+                            or x["proposed_source_families"]))
         self.assertIsNone(next(x for x in plan["tasks"]
                                if x["scope"] == "korea")["registry_desk"])
         self.assertNotIn("korea", {x["slug"] for x in self.registry["desks"]})
@@ -115,6 +119,20 @@ class DeskCapabilityPlanTests(unittest.TestCase):
         missing["desks"] = [x for x in missing["desks"] if x["slug"] != "vietnam"]
         with self.assertRaises(PlanInvalid):
             validate(self.case(), bindings=self.bindings, registry=missing)
+
+    def test_missing_declared_shadow_family_refused_even_when_others_work(self):
+        plan = self.case()
+        baseline = next(x for x in plan["tasks"] if x["id"] == "REG-01")
+        baseline["declared_source_slugs"].remove("vn_national_defence_journal_en")
+        with self.assertRaisesRegex(PlanInvalid, "every declared source"):
+            validate(plan, bindings=self.bindings, registry=self.registry)
+
+    def test_proposed_access_and_editorial_integration_need_human(self):
+        for ident in ("VN-03", "KR-02", "REG-02"):
+            p = self.case()
+            next(x for x in p["tasks"] if x["id"] == ident)["human_decision_required"] = False
+            with self.subTest(id=ident), self.assertRaisesRegex(PlanInvalid, "human"):
+                validate(p, bindings=self.bindings, registry=self.registry)
 
     def test_cli_returns_planning_only_and_writes_no_output(self):
         refs = (ROOT / "pla_watch.db", ROOT / "desks/registry.json",
