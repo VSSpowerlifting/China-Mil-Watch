@@ -1,0 +1,487 @@
+{
+  "queue_id": "ipr_regional_topics_owner_questions_2026-10-07",
+  "status": "pending_owner_source_judgment",
+  "purpose": "Editor-only queue of model-identified disputes; never present to a blinded source reviewer before independent adjudication.",
+  "source_refs": {
+    "repository": "VSSpowerlifting/China-Mil-Watch",
+    "pilot_merged_pr": 128,
+    "ledger_path": "research/topic_pilot_v1/ledger.json",
+    "ledger_blob_sha": "a4af23d199550df81b7e8292afda2c6e330a8cc5",
+    "assessment_path": "research/topic_pilot_v1/review/assessment.json",
+    "assessment_blob_sha": "1bdab3a0d9da12bfe2b69b04ff9b49940af9ebda",
+    "reviewed_head": "0f368eb3131b7cac7d6d1db9e9f00ed7d889a57f",
+    "v2_scope_proposal_pr": 133,
+    "v2_implementation_pr": 137,
+    "independent_review_gate_pr": 142
+  },
+  "owner_review_complete": false,
+  "workflow_boundaries": {
+    "production_assignment": false,
+    "human_gold_labels": false,
+    "vocabulary_activation": false
+  },
+  "clusters": [
+    {
+      "key": "gray_zone_military_pressure",
+      "title": "Gray-zone labeling beyond coast guard",
+      "ids": [
+        "P01"
+      ],
+      "guideline": "Military warning, tracking, or expulsion can be sub-threshold pressure, but neither source affiliation nor disputed-area geography establishes a coercive gray-zone act on its own; verify actor, behavior, and context.",
+      "items": [
+        {
+          "pilot_id": "P01",
+          "desk_id": "china",
+          "source_url": "http://www.81.cn/yw_208727/16491198.html",
+          "source_date": "2026-10-05",
+          "original_title": "南部战区新闻发言人发表谈话",
+          "body_sha256": "bc87b38c83f5a0f8b6ad42e5d0c0c3db20146f96038af352a3536f7bf6239549",
+          "initial_model_topics": [
+            "maritime_security",
+            "south_china_sea"
+          ],
+          "second_model_topics": [
+            "maritime_security",
+            "south_china_sea",
+            "gray_zone_coast_guard"
+          ],
+          "owner_question": "Define when military warning/expulsion becomes sub-threshold pressure; recommendation adds gray-zone without claiming coast-guard involvement.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        }
+      ]
+    },
+    {
+      "key": "history_and_out_of_region",
+      "title": "Historic and out-of-region subjects",
+      "ids": [
+        "P05",
+        "P10"
+      ],
+      "guideline": "Subject taxonomy can characterize historically reported and out-of-region content, but never rewrite source ownership, date, or event geography.",
+      "items": [
+        {
+          "pilot_id": "P05",
+          "desk_id": "china",
+          "source_url": "https://www.news.cn/milpro/20261001/f58cffe51ef64573bde27441efb513ec/c.html",
+          "source_date": "2026-10-01",
+          "original_title": "俄罗斯向北约发出“核警告”有何考量",
+          "body_sha256": "01a5396a902d04021c3e5a9a3cab3f8928d9d658de06a6b3e41fbf2a8992cd72",
+          "initial_model_topics": [
+            "nuclear_deterrence"
+          ],
+          "second_model_topics": [
+            "nuclear_deterrence",
+            "military_exercises",
+            "force_posture_basing"
+          ],
+          "owner_question": "Confirm whether out-of-region/historical source subjects remain classifiable within this cross-desk vocabulary; this is not a Russia Desk.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P10",
+          "desk_id": "china",
+          "source_url": "http://www.81.cn/yw_208727/16482944.html",
+          "source_date": "2026-09-02",
+          "original_title": "“自由轮”：用工业速度赢得胜利的“丑小鸭”",
+          "body_sha256": "dfe9d143ab1a7f4b2dbd4ad5d82530c4ec76177dd62b7487417478891df360f5",
+          "initial_model_topics": [
+            "defense_industry"
+          ],
+          "second_model_topics": [
+            "defense_industry",
+            "critical_minerals_supply_chains"
+          ],
+          "owner_question": "Confirm historical wartime merchant production and logistics scope, rather than silently excluding history.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        }
+      ]
+    },
+    {
+      "key": "geography_and_access",
+      "title": "Dispute-specific geography and military access",
+      "ids": [
+        "P12",
+        "P25",
+        "P59"
+      ],
+      "guideline": "Flashpoint topics require substantive regional-security or dispute content; documented temporary access may qualify posture, but a naval-base venue is not basing evidence.",
+      "items": [
+        {
+          "pilot_id": "P12",
+          "desk_id": "china",
+          "source_url": "http://www.mod.gov.cn/gfbw/wzll/hj/16486972.html",
+          "source_date": "2026-09-17",
+          "original_title": "东海某海域，一场实战背景下的两栖攻击舰与气垫艇协同训练拉开战幕",
+          "body_sha256": "cfa90c466509c1af6f5fec68f3e41d3b568f05d449719df2a89c4014c5ea2d7c",
+          "initial_model_topics": [
+            "military_exercises",
+            "maritime_security"
+          ],
+          "second_model_topics": [
+            "military_exercises",
+            "maritime_security"
+          ],
+          "owner_question": "Does substantive regional operation require developed regional security context, or is an exercise located in the East China Sea enough?",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P25",
+          "desk_id": "singapore",
+          "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/05oct26-mq/",
+          "source_date": "2026-10-05",
+          "original_title": "Media Reply on PLAN Ships Docking at CNB",
+          "body_sha256": "f908abdc4d4759510a5188e970849f3407d9997d12d5ffc3e4bf2ad80139e251",
+          "initial_model_topics": [
+            "force_posture_basing"
+          ],
+          "second_model_topics": [
+            "force_posture_basing"
+          ],
+          "owner_question": "Confirm the literal v1 access reading; requiring persistent basing would change the scope, not correct this source.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P59",
+          "desk_id": "korea",
+          "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784196",
+          "source_date": "2026-10-02",
+          "original_title": "국방부장관, 취임 후 첫 캠프 험프리스 방문",
+          "body_sha256": "bcf6c5e77f3f3e08005bdd2dee68740cc8fcf9576d6707031d2dd7bc0f0c7914",
+          "initial_model_topics": [
+            "force_posture_basing",
+            "defense_diplomacy",
+            "alliances_partnerships"
+          ],
+          "second_model_topics": [
+            "defense_diplomacy",
+            "alliances_partnerships"
+          ],
+          "owner_question": "Confirm substantive basing versus visit venue: rejection follows the location/access/duration/distribution test used for P48/P49.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        }
+      ]
+    },
+    {
+      "key": "capability_and_civilian_security",
+      "title": "Technology, civilian space and public security",
+      "ids": [
+        "P18",
+        "P22",
+        "P23",
+        "P42",
+        "P43",
+        "P44"
+      ],
+      "guideline": "Require substantive technology and identifiable military/security relevance. Civilian space programs alone are out; police cooperation should not imply defense diplomacy or alliance obligations. Equipment remotely operated is not necessarily autonomous.",
+      "items": [
+        {
+          "pilot_id": "P18",
+          "desk_id": "china",
+          "source_url": "http://www.mod.gov.cn/gfbw/wzll/hj/16488209.html",
+          "source_date": "2026-09-22",
+          "original_title": "东部战区海军某旅紧贴实战需求展开技术攻关——深山台站实现无人值守",
+          "body_sha256": "e97b4e7f793c799308946f96eeafb501f4d677a409aafac53fdd9c29b971721a",
+          "initial_model_topics": [
+            "cyber_information",
+            "military_exercises",
+            "emerging_technology"
+          ],
+          "second_model_topics": [
+            "cyber_information",
+            "military_exercises",
+            "emerging_technology"
+          ],
+          "owner_question": "Does remote unattended equipment qualify as emerging uncrewed technology absent autonomy, and when does a reported technical upgrade become a sustainment decision?",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P22",
+          "desk_id": "china",
+          "source_url": "http://www.81.cn/yw_208727/16490762.html",
+          "source_date": "2026-10-01",
+          "original_title": "神舟二十三号航天员视频祝福祖国 祝福中国航天事业再创辉煌",
+          "body_sha256": "404ec59364cb3191133e3f1c5c0c821d2703b08ead0b331ccacf7c202458fea4",
+          "initial_model_topics": [],
+          "second_model_topics": [],
+          "owner_question": "Require a military/security nexus for space_security, or admit substantive civilian space capability?",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P23",
+          "desk_id": "china",
+          "source_url": "http://www.81.cn/yw_208727/16488441.html",
+          "source_date": "2026-09-23",
+          "original_title": "我国首届航天医学工程大会召开",
+          "body_sha256": "c989ab4f401729d10a92ac1a73038ce5ae14566d56e384b9ef687a095347f7cc",
+          "initial_model_topics": [],
+          "second_model_topics": [],
+          "owner_question": "Same civilian-space-capability boundary as P22; abstention is not a claim that space capability is absent.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P42",
+          "desk_id": "vietnam",
+          "source_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+          "source_date": "2026-10-05",
+          "original_title": "Hợp tác đào tạo, nghiên cứu công nghệ an ninh với Đại học Concordia, Canada",
+          "body_sha256": "d7c22a5ed0d6d6b6b1dba03df20bab1d6352d80d75adcdba6853b68d23fdc1d2",
+          "initial_model_topics": [
+            "cyber_information",
+            "emerging_technology"
+          ],
+          "second_model_topics": [
+            "cyber_information",
+            "emerging_technology"
+          ],
+          "owner_question": "Does emerging defense technologies encompass explicitly security-linked police AI? Retention here uses the broad security reading, not military identity.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P43",
+          "desk_id": "vietnam",
+          "source_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+          "source_date": "2026-10-05",
+          "original_title": "Mở rộng hợp tác công nghệ, công nghiệp an ninh với các đối tác Thổ Nhĩ Kỳ",
+          "body_sha256": "a74afdee76e0937e514d7551fdaae618ac91b5ca95ab291c51cd6c789f0277f9",
+          "initial_model_topics": [
+            "emerging_technology"
+          ],
+          "second_model_topics": [
+            "emerging_technology"
+          ],
+          "owner_question": "Same public-security technology boundary as P42; separate security-industry coverage is not yet justified as a new topic.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P44",
+          "desk_id": "vietnam",
+          "source_url": "https://bocongan.gov.vn/bai-viet/viet-nam-va-myanmar-chu-trong-hop-tac-dau-tranh-voi-cac-loai-toi-pham-moi-1790933646",
+          "source_date": "2026-10-02",
+          "original_title": "Việt Nam và Myanmar chú trọng hợp tác đấu tranh với các loại tội phạm mới",
+          "body_sha256": "420a79b902de06951c8cd7108e297e8fa48c3bac028d007cca9ad886cf0b38d0",
+          "initial_model_topics": [],
+          "second_model_topics": [],
+          "owner_question": "Does alliances_partnerships admit formal police Security Dialogues/crime agreements? If yes, add that topic; neither defense_diplomacy nor online-fraud cyber tagging follows automatically.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        }
+      ]
+    },
+    {
+      "key": "composite_and_materiality",
+      "title": "Composite captures, agenda lists and multi-label materiality",
+      "ids": [
+        "P19",
+        "P31",
+        "P33"
+      ],
+      "guideline": "An incidental agenda mention is not a topic, while multiple developed passages can justify several. A composite capture requires source-boundary checking before treating separate sections as one coherent article.",
+      "items": [
+        {
+          "pilot_id": "P19",
+          "desk_id": "china",
+          "source_url": "http://www.mod.gov.cn/gfbw/wzll/kj/16487888.html",
+          "source_date": "2026-09-21",
+          "original_title": "海军航空大学某团创新教官机型改装训练模式——“装备空窗期”成为“能力加速期”",
+          "body_sha256": "fd01ba0ee0442a750ca37acc2c2f1b84acf65ec8724c7623e540a59ed9c63d50",
+          "initial_model_topics": [
+            "military_exercises"
+          ],
+          "second_model_topics": [
+            "military_exercises",
+            "doctrine_strategy"
+          ],
+          "owner_question": "Accept record-level topics over the complete composite capture or require a later separately authorized source-extraction assessment?",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P31",
+          "desk_id": "singapore",
+          "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/1oct26-nr/",
+          "source_date": "2026-10-01",
+          "original_title": "Minister for Defence Chan Chun Sing Agrees with German Federal Minister of Defence to Further Strengthen Defence Relationship",
+          "body_sha256": "9599fb1f8f9b2e1c7373c0b30cdb3b08e31fd988799f96ce1a790faa44b03bdf",
+          "initial_model_topics": [
+            "defense_diplomacy",
+            "cyber_information",
+            "defense_industry",
+            "critical_minerals_supply_chains"
+          ],
+          "second_model_topics": [
+            "defense_diplomacy",
+            "alliances_partnerships",
+            "maritime_security"
+          ],
+          "owner_question": "Adopt developed-subject materiality or tag formally agreed agenda items? Under the latter, the three rejected labels could be retained.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P33",
+          "desk_id": "singapore",
+          "source_url": "https://www.mindef.gov.sg/news-and-events/latest-releases/28sep26-speech/",
+          "source_date": "2026-09-28",
+          "original_title": "Speech by Minister of State for Defence Desmond Choo at the 27th Asia-Pacific Programme for Senior Military Officers (APPSMO) on 28 September 2026 at Grand Copthorne Waterfront Hotel",
+          "body_sha256": "84379abcaf0963b82bad2e4bd326bf2403714c6c886090e8c550334846ad8a24",
+          "initial_model_topics": [
+            "doctrine_strategy",
+            "emerging_technology",
+            "cyber_information",
+            "economic_security",
+            "critical_minerals_supply_chains"
+          ],
+          "second_model_topics": [
+            "doctrine_strategy",
+            "emerging_technology",
+            "cyber_information",
+            "economic_security",
+            "critical_minerals_supply_chains",
+            "maritime_security",
+            "alliances_partnerships"
+          ],
+          "owner_question": "Confirm substantive multi-label passage standard rather than a label-count cap; GUIDE additions are developed subject matter.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        }
+      ]
+    },
+    {
+      "key": "economic_resilience_and_hadr",
+      "title": "Economic-security materiality, supply resilience and HADR",
+      "ids": [
+        "P38",
+        "P46",
+        "P47"
+      ],
+      "guideline": "Concrete national-security supply dependence can qualify strategic materials and supply-chain resilience without a mineral. Defense disaster relief, direct support costs, and mission-specific rescue training belong to proposed HADR; funding is not automatically procurement.",
+      "items": [
+        {
+          "pilot_id": "P38",
+          "desk_id": "japan",
+          "source_url": "https://www.mod.go.jp/j/press/news/2026/08/28a.pdf",
+          "source_date": "2026-08-28",
+          "original_title": "令和８年熊本地震復旧に係る対応",
+          "body_sha256": "92c3546b6ef898a2bccadcf297e640a8f3fe60a94252673b73c5b5708486a068",
+          "initial_model_topics": [],
+          "second_model_topics": [],
+          "owner_question": "Does earmarked disaster vessel operating expenditure itself constitute a concrete sustainment action? If yes, add procurement_acquisition; otherwise preserve abstention until HADR vocabulary work.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P46",
+          "desk_id": "vietnam",
+          "source_url": "https://moit.gov.vn/tin-tuc/chinh-phu-ban-hanh-nghi-quyet-ve-viec-keo-dai-thoi-han-ap-dung-uu-dai-thue-xang-dau-den-het-nam-2026.html",
+          "source_date": "2026-09-30",
+          "original_title": "Chính phủ ban hành Nghị quyết về việc kéo dài thời hạn áp dụng ưu đãi thuế xăng dầu đến hết năm 2026",
+          "body_sha256": "6e7ca7a61de495b1710490ebf517c748d14df4728b6b12f3d2c11d0354456717",
+          "initial_model_topics": [
+            "economic_security"
+          ],
+          "second_model_topics": [
+            "economic_security"
+          ],
+          "owner_question": "Confirm that a concrete policy-purpose energy-security clause suffices; rejecting this would require a stronger explicitness/materiality rule.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        },
+        {
+          "pilot_id": "P47",
+          "desk_id": "vietnam",
+          "source_url": "https://moit.gov.vn/tin-tuc/hoi-thao-khoa-hoc-quoc-gia-dinh-huong-phat-trien-cong-nghiep-ho-tro-viet-nam-.html",
+          "source_date": "2026-09-30",
+          "original_title": "Hội thảo khoa học quốc gia \"Định hướng phát triển công nghiệp hỗ trợ Việt Nam\"",
+          "body_sha256": "f32cd4760f744620dca3a2278c79c89a5d246d8bb682f47e3e30af4fb0c7fe59",
+          "initial_model_topics": [
+            "economic_security",
+            "critical_minerals_supply_chains"
+          ],
+          "second_model_topics": [
+            "economic_security",
+            "critical_minerals_supply_chains"
+          ],
+          "owner_question": "Confirm industrial-resilience scope without minerals. Restricting this slug to minerals would require a versioned vocabulary change.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        }
+      ]
+    },
+    {
+      "key": "partnership_materiality",
+      "title": "Short event-linked partnership statements",
+      "ids": [
+        "P58"
+      ],
+      "guideline": "A named enduring relationship or formally described framework must be substantive; partner names in a reaction statement do not automatically prove a security partnership or a new flashpoint taxonomy need.",
+      "items": [
+        {
+          "pilot_id": "P58",
+          "desk_id": "korea",
+          "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297",
+          "source_date": "2026-10-06",
+          "original_title": "북한 탄도미사일 발사 관련 국방부 입장",
+          "body_sha256": "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284",
+          "initial_model_topics": [
+            "alliances_partnerships"
+          ],
+          "second_model_topics": [
+            "alliances_partnerships"
+          ],
+          "owner_question": "Confirm that a short event-linked collective-defense capability statement is substantive partnership evidence. A Peninsula topic needs a broader positive sample.",
+          "owner_decision": null,
+          "decision_rationale": null,
+          "reviewer": null,
+          "reviewed_at_utc": null
+        }
+      ]
+    }
+  ]
+}
