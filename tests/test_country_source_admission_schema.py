@@ -130,6 +130,20 @@ class SchemaAdmissionContracts(unittest.TestCase):
         self.assertIn("source_machine_checkpoint_unreconciled_or_held", r["holds"])
         self.assertIn("source_machine_checkpoint_has_unresolved_holds", r["holds"])
 
+    def test_future_checkpoint_cannot_be_marked_structurally_green_early(self):
+        afp = checkpoint()
+        afp["as_of_utc"] = "2026-10-12"
+        with self.assertRaisesRegex(AdmissionSchemaRefused, "source_checkpoint_not_yet_due"):
+            plan("ph_afp_articles", afp, self.db)
+        vn = checkpoint("vietnam_three_ministry_sources")
+        vn["as_of_utc"] = "2026-10-13"
+        with self.assertRaisesRegex(AdmissionSchemaRefused, "source_checkpoint_not_yet_due"):
+            plan("vn_mps_foreign_affairs_vi", vn, self.db)
+        vn = checkpoint("vietnam_three_ministry_sources")
+        vn["checkpoint"] = "day-30"
+        with self.assertRaisesRegex(AdmissionSchemaRefused, "source_checkpoint_not_yet_due"):
+            plan("vn_moit_energy_vi", vn, self.db)
+
     def test_wrong_desk_refused_instead_of_borrowing_AFP_clock(self):
         with self.assertRaisesRegex(AdmissionSchemaRefused, "wrong_desk_checkpoint_receipt"):
             plan("vn_mps_foreign_affairs_vi", checkpoint(), self.db)
