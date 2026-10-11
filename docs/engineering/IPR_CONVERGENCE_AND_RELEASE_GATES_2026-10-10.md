@@ -5,6 +5,12 @@
 **Nature:** planning and engineering handoff only; not a new production authority, new editorial format, deployment request, implementation PR, or replacement for existing project doctrine.  
 **Decision standard:** preserve the current publication and source record while turning already-created work into a small number of independently reviewable, verifiable releases.
 
+## October 11 companion and authority update
+
+For execution beyond Sunday design review, use **docs/engineering/SUNDAY_CUSTODY_AND_DELIVERY_EXECUTION_PLAN_2026-10-11.md**. It is the issue #366-specific engineering handoff: actual PR dependencies (#377, #382, #385), evidence receipts, six blocked/disabled implementation stages, separate owner/source-rights/storage/recipient approval, rollback and ambiguous SMTP failure tests, and one-objective agent prompts. Its milestones refine Section 7 Session B; they are NOT separate authorizations or another generic IPR roadmap.
+
+At this later review checkpoint, the original code-freeze snapshot below remains historically dated: Sunday journal PR #377 passed 5,714 tests (9 skips), and combined fictional replay PR #382 at rebased head a49a584a971cef5afdf271c5594272498026a598 passed 5,730 (9 skips), with output validation and DB/output preservation. Independent snapshot PR #385 was still in exact-head CI at the time its companion was written. All three remain unmerged. PR/CI reality supersedes any stale "still running" sentence elsewhere in this file. **No real SMTP, editor delivery, or production activation follows from a test receipt.**
+
 ## 0. Executive architectural ruling
 
 **Converge before expanding.** IPR's principal risk is no longer a shortage of implementations. Multiple partially integrated or stacked workstreams target adjacent trust boundaries: Sunday Brief selection and delivery; archival evidence custody; output/public projection; Pages deployment; frontend design; country-source admission; and private research formats.
