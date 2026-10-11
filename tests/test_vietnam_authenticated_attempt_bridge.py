@@ -146,14 +146,13 @@ class VietnamAttemptBridgeTests(unittest.TestCase):
         api = FakeRest()
         slug = "vn_moit_energy_vi"
         latest = api.ledger_paths[slug][-1]
-        sha = api.routes[latest]
         del api.routes[latest]
         state_sha = next(x["object"]["sha"] for x in api.routes.values()
                          if isinstance(x, dict) and x.get("ref") ==
                          "refs/heads/" + SOURCES[slug])
         directory = PREFIX + "/contents/state/ledger?ref=" + state_sha
-        api.routes[directory]["__dummy"] = 1 if isinstance(api.routes[directory], dict) else None
-        # Remove from pinned listing instead of asking a missing GitHub blob.
+        # Remove the entry from pinned listing as a real partial push would.
+        # The missing file is not read because that family never published it.
         if isinstance(api.routes[directory], list):
             api.routes[directory] = api.routes[directory][:-1]
         result = bridge(api, through=THROUGH, binding_report=api.declarations)
