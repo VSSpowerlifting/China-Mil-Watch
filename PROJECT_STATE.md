@@ -109,7 +109,9 @@ legacy telemetry; the equal-cap/envelope three-day comparison is explicitly
 fictional/modeled, not historical per-record spend. Private browser checks at
 1280/375 and 189 focused tests pass; 72 prior blank-body/retry/state/queue
 contracts also pass after updating the moved selection seam. Final full
-offline/CI receipts are recorded in draft PR #395. Output validation retains ten governed
+offline/CI receipts are recorded in draft PR #395. The first completed full run
+reported 5,764 tests and one desk-hold log compatibility failure; the original
+desk-hold/allocation messages are restored from shared plan counts. Output validation retains ten governed
 warnings; DB/output/history preservation is independently hashed. No paid call,
 collection, production mutation, output regeneration, merge or activation.
 Operator contract and reproduction: `docs/ANALYSIS_CAPACITY_RUNBOOK.md`.

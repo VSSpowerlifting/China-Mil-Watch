@@ -570,6 +570,31 @@ def run(
     pre_cap = plan["counts"]["eligible"]
     backlog_remaining = sum(r["lane"] in ("pending", "unscored") and
                             r["reason"] in ("cap-deferral", "allocation-deferral") for r in plan["records"])
+    held_desks = Counter(r["desk_id"] for r in plan["records"] if r["reason"] == "desk-policy-hold")
+    for desk_id, held in sorted(held_desks.items(), key=lambda kv: str(kv[0])):
+        logger.info(
+            "Held out of the daily analysis queue: %d %s-desk record(s) — the "
+            "desk's screening is not run by the daily pipeline "
+            "(processing/screening.py); they stay awaiting screening.",
+            held, desk_id,
+        )
+    blank_lanes = Counter(r["lane"] for r in plan["records"] if r["reason"] == "blank-body")
+    if blank_lanes:
+        logger.warning(
+            "Withheld %d stored article(s) with blank original bodies from "
+            "paid analysis dispatch: %d new, %d pending, %d unscored. "
+            "Rows and processing states were not changed; original text "
+            "requires source/extraction review before analysis.",
+            sum(blank_lanes.values()), blank_lanes["new"], blank_lanes["pending"], blank_lanes["unscored"],
+        )
+    new_total = sum(r["lane"] == "new" and
+                    (r["selected"] or r["reason"] in ("cap-deferral", "allocation-deferral"))
+                    for r in plan["records"])
+    logger.info(
+        "Analysis queue: %d/%d new + %d/%d backlog this run (cap=%d, reserve=%.0f%%)",
+        plan["counts"]["new_planned"], new_total, plan["counts"]["backlog_planned"],
+        pre_cap - new_total, policy.cap, policy.reserve * 100,
+    )
     logger.info("Analysis plan %s: %d planned / %d eligible; %d held; %d deferred",
                 plan["plan_id"], len(queue), pre_cap, plan["counts"]["held"], plan["counts"]["deferred"])
     guard = None
