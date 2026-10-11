@@ -37,11 +37,15 @@ concurrency:
 
 jobs:
   sunday-editor-handoff:
-    if: github.event_name == 'workflow_dispatch' || vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true' || vars.IPR_SUNDAY_OWNER_PREVIEW_ENABLED == 'true'
+    # Scheduled Sunday editor draft is now the default; manual sends still require opt-in.
+    # The October 10 pilot approval/digest guard, live-source gates and Friday
+    # exclusivity check remain mandatory. A configured owner-preview conflicts
+    # with automatic Dylan delivery and fails before any paid model call.
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      SUNDAY_SEND: ${{ vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.send_email == true)) }}
+      SUNDAY_SEND: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && vars.IPR_SUNDAY_EDITOR_DELIVERY_ENABLED == 'true' && inputs.send_email == true) }}
       SUNDAY_OWNER_PREVIEW: ${{ github.event_name == 'schedule' && vars.IPR_SUNDAY_OWNER_PREVIEW_ENABLED == 'true' }}
     steps:
       - name: Checkout production corpus on main (read-only)
