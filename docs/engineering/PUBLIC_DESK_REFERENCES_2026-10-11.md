@@ -12,6 +12,9 @@ Status: **code candidate, no approvals or record promotion**. The public desk pa
 
 ## Test and release conditions
 
+The optional render-only release pathway is reviewed separately under [PR #393](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/393); it must not be invoked until this change and the country-desk foundations are merged and the generated site has passed all applicable gates. It cannot approve new publisher references or archive shadow data.
+
+
 Exact-head Python 3.9 test modules: `tests.test_public_desk_references`, `tests.test_vietnam_reviewed_links`, `tests.test_desk_rollout_contract`, `tests.test_desk_map`, plus full offline CI and production output/SQLite preservation. Check 375/1280 widths, keyboard focus, no-JS approved-link fallback, query clearing, and stale/held publication field leakage.
 
 The current P2 branch is stacked on P1 #388; merging into `main` before P1 and full individual checks would be improper. Human source-use and owner launch decisions remain upstream gates for nonempty source references and for any later live archive admission.
