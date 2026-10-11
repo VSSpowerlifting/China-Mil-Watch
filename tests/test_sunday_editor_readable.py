@@ -130,9 +130,21 @@ class ReadableSundayEditorTests(unittest.TestCase):
         self.assertNotIn("=== SOURCE APPENDIX", text_body)
         self.assertNotIn("Pinned shadow commit", html_body)
         files = list(msg.iter_attachments())
-        self.assertEqual(len(files), 1)
+        self.assertEqual(len(files), 2)
         self.assertEqual(files[0].get_filename(), "one-provisional.txt")
         self.assertEqual(files[0].get_payload(decode=True), packet_bytes)
+        self.assertEqual(files[1].get_filename(),
+                         "IPR-Briefs-Editorial-{}.docx".format(SAT))
+        self.assertEqual(
+            files[1].get_content_type(),
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
+        from io import BytesIO
+        from docx import Document
+        document = Document(BytesIO(files[1].get_payload(decode=True)))
+        rendered = "\\n".join(p.text for p in document.paragraphs)
+        self.assertIn("Provisional editorial manuscript", rendered)
+        self.assertNotIn("Pinned shadow commit", rendered)
 
 
 if __name__ == "__main__":

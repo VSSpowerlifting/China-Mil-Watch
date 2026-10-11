@@ -35,9 +35,9 @@ INTRO = (
     "sounds natural? Feel free to rewrite paragraphs or suggest cuts. "
     "If a claim strikes you as questionable, just flag it—I’ll handle the "
     "source verification and final publication review.\n\n"
-    "You can reply with your edits in the email or send back a document. "
-    "No need to work through the record IDs or technical appendix in the "
-    "reference .txt attachment. This is still a provisional draft.\n\n"
+    "Please edit and return the attached Word manuscript, or reply with "
+    "language suggestions. The separate .txt file is only a source-audit "
+    "reference and does not need your edits. This is still a provisional draft.\n\n"
 )
 CLOSING = "\n\nThanks,\nBen\n"
 
