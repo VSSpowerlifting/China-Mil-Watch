@@ -52,11 +52,11 @@ def validate_boundary(manifest, readiness, registry, production_manifests, workf
     if len(vietnam) != 1:
         raise BoundaryRefused("Vietnam desk must be declared exactly once")
     entry = vietnam[0]
-    if (entry.get("status") != "research"
+    if (entry.get("status") not in ("research", "shadow")
             or entry.get("manifest") is not None
             or entry.get("has_production_records") is not False
             or entry.get("public") is not True):
-        raise BoundaryRefused("journal's Vietnam desk is no longer research-only")
+        raise BoundaryRefused("journal's Vietnam desk is no longer nonproduction research/shadow")
 
     if not isinstance(production_manifests, dict):
         raise BoundaryRefused("invalid production manifest inventory")

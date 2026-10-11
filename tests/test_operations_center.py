@@ -78,8 +78,9 @@ class OperationsCenterContracts(unittest.TestCase):
         self.assertFalse(item["eligible_for_production"])
         self.assertFalse(item["live_collection_verified"])
         self.assertFalse(item["source_rights_verified"])
-        self.assertIsNone(item["registry_status"])
-        self.assertEqual("not_in_public_registry", item["registry_binding"])
+        self.assertEqual("shadow", item["registry_status"])
+        self.assertEqual("declared", item["registry_binding"])
+        self.assertEqual("nonproduction_source_configuration", item["inventory_role"])
 
     def test_historical_shadow_manifest_is_not_an_active_shadow_claim(self):
         self.make_shadow(desk="singapore")
