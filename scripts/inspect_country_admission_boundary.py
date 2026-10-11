@@ -187,6 +187,18 @@ def bind_checkpoint(checkpoint, source):
     }
 
 
+def frozen_database_digest(path):
+    """Hash whole frozen SQLite bytes without selecting or decoding a record."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        while True:
+            block = stream.read(1024 * 1024)
+            if not block:
+                break
+            digest.update(block)
+    return digest.hexdigest()
+
+
 def table_columns(conn, table):
     return {row[1] for row in conn.execute("PRAGMA table_info('%s')" % table)}
 
@@ -210,8 +222,8 @@ def inspect_database(path, source):
            "invalid_production_database_file")
     size = path.stat().st_size
     ensure(100 <= size <= MAX_DB_BYTES, "production_database_size_invalid")
-    ensure(not Path(str(path) + "-wal").exists() and
-           not Path(str(path) + "-shm").exists(),
+    ensure(not any(Path(str(path) + suffix).exists()
+                   for suffix in ("-wal", "-shm", "-journal")),
            "production_database_has_live_sidecars")
     db = path.resolve()
     try:
@@ -247,7 +259,13 @@ def inspect_database(path, source):
 
 def plan(source, checkpoint, database):
     binding = bind_checkpoint(checkpoint, source)
+    # A later collision audit must be able to prove it used this identical
+    # production snapshot. Never confuse the checkpoint source Git SHA
+    # with the unrelated production database identity.
+    before = frozen_database_digest(database)
     schema, existing = inspect_database(database, source)
+    after = frozen_database_digest(database)
+    ensure(before == after, "production_database_changed_during_preflight")
     holds = []
     if not schema["schema_compatible"]:
         holds.append("production_schema_contract_not_satisfied")
@@ -270,6 +288,7 @@ def plan(source, checkpoint, database):
         "checkpoint_date": binding["checkpoint_date"],
         "checkpoint_label": binding["checkpoint_label"],
         "checkpoint_receipt_sha256": binding["receipt_sha256"],
+        "production_database_sha256": after,
         "production_schema_checks": schema,
         "production_source_slug_collisions": existing,
         "machine_checkpoint_state": binding["machine_state"],
