@@ -20,8 +20,24 @@ The owner-only preview continues to carry just the exact original text; no
 separate Word editing copy is generated for previews. The first October 11
 manual delivery already happened and must not be replayed.
 
+When Dylan returns the edited Word file, use the offline, source-safe converter.
+It reads only article section headings and paragraphs, ignores the contextual
+source-link appendix in Word, and restores every original protected citation
+line and immutable source appendix from the sent TXT:
+
+    python -m scripts.import_sunday_editor_docx \
+      --original /private/IPR-Briefs-Editorial-YYYY-MM-DD.txt \
+      --edited-word /private/Dylan-return.docx \
+      --out /private/Dylan-review-candidate.txt
+
+It rejects missing/reordered sections, injected source IDs, unresolved tracked
+changes, unsafe archives and unchanged manuscripts. Its output is a
+**review-only local candidate**, never an approved or published sidecar.
+Review it for factual/source-language accuracy and perform normal publication
+approval separately. The output file must not already exist.
+
 Focused local regression tests:
-python -m unittest tests.test_sunday_editor_docx tests.test_sunday_editor_readable
+python -m unittest tests.test_sunday_editor_docx tests.test_sunday_editor_readable tests.test_sunday_editor_word_return
 
 
 ## Operating schedule
