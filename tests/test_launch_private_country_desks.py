@@ -36,6 +36,9 @@ class DeskLauncherTests(unittest.TestCase):
             ("vn_moit_foundational_industry_vi",
              "shadow/vietnam-moit-foundational-industry",
              "Công nghiệp Việt Nam", "https://moit.gov.vn/tin/2", "vn-moit-foundation:994"),
+            ("kr_policy_mnd_releases", "shadow/korea-policy-briefing",
+             "국방부 정책브리핑", "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784000",
+             "korea-policy:156784000"),
         ]
         self.commits = {}
         for slug, branch, title, url, ident in cases:
@@ -85,6 +88,21 @@ class DeskLauncherTests(unittest.TestCase):
         self.assertNotIn("MARITIME PRIVATE BODY MUST NOT EXPORT", page)
         self.assertNotIn("<html", json.dumps(receipt))
         self.assertFalse((self.original / "state" / "shadow.db").exists())
+
+    def test_korea_one_command_is_separate_from_legacy_both_and_all(self):
+        with patch("scripts.launch_private_country_desks.REMOTE", str(self.original)):
+            korea = create("korea", fmt="json", query="PRIVATE BODY")
+            self.assertEqual(korea["matched_total"], 1)
+            self.assertEqual(korea["sources"][0]["source_slug"], "kr_policy_mnd_releases")
+            self.assertFalse(korea["public_release_authorized"])
+            all_three = create("all", fmt="json", query="PRIVATE BODY")
+            self.assertEqual(len(all_three["sources"]), 6)
+            self.assertEqual(all_three["matched_total"], 6)
+            prior = create("both", fmt="json", query="PRIVATE BODY")
+            self.assertEqual(len(prior["sources"]), 5)
+            self.assertEqual(prior["matched_total"], 5)
+        self.assertNotIn("MARITIME PRIVATE BODY MUST NOT EXPORT", json.dumps(all_three))
+        self.assertFalse(all_three["automated_source_rights_approved"])
 
     def test_json_mode_body_queries_and_source_evidence_no_body(self):
         with patch("scripts.launch_private_country_desks.REMOTE", str(self.original)):

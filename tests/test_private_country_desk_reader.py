@@ -1,7 +1,8 @@
-"""No-network, real Git/SQLite synthetic tests for private two-country research UI."""
+"""No-network, real Git/SQLite synthetic tests for private country research UI."""
 from __future__ import annotations
 
 import io
+import hashlib
 import json
 import sqlite3
 import subprocess
@@ -27,6 +28,11 @@ published_date TEXT, first_seen_run TEXT, current_content_sha256 TEXT
 SQL_VERSION = """CREATE TABLE shadow_versions (
 source_identity TEXT, content_sha256 TEXT, title_original TEXT, text_original TEXT
 )"""
+SQL_KR = """CREATE TABLE shadow_records (
+source_identity TEXT, source_slug TEXT, url TEXT, title_original TEXT,
+published_date TEXT, first_seen_run TEXT, text_original TEXT,
+language_tag TEXT, metadata_json TEXT, content_sha256 TEXT, capture_sha256 TEXT
+)"""
 
 
 def git(folder, *args):
@@ -35,11 +41,30 @@ def git(folder, *args):
 
 
 def state_commit(folder, source, *, title, url, identity, content=SECRET,
-                 date="2026-10-10", clock=None):
+                 date="2026-10-10", clock=None, kr_issuer="국방부",
+                 kr_language="ko", kr_bad_sha=False, kr_state_desk="korea"):
     state = folder / "state"
     state.mkdir(exist_ok=True)
     with sqlite3.connect(state / "shadow.db") as cx:
-        if SOURCES[source][3] == "vietnam":
+        if SOURCES[source][3] == "korea":
+            cx.execute(SQL_KR)
+            cx.execute("CREATE TABLE shadow_meta (desk TEXT PRIMARY KEY)")
+            cx.execute("INSERT INTO shadow_meta VALUES (?)", (kr_state_desk,))
+            metadata = {
+                "issuer": kr_issuer,
+                "publisher": "대한민국 정책브리핑",
+                "publication_kind": "syndicated_press_release",
+                "body_scope": "published_hwpx_text",
+                "attachments_collected": True,
+                "document_url": "https://www.korea.kr/common/download.do?fileId=123456&tblKey=GMN",
+                "document_capture_sha256": "b" * 64,
+            }
+            cx.execute("INSERT INTO shadow_records VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                       (identity, source, url, title, date, "38088742605-1", content,
+                        kr_language, json.dumps(metadata, ensure_ascii=False),
+                        ("a" * 64 if kr_bad_sha else hashlib.sha256(content.encode()).hexdigest()),
+                        "c" * 64))
+        elif SOURCES[source][3] == "vietnam":
             cx.execute(SQL_VN)
             cx.execute(SQL_VERSION)
             cx.execute("INSERT INTO shadow_records VALUES (?,?,?,?,?,?)",
@@ -77,8 +102,12 @@ class PrivateCountryReaderTests(unittest.TestCase):
         host = SOURCES[slug][2]
         url = kwargs.pop("url", "https://" + host +
                          ("/news/test-press-release" if slug == "ph_afp_articles"
+                          else "/briefing/pressReleaseView.do?newsId=156784000"
+                          if slug == "kr_policy_mnd_releases"
                           else "/test-official-release"))
         identity = kwargs.pop("identity", "afp:11232" if slug == "ph_afp_articles"
+                              else "korea-policy:156784000"
+                              if slug == "kr_policy_mnd_releases"
                               else slug + ":12")
         title = kwargs.pop("title", "Official agency briefing")
         commit = state_commit(self.folder, slug, url=url, title=title,
@@ -107,6 +136,44 @@ class PrivateCountryReaderTests(unittest.TestCase):
         self.assertIn("PUBLIC REVIEW PENDING", rendered)
         self.assertIn("https://www.afp.mil.ph", rendered)
         self.assertIn("https://bocongan.gov.vn", rendered)
+
+    def test_korea_metadata_search_at_literal_commit_never_exposes_korean_body(self):
+        k = self.fixture("kr_policy_mnd_releases", title="국방부 보도자료",
+                         content="한글 원문 군사 협력 " + SECRET,
+                         clock={"desk": "korea", "day_zero_run_id": "37656171920-2",
+                                "day_zero_utc": "2026-10-07T17:16:33+00:00"})
+        out = build([k], term="군사", country="korea")
+        self.assertEqual(out["matched_total"], 1)
+        self.assertEqual(out["results"][0]["identity"], "korea-policy:156784000")
+        self.assertEqual(out["results"][0]["country"], "korea")
+        self.assertIn("Ministry of National Defense", out["results"][0]["institution"])
+        self.assertFalse(out["human_source_review_completed"])
+        self.assertFalse(out["automated_source_rights_approved"])
+        self.assertFalse(out["public_release_authorized"])
+        self.assertNotIn(SECRET, json.dumps(out, ensure_ascii=False))
+        self.assertNotIn("한글 원문", json.dumps(out, ensure_ascii=False))
+        page = render_html(out)
+        self.assertIn("South Korea", page)
+        self.assertNotIn(SECRET, page)
+        self.assertIn("PUBLIC REVIEW PENDING", page)
+
+    def test_korea_fail_closed_for_issuer_identity_language_hash_and_desk(self):
+        cases = [
+            {"kr_issuer": "방위사업청"},
+            {"identity": "korea-policy:156784001"},
+            {"url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784000&tracking=1"},
+            {"url": "https://dapa.go.kr/briefing/pressReleaseView.do?newsId=156784000"},
+            {"kr_language": "en"},
+            {"kr_bad_sha": True},
+            {"kr_state_desk": "indonesia"},
+            {"clock": {"desk": "indonesia", "day_zero_run_id": "37656171920-2",
+                       "day_zero_utc": "2026-10-07T17:16:33+00:00"}},
+        ]
+        for modifications in cases:
+            with self.subTest(modifications=modifications):
+                k = self.fixture("kr_policy_mnd_releases", **modifications)
+                with self.assertRaises(ReaderHold):
+                    build([k], country="korea")
 
     def test_casefold_query_and_country_filter_and_cap(self):
         a = self.fixture("ph_afp_articles", title="Sanlakas exercise",
