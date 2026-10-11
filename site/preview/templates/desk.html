@@ -2,6 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines') %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -20,25 +21,41 @@
   </div>
 </div>
 
-{# A deliberately separate bibliography: these are individually approved
-   links to publisher pages, NOT locally archived records, desk qualification,
-   translated source texts, or eligible Briefs trail entries. #}
-{% if desk.slug == 'vietnam' and reviewed_source_links %}
-<section aria-labelledby="vietnam-reviewed-source-heading">
-  <h2 id="vietnam-reviewed-source-heading">Individually reviewed source links</h2>
-  <p>These Vietnamese-language publications were checked individually against
-  their issuing institutions and approved for linking. They remain on the
-  publishers’ websites; they are not part of IPR's collected record, do not
-  imply complete ministry coverage, and do not qualify Vietnam as a live desk.</p>
-  <ol>
-  {% for item in reviewed_source_links %}
-    <li>
-      <p><a href="{{ item.source_url }}" lang="vi" rel="noopener noreferrer">{{ item.title_original }}</a></p>
-      <p class="meta">{{ item.source_name }} · Published {{ item.published_date }}
-      · Source link reviewed {{ item.reviewed_on }}</p>
+{# Reviewed public-source links are not locally archived IPR records. #}
+{% if desk.slug in ('philippines', 'vietnam') %}
+<section class="desk-references" aria-labelledby="desk-references-heading">
+<h2 id="desk-references-heading">Individually reviewed official-source references</h2>
+<p>Source links appear only after publication-specific review. They point to the
+institutions’ own pages, not to IPR archive records; shadow capture and desk
+qualification are separate.</p>
+{% if public_source_links %}
+<div data-reference-browser>
+  <div class="desk-reference-filters" data-reference-controls hidden>
+    <label>Search approved titles <input type="search" data-reference-search maxlength="140" placeholder="Title or institution"></label>
+    <label>Institution <select data-reference-source>
+      <option value="">All institutions</option>
+      {% for slug, name in public_source_options %}<option value="{{ slug }}">{{ name }}</option>{% endfor %}
+    </select></label>
+    <label>Language <select data-reference-language>
+      <option value="">All languages</option>
+      {% for language in public_reference_languages %}<option value="{{ language }}">{{ language }}</option>{% endfor %}
+    </select></label>
+    <label>Publication month <input type="month" data-reference-month></label>
+  </div>
+  <p class="meta" data-reference-result-count role="status" aria-live="polite">{{ public_source_links|length }} reviewed references</p>
+  <ol class="desk-reference-list" data-reference-list>
+    {% for item in public_source_links %}
+    <li data-source="{{ item.source_slug }}" data-language="{{ item.language }}" data-published="{{ item.published_date }}">
+      <p><a href="{{ item.source_url }}" lang="{{ item.language }}" rel="noopener noreferrer">{{ item.title_original }}</a></p>
+      <p class="meta">{{ item.source_name }} · Published {{ item.published_date }} · Link reviewed {{ item.reviewed_on }}</p>
     </li>
-  {% endfor %}
+    {% endfor %}
   </ol>
+  <p class="meta" data-reference-empty hidden>No approved source references match these filters.</p>
+</div>
+{% else %}
+<p class="meta">No individual source references have completed the public-link review. Private research readers and shadow records remain separate.</p>
+{% endif %}
 </section>
 {% endif %}
 
@@ -202,3 +219,4 @@ keeps its original number, title, date and URL — see <a href="analysis.html">{
 
 <p class="records-foot"><a href="desks.html">All desks</a></p>
 {% endblock %}
+{% block scripts %}{% if desk.slug in ('vietnam', 'philippines') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
