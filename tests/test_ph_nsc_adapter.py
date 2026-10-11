@@ -1242,6 +1242,25 @@ class TestProductionIsolation(unittest.TestCase):
         self.assertNotIn("philippines", registry)
         self.assertNotIn("ph_nsc", registry)
 
+    @staticmethod
+    def _forbidden_nsc_reference(path, text):
+        # Private research readers may name a source slug, but cannot import
+        # the NSC adapter. This is NOT a production registry/collector exemption.
+        if path in (
+            REPO_ROOT / "scripts" / "shadow_collect_ph_nsc.py",
+            REPO_ROOT / ".github" / "workflows" / "ph_nsc_shadow.yml",
+        ):
+            return False
+        if path in (
+            REPO_ROOT / "scripts" / "private_country_desk_reader.py",
+            REPO_ROOT / "scripts" / "launch_private_country_desks.py",
+        ):
+            return any(marker in text for marker in (
+                "PHNscAdapter", "scraper.sources.ph_nsc",
+                "from scraper.sources import ph_nsc",
+            ))
+        return "ph_nsc" in text or "PHNscAdapter" in text
+
     def test_nothing_in_production_code_or_workflows_references_the_adapter(self):
         roots = [REPO_ROOT / name for name in (".github", "core", "desks", "scripts", "site",
                                                "processing", "adapters")]
@@ -1251,13 +1270,29 @@ class TestProductionIsolation(unittest.TestCase):
         files += list((REPO_ROOT / "scraper").glob("*.py")) + [REPO_ROOT / "pipeline.py",
                                                                REPO_ROOT / "scraper" / "sources" / "__init__.py"]
         for path in files:
-            if path in (REPO_ROOT / "scripts" / "shadow_collect_ph_nsc.py",
-                        REPO_ROOT / ".github" / "workflows" / "ph_nsc_shadow.yml"):
-                continue
             if path.exists():
                 text = path.read_text(encoding="utf-8", errors="replace")
-                self.assertNotIn("ph_nsc", text, path)
-                self.assertNotIn("PHNscAdapter", text, path)
+                self.assertFalse(self._forbidden_nsc_reference(path, text), path)
+
+    def test_nsc_reference_exceptions_reject_synthetic_production_leaks(self):
+        for path in (
+            REPO_ROOT / "pipeline.py",
+            REPO_ROOT / "desks" / "registry.json",
+            REPO_ROOT / ".github" / "workflows" / "daily_update.yml",
+            REPO_ROOT / "site" / "render.py",
+        ):
+            self.assertTrue(self._forbidden_nsc_reference(path, "ph_nsc"), path)
+            self.assertTrue(self._forbidden_nsc_reference(path, "PHNscAdapter"), path)
+        for path in (
+            REPO_ROOT / "scripts" / "private_country_desk_reader.py",
+            REPO_ROOT / "scripts" / "launch_private_country_desks.py",
+        ):
+            self.assertTrue(path.is_file(), path)
+            self.assertIn("ph_nsc", path.read_text(encoding="utf-8"), path)
+            self.assertFalse(self._forbidden_nsc_reference(path, "ph_nsc"), path)
+            self.assertTrue(self._forbidden_nsc_reference(path, "PHNscAdapter"), path)
+            self.assertTrue(self._forbidden_nsc_reference(
+                path, "from scraper.sources import ph_nsc"), path)
 
     def test_the_adapter_imports_nothing_that_stores_or_reaches_production(self):
         tree = ast.parse((REPO_ROOT / "scraper" / "sources" / "ph_nsc.py").read_text(encoding="utf-8"))
