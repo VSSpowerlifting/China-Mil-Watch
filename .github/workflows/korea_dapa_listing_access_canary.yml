@@ -1,0 +1,68 @@
+name: Korea DAPA government-policy listing access — manually gated
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/probe_korea_dapa_list_access.py"
+      - "tests/test_korea_dapa_listing_access_canary.py"
+      - "docs/engineering/KOREA_DAPA_BOUNDED_LISTING_ACCESS_2026-10-11.md"
+      - ".github/workflows/korea_dapa_listing_access_canary.yml"
+  workflow_dispatch:
+    inputs:
+      approve_one_time_official_listing_access:
+        description: "I authorize one korea.kr robots GET and, only if allowed, one exact filtered DAPA listing GET. No original documents."
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  no-network-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Minimal pure-parser dependency
+        run: python -m pip install beautifulsoup4
+      - name: Publisher robots, denial, URL and no-side-effect synthetic proof
+        run: python -m unittest tests.test_korea_dapa_listing_access_canary tests.test_korea_dapa_source_contract -v
+      - name: Corpus and registry remain untouched
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/ desks/registry.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  one-time-robots-and-listing-observation:
+    if: github.event_name == 'workflow_dispatch' && inputs.approve_one_time_official_listing_access == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Minimal source-identity dependency
+        run: python -m pip install beautifulsoup4
+      - name: At most two allowed publisher metadata requests
+        run: python -m scripts.probe_korea_dapa_list_access --approve-one-time-access-check
+      - name: Confirm no publisher original body or state retained
+        if: always()
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/ desks/registry.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
