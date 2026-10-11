@@ -3,7 +3,7 @@
 {% from "_weeks.html" import week_strip %}
 {% from "_atlas.html" import spine %}
 {% block title %}The record — {{ title }}{% endblock %}
-{% block head_scripts %}<link rel="stylesheet" href="archive.css">{% endblock %}
+{% block head_scripts %}<link rel="stylesheet" href="relief.css"><link rel="stylesheet" href="archive.css">{% endblock %}
 {% block main_class %} class="archive-page"{% endblock %}
 {% block content %}
 <header class="page-head"><h1>The record.</h1><p class="lede">{{ corpus_total | count }} preserved records. Search English and original titles.</p></header>
@@ -22,7 +22,7 @@
    it. (DECISION_LOG 2026-09-27, the Records finder.) #}
 <div id="browse" data-snapshot-date="{{ snapshot.date }}"
      data-snapshot-records="{{ corpus_total }}" hidden>
-  <form id="controls" class="finder" role="search" action="archive.html" method="get" hidden>
+  <form id="controls" class="finder rl-finder" role="search" action="archive.html" method="get" hidden>
     <div class="finder-row">
       <div class="finder-field finder-field--q">
         <label for="f-q">Title contains</label>

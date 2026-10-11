@@ -1,0 +1,26 @@
+{
+ "before": {
+  "routes_checked": 7589,
+  "failures": 0,
+  "archive.html": {
+   "html_css_bytes": 134055,
+   "js_bytes": 9847,
+   "asset_bytes": 261349,
+   "local_delivery_bytes": 405251,
+   "html_css_limit": 300000,
+   "js_limit": 10000
+  }
+ },
+ "after": {
+  "routes_checked": 7589,
+  "failures": 0,
+  "archive.html": {
+   "html_css_bytes": 139634,
+   "js_bytes": 9847,
+   "asset_bytes": 271116,
+   "local_delivery_bytes": 420597,
+   "html_css_limit": 300000,
+   "js_limit": 10000
+  }
+ }
+}

@@ -6,8 +6,10 @@ nowhere else (B1=A); full-colour flags vendored with their MIT licence (B9=A);
 geography built deterministically from Natural Earth and recorded in a receipt;
 every illustration decorative; motion only behind reduced-motion, scripting
 and scroll-timeline support. These checks hold those lines. Phase 2 links the
-primitives into the homepage alone; every other production page stays without
-them, and the production build publishes only the files the homepage uses.
+primitives into the homepage; Phase 2b adds the Archive, which takes only
+`relief.css` and the finder lift (B1 names "the finder"). Every other
+production page stays without them, and the production build publishes only
+the files those two pages use.
 """
 
 from __future__ import annotations
@@ -246,17 +248,20 @@ class MacroTests(unittest.TestCase):
 
 
 class ProductionIsolationTests(unittest.TestCase):
-    """Phase 2: the homepage is the one production page allowed the primitives.
+    """Phase 2 and 2b: the homepage and the Archive are the production pages
+    allowed the primitives.
 
     A positive allowlist per template: home.html may reach relief.css, the
     _relief.html macros, the two Natural Earth sprites and the rl-* classes;
-    every other production template reaches none of them. Flags and source
-    glyphs stay gallery-only.
+    archive.html may reach relief.css and the finder lift (`rl-finder`) and
+    nothing else; every other production template reaches none of them. Flags
+    and source glyphs stay gallery-only.
     """
 
     PATTERN = re.compile(r"relief\.css|_relief\.html|assets/(geo|flags|glyphs)/[\w.-]*|\brl-[a-z]+")
     ALLOWED = {"home.html": {"relief.css", "_relief.html", "rl-finder", "rl-card",
-                             "rl-analysis"}}
+                             "rl-analysis"},
+               "archive.html": {"relief.css", "rl-finder"}}
 
     def test_only_the_homepage_reaches_them_and_only_what_it_uses(self):
         for path in sorted(TEMPLATES.glob("*.html")):
@@ -343,10 +348,12 @@ class ProductionAssetTests(unittest.TestCase):
                 ids[path] = {s.getAttribute("id") for s in doc.getElementsByTagName("symbol")}
             self.assertIn(symbol, ids[path], "%s#%s" % (path, symbol))
 
-    def test_homepage_links_relief_first_and_no_other_page_links_it(self):
+    def test_only_the_homepage_and_archive_link_relief_first(self):
         self.assertLess(self.index.index('href="relief.css"'), self.index.index('href="home.css"'))
+        archive = (self.out / "archive.html").read_text(encoding="utf-8")
+        self.assertLess(archive.index('href="relief.css"'), archive.index('href="archive.css"'))
         for page in self.out.rglob("*.html"):
-            if page.name != "index.html" or page.parent != self.out:
+            if page.parent != self.out or page.name not in ("index.html", "archive.html"):
                 self.assertNotIn("relief.css", page.read_text(encoding="utf-8"),
                                  page.relative_to(self.out))
 

@@ -87,6 +87,10 @@ TRACKED_DB = REPO_ROOT / "pla_watch.db"
 # The relief assets the homepage references (home.html, via _relief.html),
 # delivered by name. relief.css travels with the stylesheets.
 RELIEF_PRODUCTION_ASSETS = ("assets/geo/emblems.svg", "assets/geo/strait.svg")
+# The Archive's desk markers (archive.css masks), one outline per country
+# desk. Named one by one; the folder's receipt stays out of a production tree.
+ARCHIVE_MARK_ASSETS = tuple("assets/desk-marks/%s.svg" % s
+                            for s in ("china", "japan", "singapore", "vietnam"))
 
 #: The public name. Owner-directed 2026-08-25; the governing record is
 #: docs/INDO_PACIFIC_RECORD_EVOLUTION.md §1. "The Declared Record" and
@@ -2899,6 +2903,11 @@ def build(out_dir: Path, title: str, db_path: Path,
     # The relief sprites home.html references, named one by one: no folder,
     # flag set, glyph sprite or region plate reaches a production tree.
     for route in RELIEF_PRODUCTION_ASSETS:
+        target = out_dir / route
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
+        written.append(route)
+    for route in ARCHIVE_MARK_ASSETS:
         target = out_dir / route
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
