@@ -367,7 +367,7 @@
         "kr_dapa_proposed"
       ],
       "acceptance": "First-party robots/access, dated listing, source identity and separately reviewed terms; implement offline fixtures before any new shadow state.",
-      "stop_if": "Cannot infer DAPA facts from syndicated MND metadata or reuse MND's clock.",
+      "stop_if": "Cannot infer DAPA facts from syndicated MND metadata, claim a new source, or reuse the MND collector's clock.",
       "human_decision_required": false,
       "executable_effect": "none",
       "status": "planned_not_verified"
