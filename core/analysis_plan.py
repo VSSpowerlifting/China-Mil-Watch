@@ -70,6 +70,25 @@ class Candidate:
     passed_relevance: Optional[int] = None
     state_identity: Optional[str] = None
 
+    def identity(self):
+        """Bind malformed SQLite text BLOBs without serializing their bytes.
+
+        Preserve the existing identity for ordinary text inputs. A separate
+        reserved field makes BLOB storage distinct from NULL or text values;
+        only the resulting digest is exported, never this payload.
+        """
+        payload = asdict(self)
+        blobs = {}
+        for field in ("title", "body"):
+            value = payload[field]
+            if isinstance(value, bytes):
+                payload[field] = None
+                blobs[field] = {"sha256": hashlib.sha256(value).hexdigest(),
+                                "byte_length": len(value)}
+        if blobs:
+            payload["_sqlite_blob_fields"] = blobs
+        return payload
+
     def safe(self):
         # No source text, title, URL, prompt or response is exported. Locators
         # may contain secrets; only a digest of the complete input leaves memory.
@@ -145,7 +164,7 @@ def build_plan(candidates, policy, *, code_identity, pricing_identity,
     plan = {
         "schema": SCHEMA, "snapshot_kind": snapshot_kind,
         "snapshot_identity": snapshot_identity,
-        "input_identity": digest([asdict(c) for c in candidates]),
+        "input_identity": digest([c.identity() for c in candidates]),
         "code_identity": code_identity, "pricing_identity": pricing_identity,
         "execution_settings": execution_settings or {}, "capacity": capacity,
         "policy": policy_record, "cutoff_utc_day": cutoff,
@@ -182,7 +201,9 @@ def inventory(conn, new_ids=()):
                       "new" if r["id"] in new_ids else
                       "pending" if r["passed_relevance"] == 1 and not r["analyzed_at"] else
                       "unscored" if r["passed_relevance"] is None else "stored",
-                      r["title_original"] or "", r["text_original"] or "",
+                      r["title_original"] or "",
+                      r["text_original"] if r["text_original"] is not None else "",
                       r["scraped_at"], r["processing_state"], r["processing_attempts"],
                       r["analyzed_at"], r["passed_relevance"],
                       digest({k: r[k] for k in ("processing_reason", "processing_first_failed_at", "processing_last_failed_at")})) for r in ordered]
+

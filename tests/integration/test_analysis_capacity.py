@@ -162,3 +162,58 @@ class ScratchRuntime(unittest.TestCase):
             pipeline.run([], date(2026, 10, 11), budget_usd="24", receipt_sink=self.journal,
                          expected_plan={"plan_id": "stale"}, generate_output=False)
         self.assertEqual(self.client.requests, [])
+
+    def seed_blob(self, body):
+        aid = self.seed(processing_attempts=2, processing_state="retriable")
+        with db.get_conn() as conn:
+            conn.execute("UPDATE articles SET text_original=? WHERE id=?",
+                         (sqlite3.Binary(body), aid))
+        return aid
+
+    def assert_blob_untouched(self, aid, body):
+        with db.get_conn() as conn:
+            row = conn.execute("SELECT text_original, typeof(text_original), "
+                               "processing_attempts, processing_state, "
+                               "passed_relevance, analyzed_at FROM articles WHERE id=?",
+                               (aid,)).fetchone()
+        self.assertEqual(tuple(row), (body, "blob", 2, "retriable", None, None))
+
+    def test_sqlite_blob_bodies_are_held_in_guarded_runtime(self):
+        blobs = [(self.seed_blob(body), body)
+                 for body in (b"", b"\x00\xffFICTIONAL_BLOB_SENTINEL")]
+        self.run_pipeline()
+        packet = read_packet(self.journal.path)
+        self.assertEqual(packet["plan"]["selected_ids"], [])
+        self.assertEqual(packet["plan"]["counts"]["held"], 2)
+        self.assertEqual(packet["plan"]["reasons"], {"blank-body": 2})
+        self.assertEqual(packet["run"]["calls"], [])
+        self.assertEqual(self.client.requests, [])
+        self.assertNotIn("FICTIONAL_BLOB_SENTINEL", self.journal.path.read_text())
+        for aid, body in blobs:
+            self.assert_blob_untouched(aid, body)
+        self.marker.assert_not_called()
+
+    def test_sqlite_blob_does_not_block_legacy_analysis_of_ready_record(self):
+        body = b"\x00\xffFICTIONAL_BLOB_SENTINEL"
+        blob_id = self.seed_blob(body)
+        ready = self.seed()
+        with contextlib.redirect_stdout(io.StringIO()):
+            pipeline.run([], date(2026, 10, 11), generate_output=False)
+        self.assertEqual(len(self.client.requests), 4)
+        self.assertEqual(self.client.options, [])
+        self.assert_blob_untouched(blob_id, body)
+        with db.get_conn() as conn:
+            self.assertIsNotNone(conn.execute("SELECT analyzed_at FROM articles WHERE id=?",
+                                             (ready,)).fetchone()[0])
+        self.marker.assert_not_called()
+
+    def test_sqlite_blob_is_held_in_no_analysis_runtime(self):
+        body = b"\x00\xffFICTIONAL_BLOB_SENTINEL"
+        aid = self.seed_blob(body)
+        with contextlib.redirect_stdout(io.StringIO()):
+            pipeline.run([], date(2026, 10, 11), no_analysis=True,
+                         generate_output=False)
+        self.assertEqual(self.client.requests, [])
+        self.assert_blob_untouched(aid, body)
+        self.marker.assert_not_called()
+

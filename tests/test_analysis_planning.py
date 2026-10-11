@@ -1,10 +1,10 @@
 """Differential selection against the pre-extraction Daily algorithm."""
-from dataclasses import replace
+from dataclasses import asdict, replace
 from datetime import datetime, timezone
 import random
 import unittest
 
-from core.analysis_plan import Candidate, Policy, build_plan, revalidate
+from core.analysis_plan import Candidate, Policy, build_plan, digest, revalidate
 
 
 def candidate(i, lane="unscored", **kw):
@@ -78,3 +78,27 @@ class PlannerTests(unittest.TestCase):
         self.assertEqual(original, self.plan([c], p))
         self.assertNotEqual(original["plan_id"], self.plan([c], replace(p, cap=54))["plan_id"])
         with self.assertRaises(ValueError): self.plan([c], replace(p, evaluated_at="2026-10-11"))
+
+    def test_blob_body_is_held_and_identity_binds_bytes_without_export(self):
+        for body in (b"", b"\x00\xffFICTIONAL_BLOB_SENTINEL"):
+            with self.subTest(body_length=len(body)):
+                c = candidate(1, body=body, attempts=2,
+                              processing_state="retriable")
+                rows = [c, candidate(2)]
+                p = self.plan(rows)
+                self.assertEqual(p["selected_ids"], [2])
+                self.assertEqual(p["records"][0]["reason"], "blank-body")
+                self.assertEqual(p["records"][0]["attempts"], 2)
+                self.assertEqual(p, self.plan(rows))
+                self.assertNotIn("FICTIONAL_BLOB_SENTINEL", str(p))
+                self.assertNotIn("_sqlite_blob_fields", str(p))
+                self.assertNotEqual(p["input_identity"],
+                                    self.plan([replace(c, body=body + b"x"), rows[1]])["input_identity"])
+                self.assertNotEqual(p["input_identity"],
+                                    self.plan([replace(c, body=""), rows[1]])["input_identity"])
+
+    def test_regular_text_input_identity_is_unchanged(self):
+        rows = [candidate(1), candidate(2, body="")]
+        self.assertEqual(self.plan(rows)["input_identity"],
+                         digest([asdict(c) for c in rows]))
+

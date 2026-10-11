@@ -114,6 +114,12 @@ reported 5,764 tests and one desk-hold log compatibility failure; the original
 desk-hold/allocation messages are restored from shared plan counts. Output validation retains ten governed
 warnings; DB/output/history preservation is independently hashed. No paid call,
 collection, production mutation, output regeneration, merge or activation.
+Independent review found a planner identity failure on malformed SQLite BLOB
+bodies. The scoped correction now binds BLOB type/length/digest privately,
+retains empty BLOBs in the inventory, and preserves ordinary text identities;
+held records and retry state remain unchanged. Two planner and three actual
+scratch-runtime regressions cover the repair. Fresh final-head CI is required
+before review acceptance; the earlier green head does not approve this change.
 Operator contract and reproduction: `docs/ANALYSIS_CAPACITY_RUNBOOK.md`.
 
 Durable documents, and what each one governs:
