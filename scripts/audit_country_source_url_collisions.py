@@ -16,9 +16,9 @@ import sys
 from pathlib import Path
 
 from scripts.inspect_country_admission_boundary import (
-    SCHEMA as S3_SCHEMA, SOURCE_CONTRACTS, SHA40, AdmissionSchemaRefused,
-    canonical_day, canonical_json, ensure, frozen_database_digest,
-    inspect_database, load_checkpoint, sha,
+    SCHEMA as S3_SCHEMA, SOURCE_CONTRACTS, SHA40, MAX_DB_BYTES,
+    AdmissionSchemaRefused, canonical_day, canonical_json, ensure,
+    frozen_database_digest, inspect_database, load_checkpoint, sha,
 )
 
 SCHEMA = "ipr-country-canonical-url-collision-rehearsal/1"
@@ -264,6 +264,8 @@ def compare(s3, inventory, database):
 def frozen_database_digest_if_safe(db):
     db = Path(db)
     require(db.is_file() and not db.is_symlink(), "unsafe_database_snapshot_path")
+    require(100 <= db.stat().st_size <= MAX_DB_BYTES,
+            "database_snapshot_size_out_of_bounds")
     require(not any(Path(str(db) + s).exists()
                     for s in ("-wal", "-shm", "-journal")),
             "database_snapshot_has_transaction_sidecars")
