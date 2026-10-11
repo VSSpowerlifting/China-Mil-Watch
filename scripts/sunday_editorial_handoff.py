@@ -305,6 +305,17 @@ def send_packet(path, week_ending, *, provisional=False, full_week=False,
     message.add_attachment(
         original_attachment, maintype="text", subtype="plain", filename=path.name
     )
+    if full_week and not preview_to_owner:
+        # Dylan edits the friendly DOCX, while the exact reviewed original
+        # TXT remains attached as an immutable citation/audit reference.
+        # Both are derived from precisely the same already-validated bytes.
+        from scripts.sunday_editor_docx import render_editor_docx
+        edited_copy = render_editor_docx(original_attachment.decode("utf-8"))
+        message.add_attachment(
+            edited_copy, maintype="application",
+            subtype="vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename="IPR-Briefs-Editorial-{}.docx".format(week_ending),
+        )
     with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context(), timeout=30) as smtp:
         smtp.login(sender, password)
         smtp.send_message(message)
