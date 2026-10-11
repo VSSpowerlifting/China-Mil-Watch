@@ -79,13 +79,19 @@ def render(batches, params=None):
             not start or (m.published_date is not None and m.published_date >= start)) and (
             not end or (m.published_date is not None and m.published_date <= end))
     options = sorted({o.metadata.source_slug or "unknown" for b in batches for o in b.observations})
+    filters = {k: v for k, v in (("mode", mode), ("source", source),
+                                ("from", start), ("to", end)) if v}
+    hidden = ('<input type="hidden" name="show" value="all">'
+              if params.get("show") == "all" else '')
+    if selected:
+        hidden += '<input type="hidden" name="batch" value="%s">' % e(selected)
     select = '<select id="source" name="source"><option value="">All sources</option>' + "".join(
         '<option%s value="%s">%s</option>' % (' selected' if s == source else '', e(s), e(s)) for s in options) + '</select>'
     mode_select = '<select id="mode" name="mode"><option value="">Both modes</option>' + "".join(
         '<option value="%s"%s>%s</option>' % (k, ' selected' if k == mode else '', label)
         for k, label in [("archive_inventory", "Archive inventory"), ("observed_replay", "Observed replay")]) + '</select>'
     body = ['<a class="skip" href="#results">Skip to results</a><main><header><p class="label">ipr · Private local metadata</p><h1>Deduplication provenance workbench</h1><p class="caveat">Archive inventory describes retained rows. Observed replay preserves supplied local documents and their actual dedup decisions. Historical batch membership and decisions are unknown. Lost historical URLs cannot be recovered; no ongoing capture is active.</p><p class="caveat">Title groups are candidate relationships, not shared events. URL equality does not establish an unchanged body; normalized hashes are not independent corroboration. Missing text never establishes full-text equality. This reader confers no rights or custody approval.</p></header>']
-    body.append('<form method="get" action="/"><div><label for="mode">Mode</label>%s</div><div><label for="source">Source</label>%s</div><div><label for="from">From publication date</label><input id="from" name="from" type="date" value="%s"></div><div><label for="to">To publication date</label><input id="to" name="to" type="date" value="%s"></div><button type="submit">Apply filters</button><a href="/">Reset filters</a></form><div id="results" tabindex="-1">' % (mode_select, select, e(start), e(end)))
+    body.append('<form method="get" action="/">%s<div><label for="mode">Mode</label>%s</div><div><label for="source">Source</label>%s</div><div><label for="from">From publication date</label><input id="from" name="from" type="date" value="%s"></div><div><label for="to">To publication date</label><input id="to" name="to" type="date" value="%s"></div><button type="submit">Apply filters</button><a href="/">Reset filters</a></form><div id="results" tabindex="-1">' % (hidden, mode_select, select, e(start), e(end)))
     count = 0
     for b in batches:
         if selected and selected != b.batch_key_sha256 or mode and mode != b.mode:
@@ -117,7 +123,7 @@ def render(batches, params=None):
                 group_key or "o:" + o.observation_id in members)]
         if native:
             obs = []
-        body.append('<p>%s · %d matching observations; showing up to 100.</p>' % (link(dict(base,show="all"), "Show all observations"), len(obs)))
+        body.append('<p>%s · %d matching observations; showing up to 100.</p>' % (link(dict(filters,**base,show="all"), "Show all observations"), len(obs)))
         for o in obs[page * 100:(page + 1) * 100]:
             count += 1
             body.append('<article id="observation-%s"><h3>%s · position %d</h3><p>%s → %s</p>' % (e(o.observation_id), link(dict(base, observation=o.observation_id), 'Observation ' + o.observation_id[:12]), o.position, e(o.title_reason), e(o.url_hash_reason)))

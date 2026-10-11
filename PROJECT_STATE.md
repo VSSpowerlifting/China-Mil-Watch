@@ -103,7 +103,7 @@ pinned archive has 5,097 retained rows, 35 recurring-title cohorts / 78 rows and
 rewritten. Runbook, scope and verification map:
 `docs/engineering/DEDUP_PROVENANCE_WORKBENCH.md`. No ongoing capture, historical
 URL recovery, event-equivalence assertion, source-rights approval or publication
-activation. Next action: owner review of the single workbench PR and its
+activation. Next action: owner review of workbench PR #408 and its
 final-head offline/browser/preservation receipts before any merge decision.
 
 Durable documents, and what each one governs:
