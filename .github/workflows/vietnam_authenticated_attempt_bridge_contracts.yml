@@ -1,0 +1,38 @@
+name: Vietnam Actions API → existing attempt reconciler — offline proof
+
+# PR test is fully synthetic; real GitHub API is only accessed manually locally.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/bridge_vietnam_actions_reconciliation.py"
+      - "tests/test_vietnam_authenticated_attempt_bridge.py"
+      - "docs/engineering/VIETNAM_AUTHENTICATED_ATTEMPT_RECONCILIATION_2026-10-10.md"
+      - ".github/workflows/vietnam_authenticated_attempt_bridge_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  source-history-bridge-no-network:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Bridge and existing historical reconciliation proof
+        run: |
+          python -m unittest tests.test_vietnam_authenticated_attempt_bridge -v
+          python -m unittest tests.test_vietnam_ministry_attempt_reconciliation -v
+          python -m unittest tests.test_vietnam_run_state_attestation -v
+      - name: No corpus/state/registry writes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json config/shadow_source_workflow_bindings.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
