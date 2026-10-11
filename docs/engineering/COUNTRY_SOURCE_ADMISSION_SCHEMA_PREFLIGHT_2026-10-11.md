@@ -8,7 +8,7 @@ The next step after draft PRs #401 and #403 is to test the production storage as
 
 The current tracked production SQLite database drives publicly generated record pages. Registering a new source under a production manifest or inserting an article can therefore affect public claims or expose original publisher material. The new preflight reads table/index *schema* and counts only entries with the one supplied exact source slug; it never opens publisher bodies or article URLs, and cannot insert or update data.
 
-It checks that **sources.slug** and **articles.url** are uniquely indexed and that the required source/article columns exist. An existing production source row is a **collision hold** rather than permission to replace or reuse it. This tool does not yet inspect source-article URL collisions: that will need a subsequent confidential candidate-by-candidate rehearsal, on a frozen database and rights-reviewed private metadata.
+It checks that **sources.slug** and **articles.url** are uniquely indexed and that the required source/article columns exist. An existing production source row is a **collision hold** rather than permission to replace or reuse it. This tool does not yet inspect source-article URL collisions: that will need a subsequent confidential candidate-by-candidate rehearsal, on a frozen database and rights-reviewed private metadata. The report binds the inspected production baseline with **SHA-256 of the complete SQLite file**, checked before and after read-only schema introspection to detect concurrent changes; the database bytes are hashed in chunks but no article rows or body text are selected or emitted. Pending WAL, SHM or rollback-journal files are refused.
 
 ## Input binding
 
