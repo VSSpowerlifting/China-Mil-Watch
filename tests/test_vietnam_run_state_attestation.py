@@ -120,7 +120,7 @@ class LiveRunAttestationTests(unittest.TestCase):
         self.assertEqual([x["observation_state"] for x in report["sources"]],
                          ["verified_run_and_state_observation", "needs_review",
                           "needs_review"])
-        self.assertEqual(len(api.calls), 3 * 5 + 1)
+        self.assertEqual(len(api.calls), 3 * 6)
         self.assertEqual(len(set(api.calls)), 3 * 4 + 1)
         self.assertTrue(all(x["state_head_sha"] in api.source_by_branch.values()
                             for x in report["sources"]))
