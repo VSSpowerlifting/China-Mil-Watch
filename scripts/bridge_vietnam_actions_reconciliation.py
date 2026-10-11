@@ -60,7 +60,7 @@ def cron_time(cron):
 def get_attempts(api, *, through, cron):
     """Bounded GitHub list+precise attempts, including every reported rerun."""
     base = PREFIX + "/actions/workflows/vietnam_ministry_shadow.yml/runs"
-    selector = "?created={0}..{1}&per_page={2}&page=".format(
+    selector = "?created={0}%2E%2E{1}&per_page={2}&page=".format(
         MINISTRY_SHADOW_START.isoformat(), through.isoformat(), PAGE_SIZE)
     listed = []
     total = None
