@@ -25,6 +25,13 @@ DEFAULT_DB = ROOT / "pla_watch.db"
 DEFAULT_OUTPUT = ROOT / "output"
 DEFAULT_SOURCE = "sg_mindef_releases"
 
+# HTML void elements cannot contain children or add parser nesting depth.
+# HTMLParser reports <br> and <img> as start tags, not start/end pairs.
+VOID_ELEMENTS = frozenset({
+    "area", "base", "br", "col", "embed", "hr", "img", "input", "link",
+    "meta", "param", "source", "track", "wbr",
+})
+
 
 class CapturedTextParser(HTMLParser):
     """Extract only Jinja's original-text DIV plus outbound source link HREFs."""
@@ -41,7 +48,8 @@ class CapturedTextParser(HTMLParser):
         if tag == "a" and attrs.get("href"):
             self.links.append(attrs["href"])
         if self.depth:
-            self.depth += 1
+            if tag not in VOID_ELEMENTS:
+                self.depth += 1
         elif tag == "div" and "original-text" in (attrs.get("class") or "").split():
             self.depth = 1
             self.has_original_container = True
@@ -52,7 +60,7 @@ class CapturedTextParser(HTMLParser):
             self.links.extend(v for k, v in attrs if k == "href" and v)
 
     def handle_endtag(self, tag):
-        if self.depth:
+        if self.depth and tag not in VOID_ELEMENTS:
             self.depth -= 1
 
     def handle_data(self, data):
