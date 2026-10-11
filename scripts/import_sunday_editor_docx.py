@@ -11,6 +11,7 @@ import argparse
 from io import BytesIO
 import os
 from pathlib import Path
+from zipfile import BadZipFile, ZipFile
 
 from docx import Document
 
@@ -33,8 +34,18 @@ def _word_sections(word_bytes):
     if not isinstance(word_bytes, bytes) or not word_bytes or len(word_bytes) > MAX_DOCX_BYTES:
         raise ReturnValidationError("Word return must be nonempty and at most 3 MB")
     try:
+        with ZipFile(BytesIO(word_bytes)) as archive:
+            entries = archive.infolist()
+            if (len(entries) > 200 or sum(item.file_size for item in entries) > 30_000_000
+                    or "word/document.xml" not in archive.namelist()):
+                raise ReturnValidationError("Word return exceeds safe XML extraction limits")
+            xml = archive.read("word/document.xml")
+            if b"<w:ins" in xml or b"<w:del" in xml:
+                raise ReturnValidationError(
+                    "Word tracked changes must be accepted or rejected before intake"
+                )
         document = Document(BytesIO(word_bytes))
-    except Exception as exc:
+    except (BadZipFile, KeyError) as exc:
         raise ReturnValidationError("Word return is not a valid DOCX") from exc
 
     expected = ["WORKING TITLE", "DEK", *list(HEADINGS[2:])]
