@@ -202,6 +202,18 @@ class AdmissionTests(unittest.TestCase):
         self.assertEqual(a._client.requests, [])
         self.assertGreater(Decimal(g.snapshot()["unresolved_usd"]), 0)
 
+    def test_receipt_failure_after_response_keeps_legacy_paid_tokens(self):
+        a, g, _ = guarded()
+        a.prepare_article(1)
+        def hook(k):
+            g._sink = lambda r: (_ for _ in ()).throw(OSError("FICTIONAL receipt failure"))
+            return response()
+        a._client.hook = hook
+        with self.assertRaises(ReceiptFailure): a.score_relevance("FICTIONAL", "FICTIONAL")
+        self.assertEqual(len(a._client.requests), 1)
+        self.assertEqual(a.usage.rows()[0]["input_tokens"], 1000)
+        self.assertEqual(a.usage.rows()[0]["calls"], 1)
+
     def test_actual_sdk_hidden_retries_disabled_with_mock_transport(self):
         requests = []
         def handler(request):

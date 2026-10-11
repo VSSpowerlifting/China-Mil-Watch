@@ -158,9 +158,17 @@ class Analyzer:
             else:
                 response = client.messages.create(**kwargs)
         except BaseException:
+            self.usage.record_failure(task, kwargs["model"])
             if guard is not None:
                 guard.failure(ticket)
             raise
+        failed = response.stop_reason == "max_tokens" or not response.content
+        if kwargs.get("tools"):
+            tool_name = kwargs["tools"][0]["name"]
+            failed = failed or not any(b.type == "tool_use" and b.name == tool_name for b in response.content)
+        # Observability receives the paid response even if strict receipt I/O
+        # subsequently fails. Admission never reads these permissive counters.
+        self.usage.record_response(task, kwargs["model"], getattr(response, "usage", None), failed=failed)
         if guard is not None:
             guard.response(ticket, response)
         return response
@@ -232,18 +240,15 @@ class Analyzer:
         except (AdmissionDeferred, ReceiptFailure):
             raise
         except anthropic.APIStatusError as exc:
-            self.usage.record_failure(task, used_model)
             if self.__dict__.get("_admission") is not None:
                 classified = _classify_status_error(exc)
                 raise type(classified)("Guarded provider status error (%s)" % exc.status_code) from exc
             raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
-            self.usage.record_failure(task, used_model)
             if self.__dict__.get("_admission") is not None:
                 raise AnalysisError("Guarded provider connection error") from exc
             raise AnalysisError(f"API connection error: {exc}") from exc
         except Exception:
-            self.usage.record_failure(task, used_model)
             raise
 
         usage = getattr(response, "usage", None)
@@ -261,8 +266,6 @@ class Analyzer:
         empty = not response.content
         # The response exists, so its reported tokens are real spend even when
         # the output is then rejected below.
-        self.usage.record_response(task, used_model, usage,
-                                   failed=truncated or empty)
 
         if truncated:
             raise AnalysisError(
@@ -349,18 +352,15 @@ class Analyzer:
         except (AdmissionDeferred, ReceiptFailure):
             raise
         except anthropic.APIStatusError as exc:
-            self.usage.record_failure(task, used_model)
             if self.__dict__.get("_admission") is not None:
                 classified = _classify_status_error(exc)
                 raise type(classified)("Guarded provider status error (%s)" % exc.status_code) from exc
             raise _classify_status_error(exc) from exc
         except anthropic.APIConnectionError as exc:
-            self.usage.record_failure(task, used_model)
             if self.__dict__.get("_admission") is not None:
                 raise AnalysisError("Guarded provider connection error") from exc
             raise AnalysisError(f"API connection error: {exc}") from exc
         except Exception:
-            self.usage.record_failure(task, used_model)
             raise
 
         tool_block = next(
@@ -370,9 +370,6 @@ class Analyzer:
         )
         truncated = response.stop_reason == "max_tokens"
         # Reported tokens are real spend even if the output is rejected below.
-        self.usage.record_response(
-            task, used_model, getattr(response, "usage", None),
-            failed=truncated or tool_block is None)
 
         if truncated:
             raise AnalysisError(
