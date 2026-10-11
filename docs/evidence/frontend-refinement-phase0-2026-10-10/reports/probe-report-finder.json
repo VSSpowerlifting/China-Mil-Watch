@@ -1,0 +1,14 @@
+[
+ {
+  "probe": "index.html",
+  "width": 1280,
+  "result": [
+   "H2.",
+   "relative|2|rgba(0, 0, 0, 0)|1|none",
+   "H2. pos=static z=auto op=1",
+   "DIV.home-finder-heading pos=static z=auto op=1",
+   "SECTION.wrap home-finder pos=relative z=2 op=1",
+   "MAIN.leads-with-hero home-page pos=static z=auto op=1"
+  ]
+ }
+]

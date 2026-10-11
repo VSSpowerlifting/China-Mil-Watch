@@ -1,0 +1,37 @@
+{
+ "base": "http://localhost:8765/",
+ "out": "shots/home-photo",
+ "tag": "home",
+ "data_files": {
+  "emblems": "studies/emblems.json"
+ },
+ "shots": [
+  {
+   "page": "index.html",
+   "width": 1280,
+   "classes": [
+    "study"
+   ],
+   "media": {},
+   "css": [
+    "studies/overlay-home.css"
+   ],
+   "js": [
+    "studies/overlay-common.js",
+    "studies/overlay-home.js"
+   ],
+   "items": [
+    {
+     "name": "home-after-photo-brief",
+     "sel": ".home-brief",
+     "pad": [
+      20,
+      0,
+      20,
+      0
+     ]
+    }
+   ]
+  }
+ ]
+}

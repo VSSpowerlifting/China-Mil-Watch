@@ -1,0 +1,59 @@
+[
+ {
+  "shot": "study-hero-1280.png",
+  "css_bytes": 5312,
+  "js_bytes": 6901,
+  "errors": []
+ },
+ {
+  "shot": "study-list-1280.png",
+  "css_bytes": 5312,
+  "js_bytes": 6901,
+  "errors": []
+ },
+ {
+  "shot": "study-list-mid-1280.png",
+  "css_bytes": 5312,
+  "js_bytes": 6901,
+  "errors": []
+ },
+ {
+  "shot": "no81-list-1280.png",
+  "css_bytes": 5312,
+  "js_bytes": 6901,
+  "errors": []
+ },
+ {
+  "shot": "no81-list-mid-1280.png",
+  "css_bytes": 5312,
+  "js_bytes": 6901,
+  "errors": []
+ },
+ {
+  "shot": "study-hero-375.png",
+  "css_bytes": 5312,
+  "js_bytes": 6901,
+  "errors": []
+ },
+ {
+  "shot": "study-list-375.png",
+  "css_bytes": 5312,
+  "js_bytes": 6901,
+  "errors": []
+ },
+ {
+  "probe": "analysis.html",
+  "width": 375,
+  "result": {
+   "overflow": [],
+   "docW": 375,
+   "cards": 17,
+   "plates": 5,
+   "imgs": [
+    "http://localhost:8765/the-pla-watch/media/2026-05-23-veil.jpg",
+    "http://localhost:8765/the-pla-watch/media/2026-05-16-veil.jpg",
+    "http://localhost:8765/the-pla-watch/media/2026-05-10-auto-image-optimized.jpg"
+   ]
+  }
+ }
+]

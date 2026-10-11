@@ -1,0 +1,127 @@
+/* Phase 0 study overlay — light desk map, floating flagged plates, scope panels. */
+html.study{--sea:#e2ebe9;--land:#f8f7f2;--land-edge:#9aaba8;--desk:#1f4757;--desk-edge:#142e38;--quiet:#b7ccd3;--quiet-edge:#4f7480;
+  --lift:0 1px 0 hsl(197 40% 12%/.06),0 14px 22px -18px hsl(197 50% 10%/.55);--lift-hi:0 1px 0 hsl(197 40% 12%/.06),0 20px 26px -18px hsl(197 50% 10%/.6)}
+html.study .deskmap-chart{background:var(--sea);padding:0;display:block}
+html.study .deskmap-svg{border:1px solid var(--rule)}
+html.study .dm-sea{fill:var(--sea)}
+html.study .dm-graticule{stroke:#176c6c;stroke-opacity:.13}
+html.study .dm-land{fill:var(--land);stroke:var(--land-edge);stroke-width:.6px}
+html.study .dm-borders{stroke:#c3ccc9;stroke-width:.5px}
+html.study .dm-scale text{fill:#6f8583}
+html.study .dm-ocean{fill:#9fb6b3;font-size:48px}
+html.study .dm-country use{transition:fill 180ms var(--ease-rule,ease)}
+html.study .dm-country.dm-on use{fill:var(--desk);stroke:var(--desk-edge);stroke-width:.8px}
+html.study .dm-country.dm-quiet use{fill:var(--quiet);stroke:var(--quiet-edge);stroke-width:.9px;stroke-dasharray:3 2}
+html.study .dm-country.dm-ref use{fill:var(--land);stroke:var(--land-edge);stroke-width:.6px}  /* never a sovereign fill */
+html.study .dm-dot{fill:var(--desk);stroke:var(--land);stroke-width:1.6px}
+html.study .dm-anchor.is-quiet .dm-dot{fill:var(--land);stroke:var(--desk);stroke-width:1.6px}
+html.study .dm-ring{stroke:#176c6c}
+html.study .dm-label{fill:var(--ink);stroke:var(--land);stroke-width:10px}
+html.study .dm-leader{stroke:var(--desk);stroke-width:1px;opacity:.7;transition:opacity 180ms var(--ease-rule,ease)}
+html.study .dm-leader.is-quiet{stroke:var(--quiet-edge);stroke-dasharray:4 3}
+html.study .deskmap-chart-note{color:var(--muted);margin:10px 0 0}
+html.study .deskmap-context{color:var(--ink);background:var(--surface,#f8f7f2);border:1px solid var(--rule);margin-top:14px}
+html.study .deskmap-context .deskmap-context-title{color:var(--ink)}
+html.study .deskmap-context a{color:var(--accent)}
+
+/* Plates: paper cards with a flag tab, status carried by the top rule. */
+html.study .deskmap-plate.dp{background:#fbfaf6;border:1px solid hsl(197 30% 20%/.18);border-top:3px solid var(--desk);border-radius:2px;box-shadow:var(--lift);padding:16px 16px 10px}
+html.study .dp--quiet{border-top:3px dashed var(--quiet-edge)!important}
+html.study .dp--blocked{border-top:3px solid var(--warning,#8a5a12)!important}
+html.study .dp-flag{position:absolute;top:-11px;left:14px;display:block;line-height:0;padding:2px;background:#fbfaf6;border:1px solid hsl(197 30% 20%/.22);border-radius:2px}
+html.study .dp-flag img{display:block;width:22px;height:16.5px}
+html.study .dp .card-meta{margin-left:30px;margin-top:-4px}
+html.study .deskmap-plate.dp h2.plain{font-size:24px}
+@media (min-width:760px){
+  html.study .deskmap-stage{display:block;position:relative;border:0;background:none}
+  html.study .deskmap-plate.dp{position:absolute!important;z-index:2;transition:transform 180ms var(--ease-rule,ease),box-shadow 180ms}
+  html.study .dm-leader--wide,html.study .dm-leader--mid{display:none}
+}
+@media (min-width:760px) and (max-width:1099.98px){
+  html.study .deskmap-stage{margin:14rem 0 15rem}
+  html.study .deskmap-plate.dp{width:14.25rem!important;left:var(--ml)!important;top:var(--mt)!important;transform:translate(var(--mtx),var(--mty))!important}
+  html.study .dm-leader--mid{display:inline}
+  html.study .dm-label{font-size:32px;stroke-width:9px}
+  html.study .deskmap-stage:has(.dp:is(:hover,:focus-within)) .dp:is(:hover,:focus-within){transform:translate(var(--mtx),calc(var(--mty) - 2px))!important;box-shadow:var(--lift-hi)}
+}
+@media (min-width:1100px){
+  html.study .deskmap-stage{margin:9rem 0 1rem}
+  html.study .deskmap-plate.dp{width:15.25rem!important;left:var(--wl)!important;top:var(--wt)!important;transform:translate(var(--wtx),var(--wty))!important}
+  html.study .dm-leader--wide{display:inline}
+  html.study .dm-label{font-size:26px;stroke-width:8px}
+  html.study #desk-japan{--wt:4.5%!important}            /* clears the US label */
+  html.study .dm-ocean{transform:translate(130px,-175px)}  /* clears the US plate */
+  html.study .deskmap-stage .dp:is(:hover,:focus-within){transform:translate(var(--wtx),calc(var(--wty) - 2px))!important;box-shadow:var(--lift-hi)}
+}
+/* Plate hover/focus lights its own country and leader (CSS only, no JS). */
+html.study .deskmap-stage:has(#desk-china:is(:hover,:focus-within)) :is(.dm-leader[data-desk=china]),
+html.study .deskmap-stage:has(#desk-singapore:is(:hover,:focus-within)) :is(.dm-leader[data-desk=singapore]),
+html.study .deskmap-stage:has(#desk-japan:is(:hover,:focus-within)) :is(.dm-leader[data-desk=japan]),
+html.study .deskmap-stage:has(#desk-vietnam:is(:hover,:focus-within)) :is(.dm-leader[data-desk=vietnam]),
+html.study .deskmap-stage:has(#desk-us-indopacific:is(:hover,:focus-within)) :is(.dm-leader[data-desk=us-indopacific]){opacity:1}
+html.study .deskmap-stage:has(#desk-china:is(:hover,:focus-within)) .dm-country[data-desk=china] use,
+html.study .deskmap-stage:has(#desk-singapore:is(:hover,:focus-within)) .dm-country[data-desk=singapore] use{fill:#2c6272}
+html.study .deskmap-stage:has(#desk-japan:is(:hover,:focus-within)) .dm-country[data-desk=japan] use,
+html.study .deskmap-stage:has(#desk-vietnam:is(:hover,:focus-within)) .dm-country[data-desk=vietnam] use{fill:#9dbac4}
+html.study .dp a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:759.98px){
+  html.study .deskmap-register{display:grid;gap:20px;margin-top:18px}
+  html.study .deskmap-plate.dp{margin:0;border-left:1px solid hsl(197 30% 20%/.18)}
+}
+@media (max-width:519.98px){html.study .deskmap-register{grid-template-columns:minmax(0,1fr)}}
+html.study .deskmap-key{align-items:center}
+html.study .deskmap-key-item{display:none}
+html.study .dk{display:inline-flex;align-items:center;gap:.5rem}
+html.study .dk-sw{display:inline-block;width:18px;height:12px;border-radius:1px}
+html.study .dk-on{background:var(--desk)}
+html.study .dk-quiet{background:var(--quiet);outline:1px dashed var(--quiet-edge);outline-offset:-1px}
+html.study .dk-ref{background:var(--land);border:1px solid var(--land-edge);position:relative}
+html.study .dk-ref::after{content:"";position:absolute;left:5px;top:2px;width:6px;height:6px;border-radius:50%;background:var(--land);border:1.6px solid var(--desk)}
+
+/* What each desk reads: graphic panels, nothing truncated. */
+html.study .scope-register{display:grid;gap:22px}
+html.study .scope-entry.sp{grid-template-columns:132px minmax(0,1fr);grid-template-areas:"geo dt" "geo dd";gap:4px 26px;padding:18px 22px 16px 16px;
+  background:#fbfaf6;border:1px solid hsl(197 30% 20%/.16);border-top:3px solid var(--desk);border-radius:2px;box-shadow:var(--lift)}
+html.study .sp--quiet{border-top:3px dashed var(--quiet-edge)!important}
+html.study .sp--blocked{border-top:3px solid var(--warning,#8a5a12)!important}
+html.study .sp-geo{grid-area:geo;align-self:start}
+html.study .sp .sp-geo svg{display:block;width:100%;height:auto;max-height:150px}
+html.study .sp dt{grid-area:dt;flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 12px}
+html.study .sp dt .dp-flag{position:static;display:inline-block}
+html.study .sp dd{grid-area:dd}
+html.study .sp-wl{fill:none;stroke-linejoin:round}
+html.study .sp-wl .w1{stroke:#cfdcda;stroke-width:9}.sp-wl .w2{stroke:#fbfaf6;stroke-width:7}.sp-wl .w3{stroke:#dbe5e3;stroke-width:5}.sp-wl .w4{stroke:#fbfaf6;stroke-width:3.4}.sp-wl .w5{stroke:#b9cbc8;stroke-width:.9}
+html.study .sp-side{fill:#0f2530;transform:translate(1.2px,1.8px)}
+html.study .sp-land{fill:var(--desk);stroke:#92d5cc;stroke-width:.5}
+html.study .sp--quiet .sp-land{fill:var(--quiet);stroke:var(--quiet-edge);stroke-dasharray:2 1.5}
+html.study .sp--quiet .sp-side{fill:#7d9aa3}
+html.study .sp--blocked .sp-land{fill:var(--land);stroke:var(--land-edge)}
+html.study .sp--blocked .sp-side{fill:#c9d0cd}
+html.study .sp-seat{fill:#f3f2ec;stroke:var(--desk-edge);stroke-width:1.2}
+html.study .sp-seatname{font:500 12px/1.3 var(--sans);color:var(--muted);margin:6px 0 0;text-align:center}
+html.study .sp-h{font:600 13px/1.3 var(--sans);color:var(--ink);margin:14px 0 6px}
+html.study .sp-src{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px 18px}
+html.study .sp-src li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:0 9px;align-items:start}
+html.study .sp-src svg{grid-row:span 2;width:22px;height:17px;margin-top:2px}
+html.study .sp-glyph rect{fill:#fbfaf6;stroke:var(--desk-edge);stroke-width:1.1}
+html.study .sp-glyph path{fill:none;stroke:var(--desk-edge);stroke-width:1.1}
+html.study .sp-src .is-off .sp-glyph rect,html.study .sp-src .is-off .sp-glyph path{stroke:#8a9a98;stroke-dasharray:2 1.5}
+html.study .sp-src-name{font:600 14px/1.35 var(--sans);color:var(--ink)}
+html.study .sp-src-meta{font:13px/1.4 var(--sans);color:var(--ink-2)}
+html.study .sp-limits{margin:0;padding-left:1.1rem;font-size:.875rem;color:var(--ink-2)}
+html.study .sp-limits li{margin:0 0 .35rem;max-width:72ch}
+html.study .sp-none{font-size:.875rem;color:var(--ink-2);margin:12px 0 0}
+html.study .sp .card-foot{display:flex;flex-wrap:wrap;gap:6px 22px}
+html.study .sp-locate{margin:0}
+@media (max-width:759.98px){
+  html.study .scope-entry.sp{grid-template-columns:72px minmax(0,1fr);grid-template-areas:"geo dt" "dd dd";padding:14px 14px 12px}
+  html.study .sp-seatname{font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){
+  html.study .deskmap-plate.dp,html.study .dm-leader,html.study .dm-country use{transition:none}
+}
+@media (forced-colors:active){
+  html.study .deskmap-plate.dp,html.study .scope-entry.sp{box-shadow:none;border:1px solid CanvasText}
+  html.study .dm-country.dm-on use{fill:Highlight}
+  html.study .dk-sw{forced-color-adjust:none}
+}

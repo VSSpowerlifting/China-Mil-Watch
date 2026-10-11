@@ -1013,6 +1013,18 @@ News remote dispatch and retention remain unapproved. Frontend
 work may proceed when explicitly authorized without changing desk status or
 editorial records.
 
+**Frontend expressive refinement, Phase 0 closed (2026-10-10):**
+`docs/FRONTEND_REFINEMENT_PHASE0_2026-10-10.md` holds the decision packet,
+studies and rights audit (evidence in
+`docs/evidence/frontend-refinement-phase0-2026-10-10/`). No production change.
+Owner rulings are recorded in `DECISION_LOG.md` (2026-10-10): B1 three named
+elevation tokens on six surfaces, B9 full-colour flags, B3/B4 distinct media
+classes, B2 Editorial plates (no 81.cn) on the Briefs catalogue, B5 keep the
+existing No. 12 image. Still open: visual sign-off of the study screenshots;
+the opened-article 81.cn rights review; a narrow No. 12 follow-up (governed
+metadata correction and image-to-article confirmation, not blocking P1). Next:
+Phase 1 shared primitives only, in a fresh session from fresh current `main`.
+
 ## 8. Prohibited shortcuts and human-review gates
 
 * Never invent Chinese text, translations, titles, outlets, dates, units, ranks

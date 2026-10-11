@@ -1,0 +1,146 @@
+[
+ {
+  "shot": "home-before-finder-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-register-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-selected-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-band-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-desks-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-after-finder-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-register-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-selected-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-band-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-desks-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-before-finder-375.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-register-375.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-selected-375.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-band-375.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-before-desks-375.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "home-after-finder-375.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-register-375.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-selected-375.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-band-375.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-after-desks-375.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-stack-finder-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-stack-register-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-forced-finder-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ },
+ {
+  "shot": "home-forced-register-1280.png",
+  "css_bytes": 12681,
+  "js_bytes": 4892,
+  "errors": []
+ }
+]
