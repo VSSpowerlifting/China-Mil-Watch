@@ -155,6 +155,8 @@ def philippines(preflight, actions):
             "AFP requires exactly seven matched slots")
     supported = matched = 0
     holds = []
+    seen_run_ids = set()
+    expected_pending, expected_held = [], []
     for i, (slot, att) in enumerate(zip(slots, a_slots)):
         require(type(slot) is dict and type(att) is dict and
                 slot.get("date") == (start + timedelta(days=i)).isoformat()
@@ -163,6 +165,32 @@ def philippines(preflight, actions):
                 "AFP slot date or run identity mismatch")
         is_supported = slot.get("collection_status") == "ledger_success_unverified_actions"
         supported += is_supported
+        run_id = slot.get("run_id")
+        if is_supported:
+            require(type(run_id) is str and run_id not in seen_run_ids,
+                    "AFP scheduled run IDs must be unique")
+            seen_run_ids.add(run_id)
+        count = slot.get("inserted")
+        review_status = slot.get("review_status")
+        if count is None:
+            require(not is_supported and review_status == "collection_evidence_unavailable",
+                    "AFP unavailable ledger cannot have a source review")
+        else:
+            require(is_supported and type(count) is int and count >= 0,
+                    "AFP inserted count disagrees with the ledger")
+            if count == 0:
+                require(review_status == "no_insertions",
+                        "AFP zero-insertion slot has a fabricated review")
+            else:
+                require(review_status in (
+                    "human_source_review_packet_missing",
+                    "source_fidelity_held_not_admissible",
+                    "packet_checks_passed_identity_not_authenticated"),
+                    "AFP per-run review status is unrecognized")
+                if review_status == "human_source_review_packet_missing":
+                    expected_pending.append(run_id)
+                if review_status == "source_fidelity_held_not_admissible":
+                    expected_held.append(run_id)
         require((att.get("status") in ("actions_success_matches_ledger", "actions_unverified")
                  if is_supported else
                  att.get("status") == "not_eligible_for_actions_match"),
@@ -183,8 +211,14 @@ def philippines(preflight, actions):
             "AFP review packet inventories malformed")
     packet_ok = preflight.get("source_review_packet_gate")
     require(type(packet_ok) is bool, "AFP review-packet gate must be explicit")
-    if pending or held:
-        require(packet_ok is False, "AFP packets cannot pass with unresolved reviews")
+    require(pending == expected_pending and held == expected_held,
+            "AFP per-run review inventories disagree with slot statuses")
+    require(packet_ok is (supported == 7 and not pending and not held),
+            "AFP source review gate contradicts its packet inventory")
+    require(preflight.get("seven_day_machine_evidence_candidate_for_human_checkpoint")
+            is (supported == 7 and packet_ok) and
+            preflight.get("production_minimum_consecutive_collecting_days") == 30,
+            "AFP milestone or 30-day threshold disagrees with preflight")
     if not packet_ok:
         holds.append("AFP_original_source_review_packets_incomplete_or_held")
     other = actions.get("other_scheduled_runs_in_export")
