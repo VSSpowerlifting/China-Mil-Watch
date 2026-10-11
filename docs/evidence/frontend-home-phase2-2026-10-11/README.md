@@ -46,11 +46,13 @@ Zero JavaScript was added: page scripts remain `intro.js` and `shell.js` at 31,7
 
 ## Budget (`index.html`, delivery verifier)
 
+Re-measured after merging `origin/main` (`22a02d2157`: #390 desk references and the 11 October 2026 corpus snapshot, 5,097 records). The earlier 78,892 B figure (at `500a1b2596`) was 137 B larger only because that snapshot's homepage content differed; no CSS or markup changed. Baseline is a fresh main build.
+
 | Measure | Baseline | Candidate | Cap |
 |---|---|---|---|
-| HTML (`index.html`) | 14,840 | 17,017 | — |
+| HTML (`index.html`) | 14,719 | 16,880 | — |
 | `home.css` | 14,921 | 19,810 | — |
-| HTML + CSS | 67,795 | 78,892 | 300,000 delivery / 120,000 integrity |
+| HTML + CSS | 67,674 | 78,755 | 300,000 delivery / 120,000 integrity |
 | JS | 11,940 | 11,940 | 12,000 |
 | SVG sprites fetched via `<use>` | 0 | 35,476 | not counted by `asset_bytes` (2,618,405 both) |
 

@@ -1,12 +1,12 @@
 {
-  "records_checked": 5065,
+  "records_checked": 5097,
   "approved_native_relations": 10,
   "failures": [],
   "budgets": [
     {
       "route": "index.html",
       "html_css_limit": 120000,
-      "html_css_bytes": 76734,
+      "html_css_bytes": 78755,
       "js_bytes": 11940,
       "css": [
         "fonts.css",
@@ -51,7 +51,7 @@
     {
       "route": "archive.html",
       "html_css_limit": 300000,
-      "html_css_bytes": 133453,
+      "html_css_bytes": 134055,
       "js_bytes": 9847,
       "css": [
         "archive.css",
@@ -87,7 +87,7 @@
     {
       "route": "analysis.html",
       "html_css_limit": 300000,
-      "html_css_bytes": 101528,
+      "html_css_bytes": 101878,
       "js_bytes": 3118,
       "css": [
         "briefs-catalog.css",
@@ -199,6 +199,6 @@
       "external_assets": []
     }
   ],
-  "database_sha256": "b0afc9b393ae85ce891cdf9eab82d2bbc294f197b67ae292e8cf723ae67dd185",
+  "database_sha256": "8d4eb2245d7fe6d86da650f1207162cb91f84e3efbc12e8928dfd75659020c02",
   "timeline_sha256": "0e922865856addb24786b088ee925c35ebab3809659fb252462a66090c9da332"
 }
