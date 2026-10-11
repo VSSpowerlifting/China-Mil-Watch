@@ -36,6 +36,21 @@ jobs:
           python-version: '3.9'
       - name: Verify explicit release invariants
         run: python -m unittest tests.test_country_research_release_contract -v
+      - name: Install existing render dependencies (no publisher calls)
+        run: pip install -r requirements.txt
+      - name: Exercise actual static release build without committing or deploying
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > /tmp/ipr-release-ci-db.sha
+          python site/render.py
+          python scripts/validate_output.py
+          test -f output/philippines.html
+          test -f output/vietnam.html
+          test -f output/desk-references.js
+          sha256sum -c /tmp/ipr-release-ci-db.sha
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
 
   release:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
