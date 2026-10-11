@@ -70,7 +70,7 @@ def _tag(address, key):
     return hmac.new(key, parsed.casefold().encode("utf-8"), hashlib.sha256).hexdigest()
 
 
-def _open(path):
+def _open(path, *, allow_initialize=False):
     path = Path(path).absolute()
     repository = Path(__file__).resolve().parents[1]
     resolved = path.resolve(strict=False)
@@ -78,12 +78,16 @@ def _open(path):
         raise LedgerRefused("private ledger must be outside Git repository")
     if path.suffix != ".sqlite3" or not path.parent.is_dir() or path.parent.is_symlink():
         raise LedgerRefused("private ledger requires an existing private directory and .sqlite3 file")
+    if stat.S_IMODE(path.parent.stat().st_mode) & 0o077:
+        raise LedgerRefused("private ledger parent directory must not be group/world accessible")
     if path.is_symlink():
         raise LedgerRefused("symlinked ledger is prohibited")
     if path.exists():
         if not path.is_file() or stat.S_IMODE(path.stat().st_mode) != 0o600:
             raise LedgerRefused("ledger must be a regular file with mode 0600")
     else:
+        if not allow_initialize:
+            raise LedgerRefused("durable ledger missing: refuse a new reservation or send")
         try:
             fd = os.open(str(path), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
             os.close(fd)
@@ -132,14 +136,16 @@ def transition(path, *, secret, week, recipient, action,
     start commits UNCERTAIN before a separate external SMTP attempt. Once
     started, no automatic second attempt is possible, even after a crash.
     """
-    if action not in ("inspect","reserve","start","smtp-accepted","sent-attested"):
+    if action not in ("initialize","inspect","reserve","start","smtp-accepted","sent-attested"):
         raise LedgerRefused("unsupported transition")
     key = _key(secret)
     _week(week)
     _tag(recipient,key)
     if action == "inspect" and not Path(path).exists():
-        return _result(week,None)  # do not silently create an empty ledger
-    db = _open(path)
+        return {**_result(week,None), "status": "LEDGER_MISSING_STOP"}
+    if action == "initialize" and Path(path).exists():
+        raise LedgerRefused("ledger already exists: initializing again could hide earlier attempts")
+    db = _open(path,allow_initialize=(action=="initialize"))
     try:
         db.execute("BEGIN IMMEDIATE")
         tag = _tag(recipient,key)
@@ -151,7 +157,7 @@ def transition(path, *, secret, week, recipient, action,
             db.execute("INSERT INTO ledger_meta(name,value) VALUES('key_check',?)",(key_digest,))
         old = _row(db,week,tag)
         stamp=datetime.now(timezone.utc).isoformat(timespec="seconds")
-        if action == "inspect":
+        if action in ("inspect","initialize"):
             pass
         elif action == "reserve":
             digest=_sha(attachment_sha256)
@@ -187,6 +193,8 @@ def transition(path, *, secret, week, recipient, action,
         fresh=_row(db,week,tag)
         db.execute("COMMIT")
         out=_result(week,fresh)
+        if action == "initialize":
+            out["status"]="LEDGER_INITIALIZED_NO_EDITION"
         if action == "start":
             out["attempt_token"]=fresh[2]  # private operator only; never public log
         return out
@@ -200,7 +208,7 @@ def transition(path, *, secret, week, recipient, action,
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=("inspect","reserve","start","smtp-accepted","sent-attested"))
+    parser.add_argument("action", choices=("initialize","inspect","reserve","start","smtp-accepted","sent-attested"))
     parser.add_argument("--ledger", type=Path, required=True)
     parser.add_argument("--week-ending",required=True)
     parser.add_argument("--recipient",required=True)
