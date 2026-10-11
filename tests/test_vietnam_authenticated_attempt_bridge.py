@@ -9,7 +9,7 @@ import unittest
 from contextlib import redirect_stderr
 from unittest.mock import patch
 
-from scripts.attest_vietnam_run_state import PREFIX, sha_blob
+from scripts.attest_vietnam_run_state import PREFIX, GithubRead, sha_blob
 from scripts.audit_shadow_workflow_bindings import validate as source_bindings
 from scripts.bridge_vietnam_actions_reconciliation import (
     AttestationHold, OUTPUT_SCHEMA, WORKFLOW, bridge, main,
@@ -184,6 +184,32 @@ class VietnamAttemptBridgeTests(unittest.TestCase):
                     lambda x: x.__setitem__("target_date", "2026-10-12"))
             with self.subTest(case=case), self.assertRaises(AttestationHold):
                 bridge(api, through=THROUGH, binding_report=api.declarations)
+
+    def test_encoded_github_date_range_survives_strict_endpoint_guard(self):
+        api = FakeRest()
+        path = api.index_key
+        self.assertNotIn("..", path)
+        self.assertIn("%2E%2E", path)
+
+        class Response:
+            status = 200
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                return None
+            def geturl(self):
+                return "https://api.github.com" + path
+            def read(self, max_size):
+                return json.dumps(api.routes[path]).encode("utf-8")[:max_size]
+
+        class Opener:
+            def open(self, req, timeout):
+                self.request = req
+                return Response()
+
+        with patch("urllib.request.build_opener", return_value=Opener()):
+            received = GithubRead().get(path)
+        self.assertEqual(received["total_count"], len(RUNS))
 
     def test_cli_no_get_without_flag_or_token(self):
         with redirect_stderr(io.StringIO()), patch("scripts.bridge_vietnam_actions_reconciliation.GithubRead") as net:
