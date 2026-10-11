@@ -26,13 +26,15 @@ def afp_inputs(n=7, reviewed=True):
         d = (start + timedelta(days=i)).isoformat()
         supported = i < n
         rid = "%d-1" % (7000 + i) if supported else None
-        slots.append({"date": d, "run_id": rid,
+        count = (13 if i == 0 else 5 if i == 1 else 0) if supported else None
+        slots.append({"date": d, "run_id": rid, "inserted": count,
                       "collection_status": ("ledger_success_unverified_actions"
                                             if supported else "future_not_due"),
-                      "review_status": ("packet_checks_passed_identity_not_authenticated"
-                                        if supported and reviewed else
-                                        "human_source_review_packet_missing"
-                                        if supported else "collection_evidence_unavailable")})
+                      "review_status": ("collection_evidence_unavailable"
+                                        if not supported else
+                                        "no_insertions" if count == 0 else
+                                        "packet_checks_passed_identity_not_authenticated"
+                                        if reviewed else "human_source_review_packet_missing")})
         runs.append({"date": d, "run_id": rid,
                      "status": ("actions_success_matches_ledger" if supported
                                 else "not_eligible_for_actions_match")})
@@ -47,8 +49,12 @@ def afp_inputs(n=7, reviewed=True):
         "seven_slot_ledger_gate": n == 7,
         "source_review_packet_gate": reviewed and n == 7,
         "pending_review_runs": ([] if reviewed else
-                                [s["run_id"] for s in slots if s["run_id"]]),
+                                [x["run_id"] for x in slots
+                                 if x["inserted"] is not None and x["inserted"] > 0]),
         "held_review_runs": [],
+        "seven_day_machine_evidence_candidate_for_human_checkpoint":
+            reviewed and n == 7,
+        "production_minimum_consecutive_collecting_days": 30,
         "production_eligible": False,
         "weekly_AI_model_eligible": False,
         "desk_activated": False,
@@ -129,6 +135,42 @@ def vietnam_inputs():
 
 
 class CheckpointIntakeContracts(unittest.TestCase):
+    def test_afp_real_preflight_summarizer_shape_and_missing_original_review(self):
+        # Not a hand-authored approval flag: exercise the existing producer's
+        # real truth table, then pass its output into this integration layer.
+        from scripts.assess_ph_afp_activation import summarize
+        p, a = afp_inputs()
+        ledger = {
+            "immutable_state_commit": AFP_SHA,
+            "as_of_utc_date": "2026-10-13",
+            "window_start": "2026-10-07", "window_end": "2026-10-13",
+            "slots": [{"date": s["date"], "run_id": s["run_id"],
+                       "status": s["collection_status"],
+                       "inserted": s["inserted"]} for s in p["slots"]],
+            "successfully_supported_ledger_slots": 7,
+            "all_seven_ledger_slots_supported": True,
+        }
+        preflight = summarize(ledger, {})
+        self.assertEqual(preflight["pending_review_runs"], ["7000-1", "7001-1"])
+        result = philippines(preflight, a)
+        self.assertEqual(result["machine_status"], "machine_evidence_incomplete_or_held")
+        self.assertIn("AFP_original_source_review_packets_incomplete_or_held",
+                      result["machine_holds"])
+
+    def test_afp_forged_green_gate_with_missing_source_packets_is_refused(self):
+        p, a = afp_inputs(reviewed=False)
+        p["source_review_packet_gate"] = True
+        p["seven_day_machine_evidence_candidate_for_human_checkpoint"] = True
+        with self.assertRaisesRegex(CheckpointRefused, "source review gate contradicts"):
+            philippines(p, a)
+
+    def test_afp_duplicate_scheduled_run_identifier_refused(self):
+        p, a = afp_inputs()
+        p["slots"][1]["run_id"] = p["slots"][0]["run_id"]
+        a["slots"][1]["run_id"] = a["slots"][0]["run_id"]
+        with self.assertRaisesRegex(CheckpointRefused, "run IDs must be unique"):
+            philippines(p, a)
+
     def test_afp_matching_seven_slot_candidate_is_never_approval(self):
         report = philippines(*afp_inputs())
         self.assertEqual(report["schema"], SCHEMA)
