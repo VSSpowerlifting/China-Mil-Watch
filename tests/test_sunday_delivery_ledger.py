@@ -28,11 +28,24 @@ class PrivateEditorialLedgerTests(unittest.TestCase):
 
     def test_read_only_no_entry_does_not_create_file(self):
         x=self.op("inspect")
-        self.assertEqual(x["status"],"NO_LEDGER_ENTRY")
+        self.assertEqual(x["status"],"LEDGER_MISSING_STOP")
         self.assertFalse(self.path.exists())
         self.assertFalse(x["automatic_retry_authorized"])
 
+    def test_absent_or_lost_ledger_requires_manual_initialization(self):
+        with self.assertRaisesRegex(LedgerRefused,"durable ledger missing"):
+            self.op("reserve",attachment_sha256=DIGEST)
+        init=self.op("initialize")
+        self.assertEqual(init["status"],"LEDGER_INITIALIZED_NO_EDITION")
+        with self.assertRaisesRegex(LedgerRefused,"already exists"):
+            self.op("initialize")
+        self.op("reserve",attachment_sha256=DIGEST)
+        self.path.unlink()
+        with self.assertRaisesRegex(LedgerRefused,"durable ledger missing"):
+            self.op("reserve",attachment_sha256=DIGEST)
+
     def test_uncertainty_starts_before_smtp_acceptance(self):
+        self.op("initialize")
         self.op("reserve",attachment_sha256=DIGEST)
         started=self.op("start",attachment_sha256=DIGEST)
         self.assertEqual(started["status"],"ATTEMPT_STARTED_DELIVERY_UNCERTAIN")
@@ -51,6 +64,7 @@ class PrivateEditorialLedgerTests(unittest.TestCase):
         self.assertFalse(attested["gmail_sent_independently_verified"])
 
     def test_refuses_new_file_or_duplicate_reservation_same_week(self):
+        self.op("initialize")
         self.op("reserve",attachment_sha256=DIGEST)
         with self.assertRaisesRegex(LedgerRefused,"duplicate"):
             self.op("reserve",attachment_sha256="b"*64)
@@ -58,6 +72,7 @@ class PrivateEditorialLedgerTests(unittest.TestCase):
             self.op("start",attachment_sha256="b"*64)
 
     def test_no_attestation_without_attempt_and_matching_token(self):
+        self.op("initialize")
         self.op("reserve",attachment_sha256=DIGEST)
         with self.assertRaises(LedgerRefused):
             self.op("sent-attested",attachment_sha256=DIGEST,
@@ -71,6 +86,7 @@ class PrivateEditorialLedgerTests(unittest.TestCase):
                     attempt_token=x["attempt_token"],sent_evidence="bad value!")
 
     def test_no_plain_editor_address_or_hmac_key_in_database(self):
+        self.op("initialize")
         self.op("reserve",attachment_sha256=DIGEST)
         self.assertEqual(self.path.stat().st_mode & 0o777,0o600)
         raw=self.path.read_bytes()
@@ -78,6 +94,7 @@ class PrivateEditorialLedgerTests(unittest.TestCase):
         self.assertNotIn(KEY.encode("utf-8"),raw)
 
     def test_ledger_key_cannot_rotate_without_fail_closed_review(self):
+        self.op("initialize")
         self.op("reserve",attachment_sha256=DIGEST)
         with self.assertRaisesRegex(LedgerRefused,"key changed"):
             transition(self.path,action="inspect",
@@ -93,6 +110,7 @@ class PrivateEditorialLedgerTests(unittest.TestCase):
             with self.subTest(mailbox=mailbox),self.assertRaises(LedgerRefused):
                 transition(self.path,action="reserve",secret=KEY,
                     week=WEEK,recipient=mailbox,attachment_sha256=DIGEST)
+        self.op("initialize")
         with self.assertRaises(LedgerRefused):
             self.op("reserve",attachment_sha256="X"*64)
         self.op("reserve",attachment_sha256=DIGEST)
@@ -101,6 +119,7 @@ class PrivateEditorialLedgerTests(unittest.TestCase):
             self.op("inspect")
 
     def test_two_racers_cannot_reserve_same_editor_week(self):
+        self.op("initialize")
         barrier=threading.Barrier(2)
         outcomes=[]
         def compete():
