@@ -1,0 +1,115 @@
+name: Korea current shadow originals — PR source-fidelity attestation
+
+# Read only existing GitHub shadow captures. This checks archived bytes and
+# ledger continuity; it never requests korea.kr or accepts a reviewer/license.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/korea_exact_shadow_fidelity_attestation.yml"
+      - "docs/engineering/KOREA_EXACT_SHADOW_FIDELITY_ATTESTATION_2026-10-11.md"
+      - "scripts/audit_korea_source_fidelity.py"
+      - "scripts/review_desk_shadow.py"
+      - "tests/test_korea_source_fidelity.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: korea-real-originals-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  sha-bound-original-hwpx-verification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Dependencies for existing HWPX and source-fidelity readers
+        run: python -m pip install -r requirements.txt
+      - name: Existing offline original-document regression suite
+        run: python -m unittest tests.test_korea_source_fidelity tests.test_indonesia_korea_shadow -q
+      - name: Pin exact existing remote Korea source-state commit, no publisher access
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          git clone --quiet --no-tags --single-branch --branch shadow/korea-policy-briefing \
+            "$STATE_REMOTE" "$RUNNER_TEMP/korea-pinned-state"
+          tip="$(git -C "$RUNNER_TEMP/korea-pinned-state" rev-parse HEAD)"
+          remote_tip="$(git ls-remote --exit-code "$STATE_REMOTE" \
+            refs/heads/shadow/korea-policy-briefing | cut -f1)"
+          test "$tip" = "$remote_tip"
+          test "$(git -C "$RUNNER_TEMP/korea-pinned-state" ls-tree --name-only HEAD)" = state
+          echo "KOREA_STATE_SHA=$tip" >> "$GITHUB_ENV"
+          echo "KOREA_AUDIT_DATE=$(date -u +%F)" >> "$GITHUB_ENV"
+          echo "Korea source-state commit pinned: $tip"
+      - name: Re-extract actual preserved Korean HWPX and verify complete archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.audit_korea_source_fidelity \
+            --state-repo "$RUNNER_TEMP/korea-pinned-state" \
+            --state-commit "$KOREA_STATE_SHA" \
+            --as-of "$KOREA_AUDIT_DATE" \
+            --out "$RUNNER_TEMP/korea-originals-review"
+      - name: Fail closed on missing day, source parity or premature approval
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP/korea-originals-review" "$KOREA_STATE_SHA" <<'PY'
+          import json
+          import pathlib
+          import sys
+          path = pathlib.Path(sys.argv[1])
+          report = json.loads((path / "machine_fidelity.json").read_text(encoding="utf-8"))
+          blank = json.loads((path / "human_source_review_BLANK.json").read_text(encoding="utf-8"))
+          sha = sys.argv[2]
+          assert report["schema"] == "ipr-korea-source-fidelity/1"
+          assert blank["schema"] == "ipr-korea-human-source-review/1"
+          assert report["state_commit"] == blank["state_commit"] == sha
+          assert report["records_checked"] > 0
+          assert report["records_checked"] == len(report["records"])
+          assert report["records_checked"] == len(blank["source_review_assignments"])
+          assert report["machine_hwp_original_parity"] == "PASS"
+          assert all(r["machine_fidelity"] == "PASS" for r in report["records"])
+          assert report["scheduled_continuity"] == "PASS", "Korea nominal day or checksum continuity held"
+          assert report["missing_logical_dates"] == []
+          assert report["continuity_findings"] == []
+          assert report["actions_failure_inventory"].startswith("UNMEASURED")
+          assert report["human_source_review"] == "UNMEASURED"
+          assert report["content_reuse_rights"] == "UNMEASURED"
+          assert report["source_eligible_for_substantive_weekly_claims"] is False
+          assert report["production_promotion_authorized"] is False
+          assert blank["human_approval_count"] == 0
+          assert blank["editorial_claim_permissions_granted"] == 0
+          assert all(item["source_specific_approved"] is False
+                     and item["reviewer"] is None
+                     for item in blank["source_review_assignments"])
+          print(json.dumps({
+              "state_commit": sha,
+              "as_of": report["as_of"],
+              "originals_verified": report["records_checked"],
+              "preserved_hwpx_reextraction": "PASS",
+              "published_ledger_continuity": "PASS",
+              "actions_failure_inventory": "UNMEASURED",
+              "human_review_complete": False,
+              "source_rights_approved": False,
+              "public_release_authorized": False,
+          }, sort_keys=True))
+          PY
+          test -z "$(git -C "$RUNNER_TEMP/korea-pinned-state" status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ shadow/ desks/registry.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# Intentionally NO upload of original bodies or HWPX; no publisher HTTP,
+# no Git write permissions, no human signoff, no promotion, no model or email.
