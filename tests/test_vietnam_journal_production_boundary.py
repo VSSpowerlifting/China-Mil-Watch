@@ -48,10 +48,11 @@ class JournalProductionBoundaryTests(unittest.TestCase):
         ):
             self.assertFalse(report[key], key)
 
-    def test_registry_must_keep_vietnam_research_without_manifest(self):
+    def test_registry_must_keep_vietnam_nonproduction_without_manifest(self):
+        # Shadow denotes isolated collection; it is never production admission.
         for field, new_value in (
-            ("status", "shadow"),
             ("status", "live"),
+            ("status", "planned"),
             ("manifest", "desks/vietnam/manifest.json"),
             ("has_production_records", True),
             ("public", False),
@@ -60,8 +61,18 @@ class JournalProductionBoundaryTests(unittest.TestCase):
             vn = next(x for x in args[2]["desks"] if x["slug"] == "vietnam")
             vn[field] = new_value
             with self.subTest(field=field, new_value=new_value):
-                with self.assertRaisesRegex(BoundaryRefused, "research-only"):
+                with self.assertRaisesRegex(BoundaryRefused, "nonproduction"):
                     validate_boundary(*args)
+
+    def test_shadow_and_research_status_both_preserve_disabled_journal(self):
+        for status in ("research", "shadow"):
+            args = list(inputs())
+            vn = next(x for x in args[2]["desks"] if x["slug"] == "vietnam")
+            vn["status"] = status
+            with self.subTest(status=status):
+                report = validate_boundary(*args)
+                self.assertEqual(report["source_status"], "disabled_research_only")
+                self.assertFalse(report["authorized_collection"])
 
     def test_duplicate_or_missing_vietnam_registry_entry_refused(self):
         for should_duplicate in (True, False):

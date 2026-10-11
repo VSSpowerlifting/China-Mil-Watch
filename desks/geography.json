@@ -86,6 +86,33 @@
     }
    }
   },
+  "philippines": {
+   "countries": [
+    "608"
+   ],
+   "seat": "Manila",
+   "anchor": [
+    120.98,
+    14.6
+   ],
+   "card": {
+    "wide": {
+     "at": [
+      127,
+      12
+     ],
+     "hang": "right"
+    },
+    "mid": {
+     "at": [
+      120.98,
+      -42
+     ],
+     "hang": "down",
+     "align": 0.65
+    }
+   }
+  },
   "singapore": {
    "countries": [
     "702"
