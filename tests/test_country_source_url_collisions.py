@@ -242,6 +242,13 @@ class CountrySourceCanonicalURLContracts(unittest.TestCase):
         with self.assertRaisesRegex(audit.CollisionRefused, "input_must_be_regular_file"):
             audit.load_private_file(symlink)
 
+    def test_undersized_database_refused_before_digest(self):
+        tiny = self.root / "invalid-tiny.db"
+        tiny.write_bytes(b"not a database")
+        with self.assertRaisesRegex(
+                audit.CollisionRefused, "database_snapshot_size_out_of_bounds"):
+            audit.frozen_database_digest_if_safe(tiny)
+
     def test_live_sidecars_refused(self):
         s3, inv = self.paired()
         for extension in ("-wal", "-shm", "-journal"):
