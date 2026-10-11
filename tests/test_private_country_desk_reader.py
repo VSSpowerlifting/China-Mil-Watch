@@ -110,7 +110,7 @@ class PrivateCountryReaderTests(unittest.TestCase):
 
     def test_casefold_query_and_country_filter_and_cap(self):
         a = self.fixture("ph_afp_articles", title="Sanlakas exercise",
-                         content="SPECIAL maritime reconnaissance")
+                         content="SPECIAL maritime security reconnaissance")
         v = self.fixture("vn_moit_energy_vi", title="Điện năng lượng",
                          content="ENERGY security context")
         matches = build([a, v], term="special", country="philippines")
@@ -127,7 +127,6 @@ class PrivateCountryReaderTests(unittest.TestCase):
         page = render_html(build([a]))
         self.assertNotIn('</script><img', page)
         self.assertIn("&lt;/script&gt;&lt;img", page)
-        self.assertNotIn('src=x onerror=', page) if False else None
         self.assertIn("<script>(function()", page)
 
     def test_wrong_source_slug_in_pinned_database_is_blocked(self):
