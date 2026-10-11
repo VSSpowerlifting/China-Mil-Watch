@@ -10,7 +10,7 @@ The historical resolver `scripts/pw_env.py::source_veil_for_edition` claimed to 
 
 ## New Briefs catalogue: eligibility by issue
 
-**Photograph** means an independently documented public-domain or licensed curated image, with required credit and derivative-change disclosure. **Editorial plate** means original IPR geography artwork, clearly marked “Editorial plate” and “No source photograph.” Existing source-linked Signal Veils are **not** newly eligible for the catalogue merely because an article uses them.
+**Photograph candidate** means an independently documented public-domain or licensed image that must additionally pass a new catalogue-route approval, source-credit, and derivative-change check. **Editorial plate** means original IPR geography artwork, clearly marked “Editorial plate” and “No source photograph.” Existing source-linked Signal Veils are **not** newly eligible for the catalogue merely because an article uses them.
 
 | No. | Source publication window | Existing article treatment | New catalogue card |
 |---|---|---|---|
@@ -32,7 +32,7 @@ The historical resolver `scripts/pw_env.py::source_veil_for_edition` claimed to 
 | 16 | 2026-09-19 (native) | Text-led, no source veil | **Editorial plate** |
 | 17 | 2026-09-26 (native) | Text-led, no source veil | **Editorial plate** |
 
-Current B2/B5 outcome: **4 independently cleared catalogue photographs, 13 original editorial plates, zero newly added 81.cn images and no new No. 12 image use.** Catalogue implementation must recheck the editorial image manifest and its license/credit on every eligible photograph. This table is a preflight ledger, not an automatic rights allowlist.
+Current B2/B5 preflight outcome: **4 PD/CC photograph candidates pending catalogue-route authorization, 13 editorial plates, zero newly added 81.cn images, and no new No. 12 image use.** None of the candidates is automatically approved for publication at a new route. The existing editorial manifest lists Nos. 8, 9 and 10 for pre-existing routes (such as `pw-post`), not `analysis.html`; No. 1 instead uses `output/the-pla-watch/media/2026-05-10-auto-image.json` (Roberto Villa Jr., public domain). Catalogue implementation must explicitly verify the new-surface route, source, license/credit, derivative and file availability before showing a photograph. Otherwise use an Editorial plate. This table is a preflight ledger, not a runtime permission list.
 
 ## Governance and release gates for 3B/3C
 
