@@ -3,6 +3,7 @@
 **Prepared:** 2026-10-11, America/New_York.
 **Program authority:** issue #366; companion to docs/engineering/IPR_CONVERGENCE_AND_RELEASE_GATES_2026-10-10.md in planning PR #375.
 **Status:** engineering planning only. Not a sender implementation, human approval, source-rights determination, merge instruction, budget authorization, schedule or production activation.
+**Implementation companion:** `SUNDAY_C1_TO_C4_INTERFACE_AND_ACCEPTANCE_2026-10-11.md` specifies the current C1 closeout, narrow C2 owner-release verifier, pure C3 byte-preserving MIME interface, disabled C4 adapter and concrete negative-test/stop gates. It refines this plan rather than creating another program; the companion's dated PR/CI references must be refreshed before work.
 **Core invariant:** The specific private TXT the owner reviewed is the only attachment that could eventually be delivered to Dylan. Review, source-use permission, artifact custody, delivery identity and sender authorization are distinct decisions; no newly generated manuscript may inherit approval from earlier bytes.
 
 ## A. Verified starting state and exact dependency graph
