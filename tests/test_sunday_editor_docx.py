@@ -7,7 +7,7 @@ from zipfile import ZipFile
 
 from docx import Document
 
-from scripts.sunday_editor_docx import render_editor_docx
+from scripts.sunday_editor_docx import _references, render_editor_docx
 from scripts.sunday_editor_readable import ReadableEditorError, editable_sections
 from tests.test_sunday_editor_readable import reviewed_packet
 
@@ -53,7 +53,9 @@ class WordHandoffTests(unittest.TestCase):
         mutated = self.original.replace("=== EDITABLE MANUSCRIPT ===", "WRONG", 1)
         with self.assertRaises(ReadableEditorError):
             render_editor_docx(mutated)
-        broken = self.original.replace("URL: https://", "URL: javascript:", 1)
+        cited_url = _references(self.original)[0][2]
+        broken = self.original.replace("URL: " + cited_url,
+                                       "URL: javascript:blocked", 1)
         # If a cited URL is replaced by an unsafe scheme, DOCX creation fails closed.
         with self.assertRaises(ValueError):
             render_editor_docx(broken)
