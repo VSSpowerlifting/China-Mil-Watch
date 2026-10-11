@@ -1,0 +1,63 @@
+{
+  "tool": "scripts/verify_frontend_delivery.py on the disposable --gallery build",
+  "baseline": {
+    "head": "51769ae3e8",
+    "routes_checked": 7521,
+    "failures": []
+  },
+  "candidate": {
+    "routes_checked": 7522,
+    "failures": []
+  },
+  "routes_added": [
+    "gallery-relief.html"
+  ],
+  "routes_removed": [],
+  "routes_changed": [
+    "gallery.html"
+  ],
+  "gallery_before": {
+    "route": "gallery.html",
+    "html_css_bytes": 104107,
+    "html_css_limit": 120000,
+    "js_bytes": 0,
+    "js_limit": 10000,
+    "local_delivery_bytes": 365456,
+    "css": [
+      "fonts.css",
+      "styles.css",
+      "support.css",
+      "surfaces.css"
+    ]
+  },
+  "gallery_after": {
+    "route": "gallery.html",
+    "html_css_bytes": 104167,
+    "html_css_limit": 120000,
+    "js_bytes": 0,
+    "js_limit": 10000,
+    "local_delivery_bytes": 365516,
+    "css": [
+      "fonts.css",
+      "styles.css",
+      "support.css",
+      "surfaces.css"
+    ]
+  },
+  "gallery_relief": {
+    "route": "gallery-relief.html",
+    "html_css_bytes": 91580,
+    "html_css_limit": 120000,
+    "js_bytes": 0,
+    "js_limit": 10000,
+    "local_delivery_bytes": 356239,
+    "css": [
+      "fonts.css",
+      "relief.css",
+      "styles.css",
+      "support.css",
+      "surfaces.css"
+    ]
+  },
+  "note": "The verifier counts linked CSS/JS/fonts/images; SVG sprites reached through <use href> are measured in browser-checks.json relief_resources instead."
+}

@@ -1,0 +1,51 @@
+{
+  "compared": "site/assets/geo/{emblems,strait,region}.svg against Phase 0 studies/emblems.json and studies/plates.json",
+  "note": "Desk emblem viewBoxes gain a 9-unit margin (EMBLEM_PAD) so the outer water line is not clipped; the coastline itself is unchanged.",
+  "results": {
+    "china": {
+      "path_data_identical": true,
+      "seat_identical": true,
+      "phase0_viewBox": "0 0 100 70",
+      "phase1_viewBox": "-9 -9 118 88"
+    },
+    "japan": {
+      "path_data_identical": true,
+      "seat_identical": true,
+      "phase0_viewBox": "0 0 83 100",
+      "phase1_viewBox": "-9 -9 101 118"
+    },
+    "vietnam": {
+      "path_data_identical": true,
+      "seat_identical": true,
+      "phase0_viewBox": "0 0 52 100",
+      "phase1_viewBox": "-9 -9 70 118"
+    },
+    "singapore": {
+      "path_data_identical": true,
+      "seat_identical": true,
+      "phase0_viewBox": "0 0 100 55",
+      "phase1_viewBox": "-9 -9 118 73"
+    },
+    "hawaii": {
+      "path_data_identical": true,
+      "seat_identical": true,
+      "phase0_viewBox": "0 0 100 65",
+      "phase1_viewBox": "-9 -9 118 83"
+    },
+    "strait": {
+      "path_data_identical": true,
+      "seat_identical": true,
+      "phase0_viewBox": "0 0 400 317",
+      "phase1_viewBox": "0 0 400 317"
+    },
+    "hainan": {
+      "status": "not built: a Phase 0 study only, not in the \u00a713 asset list"
+    },
+    "region": {
+      "path_data_identical": true,
+      "seat_identical": true,
+      "phase0_viewBox": "0 0 300 196",
+      "phase1_viewBox": "0 0 300 196"
+    }
+  }
+}

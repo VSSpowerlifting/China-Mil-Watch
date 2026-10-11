@@ -1,0 +1,13 @@
+# Production build (generate_preview.py --snapshot-from-corpus --legacy-routes), 7,608 files
+baseline main 51769ae3e8 sha256-of-manifest: fa0863a50ee893e06f09a7e7b4fa8438204f5723d7fa821c912d1aa54f619538
+candidate        sha256-of-manifest: fa0863a50ee893e06f09a7e7b4fa8438204f5723d7fa821c912d1aa54f619538
+3c02528715977a0a61f3655bd38805f9ebaf55db5123482f7d4049c2fbf4a6a5  ./archive.html
+76556ce4aa6412e69a2c117f9a2d8bbd70b3ce545783c58fc6533c947016ef0d  ./briefs/maritime-cooperation-2026.html
+d3f0ed922cf900d0f65398c24f6d01063e1a5218ddc10d29b69a4b24f3040656  ./briefs/media/maritime-cooperation-2026-1200.webp
+4b2aa2a5ea3bdb325ce578d42a3d23d523d6f807d2b884fc2c3e730ce5991f1c  ./briefs/media/maritime-cooperation-2026-600.webp
+657bd02c0b783dae00914a88a37481302ef99894cfebb6a2eda83d968b20e4d8  ./briefs/media/maritime-cooperation-2026-source-image.jpg
+20363d5218d451f489c1c7ed7eec1ff4693f6056a66a22313b4859ddbf8a5cea  ./briefs/media/maritime-cooperation-2026-veil.jpg
+97962d1b2c1956e9a5d19ad796e4488e61b36192fb0e473bbcb2ad20082f861f  ./briefs/trident-resolve-regional-scale-specific-chinese-tasks.html
+20b7a47a50de22725e7b422c42fd404a4b691ca1083591647afc1b29883400fd  ./briefs/xiangshan-security-frames-defense-ties.html
+f468ef875cb9e8defbc1425316db33ba128fab76a32fc9574fecb58f3ff9af57  ./desks.html
+f656b14c67bc87415b71691222858eddf51bb0fee05d7da568576ce99c2ebdd0  ./index.html

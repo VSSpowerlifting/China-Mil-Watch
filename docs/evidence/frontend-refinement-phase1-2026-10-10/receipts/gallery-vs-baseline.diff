@@ -1,0 +1,19 @@
+  2317a2318,2323
+  > 8f1195d55a2fd315a07d812328470ca9ba2abb78c8d317ff19619d5125e00cea  ./assets/flags/LICENSE
+  > 981da9bdf82d48e31691f20578cefcb26cf7d0bd95e4ebd5c0df00bdfe988c1a  ./assets/flags/cn.svg
+  > bfea80baf9989383dc4bf7ca594ed95be0df0ff125bfc88d0bfa878eb0198022  ./assets/flags/jp.svg
+  > 25de9044c2e2775f7ccf9c1df02dd02342f915715b22c43248452b7ae24079a5  ./assets/flags/sg.svg
+  > e7be4240cf57987926673708f09233be1ab6bdf35acc7b86bd32a263f197a2a7  ./assets/flags/us.svg
+  > 2355037201315d74581ab0ad60b5587a29a087d26b0525bdeb8676e64fae5b86  ./assets/flags/vn.svg
+  2334a2341,2344
+  > a22b88871fbf82370ef2dc97f0d60a0a94d85661d2bedbaa9aa221439fe9be4f  ./assets/geo/emblems.svg
+  > 54ad2f107ff2f2c9b6b0eef4438bbc00f2aa577e5b4c092d7072e062602639f5  ./assets/geo/region.svg
+  > f1a4ff03d0ecd50ce328078a0255671b77c665d75d83e1d8806dc0029ab45e5a  ./assets/geo/strait.svg
+  > cc88b2414e1768b8ec78dbad5d766c95114b4efd039cbadc48e70ab217bc7b15  ./assets/glyphs/sources.svg
+  2395c2405,2406
+  < 4c5629db2be6be3e0250857497a1120eae687c6dcd29518baa943800f524deda  ./gallery.html
+  ---
+  > baee4bd9828718a01249489aad1f8617bd779738de47f0f979053c4ba123bb83  ./gallery-relief.html
+  > 8c13aaba69423f507c0edacb69952d6caaae13f01e22d6732f48618bbb628476  ./gallery.html
+  7471a7483
+  > 66568ea0d45d150280a5752e6db834c006662f72f7727e178affd879aeac6a96  ./relief.css

@@ -1022,8 +1022,22 @@ elevation tokens on six surfaces, B9 full-colour flags, B3/B4 distinct media
 classes, B2 Editorial plates (no 81.cn) on the Briefs catalogue, B5 keep the
 existing No. 12 image. Still open: visual sign-off of the study screenshots;
 the opened-article 81.cn rights review; a narrow No. 12 follow-up (governed
-metadata correction and image-to-article confirmation, not blocking P1). Next:
-Phase 1 shared primitives only, in a fresh session from fresh current `main`.
+metadata correction and image-to-article confirmation, not blocking P1).
+
+**Frontend expressive refinement, Phase 1 in review (2026-10-11):** branch
+`claude/ipr-phase1-frontend-9316d6` from main `51769ae3e`. It adds the shared
+primitives only: `site/preview/relief.css` (three lifts on the six B1
+surfaces, tactile controls, gated motion), `_relief.html` macros,
+deterministic Natural Earth sprites from `scripts/build_geo_assets.py`
+(`site/assets/geo/`, with `geo.receipt.json`), the flag-icons 7.3.2 flags with
+their MIT `LICENSE`, IPR source-family glyphs, and the unpublished
+`gallery-relief.html` specimen page (`--gallery` only). No production
+template uses them yet. The production build is byte-identical to its
+baseline; the validator keeps the same ten warnings. Implementation
+deviations from §13 are in `DECISION_LOG.md` (2026-10-11), and evidence is in
+`docs/evidence/frontend-refinement-phase1-2026-10-10/`. The gallery captures
+still need independent visual review; nothing is merged or deployed. Next,
+after review and merge: P2 Home (Phase 0 packet §12), in its own session.
 
 ## 8. Prohibited shortcuts and human-review gates
 

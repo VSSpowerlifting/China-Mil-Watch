@@ -1,0 +1,59 @@
+{# Relief macros: geographic emblems, the strait and region plates, flags and
+   source-family glyphs. Every one is decoration beside text that already says
+   what it shows, so every one is aria-hidden (flags carry alt=""). The art is
+   referenced from the generated sprites in assets/geo/ (scripts/
+   build_geo_assets.py), the vendored flag-icons files in assets/flags/ (MIT,
+   LICENSE beside them) and the IPR-drawn assets/glyphs/sources.svg. Import
+   `with context`: the macros read `root`/`nested` and `relief_boxes`, the
+   symbol viewBoxes from assets/geo/geo.receipt.json. #}
+
+{# Desk -> flag file. The US Indo-Pacific desk's flag is the United States'. #}
+{% set relief_flag_iso = {'china': 'cn', 'singapore': 'sg', 'japan': 'jp',
+                          'vietnam': 'vn', 'us-indopacific': 'us'} %}
+{# Desk -> emblem symbol. The US Indo-Pacific desk is drawn as Hawaii, seat of
+   the command its sources speak for, not as the continental United States. #}
+{% set relief_emblem_id = {'china': 'china', 'singapore': 'singapore', 'japan': 'japan',
+                           'vietnam': 'vietnam', 'us-indopacific': 'hawaii'} %}
+{# Stored `sources.source_type` -> glyph family. A type with no entry gets no
+   glyph rather than a guessed one. `feed` is drawn but no stored type maps to
+   it yet. #}
+{% set relief_glyph_family = {
+  'armed_forces_newspaper': 'newspaper', 'state_linked_newspaper': 'newspaper',
+  'ministry_website': 'ministry', 'government_republished_release': 'ministry',
+  'official_institutional_news': 'ministry',
+  'maritime_law_enforcement_official_release': 'ministry',
+  'state_news_agency': 'agency', 'military_journal_editorial': 'journal',
+  'armed_forces_english_portal': 'portal'} %}
+
+{% macro _r() %}{{ root_path | default('../' if nested else '') }}{% endmacro %}
+
+{% macro emblem(desk_slug, band=false, seat=true, draws=true) -%}
+{%- set id = relief_emblem_id.get(desk_slug) -%}
+{%- if id -%}
+<svg class="rl-emblem{{ ' rl-on-band' if band }}{{ ' rl-draws' if draws }}" viewBox="{{ relief_boxes[id] }}" aria-hidden="true" focusable="false"><use href="{{ _r() }}assets/geo/emblems.svg#{{ id }}"/>{% if seat %}<use href="{{ _r() }}assets/geo/emblems.svg#{{ id }}-seat"/>{% endif %}</svg>
+{%- endif -%}
+{%- endmacro %}
+
+{% macro strait(draws=true) -%}
+<svg class="rl-strait{{ ' rl-draws' if draws }}" viewBox="{{ relief_boxes['strait'] }}" aria-hidden="true" focusable="false"><use href="{{ _r() }}assets/geo/strait.svg#strait"/></svg>
+{%- endmacro %}
+
+{# The Editorial plate's art: the region with the named desks lifted. Sized by
+   its frame (`.rl-print`), cropped rather than letterboxed. #}
+{% macro region_plate(desk_slugs, draws=false) -%}
+<svg class="rl-region{{ ' rl-draws' if draws }}" viewBox="{{ relief_boxes['region'] }}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><use href="{{ _r() }}assets/geo/region.svg#region"/>{% for slug in desk_slugs if slug in ['china', 'singapore'] %}<use href="{{ _r() }}assets/geo/region.svg#region-{{ slug }}"/>{% endfor %}</svg>
+{%- endmacro %}
+
+{% macro flag(desk_slug) -%}
+{%- set iso = relief_flag_iso.get(desk_slug) -%}
+{%- if iso %}<img class="rl-flag" src="{{ _r() }}assets/flags/{{ iso }}.svg" width="24" height="18" alt="">{% endif -%}
+{%- endmacro %}
+
+{% macro glyph_for(source_type) -%}
+{%- set family = relief_glyph_family.get(source_type) -%}
+{%- if family %}{{ glyph(family) }}{% endif -%}
+{%- endmacro %}
+
+{% macro glyph(family) -%}
+<svg class="rl-glyph" viewBox="-1 -1 20 16" aria-hidden="true" focusable="false"><use href="{{ _r() }}assets/glyphs/sources.svg#{{ family }}"/></svg>
+{%- endmacro %}

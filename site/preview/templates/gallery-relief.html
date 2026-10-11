@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% from "_relief.html" import emblem, strait, region_plate, flag, glyph, glyph_for, relief_glyph_family with context %}
+{# The relief gallery: the Phase 1 shared primitives (relief.css, _relief.html)
+   on the six approved surfaces. A maintenance page beside gallery.html, never
+   published: `generate_preview.py --gallery` renders it into a disposable
+   build. It is a page of its own so the component gallery stays inside its
+   delivery budget. Desks, sources, records and the Brief are this build's own;
+   nothing is invented for the specimen. Linked by this page only: no
+   production template uses the primitives yet. #}
+{% block title %}Relief gallery — {{ title }}{% endblock %}
+{% block stylesheets %}{{ super() }}<link rel="stylesheet" href="{{ root_path | default('') }}relief.css">{% endblock %}
+{% block content %}
+<header class="page-head">
+  <p class="eyebrow">Maintenance · not published</p>
+  <h1 class="page-name" id="g-relief">Relief</h1>
+  <p class="lede">Elevation, tactile controls, geographic art, flags and source-family glyphs, rendered
+  with the production stylesheet from the {{ snapshot.date }} corpus. Companion to the
+  <a href="{{ root_path | default('') }}gallery.html">component and state gallery</a>.</p>
+</header>
+<p class="meta">Three lifts on six surfaces and nothing else; pressed controls darken rather than cast an inner shadow.
+  Motion runs only with scripting and no reduced-motion preference; without either, each specimen shows its finished state.</p>
+{% set src_by_slug = {} %}{% for s in source_views %}{% set _ = src_by_slug.update({s.slug: s}) %}{% endfor %}
+
+<h2 id="g-relief-finder">Raised finder · lift 3 · tactile controls</h2>
+<div class="rl-finder g-rl-finder">
+  <div class="finder-field finder-field--q"><label for="g-rl-q">Search {{ corpus_total | count }} records</label>
+    <input id="g-rl-q" class="tactile" type="search" autocomplete="off" placeholder="Title, institution or original-language text"></div>
+  <p class="g-row"><button type="button" class="btn btn--primary tactile">Search</button> <button type="button" class="btn btn--secondary tactile">Clear</button></p>
+  <ul class="chips g-rl-chips">{% for d in desks %}<li><button type="button" class="chip tactile">{{ flag(d.slug) }} {{ d.name }}</button></li>{% endfor %}</ul>
+</div>
+
+<h2 id="g-relief-cards">Record cards · lift 1, hover lift 2</h2>
+<div class="g-rl-grid">
+{% for r in specimen_records[:3] %}{% set desk = desk_by_source.get(r.source_slug) %}{% set src = src_by_slug.get(r.source_slug) %}
+  <article class="rl-card g-rl-card">
+    {% if desk %}<div class="g-rl-art">{{ emblem(desk.slug) }}</div>{% endif %}
+    <p class="meta">{% if src %}{{ glyph_for(src.source_type) }} {{ src.source_type | source_type_label }} · {% endif %}{{ r.source_name }}</p>
+    <h3><a href="{{ root_path | default('') }}record/{{ r.id }}.html">{{ r.title_english or r.title_original }}</a></h3>
+    <p class="meta"><time datetime="{{ r.published_date }}">{{ r.published_date }}</time>{% if desk %} · {{ desk.name }}{% endif %}</p>
+  </article>
+{% endfor %}
+</div>
+
+<h2 id="g-relief-desks">Desk plates · emblem, flag, status</h2>
+<p class="meta">Flags: flag-icons 7.3.2, MIT (licence in <code>assets/flags/LICENSE</code>). The US Indo-Pacific desk is drawn as Hawaii. Outlines are generalized and are not boundary claims.</p>
+<div class="g-rl-grid">
+{% for d in desks %}
+  <article class="rl-plate g-rl-desk">
+    <div class="g-rl-art">{{ emblem(d.slug) }}</div>
+    <h3>{{ flag(d.slug) }} <a href="{{ root_path | default('') }}{{ d.route }}">{{ d.name }}</a></h3>
+    <p><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+    <p class="meta">{{ d.sources | length }} source{{ '' if d.sources | length == 1 else 's' }} configured</p>
+  </article>
+{% endfor %}
+</div>
+
+{% set scope_desk = desks | selectattr('is_collecting') | first %}
+{% if scope_desk %}
+<h2 id="g-relief-scope">Scope panel · lift 1</h2>
+<section class="rl-scope g-rl-scope" aria-labelledby="g-rl-scope-h">
+  <div class="g-rl-scope-head">{{ emblem(scope_desk.slug, draws=false) }}
+    <div><p class="eyebrow">What this desk covers</p><h3 id="g-rl-scope-h">{{ flag(scope_desk.slug) }} {{ scope_desk.name }}</h3></div></div>
+  <p>{{ scope_desk.scope }}</p>
+  <ul class="g-rl-sources">{% for s in scope_desk.sources %}<li>{{ glyph_for(s.source_type) }} {{ s.display_name }} <span class="meta">{{ s.source_type | source_type_label }}</span></li>{% endfor %}</ul>
+</section>
+{% endif %}
+
+{% set brief_row = collection.rows | rejectattr('entry.issue', 'equalto', 12) | first if collection.rows else none %}
+{% if brief_row %}{% set e = brief_row.entry %}
+<h2 id="g-relief-brief">Brief print on an Editorial plate · lift 1, hover lift 2</h2>
+<p class="meta">No source photograph is used on this specimen; Brief photography is unchanged and out of scope.</p>
+<div class="g-rl-grid g-rl-grid--wide">
+  <article class="rl-brief g-rl-brief">
+    <div class="rl-print">{{ region_plate(e.desks or ['china']) }}</div>
+    <p class="g-rl-tag">Editorial plate</p>
+    <div class="g-rl-brief-copy">
+      <p class="meta">{% if e.issue is not none %}No. {{ e.issue }} · {% endif %}<time datetime="{{ e.date }}">{{ e.date | reader_date }}</time></p>
+      <h3><a href="{{ e.url }}">{{ e.title or e.slug }}</a></h3>
+      {% if e.dek %}<p>{{ e.dek }}</p>{% endif %}
+      <p class="meta">No source photograph. Outlines from Natural Earth; dots mark desk seats.</p>
+    </div>
+  </article>
+</div>
+{% endif %}
+
+{% set lead = collection.lead %}
+<h2 id="g-relief-analysis">Analysis plane · lift 1, crimson edge</h2>
+<section class="rl-analysis g-rl-analysis" aria-labelledby="g-rl-analysis-h">
+  <div class="g-rl-analysis-art rl-rises">{{ strait() }}</div>
+  <div class="g-rl-analysis-copy rl-settles">
+    <p><span class="evidence evidence--analysis">Analysis</span></p>
+    <h3 id="g-rl-analysis-h">{% if lead %}{{ lead.title or lead.slug }}{% else %}No Brief published yet{% endif %}</h3>
+    {% if lead and lead.dek %}<p>{{ lead.dek }}</p>{% endif %}
+    <p class="g-rl-note">Singapore Strait, Natural Earth 1:10m. Decorative; not a navigation or boundary chart.</p>
+  </div>
+</section>
+
+<h2 id="g-relief-glyphs">Source-family glyphs</h2>
+<p class="meta">Drawn for IPR: generic forms of a kind of publication, never a seal, crest, masthead or logo. Each sits beside its family's name.</p>
+<dl class="g-rl-glyphs">
+{% for family, label in [('newspaper', 'Newspaper'), ('ministry', 'Ministry or official release'), ('agency', 'News agency'), ('journal', 'Journal editorial'), ('portal', 'Web portal'), ('feed', 'Feed')] %}
+  <div><dt>{{ glyph(family) }} {{ label }}</dt>
+    {% set members = source_views | selectattr('source_type', 'in', relief_glyph_family | dictsort | selectattr('1', 'equalto', family) | map(attribute='0') | list) | map(attribute='display_name') | list %}
+    <dd class="meta">{% if members %}{{ members | join(' · ') }}{% elif family in relief_glyph_family.values() | list %}No configured source in this family.{% else %}No stored source type maps here yet.{% endif %}</dd></div>
+{% endfor %}
+{% set untyped = source_views | rejectattr('source_type') | map(attribute='display_name') | list %}
+{% if untyped %}<div><dt>No glyph</dt><dd class="meta">Sources with no stored type get no glyph rather than a guessed one: {{ untyped | join(' · ') }}</dd></div>{% endif %}
+</dl>
+{% endblock %}
+{% block scripts %}<style>
+/* Relief-gallery layout. Never shipped: this page is not part of a build. */
+.g-row { display: flex; flex-wrap: wrap; gap: .6rem; }
+.g-rl-finder { padding: 1.4rem; margin: 0 0 1rem; }
+.g-rl-finder input { width: 100%; min-height: 46px; font: 16px/1.5 var(--sans); background: var(--surface); border: 1px solid var(--rule); padding: 10px 13px; color: var(--ink); }
+.g-rl-chips { margin: .8rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; }
+.g-rl-chips .chip { display: inline-flex; gap: .45em; align-items: center; }
+.g-rl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1.4rem; align-items: start; margin-bottom: 1.6rem; }
+.g-rl-grid--wide { grid-template-columns: minmax(0, 26rem); }
+.g-rl-card, .g-rl-desk, .g-rl-scope { padding: 1.1rem 1.2rem; }
+.g-rl-card h3, .g-rl-desk h3, .g-rl-brief h3 { font-family: var(--serif); font-size: 1.2rem; margin: .4rem 0; }
+.g-rl-art { width: 6.5rem; height: 5.5rem; margin-bottom: .4rem; }
+.g-rl-art .rl-emblem { width: 100%; height: 100%; }
+.g-rl-scope { margin-bottom: 1.6rem; max-width: 46rem; }
+.g-rl-scope-head { display: flex; gap: 1rem; align-items: center; }
+.g-rl-scope-head .rl-emblem { width: 4.5rem; height: 4rem; flex: none; }
+.g-rl-sources { list-style: none; padding: 0; display: grid; gap: .35rem; }
+.g-rl-brief-copy { padding: .9rem 1.1rem 1.1rem; }
+.g-rl-tag { margin: 0; padding: .3rem 1.1rem; font: 600 12px/1.4 var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--rule); }
+.g-rl-analysis { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 1.4rem; padding: 1.4rem; margin-bottom: 1.6rem; overflow: hidden; }
+.g-rl-analysis h3 { font-family: var(--serif); font-size: 1.5rem; color: var(--band-ink); margin: .5rem 0; }
+.g-rl-note { font-size: 14px; opacity: .8; }
+.g-rl-glyphs { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: .9rem 1.6rem; }
+.g-rl-glyphs dt { font-weight: 600; }
+.g-rl-glyphs dd { margin: .2rem 0 0; }
+@media (max-width: 760px) { .g-rl-analysis { grid-template-columns: minmax(0, 1fr); } }
+</style>{% endblock %}

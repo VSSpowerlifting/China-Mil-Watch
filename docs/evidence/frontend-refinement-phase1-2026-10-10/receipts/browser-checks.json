@@ -1,0 +1,388 @@
+{
+  "url": "<served disposable --gallery build>/gallery-relief.html",
+  "checks": 27,
+  "failures": [],
+  "results": [
+    {
+      "name": "375px: no horizontal overflow",
+      "passed": true,
+      "detail": [
+        375,
+        375
+      ]
+    },
+    {
+      "name": "375px: no console errors or failed requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "768px: no horizontal overflow",
+      "passed": true,
+      "detail": [
+        768,
+        768
+      ]
+    },
+    {
+      "name": "768px: no console errors or failed requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "1280px: no horizontal overflow",
+      "passed": true,
+      "detail": [
+        1280,
+        1280
+      ]
+    },
+    {
+      "name": "1280px: no console errors or failed requests",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "scroll-driven draw assigned on emblems",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "analysis copy settles",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "hover: card rises and gains lift 2",
+      "passed": true,
+      "detail": {
+        "transform": "matrix(1, 0, 0, 1, 0, -2)",
+        "after_opacity": "1"
+      }
+    },
+    {
+      "name": "hover: brief print plate scales",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "press: control sinks, darkens, no inset shadow",
+      "passed": true,
+      "detail": {
+        "transform": "matrix(1, 0, 0, 1, 0, 2)",
+        "sink_px": 2.0,
+        "rest_bg": "rgb(16, 84, 86)",
+        "pressed_bg": "rgb(20, 46, 56)",
+        "box_shadow": "none"
+      }
+    },
+    {
+      "name": "normal motion: no console errors",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "reduced motion: no scroll animation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reduced motion: hover lift without movement",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "keyboard: every tactile control shows a 2px outline",
+      "passed": true,
+      "detail": [
+        [
+          "INPUT.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.btn.btn--primary.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.btn.btn--secondary.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "A",
+          "solid",
+          "2px",
+          "1"
+        ]
+      ]
+    },
+    {
+      "name": "keyboard: a focused card link raises its card's lift",
+      "passed": true,
+      "detail": [
+        [
+          "INPUT.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.btn.btn--primary.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.btn.btn--secondary.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "BUTTON.chip.tactile",
+          "solid",
+          "2px",
+          null
+        ],
+        [
+          "A",
+          "solid",
+          "2px",
+          "1"
+        ]
+      ]
+    },
+    {
+      "name": "forced colours 375px: no lift",
+      "passed": true,
+      "detail": [
+        "none"
+      ]
+    },
+    {
+      "name": "forced colours 375px: illustrations hidden, flags and text kept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "forced colours 1280px: no lift",
+      "passed": true,
+      "detail": [
+        "none"
+      ]
+    },
+    {
+      "name": "forced colours 1280px: illustrations hidden, flags and text kept",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JS 375px: no scroll animation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no JS 1280px: no scroll animation",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "every relief SVG is aria-hidden and unfocusable",
+      "passed": true,
+      "detail": 25
+    },
+    {
+      "name": "only flag images in the section, each alt=\"\"",
+      "passed": true,
+      "detail": [
+        [
+          "assets/flags/cn.svg",
+          ""
+        ],
+        [
+          "assets/flags/sg.svg",
+          ""
+        ],
+        [
+          "assets/flags/jp.svg",
+          ""
+        ],
+        [
+          "assets/flags/vn.svg",
+          ""
+        ],
+        [
+          "assets/flags/us.svg",
+          ""
+        ],
+        [
+          "assets/flags/cn.svg",
+          ""
+        ],
+        [
+          "assets/flags/sg.svg",
+          ""
+        ],
+        [
+          "assets/flags/jp.svg",
+          ""
+        ],
+        [
+          "assets/flags/vn.svg",
+          ""
+        ],
+        [
+          "assets/flags/us.svg",
+          ""
+        ],
+        [
+          "assets/flags/cn.svg",
+          ""
+        ]
+      ]
+    },
+    {
+      "name": "no background photographs in the section",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "every control has an accessible name",
+      "passed": true,
+      "detail": [
+        "Search 5,065 records",
+        "Search",
+        "Clear",
+        "China Desk",
+        "Singapore Desk",
+        "Japan Desk",
+        "Vietnam Desk",
+        "US Indo-Pacific Reference Desk"
+      ]
+    },
+    {
+      "name": "no request to 81.cn from the gallery",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "screenshots": [
+    "relief-375.jpg",
+    "relief-768.jpg",
+    "relief-1280.jpg",
+    "card-hover-1280.jpg",
+    "brief-hover-1280.jpg",
+    "finder-press-1280.jpg",
+    "finder-focus-1280.jpg",
+    "focus-card-1280.jpg",
+    "relief-forced-colors-375.jpg",
+    "relief-forced-colors-1280.jpg",
+    "relief-no-js-375.jpg",
+    "relief-no-js-1280.jpg"
+  ],
+  "relief_resources": [
+    [
+      "relief.css",
+      4031
+    ],
+    [
+      "flags/cn.svg",
+      813
+    ],
+    [
+      "flags/sg.svg",
+      889
+    ],
+    [
+      "flags/jp.svg",
+      470
+    ],
+    [
+      "flags/vn.svg",
+      490
+    ],
+    [
+      "flags/us.svg",
+      648
+    ],
+    [
+      "geo/emblems.svg#singapore",
+      15306
+    ],
+    [
+      "glyphs/sources.svg#ministry",
+      2181
+    ],
+    [
+      "geo/region.svg#region",
+      49760
+    ],
+    [
+      "geo/strait.svg#strait",
+      20170
+    ]
+  ],
+  "limitations": [
+    "Chromium only; Safari, Firefox and real assistive technology not exercised",
+    "Screenshots crop the Relief section; other gallery sections are out of Phase 1 scope"
+  ]
+}
