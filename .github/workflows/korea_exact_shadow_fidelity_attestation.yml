@@ -110,6 +110,17 @@ jobs:
           test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
+      - name: Offer unsigned metadata-only Korean source review checklist
+        uses: actions/upload-artifact@v4
+        with:
+          name: korea-unsigned-original-review-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/korea-originals-review/machine_fidelity.json
+            ${{ runner.temp }}/korea-originals-review/human_source_review_BLANK.json
+            ${{ runner.temp }}/korea-originals-review/REVIEW.md
+          if-no-files-found: error
+          retention-days: 14
 
-# Intentionally NO upload of original bodies or HWPX; no publisher HTTP,
-# no Git write permissions, no human signoff, no promotion, no model or email.
+# Only three allowlisted metadata-only reviewer files are uploaded. No raw
+# original bodies or HWPX, publisher HTTP, Git write, signoff, publication,
+# promotion, model call or email.
