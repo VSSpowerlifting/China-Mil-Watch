@@ -1,0 +1,10 @@
+{"base":"http://localhost:8765/","out":"shots/briefs","tag":"study",
+ "data_files":{"emblems":"studies/emblems.json","plates":"studies/plates.json"},
+ "shots":[
+  {"page":"analysis.html","width":1280,"classes":["study"],"css":["studies/overlay-briefs.css"],"js":["studies/overlay-common.js","studies/overlay-briefs.js"],"settle":900,
+   "items":[{"name":"study-hero","sel":".briefs-head","pad":[0,0,60,0]},{"name":"study-list","sel":".briefs-index","max_h":1500},{"name":"study-list-mid","sel":".issue-ledger--briefs li:nth-child(4)","pad":[10,40,1000,300]}]},
+  {"page":"analysis.html","width":1280,"classes":["study","study-no81"],"css":["studies/overlay-briefs.css"],"js":["studies/overlay-common.js","studies/overlay-briefs.js"],"settle":900,
+   "items":[{"name":"no81-list","sel":".briefs-index","max_h":1500},{"name":"no81-list-mid","sel":".issue-ledger--briefs li:nth-child(8)","pad":[10,40,900,300]}]},
+  {"page":"analysis.html","width":375,"height":812,"classes":["study"],"css":["studies/overlay-briefs.css"],"js":["studies/overlay-common.js","studies/overlay-briefs.js"],"settle":900,
+   "items":[{"name":"study-hero","sel":".briefs-head","pad":[0,0,40,0]},{"name":"study-list","sel":".issue-ledger--briefs","max_h":1700}],
+   "probe":"(()=>{const o=[];document.querySelectorAll('.bc').forEach(r=>{const b=r.getBoundingClientRect();if(b.right>375.5||b.left<-0.5)o.push(r.querySelector('.issue-no').textContent)});return {overflow:o,docW:document.documentElement.scrollWidth,cards:document.querySelectorAll('.bc').length,plates:document.querySelectorAll('.bc-media--plate').length,imgs:[...document.querySelectorAll('.bc-print img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.src)}})()"}]}

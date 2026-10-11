@@ -1,0 +1,64 @@
+/* Phase 0 study overlay — Briefs catalogue (disposable, scoped html.study). */
+/* Hero: raised Singapore island plate beside the lead Brief's CTA. */
+html.study .page-briefs .briefs-lead{position:relative}
+html.study .bh-island{position:absolute;right:-8px;bottom:-34px;width:300px;margin:0;pointer-events:none;z-index:1}
+html.study .bh-island svg{display:block;width:100%;height:auto;overflow:visible}
+html.study .bh-island figcaption{font:500 11px/1.3 var(--sans);color:#8fb3b0;text-align:right;margin:4px 18px 0 0}
+.bh-wl{fill:none;stroke-linejoin:round;transform-box:fill-box;transform-origin:center}
+.bh-wl .w1{stroke:#2b5d63;stroke-width:13}.bh-wl .w2{stroke:#142e38;stroke-width:10.4}.bh-wl .w3{stroke:#2b5d63;stroke-width:7.4}.bh-wl .w4{stroke:#142e38;stroke-width:5.2}.bh-wl .w5{stroke:#5e9a96;stroke-width:1.6}
+.bh-land-side{fill:#0a1d25;transform:translate(1.6px,2.6px)}
+.bh-land{fill:#21434f;stroke:#92d5cc;stroke-width:.6}
+html.study .bh-island svg>*{transition:transform 200ms var(--ease,ease)}
+html.study .briefs-lead:has(.btn--primary:hover,.btn--primary:focus-visible) .bh-land{transform:translateY(-1.6px)}
+html.study .briefs-lead:has(.btn--primary:hover,.btn--primary:focus-visible) .bh-wl{transform:scale(1.04)}
+html.study .page-briefs .briefs-lead .btn--primary{transition:transform 160ms var(--ease,ease),background-color 160ms}
+html.study .page-briefs .briefs-lead .btn--primary:hover{transform:translateY(-1px)}
+html.study .page-briefs .briefs-lead .btn--primary:active{transform:translateY(1px)}
+
+/* Catalogue: each Brief is a mounted print + copy on a paper card. */
+html.study .page-briefs .issue-ledger--briefs{border-top:0;background:transparent;display:grid;gap:22px}
+html.study .issue-ledger--briefs .issue-ledger-row.bc{grid-template-columns:272px minmax(0,1fr);grid-template-areas:"fig meta" "fig copy";align-items:start;gap:6px 26px;
+  padding:12px 22px 14px 12px;border:1px solid hsl(197 30% 20%/.16);border-radius:2px;background:#f8f7f2;
+  box-shadow:0 1px 0 hsl(197 40% 12%/.06),0 14px 22px -18px hsl(197 50% 10%/.55)}
+html.study .issue-ledger--briefs .bc::before{display:none}
+html.study .bc .bc-media{grid-area:fig;margin:0}
+html.study .bc .issue-ledger-meta{grid-area:meta;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding-top:6px}
+html.study .bc .issue-ledger-meta .issue-no{font-size:1.05rem}
+html.study .bc .issue-ledger-copy{grid-area:copy}
+html.study .bc .issue-ledger-copy h3{font-size:1.45rem;line-height:1.12}
+html.study .bc-print{position:relative;aspect-ratio:3/2;overflow:hidden;background:var(--band);border-radius:1px}
+html.study .bc-print img{display:block;width:100%;height:100%;object-fit:cover;transition:transform 220ms var(--ease,ease)}
+html.study .bc-media figcaption{font:500 11px/1.35 var(--sans);color:var(--muted,#5b6468);margin-top:7px;max-width:34ch}
+html.study .bc:has(h3 a:hover) .bc-print img,html.study .bc:focus-within .bc-print img{transform:scale(1.03)}
+html.study .bc{transition:transform 180ms var(--ease,ease),box-shadow 180ms}
+html.study .bc:has(h3 a:hover),html.study .bc:focus-within{transform:translateY(-2px);box-shadow:0 1px 0 hsl(197 40% 12%/.06),0 20px 26px -18px hsl(197 50% 10%/.6)}
+
+/* Labelled editorial plate: never presented as a photograph. */
+html.study .bc-media--plate .bc-print{background:#18343f}
+html.study .bc-media--plate svg{display:block;width:100%;height:100%}
+.pl-wl use{fill:none;stroke-linejoin:round}
+.pl-wl .w1{stroke:#24505a;stroke-width:4}.pl-wl .w2{stroke:#18343f;stroke-width:2.2}
+.pl-land{fill:#24434e;stroke:#3f6b74;stroke-width:.35}
+.pl-desk{fill:#3d7f86;stroke:#92d5cc;stroke-width:.5}
+.pl-seat{fill:#f3f2ec;stroke:#142e38;stroke-width:1}
+.pl-lab{font:600 8.5px var(--sans);fill:#e8efe9;paint-order:stroke;stroke:#18343f;stroke-width:2.4px}
+html.study .pl-tag{position:absolute;left:8px;top:8px;font:600 10.5px/1 var(--sans);letter-spacing:.02em;color:#142e38;background:#f3f2ec;padding:4px 6px;border-radius:1px}
+html.study .bc-media--withheld .bc-print{display:flex;align-items:center;padding:16px;background:repeating-linear-gradient(135deg,#e6e4dc 0 6px,#efeee8 6px 12px);border:1px dashed #9aa3a1}
+html.study .bc-media--withheld .bc-print span{font:500 12px/1.4 var(--sans);color:#3b4448}
+
+@media (max-width:760px){
+  html.study .bh-island{position:relative;right:auto;bottom:auto;width:230px;margin:26px 0 -6px auto}
+  html.study .bh-island{clip-path:inset(0 -4px)}        /* waterlines stay clear of the CTA */
+  html.study .bh-island figcaption{white-space:nowrap;margin-right:6px}
+  html.study .issue-ledger--briefs .issue-ledger-row.bc{grid-template-columns:minmax(0,1fr);grid-template-areas:"fig" "meta" "copy";padding:10px 10px 16px}
+  html.study .bc .bc-media figcaption{max-width:none}
+}
+@media (prefers-reduced-motion:reduce){
+  html.study .bc,html.study .bc-print img,html.study .bh-island svg>*,html.study .page-briefs .briefs-lead .btn--primary{transition:none}
+  html.study .bc:has(h3 a:hover),html.study .bc:focus-within,html.study .bc:has(h3 a:hover) .bc-print img,html.study .bc:focus-within .bc-print img{transform:none}
+}
+@media (forced-colors:active){
+  html.study .issue-ledger--briefs .issue-ledger-row.bc{box-shadow:none;border:1px solid CanvasText}
+  html.study .pl-tag{border:1px solid CanvasText}
+  html.study .bh-island{display:none}
+}

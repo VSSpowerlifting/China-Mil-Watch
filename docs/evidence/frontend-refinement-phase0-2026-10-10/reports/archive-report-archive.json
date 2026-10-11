@@ -1,0 +1,48 @@
+[
+ {
+  "shot": "base-top-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "base-rows-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "study-top-1280.png",
+  "css_bytes": 10787,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "study-rows-1280.png",
+  "css_bytes": 10787,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "probe": "archive.html",
+  "width": 1280,
+  "result": {
+   "links": 50,
+   "marked": 50,
+   "finder": "rgba(18, 36, 43, 0.06) 0px 1px 0px 0px, ",
+   "hidden": false
+  }
+ },
+ {
+  "shot": "study-top-375.png",
+  "css_bytes": 10787,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "study-rows-375.png",
+  "css_bytes": 10787,
+  "js_bytes": 0,
+  "errors": []
+ }
+]

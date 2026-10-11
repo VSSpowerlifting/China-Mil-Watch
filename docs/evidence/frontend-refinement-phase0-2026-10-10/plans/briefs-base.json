@@ -1,0 +1,5 @@
+{"base":"http://localhost:8765/","out":"shots/briefs","tag":"base",
+ "shots":[{"page":"analysis.html","width":1280,"items":[{"name":"base-hero","sel":".briefs-head","pad":[0,0,60,0]},{"name":"base-list","sel":".briefs-index","pad":[0,0,0,0],"max_h":900}],
+   "probe":"(()=>{const r=e=>{const b=document.querySelector(e).getBoundingClientRect();return [Math.round(b.x),Math.round(b.y+scrollY),Math.round(b.width),Math.round(b.height)]};return {head:r('.briefs-head'),inner:r('.briefs-head-inner'),mast:r('.briefs-masthead'),lead:r('.briefs-lead'),btn:r('.briefs-lead .btn--primary'),idx:r('.briefs-index'),ol:r('.issue-ledger--briefs')}})()"},
+  {"page":"analysis.html","width":375,"height":812,"items":[{"name":"base-hero","sel":".briefs-head","pad":[0,0,40,0]}],
+   "probe":"(()=>{const r=e=>{const b=document.querySelector(e).getBoundingClientRect();return [Math.round(b.x),Math.round(b.y+scrollY),Math.round(b.width),Math.round(b.height)]};return {head:r('.briefs-head'),mast:r('.briefs-masthead'),lead:r('.briefs-lead'),btn:r('.briefs-lead .btn--primary')}})()"}]}

@@ -4,6 +4,68 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-10 — Expressive frontend Phase 0 owner rulings (B1, B9, B3/B4, B2, B5)
+
+The owner approved the five decisions in
+`docs/FRONTEND_REFINEMENT_PHASE0_2026-10-10.md` §1. These are design and
+presentation rulings. They are not visual sign-off of the Phase 0 study
+screenshots, which still need independent examination before any sitewide
+redesign advances, and they settle no image right or attribution.
+
+**B1 = controlled shadow levels.** A narrow exception to `DESIGN_SYSTEM.md` §5
+("no box-shadows" except the sticky-nav hairline): exactly three restrained,
+named elevation tokens, used only on the finder, homepage record cards, the
+analysis plane, the Brief card, the desk plate and the desk source-scope panel.
+The IPR palette stays. No general-purpose drop shadow may spread to any other
+component without a further ruling.
+
+**B9 = full-colour country flags.** Small, accessible 4×3 flags on
+country-labelled desk plates, using flag-icons 7.3.2 with its MIT licence and
+notice preserved. National flag red is not the crimson analysis signal; desk
+status remains a separate textual or graphic marker and is never carried by a
+flag.
+
+**B3/B4 = distinct media classifications.** "Signal Veil" names only a
+provenance-supported duotone derivative of a photograph in the Brief's own
+cited source. An approved photograph is called a photograph and is visibly
+credited and licensed. Original maps and drawings are "Editorial plates",
+labelled as non-source imagery ("No source photograph"). Illustration is never
+presented as documentary evidence.
+
+**B2 = editorial artwork on the Briefs catalogue.** The permission basis for
+81.cn / PLA Daily veils (2026-08-12, ruling D2) is not extended to the new
+catalogue-card surface. Catalogue cards without an approved photograph use
+authored, geographically grounded Editorial plates under the B3/B4 contract.
+The existing opened-article treatment is not newly approved or settled by this
+ruling; it is preserved unless separately directed, and its rights review
+continues.
+
+**B5 = use the existing No. 12 image now.** The owner retains the existing
+No. 12 (2026-08-01) image rather than replacing it with a held plate. This does
+not resolve attribution or image rights. The Global Times image URL is dated
+2026-06-22, before the edition; chronology alone does not prove the image is
+unrelated. The source-image metadata note carries mismatched 81.cn boilerplate,
+while the public caption is generated from the correct source trail. Do not
+render the incorrect note, invent a source association or permission, hand-edit
+generated output, or place the image on the catalogue card or any other new
+surface without a specific, reviewable rights and attribution assessment. A
+narrowly scoped follow-up handles governed metadata correction and
+image-to-article confirmation; it does not block Phase 1.
+
+Already owner-directed and unchanged by this entry: Phase 4 replaces the dark
+desk map with a light basemap, status-based country treatment and
+geographically anchored flag-tab plates, and the US Indo-Pacific desk is never
+drawn as a sovereign polygon. Phase 4 records the supersession of the dark map.
+
+Phase 1 is shared design infrastructure only (`relief.css`, relief macros,
+deterministic geo assets, licensed flags, original source glyphs, unpublished
+gallery specimens, focused tests), built from fresh current `main`. Its gates
+compare against that branch's own baseline: no unexplained new validator
+warnings, test failures, output drift or budget regressions. The ten warnings
+seen in Phase 0 are a reference, not a fixed count. This ruling records
+authorization and acceptance criteria only; it does not assert implementation,
+publication or deployment.
+
 ## 2026-10-09 — One IPR article experience; keep the editorial structure small
 
 The owner confirmed that grouping old issues on the IPR Briefs index while

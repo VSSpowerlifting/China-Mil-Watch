@@ -1,0 +1,106 @@
+/* Phase 0 study overlay — home. Disposable; scoped to html.study.
+   Elevation recipe (B1, owner exception needed): one light source above,
+   hue-matched navy shadows in three tiers; forced colors fall back to borders. */
+html.study{--lift-hue:197 45% 15%;--lift-1:0 1px 1px hsl(var(--lift-hue)/.10);--lift-2:0 4px 10px -3px hsl(var(--lift-hue)/.14);--lift-3:0 22px 40px -18px hsl(var(--lift-hue)/.34)}
+
+/* S1 — raised finder sheet rises into the photograph (original image 2) */
+html.study .home-page .pacific-opening{padding-bottom:150px}
+html.study .home-page .photo-credit{bottom:96px}
+html.study .home-finder{position:relative;z-index:2;margin-top:-82px;border-radius:2px 2px 80px 2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.75),0 -18px 34px -22px hsl(197 70% 6%/.75)}
+/* F-1: surfaces.css `[data-surface] main#main > .wrap{background:transparent}` (0,1,2,1) beats `.home-finder` (0,1,0), so the chart-paper sheet never painted. */
+html.study main#main > .home-finder{background:var(--bg) url("assets/material/chart-paper.png")}
+html.study .home-search{position:relative;border:1px solid #93aaa5;border-radius:4px;padding:8px;gap:8px;background:linear-gradient(180deg,#fdfdfa,#f2f4ef);box-shadow:inset 0 1px 0 #fff,var(--lift-1),var(--lift-2),var(--lift-3)}
+html.study .home-search input{border:1px solid #c3cfcb;border-radius:2px;background:#eef2ee;box-shadow:inset 0 2px 3px hsl(var(--lift-hue)/.12);transition:background-color 160ms var(--ease),box-shadow 160ms var(--ease)}
+html.study .home-search input:focus{background:#fbfcf9;box-shadow:inset 0 1px 2px hsl(var(--lift-hue)/.10)}
+html.study .home-page .home-search .btn{border-radius:2px;background:linear-gradient(#21434f,#142e38);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 1px 0 #0b1c23,0 3px 6px -1px hsl(197 45% 10%/.35);transition:transform 140ms var(--ease),box-shadow 140ms var(--ease),background-color 140ms}
+html.study .home-page .home-search .btn:hover{transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 0 #0b1c23,0 7px 12px -3px hsl(197 45% 10%/.4)}
+html.study .home-page .home-search .btn:active{transform:translateY(1px);box-shadow:inset 0 2px 4px rgba(0,0,0,.35),0 0 0 #0b1c23}
+html.study .home-page .home-search .btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* no-shadow alternative: a second paper sheet offset behind the form */
+html.study-stack .home-finder,html.study-stack .home-search{box-shadow:none}
+html.study-stack .home-search{isolation:isolate}
+html.study-stack .home-search::before{content:"";position:absolute;inset:0;transform:translate(6px,6px);background:var(--surface-inset);border:1px solid #9fb3ae;border-radius:4px;z-index:-1}
+/* trimmed dead gap: contour bridge kept, register head pulled up */
+html.study .home-register{padding-top:22px}
+
+/* S2 — staggered physical record cards with their own emblem */
+html.study .home-recent .record-list{display:flex;flex-direction:column;gap:22px;padding:0;margin:0}
+html.study .home-recent .record-row{position:relative;width:86%;display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 22px;align-items:start;padding:20px 24px 20px 18px;border:1px solid #c6d1cc;border-top:2px solid var(--accent);border-radius:2px;background:var(--surface) url('assets/material/chart-paper.png');box-shadow:var(--lift-1),var(--lift-2),var(--lift-3);transition:transform 180ms var(--ease),box-shadow 180ms var(--ease)}
+html.study .home-recent .record-row:nth-child(even){margin-left:auto;grid-template-columns:minmax(0,1fr) 96px;padding:20px 18px 20px 24px}
+html.study .home-recent .record-row:nth-child(even) .rc-emblem{grid-column:2;grid-row:1/span 3}
+html.study .home-recent .record-row:nth-child(even)>div,html.study .home-recent .record-row:nth-child(even)>p{grid-column:1}
+html.study .home-recent .record-row>div,html.study .home-recent .record-row>p{grid-column:2;margin:0}
+html.study .home-recent .rc-emblem{grid-row:1/span 3;grid-column:1;margin:0}
+html.study .home-recent .rc-emblem svg{display:block;width:96px;height:78px;overflow:visible}
+html.study .home-recent .rc-emblem figcaption{font:500 11px/1.3 var(--sans);color:var(--muted);margin-top:6px;text-align:center}
+html.study .home-recent .rc-date{font:500 12px/1.4 var(--sans);color:var(--muted);margin:0 0 4px;grid-column:2}
+html.study .home-recent .record-row:nth-child(even) .rc-date{grid-column:1}
+html.study .home-recent .record-row h3{font:400 21px/1.42 var(--sans);margin:0}
+html.study .home-recent .record-row h3:lang(zh-Hans){font-size:20px;line-height:1.6}
+html.study .home-recent .row-via{display:inline}
+html.study .home-recent .row-side{font-size:13px;margin-top:8px}
+html.study .home-recent .record-row:hover,html.study .home-recent .record-row:focus-within{transform:translateY(-2px);box-shadow:var(--lift-1),0 6px 12px -4px hsl(var(--lift-hue)/.16),0 28px 46px -20px hsl(var(--lift-hue)/.38)}
+html.study-stack .home-recent .record-row{box-shadow:6px 6px 0 -1px var(--surface-inset),6px 6px 0 0 #a9bab5}
+/* emblem drawing: offshore water-lining under a raised land plate */
+.rc-wl{fill:none;stroke-linejoin:round}
+.rc-wl .w1{stroke:#9cc9c2;stroke-width:15}.rc-wl .w2{stroke:var(--surface);stroke-width:12}.rc-wl .w3{stroke:#9cc9c2;stroke-width:8}.rc-wl .w4{stroke:var(--surface);stroke-width:5.6}.rc-wl .w5{stroke:#6fb0a7;stroke-width:2.4}
+.rc-land-side{fill:#0f2830;transform:translate(1.4px,2px)}
+.rc-land{fill:var(--band);stroke:#3c6370;stroke-width:.5}
+.rc-seat{fill:var(--surface);stroke:var(--band);stroke-width:1.2}
+.rc-glyph rect,.rc-glyph circle{fill:var(--surface)}.rc-glyph{stroke:var(--accent-ink,#0f4f4f);stroke-width:1.1;fill:none}
+html.study .home-recent .record-row:hover .rc-wl,html.study .home-recent .record-row:focus-within .rc-wl{transform:scale(1.035);transition:transform 200ms var(--ease)}
+.rc-wl{transform-box:fill-box;transform-origin:center;transition:transform 200ms var(--ease)}
+@media(prefers-reduced-motion:no-preference) and (scripting:enabled){@supports(animation-timeline:view()){
+html.study .home-recent .record-row{animation:rc-in linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
+html.study .home-recent .record-row:nth-child(odd){--rc-x:-22px}html.study .home-recent .record-row:nth-child(even){--rc-x:22px}
+html.study .rc-wl path{stroke-dasharray:1;animation:rc-draw linear both;animation-timeline:view();animation-range:entry 10% cover 40%}
+}}
+@keyframes rc-in{from{transform:translateX(var(--rc-x));opacity:.55}to{transform:none;opacity:1}}
+@keyframes rc-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@media(max-width:600px){html.study .home-recent .record-row,html.study .home-recent .record-row:nth-child(even){width:94%;grid-template-columns:64px minmax(0,1fr);padding:16px 14px}
+html.study .home-recent .record-row:nth-child(even){grid-template-columns:minmax(0,1fr) 64px}
+html.study .home-recent .rc-emblem svg{width:64px;height:54px}html.study .home-recent .rc-emblem figcaption{font-size:10px}
+html.study .home-recent .record-row h3{font-size:18px}}
+@media(forced-colors:active){html.study .home-recent .record-row,html.study .home-search,html.study .home-finder{box-shadow:none;border:1px solid CanvasText}.rc-land,.rc-land-side{fill:CanvasText}.rc-wl path{stroke:CanvasText}.rc-wl .w2,.rc-wl .w4{stroke:Canvas}}
+
+/* S4 — raised analysis planes and Singapore Strait coast relief */
+html.study .home-coast-inner{z-index:1}
+html.study .home-latest-analysis,html.study .home-coast-inner>div:last-child{position:relative;padding:34px 36px 38px;border-radius:2px;background:#1a3a46 url('assets/material/navy-paper.png');border:1px solid rgba(146,213,204,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 2px 2px rgba(3,14,18,.25),0 26px 50px -22px rgba(3,14,18,.75);transition:transform 200ms var(--ease),box-shadow 200ms var(--ease)}
+html.study .home-coast-inner>div:last-child{margin-top:140px;background-color:#173541}
+html.study .home-latest-analysis:hover,html.study .home-latest-analysis:focus-within{transform:translateY(-3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 3px rgba(3,14,18,.25),0 34px 60px -24px rgba(3,14,18,.8)}
+html.study .home-latest-analysis::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--crimson)}
+html.study .home-coast-band .rl-wrap{position:absolute;right:-40px;top:70px;width:min(640px,56%);z-index:0;pointer-events:none;margin:0;-webkit-mask-image:radial-gradient(ellipse 62% 58% at 62% 46%,#000 52%,transparent 100%);mask-image:radial-gradient(ellipse 62% 58% at 62% 46%,#000 52%,transparent 100%)}
+html.study .home-coast-band .rl-wrap svg{display:block;width:100%;height:auto}
+html.study .home-coast-band .rl-cap{position:absolute;right:64px;bottom:26px;max-width:420px;text-align:right;font:12px/1.5 var(--sans);color:var(--band-muted);margin:0;z-index:1}
+.rl-wl{fill:none;stroke-linejoin:round}
+.rl-wl .w1{stroke:#22505a;stroke-width:22}.rl-wl .w2{stroke:#142e38;stroke-width:18}.rl-wl .w3{stroke:#2a5f66;stroke-width:13}.rl-wl .w4{stroke:#142e38;stroke-width:9}.rl-wl .w5{stroke:#4f8f8c;stroke-width:2.4}
+.rl-side{fill:#0b1f27;transform:translate(3px,5px)}
+.rl-land{fill:#1d3d4a;stroke:#5f9c97;stroke-width:1}
+.rl-seat{fill:var(--focus-band)}
+@media(prefers-reduced-motion:no-preference) and (scripting:enabled){@supports(animation-timeline:view()){
+html.study .rl-wl path{stroke-dasharray:1;animation:rc-draw linear both;animation-timeline:view();animation-range:entry 0% cover 45%}
+html.study .rl-land,html.study .rl-side{animation:rl-rise linear both;animation-timeline:view();animation-range:entry 20% cover 45%}
+}}
+@keyframes rl-rise{from{transform:translateY(8px)}to{transform:none}}
+@media(max-width:900px){html.study .home-coast-inner>div:last-child{margin-top:0}html.study .home-coast-band .rl-wrap{position:relative;right:auto;top:auto;width:100%;height:150px;overflow:hidden;margin:16px 0 0}html.study .home-coast-band .rl-wrap svg{transform:translateY(-34%)}html.study .home-coast-band .rl-cap{position:static;text-align:left;padding:8px 22px 0}}
+@media(forced-colors:active){html.study .home-coast-band .rl-wrap{display:none}html.study .home-latest-analysis,html.study .home-coast-inner>div:last-child{box-shadow:none;border:1px solid CanvasText}}
+
+/* S5 — desks behind the record: silhouettes + hairlines into the headline */
+html.study .home-desks .home-section-head{position:relative;max-width:66%;padding-bottom:12px}html.study .home-desks .home-section-head h2{display:inline-block}
+html.study .home-desks .home-section-head::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--accent);transform-origin:left}
+html.study .home-desks .hd-wires{display:block;width:66%;height:84px;margin:-1px 0 0;overflow:visible}
+html.study .home-desks .hd-wires path{fill:none;stroke:var(--accent);stroke-width:1;vector-effect:non-scaling-stroke;transition:stroke-width 160ms}
+html.study .home-desks .home-desk-list{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;margin-top:0}
+html.study .home-desks .home-desk-list a{display:grid;grid-template-columns:84px minmax(0,1fr);align-items:center;gap:4px 18px;padding:18px 18px 18px 14px;border:1px solid #c6d1cc;border-top:2px solid var(--accent);border-radius:2px;background:var(--surface);box-shadow:var(--lift-1),var(--lift-2);transition:transform 180ms var(--ease),box-shadow 180ms var(--ease)}
+html.study .home-desks .home-desk-list a svg{grid-row:1/span 2;width:84px;height:62px;overflow:visible}
+html.study .home-desks .home-desk-list a:hover,html.study .home-desks .home-desk-list a:focus-visible{transform:translateY(-2px);box-shadow:var(--lift-1),var(--lift-2),var(--lift-3)}
+html.study .home-desks:has(a[href="china.html"]:is(:hover,:focus-visible)) .hd-wires .w-china,html.study .home-desks:has(a[href="singapore.html"]:is(:hover,:focus-visible)) .hd-wires .w-singapore{stroke-width:2.2}
+html.study .home-desks .home-coverage-note{margin-top:26px}
+@media(prefers-reduced-motion:no-preference) and (scripting:enabled){@supports(animation-timeline:view()){
+html.study .home-desks .home-section-head::after{animation:hd-x linear both;animation-timeline:view();animation-range:entry 30% cover 35%}
+html.study .home-desks .hd-wires path{stroke-dasharray:1;animation:rc-draw linear both;animation-timeline:view();animation-range:entry 40% cover 45%}
+}}
+@keyframes hd-x{from{transform:scaleX(0)}to{transform:none}}
+@media(max-width:900px){html.study .home-desks .hd-wires{width:75%}}
+@media(max-width:600px){html.study .home-desks .hd-wires{display:none}html.study .home-desks .home-desk-list{grid-template-columns:1fr;gap:14px}}
+@media(forced-colors:active){html.study .home-desks .home-desk-list a{box-shadow:none;border:1px solid LinkText}}

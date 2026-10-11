@@ -1,0 +1,206 @@
+[
+ {
+  "shot": "base-map-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "base-reads-1280.png",
+  "css_bytes": 0,
+  "js_bytes": 0,
+  "errors": []
+ },
+ {
+  "shot": "study-map-1280.png",
+  "css_bytes": 9842,
+  "js_bytes": 7264,
+  "errors": []
+ },
+ {
+  "shot": "study-reads-1280.png",
+  "css_bytes": 9842,
+  "js_bytes": 7264,
+  "errors": []
+ },
+ {
+  "probe": "desks.html",
+  "width": 1280,
+  "result": {
+   "labelHits": [],
+   "overflow": [],
+   "docW": 1280,
+   "stageH": 829,
+   "svgH": 829,
+   "plates": [
+    [
+     "china",
+     266,
+     -135,
+     244,
+     209
+    ],
+    [
+     "singapore",
+     119,
+     539,
+     244,
+     209
+    ],
+    [
+     "japan",
+     782,
+     37,
+     244,
+     224
+    ],
+    [
+     "vietnam",
+     119,
+     290,
+     244,
+     224
+    ],
+    [
+     "us-indopacific",
+     852,
+     404,
+     244,
+     250
+    ]
+   ],
+   "overlaps": [],
+   "usFill": "rgb(248, 247, 242)",
+   "panels": 5,
+   "limits": 20
+  }
+ },
+ {
+  "shot": "study-focus-sg-1280.png",
+  "css_bytes": 9842,
+  "js_bytes": 7340,
+  "errors": []
+ },
+ {
+  "shot": "study-map-900.png",
+  "css_bytes": 9842,
+  "js_bytes": 7264,
+  "errors": []
+ },
+ {
+  "probe": "desks.html",
+  "width": 900,
+  "result": {
+   "labelHits": [],
+   "overflow": [],
+   "docW": 900,
+   "stageH": 616,
+   "svgH": 616,
+   "plates": [
+    [
+     "china",
+     129,
+     -225,
+     228,
+     209
+    ],
+    [
+     "singapore",
+     105,
+     629,
+     228,
+     209
+    ],
+    [
+     "japan",
+     437,
+     -240,
+     228,
+     224
+    ],
+    [
+     "vietnam",
+     15,
+     214,
+     228,
+     224
+    ],
+    [
+     "us-indopacific",
+     617,
+     629,
+     228,
+     250
+    ]
+   ],
+   "overlaps": [],
+   "usFill": "rgb(248, 247, 242)",
+   "panels": 5,
+   "limits": 20
+  }
+ },
+ {
+  "shot": "study-map-375.png",
+  "css_bytes": 9842,
+  "js_bytes": 7264,
+  "errors": []
+ },
+ {
+  "shot": "study-reads-375.png",
+  "css_bytes": 9842,
+  "js_bytes": 7264,
+  "errors": []
+ },
+ {
+  "probe": "desks.html",
+  "width": 375,
+  "result": {
+   "labelHits": [],
+   "overflow": [],
+   "docW": 375,
+   "stageH": 1382,
+   "svgH": 237,
+   "plates": [
+    [
+     "china",
+     23,
+     256,
+     329,
+     209
+    ],
+    [
+     "singapore",
+     23,
+     485,
+     329,
+     209
+    ],
+    [
+     "japan",
+     23,
+     714,
+     329,
+     209
+    ],
+    [
+     "vietnam",
+     23,
+     943,
+     329,
+     209
+    ],
+    [
+     "us-indopacific",
+     23,
+     1172,
+     329,
+     209
+    ]
+   ],
+   "overlaps": [],
+   "usFill": "rgb(248, 247, 242)",
+   "panels": 5,
+   "limits": 20
+  }
+ }
+]

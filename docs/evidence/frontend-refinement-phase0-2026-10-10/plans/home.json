@@ -1,0 +1,341 @@
+{
+ "base": "http://localhost:8765/",
+ "out": "shots/home",
+ "tag": "home",
+ "data_files": {
+  "emblems": "studies/emblems.json"
+ },
+ "shots": [
+  {
+   "page": "index.html",
+   "width": 1280,
+   "classes": [],
+   "media": {},
+   "css": [],
+   "js": [],
+   "items": [
+    {
+     "name": "home-before-finder",
+     "sel": ".home-finder",
+     "pad": [
+      170,
+      64,
+      40,
+      64
+     ]
+    },
+    {
+     "name": "home-before-register",
+     "sel": ".home-register",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-before-selected",
+     "sel": ".home-selected",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-before-band",
+     "sel": ".home-coast-band",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-before-desks",
+     "sel": ".home-desks",
+     "pad": [
+      10,
+      64,
+      10,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "page": "index.html",
+   "width": 1280,
+   "classes": [
+    "study"
+   ],
+   "media": {},
+   "css": [
+    "studies/overlay-home.css"
+   ],
+   "js": [
+    "studies/overlay-common.js",
+    "studies/overlay-home.js"
+   ],
+   "items": [
+    {
+     "name": "home-after-finder",
+     "sel": ".home-finder",
+     "pad": [
+      170,
+      64,
+      40,
+      64
+     ]
+    },
+    {
+     "name": "home-after-register",
+     "sel": ".home-register",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-after-selected",
+     "sel": ".home-selected",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-after-band",
+     "sel": ".home-coast-band",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-after-desks",
+     "sel": ".home-desks",
+     "pad": [
+      10,
+      64,
+      10,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "page": "index.html",
+   "width": 375,
+   "classes": [],
+   "media": {},
+   "css": [],
+   "js": [],
+   "items": [
+    {
+     "name": "home-before-finder",
+     "sel": ".home-finder",
+     "pad": [
+      170,
+      64,
+      40,
+      64
+     ]
+    },
+    {
+     "name": "home-before-register",
+     "sel": ".home-register",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-before-selected",
+     "sel": ".home-selected",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-before-band",
+     "sel": ".home-coast-band",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-before-desks",
+     "sel": ".home-desks",
+     "pad": [
+      10,
+      64,
+      10,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "page": "index.html",
+   "width": 375,
+   "classes": [
+    "study"
+   ],
+   "media": {},
+   "css": [
+    "studies/overlay-home.css"
+   ],
+   "js": [
+    "studies/overlay-common.js",
+    "studies/overlay-home.js"
+   ],
+   "items": [
+    {
+     "name": "home-after-finder",
+     "sel": ".home-finder",
+     "pad": [
+      170,
+      64,
+      40,
+      64
+     ]
+    },
+    {
+     "name": "home-after-register",
+     "sel": ".home-register",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-after-selected",
+     "sel": ".home-selected",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-after-band",
+     "sel": ".home-coast-band",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    {
+     "name": "home-after-desks",
+     "sel": ".home-desks",
+     "pad": [
+      10,
+      64,
+      10,
+      64
+     ]
+    }
+   ]
+  },
+  {
+   "page": "index.html",
+   "width": 1280,
+   "classes": [
+    "study",
+    "study-stack"
+   ],
+   "media": {},
+   "css": [
+    "studies/overlay-home.css"
+   ],
+   "js": [
+    "studies/overlay-common.js",
+    "studies/overlay-home.js"
+   ],
+   "items": [
+    {
+     "name": "home-stack-finder",
+     "sel": ".home-finder",
+     "pad": [
+      170,
+      64,
+      40,
+      64
+     ]
+    },
+    {
+     "name": "home-stack-register",
+     "sel": ".home-register",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "page": "index.html",
+   "width": 1280,
+   "classes": [
+    "study"
+   ],
+   "media": {
+    "forced_colors": "active"
+   },
+   "css": [
+    "studies/overlay-home.css"
+   ],
+   "js": [
+    "studies/overlay-common.js",
+    "studies/overlay-home.js"
+   ],
+   "items": [
+    {
+     "name": "home-forced-finder",
+     "sel": ".home-finder",
+     "pad": [
+      170,
+      64,
+      40,
+      64
+     ]
+    },
+    {
+     "name": "home-forced-register",
+     "sel": ".home-register",
+     "pad": [
+      0,
+      0,
+      0,
+      0
+     ]
+    }
+   ]
+  }
+ ]
+}
