@@ -32,6 +32,16 @@ The script makes only bounded GETs under `api.github.com/repos/VSSpowerlifting/C
 
 The first version supports at most **30 indexed scheduled workflow runs**, **five attempts per run**, **30 jobs per attempt** and **60 pinned state ledgers**. When those bounds are exceeded, it **refuses** to imply exhaustive coverage; a separately bounded/paginated archival reviewer can be designed. It may require a GitHub token authorization scope not currently available to the ChatGPT GitHub connector. This is a distinct operational dependency, not a reason to make up a gate setting.
 
+## GitHub-native self-service observation (without a separate Variables API token)
+
+A new **manual-only** workflow, `.github/workflows/jcg_gate_readonly_observation.yml`, provides a simpler route for the owner. After review/merge to main, navigate to GitHub Actions → **JCG Source Gate Observation — Read Only** → Run workflow and explicitly check `acknowledge_read_only_review`. **This is not the JCG guarded collector workflow.** It has no schedule, no publisher access, no upload artifacts, and `contents: read` / `actions: read` permissions only.
+
+The manual workflow passes the **current** `${{ vars.JCG_SHADOW_DAILY_ENABLED }}` into an in-process observer from its own GitHub Actions context. The same exact variable reference controls the scheduled JCG collection job. To avoid trusting an arbitrary user-supplied environment variable, the auditor's `--gate-from-actions-context` option fails closed unless the runtime reports this repository, this exact workflow file, main branch, GitHub workflow_dispatch event, full commit SHA, and a literal `true` or `false` current gate. It does **not** call the repository Variables REST endpoint in this mode. Other GitHub REST requests still check the actual existing workflow jobs and immutable state branches using the ephemeral read-only `github.token` token.
+
+An unset variable, denied Actions metadata, incomplete historical run listing, invalid state or moving branch is **BLOCKED**; the observer must not reinterpret it as `false` or claim a missing publication. A readable current gate does **not** establish what the variable was last Friday. A completed manual run can report **review HOLD** while its workflow status is green; a green observation workflow certifies only that the metadata check completed, not that Japan JCG is source-qualified. Read the JSON printed in the run log, not the workflow color alone.
+
+This mode is deliberately not invoked by pull requests, and merge/presence of the workflow does not trigger it. It changes neither the JCG variable nor the guarded source collector. `--approve-github-read` remains necessary inside the explicitly authorized manual Actions job. A separate owner's permission is still needed to activate actual Japan Coast Guard collection.
+
 ## Decision tree and next engineering milestone
 
 - Variable definitely **false now**: label **held by current gate**; inspect the actual owner's original-source Day 0 and permission decisions. Do not change the variable by automation or count missing scheduled days against the source.
