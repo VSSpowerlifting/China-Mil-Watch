@@ -1,5 +1,29 @@
 # Sunday IPR Briefs — full-week draft to Dylan (staged migration)
 
+## Editor-facing attachment format
+
+For an authorized Sunday Dylan send, the canonical immutable audited .txt
+remains attached byte-for-byte. A second editable Word (.docx) manuscript
+is generated from the SAME already validated manuscript boundary, including
+article headings, paragraphs and cited original official-source hyperlinks.
+Dylan edits and returns Word; the .txt is a source-audit reference, not his
+assignment. The email body remains article-first HTML/plain text.
+
+The Word editing copy does NOT contain source bodies, version hashes, private
+research synopses, technical receipts or unpublished source-use appendices.
+It is an unapproved editorial projection, not an independently reviewed
+publication manuscript or source admission. Missing or unsafe cited URLs
+refuse the DOCX projection before SMTP. The exact reviewed original .txt
+continues to be approved and attached unchanged.
+
+The owner-only preview continues to carry just the exact original text; no
+separate Word editing copy is generated for previews. The first October 11
+manual delivery already happened and must not be replayed.
+
+Focused local regression tests:
+python -m unittest tests.test_sunday_editor_docx tests.test_sunday_editor_readable
+
+
 ## Operating schedule
 
 The new, **separately gated** Sunday workflow is designed for this cycle:
