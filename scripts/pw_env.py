@@ -259,7 +259,9 @@ def _norm_url(url: str) -> str:
         if u.startswith(prefix):
             u = u[len(prefix):]
             break
-    return u[4:] if u.startswith("www.") else u.rstrip("/")
+    if u.startswith("www."):
+        u = u[4:]
+    return u.rstrip("/")
 
 
 def source_veil_name(date: str) -> str:
@@ -337,6 +339,10 @@ def source_veil_for_edition(date: str, sidecar=None,
         if _norm_url(item.get("url")) == _norm_url(article_url):
             trail_hit = item
             break
+    if not trail_hit:
+        # An image file and metadata are not provenance without this edition's
+        # own matching citation. Fail closed rather than invent an attribution.
+        return None
 
     title = (trail_hit.get("title") or "").strip()
     subject = title if len(title) <= 64 else title[:63].rstrip() + "…"
