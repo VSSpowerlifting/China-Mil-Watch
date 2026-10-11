@@ -334,22 +334,20 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
                               % (label, figure), html)
 
 
-class TestVietnamDeskIsResearchNotCoverage(DeskCase):
+class TestVietnamShadowIsNotPublicCoverage(DeskCase):
     """
-    Vietnam is declared at `research`. A collector for one Government News tag
-    page exists and was rehearsed outside production, but nothing runs on a
-    schedule and nothing has reached the record. Every surface has to say
-    exactly that: no count, no shadow clock, no coverage, and a shadow manifest
-    the production loader cannot find even though the desk is public.
+    Three ministry families now operate isolated scheduled shadow collection,
+    but no Vietnam original is in the public production corpus. Government
+    News and the National Defence Journal are separate disabled candidates.
     """
 
     def test_the_vietnam_desk_page_exists_and_is_linked(self):
         self.assertTrue((self.out / "vietnam.html").is_file())
         self.assertIn('href="vietnam.html"', self.page("desks.html"))
 
-    def test_the_registry_declares_research_with_no_manifest(self):
+    def test_the_registry_declares_shadow_without_a_production_manifest(self):
         entry = load_registry().get("vietnam")
-        self.assertEqual(entry.status, "research")
+        self.assertEqual(entry.status, "shadow")
         self.assertTrue(entry.public)
         self.assertIsNone(entry.manifest_path)
         self.assertFalse(entry.has_production_records)
@@ -373,16 +371,15 @@ class TestVietnamDeskIsResearchNotCoverage(DeskCase):
 
     def test_the_vietnam_page_states_no_records_and_no_enabled_source(self):
         html = self.page("vietnam.html")
-        self.assertIn("Researched — not yet collecting", html)
+        self.assertIn("Shadow evaluation — not public", html)
         self.assertIn("Records</dt><dd>None collected", html)
-        self.assertIn("Sources enabled</dt><dd>0", html)
+        self.assertIn("Sources enabled in production</dt><dd>0", html)
         self.assertNotIn("Sources enabled in shadow", html)
-        self.assertNotIn("Shadow evaluation", html)
+        self.assertIn("MPS foreign-affairs", html)
         self.assertIn("No source is enabled in production", html)
 
     def test_the_vietnam_page_shows_no_collection_statistic(self):
-        """The volume rows count what a tag page listed, not what this project
-        holds, and no shadow clock has started."""
+        """Newsroom-tag listings are not production records or shadow counts."""
         html = self.page("vietnam.html")
         self.assertNotRegex(
             html, r"\b\d[\d,]*\s+(records|articles)\s+collected\b")
@@ -422,7 +419,7 @@ class TestVietnamDeskIsResearchNotCoverage(DeskCase):
         block = [b.split("</section>", 1)[0]
                  for b in directory.split('<section class="desk')[1:]
                  if 'data-desk="vietnam"' in b][0]
-        self.assertIn("Researched — not yet collecting", block)
+        self.assertIn("Shadow evaluation — not public", block)
         self.assertIn("Records</dt><dd>None collected", block)
         self.assertNotIn("desk--live", block)
         self.assertIn("Hanoi", block)
@@ -442,6 +439,59 @@ class TestVietnamDeskIsResearchNotCoverage(DeskCase):
             if "is-mid-side" in cls.split()}
         self.assertEqual(narrowed, side)
         self.assertEqual(narrowed, {"vietnam"})
+
+
+class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
+    """A public Philippines research page does not expose shadow originals."""
+
+    def test_route_map_and_directory_are_generated(self):
+        self.assertTrue((self.out / "philippines.html").is_file())
+        directory = self.page("desks.html")
+        self.assertIn('href="philippines.html"', directory)
+        self.assertIn('data-desk="philippines"', directory)
+        self.assertIn("Manila", directory)
+        self.assertIn('dm-geo-philippines', directory)
+
+    def test_shadow_registry_never_claims_production(self):
+        entry = load_registry().get("philippines")
+        self.assertIsNotNone(entry)
+        self.assertTrue(entry.public)
+        self.assertEqual(entry.status, "shadow")
+        self.assertIsNone(entry.manifest_path)
+        self.assertFalse(entry.is_collecting)
+        self.assertFalse(entry.has_production_records)
+        self.assertFalse(entry.may_show_record_count)
+        self.assertEqual((entry.configured_source_count,
+                          entry.enabled_source_count), (0, 0))
+
+    def test_production_still_has_no_philippines_manifest_or_source(self):
+        from core.manifests import load_all_desks
+        self.assertFalse((MANIFESTS / "philippines").exists())
+        self.assertNotIn("philippines", load_all_desks())
+        with self.db() as con:
+            self.assertEqual(con.execute(
+                "SELECT COUNT(*) FROM sources WHERE desk_id = 'philippines'"
+            ).fetchone()[0], 0)
+
+    def test_countries_have_honest_empty_public_corpus(self):
+        for name in ("philippines", "vietnam"):
+            with self.subTest(desk=name):
+                page = self.page(name + ".html")
+                self.assertIn("Shadow evaluation — not public", page)
+                self.assertIn("Records</dt><dd>None collected", page)
+                self.assertIn("Sources enabled in production</dt><dd>0", page)
+                self.assertNotIn('href="archive.html?desk=' + name + '"', page)
+                self.assertNotIn("text_original", page)
+                self.assertNotIn("state/shadow.db", page)
+        page = self.page("philippines.html")
+        self.assertIn("National Security Council", page)
+        self.assertIn("AFP", page)
+
+    def test_public_desk_roster_does_not_change_which_desks_are_live(self):
+        self.assertEqual({d.slug for d in load_registry().public_entries},
+            {"china", "singapore", "japan", "philippines", "vietnam", "us-indopacific"})
+        self.assertEqual(sorted(d.slug for d in load_registry() if d.is_collecting),
+                         ["china", "singapore"])
 
 
 class TestLegacyChinaRoutesSurvive(DeskCase):
