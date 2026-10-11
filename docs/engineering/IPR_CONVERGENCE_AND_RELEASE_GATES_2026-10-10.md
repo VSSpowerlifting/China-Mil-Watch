@@ -57,7 +57,7 @@ Other useful work can proceed **without being on that critical path**, provided 
 
 ## 3. Recommended work packages and stop conditions
 
-### M0 — 24–48-hour operational and branch hygiene (highest priority; small)
+### M0 — immediate operational and branch hygiene (highest priority; small)
 
 **Owner:** repo/engineering management; no authoring-system rewrite.
 
