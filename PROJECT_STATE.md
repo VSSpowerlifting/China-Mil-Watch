@@ -94,7 +94,27 @@ separately approved. Private review is noindex and rejected by the deploy gate.
 Owner implementation review, merge/deployment decisions and separate approval
 of exact timeline editorial content remain outstanding.
 
+**Analysis capacity (11 October 2026, private implementation candidate):**
+`codex/ipr-analysis-capacity-20261011` from fresh main `59bb2eb0e8` integrates
+the shared compatibility/age-aware planner, optional strict per-run admission
+at raw/tool/stream analyzer boundaries, scratch DAO execution, private receipts
+and the existing Operations Center. Production defaults, prompts, models,
+limits, schedules and custody binding/recovery remain unchanged. All four
+stages are funded before relevance; default-model worst-case exposure is
+USD 12.005 per article, using full context ceilings and pinned cache-write
+rates. Unknown usage/failures retain exposure and block further guarded calls;
+denials consume no retry attempt. This is not a daily/invoice/restart allowance.
+The mocked scratch run completes four calls and reconciles USD 0.015 with
+legacy telemetry; the equal-cap/envelope three-day comparison is explicitly
+fictional/modeled, not historical per-record spend. Private browser checks at
+1280/375 and 189 focused tests pass. Source candidate is `713b72a3c1`; final
+full offline/CI receipts are recorded in the implementation draft PR. Output validation retains ten governed
+warnings; DB/output/history preservation is independently hashed. No paid call,
+collection, production mutation, output regeneration, merge or activation.
+Operator contract and reproduction: `docs/ANALYSIS_CAPACITY_RUNBOOK.md`.
+
 Durable documents, and what each one governs:
+
 
 | Document | Governs |
 |---|---|
