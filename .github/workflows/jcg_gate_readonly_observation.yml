@@ -1,0 +1,69 @@
+name: JCG Source Gate Observation — Read Only
+
+# Manually requested repository-metadata inspection only.
+# Does NOT enable or run the existing guarded daily JCG collector.
+on:
+  workflow_dispatch:
+    inputs:
+      acknowledge_read_only_review:
+        description: "I authorize one read-only inspection of JCG current gate and existing Actions/state metadata."
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  current-gate-and-ledger-observation:
+    if: github.ref == 'refs/heads/main' && inputs.acknowledge_read_only_review == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      # The same current vars context as the guarded collector.
+      # A missing value remains unknown and the Python auditor refuses it.
+      IPR_JCG_OBSERVED_GATE: ${{ vars.JCG_SHADOW_DAILY_ENABLED }}
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Observe current gate plus scheduled job and pinned ledger history
+        shell: bash
+        run: |
+          set -euo pipefail
+          set +e
+          python -m scripts.audit_jcg_daily_gate \
+            --as-of "$(date -u +%F)" \
+            --approve-github-read \
+            --gate-from-actions-context > "$RUNNER_TEMP/jcg-source-gate-report.json"
+          result=$?
+          set -e
+          cat "$RUNNER_TEMP/jcg-source-gate-report.json"
+          {
+            echo "### JCG source gate — read-only observation"
+            echo "No collection, source-rights approval, human review, or desk promotion occurred."
+            if [ "$result" -eq 0 ]; then
+              echo "Bounded run/state metadata observed; this does NOT qualify the desk."
+            elif [ "$result" -eq 1 ]; then
+              echo "Review HOLD: gate, job attempts, or pinned ledger require human follow-up."
+            else
+              echo "BLOCKED: required GitHub metadata could not be established."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          # A review HOLD is a valid observation, not a pipeline failure.
+          # Only malformed/unavailable provenance (2) fails this manual run.
+          test "$result" -eq 0 || test "$result" -eq 1
+      - name: No production or shadow state files changed
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/ desks/registry.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
