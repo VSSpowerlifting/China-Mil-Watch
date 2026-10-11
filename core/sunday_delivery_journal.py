@@ -117,7 +117,8 @@ class DeliveryJournal:
                 state TEXT NOT NULL CHECK (state IN
                     ('registered','attempt_reserved','smtp_accepted','outcome_unknown','held')),
                 revision INTEGER NOT NULL DEFAULT 0,
-                smtp_receipt_sha256 TEXT
+                smtp_receipt_sha256 TEXT,
+                UNIQUE(reporting_week, recipient_sha256)
             )""")
             # A structural schema probe is not equivalent to authenticating
             # data. The private directory and independent backup are assumed.
@@ -155,9 +156,18 @@ class DeliveryJournal:
                 if row != values[1:]:
                     raise DeliveryHold("existing reviewed intent conflicts; do not replace")
                 return key  # Exact repeat is a read, never resets a send state.
-            db.execute("""INSERT INTO intents(identity,reporting_week,
-                manuscript_sha256,source_receipt_sha256,recipient_sha256,
-                owner_approval_sha256,state) VALUES (?,?,?,?,?,?,'registered')""", values)
+            # A different manuscript digest for the *same* Saturday and
+            # recipient must not manufacture a second delivery allowance.
+            # A correction/replacement needs an independently authorized
+            # operator protocol; there is no reset method in this module.
+            try:
+                db.execute("""INSERT INTO intents(identity,reporting_week,
+                    manuscript_sha256,source_receipt_sha256,recipient_sha256,
+                    owner_approval_sha256,state) VALUES (?,?,?,?,?,?,'registered')""", values)
+            except sqlite3.IntegrityError as exc:
+                raise DeliveryHold(
+                    "a different manuscript already claims this week/recipient; manual hold"
+                ) from exc
         return key
 
     def _transition(self, key, old, new, receipt=None):
