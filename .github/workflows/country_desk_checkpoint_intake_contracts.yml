@@ -14,7 +14,7 @@ permissions:
 jobs:
   checkpoint-input-consistency:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 16
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,13 +22,28 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+      - name: Install established offline test requirements
+        run: python -m pip install -r requirements.txt
       - name: Snapshot production database and generated output
         run: |
           set -euo pipefail
           sha256sum pla_watch.db > "$RUNNER_TEMP/ipr-desk-checkpoint-db.sha"
           find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/ipr-desk-checkpoint-output.sha"
-      - name: Offline synthetic country checkpoint identity and negative-contract tests
-        run: python -m unittest tests.test_country_desk_checkpoint_intake -v
+      - name: Offline intake and inherited AFP/Vietnam producer contracts
+        run: |
+          python -m unittest \
+            tests.test_country_desk_checkpoint_intake \
+            tests.test_ph_afp_actions_provenance \
+            tests.test_ph_afp_activation \
+            tests.test_ph_afp_run_review \
+            tests.test_ph_afp_seven_day \
+            tests.test_ph_afp_schedule \
+            tests.test_ph_afp_readiness \
+            tests.test_ph_afp_day0_review \
+            tests.test_vietnam_ministry_attempt_reconciliation \
+            tests.test_vietnam_ministry_checkpoint_rollup \
+            tests.test_vietnam_authenticated_attempt_bridge \
+            tests.test_vietnam_shadow_review -v
       - name: Preserve tracked DB, public output and shadow declarations
         run: |
           set -euo pipefail
