@@ -42,6 +42,14 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn('assert "data-reference-list" not in text', text)
         self.assertIn('assert "6 declared" in desk_html', text)
 
+    def test_pull_request_checks_rehearse_actual_renderer_without_deployment(self):
+        text = self.body
+        self.assertIn("if: github.event_name == 'pull_request'", text)
+        self.assertIn("Exercise actual static release build without committing or deploying", text)
+        self.assertIn("test -f output/philippines.html", text)
+        self.assertIn("test -f output/vietnam.html", text)
+        self.assertIn("python scripts/validate_output.py", text)
+
     def test_db_immutability_and_safe_publishing(self):
         text = self.body
         self.assertIn("sha256sum -c", text)
