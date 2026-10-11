@@ -185,6 +185,24 @@ class JournalTests(unittest.TestCase):
                 self.fields, manuscript_sha256=sha("revision before SMTP")))
         self.assertEqual(self.journal.state(first), "registered")
 
+    def test_old_journal_without_week_recipient_unique_index_is_held(self):
+        self.path.unlink()
+        with closing(sqlite3.connect(str(self.path))) as db, db:
+            db.execute("""CREATE TABLE intents (
+                identity TEXT PRIMARY KEY,
+                reporting_week TEXT NOT NULL,
+                manuscript_sha256 TEXT NOT NULL,
+                source_receipt_sha256 TEXT NOT NULL,
+                recipient_sha256 TEXT NOT NULL,
+                owner_approval_sha256 TEXT NOT NULL,
+                state TEXT NOT NULL,
+                revision INTEGER NOT NULL DEFAULT 0,
+                smtp_receipt_sha256 TEXT
+            )""")
+        os.chmod(self.path, 0o600)
+        with self.assertRaisesRegex(DeliveryHold, "uniqueness"):
+            DeliveryJournal(self.path)
+
     def test_private_metadata_only(self):
         key = self.register()
         with closing(sqlite3.connect(str(self.path))) as db:
