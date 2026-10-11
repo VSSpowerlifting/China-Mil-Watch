@@ -116,8 +116,9 @@ def validate(plan, *, bindings, registry):
             any(not isinstance(x[k], str) or len(x[k]) < 75 for k in ("acceptance", "stop_if"))):
             _fail("insufficient bounded evidence/stop criteria " + ident)
         if type(x["human_decision_required"]) is not bool or (
-            x["gate"] in {"qualify", "decide", "verify"} and
-            not x["human_decision_required"]
+            (x["gate"] in {"qualify", "decide", "verify", "integrate"}
+             or bool(x["proposed_source_families"]))
+            and not x["human_decision_required"]
         ):
             _fail("required human-review flag missing " + ident)
         if x["status"] != "planned_not_verified" or x["executable_effect"] != "none":
@@ -140,6 +141,13 @@ def validate(plan, *, bindings, registry):
         if scope in FAMILY_PREFIXES and any(not s.startswith(FAMILY_PREFIXES[scope].rstrip("_")) for s in proposed if s != "mod-en-defence-relations"):
             _fail("proposed source assigned outside its scope " + ident)
         found[ident] = x
+
+    # The operations baseline must account for ALL declared shadow families,
+    # including disabled/manual/research-only sources with NO scheduled run.
+    # Missing evidence is not evidence of a successful collector.
+    baseline = found.get("REG-01")
+    if baseline is None or set(baseline["declared_source_slugs"]) != bound_sources:
+        _fail("regional observation baseline must inventory every declared source")
 
     for ident, node in found.items():
         for dep in node["dependencies"]:
