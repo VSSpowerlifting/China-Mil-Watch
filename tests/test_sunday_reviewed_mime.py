@@ -14,14 +14,17 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+_UNSET = object()
+
+
 class FictionalEditorMimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.text = reviewed_packet()
         cls.original = cls.text.encode("utf-8")
 
-    def build(self, raw=None, **changes):
-        if raw is None:
+    def build(self, raw=_UNSET, **changes):
+        if raw is _UNSET:
             raw = self.original
         args = dict(
             week="2026-10-10", reviewed_sha256=sha(raw),
