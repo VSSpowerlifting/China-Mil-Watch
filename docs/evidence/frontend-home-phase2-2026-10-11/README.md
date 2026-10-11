@@ -87,7 +87,7 @@ The `81.cn` record photographs are masked in every shot.
   - All 17 are 404s on legacy `the-pla-watch/` routes, which the scratch preview build does not emit.
   - These are **errors matched to the baseline**, not passes.
 - **The full `unittest discover`:** fails on baseline main with 6 failures and 42 errors. These are sandbox and worktree guards (`test_state_is_refused_inside_worktree…`, evidence-store `unsafe_store_root`, and similar).
-  - The PR body records the candidate's set and its diff against that baseline.
+  - The candidate has 1 failure and 21 errors. Both sets are classified in `receipts/unittest-summary.txt`.
 
 ## Deviations and risks
 
