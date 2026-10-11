@@ -74,11 +74,13 @@ it is not an analysis queue. <a href="corpus-guide.html#states">Read the four pr
 {% else %}
 <dl class="stat-rows">
   <div class="stat-row"><dt>Records</dt><dd>None collected</dd></div>
-  <div class="stat-row"><dt>Sources configured</dt><dd>{{ desk.configured_source_count }}</dd></div>
-  <div class="stat-row"><dt>{{ 'Sources enabled in shadow' if desk.status == 'shadow' else 'Sources enabled' }}</dt><dd>{{ desk.enabled_source_count }}</dd></div>
+  <div class="stat-row"><dt>Sources configured{{ ' in production' if desk.status == 'shadow' and not desk.sources else '' }}</dt><dd>{{ desk.configured_source_count }}</dd></div>
+  <div class="stat-row"><dt>{{ 'Sources enabled in production' if desk.status == 'shadow' and not desk.sources else 'Sources enabled in shadow' if desk.status == 'shadow' else 'Sources enabled' }}</dt><dd>{{ desk.enabled_source_count }}</dd></div>
 </dl>
-<p class="meta">This desk has collected nothing into the record. No count on this page describes
-material this project holds.</p>
+<p class="meta">This desk has no admitted records in the public IPR corpus. Any independently collected shadow originals remain separate, and no number on this page counts them.</p>
+{% if desk.status == 'shadow' and not desk.sources %}
+<p class="meta">The zero source-configuration figures above describe production only. Active shadow families are documented in the institutional research inventory below.</p>
+{% endif %}
 {% endif %}
 
 {% if desk.sources %}
@@ -128,9 +130,7 @@ qualification evidence, not a current gate.</p>
 
 {% if desk.research %}
 <h2>Pre-registered source universe</h2>
-<p>The source universe is published before collection begins, so the declared scope can be checked
-against what is eventually collected. This is a statement of intent and of researched fact. It is
-not coverage, and nothing below has produced a record.</p>
+<p>The declared source universe distinguishes isolated active shadow families from merely researched or blocked institutions. It is not coverage. Shadow preservation does not enter the public corpus before independent source admission.</p>
 
 <h3>Sources identified</h3>
 <div class="table-scroll">
@@ -149,6 +149,7 @@ not coverage, and nothing below has produced a record.</p>
 </table>
 </div>
 
+{% if desk.research.observed_volume %}
 <h3>Observed publication volume</h3>
 <dl class="stat-rows">
 {% for label, value in desk.research.observed_volume %}
@@ -156,8 +157,11 @@ not coverage, and nothing below has produced a record.</p>
 {% endfor %}
 </dl>
 <p class="meta">{{ desk.research.volume_caveat }}</p>
+{% elif desk.research.volume_caveat %}
+<p class="meta">{{ desk.research.volume_caveat }}</p>
+{% endif %}
 
-<h3>What has to be solved before this desk can collect</h3>
+<h3>{{ 'Remaining barriers to source admission' if desk.status == 'shadow' else 'What has to be solved before this desk can collect' }}</h3>
 <dl class="blockers">
 {% for head, body in desk.research.blockers %}
   <dt><strong>{{ head }}</strong></dt>
