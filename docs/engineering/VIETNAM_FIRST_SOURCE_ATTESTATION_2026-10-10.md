@@ -34,7 +34,9 @@ Every result independently keeps false: complete historical Actions attempt audi
 
 ## Next Stage 0B — complete logical-slot evidence
 
-The next separate PR under issue #250 should enumerate **all actual GitHub workflow attempts**, including failures and cancellations which never wrote a ledger, and reconcile them with every pinned source-family slot in a bounded interval. Detect delayed nominal dates, missing ledgers, partial three-branch pushes, duplicate logical days, failed attempts followed by manual recovery and Git SHA drift. The existing operations overlay is currently candidate-only; do not turn it into green desk health until source-specific original/API/state provenance is independently demonstrated.
+**Do not rebuild the existing reconciliation engine.** The repository already has scripts/vietnam_ministry_attempt_reconciliation.py, tests/test_vietnam_ministry_attempt_reconciliation.py and docs/VIETNAM_MINISTRY_ACTIONS_ATTEMPT_RECONCILIATION_2026-10-08.md. They check complete expected daily target dates, both Day 0 bootstrap attempts, failed/cancelled Actions attempts, missing per-family ledgers, partial three-branch pushes and inconsistent logical/collector provenance. They deliberately refuse to claim independently exhaustive source history from manually supplied JSON.
+
+The **next separate PR under #250 is an authenticated-input bridge**: read a bounded complete Actions run/attempt inventory and each immutable source-ledger inventory using GitHub REST, then feed only their metadata into that existing reconciliation contract. Verify the initial October 7 failed bootstrap attempt and the *different source-specific Day 0 historical targets* instead of counting the bootstrap as three October 7 scheduled runs. Preserve missing, late, cancelled, partial and recovered slots. Do not rewrite the reconciler to hide warnings; the existing operations overlay remains candidate-only until independent API/branch provenance and human source review are established.
 
 ## Exact offline safety proof
 
