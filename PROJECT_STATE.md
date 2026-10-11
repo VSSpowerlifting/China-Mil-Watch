@@ -1038,10 +1038,15 @@ test is now a page-scoped allowlist. Zero new JS; the reduced-motion 2 px
 press is fixed on the homepage. The Singapore Strait figure appears only when
 the lead Brief's desks include Singapore. Deviations are in `DECISION_LOG.md`
 (2026-10-11, Phase 2); evidence, budgets and the rights ledger are in
-`docs/evidence/frontend-home-phase2-2026-10-11/`. Not merged or deployed;
-independent review required. Open PRs #314/#323 overlap `home.html` and
-`generate_preview.py`. Next after merge: P3 (Archive/Briefs/Desks), in its
-own session.
+`docs/evidence/frontend-home-phase2-2026-10-11/`. The PR is
+VSSpowerlifting/China-Mil-Watch#391. It has been revised once after review:
+96 px record geography plates, two dimensional analysis planes, and desk cards
+hung from the desks heading by hairlines. It is not merged or deployed, and
+independent review is required. Open PRs #314/#323 overlap `home.html` and
+`generate_preview.py`. The sequence after merge, each phase in its own session:
+- Phase 2b Archive
+- Phase 3 Briefs
+- Phase 4 Desks
 
 ## 8. Prohibited shortcuts and human-review gates
 

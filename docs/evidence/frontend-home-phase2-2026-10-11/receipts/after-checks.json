@@ -109,11 +109,11 @@
    ],
    [
     "China Desk4,979 public records",
-    82
+    166
    ],
    [
     "Singapore Desk86 public record",
-    82
+    166
    ]
   ],
   "contrast_1280": {
@@ -281,11 +281,11 @@
     ],
     [
      "China Desk4,979 public records",
-     82
+     166
     ],
     [
      "Singapore Desk86 public record",
-     82
+     166
     ]
    ]
   },
@@ -335,7 +335,7 @@
    "name": "html.no-anim: relief art not animated",
    "passed": true,
    "detail": [
-    7,
+    5,
     0
    ]
   },
