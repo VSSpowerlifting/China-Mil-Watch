@@ -27,7 +27,8 @@ class FictionalEditorMimeTests(unittest.TestCase):
         if raw is _UNSET:
             raw = self.original
         args = dict(
-            week="2026-10-10", reviewed_sha256=sha(raw),
+            week="2026-10-10",
+            reviewed_sha256=sha(raw if isinstance(raw, bytes) else self.original),
             recipient="editor@example.invalid", sender="owner@example.invalid",
         )
         args.update(changes)
