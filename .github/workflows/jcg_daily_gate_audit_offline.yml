@@ -7,6 +7,8 @@ on:
     paths:
       - "scripts/audit_jcg_daily_gate.py"
       - "tests/test_jcg_daily_gate_audit.py"
+      - "tests/test_jcg_gate_actions_context.py"
+      - ".github/workflows/jcg_gate_readonly_observation.yml"
       - "docs/engineering/JAPAN_JCG_SCHEDULE_GATE_OBSERVATION_2026-10-11.md"
       - ".github/workflows/jcg_daily_gate_audit_offline.yml"
 
@@ -25,7 +27,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Strict GitHub-only gate and state observation
-        run: python -m unittest tests.test_jcg_daily_gate_audit -v
+        run: python -m unittest tests.test_jcg_daily_gate_audit tests.test_jcg_gate_actions_context -v
       - name: Confirm all production and shadow data remain untouched
         run: |
           set -euo pipefail
