@@ -84,6 +84,9 @@ TEMPLATES = Path(__file__).parent / "templates"
 DEFAULT_OUT = REPO_ROOT / "preview"
 PRODUCTION_OUT = (REPO_ROOT / "output").resolve()
 TRACKED_DB = REPO_ROOT / "pla_watch.db"
+# The relief assets the homepage references (home.html, via _relief.html),
+# delivered by name. relief.css travels with the stylesheets.
+RELIEF_PRODUCTION_ASSETS = ("assets/geo/emblems.svg", "assets/geo/strait.svg")
 
 #: The public name. Owner-directed 2026-08-25; the governing record is
 #: docs/INDO_PACIFIC_RECORD_EVOLUTION.md §1. "The Declared Record" and
@@ -2625,6 +2628,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         # from that issue's own sidecar; replaces the cover photograph in page.
         "edition_plates": {e["slug"]: edition_plate(e, trail_marks.get(e["slug"]))
                            for e in editions},
+        # Symbol viewBoxes for the relief macros (_relief.html), from the geo
+        # builder's receipt. Read by home.html and gallery-relief.html.
+        "relief_boxes": json.loads((REPO_ROOT / "site/assets/geo/geo.receipt.json")
+                                   .read_text(encoding="utf-8"))["symbols"],
     }
 
     pages = {
@@ -2694,24 +2701,20 @@ def build(out_dir: Path, title: str, db_path: Path,
             encoding="utf-8")
         written.append("gallery.html")
         # The relief primitives get a page of their own, so the component
-        # gallery stays inside its delivery budget. They travel with the
-        # gallery and nowhere else: no production template links them yet, so
-        # a production tree never carries a file nothing references.
+        # gallery stays inside its delivery budget. The specimen-only assets
+        # travel with the gallery and nowhere else; relief.css and the two
+        # sprites the homepage uses are delivered below with production.
         (out_dir / "gallery-relief.html").write_text(
             env.get_template("gallery-relief.html").render(
                 page="gallery-relief.html",
                 specimen_records=specimens,
-                relief_boxes=json.loads((REPO_ROOT / "site/assets/geo/geo.receipt.json")
-                                        .read_text(encoding="utf-8"))["symbols"],
                 **ctx),
             encoding="utf-8")
         written.append("gallery-relief.html")
-        (out_dir / "relief.css").write_bytes(
-            (Path(__file__).parent / "relief.css").read_bytes())
-        written.append("relief.css")
         for folder in ("geo", "flags", "glyphs"):
             for asset in sorted((REPO_ROOT / "site/assets" / folder).iterdir()):
-                if not asset.is_file() or asset.name.endswith(".receipt.json"):
+                if (not asset.is_file() or asset.name.endswith(".receipt.json")
+                        or "assets/%s/%s" % (folder, asset.name) in RELIEF_PRODUCTION_ASSETS):
                     continue
                 route = "assets/%s/%s" % (folder, asset.name)
                 target = out_dir / route
@@ -2890,9 +2893,16 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
+    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
+    # The relief sprites home.html references, named one by one: no folder,
+    # flag set, glyph sprite or region plate reaches a production tree.
+    for route in RELIEF_PRODUCTION_ASSETS:
+        target = out_dir / route
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
+        written.append(route)
     # The full-color JPEG fallback must travel in fresh trees too; production
     # carry-forward is not a source dependency for the home picture.
     route = "assets/editorial/reagan-jmsdf-2015.jpg"

@@ -1024,20 +1024,29 @@ existing No. 12 image. Still open: visual sign-off of the study screenshots;
 the opened-article 81.cn rights review; a narrow No. 12 follow-up (governed
 metadata correction and image-to-article confirmation, not blocking P1).
 
-**Frontend expressive refinement, Phase 1 in review (2026-10-11):** branch
-`claude/ipr-phase1-frontend-9316d6` from main `51769ae3e`. It adds the shared
-primitives only: `site/preview/relief.css` (three lifts on the six B1
-surfaces, tactile controls, gated motion), `_relief.html` macros,
-deterministic Natural Earth sprites from `scripts/build_geo_assets.py`
-(`site/assets/geo/`, with `geo.receipt.json`), the flag-icons 7.3.2 flags with
-their MIT `LICENSE`, IPR source-family glyphs, and the unpublished
-`gallery-relief.html` specimen page (`--gallery` only). No production
-template uses them yet. The production build is byte-identical to its
-baseline; the validator keeps the same ten warnings. Implementation
-deviations from §13 are in `DECISION_LOG.md` (2026-10-11), and evidence is in
-`docs/evidence/frontend-refinement-phase1-2026-10-10/`. The gallery captures
-still need independent visual review; nothing is merged or deployed. Next,
-after review and merge: P2 Home (Phase 0 packet §12), in its own session.
+**Frontend expressive refinement, Phase 1 merged (PR #379, `e097fd261`).** It added
+the shared primitives: `site/preview/relief.css`, `_relief.html` macros,
+the deterministic Natural Earth sprites in `site/assets/geo/` (with
+`geo.receipt.json`), flag-icons 7.3.2 flags with their MIT `LICENSE`, IPR
+source-family glyphs, and the `--gallery`-only `gallery-relief.html`.
+
+**Phase 2 Home in review (2026-10-11):** branch
+`claude/ipr-phase2-home-impl-515285`, from main `39b40bb7a`. Only the homepage
+links `relief.css` and only `emblems.svg` + `strait.svg` are published
+(flags, glyphs, `region.svg` and the gallery stay gallery-only); the isolation
+test is now a page-scoped allowlist. Zero new JS; the reduced-motion 2 px
+press is fixed on the homepage. The Singapore Strait figure appears only when
+the lead Brief's desks include Singapore. Deviations are in `DECISION_LOG.md`
+(2026-10-11, Phase 2); evidence, budgets and the rights ledger are in
+`docs/evidence/frontend-home-phase2-2026-10-11/`. The PR is
+VSSpowerlifting/China-Mil-Watch#391. It has been revised once after review:
+96 px record geography plates, two dimensional analysis planes, and desk cards
+hung from the desks heading by hairlines. It is not merged or deployed, and
+independent review is required. Open PRs #314/#323 overlap `home.html` and
+`generate_preview.py`. The sequence after merge, each phase in its own session:
+- Phase 2b Archive
+- Phase 3 Briefs
+- Phase 4 Desks
 
 ## 8. Prohibited shortcuts and human-review gates
 

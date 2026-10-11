@@ -4,6 +4,55 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-11 — Expressive frontend Phase 2 (Home) implementation decisions
+
+These choices were made within the owner's Phase 2 Home kickoff and lean
+execution addendum. They are not visual sign-off, and only the homepage
+changes. Evidence is in `docs/evidence/frontend-home-phase2-2026-10-11/`.
+
+- **Publish only what the homepage uses.** The production build copies
+  `relief.css`, `assets/geo/emblems.svg` and `assets/geo/strait.svg`
+  byte for byte (`RELIEF_PRODUCTION_ASSETS`). Flags, glyphs, `region.svg`,
+  `geo.receipt.json` and `gallery-relief.html` stay `--gallery`-only.
+- **The Phase 1 isolation test became a page-scoped allowlist**, not a
+  deletion. `home.html` may reference `relief.css`, `_relief.html`,
+  `rl-finder`, `rl-card` and `rl-analysis`, and the `emblem` and `strait`
+  macros; every other production template, both base templates and every
+  stylesheet stay out. The B1 six-surface shadow audit is unchanged.
+- **Records use a home-only `home_card` macro.** It keeps the `record_row`
+  fields and order and adds the source-stated date and desk emblem;
+  `record_row` stays the shared list contract.
+- **The Strait figure is conditional on the lead Brief's own desks.** It
+  appears only when they include Singapore; otherwise the band shows only
+  that Brief's desk emblems, which mark the countries the Brief analyses and
+  make no collection claim. A fixed relief is never placed beside unrelated
+  analysis. The caption says it is decorative, not a navigation or boundary
+  chart.
+- **`rl-settles` is not applied to the second analysis plane.** Both
+  analysis planes stay static: no motion leaves their text dimmed.
+- **Review revision (PR #391): both analysis planes are dimensional without a
+  shadow.** Each is lighter navy paper on the band with a hairline edge and a
+  hard offset under-plate drawn by a `::before` border box. `box-shadow` stays
+  confined to the B1 surfaces. Crimson tops only the Brief plane. The
+  timeline/Briefs plane gets a neutral edge, so crimson stays reserved for
+  analysis.
+- **Review revision: desk silhouettes hang from the heading.** The desks
+  heading no longer carries emblems. A static hairline spine drops from
+  under "The desks behind the record." past the scope link and coverage note.
+  Each contributing desk's card (`desks if d.record_count`) hangs from it by
+  its top rule and a short drop to the card's own silhouette. The spine is
+  made only of borders, with no JS or motion, and it maps to `CanvasText` in
+  forced colours. Link targets, counts and caveats are unchanged; the
+  silhouettes are `aria-hidden`.
+- **Review revision: record geography is a 96 px plate** on desktop, 64 px
+  at 600 px and below (375 included), and 52 px only below 360 px. The plate is
+  decorative; the record's desk link is the textual source of the
+  attribution.
+- **The inherited reduced-motion press is fixed on the homepage** by
+  `[data-surface] .home-page :is(.btn,button):not(:disabled):active{transform:none}`
+  under `prefers-reduced-motion: reduce`. Other pages keep the inherited
+  behaviour until their own phase.
+
 ## 2026-10-11 — Expressive frontend Phase 1 implementation decisions
 
 These are implementation choices made within the Phase 0 §13 ticket and the

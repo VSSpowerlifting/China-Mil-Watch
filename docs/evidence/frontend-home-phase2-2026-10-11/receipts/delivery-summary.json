@@ -1,0 +1,110 @@
+{
+  "verifier": "scripts/verify_frontend_delivery.py (scratch builds --snapshot-from-corpus --legacy-routes; baseline = origin/main 22a02d2157, candidate = merge head)",
+  "baseline": {
+    "routes_checked": 7589,
+    "failures": 0
+  },
+  "candidate": {
+    "routes_checked": 7589,
+    "failures": 0
+  },
+  "routes_with_changed_budget_rows": [
+    "index.html"
+  ],
+  "index.html": {
+    "baseline": {
+      "route": "index.html",
+      "html_css_limit": 300000,
+      "js_limit": 12000,
+      "html_css_bytes": 67674,
+      "js_bytes": 11940,
+      "css": [
+        "fonts.css",
+        "home.css",
+        "styles.css",
+        "surfaces.css"
+      ],
+      "js": [
+        "intro.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 2618405,
+      "assets": [
+        "assets/editorial/reagan-jmsdf-2015.jpg",
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/frontend/pacific-fleet-1600.webp",
+        "assets/frontend/pacific-fleet-2500.webp",
+        "assets/frontend/pacific-fleet-800.webp",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-ivory-160.png",
+        "assets/identity/selected-ipr/ipr-ivory-320.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/material/chart-paper.png",
+        "assets/material/chart-shelf.svg",
+        "assets/material/coast-profile.svg",
+        "assets/material/navy-paper.png",
+        "briefs/media/maritime-cooperation-2026-1200.webp",
+        "briefs/media/maritime-cooperation-2026-600.webp",
+        "briefs/media/maritime-cooperation-2026-source-image.jpg"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 2698019
+    },
+    "candidate": {
+      "route": "index.html",
+      "html_css_limit": 300000,
+      "js_limit": 12000,
+      "html_css_bytes": 78755,
+      "js_bytes": 11940,
+      "css": [
+        "fonts.css",
+        "home.css",
+        "relief.css",
+        "styles.css",
+        "surfaces.css"
+      ],
+      "js": [
+        "intro.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 2618405,
+      "assets": [
+        "assets/editorial/reagan-jmsdf-2015.jpg",
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/frontend/pacific-fleet-1600.webp",
+        "assets/frontend/pacific-fleet-2500.webp",
+        "assets/frontend/pacific-fleet-800.webp",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-ivory-160.png",
+        "assets/identity/selected-ipr/ipr-ivory-320.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/material/chart-paper.png",
+        "assets/material/chart-shelf.svg",
+        "assets/material/coast-profile.svg",
+        "assets/material/navy-paper.png",
+        "briefs/media/maritime-cooperation-2026-1200.webp",
+        "briefs/media/maritime-cooperation-2026-600.webp",
+        "briefs/media/maritime-cooperation-2026-source-image.jpg"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 2709100
+    }
+  },
+  "revision": "Re-measured after merging origin/main (#390 desk references, corpus snapshot 11 Oct 2026, 5,097 records). Production tree vs a fresh main build differs only by home.css, index.html, relief.css, assets/geo/emblems.svg and assets/geo/strait.svg."
+}
