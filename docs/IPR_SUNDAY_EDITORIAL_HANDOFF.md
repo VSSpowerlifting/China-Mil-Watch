@@ -1,5 +1,36 @@
 # Sunday IPR Briefs — full-week draft to Dylan (staged migration)
 
+## Scheduled-delivery correction — October 11, 2026
+
+After this change, the Sunday 19:17 UTC schedule **attempts one guarded
+provisional Dylan delivery by default**. The variable
+IPR_SUNDAY_EDITOR_DELIVERY_ENABLED=true remains required for an explicit
+manual workflow_dispatch editor send, not scheduled runs.
+
+Safeguards remain unchanged: the October 10 first-pilot edition still
+requires exact owner-reviewed week and attachment SHA-256; never regenerate
+that issue for automatic delivery after the manual handoff. Later editions
+still require same-Sunday successful collection, eligible source evidence,
+non-conflicting delivery modes and valid SMTP credentials. No Brief is
+automatically approved, numbered or published.
+
+Before next Sunday, the owner should:
+- Confirm the Sunday workflow is ENABLED in GitHub Actions; missing schedule
+  executions cannot be diagnosed solely from the repository YAML.
+- Keep legacy Friday IPR_EDITOR_DELIVERY_ENABLED=false and owner-only
+  IPR_SUNDAY_OWNER_PREVIEW_ENABLED=false; either conflicts with editor delivery.
+- Verify ANTHROPIC_API_KEY, IPR_EDITOR_TO, IPR_SMTP_USER and
+  IPR_SMTP_APP_PASSWORD are configured (never log or share secret values).
+- Inspect the real Sunday Actions execution and one SMTP receipt. GitHub
+  schedules can be delayed or silently skipped; changing the default does
+  not guarantee a schedule was triggered or that SMTP credentials work.
+- Do not add a second sending cron without a durable, week-specific
+  de-duplication receipt.
+
+The older staged-migration instructions below remain background only where
+they say the scheduled Sunday job needs a separately enabled delivery flag.
+
+
 ## Operating schedule
 
 The new, **separately gated** Sunday workflow is designed for this cycle:
