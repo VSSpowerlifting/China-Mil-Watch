@@ -67,6 +67,22 @@ is authorized or triggered. Original review/export evidence remains in
 `docs/FRONTEND_EXPRESSIVE_CANDIDATE_2026-10-10.md`; reconciliation and fresh receipts
 are in `docs/FRONTEND_LANDING_2026-10-10.md`.
 
+**Custody engineering (#342):** C0 is integrated on actual main `00a58b8b`.
+Reviewed #341 merged as `6d1c88f87`; reviewed fixture repair #352 merged as
+`4952b049`; #340 refreshed at `ef5993d1` with original four file blobs unchanged
+and merged as `00a58b8b`. Fresh Python 3.9.25 CI `38081600443` passed 5,494 tests
+(nine skips), output validation (10 governed warnings), and DB/output preservation
+without sidecar residue. C0-04/C0-05 are PASS for these exact integrations.
+C1 now adds disabled fictional persistent streaming custody, verified native
+schema/lineage, durable execution/native-run mappings, explicit DAO binding,
+prepared-stage recovery and validation-only private dry runs. The two earlier
+focused stage failures are resolved; 292 focused/compatibility tests pass.
+Exact-head full C1 CI is recorded in its implementation PR; independent review
+is still required for C1 acceptance.
+No private activation, production database/output/Daily/deployment changes or C2.
+Independent manager review remains the next C1 acceptance gate. Receipt:
+`docs/research/APPLICATION_CUSTODY_INTEGRATION_2026-10-10.md`.
+
 **Evidence Timelines (#181):** the inspected prerequisite at head
 `657e9f264` is integrated into this candidate in separate commit `b80b3e4`,
 preserving concurrent main changes. Versioned sidecars, strict reconciliation,

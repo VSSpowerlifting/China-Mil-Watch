@@ -30,7 +30,11 @@ FIELDS = {"id", "desk", "source_name", "source_url", "published_date",
           "language", "title_original", "source_kind", "state_commit",
           "source_content_sha256", "hash_rule", "summary", "caveats",
           "topics", "status", "copy_scope"}
-MAX_VIETNAM = 3
+# The inaugural Sunday packet reserves three Japan records in the eight-item
+# combined research budget. Allow up to five *version-matched* Vietnam notes;
+# the first pilot independently refuses if any eligible MPS record is omitted.
+# This is a private model-input quota, NOT source/publication authorization.
+MAX_VIETNAM = 5
 TOPICS = {
     "hadr", "defense_exercises", "alliance_diplomacy", "maritime_security",
     "technology_cooperation", "security_industry", "regional_partnerships",

@@ -2,6 +2,36 @@
   "schema": "vietnam-editorial-notes/1",
   "entries": [
     {
+      "source_identity": "mps-vi:1791608910",
+      "source_url": "https://bocongan.gov.vn/bai-viet/bo-truong-luong-tam-quang-chao-xa-giao-pho-thu-tuong-thu-nhat-campuchia-neth-savoeun-1791608910",
+      "published_date": "2026-10-10",
+      "content_sha256": "d5b372499a12ff3df54c74d768d93d20da1913280eb2b4c4cda851345f731224",
+      "summary": "Vietnam's Ministry of Public Security reported an October 10 courtesy meeting in Phnom Penh between Minister Luong Tam Quang and Cambodia's First Deputy Prime Minister Neth Savoeun. The officials expressed intentions to expand police cooperation on transnational and drug crime, information exchange and law-enforcement training; the release does not document a newly signed agreement or completed joint enforcement action.",
+      "caveats": [
+        "The counterpart was Cambodia's first deputy prime minister, not the Lao public security minister. Do not conflate this October 10 meeting with the October 9 Vietnam-Laos security discussions.",
+        "Reported commitments to broaden anti-drug and transnational-crime work are forward-looking; no newly concluded treaty, joint operation or quantified enforcement outcome is established.",
+        "This is a separately collected official public-security source, not a Vietnamese defense ministry report and not automatically publication-approved."
+      ],
+      "topics": [
+        "regional_partnerships"
+      ]
+    },
+    {
+      "source_identity": "mps-vi:1791535381",
+      "source_url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381",
+      "published_date": "2026-10-09",
+      "content_sha256": "8775cb700db1dddfb17209c292b7a03864c65683cc190792c88939a9dd7740ef",
+      "summary": "Vietnam's Ministry of Public Security reported an October 9 meeting in Vientiane between Minister Luong Tam Quang and Lao Public Security Minister Vanthong Kongmany. It described ongoing information exchange and past joint investigations, especially drug cases, and an agreement to continue cooperation against transnational drug trafficking, human trafficking and high-tech crime. The ministry gave no independently verified case totals or newly signed operational agreement.",
+      "caveats": [
+        "The described joint investigations are retrospective claims by Vietnam's ministry; the article does not independently verify specific cases, results or agency effectiveness.",
+        "The meeting was between public security ministries, not military services, and is distinct from China's planned October 13 border-defense exchange with Laos.",
+        "An agreement to continue cooperation is not proof that new joint operations have begun or that particular legal instruments were signed on October 9."
+      ],
+      "topics": [
+        "regional_partnerships"
+      ]
+    },
+    {
       "source_identity": "mps-vi:1791366010",
       "source_url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010",
       "published_date": "2026-10-07",

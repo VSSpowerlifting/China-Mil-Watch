@@ -10,6 +10,8 @@ import json
 import os
 import re
 import sqlite3
+import time
+import math
 from pathlib import Path
 
 SCHEMA = "ipr-evidence-snapshot/1"
@@ -141,8 +143,20 @@ def inspect_database(database):
         raise EvidenceContractError("sqlite_invalid") from None
 
 
-def capture_backup(connection, destination):
-    """WAL-consistent online backup. Source connection is caller-owned."""
+def capture_backup(connection, destination, *, timeout_seconds=30):
+    """WAL-consistent backup, refusing caller transactions before file creation.
+
+    Deadline is cooperative at SQLite backup progress callbacks (including
+    BUSY/LOCKED retries), not a hard OS interruption guarantee. The caller owns
+    commit/rollback. Cancellation removes only this call's exclusive artifact.
+    """
+    require(not connection.in_transaction, "backup_source_transaction")
+    require(type(timeout_seconds) in (int, float) and
+            math.isfinite(timeout_seconds) and timeout_seconds > 0,
+            "backup_deadline_invalid")
+    deadline = time.monotonic() + timeout_seconds
+    def progress(status, remaining, total):
+        require(time.monotonic() < deadline, "backup_timeout")
     path = Path(destination)
     require(not path.exists() and not path.is_symlink(), "backup_target_exists")
     require(path.parent.is_dir() and not path.parent.is_symlink(),
@@ -154,15 +168,30 @@ def capture_backup(connection, destination):
         os.close(fd)
         created = True
         target = sqlite3.connect(str(path))
-        connection.backup(target, pages=64, sleep=0.05)
+        connection.backup(target, pages=64, sleep=0.05, progress=progress)
+        # Close the backup as a standalone artifact through SQLite itself.
+        # WAL-mode headers can otherwise leave empty WAL/SHM sidecars even
+        # after close on some SQLite versions. Never delete a live WAL by hand.
+        require(target.execute("PRAGMA journal_mode=DELETE").fetchone()[0] == "delete",
+                "backup_journal_mode")
         inspect_database(target)
         target.close()
+        # Some SQLite/VFS combinations leave stale shared-memory after the
+        # successful switch to DELETE. This is our exclusive backup target,
+        # now closed, with no WAL; its stale coordination file has no evidence.
+        Path(str(path) + "-shm").unlink(missing_ok=True)
         return path
-    except (sqlite3.Error, EvidenceContractError, OSError):
+    except BaseException as exc:
         if target is not None:
             target.close()
         if created:
             path.unlink(missing_ok=True)
+            for suffix in ("-wal", "-shm", "-journal"):
+                Path(str(path) + suffix).unlink(missing_ok=True)
+        if not isinstance(exc, Exception):
+            raise
+        if isinstance(exc, EvidenceContractError) and str(exc) == "backup_timeout":
+            raise
         raise EvidenceContractError("backup_failed") from None
 
 
@@ -172,8 +201,16 @@ def manifest_for_backup(snapshot, *, run_id, stage, parent=None):
     require(parent is None or _sha(parent), "parent_format")
     path = Path(snapshot)
     require(path.is_file() and not path.is_symlink(), "snapshot_unavailable")
+    require(not any(Path(str(path) + suffix).exists() or
+                    Path(str(path) + suffix).is_symlink()
+                    for suffix in ("-wal", "-shm", "-journal")),
+            "snapshot_not_standalone")
     try:
-        con = sqlite3.connect("file:%s?mode=ro" % path.as_posix(), uri=True)
+        # These are closed, standalone backups, never a live WAL database.
+        # immutable avoids SQLite trying to create WAL/SHM beside a read-only
+        # restored artifact; as_uri also escapes '?' and '#' in scratch paths.
+        con = sqlite3.connect(path.resolve().as_uri() + "?mode=ro&immutable=1",
+                              uri=True)
         try:
             info = inspect_database(con)
         finally:
@@ -192,11 +229,16 @@ def verify_snapshot(snapshot, manifest):
     validate_manifest(manifest)
     path = Path(snapshot)
     require(path.is_file() and not path.is_symlink(), "snapshot_unavailable")
+    require(not any(Path(str(path) + suffix).exists() or
+                    Path(str(path) + suffix).is_symlink()
+                    for suffix in ("-wal", "-shm", "-journal")),
+            "snapshot_not_standalone")
     try:
         require(path.stat().st_size == manifest["snapshot_bytes"] and
                 digest_file(path) == manifest["snapshot_sha256"],
                 "snapshot_digest_mismatch")
-        con = sqlite3.connect("file:%s?mode=ro" % path.as_posix(), uri=True)
+        con = sqlite3.connect(path.resolve().as_uri() + "?mode=ro&immutable=1",
+                              uri=True)
         try:
             values = inspect_database(con)
         finally:

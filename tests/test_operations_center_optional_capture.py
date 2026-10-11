@@ -20,6 +20,9 @@ class OptionalDailyActionsContracts(unittest.TestCase):
         folder = tempfile.TemporaryDirectory(prefix="ipr-ops-capture-optin-")
         self.addCleanup(folder.cleanup)
         self.temp = Path(folder.name)
+        marker_patch = patch.object(unified.ops, "DAILY_MARKER", self.temp / "absent-marker.txt")
+        marker_patch.start()
+        self.addCleanup(marker_patch.stop)
         self.registry = load_registry()
         self.production = {"sources": [], "per_source_history_available": True,
                            "generated_at": "2026-10-09 01:00:00"}

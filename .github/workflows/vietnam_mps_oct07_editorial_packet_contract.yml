@@ -1,4 +1,4 @@
-name: Vietnam October 7 MPS Current-Source Sunday Packet Proof
+name: Vietnam October 10 MPS Current-Source Sunday Packet Proof
 
 # Private, read-only source/version contract. Does not call a model, upload
 # articles, write production, approve source reuse, or send editor email.
@@ -9,13 +9,15 @@ on:
       - "research/vietnam_briefs_candidates/editorial_notes_2026-10-10.json"
       - "research/briefs_editorial_evidence/2026-10-10.json"
       - "tests/test_vietnam_oct07_australia_packet.py"
+      - "tests/test_vietnam_sunday_source_quota.py"
+      - "scripts/prepare_vietnam_briefs_evidence.py"
       - ".github/workflows/vietnam_mps_oct07_editorial_packet_contract.yml"
 
 permissions:
   contents: read
 
 concurrency:
-  group: vietnam-current-week-3-source-${{ github.event.pull_request.number }}
+  group: vietnam-current-week-versioned-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -44,11 +46,12 @@ jobs:
           existing-packet: "research/briefs_editorial_evidence/2026-10-10.json"
           missing-notes-policy: refuse
           require-vietnam: "true"
-      - name: Assert three MPS original-source versions plus three preserved Japan records
+      - name: Assert complete versioned Vietnam sources and three preserved Japan records
         env:
           PRIVATE_PACKET: ${{ steps.current.outputs.packet }}
           SOURCE_SHA: ${{ steps.current.outputs.source-commit }}
           VIETNAM_COUNT: ${{ steps.current.outputs.vietnam-count }}
+          VIETNAM_ELIGIBLE: ${{ steps.current.outputs.machine-eligible-count }}
         run: |
           python - <<'PY'
           import json,os,re
@@ -59,16 +62,24 @@ jobs:
           rows=load_editorial_evidence("2026-10-10","2026-10-10",directory=packet.parent)
           vn=[x for x in rows if x["desk"]=="vietnam"]
           jp=[x for x in rows if x["desk"]=="japan"]
-          assert len(vn)==int(os.environ["VIETNAM_COUNT"])==3
+          assert len(vn)==int(os.environ["VIETNAM_COUNT"])==int(os.environ["VIETNAM_ELIGIBLE"])
+          assert len(vn)==5
           assert len(jp)==3
-          assert {x["id"] for x in vn}=={
-              "VN-MPS-1791199100","VN-MPS-1791199677","VN-MPS-1791366010"}
-          newest=next(x for x in vn if x["id"]=="VN-MPS-1791366010")
-          assert newest["source_content_sha256"]=="8707eaee31b0423d8b6835fee0d02a25207c2a8e5813718aa57c434c927fd6b5"
+          must_have={
+              "VN-MPS-1791199100","VN-MPS-1791199677",
+              "VN-MPS-1791366010","VN-MPS-1791535381",
+              "VN-MPS-1791608910"}
+          assert must_have.issubset({x["id"] for x in vn})
+          laos=next(x for x in vn if x["id"]=="VN-MPS-1791535381")
+          assert laos["source_content_sha256"]=="8775cb700db1dddfb17209c292b7a03864c65683cc190792c88939a9dd7740ef"
+          cambodia=next(x for x in vn if x["id"]=="VN-MPS-1791608910")
+          assert cambodia["source_content_sha256"]=="d5b372499a12ff3df54c74d768d93d20da1913280eb2b4c4cda851345f731224"
+          australia=next(x for x in vn if x["id"]=="VN-MPS-1791366010")
+          assert australia["source_content_sha256"]=="8707eaee31b0423d8b6835fee0d02a25207c2a8e5813718aa57c434c927fd6b5"
           assert re.fullmatch(r"[0-9a-f]{40}",os.environ["SOURCE_SHA"])
           assert all(x["status"]=="unapproved-source-linked-editorial-candidate" for x in rows)
           assert not any("article_body" in x or "text_original" in x for x in rows)
-          print("Actual current MPS state: 3 version-matched unapproved Vietnamese source notes.")
+          print("Actual MPS state: all version-matched, in-window Vietnam sources accounted for.")
           print("Japan source notes: 3 unchanged by MPS feeder. No approval, model or mail.")
           PY
       - name: Assert original production checkout preserved

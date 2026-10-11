@@ -1,0 +1,64 @@
+name: Vietnam MOD Defence Relations — manual access canary
+
+# Pull requests run ONLY offline synthetic tests. Network observation is a
+# separately explicit manual dispatch after code integration and rights review.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/probe_vietnam_mod_defrel_access.py"
+      - "tests/test_vietnam_mod_defrel_access.py"
+      - ".github/workflows/vietnam_mod_listing_access_canary.yml"
+      - "docs/VIETNAM_MOD_LISTING_ACCESS_CANARY_2026-10-10.md"
+  workflow_dispatch:
+    inputs:
+      approve_one_time_robots_and_listing_get:
+        description: "I approve exactly one robots GET plus one allowed first-party listing GET. No article capture."
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  offline-synthetic-boundaries:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run synthetic denied-robots / allowed-listing / identity tests
+        run: python -m unittest tests.test_vietnam_mod_defrel_access tests.test_vietnam_mod_portal_url_canary -v
+      - name: No generated corpus or shadow state
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  explicitly-manual-network-observation:
+    if: github.event_name == 'workflow_dispatch' && inputs.approve_one_time_robots_and_listing_get == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: One no-redirect robots check then at most one permitted listing
+        run: python -m scripts.probe_vietnam_mod_defrel_access --approve-live-probe
+      - name: Verify no corpus or shadow outputs
+        if: always()
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

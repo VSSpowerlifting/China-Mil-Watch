@@ -281,19 +281,15 @@ def send_packet(path, week_ending, *, provisional=False, full_week=False,
             + hashlib.sha256(original_attachment).hexdigest() + "\n"
         )
     elif full_week:
-        message["Subject"] = "IPR Briefs | week ending {} | one thematic Sunday draft".format(week_ending)
-        message.set_content(
-            "Hi Dylan,\n\nAttached is one coherent, provisional IPR Brief drafted "
-            "from this week's available official-source evidence through Saturday. "
-            "Please edit the article's existing argument and structure rather than "
-            "assemble separate country supplements. Check every cited record and "
-            "the separately labeled, not-yet-reviewed Japan/Vietnam external links; "
-            "remove unsupported claims and references. Preserve both source appendices. "
-            "Reply with the edited .txt attached by Monday 8 p.m. Eastern.\n\n"
-            "No shadow research source is automatically approved for the public "
-            "archive or a published Brief. Ben retains final source review, "
-            "editorial approval, numbering and publication authority.\n"
-        )
+        # The exact immutable TXT was already checked against the owner's
+        # reviewed SHA above and is attached unchanged below. Present ONLY
+        # the editorial prose in the message body so Dylan needn't edit
+        # provenance hashes, source IDs, source appendices, or a .txt envelope.
+        from scripts.sunday_editor_readable import prose_only_html, prose_only_text
+        original_text = original_attachment.decode("utf-8")
+        message["Subject"] = "IPR Briefs | week ending {} | Sunday draft for language edits".format(week_ending)
+        message.set_content(prose_only_text(original_text))
+        message.add_alternative(prose_only_html(original_text), subtype="html")
     else:
         message["Subject"] = "IPR Briefs | week ending {} | provisional editor draft".format(week_ending)
         message.set_content(

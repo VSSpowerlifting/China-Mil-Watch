@@ -41,11 +41,12 @@ def without_new_australia_note():
     # Build an intentionally INCOMPLETE catalog to test actionable gaps,
     # rather than assuming the shared fixture still contains only two notes.
     notes = copy.deepcopy(NOTES)
+    historical_two = {"mps-vi:1791199100", "mps-vi:1791199677"}
     notes["entries"] = [
         note for note in notes["entries"]
-        if note["source_identity"] != "mps-vi:1791366010"
+        if note["source_identity"] in historical_two
     ]
-    assert len(notes["entries"]) == 2
+    assert {note["source_identity"] for note in notes["entries"]} == historical_two
     return notes
 
 
