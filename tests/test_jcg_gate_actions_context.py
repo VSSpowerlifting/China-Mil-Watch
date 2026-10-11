@@ -99,6 +99,24 @@ class ActionsGateObservationTests(unittest.TestCase):
         self.assertFalse(item["current_gate_enabled"])
         self.assertNotIn(GATE_API, api.calls)
 
+    def test_observer_workflow_is_manual_readonly_not_a_collector(self):
+        from pathlib import Path
+        workflow = (
+            Path(__file__).resolve().parents[1] /
+            ".github/workflows/jcg_gate_readonly_observation.yml"
+        ).read_text(encoding="utf-8")
+        self.assertIn("  workflow_dispatch:", workflow)
+        self.assertIn("acknowledge_read_only_review", workflow)
+        self.assertIn("contents: read", workflow)
+        self.assertIn("actions: read", workflow)
+        self.assertIn("${{ vars.JCG_SHADOW_DAILY_ENABLED }}", workflow)
+        for prohibited in (
+            "\\n  schedule:", "contents: write", "workflow_call:",
+            "shadow_collect_desk", "git push ", "curl ", "wget ",
+        ):
+            with self.subTest(prohibited=prohibited):
+                self.assertNotIn(prohibited, workflow)
+
     def test_failed_context_cli_fails_before_any_api_call(self):
         api = FakeAPI()
         data = io.StringIO()
