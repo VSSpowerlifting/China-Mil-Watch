@@ -188,7 +188,7 @@ def _read_snapshot(slug, repo, commit, term):
             require(expected <= tables, "pinned source schema is missing required tables")
             if SOURCES[slug][3] == "korea":
                 require("shadow_meta" in tables and
-                        cx.execute("SELECT desk FROM shadow_meta").fetchall() ==
+                        [tuple(row) for row in cx.execute("SELECT desk FROM shadow_meta")] ==
                         [("korea",)], "Korean pinned DB is not a Korea shadow state")
             if SOURCES[slug][3] == "vietnam":
                 sql = """SELECT r.source_identity, r.source_slug, r.url,
