@@ -1,0 +1,179 @@
+name: Country research desks — render-only release
+
+# Release of approved *site presentation* only. No publisher traffic, collector,
+# private source-state fetch, analysis model, or DB promotion.
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/country_research_render_only_release.yml"
+      - "tests/test_country_research_release_contract.py"
+  workflow_dispatch:
+    inputs:
+      approved_main_sha:
+        description: "Exact 40-character main commit reviewed for public country pages"
+        required: true
+        type: string
+      publish:
+        description: "Publish regenerated output to main and GitHub Pages (otherwise preview only)"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify explicit release invariants
+        run: python -m unittest tests.test_country_research_release_contract -v
+
+  release:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - name: Checkout exact current main with full history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+
+      - name: Fail closed on stale or malformed owner-reviewed SHA
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Expected a full lowercase SHA"; exit 1; }
+          ACTUAL_SHA="$(git rev-parse HEAD)"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA" || {
+            echo "::error::Main moved since release review. Actual: $ACTUAL_SHA"; exit 1;
+          }
+          echo "Releasing reviewed main: $ACTUAL_SHA"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/country-release-db.sha"
+          git status --porcelain --untracked-files=all > "$RUNNER_TEMP/country-release-before.txt"
+          test ! -s "$RUNNER_TEMP/country-release-before.txt"
+
+      - name: Install render dependencies (no external publisher requests)
+        run: pip install -r requirements.txt
+
+      - name: Confirm production DB current without modification
+        run: |
+          set -euo pipefail
+          python scripts/verify_db_current.py
+          sha256sum -c "$RUNNER_TEMP/country-release-db.sha"
+
+      - name: Build site using committed original corpus only
+        run: |
+          set -euo pipefail
+          python site/render.py
+          python scripts/validate_output.py
+
+      - name: Country-desk public scope and metadata hold gate
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base = Path("output")
+          reg = json.loads(Path("desks/registry.json").read_text(encoding="utf-8"))
+          country = {x["slug"]: x for x in reg["desks"]}
+          assert {"china", "singapore", "philippines", "vietnam"} <= country.keys()
+          for name in ("philippines", "vietnam"):
+              d = country[name]
+              assert d["public"] is True and d["status"] == "shadow"
+              assert d["manifest"] is None and d["has_production_records"] is False
+              text = (base / (name + ".html")).read_text(encoding="utf-8")
+              assert "Shadow evaluation" in text
+              assert "Individually reviewed official-source references" in text
+              assert "No individual source references have completed" in text
+              assert "data-reference-list" not in text
+              assert "state/shadow.db" not in text
+              assert "text_original" not in text and "body_original" not in text
+          for name in ("philippines", "vietnam"):
+              row = json.loads((Path("research") / (name + "_reviewed_links.json")).read_text(encoding="utf-8"))
+              assert row["entries"] == [], "nonempty source links need separate review and release"
+          desk_html = (base / "desks.html").read_text(encoding="utf-8")
+          assert 'href="philippines.html"' in desk_html
+          assert 'href="vietnam.html"' in desk_html
+          assert "6 declared" in desk_html and "2 collecting" in desk_html
+          assert (base / "desk-references.js").is_file()
+          assert (base / "desk-references.css").is_file()
+          assert (base / "sitemap.xml").is_file()
+          PY
+          sha256sum -c "$RUNNER_TEMP/country-release-db.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+
+      - name: Stage only generated site artifacts and review diff summary
+        run: |
+          set -euo pipefail
+          git add -A -- output/
+          git diff --cached --name-status > "$RUNNER_TEMP/country-release-files.txt"
+          echo "Generated site change count: $(wc -l < "$RUNNER_TEMP/country-release-files.txt")"
+          head -n 45 "$RUNNER_TEMP/country-release-files.txt"
+          test -s "$RUNNER_TEMP/country-release-files.txt" || {
+            echo "::error::Nothing changed in output; refusing to assert a new release"; exit 1;
+          }
+          # Anything outside output or the source DB changing means an unexpected
+          # side effect. Do not publish such a build.
+          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' || true)"
+          sha256sum -c "$RUNNER_TEMP/country-release-db.sha"
+
+      - name: Upload small preview for review or release receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: country-desk-render-preview
+          path: |
+            output/philippines.html
+            output/vietnam.html
+            output/desks.html
+            output/desk-references.js
+            output/desk-references.css
+          retention-days: 7
+
+      - name: Commit generated output to main only when publish is approved
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # A concurrent PR, release or DB save is a new review state.
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo "::error::main changed during render"; exit 1;
+          }
+          git commit -m "Site: render Philippines and Vietnam research desks (metadata-only)"
+          git push origin HEAD:main
+
+      - name: Publish exact validated output to GitHub Pages
+        if: inputs.publish
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Deploy country research desks: ${{ github.run_id }}'
