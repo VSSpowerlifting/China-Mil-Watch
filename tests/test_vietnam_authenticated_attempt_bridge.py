@@ -68,7 +68,7 @@ class FakeRest:
                     "head_sha": "b" * 40,
                 }
         self.index_key = (PREFIX + "/actions/workflows/vietnam_ministry_shadow.yml/runs"
-                          "?created=2026-10-07..2026-10-10&per_page=30&page=1")
+                          "?created=2026-10-07%2E%2E2026-10-10&per_page=30&page=1")
         self.routes[self.index_key] = {
             "total_count": len(listing), "workflow_runs": listing}
         self.ledger_paths = {}
