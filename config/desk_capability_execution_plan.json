@@ -35,15 +35,25 @@
       "issue": 250,
       "dependencies": [],
       "declared_source_slugs": [
-        "vn_mps_foreign_affairs_vi",
-        "vn_moit_energy_vi",
-        "vn_moit_foundational_industry_vi",
+        "id_kemhan_news",
         "jp_jcg_press_en",
         "jp_mod_news_ja",
-        "kr_policy_mnd_releases"
+        "jp_mod_siteupdate_ja",
+        "jp_joint_staff_en",
+        "jp_mod_press_en",
+        "kr_policy_mnd_releases",
+        "ph_afp_articles",
+        "ph_nsc_official_statements",
+        "sg_mindef_releases",
+        "us_dvids_indopacom",
+        "vn_vgp_defense_en",
+        "vn_national_defence_journal_en",
+        "vn_mps_foreign_affairs_vi",
+        "vn_moit_energy_vi",
+        "vn_moit_foundational_industry_vi"
       ],
       "proposed_source_families": [],
-      "acceptance": "For each family join declared schedule, actual run attempt and immutable state ledger; distinguish skipped, delayed, manual and partial publication.",
+      "acceptance": "Inventory every declared source family including scheduled, manually triggered and research-only families. Authenticate Actions attempts and immutable state only where collection actually exists; do not invent scheduled runs for the other cases.",
       "stop_if": "Missing attempt/state or unresolved mismatch stays unobserved, never healthy.",
       "human_decision_required": false,
       "executable_effect": "none",
@@ -107,7 +117,7 @@
       ],
       "acceptance": "Owner separately authorizes merged manual robots-first #369 canary; pin actual Actions run, ref, attempt and observed block/result without article-body retrieval.",
       "stop_if": "403, unreadable robots, challenge, redirects or uncertain policy mean blocked, not zero publications.",
-      "human_decision_required": false,
+      "human_decision_required": true,
       "executable_effect": "none",
       "status": "planned_not_verified"
     },
@@ -286,7 +296,7 @@
       "proposed_source_families": [],
       "acceptance": "Use publisher-authorized robots-readable listing/full-body routes and capture real denial proof; never evade a web challenge.",
       "stop_if": "403/challenge or RSS metadata without article bytes remains retrieval blocked.",
-      "human_decision_required": false,
+      "human_decision_required": true,
       "executable_effect": "none",
       "status": "planned_not_verified"
     },
@@ -368,7 +378,7 @@
       ],
       "acceptance": "First-party robots/access, dated listing, source identity and separately reviewed terms; implement offline fixtures before any new shadow state.",
       "stop_if": "Cannot infer DAPA facts from syndicated MND metadata, claim a new source, or reuse the MND collector's clock.",
-      "human_decision_required": false,
+      "human_decision_required": true,
       "executable_effect": "none",
       "status": "planned_not_verified"
     },
@@ -434,7 +444,7 @@
       "proposed_source_families": [],
       "acceptance": "Produce exactly one thematic editorial manuscript using separately permitted production and typed source evidence; independently record offered/cited identities and omissions.",
       "stop_if": "A draft is not publication-ready; unused sources cannot be claimed as desk contributions.",
-      "human_decision_required": false,
+      "human_decision_required": true,
       "executable_effect": "none",
       "status": "planned_not_verified"
     },
@@ -453,7 +463,7 @@
       "proposed_source_families": [],
       "acceptance": "Re-use canonical records, original citations and entity/event taxonomy; preserve separate approval and unpublished states for timelines/dossiers.",
       "stop_if": "Never treat a topical dossier, media paraphrase or generated summary as a new official source.",
-      "human_decision_required": false,
+      "human_decision_required": true,
       "executable_effect": "none",
       "status": "planned_not_verified"
     }
