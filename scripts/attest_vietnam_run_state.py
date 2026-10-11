@@ -230,7 +230,8 @@ def observe(api, *, as_of, binding_report=None):
     require(cutoff <= datetime.now(timezone.utc).date(), "future as-of not allowed")
     report = binding_report if binding_report is not None else audit_bindings()
     require(report.get("schema") == "ipr-shadow-source-workflow-bindings/1" and
-            report.get("status") == "declaration_only_not_live_evidence",
+            report.get("declaration_only") is True and
+            report.get("all_runs_attested") is False,
             "binding audit is not the accepted declaration report")
     binding_rows = report.get("sources")
     require(isinstance(binding_rows, list), "no source mapping")
