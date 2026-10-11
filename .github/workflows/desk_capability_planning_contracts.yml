@@ -1,0 +1,40 @@
+name: Desk capability plan — offline structural contracts
+
+# No scheduled task, no workflow dispatch, no source network, no activation.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "config/desk_capability_execution_plan.json"
+      - "scripts/validate_desk_capability_plan.py"
+      - "tests/test_desk_capability_execution_plan.py"
+      - "docs/engineering/DESK_CAPABILITY_EXECUTION_FRAMEWORK_2026-10-10.md"
+      - ".github/workflows/desk_capability_planning_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  structural-planning-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout without persistent credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Plan DAG and real-source binding integrity
+        run: python -m scripts.validate_desk_capability_plan --json
+      - name: Assert negative contract cases
+        run: python -m unittest tests.test_desk_capability_execution_plan -v
+      - name: Assert source/state/production unchanged
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json config/shadow_source_workflow_bindings.json
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
