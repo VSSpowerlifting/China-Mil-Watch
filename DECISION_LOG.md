@@ -73,7 +73,9 @@ Evidence: `docs/evidence/briefs-article-3c-2026-10-12/`.
   is left to the owner.
 - **Inline rules on historical pages.** `output/briefs.css` is written only by
   `site/render.py`, so historical pages carry an inline copy of the kind-label
-  and nav rules and are styled whichever render is published first.
+  and nav rules and are styled whichever render is published first. The
+  plate art (`assets/geo/region.svg`) arrives only with `site/render.py`, so
+  both renders must be published in the same commit.
 - **No new JavaScript.** No interaction or accessibility problem required it.
   `scripts/pw_env.py`, `base.html`, `pla-watch-base.html`, `styles.css`,
   and sidecars are unchanged (the manifest change is recorded above).

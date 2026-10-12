@@ -409,6 +409,21 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 self.assertTrue(self._guard_fails(ctx, page.replace(old, 'alt="changed"', 1)))
         self.assertEqual(held, 3)  # Nos. 1, 10 and 12
 
+    def test_photograph_caption_links_are_pinned(self):
+        # The pre-3C normalisation swaps the whole Photograph caption, so its
+        # licence deed and file-page links are pinned here, exactly.
+        expected = {
+            "2026-06-27": ["https://creativecommons.org/licenses/by/4.0",
+                           "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg"],
+            "2026-07-04": ["https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg"],
+        }
+        found = {}
+        for ctx, page, soup in self.posts:
+            figure = soup.select_one('figure[data-article-media="photograph"]')
+            if figure is not None:
+                found[ctx["date"]] = [a["href"] for a in figure.select("figcaption a")]
+        self.assertEqual(found, expected)
+
     def test_links_and_assets_use_the_correct_two_level_root(self):
         for ctx, page, soup in self.posts:
             self.assertEqual(soup.select_one('.brand')["href"], '../../index.html')
