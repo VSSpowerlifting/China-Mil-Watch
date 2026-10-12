@@ -4,7 +4,7 @@
     "js_cap_bytes": 10000
   },
   "baseline": {
-    "html": 30415,
+    "html": 30430,
     "css": {
       "briefs-catalog.css": 6217,
       "fonts.css": 1855,
@@ -16,12 +16,12 @@
       "reveal.js": 2746,
       "shell.js": 372
     },
-    "html_css": 102574,
+    "html_css": 102589,
     "js_total": 3118,
-    "note": "origin/main 13d1fb7023"
+    "note": "origin/main e3c05ecbfb"
   },
   "candidate": {
-    "html": 41393,
+    "html": 41408,
     "css": {
       "briefs-catalog.css": 8770,
       "fonts.css": 1855,
@@ -34,7 +34,7 @@
       "reveal.js": 2746,
       "shell.js": 372
     },
-    "html_css": 120136,
+    "html_css": 120151,
     "js_total": 3118
   },
   "delta_html_css": 17562,
@@ -45,9 +45,9 @@
   "photographs_total": 50835,
   "region_svg_bytes": 49760,
   "actual_page_weight_bytes": {
-    "html_css_js": 123254,
-    "plus_photographs_when_scrolled_into_view": 174089,
-    "plus_region_svg": 223849,
+    "html_css_js": 123269,
+    "plus_photographs_when_scrolled_into_view": 174104,
+    "plus_region_svg": 223864,
     "note": "The delivery verifier's asset list does not count assets/geo/region.svg (referenced through <use>); this line adds it. Photographs load lazily. Fonts and shared images are outside this page-specific figure."
   },
   "within_caps": true

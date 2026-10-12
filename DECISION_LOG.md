@@ -69,8 +69,17 @@ Evidence: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
   value or `paths` key outside `on.pull_request` still fails. Positive and
   negative tests are kept
   (`test_the_korea_workflow_exemption_is_the_named_read_only_contract`,
-  `test_only_a_trigger_path_filter_may_name_the_registry`). The test was not
-  skipped or weakened for collectors. Reviewer commit `9b2533dcec` used `re`
+  `test_only_a_trigger_path_filter_may_name_the_registry`). Main's Indonesia
+  external-link release (`indonesia_official_links_release.yml`) is the second
+  and only other workflow that names the registry (a render-only `load_registry`
+  check that the public page has no production rows). Its own branch is kept
+  exactly as main wrote it (`contents: read`, `python site/render.py`,
+  `has_production_records is False`, `ref: main`, no pipeline, shadow
+  collector, database, secret or private-source path), now with positive and
+  negative tests (`test_the_indonesia_release_exemption_is_the_named_render_only_contract`)
+  and a closed list: a third workflow naming the registry fails until it gets
+  its own named, read-only contract. The test was not skipped or weakened for
+  collectors. Reviewer commit `9b2533dcec` used `re`
   without importing it; the import is added in the merge.
 
 ## 2026-10-11 — Expressive frontend Phase 2b (Archive) implementation decisions
