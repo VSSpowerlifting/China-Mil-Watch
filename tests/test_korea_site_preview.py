@@ -91,6 +91,23 @@ class KoreaSitePreviewTests(unittest.TestCase):
                               review_korea=True)
             self.assertEqual((dest / "keep.txt").read_text(), "Do not remove")
 
+    def test_registry_public_flip_alone_cannot_publish_korea(self):
+        from dataclasses import replace
+        from core.desk_registry import DeskRegistry, load_registry
+        original = load_registry()
+        adversarial = DeskRegistry(entries=[
+            replace(e, public=True) if e.slug == "korea" else e
+            for e in original.entries
+        ])
+        with tempfile.TemporaryDirectory(prefix="ipr-korea-flip-") as tmp:
+            output = Path(tmp) / "must-not-build"
+            with patch.object(self.gp, "load_registry", return_value=adversarial):
+                with self.assertRaisesRegex(ValueError, "owner-authorized release"):
+                    self.gp.build(
+                        output, "Unauthorized Korea", ROOT / "pla_watch.db",
+                        review_korea=False)
+            self.assertFalse(output.exists())
+
     def test_normal_public_build_still_excludes_korea(self):
         from core.desk_registry import load_registry
         desk = load_registry().get("korea")
