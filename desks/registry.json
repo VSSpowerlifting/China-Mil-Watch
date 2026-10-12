@@ -153,7 +153,7 @@
       "limits": [
         "No source is enabled in production. Nothing collected here reaches the production database, the public site, or any public count.",
         "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
-        "The MOD feeds are Japanese-language. The Ministry's English press releases and Joint Staff remain access-challenged and uncollected. The separate JCG English pilot preserved only a manually approved October 8 shadow Day 0, not verified daily collection or a production source.",
+        "The MOD feeds are Japanese-language. The Ministry's English press releases and Joint Staff remain access-challenged and uncollected. The separate JCG English pilot has a specifically approved manual source observation dated October 8, 2026; daily continuity, production admission and per-document rights clearance remain unverified.",
         "MOD RSS shadow testing began 2026-08-26; the independent JCG English pilot's Day 0 was 2026-10-08. These are distinct collection clocks, neither demonstrating a completed source-specific 7/14/30-day qualification or publishing authority."
       ]
     },
