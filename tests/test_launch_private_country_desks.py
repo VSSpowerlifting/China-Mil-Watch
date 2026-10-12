@@ -39,13 +39,20 @@ class DeskLauncherTests(unittest.TestCase):
             ("kr_policy_mnd_releases", "shadow/korea-policy-briefing",
              "국방부 정책브리핑", "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784000",
              "korea-policy:156784000"),
+            ("id_kemhan_news", "shadow/indonesia-kemhan",
+             "Kemhan Pertemuan", "https://www.kemhan.go.id/2026/10/10/kemhan-berita-sample.html",
+             "kemhan:/2026/10/10/kemhan-berita-sample.html"),
         ]
         self.commits = {}
         for slug, branch, title, url, ident in cases:
             clock = ({"desk": "korea",
                       "day_zero_run_id": "local-native-20261006-korea",
                       "day_zero_utc": "2026-10-06T16:52:01.420713+00:00"}
-                     if slug == "kr_policy_mnd_releases" else None)
+                     if slug == "kr_policy_mnd_releases" else
+                     {"desk": "indonesia",
+                      "day_zero_run_id": "local-native-20261006-indonesia",
+                      "day_zero_utc": "2026-10-06T16:52:15+00:00"}
+                     if slug == "id_kemhan_news" else None)
             commit = state_commit(self.original, slug, title=title, url=url,
                                   identity=ident, clock=clock,
                                   content="MARITIME PRIVATE BODY MUST NOT EXPORT")
@@ -99,14 +106,34 @@ class DeskLauncherTests(unittest.TestCase):
             self.assertEqual(korea["matched_total"], 1)
             self.assertEqual(korea["sources"][0]["source_slug"], "kr_policy_mnd_releases")
             self.assertFalse(korea["public_release_authorized"])
-            all_three = create("all", fmt="json", query="PRIVATE BODY")
-            self.assertEqual(len(all_three["sources"]), 6)
-            self.assertEqual(all_three["matched_total"], 6)
+            all_four = create("all", fmt="json", query="PRIVATE BODY")
+            self.assertEqual(len(all_four["sources"]), 7)
+            self.assertEqual(all_four["matched_total"], 7)
             prior = create("both", fmt="json", query="PRIVATE BODY")
             self.assertEqual(len(prior["sources"]), 5)
             self.assertEqual(prior["matched_total"], 5)
-        self.assertNotIn("MARITIME PRIVATE BODY MUST NOT EXPORT", json.dumps(all_three))
-        self.assertFalse(all_three["automated_source_rights_approved"])
+        self.assertNotIn("MARITIME PRIVATE BODY MUST NOT EXPORT", json.dumps(all_four))
+        self.assertFalse(all_four["automated_source_rights_approved"])
+
+    def test_indonesia_one_command_pins_existing_source_without_publisher_access(self):
+        with patch("scripts.launch_private_country_desks.REMOTE", str(self.original)):
+            report = create("indonesia", query="PRIVATE BODY", fmt="json")
+            self.assertEqual(report["matched_total"], 1)
+            self.assertEqual(len(report["sources"]), 1)
+            self.assertEqual(report["sources"][0]["source_slug"], "id_kemhan_news")
+            self.assertEqual(report["sources"][0]["state_commit"],
+                             self.commits["id_kemhan_news"])
+            self.assertFalse(report["source_body_text_exported"])
+            self.assertFalse(report["public_release_authorized"])
+            self.assertNotIn("MARITIME PRIVATE BODY", json.dumps(report))
+            dest = self.root / "indonesia-private.html"
+            receipt = create("indonesia", output=str(dest), fmt="html")
+        self.assertEqual(receipt["source_families"], 1)
+        self.assertTrue(receipt["no_publisher_requests"])
+        page = dest.read_text(encoding="utf-8")
+        self.assertIn("Indonesia", page)
+        self.assertIn("www.kemhan.go.id", page)
+        self.assertNotIn("MARITIME PRIVATE BODY", page)
 
     def test_json_mode_body_queries_and_source_evidence_no_body(self):
         with patch("scripts.launch_private_country_desks.REMOTE", str(self.original)):

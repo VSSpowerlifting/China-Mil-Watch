@@ -1,0 +1,107 @@
+"""Exact-scope Indonesia official-source navigation pilot, not archival admission."""
+import copy
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from core.indonesia_official_index import (
+    DEFAULT, PINNED, PublicIndexError, load, validate,
+)
+from scripts.preview_indonesia_reference_pilot import load as load_private_pilot
+
+
+class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
+    def setUp(self):
+        self.candidates = json.loads(DEFAULT.read_text(encoding="utf-8"))
+        self.temp = tempfile.TemporaryDirectory(prefix="ipr-id-public-nav-")
+        self.addCleanup(self.temp.cleanup)
+        self.path = Path(self.temp.name) / "index.json"
+
+    def test_four_exact_first_party_links_match_preserved_pilot(self):
+        actual = load()
+        pilot = load_private_pilot()
+        self.assertEqual(len(actual), 4)
+        self.assertEqual(self.candidates["pinned_shadow_commit"], PINNED)
+        self.assertEqual(
+            [(x["source_url"], x["title_original"], x["published_date"])
+             for x in actual],
+            [(x["source_url"], x["title_original"], x["published_date"])
+             for x in pilot["candidates"]],
+        )
+        self.assertFalse(pilot["owner_release_approved"])
+        self.assertFalse(pilot["independent_human_source_review_completed"])
+        self.assertFalse(pilot["day7_review_completed"])
+        self.assertEqual(actual[0]["id"], "id-01")
+
+    def test_corrupt_forged_or_excessive_links_are_not_published(self):
+        mutations = [
+            lambda x: x["references"][0].update(url="https://www.kemhan.go.id.evil.test/2026/10/10/source.html"),
+            lambda x: x["references"][0].update(url="http://www.kemhan.go.id/2026/10/10/source.html"),
+            lambda x: x["references"][0].update(url="https://www.kemhan.go.id/category/berita"),
+            lambda x: x["references"][0].update(url=x["references"][0]["url"] + "?redirect=1"),
+            lambda x: x["references"][0].update(published_date="2026-10-09"),
+            lambda x: x["references"][0].update(title_original="<script>bad</script>"),
+            lambda x: x["references"][0].update(language="en"),
+            lambda x: x["references"][0].update(text_original="private source body"),
+            lambda x: x["references"].append(copy.deepcopy(x["references"][0])),
+            lambda x: x.update(editorial_status="independently_reviewed"),
+            lambda x: x.update(collection_status="production_admitted"),
+            lambda x: x.update(pinned_shadow_commit="a"*40),
+        ]
+        for change in mutations:
+            item = copy.deepcopy(self.candidates)
+            change(item)
+            with self.subTest(change=change), self.assertRaises(PublicIndexError):
+                validate(item)
+
+    def test_missing_file_bad_json_and_duplicate_keys_refused(self):
+        with self.assertRaises(PublicIndexError):
+            load(self.path)
+        self.path.write_text('{"schema":"one","schema":"two"}', encoding="utf-8")
+        with self.assertRaises(PublicIndexError):
+            load(self.path)
+        self.path.write_text(json.dumps(self.candidates, ensure_ascii=False), encoding="utf-8")
+        self.assertEqual(len(load(self.path)), 4)
+        duplicate = self.path.parent / "symlink.json"
+        duplicate.symlink_to(self.path)
+        with self.assertRaises(PublicIndexError):
+            load(duplicate)
+
+    def test_real_site_has_four_external_links_and_no_public_corpus(self):
+        import sys
+        from bs4 import BeautifulSoup
+        root = Path(__file__).resolve().parents[1]
+        sys.path.insert(0, str(root / "site" / "preview"))
+        import generate_preview as gp
+
+        db = root / "pla_watch.db"
+        if not db.exists():
+            self.skipTest("database fixture absent")
+        output = Path(self.temp.name) / "render"
+        gp.build(output, "Offline Indonesia Official Link Pilot", db,
+                 snapshot=gp.snapshot_from_corpus(db))
+        page = (output / "indonesia.html").read_text(encoding="utf-8")
+        soup = BeautifulSoup(page, "html.parser")
+        targets = soup.select("#indonesia-links-heading ~ ol a")
+        if not targets:
+            targets = soup.select('ol[aria-label="Four external ministry news links"] a')
+        self.assertEqual(len(targets), 4)
+        self.assertEqual(
+            {x["href"] for x in targets},
+            {x["source_url"] for x in load()},
+        )
+        self.assertTrue(all(x.get("lang") == "id" for x in targets))
+        self.assertIn("not independently", soup.get_text().lower().replace("\\n", " "))
+        self.assertIn("No individual source references have completed", page)
+        self.assertNotIn('data-reference-list', page)
+        for forbidden in ("text_original", "body_original", "state/shadow.db",
+                          "NOT APPROVED FOR PUBLICATION"):
+            self.assertNotIn(forbidden, page)
+        self.assertIn("Shadow evaluation — no public corpus records", page)
+        self.assertNotIn(load()[0]["source_url"],
+                         (output / "philippines.html").read_text(encoding="utf-8"))
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -137,6 +137,7 @@ from core.catalogue_media import (                                   # noqa: E40
 from core.timelines import load_timelines
 from core.desk_registry import load_registry                         # noqa: E402
 from core.reviewed_source_links import load_public_desk_references    # noqa: E402
+from core.indonesia_official_index import load as load_indonesia_official_index  # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
 
 #: Where brief sidecars are kept: source at the repository root, never under
@@ -2860,6 +2861,10 @@ def build(out_dir: Path, title: str, db_path: Path,
     # production corpus and never change a desk's collection status or counts.
     for desk in desks:
         references = load_public_desk_references(desk.slug)
+        # A separate first-party link index is NOT an independently reviewed
+        # reference, production record, publisher-content copy or source feed.
+        indonesia_official_links = (load_indonesia_official_index()
+                                    if desk.slug == "indonesia" else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -2867,6 +2872,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              public_source_links=references,
                              public_source_options=source_options,
                              public_reference_languages=languages,
+                             indonesia_official_links=indonesia_official_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),

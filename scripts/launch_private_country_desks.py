@@ -1,4 +1,4 @@
-"""One-command PRIVATE Philippines/Vietnam/Korea desk search.
+"""One-command PRIVATE Philippines/Vietnam/Korea/Indonesia desk search.
 
 An explicit owner opt-in fetches ONLY already-existing shadow-state Git refs
 from the fixed IPR GitHub repository into a disposable local directory.
@@ -31,6 +31,7 @@ BRANCHES = {
     "vn_moit_energy_vi": "shadow/vietnam-moit-energy",
     "vn_moit_foundational_industry_vi": "shadow/vietnam-moit-foundational-industry",
     "kr_policy_mnd_releases": "shadow/korea-policy-briefing",
+    "id_kemhan_news": "shadow/indonesia-kemhan",
 }
 ORDERED = tuple(BRANCHES)
 CAPTURE = 8000
@@ -51,7 +52,7 @@ def safe_git(repo, *args):
 
 def exact_state_inputs(local_repo, desk):
     """Read fresh immutable refs in a disposable local Git repository."""
-    require(desk in ("philippines", "vietnam", "korea", "both", "all"),
+    require(desk in ("philippines", "vietnam", "korea", "indonesia", "both", "all"),
             "unknown private research country")
     slugs = tuple(s for s in ORDERED if desk == "all" or SOURCES[s][0] == desk or
                   (desk == "both" and SOURCES[s][0] in ("philippines", "vietnam")))
@@ -112,7 +113,7 @@ def create(desk, *, output=None, query="", limit=100, fmt="html",
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--desk", choices=("philippines", "vietnam", "korea", "both", "all"), required=True)
+    p.add_argument("--desk", choices=("philippines", "vietnam", "korea", "indonesia", "both", "all"), required=True)
     p.add_argument("--approve-github-shadow-fetch", action="store_true",
                    help="explicitly allow fetching existing source-state Git refs; NO publisher fetch")
     p.add_argument("--format", choices=("html", "json"), default="html")

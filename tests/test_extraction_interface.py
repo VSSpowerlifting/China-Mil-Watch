@@ -111,6 +111,23 @@ def korea_contract_violations(text: str) -> list:
     return problems
 
 
+def indonesia_release_violations(text: str) -> list:
+    """The render-only Indonesia external-link release may import the registry
+    to confirm the public desk stays shadow/noncollecting; it may not collect.
+    Returns the failed requirements (empty when it is that contract)."""
+    problems = []
+    for needle in ("permissions:\n  contents: read", "python site/render.py",
+                   "desk.has_production_records is False", "ref: main"):
+        if needle not in text:
+            problems.append("missing: " + needle)
+    for forbidden in ("from pipeline import", "python pipeline.py",
+                      "scripts/shadow_collect", "sqlite3.connect",
+                      "ANTHROPIC_API_KEY", "shadow/indonesia-kemhan"):
+        if forbidden in text:
+            problems.append("forbidden: " + forbidden)
+    return problems
+
+
 class TestMediaTypeSelection(unittest.TestCase):
 
     def test_a_declared_content_type_wins_over_the_url(self):
@@ -319,6 +336,7 @@ class TestThisEnablesNothing(unittest.TestCase):
         collection += list((REPO_ROOT / ".github" / "workflows").glob("*.yml"))
         editorial_workflow = "weekly_briefs_editorial_handoff.yml"
         korea_contract = "korea_internal_registry_contract.yml"
+        indonesia_release = "indonesia_official_links_release.yml"
         for path in collection:
             text = path.read_text(encoding="utf-8")
             with self.subTest(file=str(path.relative_to(REPO_ROOT))):
@@ -328,6 +346,11 @@ class TestThisEnablesNothing(unittest.TestCase):
                     # import or collection dependency. Keep this exception
                     # limited to the read-only Korea governance test workflow.
                     self.assertEqual(korea_contract_violations(text), [])
+                elif path.name == indonesia_release:
+                    # This is a render-only external-link release, not a
+                    # collector. Registry is used solely to verify the public
+                    # page stays shadow/noncollecting with no production rows.
+                    self.assertEqual(indonesia_release_violations(text), [])
                 elif path.name != editorial_workflow:
                     # No other workflow may name the registry at all: not as
                     # an import, a `run:` body, an env value or a path filter.
@@ -392,6 +415,38 @@ class TestThisEnablesNothing(unittest.TestCase):
             body = (REPO_ROOT / other).read_text(encoding="utf-8")
             with self.subTest(other=other):
                 self.assertNotIn("desk_registry", body)
+
+    def test_the_indonesia_release_exemption_is_the_named_render_only_contract(self):
+        """Positive: the real workflow passes. Negative: a copy that gains a
+        collection, database or secret path fails, and no third workflow is
+        named by the registry."""
+        wf = REPO_ROOT / ".github" / "workflows" / "indonesia_official_links_release.yml"
+        text = wf.read_text(encoding="utf-8")
+        self.assertEqual(indonesia_release_violations(text), [])
+        widened = {
+            "pipeline import": text + "      - run: python -c 'from pipeline import run'\n",
+            "pipeline script": text + "      - run: python pipeline.py\n",
+            "shadow collector": text + "      - run: python scripts/shadow_collect.py\n",
+            "database": text + "      - run: python -c 'import sqlite3; sqlite3.connect(\"x\")'\n",
+            "secret": text + "      - env: {K: ${{ secrets.ANTHROPIC_API_KEY }}}\n",
+            "shadow source": text + "      - run: ls shadow/indonesia-kemhan\n",
+            "write at top level": text.replace("permissions:\n  contents: read",
+                                               "permissions:\n  contents: write", 1),
+            "no render": text.replace("python site/render.py", "echo skip"),
+            "no production-row guard": text.replace(
+                "desk.has_production_records is False", "True"),
+            "unpinned ref": text.replace("ref: main", "ref: ${{ github.head_ref }}"),
+        }
+        for label, bad in widened.items():
+            with self.subTest(widened=label):
+                self.assertNotEqual(bad, text, "mutation did not apply")
+                self.assertTrue(indonesia_release_violations(bad))
+        named = sorted(p.name for p in (REPO_ROOT / ".github" / "workflows").glob("*.yml")
+                       if "desk_registry" in p.read_text(encoding="utf-8"))
+        self.assertEqual(named, ["indonesia_official_links_release.yml",
+                                 "korea_internal_registry_contract.yml"],
+                         "a new workflow names the registry: give it its own "
+                         "named, read-only contract rather than widening this one")
 
     def test_the_desk_registry_cannot_be_discovered_as_a_manifest(self):
         """

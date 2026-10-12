@@ -179,6 +179,8 @@ def _own_coverage_claims(html: str, path: str = "", literals=None) -> list:
     remembered sentence is needed to keep the guard honest.
     """
     text = _authored_text(html, path, literals).lower()
+    # Explicit denials are not IPR claims of comprehensive source coverage.
+    text = re.sub(r"\bnot comprehensive coverage\b", "", text)
     return [claim for claim in _COVERAGE_CLAIMS if claim in text]
 
 
@@ -470,6 +472,11 @@ class TestNoFabricatedCoverage(PreviewCase):
         self.assertIn("Consecutive days required</dt><dd>30",
                       self.page("singapore.html"))
         self.assertIn("Desks", self.page("index.html"))
+
+    def test_explicit_comprehensive_coverage_denial_is_not_an_own_claim(self):
+        self.assertEqual(_own_coverage_claims("<p>This is not comprehensive coverage.</p>"), [])
+        self.assertEqual(_own_coverage_claims("<p>Our comprehensive coverage is unmatched.</p>"),
+                         ["comprehensive coverage"])
 
     def test_no_page_claims_comprehensive_coverage(self):
         """

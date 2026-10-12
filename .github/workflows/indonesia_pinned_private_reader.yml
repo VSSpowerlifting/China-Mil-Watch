@@ -1,0 +1,142 @@
+name: Indonesia Desk — pinned real private reader QA
+
+# GitHub shadow branch only. No Kemhan requests, new collection, schedule, email,
+# public registry, production writes, publisher-body artifacts, or model calls.
+on:
+  workflow_dispatch:
+    inputs:
+      approve_existing_shadow_state_only:
+        description: 'Read existing Indonesian shadow Git branch only; do not contact publisher'
+        type: boolean
+        required: true
+        default: false
+  pull_request:
+    paths:
+      - ".github/workflows/indonesia_pinned_private_reader.yml"
+      - "scripts/private_country_desk_reader.py"
+      - "scripts/launch_private_country_desks.py"
+      - "tests/test_private_country_desk_reader.py"
+      - "tests/test_launch_private_country_desks.py"
+      - "docs/engineering/INDONESIA_PRIVATE_RESEARCH_READER_2026-10-11.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indonesia-private-reader-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  real-pinned-kemhan-shadow:
+    if: github.event_name == 'pull_request' || inputs.approve_existing_shadow_state_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Snapshot production DB and public output byte digests
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > /tmp/indonesia-private-db.sha
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/indonesia-private-output.sha
+      - name: Reader and launcher regression tests (offline synthetic Git)
+        run: python -m unittest tests.test_private_country_desk_reader tests.test_launch_private_country_desks -q
+      - name: Pin existing official-source archive from isolated Git branch only
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          mkdir -p "$RUNNER_TEMP/ipr-indonesia-state" "$RUNNER_TEMP/ipr-indonesia-receipt"
+          git -C "$RUNNER_TEMP/ipr-indonesia-state" init -q
+          git -C "$RUNNER_TEMP/ipr-indonesia-state" remote add origin "$STATE_REMOTE"
+          git -C "$RUNNER_TEMP/ipr-indonesia-state" fetch --quiet --no-tags --depth=1 \
+            origin refs/heads/shadow/indonesia-kemhan:refs/heads/ipr-indonesia-pinned
+          tip="$(git -C "$RUNNER_TEMP/ipr-indonesia-state" rev-parse refs/heads/ipr-indonesia-pinned)"
+          test "${#tip}" -eq 40
+          test "$(git -C "$RUNNER_TEMP/ipr-indonesia-state" ls-tree --name-only "$tip")" = state
+          echo "INDONESIA_STATE_COMMIT=$tip" >> "$GITHUB_ENV"
+          echo "Pinned already-preserved Indonesia shadow commit: $tip"
+      - name: Read actual Indonesia source originals privately and export metadata only
+        shell: bash
+        run: |
+          set -euo pipefail
+          spec="id_kemhan_news,$RUNNER_TEMP/ipr-indonesia-state,$INDONESIA_STATE_COMMIT"
+          python -m scripts.private_country_desk_reader \
+            --source "$spec" --country indonesia --format json --limit 300 \
+            > "$RUNNER_TEMP/ipr-indonesia-receipt/private-reader.json"
+          python -m scripts.private_country_desk_reader \
+            --source "$spec" --country indonesia --format html --limit 300 \
+            --output "$RUNNER_TEMP/ipr-indonesia-receipt/private-reader.html"
+      - name: Verify identity, metadata-only export and source/output preservation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP/ipr-indonesia-receipt" "$INDONESIA_STATE_COMMIT" <<'PY'
+          import json, pathlib, sys
+          folder, sha = pathlib.Path(sys.argv[1]), sys.argv[2]
+          report = json.loads((folder / "private-reader.json").read_text(encoding="utf-8"))
+          assert report["schema"] == "ipr-private-shadow-desk-reader/1"
+          assert report["status"] == "private_research_not_source_admitted"
+          assert report["desk_filter"] == "indonesia"
+          assert len(report["sources"]) == 1
+          source = report["sources"][0]
+          assert source["source_slug"] == "id_kemhan_news"
+          assert source["country"] == "indonesia"
+          assert source["state_commit"] == sha
+          assert source["stored_records"] >= 14
+          assert report["matched_total"] == source["stored_records"]
+          assert not report["truncated"]
+          assert len(report["results"]) == source["stored_records"]
+          fields = {"country", "institution", "source_slug", "identity",
+                    "url", "title", "published_date", "first_seen_run",
+                    "state_commit", "review_status"}
+          assert all(set(row) == fields and row["country"] == "indonesia"
+                     and row["source_slug"] == "id_kemhan_news"
+                     and row["state_commit"] == sha
+                     and row["review_status"] == "not_human_reviewed_for_public_use"
+                     and row["identity"].startswith("kemhan:/")
+                     and row["url"].startswith("https://www.kemhan.go.id/")
+                     for row in report["results"])
+          for field in ("source_body_text_exported", "automated_source_rights_approved",
+                        "human_source_review_completed", "production_records_changed",
+                        "country_desks_promoted", "public_release_authorized"):
+              assert report[field] is False
+          page = (folder / "private-reader.html").read_text(encoding="utf-8")
+          assert "PRIVATE RESEARCH" in page
+          assert "PUBLIC REVIEW PENDING" in page
+          assert "www.kemhan.go.id" in page
+          assert "text_original" not in page and "capture_sha256" not in page
+          (folder / "RECEIPT.json").write_text(json.dumps({
+              "schema": "ipr-indonesia-actual-private-reader-receipt/1",
+              "source_family": "id_kemhan_news",
+              "state_commit": sha,
+              "stored_records": source["stored_records"],
+              "matched_records": report["matched_total"],
+              "publisher_requests": 0,
+              "source_bodies_exported": False,
+              "source_rights_approved": False,
+              "human_review_completed": False,
+              "production_or_public_release_authorized": False,
+          }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print((folder / "RECEIPT.json").read_text(encoding="utf-8"))
+          PY
+          sha256sum -c /tmp/indonesia-private-db.sha
+          sha256sum -c /tmp/indonesia-private-output.sha > /dev/null
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test -z "$(git -C "$RUNNER_TEMP/ipr-indonesia-state" status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Preserve only metadata/count receipt (no source titles or bodies)
+        uses: actions/upload-artifact@v4
+        with:
+          name: indonesia-private-reader-receipt-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ipr-indonesia-receipt/RECEIPT.json
+          retention-days: 14
+          if-no-files-found: error

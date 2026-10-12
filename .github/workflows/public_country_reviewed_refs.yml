@@ -6,12 +6,14 @@ on:
       - "core/reviewed_source_links.py"
       - "research/philippines_reviewed_links.json"
       - "research/vietnam_reviewed_links.json"
+      - "research/indonesia_reviewed_links.json"
       - "site/preview/templates/desk.html"
       - "site/preview/generate_preview.py"
       - "site/preview/desk-references.css"
       - "site/preview/desk-references.js"
       - "tests/test_public_desk_references.py"
       - "tests/test_vietnam_reviewed_links.py"
+      - "tests/test_indonesia_reviewed_links.py"
       - "tests/test_desk_rollout_contract.py"
       - "tests/test_philippines_publisher_navigation.py"
       - ".github/workflows/public_country_reviewed_refs.yml"
@@ -39,7 +41,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Source-review schema and render contracts
         run: |
-          python -m unittest tests.test_public_desk_references tests.test_vietnam_reviewed_links tests.test_desk_rollout_contract tests.test_desk_map tests.test_philippines_publisher_navigation -v
+          python -m unittest tests.test_public_desk_references tests.test_vietnam_reviewed_links tests.test_indonesia_reviewed_links tests.test_desk_rollout_contract tests.test_desk_map tests.test_philippines_publisher_navigation -v
       - name: Confirm no production, shadow or site mutation
         run: |
           set -euo pipefail

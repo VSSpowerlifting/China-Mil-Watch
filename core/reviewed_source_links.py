@@ -16,8 +16,10 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PATH = ROOT / "research" / "vietnam_reviewed_links.json"
 PHILIPPINES_PATH = ROOT / "research" / "philippines_reviewed_links.json"
+INDONESIA_PATH = ROOT / "research" / "indonesia_reviewed_links.json"
 SCHEMA = "vietnam-reviewed-source-links/1"
 PHILIPPINES_SCHEMA = "philippines-reviewed-source-links/1"
+INDONESIA_SCHEMA = "indonesia-reviewed-source-links/1"
 SOURCES = {
     "vn_mps_foreign_affairs_vi": ("bocongan.gov.vn", "Ministry of Public Security"),
     "vn_moit_energy_vi": ("moit.gov.vn", "Ministry of Industry and Trade"),
@@ -26,6 +28,9 @@ SOURCES = {
 PHILIPPINES_SOURCES = {
     "ph_afp_articles": ("www.afp.mil.ph", "Armed Forces of the Philippines"),
     "ph_nsc_official_statements": ("nsc.gov.ph", "Philippine National Security Council"),
+}
+INDONESIA_SOURCES = {
+    "id_kemhan_news": ("www.kemhan.go.id", "Kementerian Pertahanan Republik Indonesia"),
 }
 CHECKS = ("source_page_opened", "title_checked", "publication_date_checked",
           "issuing_institution_checked", "link_publication_approved")
@@ -67,10 +72,12 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None, desk="vietnam"):
     No field proves independent verification. An actual human must perform the
     stated checks; the schema makes their missing approvals fail closed.
     """
-    _require(desk in ("vietnam", "philippines"), "unrecognized desk")
-    source_specs = SOURCES if desk == "vietnam" else PHILIPPINES_SOURCES
-    schema = SCHEMA if desk == "vietnam" else PHILIPPINES_SCHEMA
-    language = "vi" if desk == "vietnam" else "en"
+    _require(desk in ("vietnam", "philippines", "indonesia"), "unrecognized desk")
+    source_specs = (SOURCES if desk == "vietnam" else
+                    PHILIPPINES_SOURCES if desk == "philippines" else INDONESIA_SOURCES)
+    schema = (SCHEMA if desk == "vietnam" else
+              PHILIPPINES_SCHEMA if desk == "philippines" else INDONESIA_SCHEMA)
+    language = {"vietnam": "vi", "philippines": "en", "indonesia": "id"}[desk]
     path = Path(path)
     if not path.is_file():
         return []
@@ -126,6 +133,20 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None, desk="vietnam"):
         _require(item["language"] == language, "source title must remain original-source language")
         pub, reviewed = _iso_date(item["published_date"]), _iso_date(item["reviewed_on"])
         _require(pub <= reviewed <= current, "publication/review chronology is impossible")
+        if desk == "indonesia":
+            # Berita has exact dated canonical URLs; no Siaran Pers, search URLs,
+            # redirects, marketing params or other ministries may enter this lane.
+            m = re.fullmatch(
+                r"/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\.html",
+                p.path)
+            _require(m is not None and not p.query,
+                     "Indonesia Berita canonical URL/path mismatch")
+            try:
+                path_date = date(*map(int, m.groups()))
+            except ValueError as exc:
+                raise ReviewedLinkError("Indonesia Berita date in URL is invalid") from exc
+            _require(path_date == pub,
+                     "Indonesia Berita canonical path/date mismatch")
         reviewer = item["reviewed_by"]
         _require(isinstance(reviewer, str) and 3 <= len(reviewer.strip()) <= 120,
                  "named human reviewer is required")
@@ -151,6 +172,10 @@ def load_public_desk_references(desk):
     """Public metadata only; no shadow body or private Git access."""
     if desk == "philippines":
         return load_reviewed_links(PHILIPPINES_PATH, desk="philippines")
+    if desk == "indonesia":
+        # Only a separately, explicitly approved bibliographic JSON register.
+        # Never consume the four held private pilot candidates or shadow DB.
+        return load_reviewed_links(INDONESIA_PATH, desk="indonesia")
     if desk == "vietnam":
         references = load_reviewed_links()
         _require(all(r["source_slug"] == "vn_mps_foreign_affairs_vi"

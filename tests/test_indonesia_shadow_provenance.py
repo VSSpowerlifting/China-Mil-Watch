@@ -56,7 +56,7 @@ class IndonesiaProvenance(unittest.TestCase):
         ]
         self.clock = {"desk": "indonesia",
                       "day_zero_run_id": "local-native-20261006-indonesia",
-                      "day_zero_utc": "2026-10-06T16:52:15+00:00"}
+                      "day_zero_utc": "2026-10-06T16:53:00+00:00"}
         self.write_pinned()
 
     def git(self, *args):

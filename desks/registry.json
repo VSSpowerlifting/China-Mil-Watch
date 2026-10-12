@@ -153,7 +153,7 @@
       "slug": "korea",
       "name": "South Korea Desk",
       "route": "korea.html",
-      "scope": "A curated directory of five Korean Ministry of National Defense (국방부) press releases republished by Republic of Korea Policy Briefing. Original official links and bibliographic metadata only; not comprehensive coverage or a live production archive.",
+      "scope": "A curated directory of five Korean Ministry of National Defense (국방부) press releases republished by Republic of Korea Policy Briefing. Original official links and bibliographic metadata only; separate MND and DAPA publisher indexes are outbound research navigation, not additional reviewed records or a production archive.",
       "status": "shadow",
       "status_explanation": "Public official-reference directory (five fixed bibliographic entries). The Korea collector itself remains isolated in shadow research: no archived Korean bodies, production records, automatic translations or independently verified military assessments are published.",
       "public": true,
@@ -164,7 +164,14 @@
           {
             "name": "Ministry of National Defense — Policy Briefing republications (Korean)",
             "format": "Original Korean HWPX attached to government-portal press releases; separately preserved isolated shadow Git state",
-            "note": "Exact source family kr_policy_mnd_releases; original issuer 국방부, publisher 대한민국 정책브리핑. It is not direct MND.gov.kr or DAPA material. Private reader checks source identity and SHA; five October 11 originals separately passed real HWPX parity."
+            "note": "Exact source family kr_policy_mnd_releases; original issuer 국방부, publisher 대한민국 정책브리핑. It is not direct MND.gov.kr or DAPA material. Private reader checks source identity and SHA; five October 11 originals separately passed real HWPX parity.",
+            "publisher_url": "https://www.korea.kr/briefing/pressReleaseList.do?pWiseMinistry=ministryNews&repCode=A00005&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80%EC%B2%98"
+          },
+          {
+            "name": "Defense Acquisition Program Administration (방위사업청) — Policy Briefing press index (Korean; research only)",
+            "format": "Official first-party DAPA-filtered Korean press-release index; external navigation only, no DAPA shadow collection or public corpus records",
+            "note": "Publisher 대한민국 정책브리핑, distinct original issuer 방위사업청 (B00008). The October 8 samples include separately linked HWPX and PDF formats, not corroborating publications. DAPA access, extraction, content-rights review, shadow clock, and source admission are unapproved; this index is not IPR-vetted coverage.",
+            "publisher_url": "https://www.korea.kr/briefing/pressReleaseList.do?pWiseMinistry=ministryNews&repCode=B00008&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80%EC%B2%98"
           }
         ],
         "observed_volume": [],
@@ -196,7 +203,7 @@
       },
       "limits": [
         "Public scope is five frozen bibliographic links, not 5 production archive records, 5 separately corroborated sources or live Korea military coverage.",
-        "Issuing institution: Republic of Korea Ministry of National Defense (국방부); public publisher: Republic of Korea Policy Briefing (대한민국 정책브리핑). No direct MND.gov.kr ingest, DAPA or other agencies.",
+        "Issuing institution: Republic of Korea Ministry of National Defense (국방부); public publisher: Republic of Korea Policy Briefing (대한민국 정책브리핑). No direct MND.gov.kr ingest, DAPA or other-agency collection; the DAPA publisher index is a navigation link only.",
         "The directory reproduces Korean headline, canonical official link and source dates only. No IPR translation, full original Korean article body, HWPX, photo, PDF, diagram or video is published.",
         "Source-author claims are not independently verified by IPR; original distribution and portal posting dates are shown separately. No automatic Sunday Brief or production collector admission."
       ]
@@ -358,21 +365,21 @@
    "slug": "indonesia",
    "name": "Indonesia Desk",
    "route": "indonesia.html",
-   "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. This is not a comprehensive Indonesian armed-forces, Ministry of Defence, government-document, or defence-policy archive.",
+   "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. Coverage excludes the armed forces' wider publications, ministerial decrees, and national defense-policy documents.",
    "status": "shadow",
-   "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. A source-language and rights review has examined five selected originals, but independent human signoff, the Day 7/14/30 reviews, and any individual public-link release remain outstanding. This page is a research-status directory entry only, not public article coverage.",
+   "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. Four dated official publisher links are offered as an attributed, frozen navigation pilot, not as human-reviewed IPR source citations or public archive records. Five preserved originals received preliminary review; independent Indonesian-language signoff and the Day 7/14/30 collection reviews remain outstanding.",
    "public": true,
    "manifest": null,
    "has_production_records": false,
    "research": {
     "source_families": [
      {
-      "name": "Indonesian Ministry of Defence — Berita (Indonesian)",
+      "name": "Indonesian Ministry of Defense — Berita (Indonesian)",
       "format": "Dated ministry news HTML; isolated shadow preservation and private research reader",
       "note": "Institutional Berita statements on www.kemhan.go.id, not verbatim official decrees, treaties or independent verification of military capability. Original-language article text stays in shadow state. No publisher bodies, photographs or translations are displayed here."
      },
      {
-      "name": "Indonesian Ministry of Defence — Siaran Pers (Indonesian)",
+      "name": "Indonesian Ministry of Defense — Siaran Pers (Indonesian)",
       "format": "Disabled parser candidate; no authorized collection",
       "note": "Separate ministry press-release family. Offline parser research does not transfer Berita collection continuity, rights decisions, or release eligibility."
      }
@@ -380,11 +387,11 @@
     "blockers": [
      [
       "Original-language editorial review",
-      "Five archived Berita originals received preliminary research reading. Independent named Indonesian-language review and resolution of a publisher geographic inconsistency on one article remain required before individual references may be published."
+      "Five archived Berita originals received preliminary research reading. Independent named Indonesian-language review and resolution of a publisher geographic inconsistency on one article remain required before reviewed citations, translated analysis or corpus admission."
      ],
      [
       "Source-specific publisher rights",
-      "The Kemhan site identifies ministry copyright; IPR has no documented blanket licence to republish its articles, images or translations. Publication of individually attributed links, if later approved, would be a separate and narrower release."
+      "The Kemhan site identifies ministry copyright; IPR has no documented blanket licence to republish its articles, images or translations. The public pilot points outward to four dated first-party webpages; it does not grant reuse of publisher articles, photographs or translations."
      ],
      [
       "Collection reliability and eligibility",
@@ -392,15 +399,15 @@
      ],
      [
       "Scope is not nationwide coverage",
-      "Kemhan institutional news alone cannot establish comprehensive Indonesian defence, service-level, parliamentary or formal policy coverage. Siaran Pers and other agencies remain separate disabled or unreviewed sources."
+      "Kemhan institutional news alone cannot establish complete coverage of Indonesian defense, individual services, parliament, or formal policy documents. Siaran Pers and other agencies remain separate disabled or unreviewed sources."
      ]
     ]
    },
    "limits": [
-    "Research-status page only; no Indonesian original, model analysis or citation link is published or counted in the IPR corpus.",
+    "Four source-attributed publisher links are available for navigation, but no article body, model analysis or independently reviewed citation is published; there are no admitted records in the IPR corpus.",
     "Isolated shadow collection is not production collection. A daily collection-success ledger does not establish completeness of ministry releases.",
     "Original Berita reports represent the ministry's communication, not independent confirmation of outcomes, agreements, force readiness or project completion.",
-    "Named Indonesian-language, content-rights, Day 7/14/30 and owner release decisions govern any later source-specific reference index; this page itself confers no article publication approval."
+    "Named Indonesian-language, content-rights and Day 7/14/30 decisions still govern reviewed citation releases and production admission; outbound official links are not article-republication approval."
    ]
   },
     {
