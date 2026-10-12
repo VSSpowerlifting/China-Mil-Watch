@@ -1076,8 +1076,9 @@ deployed; independent review required.
 
 **Phase 3B Briefs catalogue in review (2026-10-12, revised after review of
 PR #418):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
-`f315e0a3fa` (the Indonesia Siaran Pers link directory, #445/#446; the catalogue build,
-parity and browser checks were re-run at that pin; the full local suite pair was last measured at
+`1102462e4f` (after the Indonesia Siaran Pers link directory, #445/#446; the catalogue build,
+parity and browser checks were re-run at `f315e0a3fa`, and the later main commits, the dedup workbench
+and Vietnam review state, change no build input, so they were not repeated; the full local suite pair was last measured at
 `e3c05ecbfb`, and exact-head CI is the full regression gate). `analysis.html` lists the 17 Briefs as 3:2 media cards (two
 photographs, fifteen Editorial plates) with one catalogue-media decision,
 `core/catalogue_media.py`, driven by `site/assets/catalogue/admissions.json`.
