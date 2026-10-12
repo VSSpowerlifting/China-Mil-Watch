@@ -58,8 +58,8 @@ class IndonesiaPrivateQueueTests(unittest.TestCase):
 
     def test_queue_separates_public_navigation_hold_and_new_candidates(self):
         packet = prepare(self.report, self.public)
-        self.assertEqual(packet["stored_originals"], 10)
-        self.assertEqual(packet["counts"], dict(zip(DISPOSITIONS, (8, 1, 1))))
+        self.assertEqual(packet["stored_originals"], len(self.public) + 2)
+        self.assertEqual(packet["counts"], dict(zip(DISPOSITIONS, (len(self.public), 1, 1))))
         self.assertFalse(packet["public_renderer_consumes_queue"])
         self.assertFalse(packet["independent_human_review_completed"])
         self.assertTrue(all(not x["independent_human_review_complete"] for x in packet["rows"]))
@@ -101,7 +101,7 @@ class IndonesiaPrivateQueueTests(unittest.TestCase):
         packet = prepare(self.report, self.public)
         linked = [x for x in packet["rows"] if x["disposition"] == DISPOSITIONS[0]]
         held = [x for x in packet["rows"] if x["disposition"] == DISPOSITIONS[1]]
-        self.assertEqual(len(linked), 8)
+        self.assertEqual(len(linked), len(self.public))
         self.assertEqual(len(held), 1)
         self.assertEqual({x["official_url"] for x in linked},
                          {x["source_url"] for x in self.public})
@@ -123,6 +123,17 @@ class IndonesiaPrivateQueueTests(unittest.TestCase):
         augmented[0]["text_original"] = "unexpected publisher body"
         with self.assertRaises(QueueError):
             prepare(self.report, augmented)
+        substituted = copy.deepcopy(self.public)
+        substituted[-1] = {
+            **substituted[-1],
+            "source_url": self.report["results"][-1]["url"],
+            "title_original": self.report["results"][-1]["title"],
+            "published_date": self.report["results"][-1]["published_date"],
+        }
+        # A valid-looking archived government original still cannot replace a
+        # link selected in the separately reviewed bounded public directory.
+        with self.assertRaises(QueueError):
+            prepare(self.report, substituted)
         tampered = copy.deepcopy(self.public)
         tampered[0]["language"] = "en"
         with self.assertRaises(QueueError):
@@ -136,10 +147,10 @@ class IndonesiaPrivateQueueTests(unittest.TestCase):
             self.assertEqual(spreadsheet_value("judul biasa"), "judul biasa")
             packet = prepare(self.report, self.public)
             receipt = write(packet, output)
-            self.assertEqual(receipt["stored_originals"], 10)
+            self.assertEqual(receipt["stored_originals"], len(self.public) + 2)
             self.assertTrue((output / "review_queue.json").exists())
             self.assertEqual(len(list(csv.DictReader(
-                (output / "review_queue.csv").open(encoding="utf-8")))), 10)
+                (output / "review_queue.csv").open(encoding="utf-8")))), len(self.public) + 2)
             count = json.loads((output / "COUNT_ONLY_RECEIPT.json").read_text())
             self.assertEqual(count["counts"][DISPOSITIONS[2]], 1)
             self.assertNotIn("rows", count)
