@@ -77,10 +77,13 @@ class Day7MachineOnlyContracts(unittest.TestCase):
 
     def test_early_evening_or_before_seventh_collection_is_a_hold(self):
         before = datetime(2026, 10, 13, 16, 52, 14, tzinfo=timezone.utc)
-        with self.assertRaisesRegex(Day7Error, "before actual Day 7"):
+        with self.assertRaisesRegex(Day7Error, "before required collection slot")
             self.validate(when=before)
-        early = datetime(2026, 10, 13, 16, 52, 15, tzinfo=timezone.utc)
-        self.assertEqual(self.validate(when=early)["scheduled_dates_verified"], 7)
+        before_run = datetime(2026, 10, 13, 17, 16, 59, tzinfo=timezone.utc)
+        with self.assertRaisesRegex(Day7Error, "before required collection slot"):
+            self.validate(when=before_run)
+        after = datetime(2026, 10, 13, 18, 10, tzinfo=timezone.utc)
+        self.assertEqual(self.validate(when=after)["scheduled_dates_verified"], 7)
 
     def test_missing_or_duplicate_schedule_is_not_a_complete_day7(self):
         mutations = [
