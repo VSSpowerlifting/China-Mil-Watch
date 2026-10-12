@@ -17,6 +17,9 @@ on:
       - "tests/test_korea_official_index.py"
       - "tests/test_korea_internal_registry.py"
       - "tests/test_korea_site_preview.py"
+      - "scripts/guard_country_research_output_scope.py"
+      - "scripts/guard_korea_public_output_scope.py"
+      - "tests/test_korea_output_release_scope.py"
       - ".github/workflows/korea_public_bibliography_release.yml"
   push:
     branches: [main]
@@ -47,7 +50,7 @@ jobs:
         run: sha256sum pla_watch.db > /tmp/ipr-korea-links-db.sha
       - name: Full source-link and original-review regression checks
         run: |
-          python -m unittest tests.test_korea_official_index tests.test_korea_public_bibliography tests.test_korea_internal_registry tests.test_korea_site_preview tests.test_korea_reference_gate tests.test_public_desk_references tests.test_desk_map tests.test_desk_rollout_contract tests.test_briefs_collection tests.test_extraction_interface -q
+          python -m unittest tests.test_korea_output_release_scope tests.test_korea_official_index tests.test_korea_public_bibliography tests.test_korea_internal_registry tests.test_korea_site_preview tests.test_korea_reference_gate tests.test_public_desk_references tests.test_desk_map tests.test_desk_rollout_contract tests.test_briefs_collection tests.test_extraction_interface -q
       - name: Render real public site, no collectors or media reuse
         shell: bash
         run: |
@@ -128,7 +131,7 @@ jobs:
           set -euo pipefail
           python site/render.py
           python scripts/validate_output.py
-          python -m unittest tests.test_korea_public_bibliography tests.test_korea_internal_registry -q
+          python -m unittest tests.test_korea_output_release_scope tests.test_korea_public_bibliography tests.test_korea_internal_registry -q
           python - <<'PY'
           from pathlib import Path
           from core.korea_public_bibliography import load_public_korea_links
@@ -173,18 +176,37 @@ jobs:
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
-      - name: Stage only rendered output; abort on unrelated file change
+      # Publishing uploads the full ./output directory, including ignored media.
+      # A Korea-only publication may not carry unrelated desk/Briefs drift.
+      - name: Refuse unrelated generated-site changes
+        id: korea-output-scope
         shell: bash
         run: |
           set -euo pipefail
-          git add -A -- output/
-          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' || true)"
-          git diff --cached --name-status | head -n 25 || true
+          python -m scripts.guard_korea_public_output_scope
+          if git diff --quiet -- output/korea.html output/desk-references.css; then
+            echo "publish_required=false" >> "$GITHUB_OUTPUT"
+            echo "No Korea-specific output change; skipping commit and Pages deployment."
+          else
+            echo "publish_required=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stage only Korea page and reviewed shared reference styles
+        if: steps.korea-output-scope.outputs.publish_required == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- output/korea.html output/desk-references.css
+          python -m scripts.guard_korea_public_output_scope
+          git diff --cached --name-status
           test -n "$(git diff --cached --name-only)" || {
-            echo "::error::Expected a new Korea page in output/"; exit 1;
+            echo "::error::Expected approved Korea output changes"; exit 1;
           }
+          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' || true)"
           test "$(git rev-parse HEAD)" = "$(cat "$RUNNER_TEMP/korea-links-head")"
+
       - name: Commit exact public output to main
+        if: steps.korea-output-scope.outputs.publish_required == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -197,6 +219,7 @@ jobs:
           }
           git push origin HEAD:main
       - name: Publish validated static output to GitHub Pages
+        if: steps.korea-output-scope.outputs.publish_required == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
