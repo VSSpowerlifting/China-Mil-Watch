@@ -1,0 +1,52 @@
+name: Indonesia Desk — unregistered Kemhan press parser original-number contracts
+
+# Synthetic-only parser fidelity; no native press-source capture, network,
+# pipeline registration, production state or site release.
+on:
+  pull_request:
+    paths:
+      - "scraper/sources/id_kemhan_press.py"
+      - "scripts/audit_indonesia_press_fixture.py"
+      - "tests/test_indonesia_press_parser.py"
+      - ".github/workflows/indonesia_press_identifier_contract.yml"
+permissions:
+  contents: read
+
+jobs:
+  press-parser-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Preserve original production corpus
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-press-db.sha"
+      - name: Install isolated HTML parser dependencies
+        run: pip install -r requirements.txt
+      - name: Run strict issuer-series/date and Berita mismatch contracts
+        run: |
+          set -euo pipefail
+          python -m unittest tests.test_indonesia_press_parser tests.test_indonesia_press_links -q
+      - name: Reconfirm no registered press collector or publication
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from scripts.shadow_collect_desk import DESKS
+          from core.manifests import load_all_desks
+          from core.desk_registry import load_registry
+          assert "id_kemhan_press" not in DESKS
+          assert "indonesia" not in load_all_desks()
+          d = load_registry().get("indonesia")
+          assert d.public and d.status == "shadow" and d.has_production_records is False
+          assert d.manifest_path is None and not d.is_collecting
+          PY
+          sha256sum -c "$RUNNER_TEMP/indonesia-press-db.sha"
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
