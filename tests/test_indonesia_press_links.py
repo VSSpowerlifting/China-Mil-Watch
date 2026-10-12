@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 
 from core.indonesia_official_index import PublicIndexError, load as load_news
 from core.indonesia_press_index import DEFAULT, RELEASES, load, validate
+from scripts.indonesia_operational_health import check_public_page
 
 
 class IndonesiaPressLinks(unittest.TestCase):
@@ -79,6 +80,7 @@ class IndonesiaPressLinks(unittest.TestCase):
         out = Path(self.tmp.name) / "site"
         gp.build(out, "Offline Indonesia Press Links Pilot", database,
                  snapshot=gp.snapshot_from_corpus(database))
+        self.assertEqual(check_public_page(out / "indonesia.html"), 6)
         page = (out / "indonesia.html").read_text(encoding="utf-8")
         doc = BeautifulSoup(page, "html.parser")
         press = doc.select('ol[aria-label="Two external ministry press release links"] a')
