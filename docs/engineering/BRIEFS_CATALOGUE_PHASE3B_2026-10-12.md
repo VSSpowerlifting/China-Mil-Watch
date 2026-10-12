@@ -76,7 +76,7 @@ One primary link per card (the headline). It stretches over the card; credit lin
 
 ## Budgets and publication
 
-HTML + CSS for `analysis.html`: 120,151 B (main 102,589 B, measured at `e3c05ecbfb`; cap 300,000 B). JS: 3,118 B (cap 10,000 B). Photographs: 50,835 B in total, loaded lazily. `region.svg` (49,760 B) is referenced through `<use>` and is not counted by the delivery verifier's asset list; `receipts/analysis-budget.json` reports the corrected page weight (HTML+CSS+JS 123,269 B; with photographs 174,104 B; with `region.svg` 223,864 B) without changing the shared checker. Production publishes exactly `assets/geo/region.svg` plus the admitted files a card shows (two JPEGs); `relief.css` is now linked by the homepage, Archive and catalogue only.
+HTML + CSS for `analysis.html`: 120,151 B (main 102,589 B, measured at `e3c05ecbfb` and unchanged at `f315e0a3fa`; cap 300,000 B). JS: 3,118 B (cap 10,000 B). Photographs: 50,835 B in total, loaded lazily. `region.svg` (49,760 B) is referenced through `<use>` and is not counted by the delivery verifier's asset list; `receipts/analysis-budget.json` reports the corrected page weight (HTML+CSS+JS 123,269 B; with photographs 174,104 B; with `region.svg` 223,864 B) without changing the shared checker. Production publishes exactly `assets/geo/region.svg` plus the admitted files a card shows (two JPEGs); `relief.css` is now linked by the homepage, Archive and catalogue only.
 
 ## Out of scope / not done
 

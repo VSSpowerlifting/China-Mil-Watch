@@ -1,5 +1,5 @@
 {
-  "baseline": "origin/main e3c05ecbfb (fresh build, --snapshot-from-corpus --legacy-routes). Main 159a13e43f, merged afterwards, changes only generated output/ and no build input.",
+  "baseline": "origin/main f315e0a3fa (fresh build, --snapshot-from-corpus --legacy-routes). Earlier measurements on e3c05ecbfb gave the identical file list and changed set.",
   "candidate": "branch tree merged with that main (same flags)",
   "baseline_files": 7688,
   "candidate_files": 7691,

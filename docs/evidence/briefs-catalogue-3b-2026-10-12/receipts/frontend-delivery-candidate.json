@@ -5,7 +5,7 @@
     "route": "desks.html",
     "html_css_limit": 300000,
     "js_limit": 10000,
-    "html_css_bytes": 191671,
+    "html_css_bytes": 191704,
     "js_bytes": 2681,
     "css": [
       "desk-map.css",
@@ -37,7 +37,7 @@
       "assets/material/navy-paper.png"
     ],
     "external_assets": [],
-    "local_delivery_bytes": 469787
+    "local_delivery_bytes": 469820
   },
   "largest_local_delivery": {
     "route": "index.html",
@@ -131,5 +131,5 @@
       "local_delivery_bytes": 452570
     }
   ],
-  "note": "Re-run on the candidate built from the tree merged with main e3c05ecbfb. 7591 routes. Full per-route list trimmed to the largest routes and the analysis route; shared verifier: scripts/verify_frontend_delivery.py --root <candidate build> (build flags: --snapshot-from-corpus --legacy-routes). Main 159a13e43f (output-only) changes no build input."
+  "note": "Re-run on the candidate built from the tree merged with main f315e0a3fa. 7591 routes. Full per-route list trimmed to the entries the review reads."
 }
