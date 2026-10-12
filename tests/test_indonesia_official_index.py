@@ -144,6 +144,10 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
                           "NOT APPROVED FOR PUBLICATION"):
             self.assertNotIn(forbidden, page)
         self.assertIn("Shadow evaluation — no public corpus records", page)
+        self.assertIn("Eight dated Berita links and two historical Siaran Pers", page)
+        self.assertIn("<dt>Corpus records</dt><dd>Not admitted</dd>", page)
+        self.assertNotIn("<dt>Records</dt><dd>None collected</dd>", page)
+        self.assertNotIn("Four dated Berita links", page)
         self.assertNotIn(load()[0]["source_url"],
                          (output / "philippines.html").read_text(encoding="utf-8"))
 
