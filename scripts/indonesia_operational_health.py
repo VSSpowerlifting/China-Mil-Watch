@@ -123,7 +123,7 @@ class PublishedEntries(HTMLParser):
     """Capture each local link/title/date/press number, never dereference it."""
 
     LABELS = {
-        "Four external ministry news links": "news",
+        "Eight external ministry news links": "news",
         "Two external ministry press release links": "press",
     }
 
