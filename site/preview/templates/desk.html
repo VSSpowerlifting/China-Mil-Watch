@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines') or korea_preview | default(false) or indonesia_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -60,6 +60,46 @@
   <p class="meta">Next release gate: qualified human Korean source review, per-record
   content- and HWPX-hash-bound rights disposition, owner approval, and a separate
   production release decision. No automatic Sunday Brief admission.</p>
+</section>
+{% endif %}
+
+{# Site-equivalent Indonesia PRIVATE preview. This block cannot be enabled
+   by the ordinary renderer: only the separate, noindex, external-dir harness
+   supplies indonesia_preview. Candidate links are NOT approved publications. #}
+{% if indonesia_preview | default(false) %}
+<section class="desk-references" aria-labelledby="indonesia-reference-preview-heading">
+  <p class="eyebrow">Private layout review · unpublished · noindex</p>
+  <h2 id="indonesia-reference-preview-heading">Indonesia — proposed official-source references</h2>
+  <p><strong>HOLD · NOT APPROVED FOR PUBLICATION.</strong> These four exact
+  Indonesian-language citations are a design review of a future, limited
+  reference page. They are <strong>not</strong> approved source citations,
+  translations, copied source articles, or evidence of independent corroboration.</p>
+  <div class="korea-preview-metrics" role="group" aria-label="Indonesia unpublished qualification status">
+    <div><strong>{{ indonesia_preview_candidates|length }}</strong><span>candidate official links</span></div>
+    <div><strong>0</strong><span>independently human-approved links</span></div>
+    <div><strong>0</strong><span>Day 7 human review signoffs</span></div>
+    <div><strong>0</strong><span>admitted public archive records</span></div>
+  </div>
+  <ol class="desk-reference-list" aria-label="Official Indonesian pages under human review">
+  {% for item in indonesia_preview_candidates %}
+    <li>
+      <p><strong>{{ item.reference_id }} · Kemhan Berita · proposed reference only</strong></p>
+      <p><a href="{{ item.source_url }}" target="_blank"
+            rel="noopener noreferrer" lang="id">{{ item.title_original }}</a></p>
+      <p class="meta">Kementerian Pertahanan Republik Indonesia ·
+         Original-language publication date:
+         <time datetime="{{ item.published_date }}">{{ item.published_date }}</time></p>
+    </li>
+  {% endfor %}
+  </ol>
+  <p class="meta">One institutional Berita channel, not whole-of-government
+  defence coverage. An additional reviewed original is excluded for an unresolved
+  publisher geographic inconsistency. The four candidates are bibliographic
+  links only; the ministry's article text and images are not republished here.</p>
+  <p class="meta">Required before any public deployment: separately checked
+  Indonesian originals and individual rights dispositions, documented Day 7
+  evidence, named human approval, and an owner-accepted, source-scoped site
+  release. A private preview never grants any of those approvals.</p>
 </section>
 {% endif %}
 
