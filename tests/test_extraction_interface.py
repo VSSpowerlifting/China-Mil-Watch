@@ -65,17 +65,23 @@ def strip_trigger_path_filters(text: str) -> str:
     different path such as `core/desk_registry_x.py`) is left in place so the
     caller's `assertNotIn("desk_registry", ...)` still rejects it.
     """
-    out, in_filter, filter_indent = [], False, 0
+    out, context = [], []
     for line in text.splitlines(keepends=True):
         stripped = line.strip()
         indent = len(line) - len(line.lstrip(" "))
-        if stripped in ("paths:", "paths-ignore:"):
-            in_filter, filter_indent = True, indent
-        elif in_filter and stripped and not stripped.startswith("-") and indent <= filter_indent:
-            in_filter = False
-        item = stripped[1:].strip().strip("\"'") if stripped.startswith("-") else None
-        if in_filter and item == _TRIGGER_PATH:
-            continue
+        if stripped and not stripped.startswith("#"):
+            # Track YAML mapping parents by indentation. A generic paths key
+            # in jobs, env or a shell body grants no exemption.
+            while context and indent <= context[-1][0]:
+                context.pop()
+            key = re.fullmatch(r"([A-Za-z][\w-]*):(?:\s*#.*)?", stripped)
+            if key:
+                context.append((indent, key.group(1)))
+            item = stripped[1:].strip().strip("\"'") if stripped.startswith("-") else None
+            if (item == _TRIGGER_PATH and len(context) >= 3
+                    and [key for _, key in context[-3:-1]] == ["on", "pull_request"]
+                    and context[-1][1] in ("paths", "paths-ignore")):
+                continue
         out.append(line)
     return "".join(out)
 
@@ -325,6 +331,9 @@ class TestThisEnablesNothing(unittest.TestCase):
             ok.replace("    paths:\n", "    branches:\n"),
             'env:\n  P: core/desk_registry.py\n',
             'jobs:\n  a:\n    steps:\n      - uses: core/desk_registry.py\n',
+            'jobs:\n  a:\n    paths:\n      - core/desk_registry.py\n',
+            'on:\n  workflow_dispatch:\n    inputs:\n      paths:\n        - core/desk_registry.py\n',
+            'jobs:\n  a:\n    steps:\n      - run: |\n          paths:\n            - core/desk_registry.py\n',
         ):
             with self.subTest(bad=bad[-70:]):
                 self.assertIn("desk_registry", strip_trigger_path_filters(bad))
