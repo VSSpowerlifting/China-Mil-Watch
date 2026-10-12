@@ -329,11 +329,11 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
         """Observed publication volume describes the ministry's output, not
         ours. Nothing may read as a record count for this desk.
 
-        The page may — and does — name the 30-day shadow gate and say that
-        cadence and silence thresholds are deliberately unset. Those are the
-        governing disclosures. What must never appear is a *running* shadow-day
-        counter or a calibrated threshold, either of which would imply a clock
-        that has started."""
+        The page now reports *measured*, separate shadow-source evidence:
+        30 partial MOD scheduled collection slots and one manual JCG Day 0.
+        Neither is a production corpus count or a completed human source
+        qualification. Do not present a running desk-activation counter or
+        imply that the separate JCG collecting-day clock is authorized."""
         html = self.page("japan.html")
         self.assertNotRegex(
             html, r"\b\d[\d,]*\s+(records|articles)\s+collected\b")
@@ -345,7 +345,9 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
         for raw_field in ("expected_cadence_days", "silence_threshold_days"):
             with self.subTest(field=raw_field):
                 self.assertNotIn(raw_field, lower)
-        self.assertIn("thresholds remain unset", lower)
+        self.assertIn("30 verified scheduled mod collection slots", lower)
+        self.assertIn("human source reviews remain unsigned", lower)
+        self.assertIn("no daily continuity", lower)
 
     def test_the_japan_page_is_not_described_as_coverage(self):
         html = re.sub(r"\s+", " ", self.page("japan.html").lower())

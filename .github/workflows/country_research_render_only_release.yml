@@ -47,6 +47,7 @@ jobs:
           test -f output/philippines.html
           test -f output/vietnam.html
           test -f output/indonesia.html
+          test -f output/japan.html
           test -f output/desk-references.js
           sha256sum -c /tmp/ipr-release-ci-db.sha
           test ! -e pla_watch.db-wal
@@ -125,6 +126,31 @@ jobs:
               assert "data-reference-list" not in text
               assert "state/shadow.db" not in text
               assert "text_original" not in text and "body_original" not in text
+          # Japan is a public research route, but its manifest is deliberately
+          # SHADOW-only. It must not be treated as a production desk or as an
+          # extension of the Vietnam/Indonesia reviewed-record mechanism.
+          japan = country["japan"]
+          assert japan["public"] is True and japan["status"] == "shadow"
+          assert japan["manifest"] == "shadow/jp_mod/manifest.json"
+          assert japan["has_production_records"] is False
+          japan_html = (base / "japan.html").read_text(encoding="utf-8")
+          assert "Shadow evaluation" in japan_html
+          assert "not in corpus" in japan_html
+          official_japan_indices = (
+              "https://www.mod.go.jp/j/press/news/",
+              "https://www.mod.go.jp/j/update/index.html",
+              "https://www.kaiho.mlit.go.jp/e/topics_archive/index.html",
+          )
+          for url in official_japan_indices:
+              assert 'href="' + url + '" rel="noopener noreferrer"' in japan_html
+          assert japan_html.count("Open official publisher index") == 3
+          assert "manual October 8 Day 0" in japan_html
+          assert "repository gate was observed unset or unavailable" in japan_html
+          assert "30 verified scheduled MOD collection slots" in japan_html
+          for forbidden in ("data-reference-list", "state/shadow.db",
+                            "text_original", "body_original"):
+              assert forbidden not in japan_html
+          assert 'href="archive.html?desk=japan"' not in japan_html
           indonesia = (base / "indonesia.html").read_text(encoding="utf-8")
           assert "No individual source references have completed" in indonesia
           assert "data-reference-list" not in indonesia
@@ -170,6 +196,7 @@ jobs:
             output/philippines.html
             output/vietnam.html
             output/indonesia.html
+            output/japan.html
             output/desks.html
             output/desk-references.js
             output/desk-references.css

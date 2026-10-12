@@ -79,10 +79,27 @@ class CountryPublisherNavigationTests(DeskCase):
         jcg = next(s for s in desk.research["source_families"]
                    if s["name"] == "Japan Coast Guard — English press releases")
         self.assertIn("manual October 8 Day 0", jcg["note"])
-        self.assertIn("daily gate/job continuity is unverified", jcg["note"])
+        self.assertIn("repository gate was observed unset or unavailable on October 12", jcg["note"])
         self.assertIn("No JCG daily qualification", jcg["note"])
         self.assertIn("per-version rights review", jcg["note"])
         self.assertIn("distinct collection clocks", desk.limits[-1])
+        self.assertIn("30 scheduled MOD collection slots", desk.limits[-1])
+        self.assertIn("8 of 142 news-feed items (6 percent) were PDF-format candidates",
+                      desk.limits[1])
+        self.assertNotIn("carried full text", desk.limits[1])
+        self.assertIn("some PDF-published originals yield extractable text",
+                      desk.status_explanation)
+
+        self.assertIn("five text-bearing originals and 158 unretrieved URLs",
+                      desk.research["volume_caveat"])
+        self.assertIn("PDF source completeness and qualification remain unresolved",
+                      desk.research["blockers"][1][0])
+        self.assertIn("30 verified scheduled MOD collection slots",
+                      desk.research["blockers"][1][1])
+        self.assertIn("repository gate was observed unset or unavailable",
+                      self.page("japan.html"))
+        self.assertIn("30 scheduled MOD collection slots",
+                      self.page("japan.html"))
         self.assertEqual(desk.status, "shadow")
         self.assertFalse(desk.has_production_records)
         self.assertNotIn("data-reference-list", self.page("japan.html"))
