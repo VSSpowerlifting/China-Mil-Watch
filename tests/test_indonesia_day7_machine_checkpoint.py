@@ -77,7 +77,7 @@ class Day7MachineOnlyContracts(unittest.TestCase):
 
     def test_early_evening_or_before_seventh_collection_is_a_hold(self):
         before = datetime(2026, 10, 13, 16, 52, 14, tzinfo=timezone.utc)
-        with self.assertRaisesRegex(Day7Error, "before required collection slot")
+        with self.assertRaisesRegex(Day7Error, "before required collection slot"):
             self.validate(when=before)
         before_run = datetime(2026, 10, 13, 17, 16, 59, tzinfo=timezone.utc)
         with self.assertRaisesRegex(Day7Error, "before required collection slot"):
