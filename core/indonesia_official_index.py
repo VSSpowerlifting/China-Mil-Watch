@@ -16,7 +16,34 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT = ROOT / "research" / "indonesia_official_source_links.json"
 SCHEMA = "ipr-indonesia-external-source-links/1"
 PINNED = "17dfae7e6e1e9e1142d81c89764f022ebf03552f"
-IDS = ("id-01", "id-02", "id-03", "id-04")
+# ID-05 deliberately omitted: Kemhan's Yonif TP 880 text conflicts on Kaltara/Kalbar.
+IDS = ("id-01", "id-02", "id-03", "id-04",
+       "id-06", "id-07", "id-08", "id-09")
+# Freeze newly selected identities, original Indonesian titles, and exact dates.
+# Each addition must be explicitly reviewed; the directory must not expand
+# merely because a publisher URL is syntactically valid.
+ADDED = {
+    "id-06": (
+        "/2026/09/30/atas-nama-negara-menhan-sjafrie-anugerahkan-satyalancana-dharma-samudera-kepada-personel-jmsdf-yang-terlibat-penanganan-karhutla.html",
+        "Atas Nama Negara, Menhan Sjafrie Anugerahkan Satyalancana Dharma Samudera kepada Personel JMSDF yang Terlibat Penanganan Karhutla",
+        "2026-09-30",
+    ),
+    "id-07": (
+        "/2026/10/03/tinjau-yonif-tp-881-baratama-dharma-di-sebuku-nunukan-menhan-sjafrie-prajurit-perbatasan-harus-siap-hadapi-ancaman-dan-mengawal-kedaulatan-nkri.html",
+        "Tinjau Yonif TP 881/Baratama Dharma di Sebuku Nunukan, Menhan Sjafrie: Prajurit Perbatasan Harus Siap Hadapi Ancaman dan Mengawal Kedaulatan NKRI",
+        "2026-10-03",
+    ),
+    "id-08": (
+        "/2026/10/07/disaksikan-presiden-menhan-hadiri-penyerahan-rp132-triliun-dan-259-ribu-hektare-kawasan-hutan-kepada-negara.html",
+        "Disaksikan Presiden, Menhan Hadiri Penyerahan Rp13,2 Triliun dan 259 Ribu Hektare Kawasan Hutan Kepada Negara",
+        "2026-10-07",
+    ),
+    "id-09": (
+        "/2026/10/09/mensos-dan-wamenhan-lepas-1-509-kadet-unhan-ri-untuk-mengabdi-di-181-sekolah-rakyat.html",
+        "Mensos dan Wamenhan Lepas 1.509 Kadet Unhan RI untuk Mengabdi di 181 Sekolah Rakyat",
+        "2026-10-09",
+    ),
+}
 FIELDS = {"id", "url", "title_original", "published_date", "language"}
 EXPECTED = {"schema", "source_family", "publisher", "snapshot_date",
             "pinned_shadow_commit", "editorial_status", "collection_status",
@@ -51,8 +78,8 @@ def validate(data):
             and data["collection_status"] == "shadow_not_public_corpus",
             "public source-index provenance or status changed")
     entries = data["references"]
-    require(type(entries) is list and len(entries) == 4,
-            "this frozen pilot permits exactly four external publisher links")
+    require(type(entries) is list and len(entries) == len(IDS),
+            "this frozen source directory permits exactly eight external publisher links")
     require([p.get("id") for p in entries if type(p) is dict] == list(IDS),
             "unrecognized or reordered pilot reference")
     seen = set()
@@ -88,6 +115,9 @@ def validate(data):
             raise PublicIndexError("invalid official publication date") from exc
         require(url_date == item["published_date"] == meta_date,
                 "publication date disagrees with official URL")
+        if item["id"] in ADDED:
+            require((parsed.path, title, meta_date) == ADDED[item["id"]],
+                    "unqualified new Indonesia publisher link identity or title")
         require(url not in seen, "duplicate official publication")
         seen.add(url)
         result.append({
