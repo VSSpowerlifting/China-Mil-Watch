@@ -120,6 +120,41 @@ class RemoteReview(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "foreign source"):
             self.packet(commit=commit)
 
+    def test_moit_source_surface_warning_reaches_formal_signoff(self):
+        self.batch()
+        state = self.repos / ENERGY / "state"
+        ledger = next((state / "ledger").glob("*.json"))
+        row = json.loads(ledger.read_text(encoding="utf-8"))
+        warning = ("robots_content_type: https://moit.gov.vn/robots.txt "
+                   "is a rules file served as 'text/html; charset=UTF-8'")
+        row["source_anomalies"] = [warning]
+        row["anomalies"] = []  # Distinct collector field must not mask this.
+        ledger.write_text(json.dumps(row), encoding="utf-8")
+        commit = self.commit_state(ENERGY)
+        out, manifest = self.packet(ENERGY, "moit-source-warning", commit)
+        tagged = "source-surface run %s: %s" % (row["run_id"], warning)
+        self.assertIn(tagged, manifest["anomalies"])
+        signoff = json.loads((out / "signoff_template.json").read_text(encoding="utf-8"))
+        self.assertIn({"anomaly": tagged, "disposition": ""}, signoff["anomalies"])
+        self.assertTrue(any("anomaly has no disposition" in problem
+                            for problem in review.check_signoff(
+                                out, out / "signoff_template.json")))
+
+    def test_malformed_source_surface_warning_is_refused(self):
+        self.batch()
+        state = self.repos / ENERGY / "state"
+        ledger = next((state / "ledger").glob("*.json"))
+        row = json.loads(ledger.read_text(encoding="utf-8"))
+        for index, bad in enumerate((None, "warning-as-string", [""],
+                                     ["line\nbreak"], [3], ["repeat", "repeat"])):
+            with self.subTest(bad=bad):
+                row["source_anomalies"] = bad
+                ledger.write_text(json.dumps(row), encoding="utf-8")
+                commit = self.commit_state(ENERGY)
+                with self.assertRaisesRegex(ValueError,
+                                            "invalid source-surface anomaly evidence"):
+                    self.packet(ENERGY, "invalid-surface-%s" % index, commit)
+
     def test_batch_failure_stops_all_remaining_sources(self):
         calls = []
         def failure(state, slug, *args, **kwargs):

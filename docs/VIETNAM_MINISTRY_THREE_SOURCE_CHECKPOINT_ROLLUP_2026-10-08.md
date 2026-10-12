@@ -75,6 +75,35 @@ The command prints a machine evidence summary to stdout, makes
 no publisher requests, and writes nothing. Day 14/30 use the same
 three-packet contract with those specific checkpoint names.
 
+## October 11 review-boundary correction: MOIT source-surface warnings
+
+The verified October 10 MOIT Energy and Foundational Industry shadow ledgers
+carry a `robots_content_type` warning under `source_anomalies`:
+`https://moit.gov.vn/robots.txt` returned `text/html; charset=UTF-8`.
+Their separate per-article `anomalies` arrays were empty. A successful
+scheduled run or `health=ok` therefore does **not** establish that all
+source-surface and access-policy questions are resolved.
+
+The formal ministry packet producer now incorporates each committed
+`source_anomalies` item into the packet's `anomalies` list with its specific
+run-attempt ID. The existing signoff template requires a human disposition
+for every such warning. The three-source rollup reads those formal packet
+anomalies and surfaces their counts; it remains a read-only summary, not
+an independent rights or robots-policy adjudicator.
+
+Reviewers must inspect the original robots response and publisher terms;
+a warning appearing in the packet is **not** permission to ignore it,
+republish MOIT text, send it to an external model, or activate production.
+The MOIT written-consent/attribution hold tracked in issue #196 remains
+separate from the MIME warning and must be resolved independently.
+No automated status field or completed checklist can grant source-use rights.
+
+The source-specific Day 7 human review remains scheduled **after** the
+October 14 run, and the formal elapsed-day flag does not establish seven
+distinct successful scheduled attempts or the later 30-day maturity gate.
+Check GitHub Actions history separately, including failures, retries and
+the Oct 7 manual bootstrap attempt that must not be counted twice.
+
 ## Evidence and authority boundaries
 
 - The separate per-source **producer** establishes Git provenance.
