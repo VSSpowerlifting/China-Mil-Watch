@@ -93,7 +93,7 @@ class OperationalCanaryTests(unittest.TestCase):
 
     def test_actual_published_index_contract_in_disposable_html(self):
         approved = load_index()
-        self.assertEqual(len(approved), 8)
+        self.assertEqual(len(approved), 12)
         press = load_press_index()
         self.assertEqual(len(press), 2)
         with tempfile.TemporaryDirectory(prefix="ipr-id-canary-") as tmp:
@@ -114,14 +114,14 @@ class OperationalCanaryTests(unittest.TestCase):
                     "<h2>Shadow evaluation — no public corpus records</h2>"
                     "<p>No individual source references have completed</p>"
                     "<h2>Explore official Indonesian defense publications</h2>"
-                    '<ol aria-label="Eight external ministry news links">' +
+                    '<ol aria-label="Twelve external ministry news links">' +
                     links + "</ol>"
                     "<h2>Kemhan press releases (Siaran Pers)</h2>"
                     '<ol aria-label="Two external ministry press release links">' +
                     press_links + "</ol>"
                 ) if good else "<h1>Wrong site</h1>" + links
             page.write_text(document(approved), encoding="utf-8")
-            self.assertEqual(check_public_page(page), 10)
+            self.assertEqual(check_public_page(page), 14)
             page.write_text(document(approved[:-1]), encoding="utf-8")
             with self.assertRaises(HealthError):
                 check_public_page(page)
