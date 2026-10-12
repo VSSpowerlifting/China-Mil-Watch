@@ -7,6 +7,8 @@ on:
     paths:
       - ".github/workflows/country_research_render_only_release.yml"
       - "tests/test_country_research_release_contract.py"
+      - "scripts/guard_country_research_output_scope.py"
+      - "tests/test_country_research_output_scope.py"
   workflow_dispatch:
     inputs:
       approved_main_sha:
@@ -44,6 +46,7 @@ jobs:
           sha256sum pla_watch.db > /tmp/ipr-release-ci-db.sha
           python site/render.py
           python scripts/validate_output.py
+          python -m scripts.guard_country_research_output_scope
           test -f output/philippines.html
           test -f output/vietnam.html
           test -f output/indonesia.html
@@ -173,10 +176,21 @@ jobs:
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
 
-      - name: Stage only generated site artifacts and review diff summary
+      - name: Fail closed on unrelated full-site generated drift
         run: |
           set -euo pipefail
-          git add -A -- output/
+          # Publishing this workflow deploys the entire ./output tree, so even
+          # ignored or unstaged media must be scoped before the Pages action.
+          python -m scripts.guard_country_research_output_scope
+
+      - name: Stage only approved country research presentation files
+        run: |
+          set -euo pipefail
+          git add -A -- \\
+            output/philippines.html output/vietnam.html output/indonesia.html \\
+            output/japan.html output/desks.html \\
+            output/desk-references.js output/desk-references.css
+          python -m scripts.guard_country_research_output_scope
           git diff --cached --name-status > "$RUNNER_TEMP/country-release-files.txt"
           echo "Generated site change count: $(wc -l < "$RUNNER_TEMP/country-release-files.txt")"
           head -n 45 "$RUNNER_TEMP/country-release-files.txt"
@@ -213,7 +227,7 @@ jobs:
           test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
             echo "::error::main changed during render"; exit 1;
           }
-          git commit -m "Site: render Philippines and Vietnam research desks (metadata-only)"
+          git commit -m "Site: render reviewed country research desks (metadata-only)"
           git push origin HEAD:main
 
       - name: Publish exact validated output to GitHub Pages
