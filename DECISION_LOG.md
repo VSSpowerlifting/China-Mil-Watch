@@ -4,6 +4,47 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-12 — Expressive frontend Phase 3C (Brief article presentation) implementation decisions
+
+Made within the Phase 3C brief; presentation only, not visual sign-off.
+Contract: `docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`.
+Evidence: `docs/evidence/briefs-article-3c-2026-10-12/`.
+
+- **A presentation adapter, not an admission.** `core/article_media.py` only
+  says how an opened article shows the image its own resolvers already chose
+  (`pw_env` veils, the legacy cover, `brief_collection.brief_photo`). It never
+  reads `core/catalogue_media.py` or its admissions, which govern the catalogue
+  only, and it creates no photograph admission or source–image association.
+- **Kinds are named in text.** "Photograph" (curated, with the manifest's
+  credit, licence link where recorded, source link, "Toned, cropped and resized
+  by IPR." and "Visual context, not evidence."), "Signal Veil" (the pre-3C
+  caption word for word), "Editorial plate" (original IPR artwork, empty alt,
+  "Decorative, not evidence."; no production use yet), or no figure.
+- **A Signal Veil's stored `credit` is never read.** For a source veil it is a
+  collector's note, not an attribution. The caption is built from the source
+  id, source page and subject only.
+- **Held images stay as they were.** No. 1 (legacy cover; identifiable people,
+  filename alt), No. 10 (`jin-class-type-094-ssbn`; authorship and alt text not
+  established), No. 12 (`src-2026-08-01`, B5) and No. 15's native photograph
+  keep their pre-3C figure markup byte for byte. An unknown veil kind falls back
+  to the same preserved branch. Clearing any of them is a separate decision.
+- **No. 12.** The stored "Downloaded from PLA Daily / 81.cn" note is never
+  rendered as a credit. It was absent before 3C and stays absent; a test
+  asserts it.
+- **Navigation order.** Native Briefs follow the collection: "Previous Brief"
+  is the next older item and "Next Brief" the next newer one, across series.
+  Earlier issues keep their date-sorted sidecar targets from
+  `rerender_pla_watch.py`; only labels and titles change. The "The PLA Watch: "
+  prefix is stripped for display only. No. 14 → No. 15 is not linked, because
+  that would make historical pages depend on the native collection; the choice
+  is left to the owner.
+- **Inline rules on historical pages.** `output/briefs.css` is written only by
+  `site/render.py`, so historical pages carry an inline copy of the kind-label
+  and nav rules and are styled whichever render is published first.
+- **No new JavaScript.** No interaction or accessibility problem required it.
+  `scripts/pw_env.py`, `base.html`, `pla-watch-base.html`, `styles.css`,
+  sidecars and the editorial manifest are unchanged.
+
 ## 2026-10-12 — Expressive frontend Phase 3B (Briefs catalogue) implementation decisions
 
 Made within the Phase 3B brief; presentation only, not visual sign-off.

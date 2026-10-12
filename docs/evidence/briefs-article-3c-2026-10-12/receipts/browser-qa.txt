@@ -1,0 +1,209 @@
+# Browser QA — Phase 3C (Playwright 1.x, .venv; file:// on disposable renders, never tracked output/)
+Roots: review-after = tracked output/ symlinks + after renders (site/render.py --out; historical render mirroring
+rerender_pla_watch.py prev/next wiring). Each line reports document scrollWidth; 'OVERFLOW' or an 'errors:' line
+would mark a failure (console error or failed request). None appear below.
+
+## Full page, all 17 routes x 320/375/768/1280 (chromium)
+tools/shots.py review-after shots 320,375,768,1280 <17 routes>
+the-pla-watch/posts/2026-05-09.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-16.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-23.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-30.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-06.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-13.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-20.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-27.html @320: scrollWidth=320
+the-pla-watch/posts/2026-07-04.html @320: scrollWidth=320
+the-pla-watch/posts/2026-07-11.html @320: scrollWidth=320
+the-pla-watch/posts/2026-07-18.html @320: scrollWidth=320
+the-pla-watch/posts/2026-08-01.html @320: scrollWidth=320
+the-pla-watch/posts/2026-08-08.html @320: scrollWidth=320
+the-pla-watch/posts/2026-08-15.html @320: scrollWidth=320
+briefs/maritime-cooperation-2026.html @320: scrollWidth=320
+briefs/xiangshan-security-frames-defense-ties.html @320: scrollWidth=320
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-09.html @375: scrollWidth=375
+the-pla-watch/posts/2026-05-16.html @375: scrollWidth=375
+the-pla-watch/posts/2026-05-23.html @375: scrollWidth=375
+the-pla-watch/posts/2026-05-30.html @375: scrollWidth=375
+the-pla-watch/posts/2026-06-06.html @375: scrollWidth=375
+the-pla-watch/posts/2026-06-13.html @375: scrollWidth=375
+the-pla-watch/posts/2026-06-20.html @375: scrollWidth=375
+the-pla-watch/posts/2026-06-27.html @375: scrollWidth=375
+the-pla-watch/posts/2026-07-04.html @375: scrollWidth=375
+the-pla-watch/posts/2026-07-11.html @375: scrollWidth=375
+the-pla-watch/posts/2026-07-18.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-01.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-08.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-15.html @375: scrollWidth=375
+briefs/maritime-cooperation-2026.html @375: scrollWidth=375
+briefs/xiangshan-security-frames-defense-ties.html @375: scrollWidth=375
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @375: scrollWidth=375
+the-pla-watch/posts/2026-05-09.html @768: scrollWidth=768
+the-pla-watch/posts/2026-05-16.html @768: scrollWidth=768
+the-pla-watch/posts/2026-05-23.html @768: scrollWidth=768
+the-pla-watch/posts/2026-05-30.html @768: scrollWidth=768
+the-pla-watch/posts/2026-06-06.html @768: scrollWidth=768
+the-pla-watch/posts/2026-06-13.html @768: scrollWidth=768
+the-pla-watch/posts/2026-06-20.html @768: scrollWidth=768
+the-pla-watch/posts/2026-06-27.html @768: scrollWidth=768
+the-pla-watch/posts/2026-07-04.html @768: scrollWidth=768
+the-pla-watch/posts/2026-07-11.html @768: scrollWidth=768
+the-pla-watch/posts/2026-07-18.html @768: scrollWidth=768
+the-pla-watch/posts/2026-08-01.html @768: scrollWidth=768
+the-pla-watch/posts/2026-08-08.html @768: scrollWidth=768
+the-pla-watch/posts/2026-08-15.html @768: scrollWidth=768
+briefs/maritime-cooperation-2026.html @768: scrollWidth=768
+briefs/xiangshan-security-frames-defense-ties.html @768: scrollWidth=768
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @768: scrollWidth=768
+the-pla-watch/posts/2026-05-09.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-05-16.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-05-23.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-05-30.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-06.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-13.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-20.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-27.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-07-04.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-07-11.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-07-18.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-01.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-08.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-15.html @1280: scrollWidth=1280
+briefs/maritime-cooperation-2026.html @1280: scrollWidth=1280
+briefs/xiangshan-security-frames-defense-ties.html @1280: scrollWidth=1280
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @1280: scrollWidth=1280
+
+## Mixed state: new historical pages with the tracked (pre-3C) briefs.css
+Historical pages carry their own inline 3C rules, so they render correctly before output/briefs.css is regenerated.
+the-pla-watch/posts/2026-05-09.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-16.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-23.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-30.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-06.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-13.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-20.html @320: scrollWidth=320
+the-pla-watch/posts/2026-06-27.html @320: scrollWidth=320
+the-pla-watch/posts/2026-07-04.html @320: scrollWidth=320
+the-pla-watch/posts/2026-07-11.html @320: scrollWidth=320
+the-pla-watch/posts/2026-07-18.html @320: scrollWidth=320
+the-pla-watch/posts/2026-08-01.html @320: scrollWidth=320
+the-pla-watch/posts/2026-08-08.html @320: scrollWidth=320
+the-pla-watch/posts/2026-08-15.html @320: scrollWidth=320
+the-pla-watch/posts/2026-05-09.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-05-16.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-05-23.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-05-30.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-06.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-13.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-20.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-27.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-07-04.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-07-11.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-07-18.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-01.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-08.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-15.html @1280: scrollWidth=1280
+
+## Hero-to-reading transition, 6 representative routes x 4 widths
+tools/transition.py (viewport crops at the hero's bottom edge)
+the-pla-watch/posts/2026-05-16.html 320 scrollWidth 320
+the-pla-watch/posts/2026-06-27.html 320 scrollWidth 320
+the-pla-watch/posts/2026-08-01.html 320 scrollWidth 320
+the-pla-watch/posts/2026-08-15.html 320 scrollWidth 320
+briefs/maritime-cooperation-2026.html 320 scrollWidth 320
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html 320 scrollWidth 320
+the-pla-watch/posts/2026-05-16.html 375 scrollWidth 375
+the-pla-watch/posts/2026-06-27.html 375 scrollWidth 375
+the-pla-watch/posts/2026-08-01.html 375 scrollWidth 375
+the-pla-watch/posts/2026-08-15.html 375 scrollWidth 375
+briefs/maritime-cooperation-2026.html 375 scrollWidth 375
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html 375 scrollWidth 375
+the-pla-watch/posts/2026-05-16.html 768 scrollWidth 768
+the-pla-watch/posts/2026-06-27.html 768 scrollWidth 768
+the-pla-watch/posts/2026-08-01.html 768 scrollWidth 768
+the-pla-watch/posts/2026-08-15.html 768 scrollWidth 768
+briefs/maritime-cooperation-2026.html 768 scrollWidth 768
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html 768 scrollWidth 768
+the-pla-watch/posts/2026-05-16.html 1280 scrollWidth 1280
+the-pla-watch/posts/2026-06-27.html 1280 scrollWidth 1280
+the-pla-watch/posts/2026-08-01.html 1280 scrollWidth 1280
+the-pla-watch/posts/2026-08-15.html 1280 scrollWidth 1280
+briefs/maritime-cooperation-2026.html 1280 scrollWidth 1280
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html 1280 scrollWidth 1280
+
+## No JavaScript (JS=0), 375
+
+the-pla-watch/posts/2026-05-16.html @375: scrollWidth=375
+the-pla-watch/posts/2026-06-27.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-01.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-15.html @375: scrollWidth=375
+briefs/maritime-cooperation-2026.html @375: scrollWidth=375
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @375: scrollWidth=375
+the-pla-watch/posts/2026-05-16.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-27.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-01.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-15.html @1280: scrollWidth=1280
+briefs/maritime-cooperation-2026.html @1280: scrollWidth=1280
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @1280: scrollWidth=1280
+
+## Reduced motion (MOTION=reduce), 375
+
+the-pla-watch/posts/2026-05-16.html @375: scrollWidth=375
+the-pla-watch/posts/2026-06-27.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-01.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-15.html @375: scrollWidth=375
+briefs/maritime-cooperation-2026.html @375: scrollWidth=375
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @375: scrollWidth=375
+the-pla-watch/posts/2026-05-16.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-27.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-01.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-15.html @1280: scrollWidth=1280
+briefs/maritime-cooperation-2026.html @1280: scrollWidth=1280
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @1280: scrollWidth=1280
+
+## Forced colors (FORCED=active), 375
+
+the-pla-watch/posts/2026-05-16.html @375: scrollWidth=375
+the-pla-watch/posts/2026-06-27.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-01.html @375: scrollWidth=375
+the-pla-watch/posts/2026-08-15.html @375: scrollWidth=375
+briefs/maritime-cooperation-2026.html @375: scrollWidth=375
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @375: scrollWidth=375
+the-pla-watch/posts/2026-05-16.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-06-27.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-01.html @1280: scrollWidth=1280
+the-pla-watch/posts/2026-08-15.html @1280: scrollWidth=1280
+briefs/maritime-cooperation-2026.html @1280: scrollWidth=1280
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html @1280: scrollWidth=1280
+
+## Keyboard, 200% zoom, print — tools/a11y3c.py
+keyboard: Tab from page top until each issue-nav link holds focus; (side, outline-style, outline-width, rect fully in viewport).
+zoom200: 1280 CSS px at 200% == 640 px viewport with deviceScaleFactor 2; scrollWidth must stay 640.
+print: emulated print media; nav display must be none; caption 'block' where a figure exists, 'absent' where the page has none.
+the-pla-watch/posts/2026-05-09.html keyboard 1/1 [('next', 'solid', '2px', True)]
+the-pla-watch/posts/2026-05-09.html zoom200 scrollWidth 640 ok
+the-pla-watch/posts/2026-05-09.html print {'nav': 'none', 'caption': 'absent'}
+the-pla-watch/posts/2026-06-27.html keyboard 2/2 [('prev', 'solid', '2px', True), ('next', 'solid', '2px', True)]
+the-pla-watch/posts/2026-06-27.html zoom200 scrollWidth 640 ok
+the-pla-watch/posts/2026-06-27.html print {'nav': 'none', 'caption': 'block'}
+the-pla-watch/posts/2026-08-15.html keyboard 1/1 [('prev', 'solid', '2px', True)]
+the-pla-watch/posts/2026-08-15.html zoom200 scrollWidth 640 ok
+the-pla-watch/posts/2026-08-15.html print {'nav': 'none', 'caption': 'absent'}
+briefs/maritime-cooperation-2026.html keyboard 2/2 [('prev', 'solid', '2px', False), ('next', 'solid', '2px', False)]
+briefs/maritime-cooperation-2026.html zoom200 scrollWidth 640 ok
+briefs/maritime-cooperation-2026.html print {'nav': 'none', 'caption': 'absent'}
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html keyboard 1/1 [('prev', 'solid', '2px', False)]
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html zoom200 scrollWidth 640 ok
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html print {'nav': 'none', 'caption': 'absent'}
+
+## Native keyboard inView=False above, measured — tools/focusgap.py
+The focused link's bottom edge sits 0.016 / 0.125 px past innerHeight (900) after the browser's focus scroll: subpixel alignment, the link is visible (see shots/keyboard-focus-no15-next-1280.jpg).
+briefs/maritime-cooperation-2026.html {'cls': 'brief-issue-nav-prev', 'top': 783.421875, 'bottom': 900.015625, 'ih': 900, 'sy': 5234, 'max': 5977}
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html {'cls': 'brief-issue-nav-prev', 'top': 783.53125, 'bottom': 900.125, 'ih': 900, 'sy': 7528, 'max': 8271}
+
+## Citation / TOC navigation into collapsed evidence — tools/details_nav.py (native No. 15)
+For #s-compare and #s-coverage: loading the URL with the fragment, and clicking the TOC link, each open the enclosing <details>; heading then in view. Historical pages have no collapsed sections targeted by TOC or citations (checked with BeautifulSoup during the audit).
+chromium [('s-compare', 'url-load open=True', 'toc-click open=True', 'heading in view=True'), ('s-coverage', 'url-load open=True', 'toc-click open=True', 'heading in view=True')]
+firefox [('s-compare', 'url-load open=True', 'toc-click open=True', 'heading in view=True'), ('s-coverage', 'url-load open=True', 'toc-click open=True', 'heading in view=True')]
+webkit [('s-compare', 'url-load open=True', 'toc-click open=True', 'heading in view=True'), ('s-coverage', 'url-load open=True', 'toc-click open=True', 'heading in view=True')]

@@ -1,0 +1,36 @@
+# validate_output.py
+## tracked output/ (the deploy gate as CI runs it)
+WARN:  the-pla-watch/posts/2026-05-09.json: week_start→week_ending spans 2 days, expected 6 (pilot edition)
+WARN:  the-pla-watch/posts/2026-05-09.json: 13/13 source_trail entries have no date
+WARN:  the-pla-watch/posts/2026-05-09.json: n_significant=1 but no source_trail entry is marked significant
+WARN:  the-pla-watch/posts/2026-05-16.json: 11/11 source_trail entries have no date
+WARN:  the-pla-watch/posts/2026-05-16.json: n_significant=3 but no source_trail entry is marked significant
+WARN:  the-pla-watch/posts/2026-05-23.json: 3/3 source_trail entries have no date
+WARN:  LinkedIn file missing for edition 2026-05-09
+WARN:  LinkedIn file missing for edition 2026-05-16
+WARN:  LinkedIn file missing for edition 2026-05-23
+WARN:  cadence gap: 2026-07-18 → 2026-08-01 is 14 days (expected 7)
+Validation passed (10 warning(s)). Output OK: output
+
+## overlay = tracked output/ + Phase 3C disposable renders (the post-rerender state)
+## 3 LinkedIn warnings are location-scoped (output_dir.parent/the-pla-watch/linkedin) and cannot fire outside the repo
+WARN:  the-pla-watch/posts/2026-05-09.json: week_start→week_ending spans 2 days, expected 6 (pilot edition)
+WARN:  the-pla-watch/posts/2026-05-09.json: 13/13 source_trail entries have no date
+WARN:  the-pla-watch/posts/2026-05-09.json: n_significant=1 but no source_trail entry is marked significant
+WARN:  the-pla-watch/posts/2026-05-16.json: 11/11 source_trail entries have no date
+WARN:  the-pla-watch/posts/2026-05-16.json: n_significant=3 but no source_trail entry is marked significant
+WARN:  the-pla-watch/posts/2026-05-23.json: 3/3 source_trail entries have no date
+WARN:  cadence gap: 2026-07-18 → 2026-08-01 is 14 days (expected 7)
+Validation passed (7 warning(s)). Output OK: overlay
+
+# verify_frontend_delivery.py
+overlay: Checked 7609 routes: 0 delivery budget failures
+tracked output/: Checked 7609 routes: 0 delivery budget failures
+
+# verify_frontend_integrity (overlay)
+Verified all 5097 record bodies, titles, source URLs, dates and compatibility routes
+
+# DB
+pla_watch.db: OK
+
+# git status -- output/ pla_watch.db (empty = untouched)

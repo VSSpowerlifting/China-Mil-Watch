@@ -129,7 +129,9 @@ from core.edition_identity import (                                  # noqa: E40
 from core.brief_collection import (                                  # noqa: E402
     FEED_ROUTE as BRIEFS_FEED_ROUTE, MEDIA_DIRNAME as BRIEFS_MEDIA,
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
-    build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
+    build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose,
+    adjacent_items)
+from core.article_media import native_article_media                  # noqa: E402
 from core.brief_contract import validate_readiness
 from core.catalogue_media import (                                   # noqa: E402
     load_admissions as load_catalogue_admissions,
@@ -2834,6 +2836,8 @@ def build(out_dir: Path, title: str, db_path: Path,
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_bytes(image["file"].read_bytes())
                     written.append(route)
+            brief["article_media"] = native_article_media(brief["photo"])
+            brief["adjacent"] = adjacent_items(collection, slug)
             # A cited record this site preserves links to its record page; one
             # it does not hold links only to the source.
             for group in brief["trail_groups"]:

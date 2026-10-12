@@ -21,3 +21,11 @@
 @media(max-width:600px){.brief-hero{padding-bottom:48px}.brief-hero::after{height:32px;border-radius:90% 0 0 0}.brief-reading-navigation{padding:14px 20px 24px}.brief-main{background:transparent}}
 @media print,(forced-colors:active){.brief-hero{padding-bottom:0;background-image:none}.brief-hero::before,.brief-hero::after{display:none}.brief-reading-navigation{background-image:none;border-radius:0}}
 @media(forced-colors:active){.brief-hero .historical-veil figcaption{color:CanvasText;background:Canvas}.brief-hero .historical-veil figcaption a{color:LinkText}}
+/* Phase 3C: the hero image names its kind; previous/next Briefs close the article. */
+@media(max-width:900px){.brief-reading-navigation{align-self:stretch}}
+.article-media-kind{font-weight:600;color:var(--band-ink)}
+.brief-author .brief-author-label{font:600 13px/1.6 var(--sans);color:var(--ink-2);margin:0}.brief-author .brief-author-name{font:400 22px/1.3 var(--display);margin:4px 0 0}.brief-author .brief-author-title{color:var(--ink-2);margin:0 0 12px}.brief-author-links{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:0 1.25rem}.brief-author-links a{display:inline-flex;align-items:center;min-height:44px;font:14px/1.6 var(--sans)}
+.brief-issue-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 32px;margin:48px 0 16px;padding-top:16px;border-top:1px solid var(--rule)}.brief-issue-nav a{display:flex;flex-direction:column;gap:2px;min-height:44px;padding-block:8px;color:var(--ink);text-decoration:none}.brief-issue-nav-next{grid-column:2;align-items:flex-end;text-align:right}.brief-issue-nav-label{font:600 13px/1.6 var(--sans);color:var(--accent-ink)}.brief-issue-nav-meta{font:13px/1.6 var(--sans);color:var(--muted)}.brief-issue-nav-title{font:400 22px/1.25 var(--display);text-decoration-line:underline;text-decoration-thickness:1px;text-underline-offset:.2em;text-wrap:pretty}.brief-issue-nav a:hover .brief-issue-nav-title{text-decoration-thickness:2px}
+@media(max-width:600px){.brief-issue-nav{grid-template-columns:minmax(0,1fr)}.brief-issue-nav-next{grid-column:1;align-items:flex-start;text-align:left}}
+@media print{.brief-issue-nav{display:none}}
+@media(forced-colors:active){.brief-issue-nav a,.brief-issue-nav-label,.brief-issue-nav-meta{color:LinkText}}

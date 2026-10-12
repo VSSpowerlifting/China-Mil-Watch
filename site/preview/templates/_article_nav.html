@@ -1,0 +1,16 @@
+{#- Previous / next Brief at the foot of an opened article (Phase 3C), shared
+    by the native and the historical page so both read the same way. `prev`
+    and `next` are {href, number, date, title} or None; the order is the
+    collection's (publication week), whichever series an item appeared in. -#}
+{% macro issue_nav(prev, next, aria_label, nav_class='') -%}
+{% if prev or next %}
+    <nav class="brief-issue-nav{% if nav_class %} {{ nav_class }}{% endif %}" aria-label="{{ aria_label }}">
+{% if prev %}
+      <a class="brief-issue-nav-prev" href="{{ prev.href }}" rel="prev"><span class="brief-issue-nav-label"><span aria-hidden="true">← </span>Previous Brief</span> <span class="brief-issue-nav-meta">{% if prev.number %}No. {{ prev.number }} · {% endif %}<time datetime="{{ prev.date }}">{{ prev.date|reader_date }}</time></span> <span class="brief-issue-nav-title">{{ prev.title }}</span></a>
+{% endif %}
+{% if next %}
+      <a class="brief-issue-nav-next" href="{{ next.href }}" rel="next"><span class="brief-issue-nav-label">Next Brief<span aria-hidden="true"> →</span></span> <span class="brief-issue-nav-meta">{% if next.number %}No. {{ next.number }} · {% endif %}<time datetime="{{ next.date }}">{{ next.date|reader_date }}</time></span> <span class="brief-issue-nav-title">{{ next.title }}</span></a>
+{% endif %}
+    </nav>
+{% endif %}
+{%- endmacro %}

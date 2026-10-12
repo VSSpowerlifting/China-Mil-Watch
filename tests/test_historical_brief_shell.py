@@ -4,6 +4,7 @@ import hashlib
 import json
 import functools
 import http.server
+import re
 import shutil
 import socketserver
 import tempfile
@@ -13,12 +14,35 @@ import unittest
 
 from bs4 import BeautifulSoup
 
+from core.article_media import CHANGE_NOTE, CONTEXT_NOTE, PRESERVED_MEDIA
 from scripts.historical_brief_render import render_historical_brief, render_historical_utility, SECTIONS
 from scripts.pw_env import inline_markup, make_pw_env
 from scripts.rerender_pla_watch import _build_post_context, _flatten_term
 
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "output/the-pla-watch/posts"
+
+# Phase 3C changed four regions of an earlier issue's page: its inline style,
+# the hero figure of a Photograph or Signal Veil, the trail's model flag and
+# the issue links. A page published before the owner's post-merge rerender
+# still carries the earlier form, so those regions alone are set aside on both
+# sides; a held figure (No. 1, No. 10, No. 12) is compared as it stands.
+PHASE_3C_MARKER = "brief-issue-nav-label"
+_3C_STYLE = ("issue-nav", "article-media-kind", ".evidence", "Phase 3C", "carries these rules")
+_3C_NAV = re.compile(r' *<nav class="(?:brief-issue-nav )?historical-issue-nav".*?</nav>\n', re.S)
+_3C_FIGURE = re.compile(r' *<figure class="historical-veil".*?</figure>\n', re.S)
+
+
+def _outside_phase_3c(page, media_figure):
+    head, end, body = page.partition("</style>")
+    head = head.replace("@media print{.brief-issue-nav{display:none}", "@media print{")
+    head = "".join(line for line in head.splitlines(True)
+                   if not any(marker in line for marker in _3C_STYLE))
+    body = _3C_NAV.sub("", body, count=1)
+    if media_figure:
+        body = _3C_FIGURE.sub("", body, count=1)
+    body = body.replace('<span class="evidence evidence--model">Model-flagged</span>', "Model-flagged")
+    return head + end + body
 
 
 class HistoricalBriefShellTests(unittest.TestCase):
@@ -161,10 +185,35 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 self.assertEqual(figure.img["src"], original["duo"])
                 self.assertEqual(figure.img["alt"], original["alt"])
                 self.assertIn(original["mask_focus"], figure.img["style"])
-                self.assertEqual(figure.a["href"], original["source_page"])
-                self.assertIn(original["source_id"], figure.get_text())
-                self.assertIn(original.get("subject") or "", figure.get_text())
-                self.assertIn("Context, not evidence", figure.get_text())
+                caption = figure.figcaption.get_text()
+                self.assertIn(original.get("subject") or "", caption)
+                hrefs = [a["href"] for a in figure.select("a[href]")]
+                if original["id"] in PRESERVED_MEDIA:
+                    # Held: the pre-3C figure, unrelabelled.
+                    self.assertFalse(figure.has_attr("data-article-media"))
+                    self.assertEqual(hrefs, [original["source_page"]])
+                    self.assertTrue(caption.startswith("Image: "))
+                    self.assertIn(original["source_id"], caption)
+                    self.assertIn("Context, not evidence", caption)
+                elif original["kind"] == "source":
+                    self.assertEqual(figure["data-article-media"], "signal-veil")
+                    self.assertEqual(figure.select_one(".article-media-kind").get_text(), "Signal Veil")
+                    self.assertEqual(hrefs, [original["source_page"]])
+                    self.assertIn(original["source_id"], caption)
+                    self.assertIn("Context, not evidence", caption)
+                    # The collector note is never shown as a credit.
+                    if original.get("credit"):
+                        self.assertNotIn(original["credit"], caption)
+                else:
+                    self.assertEqual(original["kind"], "curated")
+                    self.assertEqual(figure["data-article-media"], "photograph")
+                    self.assertEqual(figure.select_one(".article-media-kind").get_text(), "Photograph")
+                    self.assertIn(original["source_page"], hrefs)
+                    for segment in original["credit"].split(" · "):
+                        self.assertIn(segment.strip(), caption)
+                    self.assertIn(original["license"], caption)
+                    self.assertIn(CHANGE_NOTE, caption)
+                    self.assertIn(CONTEXT_NOTE, caption)
                 self.assertFalse(soup.select(".brief-opening-photo"),
                     "Resolved Signal Veil replaces in-page cover, not duplicates it")
 
@@ -217,7 +266,7 @@ class HistoricalBriefShellTests(unittest.TestCase):
         )
 
     def test_checked_in_pages_equal_current_sidecar_render(self):
-        for ctx, rendered, _ in self.posts:
+        for ctx, rendered, soup in self.posts:
             with self.subTest(issue=ctx["issue_number"]):
                 published = POSTS / (ctx["date"] + ".html")
                 # Source-only candidates may add these two inert presentation hooks
@@ -230,6 +279,10 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 checked_in = published.read_text(encoding="utf-8").replace(
                     ' data-surface="historical" data-route="analysis.html"', '').replace(
                     '<link rel="stylesheet" href="../../surfaces.css">\n', '')
+                if PHASE_3C_MARKER not in checked_in:
+                    media_figure = bool(soup.select("figure[data-article-media]"))
+                    candidate = _outside_phase_3c(candidate, media_figure)
+                    checked_in = _outside_phase_3c(checked_in, media_figure)
                 self.assertEqual(checked_in, candidate)
 
     def test_links_and_assets_use_the_correct_two_level_root(self):

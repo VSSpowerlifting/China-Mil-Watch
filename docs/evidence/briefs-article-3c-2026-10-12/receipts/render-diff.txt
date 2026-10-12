@@ -1,0 +1,21 @@
+# Disposable render diff at base 18b57684e6 vs Phase 3C head (never output/)
+## site/render.py --out (base-site vs after-site)
+Files base-site/briefs/maritime-cooperation-2026.html and after-site/briefs/maritime-cooperation-2026.html differ
+Files base-site/briefs/trident-resolve-regional-scale-specific-chinese-tasks.html and after-site/briefs/trident-resolve-regional-scale-specific-chinese-tasks.html differ
+Files base-site/briefs/xiangshan-security-frames-defense-ties.html and after-site/briefs/xiangshan-security-frames-defense-ties.html differ
+Files base-site/briefs.css and after-site/briefs.css differ
+## historical render (base-hist vs after-hist)
+Files base-hist/the-pla-watch/posts/2026-05-09.html and after-hist/the-pla-watch/posts/2026-05-09.html differ
+Files base-hist/the-pla-watch/posts/2026-05-16.html and after-hist/the-pla-watch/posts/2026-05-16.html differ
+Files base-hist/the-pla-watch/posts/2026-05-23.html and after-hist/the-pla-watch/posts/2026-05-23.html differ
+Files base-hist/the-pla-watch/posts/2026-05-30.html and after-hist/the-pla-watch/posts/2026-05-30.html differ
+Files base-hist/the-pla-watch/posts/2026-06-06.html and after-hist/the-pla-watch/posts/2026-06-06.html differ
+Files base-hist/the-pla-watch/posts/2026-06-13.html and after-hist/the-pla-watch/posts/2026-06-13.html differ
+Files base-hist/the-pla-watch/posts/2026-06-20.html and after-hist/the-pla-watch/posts/2026-06-20.html differ
+Files base-hist/the-pla-watch/posts/2026-06-27.html and after-hist/the-pla-watch/posts/2026-06-27.html differ
+Files base-hist/the-pla-watch/posts/2026-07-04.html and after-hist/the-pla-watch/posts/2026-07-04.html differ
+Files base-hist/the-pla-watch/posts/2026-07-11.html and after-hist/the-pla-watch/posts/2026-07-11.html differ
+Files base-hist/the-pla-watch/posts/2026-07-18.html and after-hist/the-pla-watch/posts/2026-07-18.html differ
+Files base-hist/the-pla-watch/posts/2026-08-01.html and after-hist/the-pla-watch/posts/2026-08-01.html differ
+Files base-hist/the-pla-watch/posts/2026-08-08.html and after-hist/the-pla-watch/posts/2026-08-08.html differ
+Files base-hist/the-pla-watch/posts/2026-08-15.html and after-hist/the-pla-watch/posts/2026-08-15.html differ

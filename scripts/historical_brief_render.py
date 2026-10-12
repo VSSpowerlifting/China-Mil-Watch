@@ -14,9 +14,11 @@ from urllib.parse import urlsplit
 from jinja2 import Environment, FileSystemLoader
 
 from config import SITE_ORIGIN
+from core.article_media import historical_article_media
+from core.brief_collection import display_title as series_display_title
 from core.edition_identity import COLLECTION_NAME, resolve_identity
 from core.topography import topography_style
-from scripts.pw_env import format_date, inline_markup
+from scripts.pw_env import format_date, inline_markup, load_editorial_manifest
 
 ROOT = Path(__file__).resolve().parent.parent
 SECTIONS = (
@@ -56,6 +58,23 @@ def _historical_author_links(links: dict) -> list[dict]:
     return safe
 
 
+def _manifest_entry(veil) -> dict:
+    """The editorial manifest entry behind a curated veil, read only."""
+    if not veil or veil.get("kind") != "curated":
+        return {}
+    return next((e for e in load_editorial_manifest()
+                 if e.get("id") == veil.get("id")), {})
+
+
+def _issue_link(post) -> dict:
+    """An adjacent issue for the shared previous/next navigation."""
+    if not post:
+        return None
+    return {"href": f"{post['date']}.html", "number": post.get("issue_number"),
+            "date": post.get("week_ending"),
+            "title": series_display_title(post.get("title"))}
+
+
 def render_historical_brief(context: dict) -> str:
     """Accept the existing resolved post context; only presentation changes."""
     gp = _site_definition()
@@ -68,11 +87,8 @@ def render_historical_brief(context: dict) -> str:
     # Leave the resolved author/publication context intact. Current shell and
     # historical edition data deliberately have separate namespaces.
     edition = dict(context)
-    display_title = edition.get("title", "")
-    for prefix in ("The PLA Watch: ", "The PLA Watch — ", "The PLA Watch – "):
-        if display_title.startswith(prefix):
-            display_title = display_title[len(prefix):]
-            break
+    display_title = series_display_title(edition.get("title", ""))
+    veil = edition.get("pw_veil")
     page_url = edition.get("page_url") or (
         f"{SITE_ORIGIN}/the-pla-watch/posts/{edition['date']}.html")
     rendered = env.get_template("historical-brief.html").render(
@@ -81,6 +97,10 @@ def render_historical_brief(context: dict) -> str:
         live_base=SITE_ORIGIN, page="analysis.html", root_path="../../",
         brief={}, desks=[], timelines=[], review_mode=False,
         edition=edition, display_title=display_title,
+        article_media=historical_article_media(
+            veil, edition.get("cover_media_item"), _manifest_entry(veil)),
+        adjacent={"previous": _issue_link(edition.get("prev_post")),
+                  "next": _issue_link(edition.get("next_post"))},
         historical_author_links=_historical_author_links(edition.get("author_links")),
         sections=[(key, anchor, heading) for key, anchor, heading in SECTIONS
                   if edition.get(key)],

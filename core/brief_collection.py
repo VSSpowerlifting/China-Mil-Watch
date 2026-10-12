@@ -125,6 +125,22 @@ def brief_route(slug: str) -> str:
     return "%s/%s.html" % (ROUTE_DIR, slug)
 
 
+#: The former series' masthead, as it opens an earlier issue's stored title.
+#: The stored title keeps it (citations quote it); headings and navigation
+#: show the title without it, since the masthead is stated in provenance.
+SERIES_TITLE_PREFIXES = ("The PLA Watch: ", "The PLA Watch — ",
+                         "The PLA Watch – ")
+
+
+def display_title(title) -> str:
+    """A stored title without the former series' masthead prefix."""
+    text = str(title or "")
+    for prefix in SERIES_TITLE_PREFIXES:
+        if text.startswith(prefix):
+            return text[len(prefix):]
+    return text
+
+
 def paragraphs(text) -> list:
     """Blank-line separated paragraphs of plain prose. Nothing is markup."""
     return [p.strip() for p in re.split(r"\n\s*\n", str(text or ""))
@@ -399,6 +415,36 @@ def load_collection(editions: list, registry, *,
     return Collection(rows=tuple(rows), briefs=tuple(briefs),
                       withheld=tuple(withheld),
                       sidecars={slug: sc for slug, sc in published})
+
+
+def adjacent_items(collection: Collection, slug: str) -> dict:
+    """
+    The items either side of a brief in the collection order, for its
+    previous/next navigation: `previous` is the next older item and `next`
+    the next newer one, whichever series each first appeared in; None at an
+    end. Each `href` is relative to `briefs/`: a brief links its sibling page,
+    an earlier issue its rendered page under `the-pla-watch/posts/` (or its
+    live address when no page was rendered locally).
+    """
+    rows = collection.rows
+    at = next((i for i, r in enumerate(rows)
+               if r["kind"] == "brief" and r["entry"]["slug"] == slug), None)
+    if at is None:
+        return {"previous": None, "next": None}
+
+    def link(row):
+        e = row["entry"]
+        if row["kind"] == "brief":
+            href = "%s.html" % e["slug"]
+        elif e.get("rendered_locally"):
+            href = "../the-pla-watch/posts/%s.html" % e["slug"]
+        else:
+            href = e["url"]
+        return {"href": href, "number": e.get("issue"), "date": e.get("date"),
+                "title": display_title(e.get("title"))}
+
+    return {"previous": link(rows[at + 1]) if at + 1 < len(rows) else None,
+            "next": link(rows[at - 1]) if at > 0 else None}
 
 
 # ── Signal Veil ───────────────────────────────────────────────────────────────

@@ -1,0 +1,22 @@
+{#- The opened article's hero image, from `core.article_media` (Phase 3C).
+
+    One figure per kind, each naming what it is in text: a Photograph with its
+    full credit, licence and IPR's change note; a Signal Veil with the
+    source-linked caption it always carried; an Editorial plate, decorative
+    and never evidence. `none` and `preserved` render nothing here: a text-led
+    hero needs no figure, and a preserved image keeps its own markup in the
+    page template. A Signal Veil's stored `credit` is never read. -#}
+{% macro article_figure(m, figure_class='historical-veil', aria_label='Historical visual context, not evidence') -%}
+{% if m.kind in ('photograph', 'signal-veil', 'plate') %}
+    <figure class="{{ figure_class }}"{% if m.id %} data-editorial-id="{{ m.id }}"{% endif %} data-article-media="{{ m.kind }}"{% if aria_label and m.kind != 'plate' %} aria-label="{{ aria_label }}"{% endif %}>
+      <img src="{{ m.src }}" alt="{{ m.alt }}"{% if m.focus %} style="object-position:{{ m.focus }}"{% endif %} loading="eager" decoding="async">
+{% if m.kind == 'photograph' %}
+      <figcaption><span class="article-media-kind">{{ m.label }}</span>{% if m.subject %} · {{ m.subject }}{% endif %} · {% for p in m.credit %}{{ p.before }}{% if p.href %}<a href="{{ p.href }}" rel="{{ p.rel }}">{{ p.text }}</a>{% else %}{{ p.text }}{% endif %}{% if not loop.last %} · {% endif %}{% endfor %}. {{ m.notes | join(' ') }}</figcaption>
+{% elif m.kind == 'signal-veil' %}
+      <figcaption><span class="article-media-kind">{{ m.label }}</span> · Image: <a href="{{ m.source_page }}" rel="noopener nofollow">{{ m.source_id }}</a>{% if m.subject %} · {{ m.subject }}{% endif %} · Context, not evidence.</figcaption>
+{% else %}
+      <figcaption><span class="article-media-kind">{{ m.label }}</span> · {{ m.notes | join(' ') }}</figcaption>
+{% endif %}
+    </figure>
+{% endif %}
+{%- endmacro %}

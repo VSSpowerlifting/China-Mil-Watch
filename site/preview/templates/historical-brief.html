@@ -1,5 +1,10 @@
 {% extends "base.html" %}
-{# Earlier Briefs: current site identity, unchanged historical evidence. #}
+{% from "_article_media.html" import article_figure %}
+{% from "_article_nav.html" import issue_nav %}
+{# Earlier Briefs: current site identity, unchanged historical evidence.
+   The hero image is presented by `core.article_media`: a curated Photograph
+   or a cited-source Signal Veil through `article_figure`; a held image keeps
+   its pre-3C markup below, byte for byte. #}
 {% block title %}{{ display_title }} — Indo-Pacific Record{% endblock %}
 {% block description %}{{ edition.dek }}{% endblock %}
 {% block og_type %}article{% endblock %}
@@ -19,8 +24,6 @@
 .historical-source-list .source-card-original{display:block;margin:.35rem 0;color:var(--ink-2)}
 .brief-section .historical-source-meta{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
 .brief-citation{overflow-wrap:anywhere;font:15px/1.8 var(--sans)}
-.historical-issue-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin:2rem 0}
-.historical-issue-nav a{min-height:44px;display:inline-flex;align-items:center}
 .historical-media img{width:100%;height:auto}
 .historical-media figcaption{font-size:.875rem;color:var(--muted)}
 .historical-veil{grid-area:photo;margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
@@ -29,7 +32,14 @@
 .historical-veil a{color:inherit;text-underline-offset:.2em}
 .historical-author-links{display:flex;gap:.5rem 1.25rem;flex-wrap:wrap}
 .historical-author-links a{display:inline-flex;align-items:center;min-height:44px}
-@media print{.historical-author>div{display:block!important}.historical-source-list a::after{content:" (" attr(href) ")";font-size:.75rem;overflow-wrap:anywhere}}
+/* Phase 3C. A rerendered issue can be published before the briefs.css that
+   carries these rules, so it holds its own copy of them. */
+.article-media-kind{font-weight:600;color:var(--band-ink)}
+.historical-source-meta .evidence{font-size:inherit}
+.brief-issue-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 32px;margin:48px 0 16px;padding-top:16px;border-top:1px solid var(--rule)}.brief-issue-nav a{display:flex;flex-direction:column;gap:2px;min-height:44px;padding-block:8px;color:var(--ink);text-decoration:none}.brief-issue-nav-next{grid-column:2;align-items:flex-end;text-align:right}.brief-issue-nav-label{font:600 13px/1.6 var(--sans);color:var(--accent-ink)}.brief-issue-nav-meta{font:13px/1.6 var(--sans);color:var(--muted)}.brief-issue-nav-title{font:400 22px/1.25 var(--display);text-decoration-line:underline;text-decoration-thickness:1px;text-underline-offset:.2em;text-wrap:pretty}.brief-issue-nav a:hover .brief-issue-nav-title{text-decoration-thickness:2px}
+@media(max-width:600px){.brief-issue-nav{grid-template-columns:minmax(0,1fr)}.brief-issue-nav-next{grid-column:1;align-items:flex-start;text-align:left}}
+@media(forced-colors:active){.brief-issue-nav a,.brief-issue-nav-label,.brief-issue-nav-meta{color:LinkText}}
+@media print{.brief-issue-nav{display:none}.historical-author>div{display:block!important}.historical-source-list a::after{content:" (" attr(href) ")";font-size:.75rem;overflow-wrap:anywhere}}
 </style>
 {% endblock %}
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
@@ -46,6 +56,7 @@
       <p class="brief-byline">By <span class="byline-name">{{ edition.author_name }}</span></p>
       <p class="historical-provenance">Originally published as {{ edition.series_name }}{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %} under {{ edition.publication }}. Part of <a href="{{ root }}analysis.html">Indo-Pacific Record Briefs</a>.</p>
     </div>
+{% if article_media.kind == 'preserved' %}
 {% if edition.pw_veil %}    <figure class="historical-veil" data-editorial-id="{{ edition.pw_veil.id }}" aria-label="Historical visual context, not evidence">
       <img src="{{ edition.pw_veil.duo }}" alt="{{ edition.pw_veil.alt }}" style="object-position:{{ edition.pw_veil.mask_focus }}" loading="eager" decoding="async">
       <figcaption>Image: <a href="{{ edition.pw_veil.source_page }}" rel="noopener nofollow">{{ edition.pw_veil.source_id }}</a>{% if edition.pw_veil.subject %} · {{ edition.pw_veil.subject }}{% endif %} · Context, not evidence.</figcaption>
@@ -54,6 +65,8 @@
     {% if edition.cover_media_item and edition.cover_media_item.src and not edition.pw_veil %}
     <figure class="brief-opening-photo"><img src="{{ edition.cover_media_item.src }}" alt="{{ edition.cover_media_item.alt }}" fetchpriority="high"><figcaption>{% if edition.cover_media_item.credit %}{{ edition.cover_media_item.credit }} · {% endif %}<a href="{{ edition.cover_media_item.source_page or edition.cover_media_item.source_url }}" rel="noopener nofollow">Source photograph</a> · Context, not evidence.{% if edition.cover_media_item.caption %} <span>{{ edition.cover_media_item.caption }}</span>{% endif %}</figcaption></figure>
     {% endif %}
+{% else %}
+{{ article_figure(article_media) }}{% endif %}
   </div>
 </section>
 {% endblock %}
@@ -96,7 +109,7 @@
         {% for item in edition.articles %}<li>
           <a class="source-card-title brief-record-title" href="{{ item.url }}" rel="noopener">{{ item.title }}</a>
           {% if item.title_zh %}<span class="source-card-original"{% if item.title_zh|has_cjk %} lang="zh-Hans"{% endif %}>{{ item.title_zh }}</span>{% endif %}
-          <p class="historical-source-meta">{{ item.source }}{% if item.date %} · <time datetime="{{ item.date }}">{{ item.date }}</time>{% endif %}{% if item.is_significant %} · Model-flagged{% endif %}</p>
+          <p class="historical-source-meta">{{ item.source }}{% if item.date %} · <time datetime="{{ item.date }}">{{ item.date }}</time>{% endif %}{% if item.is_significant %} · <span class="evidence evidence--model">Model-flagged</span>{% endif %}</p>
         </li>{% endfor %}
       </ol>
       {% if edition.source_trail_truncated %}<p>The trail is a selected subset. <a href="{{ root }}archive.html">Explore the preserved records</a>.</p>{% endif %}
@@ -115,10 +128,7 @@
     <section class="brief-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>
       <p class="brief-citation" id="pw-cite">{% if edition.author_name %}{{ edition.author_name }}, {% endif %}“{{ edition.title }},” <em>{{ edition.series_name }}</em>{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %}, {{ edition.publication }}, {{ edition.week_ending|reader_date }}. {{ edition.page_url }}</p>
     </section>
-    <nav class="historical-issue-nav" aria-label="Adjacent historical issues">
-      {% if edition.prev_post %}<a href="{{ edition.prev_post.date }}.html">← No. {{ edition.prev_post.issue_number }} · {{ edition.prev_post.week_ending|reader_date }}</a>{% endif %}
-      {% if edition.next_post %}<a href="{{ edition.next_post.date }}.html">No. {{ edition.next_post.issue_number }} · {{ edition.next_post.week_ending|reader_date }} →</a>{% endif %}
-    </nav>
+{% if adjacent is defined %}{{ issue_nav(adjacent.previous, adjacent.next, 'Adjacent historical issues', 'historical-issue-nav') }}{% endif %}
     <p><a href="{{ root }}analysis.html">All Indo-Pacific Record Briefs</a></p>
   </article>
 </div>
