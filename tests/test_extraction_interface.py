@@ -259,11 +259,25 @@ class TestThisEnablesNothing(unittest.TestCase):
         collection += list((REPO_ROOT / "scraper").rglob("*.py"))
         collection += list((REPO_ROOT / ".github" / "workflows").glob("*.yml"))
         editorial_workflow = "weekly_briefs_editorial_handoff.yml"
+        korea_contract = "korea_internal_registry_contract.yml"
         for path in collection:
             text = path.read_text(encoding="utf-8")
             with self.subTest(file=str(path.relative_to(REPO_ROOT))):
                 self.assertNotIn("core.viewmodel", text)
-                if path.name != editorial_workflow:
+                if path.name == korea_contract:
+                    # The registry filename is a PR paths filter, not an
+                    # import or collection dependency. Keep this exception
+                    # limited to the read-only Korea governance test workflow.
+                    self.assertIn("on:\n  pull_request:", text)
+                    self.assertIn('      - "core/desk_registry.py"', text)
+                    self.assertIn("permissions:\n  contents: read", text)
+                    self.assertIn("python -m unittest tests.test_korea_internal_registry", text)
+                    for forbidden in ("from core.desk_registry import",
+                                      "import core.desk_registry",
+                                      "from pipeline import", "pipeline.run(",
+                                      "git push", "workflow_dispatch:"):
+                        self.assertNotIn(forbidden, text)
+                elif path.name != editorial_workflow:
                     self.assertNotIn("desk_registry", text)
                 else:
                     # This is an editorial consumer of production records,

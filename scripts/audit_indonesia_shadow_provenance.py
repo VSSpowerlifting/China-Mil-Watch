@@ -185,8 +185,8 @@ def assess(clock, ledgers, actual_db_sha256, actions):
         if index == 0:
             require(before is None and run == clock["day_zero_run_id"],
                     "first ledger must match pinned Day-0 clock and have no previous state")
-            require(started == utc(clock["day_zero_utc"]),
-                    "first run clock must match Day-0 timestamp")
+            require(finished == utc(clock["day_zero_utc"]),
+                    "first run completion must match durable Day-0 clock")
         else:
             require(type(before) is str and SHA256.fullmatch(before) and before == prev,
                     "broken adjacent ledger state SHA256 link")
