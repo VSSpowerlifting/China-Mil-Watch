@@ -48,9 +48,8 @@ class PhilippinesPublisherEntrypointTests(DeskCase):
         html = self.page("vietnam.html")
         self.assertNotIn("https://www.afp.mil.ph/", html)
         self.assertNotIn("https://nsc.gov.ph/category/official-statements/", html)
-        # Vietnam now has its own verified institutional indices. This test
-        # guards *Philippine* link leakage, not a global no-links rule.
-        self.assertIn("Open official publisher index", html)
+        # The existence of Vietnam's own institutional links is tested by
+        # the Vietnam source-navigation contract, not this Philippines test.
 
 
 if __name__ == "__main__":
