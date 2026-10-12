@@ -194,7 +194,7 @@ class KoreaPrivateStructuralProjectionTests(unittest.TestCase):
                     self.gp.build(dest, "Must not publish",
                                   ROOT / "pla_watch.db", review_korea=True,
                                   korea_review_packet=self.packet)
-                self.assertFalse((dest / "korea.html").exists())
+                self.assertFalse(dest.exists(), "invalid reviewer packet left partial preview files")
 
     def test_packet_not_accepted_for_normal_site_or_from_repository(self):
         dest = self.root / "normal-release"
