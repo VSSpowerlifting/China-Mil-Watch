@@ -1,0 +1,102 @@
+name: Indonesia Desk — pinned official-link review queue
+
+# Exact existing shadow Git branch only. Metadata-only reviewer artifacts,
+# never publisher bodies, images, translations or human/rights approval.
+on:
+  pull_request:
+    paths:
+      - "scripts/prepare_indonesia_reference_review_queue.py"
+      - "tests/test_prepare_indonesia_reference_review_queue.py"
+      - ".github/workflows/indonesia_pinned_reference_review_queue.yml"
+  workflow_dispatch:
+    inputs:
+      approve_existing_git_state_only:
+        description: 'Generate metadata-only review queue from existing state; no publisher requests'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  pinned-reference-review:
+    if: github.event_name == 'pull_request' || inputs.approve_existing_git_state_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Preserve protected source and output baselines
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/id-review-db.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/id-review-output.sha"
+      - name: Synthetic metadata and anti-body tests
+        run: python -m unittest tests.test_prepare_indonesia_reference_review_queue -v
+      - name: Pin immutable existing Indonesia Git state
+        shell: bash
+        env:
+          SOURCE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/indonesia-state"
+          git -C "$RUNNER_TEMP/indonesia-state" init -q
+          git -C "$RUNNER_TEMP/indonesia-state" remote add origin "$SOURCE_REMOTE"
+          git -C "$RUNNER_TEMP/indonesia-state" fetch -q --no-tags --depth=1 origin \
+            refs/heads/shadow/indonesia-kemhan:refs/heads/shadow/indonesia-kemhan
+          sha="$(git -C "$RUNNER_TEMP/indonesia-state" rev-parse refs/heads/shadow/indonesia-kemhan)"
+          test "${#sha}" -eq 40
+          test "$(git -C "$RUNNER_TEMP/indonesia-state" ls-tree --name-only "$sha")" = state
+          echo "INDONESIA_STATE_SHA=$sha" >> "$GITHUB_ENV"
+      - name: Read all preserved originals in-memory and emit metadata-only queue
+        run: |
+          set -euo pipefail
+          python -m scripts.prepare_indonesia_reference_review_queue \
+            --state-repo "$RUNNER_TEMP/indonesia-state" \
+            --state-commit "$INDONESIA_STATE_SHA" \
+            --out "$RUNNER_TEMP/indonesia-review-queue"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          d = Path(os.environ["RUNNER_TEMP"]) / "indonesia-review-queue"
+          data = json.loads((d / "review_queue.json").read_text(encoding="utf-8"))
+          counts = data["counts"]
+          assert data["stored_originals"] >= 24, "pinned source record count decreased"
+          assert counts["official_link_already_public_not_reviewed"] == 4
+          assert counts["hold_publisher_geography_inconsistent"] == 1
+          assert counts["new_source_review_candidate"] >= 19
+          assert sum(counts.values()) == data["stored_originals"]
+          assert not data["public_renderer_consumes_queue"]
+          assert not data["independent_human_review_completed"]
+          assert not data["source_reuse_approved"]
+          assert not data["public_corpus_admitted"]
+          for row in data["rows"]:
+              assert set(row) == {
+                  "publication_date", "title_original", "official_url",
+                  "source_identity", "first_seen_run", "disposition",
+                  "independent_human_review_complete",
+                  "publisher_body_reuse_authorized", "eligible_for_public_corpus"}
+              assert row["official_url"].startswith("https://www.kemhan.go.id/")
+              assert row["independent_human_review_complete"] is False
+          print("Verified pinned metadata-only Indonesia source review queue:", counts)
+          PY
+      - name: Confirm protected database, output and source unchanged
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/id-review-db.sha"
+          sha256sum -c "$RUNNER_TEMP/id-review-output.sha" > /dev/null
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Offer reviewer-friendly metadata-only JSON and CSV privately as Actions artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: indonesia-private-metadata-review-queue-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/indonesia-review-queue/
+          retention-days: 14
+          if-no-files-found: error
