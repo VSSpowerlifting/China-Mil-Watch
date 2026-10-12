@@ -145,5 +145,22 @@ class KoreaAuthenticatedActionsCensus(unittest.TestCase):
                 live.pinned_ledger_checkout(link)
 
 
+    def test_manual_workflow_really_sparsely_checks_out_only_ledgers(self):
+        workflow = (Path(__file__).resolve().parents[1] /
+                    ".github/workflows/korea_authenticated_actions_census.yml"
+                    ).read_text(encoding="utf-8")
+        self.assertIn("workflow_dispatch:", workflow)
+        self.assertNotIn("  schedule:", workflow)
+        self.assertNotIn("  push:", workflow)
+        self.assertIn("  actions: read", workflow)
+        self.assertIn("  contents: read", workflow)
+        self.assertIn("ref: shadow/korea-policy-briefing", workflow)
+        self.assertIn("sparse-checkout-cone-mode: false", workflow)
+        self.assertIn("/state/ledger/**", workflow)
+        self.assertNotIn("state/captures", workflow)
+        self.assertEqual(workflow.count("persist-credentials: false"), 2)
+        self.assertIn("confirm_read_only", workflow)
+
+
 if __name__ == "__main__":
     unittest.main()
