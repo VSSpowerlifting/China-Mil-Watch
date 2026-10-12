@@ -355,13 +355,23 @@ class TestCandidateBuild(unittest.TestCase):
         self.assertNotIn("Live — collecting", html)
 
     def test_no_undeclared_desk_was_introduced(self):
-        """A desk absent from the registry must not appear in the build."""
+        """Known public shadow desks render, but undeclared desks stay absent."""
         from core.desk_registry import load_registry
-        declared = {e.name for e in load_registry().public_entries}
+        declared = {e.name: e for e in load_registry().public_entries}
         html = (self.out / "desks.html").read_text(encoding="utf-8")
-        for absent in ("Korea Desk", "Australia Desk",
-                       "Taiwan Desk", "India Desk", "Cross-Regional Desk"):
-            with self.subTest(desk=absent):
+        # Korea and Indonesia were subsequently admitted as public reference/
+        # status-only pages. Neither has a production manifest or public corpus.
+        for name in ("South Korea Desk", "Indonesia Desk"):
+            with self.subTest(public_shadow=name):
+                entry = declared[name]
+                self.assertIn(name, html)
+                self.assertEqual(entry.status, "shadow")
+                self.assertIsNone(entry.manifest_path)
+                self.assertFalse(entry.has_production_records)
+                self.assertTrue((self.out / entry.route).is_file())
+        for absent in ("Australia Desk", "Taiwan Desk", "India Desk",
+                       "Cross-Regional Desk"):
+            with self.subTest(undeclared=absent):
                 self.assertNotIn(absent, declared)
                 self.assertNotIn(absent, html)
 
