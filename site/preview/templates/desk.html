@@ -211,12 +211,16 @@ qualification evidence, not a current gate.</p>
 <h3>Sources identified</h3>
 <div class="table-scroll">
 <table class="stacking">
-  <caption>Listing and item format verified directly; no endpoint is claimed that was not checked.</caption>
+  <caption>Declared source families and, where verified, official publisher entrypoints. These are external institution pages, not IPR-reviewed individual publications or admitted archive records.</caption>
   <thead><tr><th scope="col">Source</th><th scope="col">Item format</th><th scope="col">Note</th></tr></thead>
   <tbody>
   {% for s in desk.research.source_families %}
     <tr>
-      <td data-label="Source">{{ s.name }}</td>
+      <td data-label="Source">{{ s.name }}
+        {% if s.publisher_url %}
+        <p class="meta"><a href="{{ s.publisher_url }}" rel="noopener noreferrer">Open official publisher index</a></p>
+        {% endif %}
+      </td>
       <td data-label="Item format">{{ s.format }}</td>
       <td data-label="Note">{{ s.note }}</td>
     </tr>
