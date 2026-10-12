@@ -51,6 +51,22 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn("test -f output/indonesia.html", text)
         self.assertIn("python scripts/validate_output.py", text)
 
+    def test_japan_render_only_release_requires_jcg_index_without_source_admission(self):
+        text = self.body
+        self.assertIn("test -f output/japan.html", text)
+        self.assertIn('japan = country["japan"]', text)
+        self.assertIn('japan["manifest"] == "shadow/jp_mod/manifest.json"', text)
+        self.assertIn('japan["has_production_records"] is False', text)
+        self.assertIn('"https://www.mod.go.jp/j/press/news/"', text)
+        self.assertIn('"https://www.mod.go.jp/j/update/index.html"', text)
+        self.assertIn('"https://www.kaiho.mlit.go.jp/e/topics_archive/index.html"', text)
+        self.assertIn('japan_html.count("Open official publisher index") == 3', text)
+        self.assertIn('"manual October 8 Day 0" in japan_html', text)
+        self.assertIn('"state/shadow.db"', text)
+        self.assertIn("'href=\"archive.html?desk=japan\"' not in japan_html", text)
+        self.assertIn("            output/japan.html", text)
+        self.assertIn("if: inputs.publish", text)
+
     def test_db_immutability_and_safe_publishing(self):
         text = self.body
         self.assertIn("sha256sum -c", text)
