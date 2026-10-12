@@ -69,6 +69,56 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn("            output/japan.html", text)
         self.assertIn("if: inputs.publish", text)
 
+    def test_scoped_staging_command_executes_without_literal_backslash(self):
+        """Reproduce the exact workflow staging shell in a disposable git repo.
+
+        A doubled YAML backslash previously passed a literal \\ to git, causing
+        a 128 pathspec failure even after every pre-stage safety gate passed.
+        """
+        import subprocess
+        import tempfile
+
+        block = self.body.split(
+            "- name: Stage only approved country research presentation files", 1
+        )[1].split("python -m scripts.guard_country_research_output_scope", 1)[0]
+        commands = [
+            line.strip() for line in block.splitlines()
+            if line.lstrip().startswith("git add -A --")
+        ]
+        self.assertEqual(len(commands), 1)
+        command = commands[0]
+        self.assertNotIn(chr(92), command, "No shell continuations in staging command")
+        expected = {
+            "output/philippines.html", "output/vietnam.html",
+            "output/indonesia.html", "output/japan.html", "output/desks.html",
+            "output/desk-references.js", "output/desk-references.css",
+        }
+        self.assertEqual(set(command.split()[4:]), expected)
+
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for path in expected | {"output/analysis.html"}:
+                out = root / path
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_text("baseline", encoding="utf-8")
+            def git(*args):
+                return subprocess.run(["git", *args], cwd=root,
+                                      capture_output=True, text=True, check=True)
+            git("init", "-q")
+            git("config", "user.name", "Test")
+            git("config", "user.email", "test@example.invalid")
+            git("add", "-A")
+            git("commit", "-qm", "baseline")
+            for filename in ("output/japan.html", "output/desks.html",
+                             "output/analysis.html"):
+                (root / filename).write_text("updated", encoding="utf-8")
+            subprocess.run(["bash", "-e", "-c", command], cwd=root,
+                           check=True, capture_output=True, text=True)
+            self.assertEqual(set(git("diff", "--cached", "--name-only").stdout.splitlines()),
+                             {"output/japan.html", "output/desks.html"})
+            self.assertEqual(git("diff", "--name-only").stdout.strip(),
+                             "output/analysis.html")
+
     def test_db_immutability_and_safe_publishing(self):
         text = self.body
         self.assertIn("sha256sum -c", text)
