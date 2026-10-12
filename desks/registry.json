@@ -83,12 +83,14 @@
           {
             "name": "Ministry of Defense — news feed (Japanese)",
             "format": "RSS — 142 items measured 2026-08-26: 134 HTML, 8 PDF",
-            "note": "Families: /j/press/ 105, /j/approach/ 37."
+            "note": "Families: /j/press/ 105, /j/approach/ 37.",
+            "publisher_url": "https://www.mod.go.jp/j/press/news/"
           },
           {
             "name": "Ministry of Defense — site update feed (Japanese)",
             "format": "RSS — 391 items measured 2026-08-26: 342 HTML, 0 PDF",
-            "note": "A whole-site stream, not a press-release feed: /j/press/ 126, /j/budget/ 93, /j/profile/ 76, /j/approach/ 63, /j/policy/ 21, /j/presiding/ 11, /j/kids/ 1. Every item is labeled by its family and nothing is filtered out."
+            "note": "A whole-site stream, not a press-release feed: /j/press/ 126, /j/budget/ 93, /j/profile/ 76, /j/approach/ 63, /j/policy/ 21, /j/presiding/ 11, /j/kids/ 1. Every item is labeled by its family and nothing is filtered out.",
+            "publisher_url": "https://www.mod.go.jp/j/update/index.html"
           },
           {
             "name": "Joint Staff — press releases (English)",
@@ -272,7 +274,8 @@
           {
             "name": "Viet Nam Government News — defense tag page (English)",
             "format": "HTML tag page and HTML articles — 24 items listed on 2026-10-06 UTC",
-            "note": "en.baochinhphu.vn. The page labels itself “Tags: defense”. Tier B: the Government newsroom's own reporting, not statements by the ministries it reports on. English as published; nothing is translated. The original English pilot is retained alongside separate ministry research."
+            "note": "en.baochinhphu.vn. The page labels itself “Tags: defense”. Tier B: the Government newsroom's own reporting, not statements by the ministries it reports on. English as published; nothing is translated. The original English pilot is retained alongside separate ministry research.",
+            "publisher_url": "https://en.baochinhphu.vn/defense.html"
           },
           {
             "name": "Ministry of National Defence — English portal",
@@ -292,12 +295,20 @@
           {
             "name": "Ministry of Public Security — foreign affairs (Vietnamese)",
             "format": "Published RSS 34 and linked portal reports; scheduled isolated shadow collection",
-            "note": "bocongan.gov.vn. Thông tin Đối ngoại only, with original Vietnamese text. Publication date is the visible article stamp; the explicitly offset RSS instant is stored separately. No broad police-news feed or archive claim."
+            "note": "bocongan.gov.vn. Thông tin Đối ngoại only, with original Vietnamese text. Publication date is the visible article stamp; the explicitly offset RSS instant is stored separately. No broad police-news feed or archive claim.",
+            "publisher_url": "https://bocongan.gov.vn/chuyen-muc/thong-tin-doi-ngoai-1751367399"
           },
           {
-            "name": "Ministry of Industry and Trade — energy and foundational industry (Vietnamese)",
-            "format": "Published first category pages and linked portal reports; scheduled isolated shadow collection",
-            "note": "moit.gov.vn. Phát triển năng lượng and Công nghiệp nền tảng are separate source families and clocks sharing one host gate. Printed dates govern; conflicting metadata is kept separately. Script-only older pagination is not requested. These reports are not inferred legal instruments. The linked trade-remedies host disallows collection."
+            "name": "Ministry of Industry and Trade — energy (Vietnamese)",
+            "format": "Official Phát triển năng lượng listing and linked ministry reports; scheduled isolated shadow collection",
+            "note": "moit.gov.vn. Phát triển năng lượng is a separate source family and reliability clock from foundational industry. Printed publication dates govern; conflicting metadata is retained. Script-only older pagination is not requested. Reports are not legal instruments; MOIT robots-policy and publisher-rights review remain held.",
+            "publisher_url": "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong"
+          },
+          {
+            "name": "Ministry of Industry and Trade — foundational industry (Vietnamese)",
+            "format": "Official Công nghiệp nền tảng listing and linked ministry reports; scheduled isolated shadow collection",
+            "note": "moit.gov.vn. Công nghiệp nền tảng has its own isolated source family and reliability clock, separate from energy despite the shared host gate. Printed publication dates govern; conflicting metadata is retained. The linked trade-remedies host disallows collection. Ministry robots-policy and publisher-rights review remain held.",
+            "publisher_url": "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang"
           },
           {
             "name": "National Defence Journal — English edition (military journal)",
