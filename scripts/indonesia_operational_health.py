@@ -12,7 +12,7 @@ import sys
 from datetime import date, datetime, timedelta, timezone
 import re
 
-from bs4 import BeautifulSoup
+from html.parser import HTMLParser
 from pathlib import Path
 
 from core.indonesia_official_index import load as load_official_links
@@ -119,48 +119,95 @@ def evaluate(clock, ledgers, db_digest, expected_day, commit):
     }
 
 
-def published_entries(document, label, *, press=False):
-    """Read each source's *local* title/date/number as a bound list item.
+class PublishedEntries(HTMLParser):
+    """Capture each local link/title/date/press number, never dereference it."""
 
-    Static publication check only: no link dereference, source fetch or rights
-    decision. A correct URL is not sufficient if its surrounding metadata lies.
-    """
-    groups = document.select('ol[aria-label="' + label + '"]')
-    check(len(groups) == 1, "expected exactly one " + label)
-    result = []
-    for item in groups[0].find_all("li", recursive=False):
-        anchors, dates = item.find_all("a"), item.find_all("time")
-        check(len(anchors) == 1 and len(dates) == 1,
-              "publisher item must bind one link, heading and date")
-        link, published = anchors[0], dates[0]
-        entry = (link.get("href"), link.get("lang"),
-                 link.get_text(" ", strip=True),
-                 published.get("datetime"),
-                 published.get_text(" ", strip=True))
-        if press:
-            numbers = re.findall(
-                r"\bPress statement\s+(SP/[1-9][0-9]*/[IVX]+/20[0-9]{2}/ROINFOHAN)\b",
-                item.get_text(" ", strip=True))
-            check(len(numbers) == 1,
-                  "missing or duplicated local publisher press identifier")
-            entry += (numbers[0],)
-        result.append(entry)
-    return result
+    LABELS = {
+        "Four external ministry news links": "news",
+        "Two external ministry press release links": "press",
+    }
 
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.section = None
+        self.counts = {"news": 0, "press": 0}
+        self.news, self.press = [], []
+        self.current = None
+        self.anchor = None
+        self.time = None
 
+    def handle_starttag(self, tag, attrs):
+        values = dict(attrs)
+        if tag == "ol" and values.get("aria-label") in self.LABELS:
+            check(self.section is None and self.current is None,
+                  "overlapping publisher indexes")
+            self.section = self.LABELS[values["aria-label"]]
+            self.counts[self.section] += 1
+        elif tag == "li" and self.section is not None:
+            check(self.current is None, "nested publisher reference")
+            self.current = {"anchors": [], "dates": [], "text": []}
+        elif self.current is not None and tag == "a":
+            check(self.anchor is None, "nested publisher anchor")
+            self.anchor = [values.get("href"), values.get("lang"), []]
+            self.current["anchors"].append(self.anchor)
+        elif self.current is not None and tag == "time":
+            check(self.time is None, "nested publisher date")
+            self.time = [values.get("datetime"), []]
+            self.current["dates"].append(self.time)
+
+    def handle_data(self, value):
+        if self.current is not None:
+            self.current["text"].append(value)
+            if self.anchor is not None:
+                self.anchor[2].append(value)
+            if self.time is not None:
+                self.time[1].append(value)
+
+    def handle_endtag(self, tag):
+        if tag == "a":
+            self.anchor = None
+        elif tag == "time":
+            self.time = None
+        elif tag == "li" and self.section is not None:
+            check(self.current is not None and self.anchor is None and
+                  self.time is None and len(self.current["anchors"]) == 1 and
+                  len(self.current["dates"]) == 1,
+                  "publisher item must bind one link, heading and date")
+            url, lang, headline = self.current["anchors"][0]
+            machine_date, shown_date = self.current["dates"][0]
+            normalized = lambda value: " ".join("".join(value).split())
+            entry = (url, lang, normalized(headline),
+                     machine_date, normalized(shown_date))
+            if self.section == "press":
+                numbers = re.findall(
+                    r"\bPress statement\s+(SP/[1-9][0-9]*/[IVX]+/20[0-9]{2}/ROINFOHAN)\b",
+                    normalized(self.current["text"]))
+                check(len(numbers) == 1,
+                      "missing or duplicated local publisher press identifier")
+                self.press.append(entry + (numbers[0],))
+            else:
+                self.news.append(entry)
+            self.current = None
+        elif tag == "ol" and self.section is not None:
+            check(self.current is None, "unclosed publisher reference")
+            self.section = None
+
+    def validate(self):
+        check(self.counts == {"news": 1, "press": 1} and
+              self.section is None and self.current is None,
+              "missing, repeated or unclosed publisher directory")
 def check_public_page(path, approved_links=None, approved_press_links=None):
     """Read a local copy from exact gh-pages Git commit, never fetch publisher."""
     path = Path(path)
     check(path.is_file() and not path.is_symlink() and
           path.stat().st_size <= 250_000, "published page missing or oversized")
     page = path.read_text(encoding="utf-8")
-    document = BeautifulSoup(page, "html.parser")
+    entries = PublishedEntries()
+    entries.feed(page)
+    entries.validate()
     known = approved_links if approved_links is not None else load_official_links()
     press = approved_press_links if approved_press_links is not None else load_official_press_links()
-    news_entries = published_entries(
-        document, "Four external ministry news links")
-    press_entries = published_entries(
-        document, "Two external ministry press release links", press=True)
+    news_entries, press_entries = entries.news, entries.press
     expected_news = [
         (ref["source_url"], "id", ref["title_original"],
          ref["published_date"], ref["published_date"])
