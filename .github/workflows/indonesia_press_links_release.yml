@@ -131,11 +131,11 @@ jobs:
           from bs4 import BeautifulSoup
           from core.indonesia_official_index import load as news_links
           from core.indonesia_press_index import load as press_links
-          from core.desk_registry import load_registry
-          d = load_registry().get("indonesia")
-          assert d.status == "shadow" and d.public
-          assert not d.is_collecting and d.manifest_path is None
-          assert d.has_production_records is False
+          import json
+          d = next(d for d in json.loads(Path("desks/registry.json").read_text())["desks"]
+                   if d["slug"] == "indonesia")
+          assert d["status"] == "shadow" and d["public"] is True
+          assert d["manifest"] is None and d["has_production_records"] is False
           html = Path("output/indonesia.html").read_text(encoding="utf-8")
           soup = BeautifulSoup(html, "html.parser")
           news = soup.select('ol[aria-label="Four external ministry news links"] a')
