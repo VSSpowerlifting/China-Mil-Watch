@@ -11,11 +11,11 @@ import json
 import os
 import re
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from scripts import audit_indonesia_actions_attempts as inventory
 from scripts import audit_indonesia_shadow_provenance as provenance
@@ -48,6 +48,13 @@ def endpoint(repo, route, query):
             urlencode(query))
 
 
+class RejectRedirect(HTTPRedirectHandler):
+    """Never forward the GitHub authorization header to a redirect target."""
+
+    def redirect_request(self, *args, **kwargs):
+        return None
+
+
 def request_json(url, token):
     require(type(token) is str and 12 <= len(token) <= 512,
             "authenticated read-only GitHub token required")
@@ -61,7 +68,7 @@ def request_json(url, token):
     })
     try:
         # Do not print exceptions: an unexpected URL or header could be embedded.
-        with urlopen(request, timeout=30) as response:
+        with build_opener(RejectRedirect()).open(request, timeout=30) as response:
             require(response.status == 200 and
                     response.geturl().startswith(
                         "https://api.github.com/repos/" + OWNER_REPO + "/actions/"),
@@ -105,7 +112,7 @@ def paginated(repo, route, query, collection, token, maximum):
 def export(repo, token, as_of, get_pages=paginated):
     """One inclusive Day 0..as_of+1 query (handles overnight queued runs)."""
     check = provenance.day(as_of)
-    require(date(2026, 10, 6) <= check <= date.today() + timedelta(days=1),
+    require(date(2026, 10, 6) <= check <= datetime.now(timezone.utc).date() + timedelta(days=1),
             "historical or future audit date outside Indonesia's active window")
     end = check + timedelta(days=1)
     query = {"created": "2026-10-06.." + end.isoformat()}
