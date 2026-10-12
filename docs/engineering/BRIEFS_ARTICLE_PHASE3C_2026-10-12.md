@@ -34,7 +34,7 @@ Article text, headings, anchors, citations, provenance, canonical and social met
 | Style | `site/preview/briefs.css` (+8 lines, additive) | Kind label, issue nav, native author block, TOC stretch under 900 px. Historical pages carry an inline copy of the kind-label and nav rules (see "Publication"). |
 | Tests | `tests/test_article_media.py` (new, 22), `tests/test_historical_brief_shell.py` | Contract tests: kinds, preserved ids, credit splitting, Signal Veil caption parity, No. 12, nav order, display titles. |
 
-Files left untouched: `scripts/pw_env.py`, `base.html`, `pla-watch-base.html`, `styles.css`, `core/catalogue_media.py`, every sidecar, the editorial manifest and the database. No JavaScript was added.
+Files left untouched: `scripts/pw_env.py`, `base.html`, `pla-watch-base.html`, `styles.css`, `core/catalogue_media.py`, every sidecar and the database. The editorial manifest gains two fields on one entry (No. 8's `credit_native` / `credit_native_lang`; see "No. 8 credit language"). No JavaScript was added.
 
 ## The media contract
 
@@ -53,8 +53,8 @@ The module only says how the image those resolvers returned is presented. It nev
 | `signal-veil` | Nos. 2, 3, 5, 6, 7, 11, 13 | "**Signal Veil** · " followed by the pre-3C caption, word for word: "Image: [source id → source page] · subject · Context, not evidence." |
 | `photograph` | No. 8 (Liaoning J-15 recovery), No. 9 (Scarborough Shoal from the ISS) | The caption runs: "**Photograph** · subject ·" the manifest credit, split on its own " · " separators. Then come the licence (No. 8's "CC BY 4.0" is linked to its deed from the manifest's `license_url`), "via [Wikimedia Commons → file page]", "Toned, cropped and resized by IPR." and "Visual context, not evidence." |
 | `preserved` | No. 1, No. 10, No. 12, No. 15 | Figure markup byte-identical to the pre-3C page (see below). |
-| `none` | No. 4, No. 14, No. 16, No. 17 | No figure. The hero is text-led, as before. |
-| `plate` | none in production | Macro and adapter exist (`editorial_plate`). The image has empty alt text, and the caption reads "Editorial plate · Original IPR artwork. No source photograph. Decorative, not evidence." |
+| `plate` | No. 4, No. 14 (China Desk), No. 16, No. 17 (their own desks) | The catalogue's regional relief (`assets/geo/region.svg`, referenced by `<use>`, never inlined), with the brief's desks picked out. The art is `aria-hidden`; the caption reads "**Editorial plate** · Original IPR artwork. No source photograph. Decorative, not evidence." Outlines are Natural Earth and not boundary claims (`geo.receipt.json`). |
+| `none` | none on a production route | Kept for a caller that passes no `root`. |
 
 Every word of a photograph credit comes from the manifest. If a credit names no host, a plain "Source" link to the source page is added, so the source stays one click away. An unrecognised veil kind falls back to `preserved` rather than being guessed at.
 
@@ -88,7 +88,7 @@ A preserved item is not reclassified, relabelled or recaptioned. Clearing one is
   - a "Previous Brief" / "Next Brief" label;
   - a "No. N · date" line;
   - the issue title, with the series prefix stripped for display.
-- **Limitation.** Historical No. 14 has no forward link to No. 15. Historical adjacency is a function of the 14 sidecars, and linking forward would make every historical page depend on the native collection. That choice belongs to the owner and is left for later.
+- **The one cross-series bridge.** The newest earlier issue (No. 14) has no next issue, so its "Next Brief" is the published Brief that follows it in the collection: `next_brief_after` builds the editions from the sidecars, loads the collection through its own approval gate (`load_collection`; drafts are never loaded), and asks `brief_after_issue` for the item immediately newer than that issue. Today that is No. 15 (`../../briefs/maritime-cooperation-2026.html`), so No. 14 ↔ No. 15 are reciprocal. If the collection cannot be loaded the link is omitted with a warning, never guessed. Every other historical href is unchanged. The bridge is wired into `rerender_pla_watch.py` and the review builds.
 - **Display titles.** The prefix strip is display-only. The canonical title, the `<title>`, the citation and the sidecar keep "The PLA Watch: …".
 
 The nav is a `<nav>` with an `aria-label`: "Adjacent Briefs" on native pages and "Adjacent historical issues" on earlier ones. Links carry `rel="prev"` and `rel="next"`, a 44 px minimum target and visible focus. The two links stack below 600 px, the nav is hidden in print, and it uses `LinkText` in forced colours.
@@ -126,7 +126,7 @@ Three fields change, as predicted before editing:
 
 - **Labels.** Every kind is named in text, not by colour or position.
 - **Signal Veil.** Its figure keeps `aria-label="Historical visual context, not evidence"`.
-- **Plate.** An editorial plate has empty alt text and no `aria-label`, because its caption carries the meaning.
+- **Plate.** The plate art is `aria-hidden` and not focusable; its visible caption carries the meaning. It is hidden in forced colours and in print, where the caption alone remains.
 - **Without JavaScript or motion.** The new parts render identically with JavaScript off, with no motion, and with reduced motion.
 - **Forced colours.** The kind label and nav switch to `CanvasText` / `LinkText`.
 - **Zoom.** At 200% (a 640 px layout) nothing overflows.
@@ -137,9 +137,10 @@ Three fields change, as predicted before editing:
 ## Budgets and publication
 
 **Size.** Pages stay well inside their budgets:
-- historical articles: HTML+CSS 75,930–86,310 B, up 3.2–4.1 KB;
-- native articles: 78,484–79,091 B, up 2.2–2.6 KB;
-- `briefs.css` grows from 8,717 B to 10,443 B;
+- historical articles: HTML+CSS 76,916–87,296 B;
+- native articles: 79,523–79,751 B;
+- `briefs.css` grows from 8,717 B to 10,936 B;
+- the plate art (`region.svg`, already shipped by the catalogue) is one shared, cached request;
 - JS is unchanged (372 B / 5,322 B).
 
 The caps are 120,000 B HTML+CSS and 10,000 B JS per article (`scripts/verify_frontend_delivery.py`). The delivery verifier reports 0 failures on 7,609 routes.
@@ -162,15 +163,16 @@ Then run `scripts/validate_output.py` (baseline: 10 governed warnings). This PR 
   - **No. 12 (B5).** Attribution is unresolved; the stored note stays unrendered.
   - **No. 1.** Its alt text is a filename, and identifiable people are shown.
   - **No. 10.** Authorship and alt text are not established.
-- **No. 8 credit.** This phase introduces "統合幕僚監部" to the article caption (the pre-3C caption had no Japanese text), and it has no `lang` attribute. The editorial manifest holds the credit as one string and records no language for its `creator`. The catalogue does tag this name, but from its own admission record (`creator_native_lang`), which this phase may not read. The script is not used to guess a language. The fix is to record the native name and its language in the manifest, a separate change.
+- **No. 8 credit language (resolved in review).** The caption shows the manifest credit's "統合幕僚監部". The manifest entry now records it as `credit_native` with `credit_native_lang: "ja"`, taken from the Commons file page's own author field ("日本防衛省・統合幕僚監部", `{{ja|…}}` description; checked 2026-10-12); the credit string is unchanged. `credit_parts` wraps only that name in `<span lang="ja">`, and only when it occurs exactly once in the credit. Tests assert the span, that the native name is a substring of the recorded `creator`, and that no photograph caption carries untagged CJK. The catalogue's admission record was not read.
+- **Editorial plates: owner visual sign-off open.** Nos. 4, 14, 16 and 17 now carry a labelled editorial plate, meeting Phase 0 requirement 7 (a considered image on every opened Brief) in implementation. The requirement stays **conditional** until the owner signs off the plate's look; no source photograph is admitted and no protected image changed.
 - **`_wm` false negatives.** `scripts/fetch_article_image.py:128` `_ASSET_ID_RE` misses ids with a `_wm` suffix (2026-06-27 and 2026-07-18 source images). This was noted during the audit and is not changed here.
-- **No. 14 → No. 15.** No forward link (see "Navigation contract").
+- **Test normalisation (temporary).** `tests/test_historical_brief_shell.py` compares the checked-in historical pages with a fresh render. Until the owner's governed rerender, the fresh render is converted back to its exact pre-3C form by counted, context-built replacements (style block, kind label, plate, photograph caption, model-flag span, nav). Every replacement must match exactly once, and a guard test proves that changing a figure's source, alt, duotone, citation, model flag or a held figure still fails. Once the checked-in pages carry the 3C nav class the comparison is strict byte equality, with no normalisation.
 - **Render drift unrelated to 3C.** Tracked `output/` already differs from a fresh base render in:
   - `analysis.html`;
   - `briefs-catalog.css`;
   - `sitemap.xml`;
   - `assets/catalogue`;
-  - `assets/geo/region.svg`;
+  - `assets/geo/region.svg` (shipped by the build; the browser test fixture copies it from `site/assets/geo`);
   - `in/`.
 
   The owner's next full render will carry that drift too.

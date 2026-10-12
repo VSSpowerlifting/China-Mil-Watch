@@ -12,7 +12,8 @@ image those resolvers returned is presented, as one of these kinds:
   with its full credit, its licence, its source and IPR's change note;
 * ``signal-veil`` — a duotone of the cited source's own photograph, shown
   with the existing source-linked caption, word for word;
-* ``plate`` — original IPR artwork: decorative, labelled, never evidence;
+* ``plate`` — original IPR artwork (the regional relief): decorative,
+  labelled "Editorial plate", never evidence, never a photograph;
 * ``none`` — no image: the hero is text-led;
 * ``preserved`` — an image whose existing markup is kept byte for byte
   because a ruling holds it (see ``PRESERVED_MEDIA``).
@@ -48,6 +49,13 @@ CONTEXT_NOTE = "Visual context, not evidence."
 PLATE_NOTE = "Original IPR artwork. No source photograph."
 PLATE_CONTEXT = "Decorative, not evidence."
 
+#: The catalogue's regional relief (Phase 3B), referenced, never inlined. Its
+#: viewBox is the `region` symbol's, recorded in `assets/geo/geo.receipt.json`;
+#: only these desks have a highlight in it.
+PLATE_ART = "assets/geo/region.svg"
+PLATE_VIEWBOX = "0 0 300 196"
+PLATE_DESKS = ("china", "singapore")
+
 #: Media whose opened-article markup stays exactly as it was before Phase 3C.
 #: A held item is not reclassified, relabelled or recaptioned here; clearing
 #: one is a separate, recorded decision.
@@ -65,18 +73,28 @@ PRESERVED_MEDIA = {
 
 def _part(text, href=None, rel=None, before=""):
     return {"before": before, "text": text, "href": href or None,
-            "rel": rel if href else None}
+            "rel": rel if href else None, "native": None}
 
 
 def credit_parts(credit: str, *, license_name: str = "",
-                 license_url: str = "", source_page: str = "") -> list:
+                 license_url: str = "", source_page: str = "",
+                 native: str = "", native_lang: str = "") -> list:
     """
     The manifest credit, split on its own " · " separators, with the licence
     linked to its deed when the manifest records one and "via <host>" linked
     to the source page. Every word shown is the manifest's; when the credit
     names no host, a plain "Source" link is added so the source stays one
     click away.
+
+    `native` and `native_lang` are the manifest's `credit_native` and
+    `credit_native_lang`: the creator's name in its own script, recorded
+    from the source's own author field, and that name's language. The
+    segment holding it is split so only the name carries `lang`. The
+    language is never guessed from the script, and a name that does not
+    occur exactly once in the credit is not tagged at all (a test then
+    fails on the untagged script rather than the page guessing).
     """
+    tag = bool(native and native_lang and (credit or "").count(native) == 1)
     parts, linked_source = [], False
     for segment in [s.strip() for s in (credit or "").split(" · ") if s.strip()]:
         if license_name and segment == license_name and license_url:
@@ -86,7 +104,12 @@ def credit_parts(credit: str, *, license_name: str = "",
                                before="via "))
             linked_source = True
         else:
-            parts.append(_part(segment))
+            part = _part(segment)
+            if tag and native in segment:
+                pre, _, post = segment.partition(native)
+                part["native"] = {"pre": pre, "text": native,
+                                  "lang": native_lang, "post": post}
+            parts.append(part)
     if source_page and not linked_source:
         parts.append(_part("Source", source_page, "noopener nofollow"))
     return parts
@@ -100,13 +123,20 @@ def _image(veil: Mapping) -> dict:
 
 def historical_article_media(veil: Optional[Mapping],
                              cover: Optional[Mapping] = None,
-                             manifest_entry: Optional[Mapping] = None) -> dict:
+                             manifest_entry: Optional[Mapping] = None,
+                             *, root: Optional[str] = None) -> dict:
     """
     How an earlier issue's hero image is shown.
 
     `veil` is the issue's already-resolved `pw_veil` (curated or source),
     `cover` its legacy `cover_media_item`, and `manifest_entry` the editorial
-    manifest entry with the veil's id, read only for its licence deed URL.
+    manifest entry with the veil's id, read only for its licence deed URL
+    and the language of a native-script name in its credit.
+
+    With `root` (the page's path to the site root), an issue with no image
+    gets the China Desk's editorial plate instead of a text-led hero: the
+    China Desk published every earlier issue, as the catalogue records. A
+    plate never replaces a photograph, a Signal Veil or a preserved image.
     """
     if veil:
         if veil.get("id") in PRESERVED_MEDIA:
@@ -120,7 +150,9 @@ def historical_article_media(veil: Optional[Mapping],
                     "credit": credit_parts(
                         veil.get("credit"), license_name=veil.get("license") or "",
                         license_url=entry.get("license_url") or "",
-                        source_page=veil.get("source_page") or ""),
+                        source_page=veil.get("source_page") or "",
+                        native=entry.get("credit_native") or "",
+                        native_lang=entry.get("credit_native_lang") or ""),
                     "notes": (CHANGE_NOTE, CONTEXT_NOTE)}
         if veil.get("kind") == "source":
             # The caption the page already carried, word for word, with only
@@ -136,26 +168,36 @@ def historical_article_media(veil: Optional[Mapping],
         # Only No. 1 has a legacy cover; Phase 3B held it (identifiable people,
         # a filename for alt text). Its existing markup is kept.
         return {"kind": PRESERVED, "reason": "3B hold: legacy edition cover"}
+    if root is not None:
+        return editorial_plate(root, ("china",))
     return {"kind": NONE}
 
 
-def native_article_media(photo: Optional[Mapping]) -> dict:
+def native_article_media(photo: Optional[Mapping], desks=(),
+                         root: Optional[str] = None) -> dict:
     """
     How a brief's hero image is shown. A brief's photograph (`brief_photo`)
-    keeps its existing figure and two-level credit (Phase 0 §1.2); without
-    one the hero is text-led.
+    keeps its existing figure and two-level credit (Phase 0 §1.2). Without
+    one, and given `root`, the hero carries the editorial plate for the
+    brief's own desks; otherwise it is text-led.
     """
     if photo:
         return {"kind": PRESERVED, "reason": "Phase 0 §1.2: brief photograph"}
+    if root is not None:
+        return editorial_plate(root, desks)
     return {"kind": NONE}
 
 
-def editorial_plate(src: str, *, focus: str = "") -> dict:
+def editorial_plate(root: str, desks=()) -> dict:
     """
-    Original IPR artwork in the hero. Decorative: its image has empty alt
-    text and the label and note carry its meaning. No production article
-    uses one yet; the treatment exists so one can be added without a new
-    caption pattern.
+    Original IPR artwork in the hero: the catalogue's regional relief, with
+    the brief's desks picked out. Decorative and never evidence: the art is
+    hidden from assistive technology and the label and note carry its
+    meaning. Its outlines are generated from Natural Earth and are not
+    boundary claims (`assets/geo/geo.receipt.json`). It is not a photograph
+    and grants none.
     """
-    return {"kind": PLATE, "label": LABELS[PLATE], "id": None, "src": src,
-            "alt": "", "focus": focus, "notes": (PLATE_NOTE, PLATE_CONTEXT)}
+    return {"kind": PLATE, "label": LABELS[PLATE], "id": None,
+            "art": root + PLATE_ART, "viewbox": PLATE_VIEWBOX,
+            "desks": tuple(d for d in desks if d in PLATE_DESKS),
+            "notes": (PLATE_NOTE, PLATE_CONTEXT)}

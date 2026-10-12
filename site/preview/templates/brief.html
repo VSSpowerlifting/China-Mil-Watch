@@ -1,14 +1,16 @@
 {% extends "base.html" %}
 {% from "_atlas.html" import breadcrumb %}
 {% from "_article_nav.html" import issue_nav %}
+{% from "_article_media.html" import article_figure %}
 {#- One Indo-Pacific Record Brief, at briefs/<slug>.html.
 
     The existing article anatomy — edition head, signal, development, coverage,
     the standing sections, term, what to watch, source trail, author, citation —
     in the site's own shell, so a brief is published by Indo-Pacific Record and
     reads as one. The hero is the sanctioned Night Desk crossover: the dark
-    band, with the Signal Veil when the brief's image provenance resolves
-    (`core.brief_collection.brief_veil`) and a text-led band when it does not.
+    band, with the brief's photograph when its provenance resolves
+    (`core.brief_collection.brief_photo`) and otherwise the Editorial plate
+    (`core.article_media.editorial_plate`): original artwork, never evidence.
 
     Everything shown comes from `brief_view`, which composes nothing. Headings
     are real headings. Nothing here requires JavaScript; `citation.js` only
@@ -30,7 +32,7 @@
 {%- endmacro %}
 
 {% block hero %}
-<section class="band brief-hero{% if brief.photo %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
+<section class="band brief-hero{% if brief.photo or (brief.article_media and brief.article_media.kind == 'plate') %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
   <div class="wrap brief-hero-inner">
     {% if brief.is_review %}<p class="brief-fixture" role="note">Editorial review candidate · unapproved, unnumbered and unpublished.</p>{% endif %}
     {% if brief.synthetic %}
@@ -48,6 +50,8 @@
         <details class="brief-photo-credit-detail"><summary>Full photograph credit</summary><p>{{ brief.photo.credit }}. Image: <a href="{{ brief.photo.source_page }}" rel="noopener nofollow">{{ brief.photo.source }}</a>{% if brief.photo.subject %}, published with “{{ brief.photo.subject }}”{% endif %} (<a href="#{{ brief.photo.anchor }}">cited record {{ brief.photo.record_id }}</a>). Context, not evidence.</p></details>
       </figcaption>
     </figure>
+    {% elif brief.article_media and brief.article_media.kind == 'plate' %}
+{{ article_figure(brief.article_media) }}
     {% endif %}
     <div class="brief-context">    <p class="brief-dek">{{ brief.dek }}</p>
     <p class="brief-byline">By <span class="byline-name">{{ brief.author_name }}</span>{% if brief.author_title %}<span class="byline-title">{{ brief.author_title }}</span>{% endif %}</p>

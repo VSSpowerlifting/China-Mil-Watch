@@ -31,15 +31,16 @@ def build(destination):
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(source, target)
     from scripts.rerender_pla_watch import _build_post_context, _sidecar_has_body, _flatten_term
-    from scripts.historical_brief_render import render_historical_brief, render_historical_utility
+    from scripts.historical_brief_render import render_historical_brief, render_historical_utility, next_brief_after
     sidecars = [json.loads(p.read_text()) for p in sorted((ROOT/'output/the-pla-watch/posts').glob('*.json'))]
+    bridge = next_brief_after(sidecars)
     for i, sidecar in enumerate(sidecars):
         if not _sidecar_has_body(sidecar):
             raise ValueError('Historical sidecar has no body: '+sidecar['date'])
         context = _build_post_context(sidecar)
         context['prev_post'] = sidecars[i-1] if i else None
         context['next_post'] = sidecars[i+1] if i+1<len(sidecars) else None
-        (destination/'the-pla-watch/posts'/ (sidecar['date']+'.html')).write_text(render_historical_brief(context))
+        (destination/'the-pla-watch/posts'/ (sidecar['date']+'.html')).write_text(render_historical_brief(context, next_brief=bridge['link'] if bridge and bridge['slug'] == sidecar['date'] else None))
     newest = list(reversed(sidecars))
     for name in ('index.html', 'archive.html'):
         (destination/'the-pla-watch'/name).write_text(render_historical_utility(

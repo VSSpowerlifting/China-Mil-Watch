@@ -447,6 +447,25 @@ def adjacent_items(collection: Collection, slug: str) -> dict:
             "next": link(rows[at - 1]) if at > 0 else None}
 
 
+def brief_after_issue(collection: Collection, issue_slug: str):
+    """
+    The published brief that comes next after an earlier issue in the
+    collection order, for that issue's "Next" link; None when the next newer
+    item is not a brief, or there is none. Read only: the collection already
+    holds approved briefs alone (`load_briefs` withholds every draft). The
+    `href` is relative to `the-pla-watch/posts/`, where issue pages live.
+    """
+    rows = collection.rows
+    at = next((i for i, r in enumerate(rows)
+               if r["kind"] == "issue" and r["entry"]["slug"] == issue_slug), None)
+    if not at or rows[at - 1]["kind"] != "brief":
+        return None
+    e = rows[at - 1]["entry"]
+    return {"href": "../../%s/%s.html" % (ROUTE_DIR, e["slug"]),
+            "number": e.get("issue"), "date": e.get("date"),
+            "title": display_title(e.get("title"))}
+
+
 # ── Signal Veil ───────────────────────────────────────────────────────────────
 
 def source_image_name(slug: str) -> str:

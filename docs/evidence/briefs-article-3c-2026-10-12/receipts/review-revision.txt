@@ -1,0 +1,39 @@
+# Phase 3C review revision — receipts (2026-10-12)
+
+## Browser: tools/review_revision_browse.py on the overlay (17 routes x 320/375/768/1280)
+{
+"the-pla-watch/posts/2026-05-09.html": "brief-opening-photo",
+"the-pla-watch/posts/2026-05-16.html": "signal-veil",
+"the-pla-watch/posts/2026-05-23.html": "signal-veil",
+"the-pla-watch/posts/2026-05-30.html": "plate",
+"the-pla-watch/posts/2026-06-06.html": "signal-veil",
+"the-pla-watch/posts/2026-06-13.html": "signal-veil",
+"the-pla-watch/posts/2026-06-20.html": "signal-veil",
+"the-pla-watch/posts/2026-06-27.html": "photograph",
+"the-pla-watch/posts/2026-07-04.html": "photograph",
+"the-pla-watch/posts/2026-07-11.html": "historical-veil",
+"the-pla-watch/posts/2026-07-18.html": "signal-veil",
+"the-pla-watch/posts/2026-08-01.html": "historical-veil",
+"the-pla-watch/posts/2026-08-08.html": "signal-veil",
+"the-pla-watch/posts/2026-08-15.html": "plate",
+"briefs/maritime-cooperation-2026.html": "brief-opening-photo",
+"briefs/trident-resolve-regional-scale-specific-chinese-tasks.html": "plate",
+"briefs/xiangshan-security-frames-defense-ties.html": "plate"
+}
+forced display: none print display: none No.8 lang: ['ja:統合幕僚監部']
+nav 14: ['2026-08-08.html', '../../briefs/maritime-cooperation-2026.html']
+nav 15: ['../the-pla-watch/posts/2026-08-15.html', 'xiangshan-security-frames-defense-ties.html']
+PROBLEMS 0
+
+## Validator
+tracked output/:
+Validation passed (10 warning(s)). Output OK: output
+overlay:
+Validation passed (7 warning(s)). Output OK: <scratch>/ov
+
+## Delivery verifier (overlay)
+Checked 7609 routes: 0 delivery budget failures
+historical HTML+CSS 76,916-87,296 B; native 79,523-79,751 B; cap 120,000 B
+
+## output/ and DB untouched
+(empty above = untouched)

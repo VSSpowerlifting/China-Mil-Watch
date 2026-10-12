@@ -26,6 +26,16 @@
 
 Screenshots were captured as PNG in Chromium (Playwright, `file://`) and stored as JPEG to keep the folder small. Run the tools with the repository's `.venv` python. `tools/budget.py` imports `core.frontend_budget` from the repository root.
 
+## Review revision (2026-10-12)
+
+A review pass on the PR addressed four findings. The receipts below belong to the first head; these belong to the revision. Receipts: `receipts/review-revision.txt`; tool: `tools/review_revision_browse.py`; screenshots: `shots/revision-*.jpg`.
+
+- **No. 8 credit language.** The manifest entry records `credit_native: "統合幕僚監部"` and `credit_native_lang: "ja"`. Source: the Wikimedia Commons file page for the image, whose author field reads "日本防衛省・統合幕僚監部" and whose description is marked `{{ja|…}}` (checked 2026-10-12). The credit string is unchanged. The caption wraps only that name in `<span lang="ja">`. The catalogue's admission record was not read.
+- **No. 14 ↔ No. 15.** No. 14's "Next Brief" is No. 15 (`../../briefs/maritime-cooperation-2026.html`), taken from the approval-gated collection; No. 15's "Previous Brief" was already No. 14. Every other historical href is unchanged.
+- **Editorial plates.** Nos. 4, 14, 16 and 17 open on the labelled editorial plate (the catalogue's regional relief, `aria-hidden`; "Editorial plate · Original IPR artwork. No source photograph. Decorative, not evidence."). Owner visual sign-off is open, so Phase 0 requirement 7 is met conditionally. No source photograph was admitted and no held image changed.
+- **Test normalisation.** Narrowed to counted, context-built replacements with a guard test; strict byte equality returns after the owner's governed rerender (engineering contract, "Limitations").
+- **Checks.** All 17 routes at 320/375/768/1280 px: kinds as expected, no overflow, no failed request, every plate at least 150 px tall; plates hidden in forced colours and print. Validator: tracked `output/` 10 governed warnings, overlay 7. Delivery verifier: 0 failures on 7,609 routes. `output/` and the DB untouched.
+
 ## Results
 
 - **Media.** Seven Signal Veils (Nos. 2, 3, 5, 6, 7, 11, 13) gain a leading "Signal Veil" label. The rest of the caption is the pre-3C text, word for word, and the stored `credit` of a source veil is never read.
@@ -34,7 +44,7 @@ Screenshots were captured as PNG in Chromium (Playwright, `file://`) and stored 
   - the licence, linked to its deed where the manifest records one (No. 8, CC BY 4.0);
   - "via Wikimedia Commons", linked to the file page;
   - "Toned, cropped and resized by IPR." and "Visual context, not evidence."
-- **Unchanged figures and text-led pages.** Nos. 1, 10, 12 and 15 keep their figure markup byte for byte. Nos. 4, 14, 16 and 17 have no figure and still have none. "Downloaded from PLA Daily" appears on no route, before or after.
+- **Unchanged figures and text-led pages.** Nos. 1, 10, 12 and 15 keep their figure markup byte for byte. At the first head, Nos. 4, 14, 16 and 17 had no figure (see "Review revision"). "Downloaded from PLA Daily" appears on no route, before or after.
 - **Invariants.** On all 17 routes the following fields are equal before and after:
   - title and meta (canonical, Open Graph, description);
   - h1, heading order and ids;

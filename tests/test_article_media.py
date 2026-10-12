@@ -27,7 +27,8 @@ import generate_preview as gp                                    # noqa: E402
 from core import article_media as am                             # noqa: E402
 from core import brief_collection as bc                          # noqa: E402
 from core.desk_registry import load_registry                     # noqa: E402
-from scripts.historical_brief_render import render_historical_brief  # noqa: E402
+from scripts.historical_brief_render import (next_brief_after,  # noqa: E402
+                                             render_historical_brief)
 from scripts.rerender_pla_watch import _build_post_context       # noqa: E402
 
 POSTS = ROOT / "output/the-pla-watch/posts"
@@ -39,7 +40,7 @@ MANIFEST = ROOT / "site/assets/editorial/manifest.json"
 EXPECTED = {
     1: am.PRESERVED,     # legacy edition cover, held by 3B
     2: am.SIGNAL_VEIL, 3: am.SIGNAL_VEIL,
-    4: am.NONE,
+    4: am.PLATE,         # no image: the China Desk's editorial plate
     5: am.SIGNAL_VEIL, 6: am.SIGNAL_VEIL, 7: am.SIGNAL_VEIL,
     8: am.PHOTOGRAPH,    # liaoning-j15-recovery, CC BY 4.0
     9: am.PHOTOGRAPH,    # scarborough-shoal-iss, public domain
@@ -47,10 +48,13 @@ EXPECTED = {
     11: am.SIGNAL_VEIL,
     12: am.PRESERVED,    # src-2026-08-01, B5
     13: am.SIGNAL_VEIL,
-    14: am.NONE,
+    14: am.PLATE,
     15: am.PRESERVED,    # a native brief's own photograph (Phase 0 §1.2)
-    16: am.NONE, 17: am.NONE,
+    16: am.PLATE, 17: am.PLATE,
 }
+
+#: Han, kana and CJK punctuation: script that needs a declared language.
+CJK = re.compile(r"[\u3000-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uff00-\uffef]")
 
 #: The cited article's numeric id and its photograph's, as 81.cn names them.
 #: A `_wm…` suffix is the CMS's watermarked rendition of the same asset.
@@ -80,11 +84,13 @@ class ArticleMediaPagesTests(unittest.TestCase):
                        key=lambda s: s["date"])
         cls.historical = {}
         with contextlib.redirect_stdout(io.StringIO()):
+            bridge = next_brief_after(sides)
             for i, side in enumerate(sides):
                 ctx = _build_post_context(side)
                 ctx["prev_post"] = sides[i - 1] if i else None
                 ctx["next_post"] = sides[i + 1] if i + 1 < len(sides) else None
-                page = render_historical_brief(ctx)
+                page = render_historical_brief(
+                    ctx, next_brief=bridge["link"] if bridge and bridge["slug"] == side["date"] else None)
                 cls.historical[side["issue_number"]] = (
                     side, ctx, page, BeautifulSoup(page, "html.parser"))
 
@@ -113,28 +119,73 @@ class ArticleMediaPagesTests(unittest.TestCase):
                 manifest = ({e["id"]: e for e in json.loads(MANIFEST.read_text())}
                             .get((veil or {}).get("id"), {}))
                 kind = am.historical_article_media(
-                    veil, ctx.get("cover_media_item"), manifest)["kind"]
+                    veil, ctx.get("cover_media_item"), manifest, root="../../")["kind"]
                 self.assertEqual(kind, EXPECTED[number])
+                # Without a page root the adapter never invents a plate.
+                if kind == am.PLATE:
+                    self.assertEqual(am.historical_article_media(
+                        veil, ctx.get("cover_media_item"), manifest)["kind"], am.NONE)
                 marked = [f["data-article-media"]
                           for f in soup.select("figure[data-article-media]")]
                 figures = hero(soup).select("figure")
-                if kind in (am.PHOTOGRAPH, am.SIGNAL_VEIL):
+                if kind in (am.PHOTOGRAPH, am.SIGNAL_VEIL, am.PLATE):
                     self.assertEqual(marked, [kind])
-                elif kind == am.PRESERVED:
-                    self.assertEqual(marked, [])
                     self.assertEqual(len(figures), 1)
                 else:
+                    self.assertEqual(kind, am.PRESERVED)
                     self.assertEqual(marked, [])
-                    self.assertEqual(figures, [])
+                    self.assertEqual(len(figures), 1)
+                # Every opened issue now has an image card in its hero.
+                self.assertIn("brief-hero--photo", hero(soup)["class"])
 
-    def test_native_briefs_keep_their_photograph_or_lead_with_text(self):
+    def test_native_briefs_keep_their_photograph_or_carry_a_plate(self):
         for number, (entry, page, soup) in self.native.items():
             with self.subTest(brief=number):
-                self.assertEqual(am.native_article_media(entry.get("photo"))["kind"],
-                                 EXPECTED[number])
-                self.assertEqual(soup.select("figure[data-article-media]"), [])
+                desks = self.collection.sidecars[entry["slug"]]["desks"]
+                media = am.native_article_media(entry.get("photo"), desks, root="../")
+                self.assertEqual(media["kind"], EXPECTED[number])
                 photo = hero(soup).select("figure.brief-opening-photo")
+                plate = hero(soup).select("figure[data-article-media=plate]")
                 self.assertEqual(len(photo), 1 if EXPECTED[number] == am.PRESERVED else 0)
+                self.assertEqual(len(plate), 1 if EXPECTED[number] == am.PLATE else 0)
+                self.assertEqual(len(soup.select("figure[data-article-media]")), len(plate))
+                self.assertIn("brief-hero--photo", hero(soup)["class"])
+                if plate:
+                    uses = [u["href"] for u in plate[0].select("use")]
+                    self.assertEqual(uses, ["../assets/geo/region.svg#region"] + [
+                        "../assets/geo/region.svg#region-%s" % d
+                        for d in desks if d in am.PLATE_DESKS])
+
+    def test_every_plate_is_labelled_decorative_original_artwork(self):
+        pages = ([(n, soup) for n, (_, _, _, soup) in self.historical.items()]
+                 + [(n, soup) for n, (_, _, soup) in self.native.items()])
+        plated = []
+        for number, soup in pages:
+            plate = soup.select_one("figure[data-article-media=plate]")
+            if plate is None:
+                continue
+            plated.append(number)
+            with self.subTest(item=number):
+                self.assertEqual(plate.select("img, a"), [])
+                self.assertEqual(plate.svg["aria-hidden"], "true")
+                self.assertEqual(plate.svg["viewbox"], am.PLATE_VIEWBOX)
+                self.assertEqual(plate.figcaption.get_text(" ", strip=True).split(" · ", 1)[0],
+                                 "Editorial plate")
+                for text in (am.PLATE_NOTE, am.PLATE_CONTEXT):
+                    self.assertIn(text, plate.figcaption.get_text())
+        self.assertEqual(sorted(plated), [4, 14, 16, 17])
+        # A historical plate is the China Desk's, the desk that published them.
+        for number in (4, 14):
+            uses = [u["href"] for u in self.historical[number][3].select("figure[data-article-media=plate] use")]
+            self.assertEqual(uses, ["../../assets/geo/region.svg#region",
+                                    "../../assets/geo/region.svg#region-china"])
+
+    def test_plate_art_is_the_receipted_regional_relief(self):
+        receipt = json.loads((ROOT / "site/assets/geo/geo.receipt.json").read_text())
+        self.assertEqual(receipt["symbols"]["region"], am.PLATE_VIEWBOX)
+        svg = (ROOT / "site/assets" / am.PLATE_ART.split("/", 1)[1]).read_text()
+        for symbol in ("region",) + tuple("region-" + d for d in am.PLATE_DESKS):
+            self.assertIn('id="%s" viewBox="%s"' % (symbol, am.PLATE_VIEWBOX), svg)
 
     def test_held_figures_are_byte_for_byte_what_was_published(self):
         for number in (1, 10, 12):
@@ -202,6 +253,22 @@ class ArticleMediaPagesTests(unittest.TestCase):
         # A licence without a recorded deed is named, not linked.
         self.assertIsNone(self.historical[9][3].select_one("figure a[rel~=license]"))
 
+    def test_native_script_in_a_photograph_credit_declares_its_language(self):
+        # No. 8's credit names the Joint Staff in Japanese. Only that name is
+        # tagged, from the manifest's recorded language; no script is guessed.
+        figure = self.historical[8][3].select_one("figure[data-article-media=photograph]")
+        tagged = figure.figcaption.select("[lang]")
+        self.assertEqual([(t.name, t["lang"], t.get_text()) for t in tagged],
+                         [("span", "ja", "統合幕僚監部")])
+        self.assertIn("Japan Ministry of Defense, Joint Staff (統合幕僚監部)",
+                      figure.figcaption.get_text())
+        for number, (_, _, _, soup) in self.historical.items():
+            for fig in soup.select("figure[data-article-media=photograph]"):
+                with self.subTest(issue=number):
+                    for text in fig.figcaption.find_all(string=CJK):
+                        self.assertIsNotNone(text.find_parent(attrs={"lang": True}),
+                                             "untagged script in credit: %r" % str(text))
+
     def test_historical_issue_links_follow_the_sidecar_order(self):
         numbers = sorted(self.historical)
         for number in numbers:
@@ -209,7 +276,12 @@ class ArticleMediaPagesTests(unittest.TestCase):
                 nav = self.historical[number][3].select_one("nav.brief-issue-nav.historical-issue-nav")
                 prev, nxt = nav.select_one("a[rel=prev]"), nav.select_one("a[rel=next]")
                 self.assertEqual(prev is None, number == numbers[0])
-                self.assertEqual(nxt is None, number == numbers[-1])
+                self.assertIsNotNone(nxt)
+                if number == numbers[-1]:
+                    # The newest issue's next item is the first native Brief.
+                    self.assertEqual(nxt["href"], "../../briefs/maritime-cooperation-2026.html")
+                    self.assertIn("No. %d" % (number + 1), nxt.get_text())
+                    nxt = None
                 for link, other in ((prev, number - 1), (nxt, number + 1)):
                     if link is None:
                         continue
@@ -306,18 +378,63 @@ class ArticleMediaAdapterTests(unittest.TestCase):
         self.assertEqual([p["href"] for p in parts], [None, None, "https://example.test/p"])
         self.assertEqual(am.credit_parts(""), [])
 
+    def test_credit_parts_tag_only_a_recorded_native_name(self):
+        credit = "Joint Staff (統合幕僚監部) · CC BY 4.0"
+        parts = am.credit_parts(credit, native="統合幕僚監部", native_lang="ja")
+        self.assertEqual(parts[0]["native"], {"pre": "Joint Staff (", "text": "統合幕僚監部",
+                                              "lang": "ja", "post": ")"})
+        self.assertEqual(parts[0]["text"], "Joint Staff (統合幕僚監部)")
+        html = figure_html({**am.historical_article_media(dict(self.CURATED, credit=credit), None,
+                            {"id": "pic", "credit_native": "統合幕僚監部",
+                             "credit_native_lang": "ja"}), "src": "p.jpg"})
+        self.assertIn('Joint Staff (<span lang="ja">統合幕僚監部</span>)', html)
+        # No language recorded, absent, or ambiguous: nothing is tagged.
+        for native, lang, text in (("統合幕僚監部", "", credit), ("幕僚", "ja", "幕僚 幕僚"),
+                                   ("海上幕僚監部", "ja", credit)):
+            self.assertTrue(all(p["native"] is None for p in
+                                am.credit_parts(text, native=native, native_lang=lang)))
+
+    def test_manifest_native_names_come_from_the_recorded_creator(self):
+        for entry in json.loads(MANIFEST.read_text()):
+            credit = entry.get("credit") or ""
+            with self.subTest(entry=entry["id"]):
+                if not CJK.search(credit):
+                    self.assertNotIn("credit_native", entry)
+                    continue
+                native = entry["credit_native"]
+                self.assertEqual(credit.count(native), 1)
+                self.assertIn(native, entry["creator"])
+                self.assertEqual(entry["credit_native_lang"], "ja")
+                self.assertFalse(CJK.search(credit.replace(native, "")))
+
     def test_an_editorial_plate_is_decorative_and_labelled(self):
-        soup = BeautifulSoup(figure_html(am.editorial_plate("plate.jpg", focus="40% 50%")),
-                             "html.parser")
-        figure = soup.select_one("figure")
+        plate = am.editorial_plate("../", ("singapore", "unknown", "china"))
+        self.assertEqual(plate["desks"], ("singapore", "china"))
+        figure = BeautifulSoup(figure_html(plate), "html.parser").select_one("figure")
         self.assertEqual(figure["data-article-media"], "plate")
         self.assertFalse(figure.has_attr("aria-label"))
         self.assertFalse(figure.has_attr("data-editorial-id"))
-        self.assertEqual(figure.img["alt"], "")
+        self.assertEqual(figure.select("img, a"), [])
+        self.assertEqual(figure.svg["aria-hidden"], "true")
+        self.assertEqual(figure.svg["focusable"], "false")
+        self.assertEqual([u["href"] for u in figure.select("use")],
+                         ["../assets/geo/region.svg#region",
+                          "../assets/geo/region.svg#region-singapore",
+                          "../assets/geo/region.svg#region-china"])
         caption = figure.figcaption.get_text()
         for text in ("Editorial plate", am.PLATE_NOTE, am.PLATE_CONTEXT):
             self.assertIn(text, caption)
-        self.assertEqual(figure.select("a"), [])
+
+    def test_a_plate_never_replaces_an_image(self):
+        cover = {"src": "cover.jpg"}
+        for veil, cover_item, kind in ((self.SOURCE, None, am.SIGNAL_VEIL),
+                                       (self.CURATED, None, am.PHOTOGRAPH),
+                                       ({"id": "src-2026-08-01", "kind": "source"}, None, am.PRESERVED),
+                                       (None, cover, am.PRESERVED)):
+            self.assertEqual(am.historical_article_media(veil, cover_item, root="../../")["kind"], kind)
+        self.assertEqual(am.native_article_media({"src": "p.jpg"}, ("china",), root="../")["kind"],
+                         am.PRESERVED)
+        self.assertEqual(am.native_article_media(None, ("china",))["kind"], am.NONE)
 
     def test_no_image_and_held_images_render_nothing_from_the_macro(self):
         for m in ({"kind": am.NONE}, {"kind": am.PRESERVED, "reason": "held"}):

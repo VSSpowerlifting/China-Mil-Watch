@@ -1097,23 +1097,26 @@ the macOS temp root). Contract:
 as `18b57684e6`.
 
 **Phase 3C Briefs article presentation in review (2026-10-12):** branch
-`claude/ipr-phase-3c-rendering-4da02b`, from main `18b57684e6`. The 17 opened
-Briefs (14 historical pages, 3 native) name their hero image's kind in text
-through one presentation adapter, `core/article_media.py`. It grants nothing
-and never reads `core/catalogue_media.py`. Seven Signal Veils keep their
-caption word for word behind a "Signal Veil" label. Nos. 8 and 9 show the
-manifest's full credit, licence, Commons link and IPR's change note. Nos. 1,
-10, 12 and 15 keep their figure markup byte for byte, and Nos. 4, 14, 16 and
-17 stay text-led. Both templates close with a shared previous/next Brief nav.
-Native order comes from `brief_collection.adjacent_items`; historical targets
-are unchanged, so No. 14 still has no forward link to No. 15. Historical pages
-inline the new rules because `output/briefs.css` is written only by
-`site/render.py`. No JavaScript added; HTML+CSS is at most 86.3 KB per article.
-On all 17 routes only the predicted fields differ (hrefs, figcaptions, No. 8's
-licence link). Known gap introduced here: No. 8's caption now shows the
-manifest credit's "統合幕僚監部" with no `lang` attribute, because the manifest
-records no language for it; recording one is a separate manifest change.
-Publishing needs both documented renders after merge. Contract:
+`claude/ipr-phase-3c-rendering-4da02b`, from main `18b57684e6`; a review
+revision has been applied. All 17 opened Briefs (14 historical pages, 3 native)
+name their hero image's kind in text through one presentation adapter,
+`core/article_media.py`, which grants nothing and never reads
+`core/catalogue_media.py`. The treatments:
+- Seven Signal Veils keep their caption word for word behind a "Signal Veil"
+  label.
+- Nos. 8 and 9 show the manifest's full credit, licence, Commons link and IPR's
+  change note. No. 8's "統合幕僚監部" carries `lang="ja"` from the manifest's new
+  `credit_native_lang`.
+- Nos. 1, 10, 12 and 15 keep their figure markup byte for byte.
+- Nos. 4, 14, 16 and 17 open on a labelled editorial plate.
+
+Both templates close with a shared previous/next Brief nav, and No. 14 ↔
+No. 15 are now reciprocal through one approval-gated bridge. No JavaScript was
+added, and HTML+CSS is at most 87.3 KB per article. **Open gates:** owner
+visual sign-off on the plates (Phase 0 requirement 7 stays conditional until
+then), owner review of the manifest field, and independent review. Publishing
+needs both documented renders after merge; the historical test's temporary
+normalisation then becomes strict byte equality. Contract:
 `docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`; evidence:
 `docs/evidence/briefs-article-3c-2026-10-12/`. Not merged or deployed;
 independent review required.
