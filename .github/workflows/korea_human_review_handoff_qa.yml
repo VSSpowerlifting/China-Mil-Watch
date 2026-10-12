@@ -1,0 +1,81 @@
+name: Korea — real original-HWPX reviewer handoff privacy QA
+
+on:
+  pull_request:
+    paths:
+      - "scripts/prepare_korea_human_review.py"
+      - "tests/test_korea_human_review_package.py"
+      - "docs/engineering/KOREA_HUMAN_SOURCE_REVIEW_HANDOFF_2026-10-11.md"
+      - ".github/workflows/korea_human_review_handoff_qa.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  no-public-original-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin protected output hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > /tmp/korea-review-db.sha
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/korea-review-output.sha
+      - name: Local-only tests with a genuine fixture HWPX
+        run: |
+          python -m unittest tests.test_korea_human_review_package tests.test_korea_source_fidelity -q
+      - name: Read archived real Korea source state from Git (NO publisher fetch)
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          git clone --quiet --single-branch --branch shadow/korea-policy-briefing "$STATE_REMOTE" "$RUNNER_TEMP/korea-originals-state"
+          tip="$(git -C "$RUNNER_TEMP/korea-originals-state" rev-parse HEAD)"
+          test "$tip" = "dcb43b9c4edb471d6def5876701ec4a2e39d5264"
+          python -m scripts.prepare_korea_human_review \
+            --state-repo "$RUNNER_TEMP/korea-originals-state" \
+            --state-commit "$tip" \
+            --out "$RUNNER_TEMP/korea-private-source-originals" \
+            --acknowledge-private-originals \
+            > "$RUNNER_TEMP/korea-metadata-receipt.json"
+          python - "$RUNNER_TEMP/korea-private-source-originals" "$RUNNER_TEMP/korea-metadata-receipt.json" <<'PY'
+          import json, pathlib, stat, sys
+          root, receipt_file = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+          receipt = json.loads(receipt_file.read_text(encoding="utf-8"))
+          assert receipt["state_commit"] == "dcb43b9c4edb471d6def5876701ec4a2e39d5264"
+          assert len(receipt["records"]) == 5
+          assert receipt["reviewer_approvals"] == 0
+          assert receipt["public_release_authorized"] is False
+          assert receipt["source_bodies_in_public_artifact"] is False
+          assert stat.S_IMODE(root.stat().st_mode) == 0o700
+          names = [p.name for p in (root / "originals").glob("*.hwpx")]
+          assert len(names) == 5
+          assert len(list((root / "originals").glob("*.ko.txt"))) == 5
+          assert len(list((root / "reviews").glob("*.md"))) == 5
+          assert all(stat.S_IMODE(p.stat().st_mode) == 0o600
+                     for p in root.rglob("*") if p.is_file())
+          packet = json.loads((root / "approvals_UNFILLED.json").read_text(encoding="utf-8"))
+          assert len(packet["entries"]) == 5
+          assert all(not x["human_korean_review"]["korean_semantics_verified"]
+                     and not x["source_rights_review"]["intended_use_approved"]
+                     and not x["owner_publication_approval"]["explicit_approval_for_reference_only"]
+                     for x in packet["entries"])
+          print("Actual five archived HWPX verified and packed locally; human approvals=0; no artifact upload.")
+          PY
+          rm -rf "$RUNNER_TEMP/korea-private-source-originals" "$RUNNER_TEMP/korea-originals-state"
+          test ! -e "$RUNNER_TEMP/korea-private-source-originals"
+          sha256sum -c /tmp/korea-review-db.sha
+          sha256sum -c /tmp/korea-review-output.sha > /dev/null
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+# Deliberately NO actions/upload-artifact: raw originals must never go to Actions artifacts.
