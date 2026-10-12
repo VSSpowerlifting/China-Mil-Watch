@@ -10,6 +10,8 @@ import argparse
 import json
 import sys
 from datetime import date, datetime, timedelta, timezone
+import re
+
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -117,47 +119,112 @@ def evaluate(clock, ledgers, db_digest, expected_day, commit):
     }
 
 
-class Links(HTMLParser):
+class PublishedEntries(HTMLParser):
+    """Capture each local link/title/date/press number, never dereference it."""
+
+    LABELS = {
+        "Four external ministry news links": "news",
+        "Two external ministry press release links": "press",
+    }
+
     def __init__(self):
         super().__init__(convert_charrefs=True)
-        self.in_index = False
-        self.in_press = False
-        self.refs = []
-        self.press_refs = []
+        self.section = None
+        self.counts = {"news": 0, "press": 0}
+        self.news, self.press = [], []
+        self.current = None
+        self.anchor = None
+        self.time = None
 
     def handle_starttag(self, tag, attrs):
         values = dict(attrs)
-        if tag == "ol" and values.get("aria-label") == "Four external ministry news links":
-            self.in_index = True
-        elif tag == "ol" and values.get("aria-label") == "Two external ministry press release links":
-            self.in_press = True
-        elif tag == "a" and self.in_index:
-            self.refs.append((values.get("href"), values.get("lang")))
-        elif tag == "a" and self.in_press:
-            self.press_refs.append((values.get("href"), values.get("lang")))
+        if tag == "ol" and values.get("aria-label") in self.LABELS:
+            check(self.section is None and self.current is None,
+                  "overlapping publisher indexes")
+            self.section = self.LABELS[values["aria-label"]]
+            self.counts[self.section] += 1
+        elif tag == "li" and self.section is not None:
+            check(self.current is None, "nested publisher reference")
+            self.current = {"anchors": [], "dates": [], "text": []}
+        elif self.current is not None and tag == "a":
+            check(self.anchor is None, "nested publisher anchor")
+            self.anchor = [values.get("href"), values.get("lang"), []]
+            self.current["anchors"].append(self.anchor)
+        elif self.current is not None and tag == "time":
+            check(self.time is None, "nested publisher date")
+            self.time = [values.get("datetime"), []]
+            self.current["dates"].append(self.time)
+
+    def handle_data(self, value):
+        if self.current is not None:
+            self.current["text"].append(value)
+            if self.anchor is not None:
+                self.anchor[2].append(value)
+            if self.time is not None:
+                self.time[1].append(value)
 
     def handle_endtag(self, tag):
-        if tag == "ol":
-            self.in_index = False
-            self.in_press = False
+        if tag == "a":
+            self.anchor = None
+        elif tag == "time":
+            self.time = None
+        elif tag == "li" and self.section is not None:
+            check(self.current is not None and self.anchor is None and
+                  self.time is None and len(self.current["anchors"]) == 1 and
+                  len(self.current["dates"]) == 1,
+                  "publisher item must bind one link, heading and date")
+            url, lang, headline = self.current["anchors"][0]
+            machine_date, shown_date = self.current["dates"][0]
+            normalized = lambda value: " ".join("".join(value).split())
+            entry = (url, lang, normalized(headline),
+                     machine_date, normalized(shown_date))
+            if self.section == "press":
+                numbers = re.findall(
+                    r"\bPress statement\s+(SP/[1-9][0-9]*/[IVX]+/20[0-9]{2}/ROINFOHAN)\b",
+                    normalized(self.current["text"]))
+                check(len(numbers) == 1,
+                      "missing or duplicated local publisher press identifier")
+                self.press.append(entry + (numbers[0],))
+            else:
+                self.news.append(entry)
+            self.current = None
+        elif tag == "ol" and self.section is not None:
+            check(self.current is None, "unclosed publisher reference")
+            self.section = None
 
-
+    def validate(self):
+        check(self.counts == {"news": 1, "press": 1} and
+              self.section is None and self.current is None,
+              "missing, repeated or unclosed publisher directory")
 def check_public_page(path, approved_links=None, approved_press_links=None):
     """Read a local copy from exact gh-pages Git commit, never fetch publisher."""
     path = Path(path)
     check(path.is_file() and not path.is_symlink() and
           path.stat().st_size <= 250_000, "published page missing or oversized")
     page = path.read_text(encoding="utf-8")
-    links = Links()
-    links.feed(page)
+    entries = PublishedEntries()
+    entries.feed(page)
+    entries.validate()
     known = approved_links if approved_links is not None else load_official_links()
-    check(links.refs == [(x["source_url"], "id") for x in known],
-          "Pages four-link bibliography disagrees with the source index")
     press = approved_press_links if approved_press_links is not None else load_official_press_links()
-    check(links.press_refs == [(x["source_url"], "id") for x in press],
-          "Pages two-link Kemhan press bibliography disagrees with official originals")
-    for number in (x["press_number"] for x in press):
-        check(number in page, "official publisher press-reference number missing")
+    news_entries, press_entries = entries.news, entries.press
+    expected_news = [
+        (ref["source_url"], "id", ref["title_original"],
+         ref["published_date"], ref["published_date"])
+        for ref in known
+    ]
+    expected_press = [
+        (ref["source_url"], "id", ref["title_original"],
+         ref["published_date"], ref["published_date"], ref["press_number"])
+        for ref in press
+    ]
+    check(news_entries == expected_news,
+          "Pages news links, headlines or dates disagree with frozen source metadata")
+    check(press_entries == expected_press,
+          "Pages press links, headlines, dates or numbered releases disagree with frozen source metadata")
+    check(len({entry[0] for entry in news_entries + press_entries}) ==
+          len(news_entries) + len(press_entries),
+          "published ministry links are not unique")
     for phrase in ("Shadow evaluation — no public corpus records",
                    "No individual source references have completed",
                    "Explore official Indonesian defense publications",
@@ -166,7 +233,7 @@ def check_public_page(path, approved_links=None, approved_press_links=None):
     for forbidden in ("text_original", "body_original", "state/shadow.db",
                       "data-reference-list", "NOT APPROVED FOR PUBLICATION"):
         check(forbidden not in page, "unapproved source or review material in public page")
-    return len(links.refs) + len(links.press_refs)
+    return len(news_entries) + len(press_entries)
 
 
 def main(argv=None):
