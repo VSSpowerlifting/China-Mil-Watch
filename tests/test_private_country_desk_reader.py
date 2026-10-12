@@ -42,14 +42,16 @@ def git(folder, *args):
 
 def state_commit(folder, source, *, title, url, identity, content=SECRET,
                  date="2026-10-10", clock=None, kr_issuer="국방부",
-                 kr_language="ko", kr_bad_sha=False, kr_state_desk="korea"):
+                 kr_language=None, kr_bad_sha=False, kr_state_desk=None,
+                 id_metadata_changes=None):
     state = folder / "state"
     state.mkdir(exist_ok=True)
     with sqlite3.connect(state / "shadow.db") as cx:
-        if SOURCES[source][3] == "korea":
+        if SOURCES[source][3] in ("korea", "indonesia"):
             cx.execute(SQL_KR)
             cx.execute("CREATE TABLE shadow_meta (desk TEXT PRIMARY KEY)")
-            cx.execute("INSERT INTO shadow_meta VALUES (?)", (kr_state_desk,))
+            cx.execute("INSERT INTO shadow_meta VALUES (?)",
+                       (kr_state_desk or SOURCES[source][0],))
             metadata = {
                 "issuer": kr_issuer,
                 "publisher": "대한민국 정책브리핑",
@@ -59,9 +61,18 @@ def state_commit(folder, source, *, title, url, identity, content=SECRET,
                 "document_url": "https://www.korea.kr/common/download.do?fileId=123456&tblKey=GMN",
                 "document_capture_sha256": "b" * 64,
             }
+            if source == "id_kemhan_news":
+                metadata = {
+                    "publisher": "Kementerian Pertahanan Republik Indonesia",
+                    "issuer": None, "publication_kind": "institutional_news",
+                    "body_scope": "published_html_text",
+                    "attachments_collected": False,
+                }
+                metadata.update(id_metadata_changes or {})
             cx.execute("INSERT INTO shadow_records VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                        (identity, source, url, title, date, "38088742605-1", content,
-                        kr_language, json.dumps(metadata, ensure_ascii=False),
+                        kr_language or ("id" if source == "id_kemhan_news" else "ko"),
+                        json.dumps(metadata, ensure_ascii=False),
                         ("a" * 64 if kr_bad_sha else hashlib.sha256(content.encode()).hexdigest()),
                         "c" * 64))
         elif SOURCES[source][3] == "vietnam":
@@ -104,10 +115,14 @@ class PrivateCountryReaderTests(unittest.TestCase):
                          ("/news/test-press-release" if slug == "ph_afp_articles"
                           else "/briefing/pressReleaseView.do?newsId=156784000"
                           if slug == "kr_policy_mnd_releases"
+                          else "/2026/10/10/kemhan-berita-sample.html"
+                          if slug == "id_kemhan_news"
                           else "/test-official-release"))
         identity = kwargs.pop("identity", "afp:11232" if slug == "ph_afp_articles"
                               else "korea-policy:156784000"
                               if slug == "kr_policy_mnd_releases"
+                              else "kemhan:/2026/10/10/kemhan-berita-sample.html"
+                              if slug == "id_kemhan_news"
                               else slug + ":12")
         title = kwargs.pop("title", "Official agency briefing")
         commit = state_commit(self.folder, slug, url=url, title=title,
@@ -176,6 +191,56 @@ class PrivateCountryReaderTests(unittest.TestCase):
                 k = self.fixture("kr_policy_mnd_releases", **modifications)
                 with self.assertRaises(ReaderHold):
                     build([k], country="korea")
+
+    def test_indonesia_private_original_language_search_without_body_export(self):
+        a = self.fixture(
+            "id_kemhan_news", title="Kemhan Gelar Pertemuan Resmi",
+            content="Pertemuan pertahanan resmi " + SECRET,
+            clock={"desk": "indonesia",
+                   "day_zero_run_id": "local-native-20261006-indonesia",
+                   "day_zero_utc": "2026-10-06T16:52:15+00:00"})
+        report = build([a], term="Pertemuan pertahanan", country="indonesia")
+        self.assertEqual(report["matched_total"], 1)
+        item = report["results"][0]
+        self.assertEqual(item["country"], "indonesia")
+        self.assertEqual(item["source_slug"], "id_kemhan_news")
+        self.assertEqual(item["identity"], "kemhan:/2026/10/10/kemhan-berita-sample.html")
+        self.assertEqual(item["state_commit"], a.split(",")[2])
+        self.assertEqual(item["review_status"], "not_human_reviewed_for_public_use")
+        serialized = json.dumps(report, ensure_ascii=False)
+        self.assertNotIn(SECRET, serialized)
+        self.assertNotIn("Pertemuan pertahanan resmi", serialized)
+        self.assertFalse(report["public_release_authorized"])
+        self.assertFalse(report["human_source_review_completed"])
+        self.assertFalse(report["automated_source_rights_approved"])
+        page = render_html(report)
+        self.assertIn("Indonesia", page)
+        self.assertIn("www.kemhan.go.id", page)
+        self.assertIn("PUBLIC REVIEW PENDING", page)
+        self.assertNotIn(SECRET, page)
+
+    def test_indonesia_rejects_identity_date_language_desk_and_scope_drift(self):
+        cases = (
+            {"identity": "kemhan:/2026/10/10/another-article.html"},
+            {"url": "https://www.kemhan.go.id/2026/10/11/kemhan-berita-sample.html"},
+            {"url": "https://www.kemhan.go.id/2026/10/10/kemhan-berita-sample.html?utm=1"},
+            {"url": "https://tni.mil.id/2026/10/10/kemhan-berita-sample.html"},
+            {"date": "2026-10-09"},
+            {"kr_language": "en"},
+            {"kr_bad_sha": True},
+            {"kr_state_desk": "korea"},
+            {"id_metadata_changes": {"publication_kind": "press_release"}},
+            {"id_metadata_changes": {"body_scope": "unknown"}},
+            {"id_metadata_changes": {"attachments_collected": True}},
+            {"id_metadata_changes": {"publisher": "Some other publisher"}},
+            {"clock": {"desk": "korea", "day_zero_run_id": "local-native-20261006-indonesia",
+                       "day_zero_utc": "2026-10-06T16:52:15+00:00"}},
+        )
+        for case in cases:
+            with self.subTest(case=case):
+                a = self.fixture("id_kemhan_news", **case)
+                with self.assertRaises(ReaderHold):
+                    build([a], country="indonesia")
 
     def test_casefold_query_and_country_filter_and_cap(self):
         a = self.fixture("ph_afp_articles", title="Sanlakas exercise",

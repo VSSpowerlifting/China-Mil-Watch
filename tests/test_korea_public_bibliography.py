@@ -83,8 +83,12 @@ class KoreaPublicMetadataContracts(unittest.TestCase):
                               "download.do?fileId=", "data-review-status=",
                               "english_description", "korea_private_structural_refs"):
                 self.assertNotIn(forbidden, page)
-            self.assertIn('href="korea.html"',
-                          (target / "desks.html").read_text(encoding="utf-8"))
+            desks_html = (target / "desks.html").read_text(encoding="utf-8")
+            self.assertIn('href="korea.html"', desks_html)
+            self.assertIn("Shadow evaluation — not in corpus", desks_html)
+            self.assertNotIn("Shadow evaluation — not public", desks_html)
+            self.assertIn("approved official-source links", desks_html)
+            self.assertIn("Official references available", page)
             sitemap = (target / "sitemap.xml").read_text(encoding="utf-8")
             self.assertIn("https://indopacificrecord.org/korea.html", sitemap)
 

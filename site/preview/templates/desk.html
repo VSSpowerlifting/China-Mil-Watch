@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -16,7 +16,7 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{{ 'Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label }}</h2>
+    <h2>{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}</h2>
     <p>{{ desk.status_explanation }}</p>
   </div>
 </div>
@@ -116,8 +116,88 @@
 </section>
 {% endif %}
 
+{# Site-equivalent Indonesia PRIVATE preview. This block cannot be enabled
+   by the ordinary renderer: only the separate, noindex, external-dir harness
+   supplies indonesia_preview. Candidate links are NOT approved publications. #}
+{% if indonesia_preview | default(false) %}
+<section class="desk-references" aria-labelledby="indonesia-reference-preview-heading">
+  <p class="eyebrow">Private layout review · unpublished · noindex</p>
+  <h2 id="indonesia-reference-preview-heading">Indonesia — proposed official-source references</h2>
+  <p><strong>HOLD · NOT APPROVED FOR PUBLICATION.</strong> These four exact
+  Indonesian-language citations are a design review of a future, limited
+  reference page. They are <strong>not</strong> approved source citations,
+  translations, copied source articles, or evidence of independent corroboration.</p>
+  <div class="korea-preview-metrics" role="group" aria-label="Indonesia unpublished qualification status">
+    <div><strong>{{ indonesia_preview_candidates|length }}</strong><span>candidate official links</span></div>
+    <div><strong>0</strong><span>independently human-approved links</span></div>
+    <div><strong>0</strong><span>Day 7 human review signoffs</span></div>
+    <div><strong>0</strong><span>admitted public archive records</span></div>
+  </div>
+  <ol class="desk-reference-list" aria-label="Official Indonesian pages under human review">
+  {% for item in indonesia_preview_candidates %}
+    <li>
+      <p><strong>{{ item.reference_id }} · Kemhan Berita · proposed reference only</strong></p>
+      <p><a href="{{ item.source_url }}" target="_blank"
+            rel="noopener noreferrer" lang="id">{{ item.title_original }}</a></p>
+      <p class="meta">Kementerian Pertahanan Republik Indonesia ·
+         Original-language publication date:
+         <time datetime="{{ item.published_date }}">{{ item.published_date }}</time></p>
+    </li>
+  {% endfor %}
+  </ol>
+  <p class="meta">One institutional Berita channel, not whole-of-government
+  defence coverage. An additional reviewed original is excluded for an unresolved
+  publisher geographic inconsistency. The four candidates are bibliographic
+  links only; the ministry's article text and images are not republished here.</p>
+  <p class="meta">Required before any public deployment: separately checked
+  Indonesian originals and individual rights dispositions, documented Day 7
+  evidence, named human approval, and an owner-accepted, source-scoped site
+  release. A private preview never grants any of those approvals.</p>
+</section>
+{% endif %}
+
+{# Indonesia has a first-party publisher *directory* link, not an article
+   citation or inherited reuse permission. No shadow originals are exposed. #}
+{% if desk.slug == 'indonesia' and not indonesia_preview | default(false) %}
+<section class="desk-references" aria-labelledby="indonesia-publisher-heading">
+  <h2 id="indonesia-publisher-heading">Official publisher starting point</h2>
+  <p><a href="https://www.kemhan.go.id/category/berita"
+        target="_blank" rel="noopener noreferrer" lang="id">Kementerian Pertahanan RI — Berita</a></p>
+  <p class="meta">The link opens the ministry's own institutional-news listing.
+  It is not an IPR-hosted copy or evidence that every publication is captured.</p>
+</section>
+{% if indonesia_official_links | default([]) %}
+<section class="desk-references" aria-labelledby="indonesia-links-heading">
+  <p class="eyebrow">Limited publisher-link directory · October 11, 2026 snapshot</p>
+  <h2 id="indonesia-links-heading">Explore official Indonesian defense publications</h2>
+  <p>These four links open original Berita articles on the Indonesian Ministry of
+  Defense website. They are <strong>publisher references, not independently
+  human-reviewed IPR citations</strong>. Publication dates and Indonesian
+  headlines are attributed to the ministry; the links do not verify the
+  institution's claims, imply its endorsement, or add archived public records.</p>
+  <ol class="desk-reference-list" aria-label="Four external ministry news links">
+    {% for ref in indonesia_official_links %}
+    <li>
+      <p><a href="{{ ref.source_url }}" target="_blank" rel="noopener noreferrer"
+            lang="id">{{ ref.title_original }}</a></p>
+      <p class="meta">Kementerian Pertahanan Republik Indonesia · Published
+      <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+      · Original Indonesian · External official publication</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">This is a frozen four-reference selection from one ministry
+  news channel, not an automatically updated Indonesian national defense archive.
+  A separately examined fifth original is withheld over inconsistent geography
+  on its source page. No article body, image, translation or third-party media
+  is reproduced here. Human source review and the Day 7/14/30 collection
+  checkpoints remain separate from the ability to follow these official links.</p>
+</section>
+{% endif %}
+{% endif %}
+
 {# Reviewed public-source links are not locally archived IPR records. #}
-{% if desk.slug in ('philippines', 'vietnam') %}
+{% if desk.slug in ('philippines', 'vietnam', 'indonesia') and not indonesia_preview | default(false) %}
 <section class="desk-references" aria-labelledby="desk-references-heading">
 <h2 id="desk-references-heading">Individually reviewed official-source references</h2>
 <p>Source links appear only after publication-specific review. They point to the
@@ -318,4 +398,4 @@ keeps its original number, title, date and URL — see <a href="analysis.html">{
 
 <p class="records-foot"><a href="desks.html">All desks</a></p>
 {% endblock %}
-{% block scripts %}{% if desk.slug in ('vietnam', 'philippines') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
+{% block scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') and not indonesia_preview | default(false) %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}

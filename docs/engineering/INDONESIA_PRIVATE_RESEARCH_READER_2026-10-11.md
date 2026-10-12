@@ -1,0 +1,53 @@
+# Indonesia Desk — working private Kemhan Berita reader (October 11, 2026)
+
+**Engineering scope:** extend the existing Philippines/Vietnam/Korea local metadata research reader to the already-running Indonesia *Berita* shadow branch. This is private research functionality only. This PR does **not** add a collector, source expansion, public publication, registry declaration, editorial approval, production record, model input, public desk page, or deployment. A separate public **research-status-only** page was released by [PR #424](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/424); it publishes no shadow records or individual reviewed source links.
+
+## Exact existing source and fresh observation
+
+- Source family: `id_kemhan_news`, official Kemhan `Berita` listing only (`https://www.kemhan.go.id/category/berita`), collected by the existing identified, robots-gated isolated collector.
+- Git source-state branch: `shadow/indonesia-kemhan`; the command fetches its current existing tip, resolves a literal immutable commit, then reads only Git objects from that exact commit. It does not request the publisher.
+- **Observed on October 11:** state branch `17dfae7e6e1e9e1142d81c89764f022ebf03552f`; saved Day-0 clock `local-native-20261006-indonesia`; October 11 ledger run `38174376601-1`, logical date 2026-10-11, `health=ok`, `result=ok_all_duplicates`, **24 stored records**, 15 duplicates, 0 inserts, and no recorded fetch/access/extraction failures. State database digest in that ledger: `97adcbac44b626bdf36a5e66ae3315df7b3bcc340575d0e78c0d0bfc1e05cd74`. This is a **read-only Git observation**, not an exhaustive independent authenticated Actions history, source license, or original-language review. Counts will change.
+- This first family is **ministry institutional news**. It is not Siaran Pers, a TNI feed, all Indonesian defense publication, or evidence of 30-day qualification. The separate offline Siaran Pers prototype remains unregistered and inactive.
+
+## Private, one-command analyst use
+
+From an IPR source checkout with Python 3.9 and Git, using an absolute **new** destination outside the checkout:
+
+```bash
+python -m scripts.launch_private_country_desks \
+  --desk indonesia --approve-github-shadow-fetch \
+  --format html --output "$HOME/Downloads/ipr-indonesia-private.html"
+```
+
+Original-language title and **preserved body** are searchable privately at command time, without emitting source-body text:
+
+```bash
+python -m scripts.launch_private_country_desks \
+  --desk indonesia --approve-github-shadow-fetch \
+  --query pertahanan --format html \
+  --output "$HOME/Downloads/ipr-indonesia-pertahanan-private.html"
+```
+
+`--format json` outputs source metadata to stdout only; redirect into a trusted private path. HTML contains publisher links, original-language titles, publication dates, institution, source identities and pinned Git commits. The HTML's later on-page filter searches its **displayed metadata only**, not withheld original body. No excerpt, publisher capture, PDF, article text, or model synopsis is exported. Existing `--desk both` retains its Philippines/Vietnam meaning; `--desk all` now includes Korea and Indonesia as well.
+
+## Admission and custody constraints
+
+The reader refuses any absent/malformed source family, nonliteral commit, mismatched source desk, malformed clock, unrecognized official host, changed canonical Berita URL/date/identity, unapproved source category, non-Indonesian language label, missing/changed saved-body hash, invalid capture reference, or source rows from another family. It opens the exact pinned Git SQLite bytes in a disposable local immutable/read-only DB, enforces a fixed size and row cap, and discards the extracted body data after building the metadata result.
+
+A successful reader means *research access to preserved source material*, **not** that a human compared 24 original articles or that IPR can publish their text. Specifically unapproved: shadow-body redistribution, copyrighted media and attachments, English translations, AI/editorial use, public-source links, production source registration, and source qualification.
+
+## Verification and downstream gates
+
+Focused deterministic local tests:
+
+```bash
+python -m unittest tests.test_private_country_desk_reader tests.test_launch_private_country_desks -v
+```
+
+The focused tests use offline **synthetic** Git/SQLite originals. Separate PR-only [Actions run 38189886906](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38189886906), against implementation head `7778932bfd4af0077e05a18034d74504f2fc3ab9`, **passed** the actual existing Indonesia shadow Git reader: 24/24 stored rows searched, a metadata-only JSON/HTML preview, 22 offline reader/launcher tests, the current exact state SHA, and byte-level production DB/generated-output preservation. No publisher or paid-model requests. Other focused reader/Korea workflows on that head passed; the generic PR offline workflow was **path-filtered/skipped**, not a full-suite pass. Re-run relevant checks on any newer review head. This real automated check does **not** substitute for Indonesian-language human source comparison, source-rights adjudication, an independently exhaustive Actions attempt audit or owner publication approval.
+
+**Next separate phase:** run the new read-only command against the actual pinned Indonesia shadow head; sample the full Indonesian originals against publisher captures, reconcile the October 6–11 schedule and missing/failed attempts from independently authenticated GitHub Actions data, and complete the actual Day 7/14/30 human checkpoints (earliest Day 7 October 13, subject to measured schedule continuity). The status-only directory page already exists separately under PR #424; **that is not public source-link approval**. Only after individual source-use decisions and named human sign-off should Indonesia be proposed for a bounded public *individual-source bibliography*. Public corpus admission and full desk promotion remain later, independent decisions.
+
+## Integration note — after the separate October 11 public status release
+
+The exact publisher-directory-only page was built into `gh-pages/indonesia.html` by the guarded one-time [publication run 38196241108](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38196241108). This privately searchable reader PR neither changes that page nor imports its preserved article text into public output. It does not depend on draft [rights/Day 7 research PR #421](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/421); keep that independent. The standard offline CI run 38195683021 failed on an older base's Korea workflow-path assertion, not a private reader regression; its fix was separately merged to `main` by [PR #422](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/422). Recheck the latest PR test-merge against current main before integrating this reader. Successful publishing to `gh-pages` is not a direct check of public-domain DNS/CDN availability.

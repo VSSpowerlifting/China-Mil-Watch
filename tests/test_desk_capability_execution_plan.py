@@ -55,8 +55,7 @@ class DeskCapabilityPlanTests(unittest.TestCase):
         self.assertIsNone(next(x for x in plan["tasks"]
                                if x["scope"] == "korea")["registry_desk"])
         korea = next(x for x in self.registry["desks"] if x["slug"] == "korea")
-        # Internal registration is not a reviewed plan or public admission.
-        self.assertFalse(korea["public"])
+        self.assertTrue(korea["public"])  # Fixed link-only directory, not collector admission
         self.assertEqual(korea["status"], "shadow")
         self.assertIsNone(korea["manifest"])
         self.assertFalse(korea["has_production_records"])
