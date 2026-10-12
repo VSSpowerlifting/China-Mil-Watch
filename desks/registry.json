@@ -164,7 +164,8 @@
           {
             "name": "Ministry of National Defense — Policy Briefing republications (Korean)",
             "format": "Original Korean HWPX attached to government-portal press releases; separately preserved isolated shadow Git state",
-            "note": "Exact source family kr_policy_mnd_releases; original issuer 국방부, publisher 대한민국 정책브리핑. It is not direct MND.gov.kr or DAPA material. Private reader checks source identity and SHA; five October 11 originals separately passed real HWPX parity."
+            "note": "Exact source family kr_policy_mnd_releases; original issuer 국방부, publisher 대한민국 정책브리핑. It is not direct MND.gov.kr or DAPA material. Private reader checks source identity and SHA; five October 11 originals separately passed real HWPX parity.",
+            "publisher_url": "https://www.korea.kr/briefing/pressReleaseList.do?pWiseMinistry=ministryNews&repCode=A00005&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80%EC%B2%98"
           }
         ],
         "observed_volume": [],
