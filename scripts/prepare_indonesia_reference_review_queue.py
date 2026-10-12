@@ -61,10 +61,18 @@ def prepare(reader_report, public_links):
     sha = sources[0].get("state_commit")
     require(type(sha) is str and re.fullmatch(r"[0-9a-f]{40}", sha),
             "invalid immutable source revision")
-    require(type(public_links) is list and len(public_links) == 4,
-            "fixed published source navigation pilot changed")
+    # The private pilot began with four links; the owner has separately released
+    # eight fixed Berita publisher URLs. These are navigation, never review signoff.
+    # Do not silently accept a truncated four-link list or arbitrary ninth URL.
+    require(type(public_links) is list and len(public_links) == 8,
+            "fixed eight-link public Berita directory changed")
+    require(all(type(x) is dict and
+                set(x) == {"id", "source_url", "title_original",
+                           "published_date", "language"} and
+                x["language"] == "id" for x in public_links),
+            "public link metadata unexpectedly expanded or changed")
     released = {x["source_url"]: x for x in public_links}
-    require(len(released) == 4, "duplicate public source link")
+    require(len(released) == 8, "duplicate public source link")
     found, rows = set(), []
     for row in records:
         require(type(row) is dict and set(row) == REQUIRED_ROW_FIELDS,
