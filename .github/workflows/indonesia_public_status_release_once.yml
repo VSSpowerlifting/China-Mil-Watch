@@ -58,12 +58,12 @@ jobs:
           assert "No individual source references have completed" in indonesia
           assert "https://www.kemhan.go.id/category/berita" in indonesia
           assert "data-reference-list" not in indonesia
-          # The status-only route now includes four external ministry links,
+          # The status-only route now includes eight external ministry links,
           # not copied source text or approved IPR citations.
           from core.indonesia_official_index import load
           from bs4 import BeautifulSoup
           links = BeautifulSoup(indonesia, "html.parser").select(
-              'ol[aria-label="Four external ministry news links"] a')
+              'ol[aria-label="Eight external ministry news links"] a')
           assert [a["href"] for a in links] == [r["source_url"] for r in load()]
           for forbidden in ("state/shadow.db", "text_original", "body_original"):
               assert forbidden not in indonesia, forbidden
