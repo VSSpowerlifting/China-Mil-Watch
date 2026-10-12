@@ -277,6 +277,18 @@ class TestThisEnablesNothing(unittest.TestCase):
                                       "from pipeline import", "pipeline.run(",
                                       "git push", "workflow_dispatch:"):
                         self.assertNotIn(forbidden, text)
+                elif path.name == "indonesia_official_links_release.yml":
+                    # This is a render-only external-link release, not a
+                    # collector. Registry is used solely to verify the public
+                    # page stays shadow/noncollecting with no production rows.
+                    self.assertIn("permissions:\n  contents: read", text)
+                    self.assertIn("python site/render.py", text)
+                    self.assertIn("desk.has_production_records is False", text)
+                    self.assertIn('ref: main', text)
+                    for forbidden in ("from pipeline import", "python pipeline.py",
+                                      "scripts/shadow_collect", "sqlite3.connect",
+                                      "ANTHROPIC_API_KEY", "shadow/indonesia-kemhan"):
+                        self.assertNotIn(forbidden, text)
                 elif path.name != editorial_workflow:
                     self.assertNotIn("desk_registry", text)
                 else:
