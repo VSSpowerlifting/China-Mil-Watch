@@ -1,7 +1,8 @@
 name: Korea Desk — five official-source links release
 
 # Explicit owner-authorized publication of government bibliography only.
-# Push triggers once when the bounded Korea allowlist enters main.
+# Push triggers on this owner-reviewed release-contract update to publish
+# the approved Korea publisher-index navigation, never new source IDs.
 # Never requests a Korean publisher, shadow Git, HWPX, model or new collector.
 on:
   pull_request:
@@ -66,6 +67,11 @@ jobs:
           base = Path("output")
           html = (base/"korea.html").read_text(encoding="utf-8")
           assert html.count('data-korea-public-link=') == 5
+          assert '<nav class="korea-publisher-shortcuts"' in html
+          assert html.index('korea-publisher-shortcuts-title') < html.index('data-korea-public-link=')
+          assert html.count("Open official publisher index") == 2
+          for unreviewed_id in ("156784787", "156784873", "156784618", "156784625"):
+              assert unreviewed_id not in html
           assert "not IPR archived records" in html
           assert "https://www.korea.kr/guide/copyRight.do" in html
           assert "2026-10-04" in html and "2026-10-06" in html
@@ -142,13 +148,14 @@ jobs:
           source_families = k["research"]["source_families"]
           assert len(source_families) == 2
           assert html.count("Open official publisher index") == 2
+          assert "Research-only source family; no DAPA records admitted" in html
           for rep_code, source in zip(("A00005", "B00008"), source_families):
               url = source["publisher_url"]
               assert url.startswith("https://www.korea.kr/briefing/pressReleaseList.do?")
               from urllib.parse import parse_qs, urlsplit
               assert parse_qs(urlsplit(url).query).get("repCode") == [rep_code]
               assert ('href="' + escape(url, quote=True) + '"') in html
-          for unreviewed_id in ("156784618", "156784625", "156784787"):
+          for unreviewed_id in ("156784618", "156784625", "156784787", "156784873"):
               assert unreviewed_id not in html
           assert "Shadow evaluation — not in corpus" in (
               p/"desks.html").read_text(encoding="utf-8")
