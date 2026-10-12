@@ -80,6 +80,19 @@
 </section>
 {% endif %}
 
+{# Indonesia has a first-party publisher *directory* link, not an article
+   citation or inherited reuse permission. No shadow originals are exposed. #}
+{% if desk.slug == 'indonesia' %}
+<section class="desk-references" aria-labelledby="indonesia-publisher-heading">
+  <h2 id="indonesia-publisher-heading">Official publisher starting point</h2>
+  <p><a href="https://www.kemhan.go.id/category/berita"
+        target="_blank" rel="noopener noreferrer" lang="id">Kementerian Pertahanan RI — Berita</a></p>
+  <p class="meta">This external link opens the ministry's own institutional-news
+  listing. It is not an IPR-hosted article, source-citation approval, or a claim
+  that every publication is preserved, verified or available here.</p>
+</section>
+{% endif %}
+
 {# Reviewed public-source links are not locally archived IPR records. #}
 {% if desk.slug in ('philippines', 'vietnam', 'indonesia') %}
 <section class="desk-references" aria-labelledby="desk-references-heading">
