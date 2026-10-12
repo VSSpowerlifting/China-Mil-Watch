@@ -38,7 +38,7 @@ def _git_paths(root: Path, *args: str) -> set[str]:
 def classify_output_changes(root: Path) -> tuple[set[str], set[str]]:
     """Return (all generated output deltas, paths not reviewed for release).
 
-    --no-exclude-standard intentionally includes gitignored generated files:
+    Omitting --exclude-standard intentionally includes gitignored files:
     peaceiris/actions-gh-pages publishes all files on disk, not just tracked
     paths. --no-renames prevents a rename from obscuring a deleted old path.
     """
