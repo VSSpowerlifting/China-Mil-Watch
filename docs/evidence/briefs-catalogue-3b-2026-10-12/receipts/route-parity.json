@@ -1,10 +1,11 @@
 {
+  "baseline": "origin/main 4717c8e38a (fresh build, --snapshot-from-corpus)",
+  "candidate": "branch tree after sync with that main (--snapshot-from-corpus)",
   "baseline_files": 5340,
-  "candidate_files": 5344,
+  "candidate_files": 5343,
   "added": [
     "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
     "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-    "assets/catalogue/media/no-10-jin-class-type-094.jpg",
     "assets/geo/region.svg"
   ],
   "removed": [],
@@ -13,5 +14,5 @@
     "briefs-catalog.css"
   ],
   "admissions_json_published": false,
-  "builds": "baseline = main 22293e92bc via the same generator flags (--snapshot-from-corpus); candidate = this branch, rebuilt after the review fixups"
+  "no_10_derivative_published": false
 }

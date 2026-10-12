@@ -92,7 +92,7 @@
     {
       "route": "analysis.html",
       "html_css_limit": 300000,
-      "html_css_bytes": 119633,
+      "html_css_bytes": 119440,
       "js_bytes": 3118,
       "css": [
         "briefs-catalog.css",
@@ -107,11 +107,10 @@
         "shell.js"
       ],
       "external": [],
-      "asset_bytes": 353713,
+      "asset_bytes": 329301,
       "assets": [
         "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
         "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-        "assets/catalogue/media/no-10-jin-class-type-094.jpg",
         "assets/fonts/instrument-serif-0.woff2",
         "assets/fonts/instrument-serif-1.woff2",
         "assets/fonts/inter-0.woff2",

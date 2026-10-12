@@ -17,12 +17,13 @@
       "shell.js": 372
     },
     "html_css": 101878,
-    "js_total": 3118
+    "js_total": 3118,
+    "note": "origin/main 4717c8e38a"
   },
   "candidate": {
-    "html": 41082,
+    "html": 40697,
     "css": {
-      "briefs-catalog.css": 8578,
+      "briefs-catalog.css": 8770,
       "fonts.css": 1855,
       "relief.css": 4031,
       "styles.css": 30549,
@@ -33,15 +34,21 @@
       "reveal.js": 2746,
       "shell.js": 372
     },
-    "html_css": 119633,
+    "html_css": 119440,
     "js_total": 3118
   },
-  "delta_html_css": 17755,
+  "delta_html_css": 17562,
   "photographs_bytes": {
     "no-08-liaoning-j15-recovery.jpg": 24325,
-    "no-10-jin-class-type-094.jpg": 24412,
     "no-09-scarborough-shoal-iss.jpg": 26510
   },
+  "photographs_total": 50835,
   "region_svg_bytes": 49760,
-  "note": "Delivery verifier (verify_frontend_delivery.py) reports 0 failures on 7589 routes for the candidate."
+  "actual_page_weight_bytes": {
+    "html_css_js": 122558,
+    "plus_photographs_when_scrolled_into_view": 173393,
+    "plus_region_svg": 223153,
+    "note": "The delivery verifier's asset list does not count assets/geo/region.svg (referenced through <use>); this line adds it. Photographs load lazily. Fonts and shared images are outside this page-specific figure."
+  },
+  "within_caps": true
 }

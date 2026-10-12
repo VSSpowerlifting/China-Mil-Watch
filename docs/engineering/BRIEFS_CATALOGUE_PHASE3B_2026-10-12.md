@@ -1,17 +1,17 @@
 # Phase 3B — Briefs catalogue: design and engineering contract
 
-**Status:** implemented as a review candidate, not merged, not deployed, no `output/` regeneration. 2026-10-12. Governing: `docs/FRONTEND_REFINEMENT_PHASE0_2026-10-10.md` (B1, B2, B3/B4, B5, B6) and `docs/engineering/BRIEFS_MEDIA_ELIGIBILITY_PHASE3A_2026-10-11.md`. Evidence and receipts: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
+**Status:** implemented as a review candidate, revised after independent review of PR #418 (2 photographs, 15 plates); not merged, not deployed, no `output/` regeneration. 2026-10-12. Governing: `docs/FRONTEND_REFINEMENT_PHASE0_2026-10-10.md` (B1, B2, B3/B4, B5, B6) and `docs/engineering/BRIEFS_MEDIA_ELIGIBILITY_PHASE3A_2026-10-11.md`. Evidence and receipts: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
 
 ## What changed
 
-`analysis.html` lists all 17 published Briefs (14 historical issues, Nos. 15–17 native) as media cards in one ordered list, newest first. The navy hero is untouched except that its optional lead photograph now passes through the same media decision (see "Hero"). Every number, title, dek, date, label, provenance line, link and `rel="noopener"` is the baseline's; the redesign adds only the media block, one credit block per card and one short key.
+`analysis.html` lists all 17 published Briefs (14 historical issues, Nos. 15–17 native) as media cards in one ordered list, newest first. The navy hero is untouched except that its optional lead photograph now passes through the same media decision and credit macro (see "Hero"). Every number, title, dek, date, label, provenance line, link and `rel="noopener"` is the baseline's; the redesign adds only the media block, one credit block per card and one short key.
 
 | Layer | File | Role |
 |---|---|---|
 | Decision | `core/catalogue_media.py` | The one catalogue-media decision. Reads only the admission record. |
 | Record | `site/assets/catalogue/admissions.json` | Explicit per-issue admission, with verbatim credit, caption, alt and licence. |
 | Derivatives | `scripts/build_catalogue_media.py` → `site/assets/catalogue/media/` | Deterministic 720×480 3:2 JPEGs; `--check` verifies hashes. |
-| Markup | `site/preview/templates/analysis.html` | Cards; imports only `region_plate`. |
+| Markup | `site/preview/templates/analysis.html`, `_catalogue_credit.html` | Cards and hero; imports only `region_plate` from the relief macros. `photo_credit` is the one credit for card and hero. |
 | Styles | `site/preview/briefs-catalog.css` | Grid, typography, tags, credit lines; no shadow, no lift token. |
 | Wiring | `site/preview/generate_preview.py` | `catalogue_media` ctx; `CATALOGUE_STATIC_ASSETS`; copies exactly the admitted files shown. |
 
@@ -28,28 +28,29 @@ A **Photograph** appears only when an entry in `admissions.json` is `status: "ad
 5. Required fields are present: alt, caption, credit, creator, licence, source page, source label, change note, served path, source file, served hash, size.
 6. `source_file` is under `site/assets/editorial/` and `served` is under `assets/catalogue/media/`; neither matches the veil / source-image pattern.
 7. Licence is `Public domain` or `CC BY 4.0`; CC BY needs a licence link; the source page is `https://`.
-8. The served file exists and its SHA-256 equals the record.
+8. Origin continuity: the source file's name begins with its `source_manifest_id`, the file exists and its SHA-256 equals `source_sha256`, and the curated manifest entry with that id still has the record's `license`, `license_url`, `source_page` and `credit`.
+9. The served file exists and its SHA-256 equals `served_sha256`.
 
-Any failure returns a plate with a reason code. Nothing raises at build.
+Any failure returns a plate with a reason code (for example `source-hash-mismatch`, `source-missing`, `manifest-changed:license`). Nothing raises at build. The manifest is read only to confirm the reviewed source is still the one on disk; it never grants permission.
 
 **Isolation.** The module never calls `brief_veil`, `source_veil_for_edition` or `pw_env`, and never reads an entry's `cover` or `photo`. An article cover, a Signal Veil or a matching source-trail URL is never permission for this surface (3A gate 1). A test asserts the module does not name those surfaces and that a row carrying a `cover` still resolves to a plate.
 
-## Admission outcomes (engineering review; pending independent confirmation)
+## Admission outcomes (revised after independent review of PR #418)
 
-These are **my review, not an owner ruling**, and they settle no wider image right. Flipping an entry to `held` returns that card to a plate and changes nothing else.
+Nos. 8 and 9 were approved, No. 10 held, by the independent review. Catalogue only; no blanket permission. Flipping an entry to `held` returns that card to a plate and changes nothing else.
 
 | No. | Outcome | Basis |
 |---|---|---|
-| 8 | **Photograph** — CC BY 4.0, linked licence, creator in English and Japanese | Commons record verified (receipt); manifest credit, caption and alt used verbatim |
+| 8 | **Photograph** — CC BY 4.0, linked licence, creator in English and Japanese | Japan MOD / Joint Staff original; Commons record verified (receipt); manifest credit, caption and alt used verbatim |
 | 9 | **Photograph** — Public domain (NASA / ISS Expedition 45) | Commons record verified (receipt) |
-| 10 | **Photograph** — Public domain (U.S. government photo via CRS report RL33153) | Commons record and "PD US Government" categorisation (receipt). The PD status is Commons' and CRS's statement, not an independent finding |
+| 10 | **Held** — plate | Commons' PD-US-Government category and a "provided to CRS" attribution do not establish who made the photograph; the file's author field describes the CRS report. The drafted alt ("underway on the surface") is not established by the source and must not be reused. The opened-article use is a separate, unchanged surface. Clear only with original-photographer or originating-agency evidence |
 | 1 | **Held** — plate | Identifiable, named U.S. and PLA officers at an unrelated 2012 event, auto-selected by keyword for a Brief about former defence ministers; beside that headline a card could read as identification. The sidecar alt text is a filename. Clear only with an owner-reviewed alt and short caption |
 | 12 | **Denied** — plate | B5 |
 | 2–7, 11, 13–17 | Plate | No admission record |
 
-No 81.cn / PLA Daily imagery, no CC BY-SA file (B6) and no No. 12 image is referenced anywhere on the page; the verifier asserts zero requests for `*-source-image*`, `*-veil*`, `81.cn`.
+No 81.cn / PLA Daily imagery, no CC BY-SA file (B6) and no No. 12 image is referenced anywhere on the page; the verifier asserts zero requests for `*-source-image*`, `*-veil*`, `81.cn`. No. 10's catalogue derivative was removed from `site/assets/catalogue/media/`; its record keeps the Commons page and credit string as provenance.
 
-**Derivatives.** The three card images are re-crops (focal point recorded per entry) of the existing curated, already-toned `*-duo-navy.jpg` derivatives, resized to 720×480, progressive JPEG, no metadata, encoded with Pillow 11.3.0 (recorded as `built_with`; bytes are only reproducible for that encoder, so production verifies the committed file's SHA-256, never a re-encode). The card says "Toned, cropped and resized by IPR." and "Visual context, not evidence." The label is "Photograph", never "Signal Veil".
+**Derivatives.** The two card images are re-crops (focal point recorded per entry) of the existing curated, already-toned `*-duo-navy.jpg` derivatives, resized to 720×480, progressive JPEG, no metadata, encoded with Pillow 11.3.0 (recorded as `built_with`; bytes are only reproducible for that encoder, so production verifies the committed file's SHA-256, never a re-encode). The card says "Toned, cropped and resized by IPR." and "Visual context, not evidence." The label is "Photograph", never "Signal Veil".
 
 ## Card anatomy
 
@@ -71,15 +72,11 @@ One primary link per card (the headline). It stretches over the card; credit lin
 
 ## Hero
 
-`briefs-lead-photo` is rendered only if the lead row resolves to a photograph. The lead is No. 17, which has no cover, so nothing changes today. The old path rendered a native Brief's cover with no catalogue decision; that path is now closed.
+`briefs-lead-photo` is rendered only if the lead row resolves to a photograph, and its figcaption calls the same `photo_credit` macro as a card: caption and date note, creator with native name, licence link (`rel="noopener"`), source link, change note and "Visual context, not evidence." The lead is No. 17, which has no cover, so nothing changes today. The old path rendered a native Brief's cover with no catalogue decision; that path is closed. `HeroPhotographTests` builds the page with a non-synthetic fixture lead whose media is admitted (resolver patched with No. 8's real record) and asserts the credit; the same build without an admission has no hero figure.
 
 ## Budgets and publication
 
-HTML + CSS for `analysis.html`: 119,633 B (baseline 101,878 B; cap 300,000 B). JS: 3,118 B (cap 10,000 B). Photographs: 75,247 B in total, loaded lazily. `region.svg` (49,760 B) is referenced through `<use>` and is not counted by the delivery verifier's asset list, so measured local delivery understates the page by about that amount. Production publishes exactly `assets/geo/region.svg` plus the admitted files a card shows; `relief.css` is now linked by the homepage, Archive and catalogue only.
-
-## Hero caption (known gap)
-
-If a CC BY photograph were ever admitted for the lead, the hero figcaption would show credit and caption but not the licence link or change note that card credits carry. Nothing reaches it today. Close it before any hero use.
+HTML + CSS for `analysis.html`: 119,440 B (main 101,878 B; cap 300,000 B). JS: 3,118 B (cap 10,000 B). Photographs: 50,835 B in total, loaded lazily. `region.svg` (49,760 B) is referenced through `<use>` and is not counted by the delivery verifier's asset list; `receipts/analysis-budget.json` reports the corrected page weight (HTML+CSS+JS 122,558 B; with photographs 173,393 B; with `region.svg` 223,153 B) without changing the shared checker. Production publishes exactly `assets/geo/region.svg` plus the admitted files a card shows (two JPEGs); `relief.css` is now linked by the homepage, Archive and catalogue only.
 
 ## Out of scope / not done
 

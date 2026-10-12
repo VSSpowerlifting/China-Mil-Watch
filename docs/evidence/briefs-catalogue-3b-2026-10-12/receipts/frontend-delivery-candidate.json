@@ -91,7 +91,7 @@
       "route": "analysis.html",
       "html_css_limit": 300000,
       "js_limit": 10000,
-      "html_css_bytes": 119633,
+      "html_css_bytes": 119440,
       "js_bytes": 3118,
       "css": [
         "briefs-catalog.css",
@@ -106,11 +106,10 @@
         "shell.js"
       ],
       "external": [],
-      "asset_bytes": 353713,
+      "asset_bytes": 329301,
       "assets": [
         "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
         "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-        "assets/catalogue/media/no-10-jin-class-type-094.jpg",
         "assets/fonts/instrument-serif-0.woff2",
         "assets/fonts/instrument-serif-1.woff2",
         "assets/fonts/inter-0.woff2",
@@ -129,8 +128,8 @@
         "assets/material/navy-paper.png"
       ],
       "external_assets": [],
-      "local_delivery_bytes": 476464
+      "local_delivery_bytes": 451859
     }
   ],
-  "note": "Trimmed from the full per-route receipt (7,589 routes, 7 MB) to its summary and the analysis route. Re-run: scripts/verify_frontend_delivery.py --root <legacy-routes build> --receipt <json>."
+  "note": "Trimmed: full per-route list omitted. Built from the branch tree synced with origin/main 4717c8e38a with --legacy-routes. asset_bytes for analysis.html does not include assets/geo/region.svg (49,760 B, via <use>); see analysis-budget.json for the corrected page weight."
 }

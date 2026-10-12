@@ -1,25 +1,21 @@
 {
-  "statement": "Full-page PNG captures of the candidate at each width are byte-identical across default, no-js and reduced-motion; only forced-colors differs.",
-  "by_width": {
+  "statement": "Full-page PNG sha256 of no-js and reduced-motion captures equal the default capture at each width (refreshed after the review revision).",
+  "identical": {
     "320": {
       "no-js": true,
-      "reduced-motion": true,
-      "sha256_default_png": "e1e13200616d7540579711fbe5e3bb875d1b11ba9e69916cf2f7a98ca22fd735"
+      "reduced-motion": true
     },
     "375": {
       "no-js": true,
-      "reduced-motion": true,
-      "sha256_default_png": "3056d9ce39edaf9508b3b788efc3b745cfcdb81a01c1dd8ba5bb0e0540f97b5d"
+      "reduced-motion": true
     },
     "768": {
       "no-js": true,
-      "reduced-motion": true,
-      "sha256_default_png": "3d05dc6b227cec26ce72619efc6099a2e02b0bb4a9c5e6f5db19eed2d6786a59"
+      "reduced-motion": true
     },
     "1280": {
       "no-js": true,
-      "reduced-motion": true,
-      "sha256_default_png": "a2dc1bab954360d4a84cb6e7dfab28b82e80685a7c7cdad8445010467ecd0887"
+      "reduced-motion": true
     }
   }
 }

@@ -52,6 +52,34 @@ def body_page():
     return BODY
 
 
+_TRIGGER_PATH = "core/desk_registry.py"
+
+
+def strip_trigger_path_filters(text: str) -> str:
+    """Remove only the literal `core/desk_registry.py` list items that sit
+    inside a workflow's `paths:` / `paths-ignore:` trigger filter.
+
+    A path filter lists files whose change should start a workflow; it imports
+    and runs nothing. Anything else that names the registry (a `run:` body, an
+    `env:` value, a `python -c` string, a path outside a trigger filter, or a
+    different path such as `core/desk_registry_x.py`) is left in place so the
+    caller's `assertNotIn("desk_registry", ...)` still rejects it.
+    """
+    out, in_filter, filter_indent = [], False, 0
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        indent = len(line) - len(line.lstrip(" "))
+        if stripped in ("paths:", "paths-ignore:"):
+            in_filter, filter_indent = True, indent
+        elif in_filter and stripped and not stripped.startswith("-") and indent <= filter_indent:
+            in_filter = False
+        item = stripped[1:].strip().strip("\"'") if stripped.startswith("-") else None
+        if in_filter and item == _TRIGGER_PATH:
+            continue
+        out.append(line)
+    return "".join(out)
+
+
 class TestMediaTypeSelection(unittest.TestCase):
 
     def test_a_declared_content_type_wins_over_the_url(self):
@@ -264,7 +292,14 @@ class TestThisEnablesNothing(unittest.TestCase):
             with self.subTest(file=str(path.relative_to(REPO_ROOT))):
                 self.assertNotIn("core.viewmodel", text)
                 if path.name != editorial_workflow:
-                    self.assertNotIn("desk_registry", text)
+                    # A workflow may name `core/desk_registry.py` as a
+                    # trigger path filter only; no import, `run:` body or
+                    # other reference to the registry is allowed.
+                    self.assertNotIn("core.desk_registry", text)
+                    self.assertNotIn("desk_registry",
+                                     strip_trigger_path_filters(text))
+                    if "desk_registry" in text:
+                        self.assertIn("permissions:\n  contents: read", text)
                 else:
                     # This is an editorial consumer of production records,
                     # not a collector. It may read desk metadata, but may
@@ -275,6 +310,24 @@ class TestThisEnablesNothing(unittest.TestCase):
                     self.assertNotIn("from pipeline import", text)
                     self.assertNotIn("pipeline.run(", text)
                     self.assertNotIn("git push", text)
+
+    def test_only_a_trigger_path_filter_may_name_the_registry(self):
+        """The exemption is the literal trigger path and nothing wider."""
+        ok = ('on:\n  pull_request:\n    paths:\n      - "desks/registry.json"\n'
+              '      - "core/desk_registry.py"\n      - \'tests/x.py\'\n'
+              'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n'
+              '      - run: python -m unittest tests.x\n')
+        self.assertNotIn("desk_registry", strip_trigger_path_filters(ok))
+        for bad in (
+            ok + '      - run: python -c "from core.desk_registry import load_registry"\n',
+            ok + '      - run: python core/desk_registry.py\n',
+            ok.replace('"core/desk_registry.py"', '"core/desk_registry_x.py"'),
+            ok.replace("    paths:\n", "    branches:\n"),
+            'env:\n  P: core/desk_registry.py\n',
+            'jobs:\n  a:\n    steps:\n      - uses: core/desk_registry.py\n',
+        ):
+            with self.subTest(bad=bad[-70:]):
+                self.assertIn("desk_registry", strip_trigger_path_filters(bad))
 
     def test_the_desk_registry_cannot_be_discovered_as_a_manifest(self):
         """

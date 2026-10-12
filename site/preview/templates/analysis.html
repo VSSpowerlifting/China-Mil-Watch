@@ -2,6 +2,7 @@
 {% from "_plate.html" import edition_plate %}
 {% from "_terrain.html" import terrain %}
 {% from "_relief.html" import region_plate with context %}
+{% from "_catalogue_credit.html" import photo_credit %}
 {% block title %}Analysis — {{ title }}{% endblock %}
 {% block body_open %}<body class="page-briefs material-paper">{% endblock %}
 {% block head_scripts %}
@@ -58,7 +59,7 @@
       {% set lp = lead_media.photo %}
       <figure class="briefs-lead-photo">
         <a href="{{ lead.url }}"><img src="{{ lp.served }}" width="{{ lp.width }}" height="{{ lp.height }}" alt="{{ lp.alt }}"></a>
-        <figcaption>{{ lp.credit }}. <a href="{{ lp.source_page }}" rel="noopener">{{ lp.source_label }}</a> · visual context only.</figcaption>
+        <figcaption>{{ photo_credit(lp) }}</figcaption>
       </figure>
       {% endif %}
       {#- The issue drawn from its own sidecar, where one exists: one mark per
@@ -120,8 +121,7 @@
         </div>
         <div class="brief-credit">
         {%- if m and m.is_photograph %}{% set ph = m.photo %}
-          <p>{{ ph.caption }}{% if ph.date_note %} {{ ph.date_note }}{% endif %}</p>
-          <p>Photo: {{ ph.creator }}{% if ph.creator_native %} (<span lang="{{ ph.creator_native_lang }}">{{ ph.creator_native }}</span>){% endif %} · {% if ph.license_url %}<a href="{{ ph.license_url }}" rel="noopener">{{ ph.license }}</a>{% else %}{{ ph.license }}{% endif %} · via <a href="{{ ph.source_page }}" rel="noopener">{{ ph.source_label }}</a>. {{ ph.change_note }} Visual context, not evidence.</p>
+          {{ photo_credit(ph) }}
         {%- else %}
           <p>No source photograph. Outlines from Natural Earth.</p>
         {%- endif %}

@@ -88,24 +88,12 @@
       "issue": "No. 10",
       "title": "The PLA Watch: Beijing's Public SLBM Test and What It Was Designed to Do",
       "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-11.html",
-      "media": "photograph",
-      "tag": "Photograph",
-      "img": {
-        "src": "assets/catalogue/media/no-10-jin-class-type-094.jpg",
-        "alt": "A Jin-class (Type 094) nuclear-powered ballistic missile submarine of the PLA Navy underway on the surface",
-        "w": 720,
-        "h": 480,
-        "lazy": "lazy"
-      },
-      "plate_svg": false,
-      "credit": "A Jin-class (Type 094) nuclear-powered ballistic missile submarine of the PLA Navy. File photograph supplied to CRS in December 2010. Photo: U.S. government photo, via CRS report RL33153 (R. O'Rourke) \u00b7 Public domain \u00b7 via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
-      "credit_links": [
-        {
-          "href": "https://commons.wikimedia.org/wiki/File:Jin_(Type_094)_Class_Ballistic_Missile_Submarine.JPG",
-          "rel": "noopener",
-          "text": "Wikimedia Commons"
-        }
-      ]
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
     },
     {
       "issue": "No. 9",
@@ -121,7 +109,7 @@
         "lazy": "lazy"
       },
       "plate_svg": false,
-      "credit": "Scarborough Shoal (Huangyan Island), photographed from the International Space Station during Expedition 45. Photographed 24 October 2015. Photo: NASA / ISS Expedition 45 \u00b7 Public domain \u00b7 via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "credit": "Scarborough Shoal (Huangyan Island), photographed from the International Space Station during Expedition 45. Photographed 24 October 2015. Photo: NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
       "credit_links": [
         {
           "href": "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
@@ -144,7 +132,7 @@
         "lazy": "lazy"
       },
       "plate_svg": false,
-      "credit": "A J-15 carrier fighter prepares to recover aboard the carrier Liaoning during western Pacific operations, May 2022. Photographed 4 May 2022. Photo: Japan Ministry of Defense, Joint Staff (\u7d71\u5408\u5e55\u50da\u76e3\u90e8) \u00b7 CC BY 4.0 \u00b7 via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "credit": "A J-15 carrier fighter prepares to recover aboard the carrier Liaoning during western Pacific operations, May 2022. Photographed 4 May 2022. Photo: Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
       "credit_links": [
         {
           "href": "https://creativecommons.org/licenses/by/4.0",
@@ -215,7 +203,7 @@
     },
     {
       "issue": "No. 2",
-      "title": "Fujian\u2019s Air Wing Takes Shape as the Rocket Force Trains for Failure",
+      "title": "Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure",
       "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-16.html",
       "media": "plate",
       "tag": "Editorial plate",
@@ -685,51 +673,45 @@
       "resources": [
         {
           "url": "http://127.0.0.1:8771/analysis.html",
-          "transfer": 41382,
-          "body": 41082,
-          "duration": 38.19999998807907
+          "transfer": 40997,
+          "body": 40697,
+          "duration": 45.09999996423721
         },
         {
           "url": "http://127.0.0.1:8771/fonts.css",
           "transfer": 2155,
           "body": 1855,
-          "duration": 1.300000011920929
+          "duration": 2.100000023841858
         },
         {
           "url": "http://127.0.0.1:8771/styles.css",
           "transfer": 30849,
           "body": 30549,
-          "duration": 1.5999999642372131
-        },
-        {
-          "url": "http://127.0.0.1:8771/support.css",
-          "transfer": 28208,
-          "body": 27908,
-          "duration": 1.699999988079071
-        },
-        {
-          "url": "http://127.0.0.1:8771/surfaces.css",
-          "transfer": 5930,
-          "body": 5630,
-          "duration": 2.5
+          "duration": 2.899999976158142
         },
         {
           "url": "http://127.0.0.1:8771/relief.css",
           "transfer": 4331,
           "body": 4031,
-          "duration": 3
-        },
-        {
-          "url": "http://127.0.0.1:8771/reveal.js",
-          "transfer": 3046,
-          "body": 2746,
-          "duration": 3
+          "duration": 2.199999988079071
         },
         {
           "url": "http://127.0.0.1:8771/briefs-catalog.css",
-          "transfer": 8878,
-          "body": 8578,
-          "duration": 3.199999988079071
+          "transfer": 9070,
+          "body": 8770,
+          "duration": 2.399999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8771/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 2.599999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8771/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 2.799999952316284
         },
         {
           "url": "http://127.0.0.1:8771/assets/identity/selected-ipr/ipr-navy-160.png",
@@ -738,58 +720,64 @@
           "duration": 3.5
         },
         {
+          "url": "http://127.0.0.1:8771/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 3.400000035762787
+        },
+        {
           "url": "http://127.0.0.1:8771/shell.js",
           "transfer": 672,
           "body": 372,
-          "duration": 3.900000035762787
+          "duration": 4.199999988079071
         },
         {
           "url": "http://127.0.0.1:8771/assets/geo/region.svg#region",
           "transfer": 50060,
           "body": 49760,
-          "duration": 0.3999999761581421
+          "duration": 0.6000000238418579
         },
         {
           "url": "http://127.0.0.1:8771/assets/material/chart-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1.100000023841858
+          "duration": 0.800000011920929
         },
         {
           "url": "http://127.0.0.1:8771/assets/material/navy-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1.199999988079071
+          "duration": 0.9000000357627869
         },
         {
           "url": "http://127.0.0.1:8771/assets/material/chart-shelf.svg",
           "transfer": 2734,
           "body": 2434,
-          "duration": 1.0999999642372131
+          "duration": 1
         },
         {
           "url": "http://127.0.0.1:8771/assets/fonts/instrument-serif-1.woff2",
           "transfer": 23048,
           "body": 22748,
-          "duration": 5.5
+          "duration": 26
         },
         {
           "url": "http://127.0.0.1:8771/assets/fonts/source-serif-4-1.woff2",
           "transfer": 28164,
           "body": 27864,
-          "duration": 5
+          "duration": 26.19999998807907
         },
         {
           "url": "http://127.0.0.1:8771/assets/fonts/inter-0.woff2",
           "transfer": 36220,
           "body": 35920,
-          "duration": 5.300000011920929
+          "duration": 25.5
         },
         {
           "url": "http://127.0.0.1:8771/assets/fonts/inter-1.woff2",
           "transfer": 37548,
           "body": 37248,
-          "duration": 4.699999988079071
+          "duration": 26.5
         }
       ]
     },
@@ -812,8 +800,8 @@
         {
           "url": "http://127.0.0.1:8771/analysis.html",
           "transfer": 0,
-          "body": 41082,
-          "duration": 7.299999952316284
+          "body": 40697,
+          "duration": 12.399999976158142
         },
         {
           "url": "http://127.0.0.1:8771/fonts.css",
@@ -848,7 +836,7 @@
         {
           "url": "http://127.0.0.1:8771/briefs-catalog.css",
           "transfer": 0,
-          "body": 8578,
+          "body": 8770,
           "duration": 0
         },
         {
@@ -927,85 +915,85 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 72
+          "start": 76
         },
         {
           "name": "first-contentful-paint",
-          "start": 72
+          "start": 76
         }
       ],
       "resources": [
         {
           "url": "http://127.0.0.1:8771/analysis.html",
-          "transfer": 41382,
-          "body": 41082,
-          "duration": 35.80000001192093
+          "transfer": 40997,
+          "body": 40697,
+          "duration": 41.5
         },
         {
           "url": "http://127.0.0.1:8771/fonts.css",
           "transfer": 2155,
           "body": 1855,
-          "duration": 2.100000023841858
+          "duration": 4.5
         },
         {
           "url": "http://127.0.0.1:8771/styles.css",
           "transfer": 30849,
           "body": 30549,
-          "duration": 1.9000000357627869
+          "duration": 4.600000023841858
         },
         {
           "url": "http://127.0.0.1:8771/support.css",
           "transfer": 28208,
           "body": 27908,
-          "duration": 1.9000000357627869
-        },
-        {
-          "url": "http://127.0.0.1:8771/relief.css",
-          "transfer": 4331,
-          "body": 4031,
-          "duration": 2.699999988079071
+          "duration": 4.599999964237213
         },
         {
           "url": "http://127.0.0.1:8771/surfaces.css",
           "transfer": 5930,
           "body": 5630,
-          "duration": 3.100000023841858
+          "duration": 4.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8771/relief.css",
+          "transfer": 4331,
+          "body": 4031,
+          "duration": 5.399999976158142
         },
         {
           "url": "http://127.0.0.1:8771/briefs-catalog.css",
-          "transfer": 8878,
-          "body": 8578,
-          "duration": 3.5
-        },
-        {
-          "url": "http://127.0.0.1:8771/reveal.js",
-          "transfer": 3046,
-          "body": 2746,
-          "duration": 3.5
+          "transfer": 9070,
+          "body": 8770,
+          "duration": 5.600000023841858
         },
         {
           "url": "http://127.0.0.1:8771/assets/identity/selected-ipr/ipr-navy-160.png",
           "transfer": 7144,
           "body": 6844,
-          "duration": 3.699999988079071
+          "duration": 5.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8771/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 5.900000035762787
         },
         {
           "url": "http://127.0.0.1:8771/shell.js",
           "transfer": 672,
           "body": 372,
-          "duration": 4.300000011920929
+          "duration": 6.399999976158142
         },
         {
           "url": "http://127.0.0.1:8771/assets/geo/region.svg#region",
           "transfer": 50060,
           "body": 49760,
-          "duration": 0.699999988079071
+          "duration": 0.5
         },
         {
           "url": "http://127.0.0.1:8771/assets/material/chart-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 0.8999999761581421
+          "duration": 1.199999988079071
         },
         {
           "url": "http://127.0.0.1:8771/assets/material/navy-paper.png",
@@ -1023,43 +1011,37 @@
           "url": "http://127.0.0.1:8771/assets/fonts/instrument-serif-1.woff2",
           "transfer": 23048,
           "body": 22748,
-          "duration": 5.800000011920929
+          "duration": 6.299999952316284
         },
         {
           "url": "http://127.0.0.1:8771/assets/fonts/source-serif-4-1.woff2",
           "transfer": 28164,
           "body": 27864,
-          "duration": 5
+          "duration": 5.100000023841858
         },
         {
           "url": "http://127.0.0.1:8771/assets/fonts/inter-0.woff2",
           "transfer": 36220,
           "body": 35920,
-          "duration": 5
+          "duration": 5.300000011920929
         },
         {
           "url": "http://127.0.0.1:8771/assets/fonts/inter-1.woff2",
           "transfer": 37548,
           "body": 37248,
-          "duration": 4.799999952316284
-        },
-        {
-          "url": "http://127.0.0.1:8771/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-          "transfer": 24712,
-          "body": 24412,
-          "duration": 2
+          "duration": 4.699999988079071
         },
         {
           "url": "http://127.0.0.1:8771/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
           "transfer": 26810,
           "body": 26510,
-          "duration": 2.100000023841858
+          "duration": 1.800000011920929
         },
         {
           "url": "http://127.0.0.1:8771/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
           "transfer": 24625,
           "body": 24325,
-          "duration": 2.300000011920929
+          "duration": 1.899999976158142
         }
       ]
     },
@@ -1071,19 +1053,19 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 32
+          "start": 36
         },
         {
           "name": "first-contentful-paint",
-          "start": 32
+          "start": 36
         }
       ],
       "resources": [
         {
           "url": "http://127.0.0.1:8771/analysis.html",
           "transfer": 0,
-          "body": 41082,
-          "duration": 7.600000023841858
+          "body": 40697,
+          "duration": 10.099999964237213
         },
         {
           "url": "http://127.0.0.1:8771/fonts.css",
@@ -1118,7 +1100,7 @@
         {
           "url": "http://127.0.0.1:8771/briefs-catalog.css",
           "transfer": 0,
-          "body": 8578,
+          "body": 8770,
           "duration": 0
         },
         {
@@ -1143,12 +1125,6 @@
           "url": "http://127.0.0.1:8771/assets/geo/region.svg#region",
           "transfer": 0,
           "body": 49760,
-          "duration": 0
-        },
-        {
-          "url": "http://127.0.0.1:8771/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-          "transfer": 0,
-          "body": 24412,
           "duration": 0
         },
         {
@@ -1215,11 +1191,11 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 40
+          "start": 48
         },
         {
           "name": "first-contentful-paint",
-          "start": 40
+          "start": 48
         }
       ],
       "resources": [
@@ -1227,103 +1203,103 @@
           "url": "http://127.0.0.1:8772/analysis.html",
           "transfer": 30019,
           "body": 29719,
-          "duration": 41.69999998807907
+          "duration": 38.19999998807907
         },
         {
           "url": "http://127.0.0.1:8772/fonts.css",
           "transfer": 2155,
           "body": 1855,
-          "duration": 2.699999988079071
+          "duration": 2
         },
         {
           "url": "http://127.0.0.1:8772/support.css",
           "transfer": 28208,
           "body": 27908,
-          "duration": 2.099999964237213
-        },
-        {
-          "url": "http://127.0.0.1:8772/styles.css",
-          "transfer": 30849,
-          "body": 30549,
-          "duration": 2.299999952316284
+          "duration": 2
         },
         {
           "url": "http://127.0.0.1:8772/surfaces.css",
           "transfer": 5930,
           "body": 5630,
-          "duration": 2.799999952316284
+          "duration": 2.400000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8772/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 2.700000047683716
         },
         {
           "url": "http://127.0.0.1:8772/briefs-catalog.css",
           "transfer": 6517,
           "body": 6217,
-          "duration": 3.199999988079071
+          "duration": 2.300000011920929
         },
         {
           "url": "http://127.0.0.1:8772/assets/identity/selected-ipr/ipr-navy-160.png",
           "transfer": 7144,
           "body": 6844,
-          "duration": 3.599999964237213
+          "duration": 2.699999988079071
         },
         {
           "url": "http://127.0.0.1:8772/reveal.js",
           "transfer": 3046,
           "body": 2746,
-          "duration": 3.399999976158142
+          "duration": 2
         },
         {
           "url": "http://127.0.0.1:8772/shell.js",
           "transfer": 672,
           "body": 372,
-          "duration": 4.300000011920929
+          "duration": 3.800000011920929
         },
         {
           "url": "http://127.0.0.1:8772/assets/material/chart-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1.300000011920929
+          "duration": 0.800000011920929
         },
         {
           "url": "http://127.0.0.1:8772/assets/material/navy-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1
+          "duration": 0.800000011920929
         },
         {
           "url": "http://127.0.0.1:8772/assets/material/chart-shelf.svg",
           "transfer": 2734,
           "body": 2434,
-          "duration": 1.2999999523162842
+          "duration": 0.7000000476837158
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/instrument-serif-1.woff2",
           "transfer": 23048,
           "body": 22748,
-          "duration": 25.400000035762787
+          "duration": 6.300000011920929
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/source-serif-4-1.woff2",
           "transfer": 28164,
           "body": 27864,
-          "duration": 26.69999998807907
+          "duration": 5.899999976158142
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/inter-0.woff2",
           "transfer": 36220,
           "body": 35920,
-          "duration": 26
+          "duration": 5.699999988079071
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/inter-1.woff2",
           "transfer": 37548,
           "body": 37248,
-          "duration": 25.80000001192093
+          "duration": 5.100000023841858
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/source-serif-4-2.woff2",
           "transfer": 29540,
           "body": 29240,
-          "duration": 24.30000001192093
+          "duration": 4.600000023841858
         }
       ]
     },
@@ -1335,11 +1311,11 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 28
+          "start": 24
         },
         {
           "name": "first-contentful-paint",
-          "start": 28
+          "start": 24
         }
       ],
       "resources": [
@@ -1347,7 +1323,7 @@
           "url": "http://127.0.0.1:8772/analysis.html",
           "transfer": 0,
           "body": 29719,
-          "duration": 5.599999964237213
+          "duration": 10.900000035762787
         },
         {
           "url": "http://127.0.0.1:8772/fonts.css",
@@ -1467,49 +1443,49 @@
           "url": "http://127.0.0.1:8772/analysis.html",
           "transfer": 30019,
           "body": 29719,
-          "duration": 32.09999996423721
+          "duration": 40.200000047683716
         },
         {
           "url": "http://127.0.0.1:8772/fonts.css",
           "transfer": 2155,
           "body": 1855,
-          "duration": 2
-        },
-        {
-          "url": "http://127.0.0.1:8772/surfaces.css",
-          "transfer": 5930,
-          "body": 5630,
-          "duration": 2
-        },
-        {
-          "url": "http://127.0.0.1:8772/styles.css",
-          "transfer": 30849,
-          "body": 30549,
-          "duration": 2.5
+          "duration": 2.899999976158142
         },
         {
           "url": "http://127.0.0.1:8772/support.css",
           "transfer": 28208,
           "body": 27908,
-          "duration": 2.699999988079071
+          "duration": 2.5
+        },
+        {
+          "url": "http://127.0.0.1:8772/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 2.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8772/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 2.600000023841858
         },
         {
           "url": "http://127.0.0.1:8772/briefs-catalog.css",
           "transfer": 6517,
           "body": 6217,
-          "duration": 3
+          "duration": 2.699999988079071
         },
         {
           "url": "http://127.0.0.1:8772/reveal.js",
           "transfer": 3046,
           "body": 2746,
-          "duration": 3.099999964237213
+          "duration": 2.800000011920929
         },
         {
           "url": "http://127.0.0.1:8772/assets/identity/selected-ipr/ipr-navy-160.png",
           "transfer": 7144,
           "body": 6844,
-          "duration": 3.5
+          "duration": 3.399999976158142
         },
         {
           "url": "http://127.0.0.1:8772/shell.js",
@@ -1521,55 +1497,55 @@
           "url": "http://127.0.0.1:8772/assets/material/chart-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1.0999999642372131
+          "duration": 0.9000000357627869
         },
         {
           "url": "http://127.0.0.1:8772/assets/material/navy-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1
+          "duration": 0.8999999761581421
         },
         {
           "url": "http://127.0.0.1:8772/assets/material/chart-shelf.svg",
           "transfer": 2734,
           "body": 2434,
-          "duration": 1.0999999642372131
+          "duration": 0.5999999642372131
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/instrument-serif-1.woff2",
           "transfer": 23048,
           "body": 22748,
-          "duration": 5.099999964237213
+          "duration": 22.100000023841858
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/source-serif-4-1.woff2",
           "transfer": 28164,
           "body": 27864,
-          "duration": 5.100000023841858
+          "duration": 21.19999998807907
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/inter-0.woff2",
           "transfer": 36220,
           "body": 35920,
-          "duration": 5.600000023841858
+          "duration": 21.69999998807907
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/inter-1.woff2",
           "transfer": 37548,
           "body": 37248,
-          "duration": 4.600000023841858
+          "duration": 19.69999998807907
         },
         {
           "url": "http://127.0.0.1:8772/assets/material/coast-profile.svg",
           "transfer": 2904,
           "body": 2604,
-          "duration": 0.800000011920929
+          "duration": 0.8999999761581421
         },
         {
           "url": "http://127.0.0.1:8772/assets/fonts/source-serif-4-2.woff2",
           "transfer": 29540,
           "body": 29240,
-          "duration": 3.400000035762787
+          "duration": 18.80000001192093
         }
       ]
     },
@@ -1581,11 +1557,11 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 28
+          "start": 36
         },
         {
           "name": "first-contentful-paint",
-          "start": 28
+          "start": 36
         }
       ],
       "resources": [
@@ -1593,7 +1569,7 @@
           "url": "http://127.0.0.1:8772/analysis.html",
           "transfer": 0,
           "body": 29719,
-          "duration": 5.400000035762787
+          "duration": 9.099999964237213
         },
         {
           "url": "http://127.0.0.1:8772/fonts.css",
@@ -1719,43 +1695,37 @@
           "url": "http://127.0.0.1:8773/analysis.html",
           "transfer": 30788,
           "body": 30488,
-          "duration": 39.700000047683716
+          "duration": 36
         },
         {
           "url": "http://127.0.0.1:8773/fonts.css",
           "transfer": 2155,
           "body": 1855,
-          "duration": 2
+          "duration": 2.100000023841858
         },
         {
           "url": "http://127.0.0.1:8773/styles.css",
           "transfer": 30849,
           "body": 30549,
-          "duration": 2.5
+          "duration": 2.300000011920929
         },
         {
           "url": "http://127.0.0.1:8773/support.css",
           "transfer": 28208,
           "body": 27908,
-          "duration": 3.5
-        },
-        {
-          "url": "http://127.0.0.1:8773/briefs-catalog.css",
-          "transfer": 6517,
-          "body": 6217,
-          "duration": 2.600000023841858
+          "duration": 2.5
         },
         {
           "url": "http://127.0.0.1:8773/surfaces.css",
           "transfer": 5930,
           "body": 5630,
-          "duration": 3.399999976158142
+          "duration": 2.699999988079071
         },
         {
-          "url": "http://127.0.0.1:8773/reveal.js",
-          "transfer": 3046,
-          "body": 2746,
-          "duration": 3.5
+          "url": "http://127.0.0.1:8773/briefs-catalog.css",
+          "transfer": 6517,
+          "body": 6217,
+          "duration": 2.699999988079071
         },
         {
           "url": "http://127.0.0.1:8773/assets/identity/selected-ipr/ipr-navy-160.png",
@@ -1764,58 +1734,64 @@
           "duration": 3.199999988079071
         },
         {
+          "url": "http://127.0.0.1:8773/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 3
+        },
+        {
           "url": "http://127.0.0.1:8773/shell.js",
           "transfer": 672,
           "body": 372,
-          "duration": 4.5
+          "duration": 4
         },
         {
           "url": "http://127.0.0.1:8773/assets/material/chart-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1.100000023841858
+          "duration": 1.2999999523162842
         },
         {
           "url": "http://127.0.0.1:8773/assets/material/navy-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1.399999976158142
+          "duration": 1
         },
         {
           "url": "http://127.0.0.1:8773/assets/material/chart-shelf.svg",
           "transfer": 2734,
           "body": 2434,
-          "duration": 1.100000023841858
+          "duration": 0.8999999761581421
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/instrument-serif-1.woff2",
           "transfer": 23048,
           "body": 22748,
-          "duration": 23.30000001192093
+          "duration": 6.399999976158142
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/source-serif-4-1.woff2",
           "transfer": 28164,
           "body": 27864,
-          "duration": 22.5
+          "duration": 5.5
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/inter-0.woff2",
           "transfer": 36220,
           "body": 35920,
-          "duration": 23.19999998807907
+          "duration": 5.699999988079071
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/inter-1.woff2",
           "transfer": 37548,
           "body": 37248,
-          "duration": 22.80000001192093
+          "duration": 5.800000011920929
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/source-serif-4-2.woff2",
           "transfer": 29540,
           "body": 29240,
-          "duration": 22
+          "duration": 3.700000047683716
         }
       ]
     },
@@ -1827,11 +1803,11 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 32
+          "start": 24
         },
         {
           "name": "first-contentful-paint",
-          "start": 32
+          "start": 24
         }
       ],
       "resources": [
@@ -1839,7 +1815,7 @@
           "url": "http://127.0.0.1:8773/analysis.html",
           "transfer": 0,
           "body": 30488,
-          "duration": 5.5
+          "duration": 11.199999988079071
         },
         {
           "url": "http://127.0.0.1:8773/fonts.css",
@@ -1947,11 +1923,11 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 44
+          "start": 52
         },
         {
           "name": "first-contentful-paint",
-          "start": 44
+          "start": 52
         }
       ],
       "resources": [
@@ -1959,109 +1935,109 @@
           "url": "http://127.0.0.1:8773/analysis.html",
           "transfer": 30788,
           "body": 30488,
-          "duration": 35
+          "duration": 34
         },
         {
           "url": "http://127.0.0.1:8773/fonts.css",
           "transfer": 2155,
           "body": 1855,
-          "duration": 2.100000023841858
-        },
-        {
-          "url": "http://127.0.0.1:8773/styles.css",
-          "transfer": 30849,
-          "body": 30549,
-          "duration": 1.899999976158142
+          "duration": 2.299999952316284
         },
         {
           "url": "http://127.0.0.1:8773/support.css",
           "transfer": 28208,
           "body": 27908,
-          "duration": 2.699999988079071
+          "duration": 2
+        },
+        {
+          "url": "http://127.0.0.1:8773/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 2.5
         },
         {
           "url": "http://127.0.0.1:8773/surfaces.css",
           "transfer": 5930,
           "body": 5630,
-          "duration": 2.899999976158142
-        },
-        {
-          "url": "http://127.0.0.1:8773/assets/identity/selected-ipr/ipr-navy-160.png",
-          "transfer": 7144,
-          "body": 6844,
-          "duration": 3
+          "duration": 3.100000023841858
         },
         {
           "url": "http://127.0.0.1:8773/briefs-catalog.css",
           "transfer": 6517,
           "body": 6217,
-          "duration": 3.300000011920929
+          "duration": 2.800000011920929
         },
         {
           "url": "http://127.0.0.1:8773/reveal.js",
           "transfer": 3046,
           "body": 2746,
-          "duration": 3.100000023841858
+          "duration": 2.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8773/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 3.5
         },
         {
           "url": "http://127.0.0.1:8773/shell.js",
           "transfer": 672,
           "body": 372,
-          "duration": 3.900000035762787
+          "duration": 3.800000011920929
         },
         {
           "url": "http://127.0.0.1:8773/assets/material/chart-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1.199999988079071
+          "duration": 1.399999976158142
         },
         {
           "url": "http://127.0.0.1:8773/assets/material/navy-paper.png",
           "transfer": 14386,
           "body": 14086,
-          "duration": 1
+          "duration": 0.800000011920929
         },
         {
           "url": "http://127.0.0.1:8773/assets/material/chart-shelf.svg",
           "transfer": 2734,
           "body": 2434,
-          "duration": 1
+          "duration": 0.800000011920929
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/instrument-serif-1.woff2",
           "transfer": 23048,
           "body": 22748,
-          "duration": 20.899999976158142
+          "duration": 6.100000023841858
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/source-serif-4-1.woff2",
           "transfer": 28164,
           "body": 27864,
-          "duration": 19.600000023841858
+          "duration": 5.900000035762787
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/inter-0.woff2",
           "transfer": 36220,
           "body": 35920,
-          "duration": 20
+          "duration": 5.600000023841858
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/inter-1.woff2",
           "transfer": 37548,
           "body": 37248,
-          "duration": 19.600000023841858
+          "duration": 5.600000023841858
         },
         {
           "url": "http://127.0.0.1:8773/assets/material/coast-profile.svg",
           "transfer": 2904,
           "body": 2604,
-          "duration": 0.800000011920929
+          "duration": 0.8999999761581421
         },
         {
           "url": "http://127.0.0.1:8773/assets/fonts/source-serif-4-2.woff2",
           "transfer": 29540,
           "body": 29240,
-          "duration": 17.599999964237213
+          "duration": 3.599999964237213
         }
       ]
     },
@@ -2073,11 +2049,11 @@
       "paints": [
         {
           "name": "first-paint",
-          "start": 20
+          "start": 28
         },
         {
           "name": "first-contentful-paint",
-          "start": 20
+          "start": 28
         }
       ],
       "resources": [
@@ -2085,7 +2061,7 @@
           "url": "http://127.0.0.1:8773/analysis.html",
           "transfer": 0,
           "body": 30488,
-          "duration": 5.399999976158142
+          "duration": 7.099999964237213
         },
         {
           "url": "http://127.0.0.1:8773/fonts.css",

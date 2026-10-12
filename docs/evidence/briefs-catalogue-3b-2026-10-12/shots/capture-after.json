@@ -7,13 +7,12 @@
   "innerWidth": 320,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  },
  {
@@ -24,13 +23,12 @@
   "innerWidth": 375,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  },
  {
@@ -41,13 +39,12 @@
   "innerWidth": 768,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  },
  {
@@ -58,149 +55,12 @@
   "innerWidth": 1280,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "no-js",
-  "width": 320,
-  "shot": "after-no-js-320.png",
-  "scrollWidth": 320,
-  "innerWidth": 320,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "no-js",
-  "width": 375,
-  "shot": "after-no-js-375.png",
-  "scrollWidth": 375,
-  "innerWidth": 375,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "no-js",
-  "width": 768,
-  "shot": "after-no-js-768.png",
-  "scrollWidth": 768,
-  "innerWidth": 768,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "no-js",
-  "width": 1280,
-  "shot": "after-no-js-1280.png",
-  "scrollWidth": 1280,
-  "innerWidth": 1280,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "reduced-motion",
-  "width": 320,
-  "shot": "after-reduced-motion-320.png",
-  "scrollWidth": 320,
-  "innerWidth": 320,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "reduced-motion",
-  "width": 375,
-  "shot": "after-reduced-motion-375.png",
-  "scrollWidth": 375,
-  "innerWidth": 375,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "reduced-motion",
-  "width": 768,
-  "shot": "after-reduced-motion-768.png",
-  "scrollWidth": 768,
-  "innerWidth": 768,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
-  ]
- },
- {
-  "mode": "reduced-motion",
-  "width": 1280,
-  "shot": "after-reduced-motion-1280.png",
-  "scrollWidth": 1280,
-  "innerWidth": 1280,
-  "errors": [],
-  "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/chart-shelf.svg",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  },
  {
@@ -211,12 +71,11 @@
   "innerWidth": 320,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  },
  {
@@ -227,12 +86,11 @@
   "innerWidth": 375,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  },
  {
@@ -243,12 +101,11 @@
   "innerWidth": 768,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  },
  {
@@ -259,12 +116,11 @@
   "innerWidth": 1280,
   "errors": [],
   "images": [
-   "http://127.0.0.1:60332/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
-   "http://127.0.0.1:60332/assets/catalogue/media/no-10-jin-class-type-094.jpg",
-   "http://127.0.0.1:60332/assets/identity/selected-ipr/ipr-navy-160.png",
-   "http://127.0.0.1:60332/assets/material/chart-paper.png",
-   "http://127.0.0.1:60332/assets/material/navy-paper.png"
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
   ]
  }
 ]

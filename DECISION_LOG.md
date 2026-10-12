@@ -16,12 +16,21 @@ Evidence: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
   article-image and Signal Veil resolvers and never reads a cover, a photo or
   a veil. A card is a plate unless its record is `admitted` and passes every
   check (file present, SHA-256, licence Public domain or CC BY 4.0 with link,
-  credit complete, not No. 12).
-- **Admissions are an engineering review, not an owner ruling.** Nos. 8
-  (CC BY 4.0), 9 and 10 (Public domain) are admitted on a Commons record check
-  and the manifest's verbatim credit, caption and alt. They are pending
-  independent confirmation and settle no wider image right. Flipping a record
-  to `held` returns that card to a plate and changes nothing else.
+  credit complete, not No. 12) and the curated source it was reviewed against
+  is unchanged: the source file's SHA-256 equals `source_sha256` and the
+  manifest entry's licence, licence link, source page and credit still equal
+  the record. A swapped or removed curator source falls back to a plate.
+- **Admissions (revised after independent review of PR #418, 2026-10-12).**
+  No. 8 (Japan MOD / Joint Staff, CC BY 4.0, GJSTU 2.0) and No. 9 (NASA / ISS
+  Expedition 45, Public domain) are approved for the catalogue with the
+  manifest's verbatim credit, caption and alt. **No. 10 is held** pending
+  evidence of original government authorship: Commons' PD-US-Government
+  category and a "provided to CRS" attribution do not establish who made the
+  photograph, and the drafted alt ("underway on the surface") is not
+  established by the source description and must not be reused. Result: 2
+  photographs, 15 Editorial plates. Catalogue only; no blanket permission, and
+  the opened-article use of No. 10's image is unchanged. Flipping a record to
+  `held` returns that card to a plate and changes nothing else.
 - **No. 1 is held.** The photograph shows identifiable, named U.S. and PLA
   officers at an unrelated 2012 event, selected by keyword for a Brief about
   two former defence ministers, and its alt text is a filename. It returns to
@@ -40,10 +49,21 @@ Evidence: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
   linked by the homepage, the Archive and the catalogue; the isolation tests
   allow exactly `rl-brief`, `rl-print` and the `region_plate` macro there.
 - **Hero.** The lead Brief's optional photograph renders only through the same
-  decision. Nothing changes today (the lead has no cover); a native lead with
-  an article cover no longer shows it on the catalogue by default.
+  decision and, through the same `photo_credit` macro as a card, carries the
+  caption, creator (with native name), licence link, source link and change
+  note. Nothing changes today (the lead has no cover); a native lead with an
+  article cover no longer shows it on the catalogue by default. The path is
+  covered by a synthetic admitted-lead build test.
 - **Publication.** The page publishes `assets/geo/region.svg` and exactly the
   admitted files it shows. Page JavaScript is unchanged.
+- **Collection-boundary contract.** `test_the_view_layer_is_not_on_the_
+  collection_path` rejected `core/desk_registry.py` listed as a
+  `pull_request.paths` trigger in the Korea internal-registry workflow (a file
+  filter, not an import). It now exempts only that literal list item inside a
+  `paths:` / `paths-ignore:` block; any import, `run:` body, `env:` value or
+  other path naming the registry still fails, and a workflow that names it must
+  keep `permissions: contents: read`. The test was not skipped or weakened for
+  collectors.
 
 ## 2026-10-11 — Expressive frontend Phase 2b (Archive) implementation decisions
 

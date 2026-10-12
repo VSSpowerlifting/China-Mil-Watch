@@ -16,6 +16,9 @@ nothing else:
   * Fail-closed: a missing record, a held or denied status, a missing or
     altered file, a licence outside Public domain / CC BY, or an incomplete
     credit all return a plate with a reason code. Nothing raises at build.
+    A swapped or removed curated source, or a manifest entry whose licence,
+    source page or credit no longer matches the record, also falls to a
+    plate: the record was reviewed against that source, not a later one.
   * No. 12 is refused here regardless of what a record says (DECISION_LOG
     2026-10-10, B5), and a record cannot admit a file from a veil path.
 """
@@ -32,6 +35,7 @@ KIND_PHOTOGRAPH = "photograph"
 KIND_PLATE = "plate"
 
 ADMISSIONS_PATH = Path("site/assets/catalogue/admissions.json")
+MANIFEST_PATH = Path("site/assets/editorial/manifest.json")
 MEDIA_ROUTE_PREFIX = "assets/catalogue/media/"
 SOURCE_ROOT = "site/assets/editorial/"
 
@@ -54,7 +58,13 @@ PLATE_DESKS = ("china", "singapore")
 
 _REQUIRED = ("alt", "caption", "credit", "creator", "license", "source_page",
              "source_label", "change_note", "served", "source_file",
-             "served_sha256", "width", "height")
+             "source_manifest_id", "source_sha256", "served_sha256",
+             "width", "height")
+
+# Manifest fields the admission record must still agree with at build time.
+# The manifest is read only to confirm that the curated source an admission
+# was reviewed against is the one on disk; it grants nothing.
+_CONTINUITY = ("license", "license_url", "source_page", "credit")
 
 
 @dataclass(frozen=True)
@@ -105,6 +115,17 @@ def _plate_desks(row: Mapping) -> tuple:
     return tuple(d for d in (entry.get("desks") or ()) if d in PLATE_DESKS)
 
 
+def _manifest_entry(manifest_id: str, repo_root: Path) -> Optional[Mapping]:
+    try:
+        rows = json.loads((repo_root / MANIFEST_PATH).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    for row in rows if isinstance(rows, list) else ():
+        if isinstance(row, dict) and row.get("id") == manifest_id:
+            return row
+    return None
+
+
 def _check(entry: Mapping, repo_root: Path) -> Optional[str]:
     """None when the entry passes, else a reason code."""
     for key in _REQUIRED:
@@ -124,6 +145,24 @@ def _check(entry: Mapping, repo_root: Path) -> Optional[str]:
         return "licence-link-missing"
     if not str(entry["source_page"]).startswith("https://"):
         return "source-page-not-https"
+    # Origin continuity: the curated source this admission was reviewed
+    # against must still be the file on disk and the manifest entry it names.
+    # A swapped or removed source fails to a plate instead of silently
+    # keeping an old "admitted" route.
+    manifest_id = str(entry["source_manifest_id"])
+    if not Path(source).name.startswith(manifest_id + "-"):
+        return "source-not-from-manifest-entry"
+    source_path = repo_root / source
+    if not source_path.is_file():
+        return "source-missing"
+    if sha256_file(source_path) != entry["source_sha256"]:
+        return "source-hash-mismatch"
+    curated = _manifest_entry(manifest_id, repo_root)
+    if curated is None:
+        return "manifest-entry-missing"
+    for key in _CONTINUITY:
+        if (curated.get(key) or "") != (entry.get(key) or ""):
+            return "manifest-changed:" + key
     path = repo_root / "site" / served
     if not path.is_file():
         return "file-missing"
