@@ -61,10 +61,15 @@ def prepare(reader_report, public_links):
     sha = sources[0].get("state_commit")
     require(type(sha) is str and re.fullmatch(r"[0-9a-f]{40}", sha),
             "invalid immutable source revision")
-    require(type(public_links) is list and len(public_links) == 4,
-            "fixed published source navigation pilot changed")
-    released = {x["source_url"]: x for x in public_links}
-    require(len(released) == 4, "duplicate public source link")
+    # The public navigation index is already an exact URL/title/date allowlist.
+    # Compare to that authoritative directory, not the old four-item pilot or
+    # another hard-coded count; additions require upgrading the index validator.
+    validated_public = load_public_links()
+    require(type(public_links) is list and public_links == validated_public,
+            "review queue public links diverge from validated directory")
+    released = {x["source_url"]: x for x in validated_public}
+    require(len(released) == len(validated_public),
+            "duplicate public source link")
     found, rows = set(), []
     for row in records:
         require(type(row) is dict and set(row) == REQUIRED_ROW_FIELDS,
