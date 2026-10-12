@@ -54,7 +54,7 @@ class CountryPublisherNavigationTests(DeskCase):
         vietnam_sources = load_registry().get("vietnam").research["source_families"]
         self.assertEqual(len([s for s in vietnam_sources if "Ministry of Industry and Trade — " in s["name"]]), 2)
         self.assertIn("own isolated source family and reliability clock",
-                      next(s["note"] for s in vietnam_sources if "foundational industry" in s["name"]))
+                      next(s["note"] for s in vietnam_sources if s["name"] == "Ministry of Industry and Trade — foundational industry (Vietnamese)"))
 
     def test_official_index_links_render_only_on_their_own_desks(self):
         for slug, expected in LINKS.items():
