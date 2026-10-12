@@ -24,3 +24,6 @@
 .korea-candidate-kicker{font-size:.78rem;letter-spacing:.035em;margin:0}
 .korea-candidate code{overflow-wrap:anywhere;font-size:.77rem}
 @media(max-width:640px){.korea-preview-metrics{grid-template-columns:1fr}.korea-candidate{padding:1.2rem 0}}
+
+/* Private source-scoped English descriptor, not publicly source-admitted. */
+.korea-private-synopsis{font-size:1rem;line-height:1.6;margin:.75rem 0}

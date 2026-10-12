@@ -119,3 +119,100 @@ class KoreaSitePreviewTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+class KoreaPrivateStructuralProjectionTests(unittest.TestCase):
+    """Synthetic signoffs exercise website layout only, never human proof."""
+
+    def setUp(self):
+        from core.korea_reference_gate import APPROVAL_SCHEMA, STATE_SHA, load_candidates
+        from tests.test_korea_reference_gate import synthetic_approval
+        self.tmp = tempfile.TemporaryDirectory(prefix="ipr-korea-structural-web-")
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        self.rows = load_candidates()
+        self.sample = synthetic_approval(self.rows[1])
+        self.packet = self.root / "synthetic-review.json"
+        self.packet.write_text(json.dumps({
+            "schema": APPROVAL_SCHEMA,
+            "state_commit": STATE_SHA,
+            "entries": [self.sample],
+        }), encoding="utf-8")
+        import sys
+        sys.path.insert(0, str(ROOT / "site" / "preview"))
+        import generate_preview as gp
+        self.gp = gp
+
+    def preview(self):
+        out = self.root / "site-private-approved-projection"
+        result = self.gp.build(
+            out, "IPR Korea Private Synthetic QA", ROOT / "pla_watch.db",
+            snapshot=self.gp.snapshot_from_corpus(ROOT / "pla_watch.db"),
+            review_korea=True, korea_review_packet=self.packet)
+        return result, out
+
+    def test_one_structural_reference_and_four_held_source_rows(self):
+        result, output = self.preview()
+        page = (output / "korea.html").read_text(encoding="utf-8")
+        self.assertEqual(result["korea_private_structural_preview_rows"], 1)
+        self.assertEqual(page.count('data-review-status="private-structural-only"'), 1)
+        self.assertEqual(page.count('data-review-status="hold"'), 4)
+        self.assertIn(self.sample["english_description"], page)
+        self.assertIn("signoffs unauthenticated", page)
+        self.assertIn("human-approved references authenticated by this tool", page)
+        self.assertIn("not an official government translation", page)
+        self.assertNotIn(self.sample["human_korean_review"]["reviewer"], page)
+        self.assertNotIn(self.sample["source_rights_review"]["reviewer"], page)
+        self.assertNotIn(self.sample["owner_publication_approval"]["reviewer"], page)
+        self.assertNotIn("text_original", page)
+        self.assertNotIn("body_original", page)
+        self.assertNotIn('href="korea.html"',
+                         (output / "desks.html").read_text(encoding="utf-8"))
+        self.assertFalse((output / "sitemap.xml").exists())
+        self.assertIn('content="noindex, nofollow"', page)
+        self.assertEqual(result["indexable_pages"], 0)
+
+    def test_changed_hash_or_unreviewed_rights_refused_before_build(self):
+        import copy
+        for change in ("text_hash", "rights_false", "source_identity"):
+            with self.subTest(change=change):
+                item = copy.deepcopy(self.sample)
+                if change == "text_hash":
+                    item["content_sha256"] = "b"*64
+                elif change == "rights_false":
+                    item["source_rights_review"]["nontext_media_excluded"] = False
+                else:
+                    item["source_identity"] = "korea-policy:156780000"
+                self.packet.write_text(json.dumps({
+                    "schema": "ipr-korea-source-admission/1",
+                    "state_commit": "dcb43b9c4edb471d6def5876701ec4a2e39d5264",
+                    "entries": [item],
+                }), encoding="utf-8")
+                dest = self.root / ("refused-" + change)
+                with self.assertRaises(ValueError):
+                    self.gp.build(dest, "Must not publish",
+                                  ROOT / "pla_watch.db", review_korea=True,
+                                  korea_review_packet=self.packet)
+                self.assertFalse(dest.exists(), "invalid reviewer packet left partial preview files")
+
+    def test_packet_not_accepted_for_normal_site_or_from_repository(self):
+        dest = self.root / "normal-release"
+        with self.assertRaisesRegex(ValueError, "only in private review mode"):
+            self.gp.build(dest, "No Korea",
+                          ROOT / "pla_watch.db", korea_review_packet=self.packet)
+        self.assertFalse(dest.exists())
+        # Even synthetic packets checked into the public repository are refused.
+        with self.assertRaisesRegex(ValueError, "outside repository"):
+            self.gp.build(dest, "Bad packet path",
+                          ROOT / "pla_watch.db", review_korea=True,
+                          korea_review_packet=ROOT / "research/korea_reference_candidates.json")
+        self.assertFalse(dest.exists())
+
+    def test_structural_packet_never_makes_origin_or_sitemap_eligible(self):
+        with self.assertRaisesRegex(ValueError, "no origin"):
+            self.gp.build(self.root / "origin-refused", "No",
+                          ROOT / "pla_watch.db", review_korea=True,
+                          korea_review_packet=self.packet,
+                          site_origin="https://indopacificrecord.org")
+        self.assertFalse((self.root / "origin-refused").exists())
