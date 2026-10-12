@@ -3,6 +3,7 @@ import copy
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -110,7 +111,7 @@ class KoreaDay7PreflightTests(unittest.TestCase):
                                      root/"held.json")
             review.write_text(json.dumps(self.report))
             slots.write_text(json.dumps(self.slots))
-            with unittest.mock.patch(
+            with patch(
                     "scripts.korea_day7_machine_preflight.assess",
                     side_effect=EvidenceHold("sensitive Korean body")):
                 rc = main(["--formal-review", str(review),
