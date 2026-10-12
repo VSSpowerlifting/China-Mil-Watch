@@ -6,6 +6,9 @@
   "reviewer": "IPR engineering review, Phase 3B (Claude). Pending independent confirmation. This is not an owner ruling and settles no wider image right.",
   "receipt": "docs/evidence/briefs-catalogue-3b-2026-10-12/receipts/commons-imageinfo-raw.json",
   "receipt_limit": "The receipt verifies licence, creator and description of the Commons original. It does not prove the re-encoded local file derives from it. No publisher-site retrieval was made.",
+  "built_with": {
+    "pillow": "11.3.0"
+  },
   "entries": [
     {
       "issue": 1,

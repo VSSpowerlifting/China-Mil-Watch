@@ -160,11 +160,14 @@ class CommittedRecordTests(unittest.TestCase):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         cls.manifest = {m["id"]: m for m in manifest}
 
-    def test_seventeen_cards_three_photographs_fourteen_plates(self):
-        self.assertEqual(len(self.audit), 17)
+    def test_every_row_is_a_card_and_only_the_cleared_three_are_photographs(self):
+        # Row-count agnostic: publishing No. 18 must not turn this red.
+        self.assertEqual(len(self.audit), len(self.rows))
+        self.assertGreaterEqual(len(self.audit), 17)
         photos = {a["issue"] for a in self.audit if a["kind"] == cm.KIND_PHOTOGRAPH}
         self.assertEqual(photos, PHOTO_ISSUES)
-        self.assertEqual(sum(a["kind"] == cm.KIND_PLATE for a in self.audit), 14)
+        plates = sum(a["kind"] == cm.KIND_PLATE for a in self.audit)
+        self.assertEqual(plates, len(self.rows) - len(PHOTO_ISSUES))
 
     def test_number_one_is_held_and_number_twelve_is_denied(self):
         by_issue = {a["issue"]: a for a in self.audit}
@@ -241,12 +244,21 @@ class CommittedRecordTests(unittest.TestCase):
     def test_the_builder_is_deterministic(self):
         sys.path.insert(0, str(REPO_ROOT / "scripts"))
         import build_catalogue_media as bcm
+        from PIL import Image
+        same_encoder = bcm.PILLOW_VERSION == self.record.get("built_with", {}).get("pillow")
         for e in self.record["entries"]:
             if e["status"] != "admitted":
                 continue
-            blob = bcm.derive(REPO_ROOT / e["source_file"], e["focal"])
-            self.assertEqual(blob, bcm.derive(REPO_ROOT / e["source_file"], e["focal"]))
-            self.assertEqual(blob, (REPO_ROOT / "site" / e["served"]).read_bytes())
+            with self.subTest(issue=e["issue"]):
+                blob = bcm.derive(REPO_ROOT / e["source_file"], e["focal"])
+                self.assertEqual(blob, bcm.derive(REPO_ROOT / e["source_file"], e["focal"]))
+                with Image.open(__import__("io").BytesIO(blob)) as im:
+                    self.assertEqual(im.size, (e["width"], e["height"]))
+                # Byte equality holds only for the encoder that wrote the file.
+                # Other Pillow/libjpeg builds may differ; production is protected
+                # by the resolver's hash check on the committed file instead.
+                if same_encoder:
+                    self.assertEqual(blob, (REPO_ROOT / "site" / e["served"]).read_bytes())
 
     def test_resolver_module_reads_no_article_image_surface(self):
         src = (REPO_ROOT / "core/catalogue_media.py").read_text(encoding="utf-8")

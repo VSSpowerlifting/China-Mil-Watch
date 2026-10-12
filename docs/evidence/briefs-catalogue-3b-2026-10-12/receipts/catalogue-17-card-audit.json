@@ -1,6 +1,6 @@
 {
   "statement": "17/17 catalogue cards: resolver decision (core/catalogue_media.py) beside what Chromium rendered at 1280 px. Generated from the committed record and the candidate build; the rendered side comes from scripts/verify_briefs_catalog.py.",
-  "head": "22293e92bcabc9887229de0d496fe4b114065efe",
+  "base_main": "22293e92bcabc9887229de0d496fe4b114065efe",
   "counts": {
     "cards": 17,
     "photograph": 3,
@@ -469,5 +469,6 @@
       "rendered_credit_links": [],
       "img": null
     }
-  ]
+  ],
+  "candidate_commit": "3c25abd9a4 (receipt generated from this tree; the follow-up review-fixup commit changes tests, builder metadata, admissions built_with and docs only)"
 }

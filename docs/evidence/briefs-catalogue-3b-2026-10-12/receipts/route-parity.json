@@ -1,0 +1,17 @@
+{
+  "baseline_files": 5340,
+  "candidate_files": 5344,
+  "added": [
+    "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+    "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+    "assets/catalogue/media/no-10-jin-class-type-094.jpg",
+    "assets/geo/region.svg"
+  ],
+  "removed": [],
+  "changed": [
+    "analysis.html",
+    "briefs-catalog.css"
+  ],
+  "admissions_json_published": false,
+  "builds": "baseline = main 22293e92bc via the same generator flags (--snapshot-from-corpus); candidate = this branch, rebuilt after the review fixups"
+}

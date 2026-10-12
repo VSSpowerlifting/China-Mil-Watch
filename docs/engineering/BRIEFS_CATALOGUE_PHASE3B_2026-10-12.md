@@ -49,7 +49,7 @@ These are **my review, not an owner ruling**, and they settle no wider image rig
 
 No 81.cn / PLA Daily imagery, no CC BY-SA file (B6) and no No. 12 image is referenced anywhere on the page; the verifier asserts zero requests for `*-source-image*`, `*-veil*`, `81.cn`.
 
-**Derivatives.** The three card images are re-crops (focal point recorded per entry) of the existing curated, already-toned `*-duo-navy.jpg` derivatives, resized to 720×480, progressive JPEG, no metadata. The card says "Toned, cropped and resized by IPR." and "Visual context, not evidence." The label is "Photograph", never "Signal Veil".
+**Derivatives.** The three card images are re-crops (focal point recorded per entry) of the existing curated, already-toned `*-duo-navy.jpg` derivatives, resized to 720×480, progressive JPEG, no metadata, encoded with Pillow 11.3.0 (recorded as `built_with`; bytes are only reproducible for that encoder, so production verifies the committed file's SHA-256, never a re-encode). The card says "Toned, cropped and resized by IPR." and "Visual context, not evidence." The label is "Photograph", never "Signal Veil".
 
 ## Card anatomy
 
@@ -76,6 +76,10 @@ One primary link per card (the headline). It stretches over the card; credit lin
 ## Budgets and publication
 
 HTML + CSS for `analysis.html`: 119,633 B (baseline 101,878 B; cap 300,000 B). JS: 3,118 B (cap 10,000 B). Photographs: 75,247 B in total, loaded lazily. `region.svg` (49,760 B) is referenced through `<use>` and is not counted by the delivery verifier's asset list, so measured local delivery understates the page by about that amount. Production publishes exactly `assets/geo/region.svg` plus the admitted files a card shows; `relief.css` is now linked by the homepage, Archive and catalogue only.
+
+## Hero caption (known gap)
+
+If a CC BY photograph were ever admitted for the lead, the hero figcaption would show credit and caption but not the licence link or change note that card credits carry. Nothing reaches it today. Close it before any hero use.
 
 ## Out of scope / not done
 

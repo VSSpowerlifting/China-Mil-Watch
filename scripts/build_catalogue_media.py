@@ -5,7 +5,10 @@ Reads `site/assets/catalogue/admissions.json`. For each entry with status
 "admitted" it crops the entry's `source_file` (an existing curated, toned
 derivative) to 3:2 around `focal`, resizes to 720x480 and writes a
 progressive JPEG with no metadata to `site/<served>`. With `--write` it also
-records `source_sha256`, `served_sha256`, `width` and `height` in the entry.
+records `source_sha256`, `served_sha256`, `width` and `height` in the entry,
+and the Pillow version that encoded them under `built_with`. JPEG bytes are
+only reproducible for the same encoder, so the committed hash (not a re-encode)
+is what production verifies.
 With `--check` it exits non-zero if a committed file's hash differs from the
 record. It never fetches, never edits `output/`, and never tones an image:
 the toning is the existing derivative's.
@@ -16,6 +19,7 @@ import sys
 from io import BytesIO
 from pathlib import Path
 
+import PIL
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -23,6 +27,7 @@ sys.path.insert(0, str(ROOT))
 from core.catalogue_media import ADMISSIONS_PATH, sha256_file  # noqa: E402
 
 W, H, QUALITY = 720, 480, 74
+PILLOW_VERSION = PIL.__version__
 
 
 def derive(source: Path, focal: str) -> bytes:
@@ -63,6 +68,7 @@ def main() -> int:
             served.write_bytes(blob)
             e.update(source_sha256=sha256_file(source), served_sha256=sha256_file(served),
                      width=W, height=H)
+            data["built_with"] = {"pillow": PILLOW_VERSION}
             print("wrote %s %d B" % (e["served"], len(blob)))
         elif a.check:
             ok = served.is_file() and sha256_file(served) == e.get("served_sha256")
