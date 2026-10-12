@@ -261,6 +261,46 @@ class TestRosterMatchesConfiguration(DeskCase):
                     "%s hard-codes a corpus figure" % tpl.name)
 
 
+class IndonesiaPublicStatusWithoutCorpus(DeskCase):
+    """Public country page is allowed; the source and archive are not."""
+
+    def test_indonesia_has_a_discoverable_public_route_and_not_live_status(self):
+        entry = load_registry().get("indonesia")
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry.status, "shadow")
+        self.assertTrue(entry.public)
+        self.assertIsNone(entry.manifest_path)
+        self.assertFalse(entry.has_production_records)
+        self.assertFalse(entry.is_collecting)
+        self.assertIn('href="indonesia.html"', self.page("desks.html"))
+        self.assertTrue((self.out / "indonesia.html").is_file())
+
+    def test_indonesia_page_is_nonempty_but_publishes_zero_unapproved_references(self):
+        html = self.page("indonesia.html")
+        self.assertIn("Indonesia Desk", html)
+        self.assertIn("Kemhan", html)
+        self.assertIn("https://www.kemhan.go.id/category/berita", html)
+        self.assertIn("Official publisher starting point", html)
+        self.assertIn("Individually reviewed official-source references", html)
+        self.assertIn("No individual source references have completed", html)
+        self.assertIn("no admitted records", html.lower())
+        self.assertNotIn("data-reference-list", html)
+        self.assertNotIn("text_original", html)
+        self.assertNotIn("body_original", html)
+        self.assertNotIn("state/shadow.db", html)
+        self.assertNotIn("The Sudirman Dialogue 2027", html)
+        self.assertNotIn("Menhan Sjafrie Terima Courtesy Call", html)
+
+    def test_public_directory_distinguishes_reference_from_production(self):
+        html = self.page("desks.html")
+        self.assertIn("Indonesia Desk", html)
+        self.assertIn("8 declared", html)
+        self.assertIn("2 collecting into the record", html)
+        self.assertEqual(
+            sorted(x.slug for x in load_registry() if x.is_collecting),
+            ["china", "singapore"])
+
+
 class TestJapanDeskIsPlannedNotCoverage(DeskCase):
 
     def test_the_japan_desk_page_exists_and_is_linked(self):
@@ -489,7 +529,7 @@ class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
 
     def test_public_desk_roster_does_not_change_which_desks_are_live(self):
         self.assertEqual({d.slug for d in load_registry().public_entries},
-            {"china", "singapore", "japan", "korea", "philippines", "vietnam", "us-indopacific"})
+            {"china", "singapore", "japan", "korea", "philippines", "vietnam", "indonesia", "us-indopacific"})
         self.assertEqual(sorted(d.slug for d in load_registry() if d.is_collecting),
                          ["china", "singapore"])
 

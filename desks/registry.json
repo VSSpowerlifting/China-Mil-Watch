@@ -354,6 +354,55 @@
         "The three ministry families established remote Day 0 on 2026-10-07; required 7/14/30 human reviews and source-level rights gates remain. National Defence Journal is research-only and cannot inherit those ministry clocks or count as qualified."
       ]
     },
+  {
+   "slug": "indonesia",
+   "name": "Indonesia Desk",
+   "route": "indonesia.html",
+   "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. This is not a comprehensive Indonesian armed-forces, Ministry of Defence, government-document, or defence-policy archive.",
+   "status": "shadow",
+   "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. A source-language and rights review has examined five selected originals, but independent human signoff, the Day 7/14/30 reviews, and any individual public-link release remain outstanding. This page is a research-status directory entry only, not public article coverage.",
+   "public": true,
+   "manifest": null,
+   "has_production_records": false,
+   "research": {
+    "source_families": [
+     {
+      "name": "Indonesian Ministry of Defence — Berita (Indonesian)",
+      "format": "Dated ministry news HTML; isolated shadow preservation and private research reader",
+      "note": "Institutional Berita statements on www.kemhan.go.id, not verbatim official decrees, treaties or independent verification of military capability. Original-language article text stays in shadow state. No publisher bodies, photographs or translations are displayed here."
+     },
+     {
+      "name": "Indonesian Ministry of Defence — Siaran Pers (Indonesian)",
+      "format": "Disabled parser candidate; no authorized collection",
+      "note": "Separate ministry press-release family. Offline parser research does not transfer Berita collection continuity, rights decisions, or release eligibility."
+     }
+    ],
+    "blockers": [
+     [
+      "Original-language editorial review",
+      "Five archived Berita originals received preliminary research reading. Independent named Indonesian-language review and resolution of a publisher geographic inconsistency on one article remain required before individual references may be published."
+     ],
+     [
+      "Source-specific publisher rights",
+      "The Kemhan site identifies ministry copyright; IPR has no documented blanket licence to republish its articles, images or translations. Publication of individually attributed links, if later approved, would be a separate and narrower release."
+     ],
+     [
+      "Collection reliability and eligibility",
+      "The initial isolated collection began October 6, 2026. The October 11 evidence preflight cannot satisfy the October 13 Day 7 checkpoint, later human Day 14/30 reviews or 30-day corpus-admission test."
+     ],
+     [
+      "Scope is not nationwide coverage",
+      "Kemhan institutional news alone cannot establish comprehensive Indonesian defence, service-level, parliamentary or formal policy coverage. Siaran Pers and other agencies remain separate disabled or unreviewed sources."
+     ]
+    ]
+   },
+   "limits": [
+    "Research-status page only; no Indonesian original, model analysis or citation link is published or counted in the IPR corpus.",
+    "Isolated shadow collection is not production collection. A daily collection-success ledger does not establish completeness of ministry releases.",
+    "Original Berita reports represent the ministry's communication, not independent confirmation of outcomes, agreements, force readiness or project completion.",
+    "Named Indonesian-language, content-rights, Day 7/14/30 and owner release decisions govern any later source-specific reference index; this page itself confers no article publication approval."
+   ]
+  },
     {
       "slug": "us-indopacific",
       "name": "US Indo-Pacific Reference Desk",
