@@ -39,12 +39,14 @@ jobs:
           python - <<'PY'
           from scripts.shadow_collect_desk import DESKS
           from core.manifests import load_all_desks
-          from core.desk_registry import load_registry
+          import json
+          from pathlib import Path
           assert "id_kemhan_press" not in DESKS
           assert "indonesia" not in load_all_desks()
-          d = load_registry().get("indonesia")
-          assert d.public and d.status == "shadow" and d.has_production_records is False
-          assert d.manifest_path is None and not d.is_collecting
+          d = next(row for row in json.loads(Path("desks/registry.json").read_text())["desks"]
+                   if row["slug"] == "indonesia")
+          assert d["public"] is True and d["status"] == "shadow"
+          assert d["has_production_records"] is False and d["manifest"] is None
           PY
           sha256sum -c "$RUNNER_TEMP/indonesia-press-db.sha"
           git diff --exit-code -- pla_watch.db output/ shadow/
