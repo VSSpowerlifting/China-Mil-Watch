@@ -18,14 +18,14 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.path = Path(self.temp.name) / "index.json"
 
-    def test_four_exact_first_party_links_match_preserved_pilot(self):
+    def test_eight_first_party_links_keep_original_four_and_exclude_held_source(self):
         actual = load()
         pilot = load_private_pilot()
-        self.assertEqual(len(actual), 4)
+        self.assertEqual(len(actual), 8)
         self.assertEqual(self.candidates["pinned_shadow_commit"], PINNED)
         self.assertEqual(
             [(x["source_url"], x["title_original"], x["published_date"])
-             for x in actual],
+             for x in actual[:4]],
             [(x["source_url"], x["title_original"], x["published_date"])
              for x in pilot["candidates"]],
         )
@@ -33,6 +33,17 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         self.assertFalse(pilot["independent_human_source_review_completed"])
         self.assertFalse(pilot["day7_review_completed"])
         self.assertEqual(actual[0]["id"], "id-01")
+        self.assertEqual(
+            [x["id"] for x in actual],
+            ["id-01", "id-02", "id-03", "id-04",
+             "id-06", "id-07", "id-08", "id-09"],
+        )
+        self.assertFalse(any("yonif-tp-880-banuanta" in x["source_url"] for x in actual))
+        self.assertEqual(
+            [(x["id"], x["published_date"]) for x in actual[4:]],
+            [("id-06", "2026-09-30"), ("id-07", "2026-10-03"),
+             ("id-08", "2026-10-07"), ("id-09", "2026-10-09")],
+        )
 
     def test_corrupt_forged_or_excessive_links_are_not_published(self):
         mutations = [
@@ -45,6 +56,10 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
             lambda x: x["references"][0].update(language="en"),
             lambda x: x["references"][0].update(text_original="private source body"),
             lambda x: x["references"].append(copy.deepcopy(x["references"][0])),
+            lambda x: x["references"][4].update(title_original="Unreviewed inserted headline"),
+            lambda x: x["references"][5].update(url="https://www.kemhan.go.id/2026/10/03/forged-source.html"),
+            lambda x: x["references"][6].update(published_date="2026-10-08"),
+            lambda x: x["references"].insert(4, copy.deepcopy(x["references"][0])),
             lambda x: x.update(editorial_status="independently_reviewed"),
             lambda x: x.update(collection_status="production_admitted"),
             lambda x: x.update(pinned_shadow_commit="a"*40),
@@ -62,13 +77,13 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         with self.assertRaises(PublicIndexError):
             load(self.path)
         self.path.write_text(json.dumps(self.candidates, ensure_ascii=False), encoding="utf-8")
-        self.assertEqual(len(load(self.path)), 4)
+        self.assertEqual(len(load(self.path)), 8)
         duplicate = self.path.parent / "symlink.json"
         duplicate.symlink_to(self.path)
         with self.assertRaises(PublicIndexError):
             load(duplicate)
 
-    def test_real_site_has_four_external_links_and_no_public_corpus(self):
+    def test_real_site_has_eight_external_links_and_no_public_corpus(self):
         import sys
         from bs4 import BeautifulSoup
         root = Path(__file__).resolve().parents[1]
@@ -85,8 +100,8 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         soup = BeautifulSoup(page, "html.parser")
         targets = soup.select("#indonesia-links-heading ~ ol a")
         if not targets:
-            targets = soup.select('ol[aria-label="Four external ministry news links"] a')
-        self.assertEqual(len(targets), 4)
+            targets = soup.select('ol[aria-label="Eight external ministry news links"] a')
+        self.assertEqual(len(targets), 8)
         self.assertEqual(
             {x["href"] for x in targets},
             {x["source_url"] for x in load()},
