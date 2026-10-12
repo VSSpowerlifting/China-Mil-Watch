@@ -1,0 +1,136 @@
+name: Indonesia Day 7 — exact October 11 preflight (no signoff)
+
+# Historical pre-Day7 proof only. No schedules, new publisher collection, body
+# artifact, source-rights approval, registry, site deployment or production write.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_git_state_only:
+        description: 'Read only existing pinned Indonesia shadow Git state'
+        type: boolean
+        required: true
+        default: false
+  pull_request:
+    paths:
+      - ".github/workflows/indonesia_day7_preflight.yml"
+      - "scripts/review_desk_shadow.py"
+      - "scripts/preview_indonesia_reference_pilot.py"
+      - "tests/test_indonesia_reference_pilot.py"
+      - "research/indonesia/public_reference_pilot_2026-10-11.json"
+      - "docs/engineering/INDONESIA_ORIGINAL_LANGUAGE_RIGHTS_DAY7_2026-10-11.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indonesia-day7-preday7-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  archive-preflight:
+    if: github.event_name == 'pull_request' || inputs.confirm_git_state_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin protected production content before read-only audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-prod-before.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/indonesia-output-before.sha"
+      - name: Validate four held private-link candidates (no publisher requests)
+        shell: bash
+        run: |
+          python -m unittest tests.test_indonesia_reference_pilot -v
+          python -m scripts.preview_indonesia_reference_pilot
+      - name: Resolve actual pinned October 11 shadow snapshot from GitHub only
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          src="$RUNNER_TEMP/indonesia-day7-source"
+          mkdir -p "$src" "$RUNNER_TEMP/indonesia-checkpoint-receipts"
+          git -C "$src" init -q
+          git -C "$src" remote add origin "$STATE_REMOTE"
+          git -C "$src" fetch --quiet --no-tags --depth=50 origin \
+            refs/heads/shadow/indonesia-kemhan:refs/heads/shadow/indonesia-kemhan
+          PINNED="17dfae7e6e1e9e1142d81c89764f022ebf03552f"
+          git -C "$src" cat-file -e "$PINNED^{commit}"
+          git -C "$src" merge-base --is-ancestor "$PINNED" refs/heads/shadow/indonesia-kemhan
+          test "$(git -C "$src" ls-tree --name-only "$PINNED")" = state
+          echo "INDONESIA_DAY7_PIN=$PINNED" >> "$GITHUB_ENV"
+          echo "Existing source state pinned: $PINNED"
+      - name: Run pre-Day7 formal machine integrity packet (private originals stay temporary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.review_desk_shadow \
+            --desk indonesia \
+            --state-repo "$RUNNER_TEMP/indonesia-day7-source" \
+            --state-commit "$INDONESIA_DAY7_PIN" \
+            --as-of 2026-10-11 \
+            --out "$RUNNER_TEMP/indonesia-day7-review-private" \
+            > "$RUNNER_TEMP/indonesia-checkpoint-receipts/machine-summary.json"
+      - name: Assert pre-Day7 status and export count-only receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP/indonesia-day7-review-private/report.json" \
+                   "$RUNNER_TEMP/indonesia-checkpoint-receipts/RECEIPT.json" \
+                   "$INDONESIA_DAY7_PIN" <<'PY'
+          import json, pathlib, sys
+          path, receipt_path, pinned = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3]
+          r = json.loads(path.read_text(encoding="utf-8"))
+          assert r["desk"] == "indonesia" and r["as_of"] == "2026-10-11"
+          assert r["state_commit"] == pinned and r["mode"] == "formal_commit_snapshot"
+          assert r["records"] == 24 and r["ledgers"] == 7
+          assert r["qualifying_ledgers"] == 7 and r["historical_backfill_run_ids"] == []
+          assert r["findings"] == [] and r["missing_successful_days"] == []
+          assert r["human_review_completed"] is False
+          assert r["promotion_authorized"] is False
+          assert r["input_hashes"]["state/shadow.db"] == (
+              "97adcbac44b626bdf36a5e66ae3315df7b3bcc340575d0e78c0d0bfc1e05cd74")
+          output = {
+              "schema": "ipr-indonesia-preday7-machine-only/1",
+              "as_of": "2026-10-11",
+              "day7_earliest": "2026-10-13T16:52:15Z",
+              "day7_scheduled_collection_date": "2026-10-13",
+              "state_commit": pinned,
+              "stored_records": r["records"],
+              "ledgers": r["ledgers"],
+              "missing_successful_days_through_oct11": [],
+              "original_captures_hashed": True,
+              "pre_day7_only": True,
+              "day7_checkpoint_complete": False,
+              "attempt_history_independently_exhaustive": False,
+              "human_original_review_completed": False,
+              "rights_authorized": False,
+              "public_links_approved": False,
+              "production_or_site_changed": False,
+          }
+          receipt_path.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n")
+          print(receipt_path.read_text())
+          PY
+          # Never retain or artifact the review kit's full original bodies.
+          rm -rf "$RUNNER_TEMP/indonesia-day7-review-private"
+          sha256sum -c "$RUNNER_TEMP/indonesia-prod-before.sha" > /dev/null
+          sha256sum -c "$RUNNER_TEMP/indonesia-output-before.sha" > /dev/null
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test -z "$(git -C "$RUNNER_TEMP/indonesia-day7-source" status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Save ONLY count-only machine receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: indonesia-pre-day7-counts-only-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/indonesia-checkpoint-receipts/RECEIPT.json
+          retention-days: 14
+          if-no-files-found: error
