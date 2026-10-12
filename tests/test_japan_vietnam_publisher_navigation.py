@@ -16,6 +16,8 @@ LINKS = {
             "https://www.mod.go.jp/j/press/news/",
         "Ministry of Defense — site update feed (Japanese)":
             "https://www.mod.go.jp/j/update/index.html",
+        "Japan Coast Guard — English press releases":
+            "https://www.kaiho.mlit.go.jp/e/topics_archive/index.html",
     },
     "vietnam": {
         "Viet Nam Government News — defense tag page (English)":
@@ -29,7 +31,8 @@ LINKS = {
     },
 }
 ALLOWED_HOSTS = {
-    "www.mod.go.jp", "en.baochinhphu.vn", "bocongan.gov.vn", "moit.gov.vn",
+    "www.mod.go.jp", "www.kaiho.mlit.go.jp", "en.baochinhphu.vn",
+    "bocongan.gov.vn", "moit.gov.vn",
 }
 
 
@@ -70,6 +73,19 @@ class CountryPublisherNavigationTests(DeskCase):
             self.assertNotIn("data-reference-list", html)
             self.assertNotIn("state/shadow.db", html)
             self.assertNotIn("text_original", html)
+
+    def test_jcg_manual_day_zero_is_distinct_from_mod_source_and_rights(self):
+        desk = load_registry().get("japan")
+        jcg = next(s for s in desk.research["source_families"]
+                   if s["name"] == "Japan Coast Guard — English press releases")
+        self.assertIn("manual October 8 Day 0", jcg["note"])
+        self.assertIn("daily gate/job continuity is unverified", jcg["note"])
+        self.assertIn("No JCG daily qualification", jcg["note"])
+        self.assertIn("per-version rights review", jcg["note"])
+        self.assertIn("distinct collection clocks", desk.limits[-1])
+        self.assertEqual(desk.status, "shadow")
+        self.assertFalse(desk.has_production_records)
+        self.assertNotIn("data-reference-list", self.page("japan.html"))
 
     def test_blocked_institutions_not_made_clickable_by_accident(self):
         for slug in ("japan", "vietnam"):
