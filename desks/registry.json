@@ -150,6 +150,54 @@
    ]
   },
   {
+   "slug": "korea",
+   "name": "South Korea Desk",
+   "route": "korea.html",
+   "scope": "One current private research family: Ministry of National Defense (국방부) press releases republished by the Korean government Policy Briefing portal. No direct MND collector, DAPA, whole-government coverage, or public reference admission.",
+   "status": "shadow",
+   "status_explanation": "A scheduled isolated Korea shadow collector and existing-Git, metadata-only private search reader operate, but all Korean original documents remain held for independent human-language, source-specific rights and owner editorial approvals. This is an INTERNAL desk declaration only: no public Korea page, no production source and no admitted archive record.",
+   "public": false,
+   "manifest": null,
+   "has_production_records": false,
+   "research": {
+    "source_families": [
+     {
+      "name": "Ministry of National Defense — Policy Briefing republications (Korean)",
+      "format": "Original Korean HWPX attached to government-portal press releases; separately preserved isolated shadow Git state",
+      "note": "Exact source family kr_policy_mnd_releases; original issuer 국방부, publisher 대한민국 정책브리핑. It is not direct MND.gov.kr or DAPA material. Private reader checks source identity and SHA; five October 11 originals separately passed real HWPX parity."
+     }
+    ],
+    "observed_volume": [],
+    "volume_caveat": "Five verified originals at shadow commit dcb43b9c4edb471d6def5876701ec4a2e39d5264 are private research evidence, not public production records or an asserted comprehensive Ministry output. New shadow records may be present after that commit but are not automatically approved.",
+    "blockers": [
+     [
+      "Independent Korean original-language review is not signed.",
+      "A real Korean-language reviewer must inspect each rendered HWPX, original text, names, dates and technical terminology. The machine parity audit and AI Korean-language analysis are not a qualified human signoff."
+     ],
+     [
+      "Source-specific text and attachment reuse gates remain held.",
+      "The Policy Briefing pages show text-only KOGL Type 1 attribution conditions, not blanket rights over attached HWPX graphics/media. A per-item rights decision and owner editorial signoff are required."
+     ],
+     [
+      "Public source-reference and archive admission remain disabled.",
+      "Five-source gated workbench and private preview exist; no signed human/rights/owner approvals have been admitted, and the public Korea desk must not be enabled without a separate reviewed release decision. Thirty-day reliability qualification for any production promotion remains separate."
+     ]
+    ],
+    "resolved": [
+     [
+      "Private SHA-pinned reader and real-source verification operate.",
+      "PRs #410, #413 and #414 merged on October 11: metadata-only reader, bounded five-document review workbench and an on-demand GitHub Actions workflow. No publisher fetch, public body export, production collection or deployment."
+     ]
+    ]
+   },
+   "limits": [
+    "Internal registry entry only: public=false, manifest=null, no production records and no public Korea route.",
+    "One Policy Briefing MND-republication source family, not direct Ministry of National Defense collection or countrywide coverage.",
+    "Five preserved HWPX originals passed machine byte/text parity, but all remain held for real human language, rights and owner review.",
+    "No DAPA, additional institution, new source schedule, production corpus admission, automatic Sunday Brief or public-reference publication is authorized."
+   ]
+  },
+  {
    "slug": "philippines",
    "name": "Philippines Desk",
    "route": "philippines.html",
