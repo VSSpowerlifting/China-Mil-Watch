@@ -1,0 +1,148 @@
+name: Indonesia Desk — post-Day 7 machine checkpoint (human review pending)
+
+# A one-time evidence check after the Oct 13 collection, not a source launch.
+# October 11's frozen preflight is explicitly insufficient for Day 7.
+on:
+  pull_request:
+    paths:
+      - "scripts/indonesia_day7_machine_checkpoint.py"
+      - "tests/test_indonesia_day7_machine_checkpoint.py"
+      - ".github/workflows/indonesia_day7_machine_checkpoint.yml"
+  schedule:
+    - cron: '7 4 14 10 *'
+  workflow_dispatch:
+    inputs:
+      confirm_machine_only_no_publication:
+        description: 'Read existing state and Actions only; no source reuse, publishing or human signoff'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: indonesia-2026-day7-machine-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Day 7 evidence, appointment and rights non-approval tests
+        run: |
+          python -m unittest tests.test_indonesia_day7_machine_checkpoint tests.test_fetch_indonesia_actions_census tests.test_indonesia_actions_attempts -q
+      - name: Confirm no production corpus or output modifications
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+
+  checkpoint:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (
+        github.event_name == 'schedule' ||
+        (github.event_name == 'workflow_dispatch' &&
+         inputs.confirm_machine_only_no_publication == true)
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Require October 2026 checkpoint, not future annual cron
+        shell: bash
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timezone
+          now = datetime.now(timezone.utc)
+          assert datetime(2026, 10, 13, 17, 17, tzinfo=timezone.utc) <= now, "before Day7 scheduled run"
+          assert now < datetime(2026, 10, 16, tzinfo=timezone.utc), "old one-off checkpoint; disable annual schedule"
+          print("Running machine-only checkpoint against October 13 logical collection day")
+          PY
+      - name: Preserve immutable tracked database and site
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/day7-db.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/day7-site.sha"
+      - run: pip install -r requirements.txt
+      - name: Clone pinned Indonesia state as read-only Git objects
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/id-day7-git"
+          git -C "$RUNNER_TEMP/id-day7-git" init -q
+          git -C "$RUNNER_TEMP/id-day7-git" remote add origin "$STATE_REMOTE"
+          git -C "$RUNNER_TEMP/id-day7-git" fetch -q --no-tags --depth=1 origin \
+            refs/heads/shadow/indonesia-kemhan:refs/heads/shadow/indonesia-kemhan
+          pin="$(git -C "$RUNNER_TEMP/id-day7-git" rev-parse refs/heads/shadow/indonesia-kemhan)"
+          test "${#pin}" -eq 40
+          test "$(git -C "$RUNNER_TEMP/id-day7-git" ls-tree --name-only "$pin")" = state
+          echo "ID_DAY7_STATE=$pin" >> "$GITHUB_ENV"
+      - name: Validate preserved originals, captures, dates and complete shadow days
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.review_desk_shadow \
+            --desk indonesia \
+            --state-repo "$RUNNER_TEMP/id-day7-git" \
+            --state-commit "$ID_DAY7_STATE" \
+            --as-of 2026-10-13 \
+            --out "$RUNNER_TEMP/id-day7-private" \
+            > "$RUNNER_TEMP/id-day7-machine-review-summary.json"
+      - name: Independently enumerate every shared Actions attempt, including failures
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python -m scripts.fetch_indonesia_actions_census \
+            --state-repo "$RUNNER_TEMP/id-day7-git" \
+            --state-commit "$ID_DAY7_STATE" \
+            --as-of 2026-10-13 \
+            --receipt "$RUNNER_TEMP/id-day7-census.json"
+      - name: Accept machine integrity only; keep geographic anomaly and human hold
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/id-day7-counts"
+          python -m scripts.indonesia_day7_machine_checkpoint \
+            --review-report "$RUNNER_TEMP/id-day7-private/report.json" \
+            --census-report "$RUNNER_TEMP/id-day7-census.json" \
+            --state-commit "$ID_DAY7_STATE" \
+            --receipt "$RUNNER_TEMP/id-day7-counts/MACHINE_DAY7_RECEIPT.json"
+          sha256sum -c "$RUNNER_TEMP/day7-db.sha"
+          sha256sum -c "$RUNNER_TEMP/day7-site.sha" > /dev/null
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Delete temporary extracted full publisher originals
+        if: always()
+        shell: bash
+        run: |
+          rm -rf "$RUNNER_TEMP/id-day7-private" "$RUNNER_TEMP/id-day7-git"
+      - name: Retain count-only Day 7 machine receipt, never extracted bodies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: indonesia-day7-machine-only-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/id-day7-counts/MACHINE_DAY7_RECEIPT.json
+          retention-days: 21
+          if-no-files-found: warn
