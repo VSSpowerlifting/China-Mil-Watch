@@ -441,8 +441,12 @@ class TestNoFabricatedCoverage(PreviewCase):
                 block = blocks[entry.slug]
                 self.assertNotRegex(
                     block, r"\b\d[\d,]*\s+(records|runs|articles)\b",
-                    "%s shows a count; it has collected nothing" % entry.name)
-                self.assertIn("Records</dt><dd>None collected", block)
+                    "%s must not show a public corpus count" % entry.name)
+                if entry.status == "shadow":
+                    self.assertIn("Corpus records</dt><dd>Not admitted", block)
+                    self.assertIn("Last corpus collection</dt><dd>Not admitted", block)
+                else:
+                    self.assertIn("Records</dt><dd>None collected", block)
                 self.assertIn(entry.status_label, block)
 
     def test_desk_directory_states_the_live_count_honestly(self):
@@ -467,8 +471,8 @@ class TestNoFabricatedCoverage(PreviewCase):
         desk it governs.
         """
         desks = self.page("desks.html")
-        self.assertIn("Records</dt><dd>None collected", desks)
-        self.assertIn("no record count at all", desks)
+        self.assertIn("Corpus records</dt><dd>Not admitted", desks)
+        self.assertIn("Only collecting desks show public-corpus record totals", desks)
         self.assertIn("Consecutive days required</dt><dd>30",
                       self.page("singapore.html"))
         self.assertIn("Desks", self.page("index.html"))
@@ -1392,7 +1396,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         japan = self.page("japan.html")
         self.assertIn("Shadow preservation does not enter the public corpus", japan)
         self.assertIn("No source is enabled in production.", japan)
-        self.assertIn("Records</dt><dd>None collected", japan)
+        self.assertIn("Corpus records</dt><dd>Not admitted", japan)
         # The directory must carry the claim too, not defer all of it.
         desks = self.page("desks.html")
         self.assertIn("Access blocked — not collecting", desks)
