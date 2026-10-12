@@ -1,0 +1,21 @@
+{
+  "statement": "Full-page PNG sha256 of no-js and reduced-motion captures equal the default capture at each width (refreshed after the review revision).",
+  "identical": {
+    "320": {
+      "no-js": true,
+      "reduced-motion": true
+    },
+    "375": {
+      "no-js": true,
+      "reduced-motion": true
+    },
+    "768": {
+      "no-js": true,
+      "reduced-motion": true
+    },
+    "1280": {
+      "no-js": true,
+      "reduced-motion": true
+    }
+  }
+}

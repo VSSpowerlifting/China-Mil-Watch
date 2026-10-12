@@ -1,0 +1,135 @@
+{
+  "routes_checked": 7591,
+  "failures": [],
+  "largest_html_css": {
+    "route": "desks.html",
+    "html_css_limit": 300000,
+    "js_limit": 10000,
+    "html_css_bytes": 191704,
+    "js_bytes": 2681,
+    "css": [
+      "desk-map.css",
+      "fonts.css",
+      "styles.css",
+      "support.css",
+      "surfaces.css"
+    ],
+    "js": [
+      "desk-map.js"
+    ],
+    "external": [],
+    "asset_bytes": 275435,
+    "assets": [
+      "assets/fonts/instrument-serif-0.woff2",
+      "assets/fonts/instrument-serif-1.woff2",
+      "assets/fonts/inter-0.woff2",
+      "assets/fonts/inter-1.woff2",
+      "assets/fonts/source-serif-4-0.woff2",
+      "assets/fonts/source-serif-4-1.woff2",
+      "assets/fonts/source-serif-4-2.woff2",
+      "assets/identity/selected-ipr/ipr-accent-180.png",
+      "assets/identity/selected-ipr/ipr-accent-32.png",
+      "assets/identity/selected-ipr/ipr-navy-160.png",
+      "assets/identity/selected-ipr/ipr-navy-320.png",
+      "assets/material/chart-paper.png",
+      "assets/material/chart-shelf.svg",
+      "assets/material/coast-profile.svg",
+      "assets/material/navy-paper.png"
+    ],
+    "external_assets": [],
+    "local_delivery_bytes": 469820
+  },
+  "largest_local_delivery": {
+    "route": "index.html",
+    "html_css_limit": 300000,
+    "js_limit": 12000,
+    "html_css_bytes": 78755,
+    "js_bytes": 11940,
+    "css": [
+      "fonts.css",
+      "home.css",
+      "relief.css",
+      "styles.css",
+      "surfaces.css"
+    ],
+    "js": [
+      "intro.js",
+      "shell.js"
+    ],
+    "external": [],
+    "asset_bytes": 2618405,
+    "assets": [
+      "assets/editorial/reagan-jmsdf-2015.jpg",
+      "assets/fonts/instrument-serif-0.woff2",
+      "assets/fonts/instrument-serif-1.woff2",
+      "assets/fonts/inter-0.woff2",
+      "assets/fonts/inter-1.woff2",
+      "assets/fonts/source-serif-4-0.woff2",
+      "assets/fonts/source-serif-4-1.woff2",
+      "assets/fonts/source-serif-4-2.woff2",
+      "assets/frontend/pacific-fleet-1600.webp",
+      "assets/frontend/pacific-fleet-2500.webp",
+      "assets/frontend/pacific-fleet-800.webp",
+      "assets/identity/selected-ipr/ipr-accent-180.png",
+      "assets/identity/selected-ipr/ipr-accent-32.png",
+      "assets/identity/selected-ipr/ipr-ivory-160.png",
+      "assets/identity/selected-ipr/ipr-ivory-320.png",
+      "assets/identity/selected-ipr/ipr-navy-160.png",
+      "assets/material/chart-paper.png",
+      "assets/material/chart-shelf.svg",
+      "assets/material/coast-profile.svg",
+      "assets/material/navy-paper.png",
+      "briefs/media/maritime-cooperation-2026-1200.webp",
+      "briefs/media/maritime-cooperation-2026-600.webp",
+      "briefs/media/maritime-cooperation-2026-source-image.jpg"
+    ],
+    "external_assets": [],
+    "local_delivery_bytes": 2709100
+  },
+  "analysis_route": [
+    {
+      "route": "analysis.html",
+      "html_css_limit": 300000,
+      "js_limit": 10000,
+      "html_css_bytes": 120151,
+      "js_bytes": 3118,
+      "css": [
+        "briefs-catalog.css",
+        "fonts.css",
+        "relief.css",
+        "styles.css",
+        "support.css",
+        "surfaces.css"
+      ],
+      "js": [
+        "reveal.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 329301,
+      "assets": [
+        "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+        "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/chart-shelf.svg",
+        "assets/material/coast-profile.svg",
+        "assets/material/contours-hero.svg",
+        "assets/material/navy-paper.png"
+      ],
+      "external_assets": [],
+      "local_delivery_bytes": 452570
+    }
+  ],
+  "note": "Re-run on the candidate built from the tree merged with main f315e0a3fa. 7591 routes. Full per-route list trimmed to the entries the review reads."
+}

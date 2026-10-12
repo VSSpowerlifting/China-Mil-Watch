@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "surface": "briefs-catalogue",
+  "policy": "A catalogue card shows an Editorial plate unless an entry here is status \"admitted\" and passes every check in core/catalogue_media.py. A matching article cover, Signal Veil or curated-manifest route is never permission for this surface. Flipping an entry to \"held\" returns that card to a plate and changes nothing else.",
+  "reviewed_utc": "2026-10-12",
+  "reviewer": "IPR engineering review, Phase 3B (Claude); Nos. 8 and 9 approved and No. 10 held by independent review of PR #418 (2026-10-12). Catalogue surface only; settles no wider image right.",
+  "receipt": "docs/evidence/briefs-catalogue-3b-2026-10-12/receipts/commons-imageinfo-raw.json",
+  "receipt_limit": "The receipt verifies licence, creator and description of the Commons original. It does not prove the re-encoded local file derives from it. No publisher-site retrieval was made.",
+  "built_with": {
+    "pillow": "11.3.0"
+  },
+  "entries": [
+    {
+      "issue": 1,
+      "week_ending": "2026-05-09",
+      "status": "held",
+      "candidate": "output/the-pla-watch/media/2026-05-10-auto-image-optimized.jpg",
+      "reason": "Not cleared for the catalogue. Public domain (Commons: Roberto Villa Jr, U.S. Marine Corps), but the photograph shows identifiable, named U.S. and PLA officers at a 25 June 2012 Marine Corps Base Hawaii visit. It was selected automatically by keyword for an unrelated subject (the Brief is about two former defence ministers' sentences). Beside that headline a card can read as identification. The sidecar alt text is the file name, and the opened article's disclaimer is too long for a card. The opened-article use is unchanged and not assessed here. Clear only with an owner-reviewed alt text and short caption."
+    },
+    {
+      "issue": 8,
+      "week_ending": "2026-06-27",
+      "status": "admitted",
+      "source_file": "site/assets/editorial/derivatives/liaoning-j15-recovery-duo-navy.jpg",
+      "source_manifest_id": "liaoning-j15-recovery",
+      "focal": "50% 45%",
+      "served": "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+      "alt": "A J-15 carrier-based fighter on final approach to the aircraft carrier Liaoning, landing gear and arresting hook down, seen from astern",
+      "caption": "A J-15 carrier fighter prepares to recover aboard the carrier Liaoning during western Pacific operations, May 2022.",
+      "credit": "Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons",
+      "creator": "Japan Ministry of Defense, Joint Staff",
+      "creator_native": "統合幕僚監部",
+      "creator_native_lang": "ja",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0",
+      "source_page": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+      "source_label": "Wikimedia Commons",
+      "date_note": "Photographed 4 May 2022.",
+      "change_note": "Toned, cropped and resized by IPR.",
+      "source_sha256": "d117026d5e8e5a69d99ece9e2cc619f1136365d62cd662b5f2be4670f35c7f5f",
+      "served_sha256": "695896b732399e8fba6d7373b7c94bd44630a50a946f3d33fedb76632c638ec2",
+      "width": 720,
+      "height": 480
+    },
+    {
+      "issue": 9,
+      "week_ending": "2026-07-04",
+      "status": "admitted",
+      "source_file": "site/assets/editorial/derivatives/scarborough-shoal-iss-duo-navy.jpg",
+      "source_manifest_id": "scarborough-shoal-iss",
+      "focal": "52% 46%",
+      "served": "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+      "alt": "Scarborough Shoal seen from the International Space Station: a triangular coral ring enclosing a turquoise lagoon in the South China Sea",
+      "caption": "Scarborough Shoal (Huangyan Island), photographed from the International Space Station during Expedition 45.",
+      "credit": "NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons",
+      "creator": "NASA / ISS Expedition 45",
+      "creator_native": "",
+      "creator_native_lang": "",
+      "license": "Public domain",
+      "license_url": "",
+      "source_page": "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+      "source_label": "Wikimedia Commons",
+      "date_note": "Photographed 24 October 2015.",
+      "change_note": "Toned, cropped and resized by IPR.",
+      "source_sha256": "f3d2ad4ecb715e7d57d13cc01f83dd7c5e78835a7aaa426f3924b5fe902fe244",
+      "served_sha256": "d8ce7d885b0605ab0a289f356cec835c6fb71db68dde9553b9f0f42cc96c4b08",
+      "width": 720,
+      "height": 480
+    },
+    {
+      "issue": 10,
+      "week_ending": "2026-07-11",
+      "status": "held",
+      "source_manifest_id": "jin-class-type-094-ssbn",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Jin_(Type_094)_Class_Ballistic_Missile_Submarine.JPG",
+      "credit": "U.S. government photo, via CRS report RL33153 (R. O'Rourke) · Public domain · via Wikimedia Commons",
+      "reason": "Held by independent review of PR #418 (2026-10-12), pending evidence of original government authorship. Commons labels the file PD-US-Government and says it was provided to CRS by the Navy Office of Legislative Affairs, but supplying a photograph to CRS does not establish who made it, and the file's author field describes the CRS report, not the photographer. A Commons category plus a supplied-by attribution is not an original-author determination under the new-surface photograph standard. The alt text drafted for this surface (\"underway on the surface\") is not established by the available source description and must not be reused. The opened-article use of this image is a separate, unchanged surface. Clear only with original-photographer or originating-agency evidence and an alt text limited to what the source states."
+    },
+    {
+      "issue": 12,
+      "week_ending": "2026-08-01",
+      "status": "denied",
+      "reason": "B5 (DECISION_LOG 2026-10-10): the existing image stays only on its existing surfaces. Its attribution and image-to-article match are unresolved and its metadata note carries mismatched 81.cn text. No new surface may use it."
+    }
+  ]
+}

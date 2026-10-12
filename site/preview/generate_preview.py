@@ -91,6 +91,11 @@ RELIEF_PRODUCTION_ASSETS = ("assets/geo/emblems.svg", "assets/geo/strait.svg")
 # desk. Named one by one; the folder's receipt stays out of a production tree.
 ARCHIVE_MARK_ASSETS = tuple("assets/desk-marks/%s.svg" % s
                             for s in ("china", "japan", "singapore", "vietnam"))
+# The Briefs catalogue's Editorial-plate art: the region outlines the cards
+# draw (analysis.html). Named, not a folder; the admitted photograph
+# derivatives travel separately, one by one, from the admission record
+# (core/catalogue_media.py) and only when a card actually shows one.
+CATALOGUE_STATIC_ASSETS = ("assets/geo/region.svg",)
 
 #: The public name. Owner-directed 2026-08-25; the governing record is
 #: docs/INDO_PACIFIC_RECORD_EVOLUTION.md §1. "The Declared Record" and
@@ -126,6 +131,9 @@ from core.brief_collection import (                                  # noqa: E40
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
     build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
 from core.brief_contract import validate_readiness
+from core.catalogue_media import (                                   # noqa: E402
+    load_admissions as load_catalogue_admissions,
+    resolve_catalogue_media)
 from core.timelines import load_timelines
 from core.desk_registry import load_registry                         # noqa: E402
 from core.reviewed_source_links import load_public_desk_references    # noqa: E402
@@ -2546,6 +2554,14 @@ def build(out_dir: Path, title: str, db_path: Path,
         for brief in item["related_briefs"]:
             timeline_briefs[brief].append(item)
     briefs_feed = bool(collection.briefs) and bool((site_origin or "").strip())
+    # One catalogue-media decision per row, from the admission record alone.
+    # It reads neither a row's cover nor its Signal Veil: an image shown on an
+    # article is never permission for this surface (Phase 3A ledger, gate 1).
+    catalogue_admissions = load_catalogue_admissions(repo_root=REPO_ROOT)
+    catalogue_media = {
+        row["entry"]["slug"]: resolve_catalogue_media(
+            row, catalogue_admissions, repo_root=REPO_ROOT)
+        for row in collection.rows}
 
     # Corpus Guide figures. Derived once, from the same loaded corpus the pages
     # render, so the guide cannot describe a different snapshot than the one
@@ -2570,6 +2586,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     ctx = {
         "title": title,
         "review_mode": bool(review_brief or review_timeline),
+        "catalogue_media": catalogue_media,
         "timelines": timelines,
         "timeline_records": timeline_records,
         "timeline_briefs": timeline_briefs,
@@ -2775,7 +2792,8 @@ def build(out_dir: Path, title: str, db_path: Path,
         for folder in ("geo", "flags", "glyphs"):
             for asset in sorted((REPO_ROOT / "site/assets" / folder).iterdir()):
                 if (not asset.is_file() or asset.name.endswith(".receipt.json")
-                        or "assets/%s/%s" % (folder, asset.name) in RELIEF_PRODUCTION_ASSETS):
+                        or "assets/%s/%s" % (folder, asset.name) in RELIEF_PRODUCTION_ASSETS
+                        or "assets/%s/%s" % (folder, asset.name) in CATALOGUE_STATIC_ASSETS):
                     continue
                 route = "assets/%s/%s" % (folder, asset.name)
                 target = out_dir / route
@@ -3005,6 +3023,16 @@ def build(out_dir: Path, title: str, db_path: Path,
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
         written.append(route)
+    # The Briefs catalogue: the region plate art, then exactly the admitted
+    # photograph derivatives a card shows (never a folder, never a veil).
+    if collection.rows:
+        catalogue_routes = list(CATALOGUE_STATIC_ASSETS) + sorted(
+            m.photo["served"] for m in catalogue_media.values() if m.is_photograph)
+        for route in catalogue_routes:
+            target = out_dir / route
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
+            written.append(route)
     # The full-color JPEG fallback must travel in fresh trees too; production
     # carry-forward is not a source dependency for the home picture.
     route = "assets/editorial/reagan-jmsdf-2015.jpg"

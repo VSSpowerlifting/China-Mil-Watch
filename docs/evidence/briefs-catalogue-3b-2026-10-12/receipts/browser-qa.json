@@ -1,0 +1,2173 @@
+{
+  "publication_links_preserved": 61,
+  "exact_body_contract": true,
+  "additive_nodes": {
+    "[data-catalogue-media]": 17,
+    ".brief-credit": 17,
+    ".brief-key": 1
+  },
+  "cards": [
+    {
+      "issue": "No. 17",
+      "title": "Trident Resolve: What the Exercise Looked Like From Singapore and China",
+      "href": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 16",
+      "title": "Different Security Frames, Concrete Defense Ties",
+      "href": "briefs/xiangshan-security-frames-defense-ties.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 15",
+      "title": "Maritime Cooperation 2026: One Exercise, Two Official Accounts",
+      "href": "briefs/maritime-cooperation-2026.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 14",
+      "title": "The PLA Watch: One Exercise, Five Reports East of Taiwan",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 13",
+      "title": "The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-08.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 12",
+      "title": "The PLA Watch: Army Day, Scarborough Shoal, and a Week of Deliberate Disclosure",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-01.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 11",
+      "title": "The PLA Watch: Joint Sea-2026, the Y-20B Abroad, and the Week's Quieter Signals",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-18.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 10",
+      "title": "The PLA Watch: Beijing's Public SLBM Test and What It Was Designed to Do",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-11.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 9",
+      "title": "The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-04.html",
+      "media": "photograph",
+      "tag": "Photograph",
+      "img": {
+        "src": "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+        "alt": "Scarborough Shoal seen from the International Space Station: a triangular coral ring enclosing a turquoise lagoon in the South China Sea",
+        "w": 720,
+        "h": 480,
+        "lazy": "lazy"
+      },
+      "plate_svg": false,
+      "credit": "Scarborough Shoal (Huangyan Island), photographed from the International Space Station during Expedition 45. Photographed 24 October 2015. Photo: NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "credit_links": [
+        {
+          "href": "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+          "rel": "noopener",
+          "text": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "issue": "No. 8",
+      "title": "The PLA Watch: Carriers, Drones, and the Rocket Force's Manning Problem",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-27.html",
+      "media": "photograph",
+      "tag": "Photograph",
+      "img": {
+        "src": "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+        "alt": "A J-15 carrier-based fighter on final approach to the aircraft carrier Liaoning, landing gear and arresting hook down, seen from astern",
+        "w": 720,
+        "h": 480,
+        "lazy": "lazy"
+      },
+      "plate_svg": false,
+      "credit": "A J-15 carrier fighter prepares to recover aboard the carrier Liaoning during western Pacific operations, May 2022. Photographed 4 May 2022. Photo: Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "credit_links": [
+        {
+          "href": "https://creativecommons.org/licenses/by/4.0",
+          "rel": "noopener",
+          "text": "CC BY 4.0"
+        },
+        {
+          "href": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+          "rel": "noopener",
+          "text": "Wikimedia Commons"
+        }
+      ]
+    },
+    {
+      "issue": "No. 7",
+      "title": "The PLA Watch: The CCG Statement That Stood Apart",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-20.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 6",
+      "title": "The PLA Watch: Combat Realism, Institutional Friction, and One Confirmation Worth Noting",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-13.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 5",
+      "title": "The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-06.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 4",
+      "title": "The PLA Watch: Senior Cadre Oversight, Electronic Warfare, and the Week's Institutional Texture",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-30.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 3",
+      "title": "The PLA Watch: Institutional Friction and the Gap Between Form and Function",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-23.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 2",
+      "title": "Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-16.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    },
+    {
+      "issue": "No. 1",
+      "title": "The PLA Watch: Two Defense Ministers, One Verdict",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-09.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": []
+    }
+  ],
+  "forbidden_requests": [],
+  "cases": [
+    {
+      "width": 320,
+      "profile": "default",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "no-js",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 276,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 320,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 64.984375,
+        "width": 320,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "default",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "no-js",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 22,
+        "y": 176.984375,
+        "width": 331,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 375,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 64.984375,
+        "width": 335.609375,
+        "height": 32.21875
+      }
+    },
+    {
+      "width": 768,
+      "profile": "default",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "no-js",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 22,
+        "y": 194.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 768,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 64.984375,
+        "width": 574.078125,
+        "height": 55.109375
+      }
+    },
+    {
+      "width": 960,
+      "profile": "default",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "no-js",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 48,
+        "y": 201.375,
+        "width": 344,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 960,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 71.375,
+        "width": 384,
+        "height": 113.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "default",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "no-js",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 64,
+        "y": 214.171875,
+        "width": 458.671875,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1280,
+      "profile": "print",
+      "title_box": {
+        "x": 0,
+        "y": 84.171875,
+        "width": 512,
+        "height": 151.96875
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "default",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "no-js",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "script-failure",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "reduced-motion",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "no-anim",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "forced-colors",
+      "title_box": {
+        "x": 80,
+        "y": 218.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    },
+    {
+      "width": 1440,
+      "profile": "print",
+      "title_box": {
+        "x": 80,
+        "y": 88.984375,
+        "width": 509.328125,
+        "height": 170.9375
+      }
+    }
+  ],
+  "flows": [
+    "Keyboard skip, Browse anchor, visible card focus and native Brief navigation",
+    "Hover raises the approved Brief lift",
+    "One primary link per card; stretched target stays below the credit links",
+    "Live reduced-motion preference leaves finished artwork"
+  ],
+  "errors": [],
+  "delivery": [
+    {
+      "route": "candidate",
+      "width": 375,
+      "cached": false,
+      "cls": 0.024251443416666667,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 48
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 48
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8811/analysis.html",
+          "transfer": 41708,
+          "body": 41408,
+          "duration": 45.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8811/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 3.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 2
+        },
+        {
+          "url": "http://127.0.0.1:8811/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 2.200000047683716
+        },
+        {
+          "url": "http://127.0.0.1:8811/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 3.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/briefs-catalog.css",
+          "transfer": 9070,
+          "body": 8770,
+          "duration": 2.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8811/relief.css",
+          "transfer": 4331,
+          "body": 4031,
+          "duration": 2.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 3.799999952316284
+        },
+        {
+          "url": "http://127.0.0.1:8811/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 3.399999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8811/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 4.799999952316284
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/geo/region.svg#region",
+          "transfer": 50060,
+          "body": 49760,
+          "duration": 0.7000000476837158
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 0.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 0.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-shelf.svg",
+          "transfer": 2734,
+          "body": 2434,
+          "duration": 0.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 26.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 26.5
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 26.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 26.19999998807907
+        }
+      ]
+    },
+    {
+      "route": "candidate",
+      "width": 375,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 24
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 24
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8811/analysis.html",
+          "transfer": 0,
+          "body": 41408,
+          "duration": 12.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8811/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/surfaces.css",
+          "transfer": 0,
+          "body": 5630,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/relief.css",
+          "transfer": 0,
+          "body": 4031,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/briefs-catalog.css",
+          "transfer": 0,
+          "body": 8770,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/geo/region.svg#region",
+          "transfer": 0,
+          "body": 49760,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-shelf.svg",
+          "transfer": 0,
+          "body": 2434,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "candidate",
+      "width": 1440,
+      "cached": false,
+      "cls": 0.009774214115849247,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 56
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 56
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8811/analysis.html",
+          "transfer": 41708,
+          "body": 41408,
+          "duration": 37.90000003576279
+        },
+        {
+          "url": "http://127.0.0.1:8811/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 2.900000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8811/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 3.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 2.099999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8811/relief.css",
+          "transfer": 4331,
+          "body": 4031,
+          "duration": 2.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8811/briefs-catalog.css",
+          "transfer": 9070,
+          "body": 8770,
+          "duration": 2.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 3.399999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 3.400000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8811/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 3.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 4.100000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/geo/region.svg#region",
+          "transfer": 50060,
+          "body": 49760,
+          "duration": 0.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 0.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 0.9000000357627869
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-shelf.svg",
+          "transfer": 2734,
+          "body": 2434,
+          "duration": 0.8999999761581421
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 5.599999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 5.099999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 5.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 4.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+          "transfer": 26810,
+          "body": 26510,
+          "duration": 2.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+          "transfer": 24625,
+          "body": 24325,
+          "duration": 2.300000011920929
+        }
+      ]
+    },
+    {
+      "route": "candidate",
+      "width": 1440,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 40
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 40
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8811/analysis.html",
+          "transfer": 0,
+          "body": 41408,
+          "duration": 9.899999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8811/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/surfaces.css",
+          "transfer": 0,
+          "body": 5630,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/relief.css",
+          "transfer": 0,
+          "body": 4031,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/briefs-catalog.css",
+          "transfer": 0,
+          "body": 8770,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/geo/region.svg#region",
+          "transfer": 0,
+          "body": 49760,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+          "transfer": 0,
+          "body": 26510,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+          "transfer": 0,
+          "body": 24325,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8811/assets/material/chart-shelf.svg",
+          "transfer": 0,
+          "body": 2434,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 375,
+      "cached": false,
+      "cls": 0.024251443416666667,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 44
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 44
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8812/analysis.html",
+          "transfer": 30730,
+          "body": 30430,
+          "duration": 35.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8812/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 2.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8812/briefs-catalog.css",
+          "transfer": 6517,
+          "body": 6217,
+          "duration": 2.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8812/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 2.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8812/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 2.5
+        },
+        {
+          "url": "http://127.0.0.1:8812/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 2.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8812/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 3
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 3.5
+        },
+        {
+          "url": "http://127.0.0.1:8812/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 3.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 1.5
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 1.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-shelf.svg",
+          "transfer": 2734,
+          "body": 2434,
+          "duration": 1.100000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 6.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 5.099999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 5.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 5
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 3.599999964237213
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 375,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 28
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 28
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8812/analysis.html",
+          "transfer": 0,
+          "body": 30430,
+          "duration": 10.400000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8812/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/surfaces.css",
+          "transfer": 0,
+          "body": 5630,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/briefs-catalog.css",
+          "transfer": 0,
+          "body": 6217,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-shelf.svg",
+          "transfer": 0,
+          "body": 2434,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 1440,
+      "cached": false,
+      "cls": 0.009884286265432099,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 44
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 44
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8812/analysis.html",
+          "transfer": 30730,
+          "body": 30430,
+          "duration": 37
+        },
+        {
+          "url": "http://127.0.0.1:8812/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 2.100000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8812/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 2.400000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8812/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 2.400000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8812/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 2
+        },
+        {
+          "url": "http://127.0.0.1:8812/briefs-catalog.css",
+          "transfer": 6517,
+          "body": 6217,
+          "duration": 2.900000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 3.200000047683716
+        },
+        {
+          "url": "http://127.0.0.1:8812/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 3
+        },
+        {
+          "url": "http://127.0.0.1:8812/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 3.900000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 1.399999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 1.100000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-shelf.svg",
+          "transfer": 2734,
+          "body": 2434,
+          "duration": 1.0999999642372131
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 20.19999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 19.5
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 20
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 20.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/coast-profile.svg",
+          "transfer": 2904,
+          "body": 2604,
+          "duration": 0.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 18.899999976158142
+        }
+      ]
+    },
+    {
+      "route": "current-main",
+      "width": 1440,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 28
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 28
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8812/analysis.html",
+          "transfer": 0,
+          "body": 30430,
+          "duration": 7.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8812/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/surfaces.css",
+          "transfer": 0,
+          "body": 5630,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/briefs-catalog.css",
+          "transfer": 0,
+          "body": 6217,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/chart-shelf.svg",
+          "transfer": 0,
+          "body": 2434,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8812/assets/material/coast-profile.svg",
+          "transfer": 0,
+          "body": 2604,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 375,
+      "cached": false,
+      "cls": 0.024251443416666667,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 40
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 40
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8813/analysis.html",
+          "transfer": 31499,
+          "body": 31199,
+          "duration": 39.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8813/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 2.599999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8813/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 2.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8813/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 2.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8813/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 2.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 2.900000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8813/briefs-catalog.css",
+          "transfer": 6517,
+          "body": 6217,
+          "duration": 3.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 4
+        },
+        {
+          "url": "http://127.0.0.1:8813/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 4.5
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 0.7000000476837158
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 1
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-shelf.svg",
+          "transfer": 2734,
+          "body": 2434,
+          "duration": 1
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 22.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 22.099999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 21.900000035762787
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 23.200000047683716
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 21.100000023841858
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 375,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 20
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 20
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8813/analysis.html",
+          "transfer": 0,
+          "body": 31199,
+          "duration": 15.199999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8813/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/surfaces.css",
+          "transfer": 0,
+          "body": 5630,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/briefs-catalog.css",
+          "transfer": 0,
+          "body": 6217,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-shelf.svg",
+          "transfer": 0,
+          "body": 2434,
+          "duration": 0
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 1440,
+      "cached": false,
+      "cls": 0.010001128472222223,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 44
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 44
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8813/analysis.html",
+          "transfer": 31499,
+          "body": 31199,
+          "duration": 37.299999952316284
+        },
+        {
+          "url": "http://127.0.0.1:8813/fonts.css",
+          "transfer": 2155,
+          "body": 1855,
+          "duration": 2.399999976158142
+        },
+        {
+          "url": "http://127.0.0.1:8813/styles.css",
+          "transfer": 30849,
+          "body": 30549,
+          "duration": 3.599999964237213
+        },
+        {
+          "url": "http://127.0.0.1:8813/support.css",
+          "transfer": 28208,
+          "body": 27908,
+          "duration": 1.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/briefs-catalog.css",
+          "transfer": 6517,
+          "body": 6217,
+          "duration": 2.5
+        },
+        {
+          "url": "http://127.0.0.1:8813/surfaces.css",
+          "transfer": 5930,
+          "body": 5630,
+          "duration": 2.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/reveal.js",
+          "transfer": 3046,
+          "body": 2746,
+          "duration": 3.300000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 7144,
+          "body": 6844,
+          "duration": 3.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/shell.js",
+          "transfer": 672,
+          "body": 372,
+          "duration": 4.699999988079071
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 0.7000000476837158
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/navy-paper.png",
+          "transfer": 14386,
+          "body": 14086,
+          "duration": 0.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-shelf.svg",
+          "transfer": 2734,
+          "body": 2434,
+          "duration": 0.800000011920929
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 23048,
+          "body": 22748,
+          "duration": 21.80000001192093
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 28164,
+          "body": 27864,
+          "duration": 20.69999998807907
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-0.woff2",
+          "transfer": 36220,
+          "body": 35920,
+          "duration": 19.799999952316284
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-1.woff2",
+          "transfer": 37548,
+          "body": 37248,
+          "duration": 20.299999952316284
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/coast-profile.svg",
+          "transfer": 2904,
+          "body": 2604,
+          "duration": 1.5
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 29540,
+          "body": 29240,
+          "duration": 18.899999976158142
+        }
+      ]
+    },
+    {
+      "route": "released",
+      "width": 1440,
+      "cached": true,
+      "cls": 0,
+      "paints": [
+        {
+          "name": "first-paint",
+          "start": 24
+        },
+        {
+          "name": "first-contentful-paint",
+          "start": 24
+        }
+      ],
+      "resources": [
+        {
+          "url": "http://127.0.0.1:8813/analysis.html",
+          "transfer": 0,
+          "body": 31199,
+          "duration": 7.600000023841858
+        },
+        {
+          "url": "http://127.0.0.1:8813/fonts.css",
+          "transfer": 0,
+          "body": 1855,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/styles.css",
+          "transfer": 0,
+          "body": 30549,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/support.css",
+          "transfer": 0,
+          "body": 27908,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/surfaces.css",
+          "transfer": 0,
+          "body": 5630,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/briefs-catalog.css",
+          "transfer": 0,
+          "body": 6217,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/reveal.js",
+          "transfer": 0,
+          "body": 2746,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/identity/selected-ipr/ipr-navy-160.png",
+          "transfer": 0,
+          "body": 6844,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/shell.js",
+          "transfer": 0,
+          "body": 372,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/instrument-serif-1.woff2",
+          "transfer": 0,
+          "body": 22748,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-0.woff2",
+          "transfer": 0,
+          "body": 35920,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/inter-1.woff2",
+          "transfer": 0,
+          "body": 37248,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-1.woff2",
+          "transfer": 0,
+          "body": 27864,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/fonts/source-serif-4-2.woff2",
+          "transfer": 0,
+          "body": 29240,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/navy-paper.png",
+          "transfer": 0,
+          "body": 14086,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/chart-shelf.svg",
+          "transfer": 0,
+          "body": 2434,
+          "duration": 0
+        },
+        {
+          "url": "http://127.0.0.1:8813/assets/material/coast-profile.svg",
+          "transfer": 0,
+          "body": 2604,
+          "duration": 0
+        }
+      ]
+    }
+  ],
+  "concept_images": false,
+  "browser": "147.0.7727.15"
+}

@@ -25,6 +25,7 @@ No network. No database. No writes.
 
 from __future__ import annotations
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -50,6 +51,81 @@ def body_page():
     """A page long enough to clear the minimum-text floor."""
     from tests.test_pdf_text import BODY
     return BODY
+
+
+_TRIGGER_PATH = "core/desk_registry.py"
+
+
+def strip_trigger_path_filters(text: str) -> str:
+    """Remove only the literal `core/desk_registry.py` list items that sit
+    inside a workflow's `paths:` / `paths-ignore:` trigger filter.
+
+    A path filter lists files whose change should start a workflow; it imports
+    and runs nothing. Anything else that names the registry (a `run:` body, an
+    `env:` value, a `python -c` string, a path outside a trigger filter, or a
+    different path such as `core/desk_registry_x.py`) is left in place so the
+    caller's `assertNotIn("desk_registry", ...)` still rejects it.
+    """
+    out, context = [], []
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        indent = len(line) - len(line.lstrip(" "))
+        if stripped and not stripped.startswith("#"):
+            # Track YAML mapping parents by indentation. A generic paths key
+            # in jobs, env or a shell body grants no exemption.
+            while context and indent <= context[-1][0]:
+                context.pop()
+            key = re.fullmatch(r"([A-Za-z][\w-]*):(?:\s*#.*)?", stripped)
+            if key:
+                context.append((indent, key.group(1)))
+            item = stripped[1:].strip().strip("\"'") if stripped.startswith("-") else None
+            if (item == _TRIGGER_PATH and len(context) >= 3
+                    and [key for _, key in context[-3:-1]] == ["on", "pull_request"]
+                    and context[-1][1] in ("paths", "paths-ignore")):
+                continue
+        out.append(line)
+    return "".join(out)
+
+
+def korea_contract_violations(text: str) -> list:
+    """Everything the named Korea governance workflow must satisfy to be the
+    one workflow allowed to carry `core/desk_registry.py` as a PR trigger path.
+    Returns the failed requirements (empty when it is the read-only contract).
+    """
+    problems = []
+    for needle in ("on:\n  pull_request:", '      - "core/desk_registry.py"',
+                   "permissions:\n  contents: read",
+                   "python -m unittest tests.test_korea_internal_registry"):
+        if needle not in text:
+            problems.append("missing: " + needle.strip())
+    for forbidden in ("from core.desk_registry import",
+                      "import core.desk_registry", "core.desk_registry",
+                      "from pipeline import", "pipeline.run(",
+                      "git push", "workflow_dispatch:"):
+        if forbidden in text:
+            problems.append("forbidden: " + forbidden)
+    # Once the single trigger-path item is removed, nothing else (run body,
+    # env value, a second path list) may name the registry.
+    if "desk_registry" in strip_trigger_path_filters(text):
+        problems.append("registry named outside on.pull_request.paths")
+    return problems
+
+
+def indonesia_release_violations(text: str) -> list:
+    """The render-only Indonesia external-link release may import the registry
+    to confirm the public desk stays shadow/noncollecting; it may not collect.
+    Returns the failed requirements (empty when it is that contract)."""
+    problems = []
+    for needle in ("permissions:\n  contents: read", "python site/render.py",
+                   "desk.has_production_records is False", "ref: main"):
+        if needle not in text:
+            problems.append("missing: " + needle)
+    for forbidden in ("from pipeline import", "python pipeline.py",
+                      "scripts/shadow_collect", "sqlite3.connect",
+                      "ANTHROPIC_API_KEY", "shadow/indonesia-kemhan"):
+        if forbidden in text:
+            problems.append("forbidden: " + forbidden)
+    return problems
 
 
 class TestMediaTypeSelection(unittest.TestCase):
@@ -260,6 +336,7 @@ class TestThisEnablesNothing(unittest.TestCase):
         collection += list((REPO_ROOT / ".github" / "workflows").glob("*.yml"))
         editorial_workflow = "weekly_briefs_editorial_handoff.yml"
         korea_contract = "korea_internal_registry_contract.yml"
+        indonesia_release = "indonesia_official_links_release.yml"
         for path in collection:
             text = path.read_text(encoding="utf-8")
             with self.subTest(file=str(path.relative_to(REPO_ROOT))):
@@ -268,28 +345,16 @@ class TestThisEnablesNothing(unittest.TestCase):
                     # The registry filename is a PR paths filter, not an
                     # import or collection dependency. Keep this exception
                     # limited to the read-only Korea governance test workflow.
-                    self.assertIn("on:\n  pull_request:", text)
-                    self.assertIn('      - "core/desk_registry.py"', text)
-                    self.assertIn("permissions:\n  contents: read", text)
-                    self.assertIn("python -m unittest tests.test_korea_internal_registry", text)
-                    for forbidden in ("from core.desk_registry import",
-                                      "import core.desk_registry",
-                                      "from pipeline import", "pipeline.run(",
-                                      "git push", "workflow_dispatch:"):
-                        self.assertNotIn(forbidden, text)
-                elif path.name == "indonesia_official_links_release.yml":
+                    self.assertEqual(korea_contract_violations(text), [])
+                elif path.name == indonesia_release:
                     # This is a render-only external-link release, not a
                     # collector. Registry is used solely to verify the public
                     # page stays shadow/noncollecting with no production rows.
-                    self.assertIn("permissions:\n  contents: read", text)
-                    self.assertIn("python site/render.py", text)
-                    self.assertIn("desk.has_production_records is False", text)
-                    self.assertIn('ref: main', text)
-                    for forbidden in ("from pipeline import", "python pipeline.py",
-                                      "scripts/shadow_collect", "sqlite3.connect",
-                                      "ANTHROPIC_API_KEY", "shadow/indonesia-kemhan"):
-                        self.assertNotIn(forbidden, text)
+                    self.assertEqual(indonesia_release_violations(text), [])
                 elif path.name != editorial_workflow:
+                    # No other workflow may name the registry at all: not as
+                    # an import, a `run:` body, an env value or a path filter.
+                    self.assertNotIn("core.desk_registry", text)
                     self.assertNotIn("desk_registry", text)
                 else:
                     # This is an editorial consumer of production records,
@@ -301,6 +366,87 @@ class TestThisEnablesNothing(unittest.TestCase):
                     self.assertNotIn("from pipeline import", text)
                     self.assertNotIn("pipeline.run(", text)
                     self.assertNotIn("git push", text)
+
+    def test_only_a_trigger_path_filter_may_name_the_registry(self):
+        """The exemption is the literal trigger path and nothing wider."""
+        ok = ('on:\n  pull_request:\n    paths:\n      - "desks/registry.json"\n'
+              '      - "core/desk_registry.py"\n      - \'tests/x.py\'\n'
+              'permissions:\n  contents: read\njobs:\n  a:\n    steps:\n'
+              '      - run: python -m unittest tests.x\n')
+        self.assertNotIn("desk_registry", strip_trigger_path_filters(ok))
+        for bad in (
+            ok + '      - run: python -c "from core.desk_registry import load_registry"\n',
+            ok + '      - run: python core/desk_registry.py\n',
+            ok.replace('"core/desk_registry.py"', '"core/desk_registry_x.py"'),
+            ok.replace("    paths:\n", "    branches:\n"),
+            'env:\n  P: core/desk_registry.py\n',
+            'jobs:\n  a:\n    steps:\n      - uses: core/desk_registry.py\n',
+            'jobs:\n  a:\n    paths:\n      - core/desk_registry.py\n',
+            'on:\n  workflow_dispatch:\n    inputs:\n      paths:\n        - core/desk_registry.py\n',
+            'jobs:\n  a:\n    steps:\n      - run: |\n          paths:\n            - core/desk_registry.py\n',
+        ):
+            with self.subTest(bad=bad[-70:]):
+                self.assertIn("desk_registry", strip_trigger_path_filters(bad))
+
+    def test_the_korea_workflow_exemption_is_the_named_read_only_contract(self):
+        """Positive: the real workflow passes. Negative: a copy that widens it
+        in any way, or any other workflow carrying the same path, fails."""
+        wf = REPO_ROOT / ".github" / "workflows" / "korea_internal_registry_contract.yml"
+        text = wf.read_text(encoding="utf-8")
+        self.assertEqual(korea_contract_violations(text), [])
+        widened = {
+            "run body": text + '      - run: python -c "import core.desk_registry"\n',
+            "second path use": text + "      - run: cat core/desk_registry.py\n",
+            "env value": text.replace("jobs:", "env:\n  R: core/desk_registry.py\njobs:", 1),
+            "dispatch": text.replace("on:\n  pull_request:",
+                                     "on:\n  workflow_dispatch:\n  pull_request:", 1),
+            "write permission": text.replace("contents: read", "contents: write", 1),
+            "pipeline": text + "      - run: python -c 'from pipeline import run'\n",
+            "no trigger filter": text.replace('      - "core/desk_registry.py"\n', "", 1),
+        }
+        for label, bad in widened.items():
+            with self.subTest(widened=label):
+                self.assertNotEqual(bad, text, "mutation did not apply")
+                self.assertTrue(korea_contract_violations(bad))
+        # Another workflow may not borrow the exemption: the strict branch of
+        # the collection-boundary test rejects any mention of the registry.
+        for other in (".github/workflows/korea_public_bibliography_release.yml",
+                      ".github/workflows/pr_offline_checks.yml"):
+            body = (REPO_ROOT / other).read_text(encoding="utf-8")
+            with self.subTest(other=other):
+                self.assertNotIn("desk_registry", body)
+
+    def test_the_indonesia_release_exemption_is_the_named_render_only_contract(self):
+        """Positive: the real workflow passes. Negative: a copy that gains a
+        collection, database or secret path fails, and no third workflow is
+        named by the registry."""
+        wf = REPO_ROOT / ".github" / "workflows" / "indonesia_official_links_release.yml"
+        text = wf.read_text(encoding="utf-8")
+        self.assertEqual(indonesia_release_violations(text), [])
+        widened = {
+            "pipeline import": text + "      - run: python -c 'from pipeline import run'\n",
+            "pipeline script": text + "      - run: python pipeline.py\n",
+            "shadow collector": text + "      - run: python scripts/shadow_collect.py\n",
+            "database": text + "      - run: python -c 'import sqlite3; sqlite3.connect(\"x\")'\n",
+            "secret": text + "      - env: {K: ${{ secrets.ANTHROPIC_API_KEY }}}\n",
+            "shadow source": text + "      - run: ls shadow/indonesia-kemhan\n",
+            "write at top level": text.replace("permissions:\n  contents: read",
+                                               "permissions:\n  contents: write", 1),
+            "no render": text.replace("python site/render.py", "echo skip"),
+            "no production-row guard": text.replace(
+                "desk.has_production_records is False", "True"),
+            "unpinned ref": text.replace("ref: main", "ref: ${{ github.head_ref }}"),
+        }
+        for label, bad in widened.items():
+            with self.subTest(widened=label):
+                self.assertNotEqual(bad, text, "mutation did not apply")
+                self.assertTrue(indonesia_release_violations(bad))
+        named = sorted(p.name for p in (REPO_ROOT / ".github" / "workflows").glob("*.yml")
+                       if "desk_registry" in p.read_text(encoding="utf-8"))
+        self.assertEqual(named, ["indonesia_official_links_release.yml",
+                                 "korea_internal_registry_contract.yml"],
+                         "a new workflow names the registry: give it its own "
+                         "named, read-only contract rather than widening this one")
 
     def test_the_desk_registry_cannot_be_discovered_as_a_manifest(self):
         """

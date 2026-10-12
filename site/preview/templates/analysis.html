@@ -1,9 +1,12 @@
 {% extends "base.html" %}
 {% from "_plate.html" import edition_plate %}
 {% from "_terrain.html" import terrain %}
+{% from "_relief.html" import region_plate with context %}
+{% from "_catalogue_credit.html" import photo_credit %}
 {% block title %}Analysis — {{ title }}{% endblock %}
 {% block body_open %}<body class="page-briefs material-paper">{% endblock %}
 {% block head_scripts %}
+<link rel="stylesheet" href="relief.css">
 <link rel="stylesheet" href="briefs-catalog.css">
 <script src="reveal.js"></script>
 {% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="{{ briefs_feed_route }}">{% endif %}{% endblock %}
@@ -48,10 +51,15 @@
       {% if lead_row.kind == 'issue' %}<p class="briefs-lead-note">{{ lead_row.provenance }}</p>{% endif %}
       {% if lead.synthetic %}<p class="briefs-lead-note">Synthetic test fixture. Not a published brief.</p>{% endif %}
       <p><a class="btn btn--primary" href="{{ lead.url }}"{% if lead_row.kind == 'issue' %} rel="noopener"{% endif %}>Read this Brief</a></p>
-      {% if lead_row.kind == 'brief' and lead.cover %}
+      {#- The hero photograph is a catalogue surface too: it shows only what
+          the catalogue-media decision admits (core/catalogue_media.py), never
+          an article cover by itself. -#}
+      {% set lead_media = catalogue_media.get(lead.slug) if catalogue_media else none %}
+      {% if lead_row.kind == 'brief' and lead_media and lead_media.is_photograph %}
+      {% set lp = lead_media.photo %}
       <figure class="briefs-lead-photo">
-        <a href="{{ lead.url }}"><img src="{{ lead.cover.route }}" width="1200" height="675" alt="{{ lead.cover.alt }}"></a>
-        <figcaption>{{ lead.cover.credit }}. <a href="{{ lead.cover.source_page }}">Source photograph</a> · visual context only.</figcaption>
+        <a href="{{ lead.url }}"><img src="{{ lp.served }}" width="{{ lp.width }}" height="{{ lp.height }}" alt="{{ lp.alt }}"></a>
+        <figcaption>{{ photo_credit(lp) }}</figcaption>
       </figure>
       {% endif %}
       {#- The issue drawn from its own sidecar, where one exists: one mark per
@@ -82,14 +90,23 @@
 {% if collection.rows %}
 {% set n_rows = collection.rows|length %}
 <section class="briefs-index" aria-labelledby="briefs-published">
-  {{ terrain('margin') }}
   <h2 id="briefs-published">All Briefs</h2>
   <p class="section-note">Newest reporting window first.{% if review_mode %} This private preview includes an unapproved candidate.{% endif %}</p>
-  <ol class="issue-ledger issue-ledger--briefs">
+  <p class="brief-key"><span class="brief-key-term">Photograph</span> is a credited image, shown as visual context and never as evidence.
+    <span class="brief-key-term">Editorial plate</span> is original IPR map artwork where no source photograph is used.</p>
+  <ol class="brief-cards">
   {% for row in collection.rows %}
   {% set e = row.entry %}
+  {% set m = catalogue_media.get(e.slug) %}
     <li>
-      <article class="issue-ledger-row">
+      <article class="rl-brief brief-card" data-media="{{ m.kind if m else 'plate' }}">
+        <div class="brief-media" data-catalogue-media>
+          <div class="rl-print">
+          {%- if m and m.is_photograph %}<img src="{{ m.photo.served }}" width="{{ m.photo.width }}" height="{{ m.photo.height }}" alt="{{ m.photo.alt }}" loading="lazy" decoding="async">
+          {%- else %}{{ region_plate(m.plate_desks if m else ['china']) }}{% if e.issue is not none %}<span class="brief-ghost" aria-hidden="true">{{ '%02d' % e.issue }}</span>{% endif %}{% endif -%}
+          </div>
+          <span class="brief-tag">{% if m and m.is_photograph %}Photograph{% else %}Editorial plate{% endif %}</span>
+        </div>
         <div class="issue-ledger-meta">
           <span class="issue-no">{% if e.issue is not none %}No. {{ e.issue }}{% else %}Brief{% endif %}</span>
           <span class="visually-hidden">Week ending </span><time datetime="{{ e.date }}">{{ e.date|reader_date }}</time>
@@ -101,6 +118,13 @@
           {% if e.dek %}<p>{{ e.dek }}</p>{% endif %}
           {% if e.desks %}<p class="meta">{% for slug in e.desks %}{{ desks.get(slug).name }}{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
           <p class="meta">{{ row.provenance }}{% if e.synthetic %} · Synthetic test fixture{% endif %}</p>
+        </div>
+        <div class="brief-credit">
+        {%- if m and m.is_photograph %}{% set ph = m.photo %}
+          {{ photo_credit(ph) }}
+        {%- else %}
+          <p>No source photograph. Outlines from Natural Earth.</p>
+        {%- endif %}
         </div>
       </article>
     </li>

@@ -1,0 +1,126 @@
+[
+ {
+  "mode": "default",
+  "width": 320,
+  "shot": "after-default-320.png",
+  "scrollWidth": 320,
+  "innerWidth": 320,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "default",
+  "width": 375,
+  "shot": "after-default-375.png",
+  "scrollWidth": 375,
+  "innerWidth": 375,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "default",
+  "width": 768,
+  "shot": "after-default-768.png",
+  "scrollWidth": 768,
+  "innerWidth": 768,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "default",
+  "width": 1280,
+  "shot": "after-default-1280.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "forced-colors",
+  "width": 320,
+  "shot": "after-forced-colors-320.png",
+  "scrollWidth": 320,
+  "innerWidth": 320,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "forced-colors",
+  "width": 375,
+  "shot": "after-forced-colors-375.png",
+  "scrollWidth": 375,
+  "innerWidth": 375,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "forced-colors",
+  "width": 768,
+  "shot": "after-forced-colors-768.png",
+  "scrollWidth": 768,
+  "innerWidth": 768,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "forced-colors",
+  "width": 1280,
+  "shot": "after-forced-colors-1280.png",
+  "scrollWidth": 1280,
+  "innerWidth": 1280,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:63336/assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+   "http://127.0.0.1:63336/assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+   "http://127.0.0.1:63336/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:63336/assets/material/chart-paper.png",
+   "http://127.0.0.1:63336/assets/material/navy-paper.png"
+  ]
+ }
+]

@@ -1,0 +1,348 @@
+{
+  "statement": "Per-card decision (core/catalogue_media.py) beside what the browser rendered (scripts/verify_briefs_catalog.py). Revised after independent review of PR #418: Nos. 8 and 9 photographs; Nos. 1 and 10 held; No. 12 denied; the rest plates.",
+  "base_main": "4717c8e38a (origin/main when this receipt was produced). The decisions depend only on admissions.json and the resolver, not on the Korea roster; the re-run browser verifier at f315e0a3fa (receipts/browser-qa.json) again shows 17 cards with rendered kind = resolver decision.",
+  "candidate": "this branch after the review revision (frozen head recorded in the PR)",
+  "counts": {
+    "cards": 17,
+    "photographs": 2,
+    "plates": 15
+  },
+  "forbidden_requests": [],
+  "cards": [
+    {
+      "issue": "No. 17",
+      "title": "Trident Resolve: What the Exercise Looked Like From Singapore and China",
+      "href": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 16",
+      "title": "Different Security Frames, Concrete Defense Ties",
+      "href": "briefs/xiangshan-security-frames-defense-ties.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 15",
+      "title": "Maritime Cooperation 2026: One Exercise, Two Official Accounts",
+      "href": "briefs/maritime-cooperation-2026.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 14",
+      "title": "The PLA Watch: One Exercise, Five Reports East of Taiwan",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 13",
+      "title": "The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-08.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 12",
+      "title": "The PLA Watch: Army Day, Scarborough Shoal, and a Week of Deliberate Disclosure",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-01.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "denied",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 11",
+      "title": "The PLA Watch: Joint Sea-2026, the Y-20B Abroad, and the Week's Quieter Signals",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-18.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 10",
+      "title": "The PLA Watch: Beijing's Public SLBM Test and What It Was Designed to Do",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-11.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "held",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 9",
+      "title": "The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-04.html",
+      "media": "photograph",
+      "tag": "Photograph",
+      "img": {
+        "src": "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+        "alt": "Scarborough Shoal seen from the International Space Station: a triangular coral ring enclosing a turquoise lagoon in the South China Sea",
+        "w": 720,
+        "h": 480,
+        "lazy": "lazy"
+      },
+      "plate_svg": false,
+      "credit": "Scarborough Shoal (Huangyan Island), photographed from the International Space Station during Expedition 45. Photographed 24 October 2015. Photo: NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "credit_links": [
+        {
+          "href": "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+          "rel": "noopener",
+          "text": "Wikimedia Commons"
+        }
+      ],
+      "decision": {
+        "kind": "photograph",
+        "reason": "admitted",
+        "served": "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+        "license": "Public domain"
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 8",
+      "title": "The PLA Watch: Carriers, Drones, and the Rocket Force's Manning Problem",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-27.html",
+      "media": "photograph",
+      "tag": "Photograph",
+      "img": {
+        "src": "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+        "alt": "A J-15 carrier-based fighter on final approach to the aircraft carrier Liaoning, landing gear and arresting hook down, seen from astern",
+        "w": 720,
+        "h": 480,
+        "lazy": "lazy"
+      },
+      "plate_svg": false,
+      "credit": "A J-15 carrier fighter prepares to recover aboard the carrier Liaoning during western Pacific operations, May 2022. Photographed 4 May 2022. Photo: Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "credit_links": [
+        {
+          "href": "https://creativecommons.org/licenses/by/4.0",
+          "rel": "noopener",
+          "text": "CC BY 4.0"
+        },
+        {
+          "href": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+          "rel": "noopener",
+          "text": "Wikimedia Commons"
+        }
+      ],
+      "decision": {
+        "kind": "photograph",
+        "reason": "admitted",
+        "served": "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+        "license": "CC BY 4.0"
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 7",
+      "title": "The PLA Watch: The CCG Statement That Stood Apart",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-20.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 6",
+      "title": "The PLA Watch: Combat Realism, Institutional Friction, and One Confirmation Worth Noting",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-13.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 5",
+      "title": "The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-06.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 4",
+      "title": "The PLA Watch: Senior Cadre Oversight, Electronic Warfare, and the Week's Institutional Texture",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-30.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 3",
+      "title": "The PLA Watch: Institutional Friction and the Gap Between Form and Function",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-23.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 2",
+      "title": "Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-16.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "no-admission-record",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    },
+    {
+      "issue": "No. 1",
+      "title": "The PLA Watch: Two Defense Ministers, One Verdict",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-09.html",
+      "media": "plate",
+      "tag": "Editorial plate",
+      "img": null,
+      "plate_svg": true,
+      "credit": "No source photograph. Outlines from Natural Earth.",
+      "credit_links": [],
+      "decision": {
+        "kind": "plate",
+        "reason": "held",
+        "served": null,
+        "license": null
+      },
+      "agrees": true
+    }
+  ]
+}

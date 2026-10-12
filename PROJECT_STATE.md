@@ -1057,7 +1057,7 @@ hung from the desks heading by hairlines. It is not merged or deployed, and
 independent review is required. Open PRs #314/#323 overlap `home.html` and
 `generate_preview.py`. The sequence after merge, each phase in its own session:
 - Phase 2b Archive (in review, below)
-- Phase 3 Briefs
+- Phase 3 Briefs: 3A provenance merged; 3B catalogue in review (below); 3C article presentation
 - Phase 4 Desks
 
 **Phase 2b Archive in review (2026-10-11):** branch
@@ -1073,6 +1073,29 @@ with their files and are verified on synthetic rows. The Philippines and US
 Indo-Pacific desks get no marker. `browse.js` is byte-identical (9,847 B).
 Evidence: `docs/evidence/archive-refinement-2b-2026-10-11/`. Not merged or
 deployed; independent review required.
+
+**Phase 3B Briefs catalogue in review (2026-10-12, revised after review of
+PR #418):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
+`1102462e4f` (after the Indonesia Siaran Pers link directory, #445/#446; the catalogue build,
+parity and browser checks were re-run at `f315e0a3fa`, and the later main commits, the dedup workbench
+and Vietnam review state, change no build input, so they were not repeated; the full local suite pair was last measured at
+`e3c05ecbfb`, and exact-head CI is the full regression gate). `analysis.html` lists the 17 Briefs as 3:2 media cards (two
+photographs, fifteen Editorial plates) with one catalogue-media decision,
+`core/catalogue_media.py`, driven by `site/assets/catalogue/admissions.json`.
+Nos. 8 and 9 are approved; No. 10 is held pending evidence of original
+government authorship; No. 1 is held (identifiable officers, filename alt
+text); No. 12 is refused. The resolver also fails closed when a curated
+source file or its manifest entry no longer matches the admission. The page
+adds `region.svg` and the two 720×480 derivatives to the published set; page
+JS is unchanged (3,118 B); HTML+CSS 120.2 KB. The hero lead photograph goes
+through the same decision and the same credit macro as a card. The full
+suite is green on this branch apart from the 25 local-environment errors that
+clean main shows too (`python-docx` absent locally; `test_evidence_store` and
+the macOS temp root). Contract:
+`docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`; evidence and the
+17-card audit: `docs/evidence/briefs-catalogue-3b-2026-10-12/`. Not merged or
+deployed; independent review required. Phase 3C (article presentation) is
+separate.
 
 ## 8. Prohibited shortcuts and human-review gates
 

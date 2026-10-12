@@ -248,20 +248,24 @@ class MacroTests(unittest.TestCase):
 
 
 class ProductionIsolationTests(unittest.TestCase):
-    """Phase 2 and 2b: the homepage and the Archive are the production pages
-    allowed the primitives.
+    """Phase 2, 2b and 3B: the homepage, the Archive and the Briefs catalogue
+    are the production pages allowed the primitives.
 
     A positive allowlist per template: home.html may reach relief.css, the
     _relief.html macros, the two Natural Earth sprites and the rl-* classes;
     archive.html may reach relief.css and the finder lift (`rl-finder`) and
-    nothing else; every other production template reaches none of them. Flags
-    and source glyphs stay gallery-only.
+    nothing else; analysis.html (the Briefs catalogue) may reach relief.css,
+    the _relief.html macros and the Brief-card lift (`rl-brief`) with its
+    3:2 print frame (`rl-print`), and calls only the `region_plate` macro;
+    every other production template reaches none of them. Flags and source
+    glyphs stay gallery-only.
     """
 
     PATTERN = re.compile(r"relief\.css|_relief\.html|assets/(geo|flags|glyphs)/[\w.-]*|\brl-[a-z]+")
     ALLOWED = {"home.html": {"relief.css", "_relief.html", "rl-finder", "rl-card",
                              "rl-analysis"},
-               "archive.html": {"relief.css", "rl-finder"}}
+               "archive.html": {"relief.css", "rl-finder"},
+               "analysis.html": {"relief.css", "_relief.html", "rl-brief", "rl-print"}}
 
     def test_only_the_homepage_reaches_them_and_only_what_it_uses(self):
         for path in sorted(TEMPLATES.glob("*.html")):
@@ -274,6 +278,12 @@ class ProductionIsolationTests(unittest.TestCase):
             self.assertIn(name, home)
         # The homepage calls only the emblem and strait macros.
         self.assertEqual(set(re.findall(r"relief\.(\w+)\(", home)), {"emblem", "strait"})
+        # The catalogue imports the one macro it draws with, and uses the Brief
+        # lift on its cards; no other macro, no finder or card lift.
+        analysis = (TEMPLATES / "analysis.html").read_text(encoding="utf-8")
+        self.assertEqual(set(re.findall(r"import (\w+) with context", analysis)), {"region_plate"})
+        self.assertEqual(set(re.findall(r"\brl-[a-z]+", analysis)), {"rl-brief", "rl-print"})
+        self.assertLess(analysis.index('href="relief.css"'), analysis.index('href="briefs-catalog.css"'))
 
     def test_stylesheets_and_base_templates_stay_out(self):
         for path in sorted(PREVIEW.glob("*.css")):
@@ -332,8 +342,12 @@ class ProductionAssetTests(unittest.TestCase):
         for route in self.gp.RELIEF_PRODUCTION_ASSETS:
             self.assertEqual((self.out / route).read_bytes(),
                              (REPO_ROOT / "site" / route).read_bytes(), route)
+        # The Briefs catalogue adds the region art its Editorial plates draw.
+        self.assertEqual(self.gp.CATALOGUE_STATIC_ASSETS, ("assets/geo/region.svg",))
+        self.assertEqual((self.out / "assets/geo/region.svg").read_bytes(),
+                         (REPO_ROOT / "site/assets/geo/region.svg").read_bytes())
         self.assertEqual(sorted(p.name for p in (self.out / "assets/geo").iterdir()),
-                         ["emblems.svg", "strait.svg"])
+                         ["emblems.svg", "region.svg", "strait.svg"])
         for absent in ("assets/flags", "assets/glyphs", "gallery-relief.html"):
             self.assertFalse((self.out / absent).exists(), absent)
         self.assertFalse(any(self.out.glob("assets/**/*.receipt.json")))
@@ -348,12 +362,14 @@ class ProductionAssetTests(unittest.TestCase):
                 ids[path] = {s.getAttribute("id") for s in doc.getElementsByTagName("symbol")}
             self.assertIn(symbol, ids[path], "%s#%s" % (path, symbol))
 
-    def test_only_the_homepage_and_archive_link_relief_first(self):
+    def test_only_the_homepage_archive_and_catalogue_link_relief_first(self):
         self.assertLess(self.index.index('href="relief.css"'), self.index.index('href="home.css"'))
         archive = (self.out / "archive.html").read_text(encoding="utf-8")
         self.assertLess(archive.index('href="relief.css"'), archive.index('href="archive.css"'))
+        catalogue = (self.out / "analysis.html").read_text(encoding="utf-8")
+        self.assertLess(catalogue.index('href="relief.css"'), catalogue.index('href="briefs-catalog.css"'))
         for page in self.out.rglob("*.html"):
-            if page.parent != self.out or page.name not in ("index.html", "archive.html"):
+            if page.parent != self.out or page.name not in ("index.html", "archive.html", "analysis.html"):
                 self.assertNotIn("relief.css", page.read_text(encoding="utf-8"),
                                  page.relative_to(self.out))
 

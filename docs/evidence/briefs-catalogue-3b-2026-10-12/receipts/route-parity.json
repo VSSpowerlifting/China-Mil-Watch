@@ -1,0 +1,18 @@
+{
+  "baseline": "origin/main f315e0a3fa (fresh build, --snapshot-from-corpus --legacy-routes). Earlier measurements on e3c05ecbfb gave the identical file list and changed set.",
+  "candidate": "branch tree merged with that main (same flags)",
+  "baseline_files": 7688,
+  "candidate_files": 7691,
+  "added": [
+    "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+    "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+    "assets/geo/region.svg"
+  ],
+  "removed": [],
+  "changed": [
+    "analysis.html",
+    "briefs-catalog.css"
+  ],
+  "admissions_json_published": false,
+  "no_10_derivative_published": false
+}

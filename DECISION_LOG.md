@@ -4,6 +4,84 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-12 — Expressive frontend Phase 3B (Briefs catalogue) implementation decisions
+
+Made within the Phase 3B brief; presentation only, not visual sign-off.
+Contract: `docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`.
+Evidence: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
+
+- **One catalogue-media decision.** `core/catalogue_media.py` decides, per
+  card, between a credited photograph and the Editorial plate from
+  `site/assets/catalogue/admissions.json` alone. It is distinct from the
+  article-image and Signal Veil resolvers and never reads a cover, a photo or
+  a veil. A card is a plate unless its record is `admitted` and passes every
+  check (file present, SHA-256, licence Public domain or CC BY 4.0 with link,
+  credit complete, not No. 12) and the curated source it was reviewed against
+  is unchanged: the source file's SHA-256 equals `source_sha256` and the
+  manifest entry's licence, licence link, source page and credit still equal
+  the record. A swapped or removed curator source falls back to a plate.
+- **Admissions (revised after independent review of PR #418, 2026-10-12).**
+  No. 8 (Japan MOD / Joint Staff, CC BY 4.0, GJSTU 2.0) and No. 9 (NASA / ISS
+  Expedition 45, Public domain) are approved for the catalogue with the
+  manifest's verbatim credit, caption and alt. **No. 10 is held** pending
+  evidence of original government authorship: Commons' PD-US-Government
+  category and a "provided to CRS" attribution do not establish who made the
+  photograph, and the drafted alt ("underway on the surface") is not
+  established by the source description and must not be reused. Result: 2
+  photographs, 15 Editorial plates. Catalogue only; no blanket permission, and
+  the opened-article use of No. 10's image is unchanged. Flipping a record to
+  `held` returns that card to a plate and changes nothing else.
+- **No. 1 is held.** The photograph shows identifiable, named U.S. and PLA
+  officers at an unrelated 2012 event, selected by keyword for a Brief about
+  two former defence ministers, and its alt text is a filename. It returns to
+  the catalogue only with an owner-reviewed alt text and short caption. The
+  opened-article use is unchanged and was not assessed.
+- **No. 12 and 81.cn.** No. 12 is refused in code (B5) and no 81.cn / PLA
+  Daily image is referenced by the catalogue (B2); the verifier asserts zero
+  requests for source images and veils. CC BY-SA is not admitted (B6).
+- **Labels.** An admitted image is a "Photograph" with visible creator,
+  licence and source link, "Toned, cropped and resized by IPR." and "Visual
+  context, not evidence." It is not called a Signal Veil (B3/B4). Every other
+  card is an "Editorial plate" with "No source photograph. Outlines from
+  Natural Earth."
+- **B1 reach.** The only elevation is the existing `rl-brief` lift.
+  `briefs-catalog.css` names no shadow and no lift token. `relief.css` is now
+  linked by the homepage, the Archive and the catalogue; the isolation tests
+  allow exactly `rl-brief`, `rl-print` and the `region_plate` macro there.
+- **Hero.** The lead Brief's optional photograph renders only through the same
+  decision and, through the same `photo_credit` macro as a card, carries the
+  caption, creator (with native name), licence link, source link and change
+  note. Nothing changes today (the lead has no cover); a native lead with an
+  article cover no longer shows it on the catalogue by default. The path is
+  covered by a synthetic admitted-lead build test.
+- **Publication.** The page publishes `assets/geo/region.svg` and exactly the
+  admitted files it shows. Page JavaScript is unchanged.
+- **Collection-boundary contract.** `test_the_view_layer_is_not_on_the_
+  collection_path` rejected `core/desk_registry.py` listed as a
+  `pull_request.paths` trigger in the Korea internal-registry workflow (a file
+  filter, not an import). Reconciled with main's #425: only the named
+  read-only Korea governance workflow (`korea_internal_registry_contract.yml`)
+  may carry the exact `core/desk_registry.py` item, and only under
+  `on: pull_request: paths:`. That workflow must be `contents: read`, run only
+  `tests.test_korea_internal_registry`, and have no `workflow_dispatch`, push,
+  pipeline import or other mention of the registry once the one trigger item is
+  removed. Every other workflow, collection path, import, `run:` body, `env:`
+  value or `paths` key outside `on.pull_request` still fails. Positive and
+  negative tests are kept
+  (`test_the_korea_workflow_exemption_is_the_named_read_only_contract`,
+  `test_only_a_trigger_path_filter_may_name_the_registry`). Main's Indonesia
+  external-link release (`indonesia_official_links_release.yml`) is the second
+  and only other workflow that names the registry (a render-only `load_registry`
+  check that the public page has no production rows). Its own branch is kept
+  exactly as main wrote it (`contents: read`, `python site/render.py`,
+  `has_production_records is False`, `ref: main`, no pipeline, shadow
+  collector, database, secret or private-source path), now with positive and
+  negative tests (`test_the_indonesia_release_exemption_is_the_named_render_only_contract`)
+  and a closed list: a third workflow naming the registry fails until it gets
+  its own named, read-only contract. The test was not skipped or weakened for
+  collectors. Reviewer commit `9b2533dcec` used `re`
+  without importing it; the import is added in the merge.
+
 ## 2026-10-11 — Expressive frontend Phase 2b (Archive) implementation decisions
 
 Made within the Phase 2b brief; presentation only, not visual sign-off.
