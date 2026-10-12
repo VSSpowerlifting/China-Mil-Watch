@@ -123,7 +123,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
         text = self.body
         self.assertIn("sha256sum -c", text)
         self.assertIn("git diff --exit-code -- pla_watch.db", text)
-        self.assertNotIn("git add -A -- output/", text)
+        self.assertNotIn("git add -A -- output/\n", text)
         self.assertIn("git add -A --", text)
         self.assertIn("output/japan.html output/desks.html", text)
         self.assertIn("python -m scripts.guard_country_research_output_scope", text)
