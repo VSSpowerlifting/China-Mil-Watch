@@ -48,6 +48,7 @@ def audit(listing_file, article_file, *, source_url, page_number=1):
         "article_url": body.url,
         "published_date": body.published_date,
         "title": body.title,
+        "publisher_press_number": body.press_number,
         "language": body.language,
         "publication_kind": body.publication_kind,
         "listing_capture_sha256": hashlib.sha256(page_raw).hexdigest(),
