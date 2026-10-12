@@ -154,7 +154,7 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         notes = soup.select("div.desk-reference-reading-notes")
         self.assertEqual(len(notes), 1)
         self.assertEqual(len(notes[0].select("li")), 2)
-        note_text = notes[0].get_text(" ", strip=True)
+        note_text = " ".join(notes[0].get_text(" ", strip=True).split())
         self.assertIn("not exclusively administrative fines", note_text)
         for part in ("Rp3.48 trillion", "Rp1.54 trillion", "Rp8.23 trillion",
                      "259,230.73-hectare", "mixed group", "does not prove its completion"):
