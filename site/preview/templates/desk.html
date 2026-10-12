@@ -116,9 +116,49 @@
 </section>
 {% endif %}
 
+{# Site-equivalent Indonesia PRIVATE preview. This block cannot be enabled
+   by the ordinary renderer: only the separate, noindex, external-dir harness
+   supplies indonesia_preview. Candidate links are NOT approved publications. #}
+{% if indonesia_preview | default(false) %}
+<section class="desk-references" aria-labelledby="indonesia-reference-preview-heading">
+  <p class="eyebrow">Private layout review · unpublished · noindex</p>
+  <h2 id="indonesia-reference-preview-heading">Indonesia — proposed official-source references</h2>
+  <p><strong>HOLD · NOT APPROVED FOR PUBLICATION.</strong> These four exact
+  Indonesian-language citations are a design review of a future, limited
+  reference page. They are <strong>not</strong> approved source citations,
+  translations, copied source articles, or evidence of independent corroboration.</p>
+  <div class="korea-preview-metrics" role="group" aria-label="Indonesia unpublished qualification status">
+    <div><strong>{{ indonesia_preview_candidates|length }}</strong><span>candidate official links</span></div>
+    <div><strong>0</strong><span>independently human-approved links</span></div>
+    <div><strong>0</strong><span>Day 7 human review signoffs</span></div>
+    <div><strong>0</strong><span>admitted public archive records</span></div>
+  </div>
+  <ol class="desk-reference-list" aria-label="Official Indonesian pages under human review">
+  {% for item in indonesia_preview_candidates %}
+    <li>
+      <p><strong>{{ item.reference_id }} · Kemhan Berita · proposed reference only</strong></p>
+      <p><a href="{{ item.source_url }}" target="_blank"
+            rel="noopener noreferrer" lang="id">{{ item.title_original }}</a></p>
+      <p class="meta">Kementerian Pertahanan Republik Indonesia ·
+         Original-language publication date:
+         <time datetime="{{ item.published_date }}">{{ item.published_date }}</time></p>
+    </li>
+  {% endfor %}
+  </ol>
+  <p class="meta">One institutional Berita channel, not whole-of-government
+  defence coverage. An additional reviewed original is excluded for an unresolved
+  publisher geographic inconsistency. The four candidates are bibliographic
+  links only; the ministry's article text and images are not republished here.</p>
+  <p class="meta">Required before any public deployment: separately checked
+  Indonesian originals and individual rights dispositions, documented Day 7
+  evidence, named human approval, and an owner-accepted, source-scoped site
+  release. A private preview never grants any of those approvals.</p>
+</section>
+{% endif %}
+
 {# Indonesia has a first-party publisher *directory* link, not an article
    citation or inherited reuse permission. No shadow originals are exposed. #}
-{% if desk.slug == 'indonesia' %}
+{% if desk.slug == 'indonesia' and not indonesia_preview | default(false) %}
 <section class="desk-references" aria-labelledby="indonesia-publisher-heading">
   <h2 id="indonesia-publisher-heading">Official publisher starting point</h2>
   <p><a href="https://www.kemhan.go.id/category/berita"
@@ -130,7 +170,7 @@
 {% endif %}
 
 {# Reviewed public-source links are not locally archived IPR records. #}
-{% if desk.slug in ('philippines', 'vietnam', 'indonesia') %}
+{% if desk.slug in ('philippines', 'vietnam', 'indonesia') and not indonesia_preview | default(false) %}
 <section class="desk-references" aria-labelledby="desk-references-heading">
 <h2 id="desk-references-heading">Individually reviewed official-source references</h2>
 <p>Source links appear only after publication-specific review. They point to the
@@ -331,4 +371,4 @@ keeps its original number, title, date and URL — see <a href="analysis.html">{
 
 <p class="records-foot"><a href="desks.html">All desks</a></p>
 {% endblock %}
-{% block scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
+{% block scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') and not indonesia_preview | default(false) %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}

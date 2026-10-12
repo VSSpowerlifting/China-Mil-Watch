@@ -1,0 +1,266 @@
+name: Indonesia Day 7 — exact October 11 preflight (no signoff)
+
+# Historical pre-Day7 proof only. No schedules, new publisher collection, body
+# artifact, source-rights approval, registry, site deployment or production write.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_git_state_only:
+        description: 'Read only existing pinned Indonesia shadow Git state'
+        type: boolean
+        required: true
+        default: false
+  pull_request:
+    paths:
+      - ".github/workflows/indonesia_day7_preflight.yml"
+      - "scripts/review_desk_shadow.py"
+      - "scripts/preview_indonesia_reference_pilot.py"
+      - "tests/test_indonesia_reference_pilot.py"
+      - "scripts/audit_indonesia_actions_attempts.py"
+      - "scripts/audit_indonesia_shadow_provenance.py"
+      - "tests/test_indonesia_actions_attempts.py"
+      - "tests/test_indonesia_shadow_provenance.py"
+      - "scripts/build_indonesia_site_review.py"
+      - "tests/test_indonesia_site_review.py"
+      - "site/preview/templates/desk.html"
+      - "research/indonesia/public_reference_pilot_2026-10-11.json"
+      - "docs/engineering/INDONESIA_ORIGINAL_LANGUAGE_RIGHTS_DAY7_2026-10-11.md"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: indonesia-day7-preday7-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  archive-preflight:
+    if: github.event_name == 'pull_request' || inputs.confirm_git_state_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin protected production content before read-only audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-prod-before.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/indonesia-output-before.sha"
+      - name: Install existing offline template dependencies
+        shell: bash
+        run: pip install -r requirements.txt
+      - name: Validate four held private-link candidates (no publisher requests)
+        shell: bash
+        run: |
+          python -m unittest tests.test_indonesia_reference_pilot -v
+          python -m scripts.preview_indonesia_reference_pilot
+      - name: Test real-template Indonesia private preview without public registration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest tests.test_indonesia_site_review -v
+          python -m scripts.build_indonesia_site_review --out "$RUNNER_TEMP/indonesia-site-private-only"
+          python - "$RUNNER_TEMP/indonesia-site-private-only" <<'PY'
+          import json, pathlib, sys
+          base = pathlib.Path(sys.argv[1])
+          html = (base / "indonesia.html").read_text(encoding="utf-8")
+          receipt = json.loads((base / "PRIVATE_HOLD_RECEIPT.json").read_text())
+          assert html.count('lang="id"') == 4
+          assert 'content="noindex, nofollow"' in html
+          assert receipt["selected_bibliographic_candidates"] == 4
+          assert all(receipt[k] is False for k in (
+              "human_review_approved", "rights_reuse_approved",
+              "day7_checkpoint_completed", "public_release_authorized",
+              "production_changed", "registry_changed"))
+          # The Indonesia public status-only route already exists after PR #424.
+          # This PRIVATE preview must leave its validated existing bytes unchanged.
+          public_html = (pathlib.Path("output") / "indonesia.html").read_text(encoding="utf-8")
+          assert "No individual source references have completed" in public_html
+          assert "NOT APPROVED FOR PUBLICATION" not in public_html
+          print("Actual desk.html Indonesia private preview: 4 held references, no release")
+          PY
+          sha256sum -c "$RUNNER_TEMP/indonesia-prod-before.sha" > /dev/null
+          sha256sum -c "$RUNNER_TEMP/indonesia-output-before.sha" > /dev/null
+          rm -rf "$RUNNER_TEMP/indonesia-site-private-only"
+      - name: Resolve actual pinned October 11 shadow snapshot from GitHub only
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          src="$RUNNER_TEMP/indonesia-day7-source"
+          mkdir -p "$src" "$RUNNER_TEMP/indonesia-checkpoint-receipts"
+          git -C "$src" init -q
+          git -C "$src" remote add origin "$STATE_REMOTE"
+          git -C "$src" fetch --quiet --no-tags --depth=50 origin \
+            refs/heads/shadow/indonesia-kemhan:refs/heads/shadow/indonesia-kemhan
+          PINNED="17dfae7e6e1e9e1142d81c89764f022ebf03552f"
+          git -C "$src" cat-file -e "$PINNED^{commit}"
+          git -C "$src" merge-base --is-ancestor "$PINNED" refs/heads/shadow/indonesia-kemhan
+          test "$(git -C "$src" ls-tree --name-only "$PINNED")" = state
+          echo "INDONESIA_DAY7_PIN=$PINNED" >> "$GITHUB_ENV"
+          echo "Existing source state pinned: $PINNED"
+      - name: Run pre-Day7 formal machine integrity packet (private originals stay temporary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.review_desk_shadow \
+            --desk indonesia \
+            --state-repo "$RUNNER_TEMP/indonesia-day7-source" \
+            --state-commit "$INDONESIA_DAY7_PIN" \
+            --as-of 2026-10-11 \
+            --out "$RUNNER_TEMP/indonesia-day7-review-private" \
+            > "$RUNNER_TEMP/indonesia-checkpoint-receipts/machine-summary.json"
+      - name: Assert pre-Day7 status and export count-only receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP/indonesia-day7-review-private/report.json" \
+                   "$RUNNER_TEMP/indonesia-checkpoint-receipts/RECEIPT.json" \
+                   "$INDONESIA_DAY7_PIN" <<'PY'
+          import json, pathlib, sys
+          path, receipt_path, pinned = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3]
+          r = json.loads(path.read_text(encoding="utf-8"))
+          assert r["desk"] == "indonesia" and r["as_of"] == "2026-10-11"
+          assert r["state_commit"] == pinned and r["mode"] == "formal_commit_snapshot"
+          assert r["records"] == 24 and r["ledgers"] == 7
+          assert r["qualifying_ledgers"] == 7 and r["historical_backfill_run_ids"] == []
+          assert r["findings"] == [] and r["missing_successful_days"] == []
+          assert r["human_review_completed"] is False
+          assert r["promotion_authorized"] is False
+          assert r["input_hashes"]["state/shadow.db"] == (
+              "97adcbac44b626bdf36a5e66ae3315df7b3bcc340575d0e78c0d0bfc1e05cd74")
+          output = {
+              "schema": "ipr-indonesia-preday7-machine-only/1",
+              "as_of": "2026-10-11",
+              "day7_earliest": "2026-10-13T16:52:15Z",
+              "day7_scheduled_collection_date": "2026-10-13",
+              "state_commit": pinned,
+              "stored_records": r["records"],
+              "ledgers": r["ledgers"],
+              "missing_successful_days_through_oct11": [],
+              "original_captures_hashed": True,
+              "pre_day7_only": True,
+              "day7_checkpoint_complete": False,
+              "attempt_history_independently_exhaustive": False,
+              "human_original_review_completed": False,
+              "rights_authorized": False,
+              "public_links_approved": False,
+              "production_or_site_changed": False,
+          }
+          receipt_path.write_text(json.dumps(output, indent=2, sort_keys=True) + "\n")
+          print(receipt_path.read_text())
+          PY
+          # Never retain or artifact the review kit's full original bodies.
+          rm -rf "$RUNNER_TEMP/indonesia-day7-review-private"
+          sha256sum -c "$RUNNER_TEMP/indonesia-prod-before.sha" > /dev/null
+          sha256sum -c "$RUNNER_TEMP/indonesia-output-before.sha" > /dev/null
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test -z "$(git -C "$RUNNER_TEMP/indonesia-day7-source" status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Export complete shared-workflow Actions attempts and artifact identities through October 11
+        shell: bash
+        env:
+          GH_READ_TOKEN: ${{ github.token }}
+          REPO_IDENTITY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/indonesia-actions-private"
+          python - "$RUNNER_TEMP/indonesia-actions-private" <<'PY'
+          import json, os, pathlib, re, sys, urllib.parse, urllib.request
+          out = pathlib.Path(sys.argv[1])
+          repository = os.environ["REPO_IDENTITY"]
+          assert re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", repository)
+          token = os.environ["GH_READ_TOKEN"]
+          assert token
+          base = "https://api.github.com/repos/" + repository
+          headers = {
+              "Accept": "application/vnd.github+json",
+              "Authorization": "Bearer " + token,
+              "X-GitHub-Api-Version": "2022-11-28",
+              "User-Agent": "ipr-indonesia-preday7-evidence",
+          }
+          def get(path, params=None):
+              url = base + path + ("?" + urllib.parse.urlencode(params) if params else "")
+              with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=25) as r:
+                  assert r.status == 200
+                  return json.load(r)
+          # The source workflow includes Korea, and failed runs need checking.
+          pages = []
+          total = None
+          for index in range(1, 21):
+              page = get("/actions/workflows/376840713/runs", {
+                  "created": "2026-10-06..2026-10-12",
+                  "per_page": 100, "page": index,
+              })
+              assert type(page.get("total_count")) is int
+              assert type(page.get("workflow_runs")) is list
+              total = page["total_count"] if total is None else total
+              assert total == page["total_count"] and total <= 2000
+              pages.append(page)
+              found = sum(len(x["workflow_runs"]) for x in pages)
+              if found == total:
+                  break
+              assert found < total and page["workflow_runs"]
+          assert sum(len(p["workflow_runs"]) for p in pages) == total
+          artifacts = {}
+          for page in pages:
+              for action in page["workflow_runs"]:
+                  run_id = action["id"]
+                  assert isinstance(run_id, int) and run_id > 0
+                  key = str(run_id)
+                  assert key not in artifacts
+                  listing = get("/actions/runs/%s/artifacts" % run_id, {"per_page": 100})
+                  assert type(listing.get("total_count")) is int
+                  assert type(listing.get("artifacts")) is list
+                  assert len(listing["artifacts"]) == listing["total_count"] <= 100
+                  artifacts[key] = listing
+          (out / "runs.json").write_text(json.dumps(pages))
+          (out / "artifacts.json").write_text(json.dumps(artifacts))
+          print("Authenticated source workflow listing: %s runs on %s pages; "
+                "artifact inventories: %s" % (total, len(pages), len(artifacts)))
+          PY
+      - name: Check all Indonesia attempts against original pinned ledgers
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest tests.test_indonesia_shadow_provenance tests.test_indonesia_actions_attempts -q
+          python -m scripts.audit_indonesia_actions_attempts \
+            --state-repo "$RUNNER_TEMP/indonesia-day7-source" \
+            --state-commit "$INDONESIA_DAY7_PIN" \
+            --runs-export "$RUNNER_TEMP/indonesia-actions-private/runs.json" \
+            --artifacts-export "$RUNNER_TEMP/indonesia-actions-private/artifacts.json" \
+            --as-of 2026-10-11 \
+            > "$RUNNER_TEMP/indonesia-checkpoint-receipts/RECEIPT-ATTEMPTS.json"
+          python - "$RUNNER_TEMP/indonesia-checkpoint-receipts/RECEIPT-ATTEMPTS.json" <<'PY'
+          import json, pathlib, sys
+          r = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          assert r["verdict"] == "CONSISTENT_THROUGH_AS_OF_NOT_DAY7_SIGNOFF"
+          assert r["counts"]["indonesia_attempts"] == 6
+          assert r["counts"]["indonesia_failures_or_cancellations"] == 0
+          assert r["counts"]["indonesia_success_without_pinned_ledger"] == 0
+          assert r["pinned_ledger_unmapped_count"] == 0
+          assert r["missing_scheduled_indonesia_days"] == []
+          assert r["holds"] == []
+          assert not r["source_rights_approved"] and not r["publication_authorized"]
+          print("Shared-workflow attempt inventory consistent through October 11, no rights or Day7 signoff")
+          PY
+          sha256sum -c "$RUNNER_TEMP/indonesia-prod-before.sha" > /dev/null
+          sha256sum -c "$RUNNER_TEMP/indonesia-output-before.sha" > /dev/null
+      - name: Save ONLY count-only machine receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: indonesia-pre-day7-counts-only-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/indonesia-checkpoint-receipts/RECEIPT.json
+            ${{ runner.temp }}/indonesia-checkpoint-receipts/RECEIPT-ATTEMPTS.json
+          retention-days: 14
+          if-no-files-found: error
