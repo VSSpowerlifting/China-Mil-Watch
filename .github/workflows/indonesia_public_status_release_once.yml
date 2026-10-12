@@ -16,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: daily-update
+  group: indonesia-status-readonly-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
