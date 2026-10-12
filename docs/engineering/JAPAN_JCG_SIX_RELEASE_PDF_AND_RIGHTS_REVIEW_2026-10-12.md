@@ -23,6 +23,18 @@ All URLs below are official `kaiho.mlit.go.jp` article URLs and the PDF URLs **l
 
 **Document-level verdict:** each official PDF carries content distinct from the corresponding HTML article, even when narrative passages overlap. Five chiefly supplement the narrative with named operational details and imagery; **9424** goes further by attaching a separately authored multilateral **Joint Statement**. Therefore a truthfully labeled `published_html_text_only` source may remain an HTML pilot, but **“full JCG press release/document coverage” is false** for these six packages without distinct PDF evidence and decisions. A supplementary PDF must retain its own URL, version, issuer/author, event and publication dates, hash, page count, text-versus-visual extraction status and per-component rights provenance; it cannot silently overwrite the existing HTML originals.
 
+## Independent GitHub-runner PDF evidence for the three Day 0 pairs
+
+This visual/source-document review also reconciles the earlier **actual bounded GitHub Actions client** PDF probe from [PR #217 / run #37825395233](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37825395233), whose dated [metadata-only record in activation issue #205](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/205#issuecomment-6066577624) reports the following **captured Oct 8 PDF SHA-256** and deliberately mechanical text-overlap metrics:
+
+| JCG article | Oct 8 probe PDF SHA-256 | Extracted HTML tokens matched in PDF | Additional PDF word tokens |
+| --- | --- | ---: | ---: |
+| 9455 | `b92e76aaf2d39b5d9bc63d0333a8616e59f2307ca163f045eeb64e71635d54bd` | 91/93 | 69 |
+| 9453 | `865bce8b51c48cd3729b8db80a15687f2f6ebf47b3212a04eb7b50d3e3ced39d` | 106/107 | 52 |
+| 9436 | `0371ee8ae6efd1bfb9ed253f671076938d2765de0d391a6a15f05d95f7fe6594` | 113/114 | 46 |
+
+The original bounded probe retrieved/parses each PDF in memory and stores no PDF bytes; all three PDFs had machine-readable text on both pages. These are **prior-run capture hashes, not current Oct 12 byte-matching claims**. The strong overlap **supports preserving the separate HTML-original label**; the positive PDF-only token counts and today's visually confirmed structured fields demonstrate why overlap cannot certify whole-document completeness or image rights. No source body or media is imported here. The other three PDFs (9399/9424/9465) have **no SHA-256 independently verified by this review**, and this dossier makes none up.
+
 ## Rights review of actual page variants (not a legal license grant)
 
 1. The [JCG **Japanese main-site terms**](https://www.kaiho.mlit.go.jp/questions/post-1.html) explicitly state that **JCG-owned** published website material ordinarily falls under **Public Data License 1.0**, unless differently marked. They require **official issuer/source URL attribution**, identification of *who* edited/translated/adapted text, and avoidance of the appearance that adapted material is an unmodified government original. JCG logos and mascot images, specially licensed content and material not owned by the agency are not covered by a simple blanket permission.
