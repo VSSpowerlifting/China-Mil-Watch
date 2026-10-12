@@ -62,6 +62,8 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn('"https://www.kaiho.mlit.go.jp/e/topics_archive/index.html"', text)
         self.assertIn('japan_html.count("Open official publisher index") == 3', text)
         self.assertIn('"manual October 8 Day 0" in japan_html', text)
+        self.assertIn('"repository gate was observed unset or unavailable" in japan_html', text)
+        self.assertIn('"30 verified scheduled MOD collection slots" in japan_html', text)
         self.assertIn('"state/shadow.db"', text)
         self.assertIn("'href=\"archive.html?desk=japan\"' not in japan_html", text)
         self.assertIn("            output/japan.html", text)
