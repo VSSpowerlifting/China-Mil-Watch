@@ -359,7 +359,9 @@ class TestCandidateBuild(unittest.TestCase):
         from core.desk_registry import load_registry
         declared = {e.name for e in load_registry().public_entries}
         html = (self.out / "desks.html").read_text(encoding="utf-8")
-        for absent in ("Korea Desk", "Australia Desk",
+        self.assertIn("South Korea Desk", declared)
+        self.assertIn('href="korea.html"', html)
+        for absent in ("Australia Desk",
                        "Taiwan Desk", "India Desk", "Cross-Regional Desk"):
             with self.subTest(desk=absent):
                 self.assertNotIn(absent, declared)

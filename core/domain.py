@@ -53,7 +53,7 @@ COLLECTING_DESK_STATUSES = ("live",)
 DESK_STATUS_LABELS = {
     "planned": "Planned — nothing collected",
     "research": "Researched — not yet collecting",
-    "shadow": "Shadow evaluation — not public",
+    "shadow": "Shadow evaluation — not in corpus",
     "live": "Live — collecting",
     "paused": "Paused — collection stopped",
     "access_blocked": "Access blocked — not collecting",
