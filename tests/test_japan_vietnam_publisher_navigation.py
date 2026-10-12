@@ -84,6 +84,12 @@ class CountryPublisherNavigationTests(DeskCase):
         self.assertIn("per-version rights review", jcg["note"])
         self.assertIn("distinct collection clocks", desk.limits[-1])
         self.assertIn("30 scheduled MOD collection slots", desk.limits[-1])
+        self.assertIn("8 of 142 news-feed items (6 percent) were PDF-format candidates",
+                      desk.limits[1])
+        self.assertNotIn("carried full text", desk.limits[1])
+        self.assertIn("some PDF-published originals yield extractable text",
+                      desk.status_explanation)
+
         self.assertIn("five text-bearing originals and 158 unretrieved URLs",
                       desk.research["volume_caveat"])
         self.assertIn("PDF source completeness and qualification remain unresolved",
