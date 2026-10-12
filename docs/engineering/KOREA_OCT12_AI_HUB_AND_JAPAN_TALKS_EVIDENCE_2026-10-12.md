@@ -12,9 +12,16 @@ human-checkable leads, not a machine-approved English synopsis.
   `newsId=156784873`, original Korean title
   `국방부, 첫 번째 「국방 AX 거점」 개소식 개최`, portal posting October 12.
   Canonical link: https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784873 .
-  Earlier first-party page review reported an attachment with `261012` in
-  the name; **neither attachment original/distribution metadata nor archived
-  bytes is authenticated by this document**.
+  **Direct October 12 first-party verification:** the official publisher
+  index filters to issuer `국방부`, lists the dated AX opening as its newest
+  MND release, and links to exact `newsId=156784873`. The publisher's
+  release page shows a **single HWPX attachment whose filename begins
+  `261012`**, its explicit MND republication statement, and a **text-only
+  KOGL Type 1 attribution notice** with a separate rights warning for images,
+  illustrations, photographs and video. The public web reader displays an
+  article content attachment link rather than an independently authenticated
+  full HWPX text; **neither original distribution date, the attachment's
+  original HWPX bytes nor media permissions are verified by this docket**.
 - **Independent contemporary reporting:** Yonhap News, October 12 at 15:51
   Korea time, https://www.yna.co.kr/view/AKR20261012130000504 , independently
   describes the opening of **the first** hub in Pangyo Techno Valley on
