@@ -1,0 +1,27 @@
+{
+  "schema": "ipr-indonesia-kemhan-press-links/1",
+  "source_family": "id_kemhan_press",
+  "publisher": "Kementerian Pertahanan Republik Indonesia",
+  "category_url": "https://www.kemhan.go.id/category/siaran-pers",
+  "snapshot_date": "2026-10-12",
+  "editorial_status": "official_pages_spotchecked_independent_human_review_pending",
+  "collection_status": "press_parser_unregistered_no_shadow_state",
+  "references": [
+    {
+      "id": "id-press-2026-08",
+      "url": "https://www.kemhan.go.id/2026/08/23/kemhan-tegaskan-tidak-ada-larangan-penggunaan-hijab-bagi-kadet-universitas-pertahanan.html",
+      "title_original": "Kemhan Tegaskan Tidak Ada Larangan Penggunaan Hijab bagi Kadet Universitas Pertahanan",
+      "published_date": "2026-08-23",
+      "language": "id",
+      "press_number": "SP/17/VIII/2026/ROINFOHAN"
+    },
+    {
+      "id": "id-press-2026-03",
+      "url": "https://www.kemhan.go.id/2026/03/23/kemhan-dan-tni-siapkan-langkah-efisiensi-bbm-secara-terukur-operasional-pertahanan-tetap-menjadi-prioritas.html",
+      "title_original": "Kemhan dan TNI Siapkan Langkah Efisiensi BBM Secara Terukur, Operasional Pertahanan Tetap Menjadi Prioritas",
+      "published_date": "2026-03-23",
+      "language": "id",
+      "press_number": "SP/10/III/2026/ROINFOHAN"
+    }
+  ]
+}

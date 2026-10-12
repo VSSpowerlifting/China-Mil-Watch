@@ -194,6 +194,37 @@
   checkpoints remain separate from the ability to follow these official links.</p>
 </section>
 {% endif %}
+{% if indonesia_press_links | default([]) %}
+<section class="desk-references" aria-labelledby="indonesia-press-heading">
+  <p class="eyebrow">Official press statements · October 12, 2026 publisher snapshot</p>
+  <h2 id="indonesia-press-heading">Kemhan press releases (Siaran Pers)</h2>
+  <p>Two 2026 releases from the Ministry of Defense's separate
+    <a href="https://www.kemhan.go.id/category/siaran-pers"
+       target="_blank" rel="noopener noreferrer" lang="id">Siaran Pers directory</a>.
+    Each link points to the ministry's own dated release with a publisher
+    press-statement number. This is a <strong>limited factual link directory,
+    not an independently human-reviewed IPR archive or citation</strong>.
+    The ministry's statements are attributed claims, not independently
+    confirmed events or policy implementation.</p>
+  <ol class="desk-reference-list" aria-label="Two external ministry press release links">
+    {% for ref in indonesia_press_links %}
+    <li>
+      <p><a href="{{ ref.source_url }}" target="_blank" rel="noopener noreferrer"
+         lang="id">{{ ref.title_original }}</a></p>
+      <p class="meta">Kementerian Pertahanan Republik Indonesia ·
+        <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+        · Press statement {{ ref.press_number }} · Original Indonesian</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">Unlike the daily institutional Berita stream, this category
+    has published infrequently: as of this snapshot its two latest visible
+    releases are from August and March 2026. The press parser is disabled,
+    with no active Siaran Pers collector, archive records, continuous coverage
+    claim, license to republish content, or publisher images displayed.
+    The Berita shadow-collection checkpoints do not qualify this separate source.</p>
+</section>
+{% endif %}
 {% endif %}
 
 {# Reviewed public-source links are not locally archived IPR records. #}

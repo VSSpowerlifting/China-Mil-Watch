@@ -14,6 +14,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 from core.indonesia_official_index import load as load_official_links
+from core.indonesia_press_index import load as load_official_press_links
 from core.shadow_schedule import scheduled_slot_date
 from scripts.audit_indonesia_shadow_provenance import (
     DESK, GOOD_RESULTS, RUN_ID, SHA, SHA256, pinned_state, utc,
@@ -120,21 +121,28 @@ class Links(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.in_index = False
+        self.in_press = False
         self.refs = []
+        self.press_refs = []
 
     def handle_starttag(self, tag, attrs):
         values = dict(attrs)
         if tag == "ol" and values.get("aria-label") == "Four external ministry news links":
             self.in_index = True
+        elif tag == "ol" and values.get("aria-label") == "Two external ministry press release links":
+            self.in_press = True
         elif tag == "a" and self.in_index:
             self.refs.append((values.get("href"), values.get("lang")))
+        elif tag == "a" and self.in_press:
+            self.press_refs.append((values.get("href"), values.get("lang")))
 
     def handle_endtag(self, tag):
-        if tag == "ol" and self.in_index:
+        if tag == "ol":
             self.in_index = False
+            self.in_press = False
 
 
-def check_public_page(path, approved_links=None):
+def check_public_page(path, approved_links=None, approved_press_links=None):
     """Read a local copy from exact gh-pages Git commit, never fetch publisher."""
     path = Path(path)
     check(path.is_file() and not path.is_symlink() and
@@ -145,14 +153,20 @@ def check_public_page(path, approved_links=None):
     known = approved_links if approved_links is not None else load_official_links()
     check(links.refs == [(x["source_url"], "id") for x in known],
           "Pages four-link bibliography disagrees with the source index")
+    press = approved_press_links if approved_press_links is not None else load_official_press_links()
+    check(links.press_refs == [(x["source_url"], "id") for x in press],
+          "Pages two-link Kemhan press bibliography disagrees with official originals")
+    for number in (x["press_number"] for x in press):
+        check(number in page, "official publisher press-reference number missing")
     for phrase in ("Shadow evaluation — no public corpus records",
                    "No individual source references have completed",
-                   "Explore official Indonesian defense publications"):
+                   "Explore official Indonesian defense publications",
+                   "Kemhan press releases (Siaran Pers)"):
         check(phrase in page, "public source-scope explanation missing")
     for forbidden in ("text_original", "body_original", "state/shadow.db",
                       "data-reference-list", "NOT APPROVED FOR PUBLICATION"):
         check(forbidden not in page, "unapproved source or review material in public page")
-    return len(links.refs)
+    return len(links.refs) + len(links.press_refs)
 
 
 def main(argv=None):

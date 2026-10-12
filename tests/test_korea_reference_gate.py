@@ -25,6 +25,7 @@ def synthetic_approval(row):
             "korean_semantics_verified": True,
             "names_dates_verified": True,
             "distribution_versus_posting_checked": True,
+            "evidence_anchors_checked": True,
         },
         "source_rights_review": {
             "reviewer": "Fixture rights reviewer",
@@ -40,6 +41,11 @@ def synthetic_approval(row):
             "reviewed_at_utc": "2026-10-11T20:00:00Z",
             "explicit_approval_for_reference_only": True,
         },
+        "evidence_anchors": [{
+            "line_number": 1, "line_sha256": "a" * 64,
+            "claim_kind": "assessment",
+            "editorial_linkage": "Synthetic pointer only, not authenticated against original.",
+        }],
         "english_description": "Synthetic fixture only: MND stated a policy position. No actual public approval.",
     }
 
@@ -111,6 +117,7 @@ class KoreaGateTests(unittest.TestCase):
         self.assertNotIn("Fixture rights reviewer", page)
         self.assertNotIn("Fixture editor only", page)
         self.assertNotIn("text_original", page)
+        self.assertNotIn("line_sha256", page)
         self.assertNotIn("HOLD — human review pending", page)
         self.assertIn("not a live public Korea Desk", page)
 
@@ -132,6 +139,22 @@ class KoreaGateTests(unittest.TestCase):
                 item[section][key] = value
                 with self.assertRaises(kr.KoreaGateHold):
                     kr.approve(self.rows, self.approval_file([item]), now=NOW)
+
+    def test_original_line_anchors_fail_closed(self):
+        fixture = synthetic_approval(self.rows[0])
+        cases = []
+        a = copy.deepcopy(fixture); del a["evidence_anchors"]; cases.append(a)
+        a = copy.deepcopy(fixture); a["evidence_anchors"] = []; cases.append(a)
+        a = copy.deepcopy(fixture); a["evidence_anchors"][0]["line_sha256"] = "f" * 63; cases.append(a)
+        a = copy.deepcopy(fixture); a["evidence_anchors"][0]["line_number"] = True; cases.append(a)
+        a = copy.deepcopy(fixture); a["evidence_anchors"][0]["line_number"] = 0; cases.append(a)
+        a = copy.deepcopy(fixture); a["evidence_anchors"][0]["claim_kind"] = "proven_fact"; cases.append(a)
+        a = copy.deepcopy(fixture); a["evidence_anchors"][0]["editorial_linkage"] = "<b>faked</b>"; cases.append(a)
+        a = copy.deepcopy(fixture); a["evidence_anchors"].append(copy.deepcopy(a["evidence_anchors"][0])); cases.append(a)
+        a = copy.deepcopy(fixture); a["human_korean_review"]["evidence_anchors_checked"] = False; cases.append(a)
+        for i, item in enumerate(cases):
+            with self.subTest(i=i), self.assertRaises(kr.KoreaGateHold):
+                kr.approve(self.rows, self.approval_file([item]), now=NOW)
 
     def test_malformed_stale_or_extra_approval_refuses(self):
         original = synthetic_approval(self.rows[0])

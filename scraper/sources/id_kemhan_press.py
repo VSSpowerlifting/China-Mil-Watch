@@ -20,6 +20,15 @@ from scraper.sources.id_kemhan import (
 LISTING = "https://" + HOST + "/category/siaran-pers"
 NEXT = re.compile(r"^https://www\.kemhan\.go\.id/category/siaran-pers/page/([1-9][0-9]*)$")
 BODY_TAGS = {"p", "div", "ul", "ol", "table", "blockquote"}
+# Both original Kemhan 2026 Siaran Pers originals show this publisher
+# series marker above their body; a generic Berita page must not qualify.
+PRESS_NUMBER = re.compile(
+    r"\bSIARAN\s+PERS\b[\s:;-]*NOMOR\s*:\s*"
+    r"(SP/(?P<sequence>[1-9][0-9]*)/(?P<roman>XII|XI|X|IX|VIII|VII|VI|V|IV|III|II|I)/"
+    r"(?P<year>20[0-9]{2})/ROINFOHAN)\b", flags=re.IGNORECASE,
+)
+MONTH_NAMES = ("I", "II", "III", "IV", "V", "VI", "VII",
+               "VIII", "IX", "X", "XI", "XII")
 
 
 @dataclass(frozen=True)
@@ -41,6 +50,7 @@ class PressBody:
     published_date: str
     title: str
     original_text: str
+    press_number: str
     language: str = "id"
     publication_kind: str = "official_press_release"
 
@@ -126,4 +136,12 @@ def parse_press_article(html, *, url, listed_title, listed_date):
     content = "\n\n".join(p for p in segments if p)
     if not content or len(content) < 40:
         raise ValueError("missing/short unverified Siaran Pers body")
-    return PressBody(url, published, title, content)
+    found = list(PRESS_NUMBER.finditer(content))
+    if len(found) != 1 or found[0].start() > 260:
+        raise ValueError("missing, duplicated or displaced Siaran Pers press release number")
+    marker = found[0]
+    year, month, _ = [int(v) for v in published.split("-")]
+    if int(marker.group("year")) != year or marker.group("roman").upper() != MONTH_NAMES[month - 1]:
+        raise ValueError("printed Siaran Pers number year/month disagrees with published date")
+    return PressBody(url, published, title, content,
+                     marker.group(1).upper())
