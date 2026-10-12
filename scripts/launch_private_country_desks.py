@@ -1,4 +1,4 @@
-"""One-command PRIVATE Philippines/Vietnam desk search.
+"""One-command PRIVATE Philippines/Vietnam/Korea desk search.
 
 An explicit owner opt-in fetches ONLY already-existing shadow-state Git refs
 from the fixed IPR GitHub repository into a disposable local directory.
@@ -30,6 +30,7 @@ BRANCHES = {
     "vn_mps_foreign_affairs_vi": "shadow/vietnam-mps-foreign-affairs",
     "vn_moit_energy_vi": "shadow/vietnam-moit-energy",
     "vn_moit_foundational_industry_vi": "shadow/vietnam-moit-foundational-industry",
+    "kr_policy_mnd_releases": "shadow/korea-policy-briefing",
 }
 ORDERED = tuple(BRANCHES)
 CAPTURE = 8000
@@ -50,9 +51,10 @@ def safe_git(repo, *args):
 
 def exact_state_inputs(local_repo, desk):
     """Read fresh immutable refs in a disposable local Git repository."""
-    require(desk in ("philippines", "vietnam", "both"),
+    require(desk in ("philippines", "vietnam", "korea", "both", "all"),
             "unknown private research country")
-    slugs = tuple(s for s in ORDERED if desk == "both" or SOURCES[s][0] == desk)
+    slugs = tuple(s for s in ORDERED if desk == "all" or SOURCES[s][0] == desk or
+                  (desk == "both" and SOURCES[s][0] in ("philippines", "vietnam")))
     require(slugs, "no source family selected")
     safe_git(local_repo, "init", "-q")
     safe_git(local_repo, "remote", "add", "origin", REMOTE)
@@ -82,7 +84,7 @@ def create(desk, *, output=None, query="", limit=100, fmt="html",
         require(isinstance(state_inputs, list) and bool(state_inputs),
                 "source snapshot inventory empty")
         report = build(state_inputs, term=query,
-                       country=desk if desk != "both" else None,
+                       country=desk if desk not in ("both", "all") else None,
                        max_results=limit)
         if fmt == "html":
             require(output is not None, "HTML needs absolute private output destination")
@@ -110,7 +112,7 @@ def create(desk, *, output=None, query="", limit=100, fmt="html",
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--desk", choices=("philippines", "vietnam", "both"), required=True)
+    p.add_argument("--desk", choices=("philippines", "vietnam", "korea", "both", "all"), required=True)
     p.add_argument("--approve-github-shadow-fetch", action="store_true",
                    help="explicitly allow fetching existing source-state Git refs; NO publisher fetch")
     p.add_argument("--format", choices=("html", "json"), default="html")

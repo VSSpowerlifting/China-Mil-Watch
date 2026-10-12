@@ -1,0 +1,68 @@
+name: Korea Desk — site-equivalent private release prototype QA
+
+on:
+  pull_request:
+    paths:
+      - "site/preview/generate_preview.py"
+      - "site/preview/templates/desk.html"
+      - "site/preview/desk-references.css"
+      - "scripts/preview_korea_site.py"
+      - "tests/test_korea_site_preview.py"
+      - "docs/engineering/KOREA_WEBSITE_READINESS_2026-10-11.md"
+      - ".github/workflows/korea_site_preview_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  korea-not-published:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Preserve production corpus and static output SHA-256
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > /tmp/korea-web-db.sha
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/korea-web-output.sha
+      - name: Install existing site QA dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Real site template + five Korean references + holds
+        run: |
+          python -m unittest tests.test_korea_site_preview tests.test_korea_internal_registry tests.test_korea_reference_gate -q
+      - name: Generate actual manual private site preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.preview_korea_site --out "$RUNNER_TEMP/ipr-korea-site"
+          test -f "$RUNNER_TEMP/ipr-korea-site/korea.html"
+          test ! -f "$RUNNER_TEMP/ipr-korea-site/sitemap.xml"
+          ! grep -q 'href="korea.html"' "$RUNNER_TEMP/ipr-korea-site/desks.html"
+          grep -q 'data-review-status="hold"' "$RUNNER_TEMP/ipr-korea-site/korea.html"
+          test ! -e "$RUNNER_TEMP/ipr-korea-site/record/korea.html"
+          sha256sum -c /tmp/korea-web-db.sha
+          sha256sum -c /tmp/korea-web-output.sha >/dev/null
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Preserve offline-only five-source site-layout QA evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: korea-private-site-preview-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/ipr-korea-site/korea.html
+            ${{ runner.temp }}/ipr-korea-site/desk-references.css
+            ${{ runner.temp }}/ipr-korea-site/styles.css
+            ${{ runner.temp }}/ipr-korea-site/support.css
+            ${{ runner.temp }}/ipr-korea-site/surfaces.css
+            ${{ runner.temp }}/ipr-korea-site/fonts.css
+          if-no-files-found: error
+          retention-days: 14
+
+# No workflow_dispatch, no public deploy, no site-origin or automatic release.

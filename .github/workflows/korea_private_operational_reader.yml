@@ -1,0 +1,170 @@
+name: Korea Desk — real private operational reader (on demand)
+
+# Existing GitHub shadow Git objects only. NO korea.kr requests, schedules, publication,
+# source-body upload, production DB mutation, official-site activation or model email.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_existing_shadow_git_only:
+        description: 'Acknowledge: read only existing Korea shadow Git state, no publisher fetch'
+        type: boolean
+        required: true
+        default: false
+      private_query:
+        description: 'Optional in-memory search; exported artifacts contain metadata only'
+        type: string
+        required: false
+        default: ''
+  pull_request:
+    paths:
+      - ".github/workflows/korea_private_operational_reader.yml"
+      - "scripts/private_country_desk_reader.py"
+      - "scripts/korea_reference_workbench.py"
+      - "core/korea_reference_gate.py"
+      - "research/korea_reference_candidates.json"
+      - "tests/test_korea_private_operational_reader.py"
+      - "docs/engineering/KOREA_OPERATIONAL_PRIVATE_READER_2026-10-11.md"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: korea-operational-reader-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  pinned-existing-state:
+    if: github.event_name == 'pull_request' || inputs.confirm_existing_shadow_git_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Capture immutable production corpus checksums
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > /tmp/korea-operational-db.sha
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/korea-operational-output.sha
+      - name: Existing reader and Korea admission regressions
+        run: |
+          python -m unittest tests.test_private_country_desk_reader tests.test_launch_private_country_desks tests.test_korea_reference_gate -q
+      - name: Pin existing current Korea source-state Git SHA (GitHub only)
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          mkdir -p "$RUNNER_TEMP/korea-operational-state" "$RUNNER_TEMP/korea-operational-output"
+          git -C "$RUNNER_TEMP/korea-operational-state" init -q
+          git -C "$RUNNER_TEMP/korea-operational-state" remote add origin "$STATE_REMOTE"
+          git -C "$RUNNER_TEMP/korea-operational-state" fetch --quiet --no-tags --depth=1 \
+            origin refs/heads/shadow/korea-policy-briefing:refs/heads/ipr-korea-pinned
+          tip="$(git -C "$RUNNER_TEMP/korea-operational-state" rev-parse refs/heads/ipr-korea-pinned)"
+          test "${#tip}" -eq 40
+          test "$(git -C "$RUNNER_TEMP/korea-operational-state" ls-tree --name-only "$tip")" = state
+          echo "KOREA_STATE_COMMIT=$tip" >> "$GITHUB_ENV"
+          echo "Korea exact source state: $tip"
+      - name: Build actual existing-state reader — metadata only
+        shell: bash
+        env:
+          KOREA_QUERY: ${{ inputs.private_query }}
+        run: |
+          set -euo pipefail
+          spec="kr_policy_mnd_releases,$RUNNER_TEMP/korea-operational-state,$KOREA_STATE_COMMIT"
+          python -m scripts.private_country_desk_reader \
+            --source "$spec" --country korea --query "$KOREA_QUERY" \
+            --limit 100 --format json \
+            > "$RUNNER_TEMP/korea-operational-output/reader.json"
+          python -m scripts.private_country_desk_reader \
+            --source "$spec" --country korea --query "$KOREA_QUERY" \
+            --limit 100 --format html \
+            --output "$RUNNER_TEMP/korea-operational-output/reader.html"
+          python -m scripts.korea_reference_workbench --mode workbench \
+            --out "$RUNNER_TEMP/korea-operational-output/unsigned-review.html" \
+            > "$RUNNER_TEMP/korea-operational-output/unsigned-review-receipt.json"
+      - name: Verify actual source read, no body export, no human approval
+        shell: bash
+        env:
+          KOREA_QUERY: ${{ inputs.private_query }}
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP/korea-operational-output" "$KOREA_STATE_COMMIT" <<'PY'
+          import json, pathlib, sys
+          folder, sha = pathlib.Path(sys.argv[1]), sys.argv[2]
+          report = json.loads((folder / "reader.json").read_text(encoding="utf-8"))
+          workbench = json.loads((folder / "unsigned-review-receipt.json").read_text(encoding="utf-8"))
+          assert report["schema"] == "ipr-private-shadow-desk-reader/1"
+          assert report["status"] == "private_research_not_source_admitted"
+          assert report["desk_filter"] == "korea"
+          assert len(report["sources"]) == 1
+          source = report["sources"][0]
+          assert source["source_slug"] == "kr_policy_mnd_releases"
+          assert source["country"] == "korea"
+          assert source["state_commit"] == sha
+          assert source["stored_records"] >= 5
+          assert report["matched_total"] <= source["stored_records"]
+          assert all(r["source_slug"] == "kr_policy_mnd_releases"
+                     and r["country"] == "korea" and r["state_commit"] == sha
+                     and r["identity"].startswith("korea-policy:")
+                     and r["url"].startswith("https://www.korea.kr/briefing/pressReleaseView.do?newsId=")
+                     and set(r) == {"country", "institution", "source_slug",
+                                    "identity", "url", "title", "published_date",
+                                    "first_seen_run", "state_commit", "review_status"}
+                     for r in report["results"])
+          assert not report["source_body_text_exported"]
+          assert not report["automated_source_rights_approved"]
+          assert not report["human_source_review_completed"]
+          assert not report["production_records_changed"]
+          assert not report["country_desks_promoted"]
+          assert not report["public_release_authorized"]
+          assert workbench["approved_preview_count"] == 0
+          assert workbench["candidate_count"] == 5
+          assert workbench["production_activated"] is False
+          assert workbench["public_release_authorized"] is False
+          if not report["query"]:
+              assert report["matched_total"] >= 5, "five archived originals missing"
+          browser = (folder / "reader.html").read_text(encoding="utf-8")
+          assert "PUBLIC REVIEW PENDING" in browser if report["results"] else True
+          assert "Private country desk reader" in browser
+          assert "<script>" in browser  # local metadata filter only
+          assert "text_original" not in browser and "body_original" not in browser
+          # For raw output, export strictly the exact allowlisted record fields.
+          (folder / "RECEIPT.json").write_text(json.dumps({
+              "state_commit": sha,
+              "source_family": source["source_slug"],
+              "stored_records": source["stored_records"],
+              "matched_records": report["matched_total"],
+              "unsigned_review_candidates": workbench["candidate_count"],
+              "approved_public_records": 0,
+              "shadow_data_mutated": False,
+              "site_or_production_activated": False,
+              "publisher_requests": 0,
+          }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print((folder / "RECEIPT.json").read_text(encoding="utf-8"))
+          PY
+          sha256sum -c /tmp/korea-operational-db.sha
+          sha256sum -c /tmp/korea-operational-output.sha > /dev/null
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test -z "$(git -C "$RUNNER_TEMP/korea-operational-state" status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Preserve metadata-only reader and UNSIGNED reviewer handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: korea-metadata-only-reader-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/korea-operational-output/reader.html
+            ${{ runner.temp }}/korea-operational-output/reader.json
+            ${{ runner.temp }}/korea-operational-output/unsigned-review.html
+            ${{ runner.temp }}/korea-operational-output/unsigned-review-receipt.json
+            ${{ runner.temp }}/korea-operational-output/RECEIPT.json
+          retention-days: 14
+          if-no-files-found: error
+
+# Artifacts may be visible to repository Actions readers: they contain
+# bibliographic metadata ONLY. No source body, raw HWPX, secrets or signoffs.

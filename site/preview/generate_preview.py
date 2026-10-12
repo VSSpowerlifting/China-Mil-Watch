@@ -87,6 +87,10 @@ TRACKED_DB = REPO_ROOT / "pla_watch.db"
 # The relief assets the homepage references (home.html, via _relief.html),
 # delivered by name. relief.css travels with the stylesheets.
 RELIEF_PRODUCTION_ASSETS = ("assets/geo/emblems.svg", "assets/geo/strait.svg")
+# The Archive's desk markers (archive.css masks), one outline per country
+# desk. Named one by one; the folder's receipt stays out of a production tree.
+ARCHIVE_MARK_ASSETS = tuple("assets/desk-marks/%s.svg" % s
+                            for s in ("china", "japan", "singapore", "vietnam"))
 
 #: The public name. Owner-directed 2026-08-25; the governing record is
 #: docs/INDO_PACIFIC_RECORD_EVOLUTION.md §1. "The Declared Record" and
@@ -2347,7 +2351,9 @@ def build(out_dir: Path, title: str, db_path: Path,
           daily_run_date: str = None, briefs_dir: Path = None,
           allow_synthetic_briefs: bool = False, gallery: bool = False,
           review_brief: Path = None, timelines_dir: Path = None,
-          review_timeline: Path = None) -> dict:
+          review_timeline: Path = None,
+          review_korea: bool = False,
+          korea_review_packet: Path = None) -> dict:
     """
     Render the site into `out_dir`.
 
@@ -2369,7 +2375,55 @@ def build(out_dir: Path, title: str, db_path: Path,
     what a local build publishes. `site/render.py` is the single seam that
     turns the workflow's environment into this argument.
     """
-    out_dir = Path(out_dir).resolve()
+    # A preview of an internally declared desk must never be passed to the
+    # ordinary public build/publish path, even accidentally. The preview has
+    # its own noindex-only, new external output directory; it never changes
+    # the desk roster, registry, site origin, RSS, sitemap or deployed output.
+    # Fail closed if someone changes the desk registry to publish Korea
+    # without separately implementing and approving a signed reference
+    # allowlist. A mere public=true or production manifest must never turn
+    # private source-candidates into a public country page.
+    korea_release_state = load_registry().get("korea")
+    if korea_release_state is not None and (
+            korea_release_state.public or korea_release_state.status != "shadow"
+            or korea_release_state.manifest_path is not None
+            or korea_release_state.has_production_records):
+        raise ValueError("Korea public/production admission requires a separate "
+                         "human-reviewed, owner-authorized release PR")
+    if korea_review_packet is not None:
+        if not review_korea:
+            raise ValueError("Korean approval packet is allowed only in private review mode")
+        packet = Path(korea_review_packet).expanduser()
+        resolved_packet = packet.resolve()
+        if (not packet.is_absolute() or packet.is_symlink()
+                or not packet.is_file()
+                or resolved_packet == REPO_ROOT or REPO_ROOT in resolved_packet.parents):
+            raise ValueError("Korean approval packet must be an existing private file outside repository")
+    requested_out = Path(out_dir).expanduser()
+    if review_korea:
+        resolved = requested_out.resolve()
+        if (not requested_out.is_absolute() or requested_out.exists()
+                or requested_out.is_symlink() or requested_out.parent.is_symlink()
+                or resolved == REPO_ROOT or REPO_ROOT in resolved.parents
+                or resolved in REPO_ROOT.parents
+                or bool((site_origin or "").strip()) or allow_test_origin
+                or review_brief is not None or review_timeline is not None
+                or allow_synthetic_briefs or gallery):
+            raise ValueError("private Korea preview requires a new external directory, "
+                             "no origin, no public/synthetic/other review mode")
+        korea_entry = load_registry().get("korea")
+        if (korea_entry is None or korea_entry.public or
+                korea_entry.status != "shadow" or
+                korea_entry.has_production_records or
+                korea_entry.manifest_path is not None):
+            raise ValueError("Korea must remain a nonpublic, unconfigured shadow desk")
+        # Validate every provided document/rights/owner decision BEFORE
+        # creating any output directory. An invalid packet leaves no partial
+        # website behind. This is structural QA, not identity authentication.
+        from core.korea_reference_gate import approve, load_candidates
+        korea_candidates = load_candidates()
+        korea_prechecked_rows = approve(korea_candidates, korea_review_packet)
+    out_dir = requested_out.resolve()
     if (review_brief or review_timeline) and site_origin:
         raise ValueError("a draft review is private: no site origin, feed or sitemap")
     if review_timeline and (out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents or out_dir in REPO_ROOT.parents):
@@ -2795,6 +2849,33 @@ def build(out_dir: Path, title: str, db_path: Path,
             encoding="utf-8")
         written.append(desk.route)
 
+    if review_korea:
+        # This is a PRIVATE, unpublished rendering of the SAME site desk
+        # template used by the real publication. It is not in public_entries,
+        # desk navigation, corpus, coverage, sitemap, or deployed routes.
+        # Candidate originals always remain HOLD unless a separate private
+        # packet has all exact source, language, rights and owner fields. Even
+        # then JSON is only STRUCTURAL; no human identity is authenticated
+        # here, and the output remains inaccessible to public publication.
+        from core.viewmodel import DeskView
+        korea = DeskView(entry=korea_entry)
+        candidates = korea_candidates
+        preview_rows = korea_prechecked_rows
+        private_review_by_identity = {
+            x["source_identity"]: x for x in preview_rows
+        }
+        (out_dir / "korea.html").write_text(
+            desk_tmpl.render(
+                page="korea.html", desk=korea,
+                korea_preview=True, korea_preview_candidates=candidates,
+                korea_private_structural_refs=private_review_by_identity,
+                public_source_links=[], public_source_options=[],
+                public_reference_languages=[],
+                display_limits=public_desk_limits(korea, source_views),
+                **ctx),
+            encoding="utf-8")
+        written.append("korea.html")
+
     # ── One page per source ──────────────────────────────────────────────────
     # Including the shadow source, which is described from its manifest and
     # carries no record count at all — not a zero.
@@ -2899,6 +2980,11 @@ def build(out_dir: Path, title: str, db_path: Path,
     # The relief sprites home.html references, named one by one: no folder,
     # flag set, glyph sprite or region plate reaches a production tree.
     for route in RELIEF_PRODUCTION_ASSETS:
+        target = out_dir / route
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
+        written.append(route)
+    for route in ARCHIVE_MARK_ASSETS:
         target = out_dir / route
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
@@ -3242,6 +3328,8 @@ def build(out_dir: Path, title: str, db_path: Path,
             "records": len(data["corpus"]), "weeks": len(data["weeks"]),
             "desks": len(desks), "collecting_desks": desks.collecting_count,
             "sources": len(source_views),
+            "korea_private_structural_preview_rows": (
+                len(preview_rows) if review_korea else 0),
             "legacy_redirects": redirects}
 
 

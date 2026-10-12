@@ -1,0 +1,72 @@
+{
+  "schema": "ipr-korea-reference-candidates/1",
+  "state_branch": "shadow/korea-policy-briefing",
+  "state_commit": "dcb43b9c4edb471d6def5876701ec4a2e39d5264",
+  "entries": [
+    {
+      "source_identity": "korea-policy:156783602",
+      "source_slug": "kr_policy_mnd_releases",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156783602",
+      "title_original": "국방부 유해발굴감식단, 6·25 전사자 귀환 주제 「국유단: 귀환작전」 피규어 전시",
+      "language": "ko",
+      "published_date": "2026-09-30",
+      "document_distribution_date": "2026-09-30",
+      "content_sha256": "e4aaf200e520b3f69b83583ba7f221759a11ea3b86b244d261c109a48d576165",
+      "document_capture_sha256": "2faaf0922ca4a87c8822ad5e746b6e622618e3de0de76a5764b4d0fc65849587",
+      "issuer": "국방부",
+      "publisher": "대한민국 정책브리핑"
+    },
+    {
+      "source_identity": "korea-policy:156783708",
+      "source_slug": "kr_policy_mnd_releases",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156783708",
+      "title_original": "강신철 국방부장관, 해군작전사령부 대비태세 현장지도 반드시 승리하는 '필승해군' 당부",
+      "language": "ko",
+      "published_date": "2026-09-30",
+      "document_distribution_date": "2026-09-30",
+      "content_sha256": "25532c900c01469dc2619952786f1dfe6eb462922aa4781cfad0b29d47ad67b9",
+      "document_capture_sha256": "fa2520e26bf2f672f7793b473a6d2e1cad68cc8340fd6d4849479922ae947c35",
+      "issuer": "국방부",
+      "publisher": "대한민국 정책브리핑"
+    },
+    {
+      "source_identity": "korea-policy:156784196",
+      "source_slug": "kr_policy_mnd_releases",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784196",
+      "title_original": "국방부장관, 취임 후 첫 캠프 험프리스 방문",
+      "language": "ko",
+      "published_date": "2026-10-02",
+      "document_distribution_date": "2026-10-02",
+      "content_sha256": "bcf6c5e77f3f3e08005bdd2dee68740cc8fcf9576d6707031d2dd7bc0f0c7914",
+      "document_capture_sha256": "808e26d5eddc604d3d09c5bf3655ad928cd32ba0529eb8f5fd93066e36b61f91",
+      "issuer": "국방부",
+      "publisher": "대한민국 정책브리핑"
+    },
+    {
+      "source_identity": "korea-policy:156784297",
+      "source_slug": "kr_policy_mnd_releases",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297",
+      "title_original": "북한 탄도미사일 발사 관련 국방부 입장",
+      "language": "ko",
+      "published_date": "2026-10-06",
+      "document_distribution_date": "2026-10-04",
+      "content_sha256": "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284",
+      "document_capture_sha256": "d1b8c4d21f97c9a33da1602ec9433487c591e49e442f3b4a5960410bda145be4",
+      "issuer": "국방부",
+      "publisher": "대한민국 정책브리핑"
+    },
+    {
+      "source_identity": "korea-policy:156784652",
+      "source_slug": "kr_policy_mnd_releases",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784652",
+      "title_original": "국방부장관, 데이브 맥코믹 美 상원의원 접견",
+      "language": "ko",
+      "published_date": "2026-10-08",
+      "document_distribution_date": "2026-10-08",
+      "content_sha256": "f76162a1e028162e666f39e0c3e3ebae8239ea0a28a2536de157b7f5dc0fa6ac",
+      "document_capture_sha256": "4cdc5332b6b383b402811db492a3c00b1f899c1888bed97c4138ccbea0fe7b60",
+      "issuer": "국방부",
+      "publisher": "대한민국 정책브리핑"
+    }
+  ]
+}

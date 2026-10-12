@@ -1,0 +1,43 @@
+{
+ "nojs_rows": 50,
+ "nojs_finder_hidden_attr": true,
+ "nojs_finder_visible": false,
+ "index_error_before": {
+  "browseHidden": true,
+  "formHidden": false,
+  "failText": [
+   [
+    "index-state index-state--loading",
+    true,
+    "Loading\nthe search index for 5,097 records…"
+   ],
+   [
+    "index-state index-state--error",
+    false,
+    "The search index could not be loaded or did not match this snapshot, so search and filters are unavailable. The records held in this snapshot remain accessible through the week-by-week browse above."
+   ]
+  ],
+  "rows": 50,
+  "statusText": "\n      \n      Clear all filters\n    ",
+  "console_errors": 1
+ },
+ "index_error_after": {
+  "browseHidden": true,
+  "formHidden": false,
+  "failText": [
+   [
+    "index-state index-state--loading",
+    true,
+    "Loading\nthe search index for 5,097 records…"
+   ],
+   [
+    "index-state index-state--error",
+    false,
+    "The search index could not be loaded or did not match this snapshot, so search and filters are unavailable. The records held in this snapshot remain accessible through the week-by-week browse above."
+   ]
+  ],
+  "rows": 50,
+  "statusText": "\n      \n      Clear all filters\n    ",
+  "console_errors": 1
+ }
+}

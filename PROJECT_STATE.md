@@ -1056,9 +1056,23 @@ VSSpowerlifting/China-Mil-Watch#391. It has been revised once after review:
 hung from the desks heading by hairlines. It is not merged or deployed, and
 independent review is required. Open PRs #314/#323 overlap `home.html` and
 `generate_preview.py`. The sequence after merge, each phase in its own session:
-- Phase 2b Archive
+- Phase 2b Archive (in review, below)
 - Phase 3 Briefs
 - Phase 4 Desks
+
+**Phase 2b Archive in review (2026-10-11):** branch
+`claude/archive-visual-refinement-2b-1ca784`, from main `c9b2c38068`. The
+finder takes the approved lift through `rl-finder` (`relief.css` is now linked
+by the homepage and the Archive only) and each row's desk link gains a
+CSS-mask outline of its country desk. A `<symbol>` sprite does not work as a
+mask in Chromium, so `scripts/build_desk_marks.py` copies the four country
+outlines out of `emblems.svg` into `site/assets/desk-marks/` (9,767 B of SVG),
+published by the explicit `ARCHIVE_MARK_ASSETS` allowlist. China and
+Singapore are the only desks with records today; Japan and Vietnam rules ship
+with their files and are verified on synthetic rows. The Philippines and US
+Indo-Pacific desks get no marker. `browse.js` is byte-identical (9,847 B).
+Evidence: `docs/evidence/archive-refinement-2b-2026-10-11/`. Not merged or
+deployed; independent review required.
 
 ## 8. Prohibited shortcuts and human-review gates
 

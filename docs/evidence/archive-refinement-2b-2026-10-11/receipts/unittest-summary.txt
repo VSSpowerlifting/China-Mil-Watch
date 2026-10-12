@@ -1,0 +1,18 @@
+# Frozen code (tests/ and site/ as committed); four runs, all in this branch's venv
+
+## tests.test_archive_desk_marks tests.test_preview_prototype (496 tests, OK, 1 skipped)
+----------------------------------------------------------------------
+Ran 496 tests in 246.180s
+
+OK (skipped=1)
+
+## tests.test_archive_desk_marks tests.test_relief_primitives (39 tests, OK; the test_archive_desk_marks file was edited mid-run, so the first group re-ran it)
+Ran 39 tests in 676.429s
+
+OK
+
+[exited with code 0]
+
+## tests.test_frontend_production tests.test_palette_and_accessibility tests.test_desk_map tests.test_identity_assets (88 tests, OK)
+Ran 88 tests in 33.167s
+OK
