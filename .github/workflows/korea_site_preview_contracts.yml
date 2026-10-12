@@ -43,7 +43,7 @@ jobs:
           python -m scripts.preview_korea_site --out "$RUNNER_TEMP/ipr-korea-site"
           test -f "$RUNNER_TEMP/ipr-korea-site/korea.html"
           test ! -f "$RUNNER_TEMP/ipr-korea-site/sitemap.xml"
-          ! grep -q 'href="korea.html"' "$RUNNER_TEMP/ipr-korea-site/desks.html"
+          grep -q 'href="korea.html"' "$RUNNER_TEMP/ipr-korea-site/desks.html"
           grep -q 'data-review-status="hold"' "$RUNNER_TEMP/ipr-korea-site/korea.html"
           test ! -e "$RUNNER_TEMP/ipr-korea-site/record/korea.html"
           sha256sum -c /tmp/korea-web-db.sha

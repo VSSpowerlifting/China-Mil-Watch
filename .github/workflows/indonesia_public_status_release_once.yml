@@ -52,7 +52,7 @@ jobs:
           indonesia = Path("output/indonesia.html").read_text(encoding="utf-8")
           directory = Path("output/desks.html").read_text(encoding="utf-8")
           assert 'href="indonesia.html"' in directory
-          assert "7 declared" in directory and "2 collecting" in directory
+          assert "8 declared" in directory and "2 collecting" in directory
           assert "No individual source references have completed" in indonesia
           assert "https://www.kemhan.go.id/category/berita" in indonesia
           assert "data-reference-list" not in indonesia
@@ -107,7 +107,7 @@ jobs:
           doc = Path("output/indonesia.html").read_text()
           directory = Path("output/desks.html").read_text()
           assert 'href="indonesia.html"' in directory
-          assert "7 declared" in directory and "2 collecting" in directory
+          assert "8 declared" in directory and "2 collecting" in directory
           assert "No individual source references have completed" in doc
           assert "https://www.kemhan.go.id/category/berita" in doc
           assert "data-reference-list" not in doc

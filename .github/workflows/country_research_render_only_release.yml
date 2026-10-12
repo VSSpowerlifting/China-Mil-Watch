@@ -137,7 +137,7 @@ jobs:
           assert 'href="philippines.html"' in desk_html
           assert 'href="vietnam.html"' in desk_html
           assert 'href="indonesia.html"' in desk_html
-          assert "7 declared" in desk_html and "2 collecting" in desk_html
+          assert "8 declared" in desk_html and "2 collecting" in desk_html
           assert (base / "desk-references.js").is_file()
           assert (base / "desk-references.css").is_file()
           assert (base / "sitemap.xml").is_file()

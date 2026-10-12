@@ -50,8 +50,9 @@ class KoreaSitePreviewTests(unittest.TestCase):
         self.assertIn("not published IPR records", self.page)
         self.assertIn("human-approved references", self.page)
         self.assertIn("0</strong>", self.page)
-        self.assertNotIn('href="korea.html"', self.directory)
-        self.assertNotIn("korea.html", self.directory)
+        # The real public official-source bibliography is now listed, while
+        # this separately generated source-review preview stays noindex.
+        self.assertIn('href="korea.html"', self.directory)
         self.assertFalse((self.path / "sitemap.xml").exists())
         self.assertIsNone(self.result["site_origin"])
         self.assertEqual(self.result["indexable_pages"], 0)
@@ -91,30 +92,31 @@ class KoreaSitePreviewTests(unittest.TestCase):
                               review_korea=True)
             self.assertEqual((dest / "keep.txt").read_text(), "Do not remove")
 
-    def test_registry_public_flip_alone_cannot_publish_korea(self):
+    def test_production_status_flip_still_refused(self):
         from dataclasses import replace
         from core.desk_registry import DeskRegistry, load_registry
         original = load_registry()
-        adversarial = DeskRegistry(entries=[
-            replace(e, public=True) if e.slug == "korea" else e
-            for e in original.entries
+        changed = DeskRegistry(entries=[
+            replace(e, status="live", has_production_records=True)
+            if e.slug == "korea" else e for e in original.entries
         ])
         with tempfile.TemporaryDirectory(prefix="ipr-korea-flip-") as tmp:
             output = Path(tmp) / "must-not-build"
-            with patch.object(self.gp, "load_registry", return_value=adversarial):
-                with self.assertRaisesRegex(ValueError, "owner-authorized release"):
-                    self.gp.build(
-                        output, "Unauthorized Korea", ROOT / "pla_watch.db",
-                        review_korea=False)
+            with patch.object(self.gp, "load_registry", return_value=changed):
+                with self.assertRaisesRegex(ValueError, "production admission"):
+                    self.gp.build(output, "No live Korea", ROOT / "pla_watch.db")
             self.assertFalse(output.exists())
 
-    def test_normal_public_build_still_excludes_korea(self):
+    def test_normal_public_build_contains_fixed_korea_only(self):
         from core.desk_registry import load_registry
+        from core.korea_public_bibliography import load_public_korea_links
         desk = load_registry().get("korea")
-        self.assertFalse(desk.public)
+        self.assertTrue(desk.public)
+        self.assertEqual(desk.status, "shadow")
         self.assertIsNone(desk.manifest_path)
         self.assertFalse(desk.has_production_records)
-        self.assertNotIn("korea", [d.slug for d in load_registry().public_entries])
+        self.assertIn("korea", [d.slug for d in load_registry().public_entries])
+        self.assertEqual(len(load_public_korea_links()), 5)
 
 
 if __name__ == "__main__":
@@ -167,8 +169,8 @@ class KoreaPrivateStructuralProjectionTests(unittest.TestCase):
         self.assertNotIn(self.sample["owner_publication_approval"]["reviewer"], page)
         self.assertNotIn("text_original", page)
         self.assertNotIn("body_original", page)
-        self.assertNotIn('href="korea.html"',
-                         (output / "desks.html").read_text(encoding="utf-8"))
+        self.assertIn('href="korea.html"',
+                      (output / "desks.html").read_text(encoding="utf-8"))
         self.assertFalse((output / "sitemap.xml").exists())
         self.assertIn('content="noindex, nofollow"', page)
         self.assertEqual(result["indexable_pages"], 0)

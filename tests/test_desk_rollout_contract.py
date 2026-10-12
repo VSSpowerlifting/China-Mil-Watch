@@ -294,7 +294,7 @@ class IndonesiaPublicStatusWithoutCorpus(DeskCase):
     def test_public_directory_distinguishes_reference_from_production(self):
         html = self.page("desks.html")
         self.assertIn("Indonesia Desk", html)
-        self.assertIn("7 declared", html)
+        self.assertIn("8 declared", html)
         self.assertIn("2 collecting into the record", html)
         self.assertEqual(
             sorted(x.slug for x in load_registry() if x.is_collecting),
@@ -529,7 +529,7 @@ class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
 
     def test_public_desk_roster_does_not_change_which_desks_are_live(self):
         self.assertEqual({d.slug for d in load_registry().public_entries},
-            {"china", "singapore", "japan", "philippines", "vietnam", "indonesia", "us-indopacific"})
+            {"china", "singapore", "japan", "korea", "philippines", "vietnam", "indonesia", "us-indopacific"})
         self.assertEqual(sorted(d.slug for d in load_registry() if d.is_collecting),
                          ["china", "singapore"])
 

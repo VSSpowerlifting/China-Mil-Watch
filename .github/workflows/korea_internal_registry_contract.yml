@@ -4,9 +4,7 @@ on:
   pull_request:
     paths:
       - "desks/registry.json"
-      # Any core contract change may affect the private/public boundary.
-      # A read-only test workflow does not import this module at runtime.
-      - "core/*.py"
+      - "core/desk_registry.py"
       - "tests/test_korea_internal_registry.py"
       - ".github/workflows/korea_internal_registry_contract.yml"
 

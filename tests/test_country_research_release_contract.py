@@ -40,7 +40,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn('d["has_production_records"] is False', text)
         self.assertIn('d["manifest"] is None', text)
         self.assertIn('assert "data-reference-list" not in text', text)
-        self.assertIn('assert "7 declared" in desk_html', text)
+        self.assertIn('assert "8 declared" in desk_html', text)
 
     def test_pull_request_checks_rehearse_actual_renderer_without_deployment(self):
         text = self.body
