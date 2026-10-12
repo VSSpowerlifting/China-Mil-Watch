@@ -13,6 +13,7 @@ on:
       - "site/preview/templates/desk.html"
       - "site/preview/desk-references.css"
       - "tests/test_korea_public_bibliography.py"
+      - "tests/test_korea_official_index.py"
       - "tests/test_korea_internal_registry.py"
       - "tests/test_korea_site_preview.py"
       - ".github/workflows/korea_public_bibliography_release.yml"
@@ -42,7 +43,7 @@ jobs:
         run: sha256sum pla_watch.db > /tmp/ipr-korea-links-db.sha
       - name: Full source-link and original-review regression checks
         run: |
-          python -m unittest tests.test_korea_public_bibliography tests.test_korea_internal_registry tests.test_korea_site_preview tests.test_korea_reference_gate tests.test_public_desk_references tests.test_desk_map tests.test_desk_rollout_contract tests.test_briefs_collection tests.test_extraction_interface -q
+          python -m unittest tests.test_korea_official_index tests.test_korea_public_bibliography tests.test_korea_internal_registry tests.test_korea_site_preview tests.test_korea_reference_gate tests.test_public_desk_references tests.test_desk_map tests.test_desk_rollout_contract tests.test_briefs_collection tests.test_extraction_interface -q
       - name: Render real public site, no collectors or media reuse
         shell: bash
         run: |
