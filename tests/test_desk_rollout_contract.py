@@ -317,7 +317,7 @@ class TestJapanDeskIsPlannedNotCoverage(DeskCase):
 
     def test_the_japan_page_states_no_production_records_and_two_shadow_sources(self):
         html = self.page("japan.html")
-        self.assertIn("Records</dt><dd>None collected", html)
+        self.assertIn("Corpus records</dt><dd>Not admitted", html)
         self.assertIn("Sources enabled in shadow</dt><dd>2", html)
         self.assertIn("No source is enabled in production.", html)
         self.assertIn("participate only in isolated shadow collection", html)
@@ -420,7 +420,7 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
     def test_the_vietnam_page_states_no_records_and_no_enabled_source(self):
         html = self.page("vietnam.html")
         self.assertIn("Shadow evaluation — not in corpus", html)
-        self.assertIn("Records</dt><dd>None collected", html)
+        self.assertIn("Corpus records</dt><dd>Not admitted", html)
         self.assertIn("Sources enabled in production</dt><dd>0", html)
         self.assertNotIn("Sources enabled in shadow", html)
         self.assertIn("MPS foreign-affairs", html)
@@ -468,7 +468,9 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
                  for b in directory.split('<section class="desk')[1:]
                  if 'data-desk="vietnam"' in b][0]
         self.assertIn("Shadow evaluation — not in corpus", block)
-        self.assertIn("Records</dt><dd>None collected", block)
+        self.assertIn("Corpus records</dt><dd>Not admitted", block)
+        self.assertIn("Last corpus collection</dt><dd>Not admitted", block)
+        self.assertNotIn("Records</dt><dd>None collected", block)
         self.assertNotIn("desk--live", block)
         self.assertIn("Hanoi", block)
 
@@ -526,7 +528,7 @@ class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
             with self.subTest(desk=name):
                 page = self.page(name + ".html")
                 self.assertIn("Shadow evaluation — not in corpus", page)
-                self.assertIn("Records</dt><dd>None collected", page)
+                self.assertIn("Corpus records</dt><dd>Not admitted", page)
                 self.assertIn("Sources enabled in production</dt><dd>0", page)
                 self.assertNotIn('href="archive.html?desk=' + name + '"', page)
                 self.assertNotIn("text_original", page)
@@ -552,7 +554,7 @@ class TestPendingDeskReferenceBrowser(DeskCase):
                 self.assertIn("Individually reviewed official-source references", html)
                 self.assertIn("No individual source references have completed", html)
                 self.assertNotIn('data-reference-list', html)
-                self.assertIn("Records</dt><dd>None collected", html)
+                self.assertIn("Corpus records</dt><dd>Not admitted", html)
                 self.assertNotIn("archive.html?desk=" + slug, html)
 
     def test_progressive_enhancement_files_are_produced(self):
