@@ -2352,7 +2352,8 @@ def build(out_dir: Path, title: str, db_path: Path,
           allow_synthetic_briefs: bool = False, gallery: bool = False,
           review_brief: Path = None, timelines_dir: Path = None,
           review_timeline: Path = None,
-          review_korea: bool = False) -> dict:
+          review_korea: bool = False,
+          korea_review_packet: Path = None) -> dict:
     """
     Render the site into `out_dir`.
 
@@ -2378,17 +2379,31 @@ def build(out_dir: Path, title: str, db_path: Path,
     # ordinary public build/publish path, even accidentally. The preview has
     # its own noindex-only, new external output directory; it never changes
     # the desk roster, registry, site origin, RSS, sitemap or deployed output.
-    # Fail closed if someone changes the desk registry to publish Korea
-    # without separately implementing and approving a signed reference
-    # allowlist. A mere public=true or production manifest must never turn
-    # private source-candidates into a public country page.
+    # Public *bibliographic links* are explicitly distinct from full source
+    # text, translations and production collection. A public Korea registry
+    # declaration cannot activate ingestion, media, or arbitrary new links:
+    # source IDs remain limited to a reviewed immutable five-record snapshot.
     korea_release_state = load_registry().get("korea")
-    if korea_release_state is not None and (
-            korea_release_state.public or korea_release_state.status != "shadow"
-            or korea_release_state.manifest_path is not None
-            or korea_release_state.has_production_records):
-        raise ValueError("Korea public/production admission requires a separate "
-                         "human-reviewed, owner-authorized release PR")
+    korea_public_rows = []
+    if korea_release_state is not None:
+        if (korea_release_state.status != "shadow"
+                or korea_release_state.manifest_path is not None
+                or korea_release_state.has_production_records):
+            raise ValueError("Korea production admission remains prohibited")
+        if korea_release_state.public:
+            from core.korea_public_bibliography import load_public_korea_links
+            korea_public_rows = load_public_korea_links()
+            if len(korea_public_rows) != 5:
+                raise ValueError("Korea public bibliography requires the fixed five-source release")
+    if korea_review_packet is not None:
+        if not review_korea:
+            raise ValueError("Korean approval packet is allowed only in private review mode")
+        packet = Path(korea_review_packet).expanduser()
+        resolved_packet = packet.resolve()
+        if (not packet.is_absolute() or packet.is_symlink()
+                or not packet.is_file()
+                or resolved_packet == REPO_ROOT or REPO_ROOT in resolved_packet.parents):
+            raise ValueError("Korean approval packet must be an existing private file outside repository")
     requested_out = Path(out_dir).expanduser()
     if review_korea:
         resolved = requested_out.resolve()
@@ -2402,11 +2417,17 @@ def build(out_dir: Path, title: str, db_path: Path,
             raise ValueError("private Korea preview requires a new external directory, "
                              "no origin, no public/synthetic/other review mode")
         korea_entry = load_registry().get("korea")
-        if (korea_entry is None or korea_entry.public or
+        if (korea_entry is None or
                 korea_entry.status != "shadow" or
                 korea_entry.has_production_records or
                 korea_entry.manifest_path is not None):
             raise ValueError("Korea must remain a nonpublic, unconfigured shadow desk")
+        # Validate every provided document/rights/owner decision BEFORE
+        # creating any output directory. An invalid packet leaves no partial
+        # website behind. This is structural QA, not identity authentication.
+        from core.korea_reference_gate import approve, load_candidates
+        korea_candidates = load_candidates()
+        korea_prechecked_rows = approve(korea_candidates, korea_review_packet)
     out_dir = requested_out.resolve()
     if (review_brief or review_timeline) and site_origin:
         raise ValueError("a draft review is private: no site origin, feed or sitemap")
@@ -2828,6 +2849,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              public_source_links=references,
                              public_source_options=source_options,
                              public_reference_languages=languages,
+                             korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
@@ -2837,15 +2859,22 @@ def build(out_dir: Path, title: str, db_path: Path,
         # This is a PRIVATE, unpublished rendering of the SAME site desk
         # template used by the real publication. It is not in public_entries,
         # desk navigation, corpus, coverage, sitemap, or deployed routes.
-        # Candidates are original-source metadata only and remain HOLD.
-        from core.korea_reference_gate import load_candidates
+        # Candidate originals always remain HOLD unless a separate private
+        # packet has all exact source, language, rights and owner fields. Even
+        # then JSON is only STRUCTURAL; no human identity is authenticated
+        # here, and the output remains inaccessible to public publication.
         from core.viewmodel import DeskView
         korea = DeskView(entry=korea_entry)
-        candidates = load_candidates()
+        candidates = korea_candidates
+        preview_rows = korea_prechecked_rows
+        private_review_by_identity = {
+            x["source_identity"]: x for x in preview_rows
+        }
         (out_dir / "korea.html").write_text(
             desk_tmpl.render(
                 page="korea.html", desk=korea,
                 korea_preview=True, korea_preview_candidates=candidates,
+                korea_private_structural_refs=private_review_by_identity,
                 public_source_links=[], public_source_options=[],
                 public_reference_languages=[],
                 display_limits=public_desk_limits(korea, source_views),
@@ -3305,6 +3334,9 @@ def build(out_dir: Path, title: str, db_path: Path,
             "records": len(data["corpus"]), "weeks": len(data["weeks"]),
             "desks": len(desks), "collecting_desks": desks.collecting_count,
             "sources": len(source_views),
+            "korea_private_structural_preview_rows": (
+                len(preview_rows) if review_korea else 0),
+            "korea_public_bibliography_entries": len(korea_public_rows),
             "legacy_redirects": redirects}
 
 

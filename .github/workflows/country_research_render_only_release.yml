@@ -46,6 +46,7 @@ jobs:
           python scripts/validate_output.py
           test -f output/philippines.html
           test -f output/vietnam.html
+          test -f output/indonesia.html
           test -f output/desk-references.js
           sha256sum -c /tmp/ipr-release-ci-db.sha
           test ! -e pla_watch.db-wal
@@ -112,8 +113,8 @@ jobs:
           base = Path("output")
           reg = json.loads(Path("desks/registry.json").read_text(encoding="utf-8"))
           country = {x["slug"]: x for x in reg["desks"]}
-          assert {"china", "singapore", "philippines", "vietnam"} <= country.keys()
-          for name in ("philippines", "vietnam"):
+          assert {"china", "singapore", "philippines", "vietnam", "indonesia"} <= country.keys()
+          for name in ("philippines", "vietnam", "indonesia"):
               d = country[name]
               assert d["public"] is True and d["status"] == "shadow"
               assert d["manifest"] is None and d["has_production_records"] is False
@@ -124,13 +125,19 @@ jobs:
               assert "data-reference-list" not in text
               assert "state/shadow.db" not in text
               assert "text_original" not in text and "body_original" not in text
+          indonesia = (base / "indonesia.html").read_text(encoding="utf-8")
+          assert "No individual source references have completed" in indonesia
+          assert "data-reference-list" not in indonesia
+          assert "state/shadow.db" not in indonesia
+          assert "text_original" not in indonesia and "body_original" not in indonesia
           for name in ("philippines", "vietnam"):
               row = json.loads((Path("research") / (name + "_reviewed_links.json")).read_text(encoding="utf-8"))
               assert row["entries"] == [], "nonempty source links need separate review and release"
           desk_html = (base / "desks.html").read_text(encoding="utf-8")
           assert 'href="philippines.html"' in desk_html
           assert 'href="vietnam.html"' in desk_html
-          assert "6 declared" in desk_html and "2 collecting" in desk_html
+          assert 'href="indonesia.html"' in desk_html
+          assert "8 declared" in desk_html and "2 collecting" in desk_html
           assert (base / "desk-references.js").is_file()
           assert (base / "desk-references.css").is_file()
           assert (base / "sitemap.xml").is_file()
@@ -162,6 +169,7 @@ jobs:
           path: |
             output/philippines.html
             output/vietnam.html
+            output/indonesia.html
             output/desks.html
             output/desk-references.js
             output/desk-references.css

@@ -20,12 +20,22 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, required=True,
                         help="new absolute output directory outside repository")
+    parser.add_argument("--structural-approval-packet", type=Path,
+                        help="optional EXTERNAL reviewer JSON; structural checks ONLY")
+    parser.add_argument("--acknowledge-no-identity-authentication",
+                        action="store_true",
+                        help="understand reviewer identities are NOT authenticated")
     args = parser.parse_args(argv)
+    if args.structural_approval_packet and not args.acknowledge_no_identity_authentication:
+        parser.error("independent reviewer signatures are not authenticated; explicit acknowledgement required")
+    if args.acknowledge_no_identity_authentication and not args.structural_approval_packet:
+        parser.error("do not acknowledge absent an external review packet")
     try:
         result = site.build(
             args.out, "Indo-Pacific Record", REPO_ROOT / "pla_watch.db",
             snapshot=site.snapshot_from_corpus(REPO_ROOT / "pla_watch.db"),
-            review_korea=True)
+            review_korea=True,
+            korea_review_packet=args.structural_approval_packet)
     except (ValueError, OSError) as exc:
         parser.error(str(exc))
     target = Path(result["out_dir"])
@@ -40,7 +50,8 @@ def main(argv=None):
         "production_output_changed": False,
         "site_origin": None,
         "candidate_count": 5,
-        "approved_reference_count": 0,
+        "structurally_complete_private_preview_rows": result["korea_private_structural_preview_rows"],
+        "authenticated_public_approvals": 0,
     }, indent=2, sort_keys=True))
     return 0
 
