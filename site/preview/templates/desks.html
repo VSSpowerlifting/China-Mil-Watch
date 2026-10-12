@@ -21,8 +21,8 @@ its scope is declared, and is labeled according to what it actually does.</p>
 
    Each plate is still a `section.desk`: the no-fabricated-coverage guards
    split this page on it to check each desk's block in isolation. A desk that
-   does not collect shows "None collected" — never a zero, which would read as
-   a measurement nothing made. #}
+   is in shadow evaluation shows "Not admitted" for corpus records and dates;
+   it may still hold originals in isolated private source state. #}
 {% set placed = desk_map.desks %}
 <figure class="deskmap" aria-labelledby="deskmap-key">
   <div class="deskmap-controls" hidden>
@@ -75,8 +75,8 @@ its scope is declared, and is labeled according to what it actually does.</p>
       <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
       <p class="deskmap-seat">{{ m.seat }} <span>{{ m.coords }}</span></p>
       <dl class="deskmap-stats">
-        <div><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
-        <div><dt>Last collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
+        <div><dt>{{ 'Corpus records' if d.status == 'shadow' else 'Records' }}</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}{{ 'Not admitted' if d.status == 'shadow' else 'None collected' }}{% endif %}</dd></div>
+        <div><dt>{{ 'Last corpus collection' if d.status == 'shadow' else 'Last collection' }}</dt><dd>{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</dd></div>
       </dl>
       <p class="deskmap-enter"><a href="{{ d.route }}" aria-label="Enter the {{ d.name }}">Enter desk <span aria-hidden="true">→</span></a></p>
     </section>
@@ -102,8 +102,8 @@ its scope is declared, and is labeled according to what it actually does.</p>
   <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
   <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
   <dl class="deskmap-stats">
-    <div><dt>Records</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}None collected{% endif %}</dd></div>
-    <div><dt>Last collection</dt><dd>{{ d.last_successful_run or 'None' }}</dd></div>
+    <div><dt>{{ 'Corpus records' if d.status == 'shadow' else 'Records' }}</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}{{ 'Not admitted' if d.status == 'shadow' else 'None collected' }}{% endif %}</dd></div>
+    <div><dt>{{ 'Last corpus collection' if d.status == 'shadow' else 'Last collection' }}</dt><dd>{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</dd></div>
   </dl>
   <p class="deskmap-enter"><a href="{{ d.route }}" aria-label="Enter the {{ d.name }}">Enter desk <span aria-hidden="true">→</span></a></p>
 </section>
@@ -135,7 +135,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
   <thead>
     <tr><th scope="col">Desk</th><th scope="col">Status</th>
         <th scope="col" class="num">Configured</th><th scope="col" class="num">Enabled</th>
-        <th scope="col" class="num">Records</th><th scope="col">Last collection</th></tr>
+        <th scope="col" class="num">Records</th><th scope="col">Last corpus collection</th></tr>
   </thead>
   <tbody>
   {% for d in desks %}
@@ -145,7 +145,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
       <td data-label="Configured" class="num">{{ d.configured_source_count }}</td>
       <td data-label="Enabled" class="num">{{ d.enabled_source_count }}</td>
       <td data-label="Records" class="num">{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}<span class="meta">none — see status</span>{% endif %}</td>
-      <td data-label="Last collection">{{ d.last_successful_run or 'None' }}</td>
+      <td data-label="Last corpus collection">{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</td>
     </tr>
   {% endfor %}
   </tbody>
@@ -173,7 +173,8 @@ its scope is declared, and is labeled according to what it actually does.</p>
   </tbody>
 </table>
 </div>
-<p class="meta">A desk that does not collect shows no record count at all. Zero would say the record
-was checked and found empty; the truth is that no record exists to check.</p>
+<p class="meta">Only collecting desks show public-corpus record totals. A shadow desk\'s "Not admitted"
+means its independently preserved material is excluded from those totals and dates; it does not
+mean no private originals were collected.</p>
 {% endblock %}
 {% block scripts %}<script src="desk-map.js" defer></script>{% endblock %}
