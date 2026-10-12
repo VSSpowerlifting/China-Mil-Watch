@@ -46,6 +46,10 @@ class IndonesiaOneTimePublicationContract(unittest.TestCase):
         ):
             with self.subTest(required=required):
                 self.assertIn(required, src)
+        self.assertIn('ol[aria-label="Eight external ministry news links"] a', src)
+        self.assertNotIn('ol[aria-label="Four external ministry news links"] a', src)
+        self.assertIn('from core.indonesia_official_index import load', src)
+        self.assertIn('[a["href"] for a in links] == [r["source_url"] for r in load()]', src)
         for forbidden in (
             "scripts/shadow_collect", "python pipeline.py",
             "ANTHROPIC_API_KEY", "source_rights_approved: true",
