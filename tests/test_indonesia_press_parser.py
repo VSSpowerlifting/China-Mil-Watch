@@ -173,14 +173,15 @@ class PressParserPreview(unittest.TestCase):
         good = parse_press_article(html, **kw)
         marker = "SIARAN PERS NOMOR: " + good.press_number
         self.assertIn(marker, BeautifulSoup(html, "html.parser").get_text(" ", strip=True))
+        publisher_month = good.press_number.split("/")[2]
+        forged_month = "I" if publisher_month != "I" else "II"
         bad = [
             html.replace(marker, "BERITA NOMOR: " + good.press_number),
             html.replace(good.press_number,
                          good.press_number.replace("/2026/", "/2025/")),
             html.replace(good.press_number,
-                         good.press_number.replace("/X/2026/", "/IX/2026/")
-                         if "/X/2026/" in good.press_number else
-                         good.press_number.replace("/IX/2026/", "/X/2026/")),
+                         good.press_number.replace("/" + publisher_month + "/",
+                                                   "/" + forged_month + "/")),
             html.replace(marker, marker + " " + marker),
         ]
         for index, value in enumerate(bad):
