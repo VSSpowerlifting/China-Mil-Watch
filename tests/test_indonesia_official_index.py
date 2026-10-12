@@ -80,8 +80,7 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
             self.skipTest("database fixture absent")
         output = Path(self.temp.name) / "render"
         gp.build(output, "Offline Indonesia Official Link Pilot", db,
-                 snapshot=gp.snapshot_from_corpus(db),
-                 site_origin="https://test.invalid")
+                 snapshot=gp.snapshot_from_corpus(db))
         page = (output / "indonesia.html").read_text(encoding="utf-8")
         soup = BeautifulSoup(page, "html.parser")
         targets = soup.select("#indonesia-links-heading ~ ol a")
