@@ -31,8 +31,18 @@ class PressParserPreview(unittest.TestCase):
 
     @staticmethod
     def synthetic_article():
+        # This is deliberately a Berita fixture with a synthetic press-number
+        # marker inserted. It does NOT become authentic Siaran Pers evidence.
         row = next(r for r in ROWS if r.get("capture") == "kemhan-article.bin")
-        return row["url"], fixture(row["capture"]).decode("utf-8")
+        soup = BeautifulSoup(fixture(row["capture"]).decode("utf-8"), "html.parser")
+        parts = row["url"].split(".go.id/", 1)[1].split("/")
+        month = ("I", "II", "III", "IV", "V", "VI", "VII", "VIII",
+                 "IX", "X", "XI", "XII")[int(parts[1]) - 1]
+        marker = soup.new_tag("p")
+        marker.string = ("SIARAN PERS NOMOR: SP/17/" + month + "/" +
+                         parts[0] + "/ROINFOHAN")
+        soup.select_one(".def-page.article").insert(0, marker)
+        return row["url"], str(soup)
 
     def test_parser_not_enabled_as_source_adapter_or_manifest(self):
         from core.collection.contract import SourceAdapter
@@ -133,6 +143,50 @@ class PressParserPreview(unittest.TestCase):
         self.assertIn("Jakarta", doc.original_text)
         self.assertNotIn("Statistik Pengunjung", doc.original_text)
         self.assertEqual(doc.publication_kind, "official_press_release")
+        self.assertIn("/ROINFOHAN", doc.press_number)
+        self.assertIn("/2026/", doc.press_number)
+
+    def test_actual_unmodified_berita_article_has_no_press_identifier(self):
+        from scraper.sources.id_kemhan import KemhanAdapter
+        from core.manifests import load_manifest
+        from pathlib import Path
+        row = next(r for r in ROWS if r.get("capture") == "kemhan-article.bin")
+        html = fixture(row["capture"]).decode("utf-8")
+        source = load_manifest(Path(__file__).resolve().parents[1] /
+                               "shadow/id_kemhan/manifest.json").sources[0]
+        original = KemhanAdapter(source).parse_article(html, row["url"])
+        with self.assertRaisesRegex(ValueError, "press release number"):
+            parse_press_article(html, url=row["url"],
+                                listed_title=original.title_original,
+                                listed_date=original.published_date)
+
+    def test_press_number_is_date_bound_and_cannot_be_duplicated_or_buried(self):
+        url, html = self.synthetic_article()
+        from scraper.sources.id_kemhan import KemhanAdapter
+        from core.manifests import load_manifest
+        from pathlib import Path
+        source = load_manifest(Path(__file__).resolve().parents[1] /
+                               "shadow/id_kemhan/manifest.json").sources[0]
+        original = KemhanAdapter(source).parse_article(html, url)
+        kw = dict(url=url, listed_title=original.title_original,
+                  listed_date=original.published_date)
+        good = parse_press_article(html, **kw)
+        marker = "SIARAN PERS NOMOR: " + good.press_number
+        self.assertIn(marker, BeautifulSoup(html, "html.parser").get_text(" ", strip=True))
+        bad = [
+            html.replace(marker, "BERITA NOMOR: " + good.press_number),
+            html.replace(good.press_number,
+                         good.press_number.replace("/2026/", "/2025/")),
+            html.replace(good.press_number,
+                         good.press_number.replace("/X/2026/", "/IX/2026/")
+                         if "/X/2026/" in good.press_number else
+                         good.press_number.replace("/IX/2026/", "/X/2026/")),
+            html.replace(marker, marker + " " + marker),
+        ]
+        for index, value in enumerate(bad):
+            with self.subTest(index=index), self.assertRaisesRegex(
+                    ValueError, "press release number|year/month"):
+                parse_press_article(value, **kw)
 
     def test_page_date_canonical_and_heading_mismatch_fail_closed(self):
         url, html = self.synthetic_article()
