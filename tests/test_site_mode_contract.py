@@ -362,7 +362,7 @@ class TestCandidateBuild(unittest.TestCase):
         # Match the names of actual desk cards, not arbitrary substrings:
         # "South Korea Desk" is declared, but "Korea Desk" alone is not.
         shown = set(re.findall(
-            r'<h2 class="plain">\\s*<a href="[^"]+">([^<]+)</a>\\s*</h2>',
+            r'<h2 class="plain">\s*<a href="[^"]+">([^<]+)</a>\s*</h2>',
             html))
         self.assertTrue(shown, "no published desk cards found")
         self.assertTrue(shown <= declared, "an undeclared desk was rendered: %r" %
