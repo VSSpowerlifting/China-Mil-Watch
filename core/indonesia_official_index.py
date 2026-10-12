@@ -2,7 +2,7 @@
 
 This is a source-directory aid, NOT a reviewed reference registry, content
 license, archive/collection admission, or endorsement of publisher statements.
-The four publisher titles/dates link outward; no original bodies are loaded.
+The selected publisher titles/dates link outward; no original bodies are loaded.
 """
 from __future__ import annotations
 
@@ -18,7 +18,8 @@ SCHEMA = "ipr-indonesia-external-source-links/1"
 PINNED = "17dfae7e6e1e9e1142d81c89764f022ebf03552f"
 # ID-05 deliberately omitted: Kemhan's Yonif TP 880 text conflicts on Kaltara/Kalbar.
 IDS = ("id-01", "id-02", "id-03", "id-04",
-       "id-06", "id-07", "id-08", "id-09")
+       "id-06", "id-07", "id-08", "id-09",
+       "id-10", "id-11", "id-12", "id-13")
 # Freeze newly selected identities, original Indonesian titles, and exact dates.
 # Each addition must be explicitly reviewed; the directory must not expand
 # merely because a publisher URL is syntactically valid.
@@ -41,6 +42,26 @@ ADDED = {
     "id-09": (
         "/2026/10/09/mensos-dan-wamenhan-lepas-1-509-kadet-unhan-ri-untuk-mengabdi-di-181-sekolah-rakyat.html",
         "Mensos dan Wamenhan Lepas 1.509 Kadet Unhan RI untuk Mengabdi di 181 Sekolah Rakyat",
+        "2026-10-09",
+    ),
+    "id-10": (
+        "/2026/10/08/wamenhan-tinjau-area-gudang-utara-kodam-iii-siliwangi.html",
+        "Wamenhan Tinjau Area Gudang Utara Kodam III/Siliwangi",
+        "2026-10-08",
+    ),
+    "id-11": (
+        "/2026/10/08/menhan-tekankan-bela-negara-dan-patriotisme-kepada-siswa-latsarmil-komcad.html",
+        "Menhan Tekankan Bela Negara dan Patriotisme kepada Siswa Latsarmil Komcad",
+        "2026-10-08",
+    ),
+    "id-12": (
+        "/2026/10/08/wamenhan-bersama-wamenkes-tinjau-kesiapan-rs-tk-ii-dustira-layani-prajurit-dan-masyarakat.html",
+        "Wamenhan Bersama Wamenkes Tinjau Kesiapan RS Tk. II Dustira Layani Prajurit dan Masyarakat",
+        "2026-10-08",
+    ),
+    "id-13": (
+        "/2026/10/09/wamenhan-ri-terima-audiensi-ketua-yayasan-gedung-veteran-ri-bahas-pengelolaan-dan-pemanfaatan-aset.html",
+        "Wamenhan RI Terima Audiensi Ketua Yayasan Gedung Veteran RI, Bahas Pengelolaan dan Pemanfaatan Aset",
         "2026-10-09",
     ),
 }
@@ -79,7 +100,7 @@ def validate(data):
             "public source-index provenance or status changed")
     entries = data["references"]
     require(type(entries) is list and len(entries) == len(IDS),
-            "this frozen source directory permits exactly eight external publisher links")
+            "this frozen source directory permits exactly twelve external publisher links")
     require([p.get("id") for p in entries if type(p) is dict] == list(IDS),
             "unrecognized or reordered pilot reference")
     seen = set()
