@@ -338,9 +338,9 @@ class TestCandidateBuild(unittest.TestCase):
         self.assertEqual({a.get("href") for a in home.select(".home-desk-list a")},
                          {"china.html", "singapore.html"})
 
-    def test_japan_renders_with_no_records_and_no_sources(self):
+    def test_japan_renders_with_no_admitted_corpus_records(self):
         html = (self.out / "japan.html").read_text(encoding="utf-8")
-        self.assertIn("Records</dt><dd>None collected", html)
+        self.assertIn("Corpus records</dt><dd>Not admitted", html)
         self.assertIn("No source is enabled in production.", html)
 
     def test_the_us_is_not_a_collecting_desk_in_the_build(self):

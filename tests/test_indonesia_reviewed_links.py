@@ -140,7 +140,9 @@ class IndonesiaPublicLinkGate(unittest.TestCase):
         self.assertIn('lang="id"', html)
         self.assertIn(approved_fixture["source_url"], html)
         self.assertIn(approved_fixture["title_original"], html)
-        self.assertIn("None collected", html)
+        # Shadow collection may exist, but no record has entered the public corpus.
+        self.assertIn("Corpus records</dt><dd>Not admitted", html)
+        self.assertNotIn("Records</dt><dd>None collected", html)
         self.assertNotIn("text_original", html)
         self.assertNotIn("body_original", html)
         self.assertNotIn(approved_fixture["source_url"],
