@@ -419,7 +419,7 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
 
     def test_the_vietnam_page_states_no_records_and_no_enabled_source(self):
         html = self.page("vietnam.html")
-        self.assertIn("Shadow evaluation — not public", html)
+        self.assertIn("Shadow evaluation — not in corpus", html)
         self.assertIn("Records</dt><dd>None collected", html)
         self.assertIn("Sources enabled in production</dt><dd>0", html)
         self.assertNotIn("Sources enabled in shadow", html)
@@ -467,7 +467,7 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
         block = [b.split("</section>", 1)[0]
                  for b in directory.split('<section class="desk')[1:]
                  if 'data-desk="vietnam"' in b][0]
-        self.assertIn("Shadow evaluation — not public", block)
+        self.assertIn("Shadow evaluation — not in corpus", block)
         self.assertIn("Records</dt><dd>None collected", block)
         self.assertNotIn("desk--live", block)
         self.assertIn("Hanoi", block)
@@ -525,7 +525,7 @@ class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
         for name in ("philippines", "vietnam"):
             with self.subTest(desk=name):
                 page = self.page(name + ".html")
-                self.assertIn("Shadow evaluation — not public", page)
+                self.assertIn("Shadow evaluation — not in corpus", page)
                 self.assertIn("Records</dt><dd>None collected", page)
                 self.assertIn("Sources enabled in production</dt><dd>0", page)
                 self.assertNotIn('href="archive.html?desk=' + name + '"', page)
