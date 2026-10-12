@@ -46,8 +46,9 @@ class IndonesiaOneTimePublicationContract(unittest.TestCase):
         ):
             with self.subTest(required=required):
                 self.assertIn(required, src)
-        self.assertIn('ol[aria-label="Eight external ministry news links"] a', src)
+        self.assertIn('ol[aria-label="Twelve external ministry news links"] a', src)
         self.assertNotIn('ol[aria-label="Four external ministry news links"] a', src)
+        self.assertNotIn('ol[aria-label="Eight external ministry news links"] a', src)
         self.assertIn('from core.indonesia_official_index import load', src)
         self.assertIn('[a["href"] for a in links] == [r["source_url"] for r in load()]', src)
         for forbidden in (
