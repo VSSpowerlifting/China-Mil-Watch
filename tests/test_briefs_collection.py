@@ -666,11 +666,17 @@ class TestSiteBuild(unittest.TestCase):
         series = html[start:html.index("</section>", start)]
         self.assertLess(html.index('<h3 id="collections">Collections</h3>'), start)
         self.assertNotIn('<h3 id="collections">', series)
-        for desk in load_registry():
+        # Series is public: internal-only registered desks have no public route.
+        registry = load_registry()
+        for desk in registry.public_entries:
             with self.subTest(desk=desk.slug):
                 self.assertIn('<a href="%s">%s</a>' % (desk.route, desk.name),
                               series)
-        self.assertEqual(series.count("<tr>") - 1, len(load_registry()))
+        for desk in registry:
+            if not desk.public:
+                with self.subTest(nonpublic_desk=desk.slug):
+                    self.assertNotIn('<a href="%s">' % desk.route, series)
+        self.assertEqual(series.count("<tr>") - 1, len(registry.public_entries))
 
     def test_the_newest_earlier_issue_leads_analysis_as_the_latest_brief(self):
         # With no native brief the newest item of the one collection is the

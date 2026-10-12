@@ -2387,17 +2387,22 @@ def build(out_dir: Path, title: str, db_path: Path,
     # ordinary public build/publish path, even accidentally. The preview has
     # its own noindex-only, new external output directory; it never changes
     # the desk roster, registry, site origin, RSS, sitemap or deployed output.
-    # Fail closed if someone changes the desk registry to publish Korea
-    # without separately implementing and approving a signed reference
-    # allowlist. A mere public=true or production manifest must never turn
-    # private source-candidates into a public country page.
+    # Public *bibliographic links* are explicitly distinct from full source
+    # text, translations and production collection. A public Korea registry
+    # declaration cannot activate ingestion, media, or arbitrary new links:
+    # source IDs remain limited to a reviewed immutable five-record snapshot.
     korea_release_state = load_registry().get("korea")
-    if korea_release_state is not None and (
-            korea_release_state.public or korea_release_state.status != "shadow"
-            or korea_release_state.manifest_path is not None
-            or korea_release_state.has_production_records):
-        raise ValueError("Korea public/production admission requires a separate "
-                         "human-reviewed, owner-authorized release PR")
+    korea_public_rows = []
+    if korea_release_state is not None:
+        if (korea_release_state.status != "shadow"
+                or korea_release_state.manifest_path is not None
+                or korea_release_state.has_production_records):
+            raise ValueError("Korea production admission remains prohibited")
+        if korea_release_state.public:
+            from core.korea_public_bibliography import load_public_korea_links
+            korea_public_rows = load_public_korea_links()
+            if len(korea_public_rows) != 5:
+                raise ValueError("Korea public bibliography requires the fixed five-source release")
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -2420,7 +2425,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             raise ValueError("private Korea preview requires a new external directory, "
                              "no origin, no public/synthetic/other review mode")
         korea_entry = load_registry().get("korea")
-        if (korea_entry is None or korea_entry.public or
+        if (korea_entry is None or
                 korea_entry.status != "shadow" or
                 korea_entry.has_production_records or
                 korea_entry.manifest_path is not None):
@@ -2862,6 +2867,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              public_source_links=references,
                              public_source_options=source_options,
                              public_reference_languages=languages,
+                             korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
@@ -3358,6 +3364,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             "sources": len(source_views),
             "korea_private_structural_preview_rows": (
                 len(preview_rows) if review_korea else 0),
+            "korea_public_bibliography_entries": len(korea_public_rows),
             "legacy_redirects": redirects}
 
 

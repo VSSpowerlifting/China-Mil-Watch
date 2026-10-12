@@ -489,7 +489,7 @@ class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
 
     def test_public_desk_roster_does_not_change_which_desks_are_live(self):
         self.assertEqual({d.slug for d in load_registry().public_entries},
-            {"china", "singapore", "japan", "philippines", "vietnam", "us-indopacific"})
+            {"china", "singapore", "japan", "korea", "philippines", "vietnam", "us-indopacific"})
         self.assertEqual(sorted(d.slug for d in load_registry() if d.is_collecting),
                          ["china", "singapore"])
 

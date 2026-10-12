@@ -28,3 +28,15 @@
 .archive-page .page-head{min-height:240px;padding-bottom:75px}
 .archive-page .page-head::after{inset:-1px -22px -180px auto;background-position:right 55%;mask-image:linear-gradient(black 87%,transparent)}
 @media(max-width:700px){.archive-page .page-head{min-height:0;padding-bottom:65px}.archive-page .page-head::after{inset:auto -22px 0;height:44px;mask-image:none}}
+
+/* Desk marker (Phase 2b): the desk country's outline before its link, a mask over a muted fill.
+   The server rows and browse.js card() both draw `.row-side a` with the desk route as its href, so one
+   rule serves both; a desk with no file here shows none. Outlines: assets/desk-marks, built by
+   scripts/build_desk_marks.py. Decorative: empty generated content, hidden in forced colours and print. */
+.archive-page .row-side a:is([href="china.html"],[href="japan.html"],[href="singapore.html"],[href="vietnam.html"])::before{content:"";display:inline-block;width:1.25em;height:1em;margin-right:.4em;vertical-align:-.12em;background:var(--muted);-webkit-mask:center/contain no-repeat;mask:center/contain no-repeat}
+.archive-page .row-side a[href="china.html"]::before{-webkit-mask-image:url(assets/desk-marks/china.svg);mask-image:url(assets/desk-marks/china.svg)}
+.archive-page .row-side a[href="japan.html"]::before{-webkit-mask-image:url(assets/desk-marks/japan.svg);mask-image:url(assets/desk-marks/japan.svg)}
+.archive-page .row-side a[href="singapore.html"]::before{-webkit-mask-image:url(assets/desk-marks/singapore.svg);mask-image:url(assets/desk-marks/singapore.svg)}
+.archive-page .row-side a[href="vietnam.html"]::before{-webkit-mask-image:url(assets/desk-marks/vietnam.svg);mask-image:url(assets/desk-marks/vietnam.svg)}
+@media(forced-colors:active){.archive-page .row-side a::before{display:none!important}}
+@media print{.archive-page .row-side a::before{display:none!important}}
