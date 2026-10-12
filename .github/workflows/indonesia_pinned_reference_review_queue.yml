@@ -67,9 +67,9 @@ jobs:
           data = json.loads((d / "review_queue.json").read_text(encoding="utf-8"))
           counts = data["counts"]
           assert data["stored_originals"] >= 24, "pinned source record count decreased"
-          assert counts["official_link_already_public_not_reviewed"] == 4
+          assert counts["official_link_already_public_not_reviewed"] == 8
           assert counts["hold_publisher_geography_inconsistent"] == 1
-          assert counts["new_source_review_candidate"] >= 19
+          assert counts["new_source_review_candidate"] == data["stored_originals"] - 9
           assert sum(counts.values()) == data["stored_originals"]
           assert not data["public_renderer_consumes_queue"]
           assert not data["independent_human_review_completed"]
@@ -83,6 +83,8 @@ jobs:
                   "publisher_body_reuse_authorized", "eligible_for_public_corpus"}
               assert row["official_url"].startswith("https://www.kemhan.go.id/")
               assert row["independent_human_review_complete"] is False
+              assert row["publisher_body_reuse_authorized"] is False
+              assert row["eligible_for_public_corpus"] is False
           print("Verified pinned metadata-only Indonesia source review queue:", counts)
           PY
       - name: Confirm protected database, output and source unchanged
