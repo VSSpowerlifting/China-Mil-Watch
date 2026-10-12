@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -16,14 +16,50 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{{ desk.status_label }}</h2>
+    <h2>{{ 'Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label }}</h2>
     <p>{{ desk.status_explanation }}</p>
   </div>
 </div>
 
-{# PRIVATE-only site-equivalent Korea preview, never reachable from the public
-   registry. The actual Korean publisher links are NOT human-reviewed IPR
-   references, and no original body or translation is eligible for display. #}
+{# Public Korea renders a strictly frozen official-link bibliography only.
+   Private source/rights/editorial preview below remains separate: no raw
+   source body, media or machine-produced translation enters publication. #}
+{% if desk.slug == 'korea' and not korea_preview | default(false) %}
+<section class="korea-public-bibliography" aria-labelledby="korea-bibliography-title">
+  <p class="eyebrow">Official-source directory · limited five-reference pilot</p>
+  <h2 id="korea-bibliography-title">Ministry of National Defense — official references</h2>
+  <p>Five source references from one Korean Ministry of National Defense
+  (국방부) release family, republished by Republic of Korea Policy Briefing
+  (대한민국 정책브리핑). Entries link to the government publisher;
+  they are <strong>not IPR archived records</strong> or independent
+  confirmation of a statement's claims. The selection is frozen to the
+  October 11, 2026 original-source snapshot, not automatically updated.</p>
+  <p class="meta">Original titles are presented in Korean without an
+  IPR translation. Portal posting and original document distribution dates
+  are distinct facts.</p>
+  <ol class="korea-public-source-list" aria-label="Five official Korean source references">
+    {% for ref in korea_public_links %}
+    <li data-korea-public-link="{{ ref.source_identity }}">
+      <h3><a href="{{ ref.source_url }}" lang="ko" rel="noopener noreferrer"
+        target="_blank">{{ ref.title_original }}</a></h3>
+      <p class="meta">Issuer: Republic of Korea Ministry of National Defense (국방부)
+        · Republication: Republic of Korea Policy Briefing (대한민국 정책브리핑)</p>
+      <p class="meta">Portal posted: <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+        · Ministry document distributed: <time datetime="{{ ref.document_distribution_date }}">{{ ref.document_distribution_date }}</time>
+        · {{ ref.source_identity }}</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">Source-title and factual bibliographic links only. The
+  source publisher marks qualifying text KOGL Type 1 (attribution), but
+  original HWPX files and photographs, illustrations, videos and other
+  third-party materials are not reproduced. Attribution:
+  Ministry of National Defense, via Republic of Korea Policy Briefing.
+  <a href="https://www.korea.kr/guide/copyRight.do" rel="noopener noreferrer">Official publisher copyright policy</a>.</p>
+</section>
+{% endif %}
+
+{# PRIVATE-only site-equivalent Korea preview may be generated separately. #}
 {% if korea_preview | default(false) %}
 <section class="korea-private-preview" aria-labelledby="korea-preview-heading">
   <p class="eyebrow">Private design review · unpublished · noindex</p>
@@ -211,12 +247,16 @@ qualification evidence, not a current gate.</p>
 <h3>Sources identified</h3>
 <div class="table-scroll">
 <table class="stacking">
-  <caption>Listing and item format verified directly; no endpoint is claimed that was not checked.</caption>
+  <caption>Declared source families and, where verified, official publisher entrypoints. These are external institution pages, not IPR-reviewed individual publications or admitted archive records.</caption>
   <thead><tr><th scope="col">Source</th><th scope="col">Item format</th><th scope="col">Note</th></tr></thead>
   <tbody>
   {% for s in desk.research.source_families %}
     <tr>
-      <td data-label="Source">{{ s.name }}</td>
+      <td data-label="Source">{{ s.name }}
+        {% if s.publisher_url %}
+        <p class="meta"><a href="{{ s.publisher_url }}" rel="noopener noreferrer">Open official publisher index</a></p>
+        {% endif %}
+      </td>
       <td data-label="Item format">{{ s.format }}</td>
       <td data-label="Note">{{ s.note }}</td>
     </tr>

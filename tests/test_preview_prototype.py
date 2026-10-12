@@ -417,9 +417,9 @@ class TestNoFabricatedCoverage(PreviewCase):
 
     def test_non_collecting_desks_are_labelled_and_carry_no_record_count(self):
         """
-        Every declared desk is rendered, including the ones that collect
-        nothing — a declared desk with no page is one a reader cannot check.
-        What a non-collecting desk may never show is a record figure.
+        Every public desk is rendered, including those collecting nothing.
+        Internal-only desks have no public route and must not appear here.
+        A non-collecting public desk may never show a record figure.
         """
         html = self.page("desks.html")
         # One block per desk section, so the status marker that precedes the
@@ -427,11 +427,11 @@ class TestNoFabricatedCoverage(PreviewCase):
         blocks = {}
         for chunk in html.split('<section class="desk')[1:]:
             body = chunk.split("</section>", 1)[0]
-            for entry in load_registry():
+            for entry in load_registry().public_entries:
                 if entry.name in body:
                     blocks.setdefault(entry.slug, body)
                     break
-        for entry in load_registry():
+        for entry in load_registry().public_entries:
             if entry.is_collecting:
                 continue
             with self.subTest(desk=entry.slug):

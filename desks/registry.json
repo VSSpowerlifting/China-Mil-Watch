@@ -1,369 +1,375 @@
 {
- "registry_version": 1,
- "_comment": [
-  "THE DESK REGISTRY — one authoritative list of every declared desk.",
-  "",
-  "This file is NOT a desk manifest and is deliberately not discoverable as",
-  "one. core.manifests.load_all_desks() globs desks/*/manifest.json; this",
-  "file sits one level up, so declaring a desk here cannot make",
-  "sync_desk_config() write a desk, institution or source row into the",
-  "tracked production database, and cannot enable collection.",
-  "",
-  "What a desk's manifest says is authoritative for its SOURCES. What this",
-  "file says is authoritative for its STATUS and its public presentation.",
-  "Neither invents the other: configured and enabled source counts are read",
-  "from the manifest this file points at, and a desk with no manifest has no",
-  "sources — which is a fact, not a gap to fill in.",
-  "",
-  "Record counts are never declared here. They come from the database, for",
-  "desks that have records in it.",
-  "",
-  "Statuses (core/domain.py DESK_STATUSES):",
-  "  planned        declared scope, nothing researched or configured",
-  "  research       scope researched; no enabled source and nothing",
-  "                 collecting. A collector may be built and rehearsed,",
-  "                 but it has not been launched",
-  "  shadow         collecting privately under evaluation; no public records",
-  "  live           collecting into the production corpus",
-  "  paused         configured and deliberately stopped",
-  "  access_blocked researched and reachable in principle, but official",
-  "                 discovery is not available under honest identification"
- ],
- "desks": [
-  {
-   "slug": "china",
-   "name": "China Desk",
-   "route": "china.html",
-   "scope": "Chinese official and state-linked defense publication surfaces: the armed forces newspaper, the defense ministry, the state news agency's military desk, and two English-language portals.",
-   "status": "live",
-   "status_explanation": "Collecting daily into the production corpus. This is the only mature collection in the project.",
-   "public": true,
-   "manifest": "desks/china/manifest.json",
-   "has_production_records": true,
-   "limits": [
-    "Coverage is selective and heavily concentrated in one source.",
-    "Not every Chinese official publication surface is implemented. One configured source has no working collector and is reported as such on every run rather than hidden.",
-    "Collection was interrupted between 2026-07-17 and 2026-07-24. The gap is preserved, not backfilled."
-   ]
-  },
-  {
-   "slug": "singapore",
-   "name": "Singapore Desk",
-   "route": "singapore.html",
-   "scope": "One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.",
-   "status": "live",
-   "status_explanation": "Promoted 2026-09-21 (DECISION_LOG), after 33 elapsed shadow-collection days, completed Day 7 and Day 14 human checkpoint reviews, and owner sign-off. The corpus began as a one-time governed promotion of 57 corrected shadow records; the same adapter, already run daily by the shadow collector since 2026-08-19, is now also invoked by the ordinary scheduled production pipeline, so the corpus grows from further scheduled runs going forward. Two records stay held out of the promotable set for unrepaired charset damage.",
-   "public": true,
-   "manifest": "desks/singapore/manifest.json",
-   "has_production_records": true,
-   "limits": [
-    "This is not whole-of-government coverage, not armed-forces-wide, and not comprehensive Singapore defense coverage.",
-    "Other ministries, the parliamentary Hansard record, unit and recruitment pages, magazine features, social media, and procurement notices are all outside the declared scope.",
-    "The corpus began as a one-time governed promotion; new records are now collected by the ordinary scheduled production pipeline, subject to the same held-record exclusions.",
-    "Two records are held out of the promoted corpus: their CJK text was damaged by a historical extractor defect the correction overlay could not repair, and they are excluded rather than published with damaged text. See shadow/singapore_mindef/CORRECTIONS.md for which records and why."
-   ],
-   "qualification": {
-    "required_consecutive_days": 30,
-    "checkpoints": 3,
-    "explanation": "Historical qualification record, retained after promotion rather than deleted: this is evidence for how the desk reached live status, not a current gate. Day zero was 2026-08-19T23:03:09Z. Day 7 and Day 14 human checkpoint reviews are complete, both pass_with_findings, published to review/singapore-mindef. No separate Day 30 human checkpoint review is on record; the review kit's computed Day-30 packet reproduces byte-for-byte and reports publishable: yes. Owner sign-off promoting the desk to live is recorded in DECISION_LOG.md, 2026-09-21."
-   }
-  },
-  {
-   "slug": "japan",
-   "name": "Japan Desk",
-   "route": "japan.html",
-   "scope": "Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.",
-   "status": "shadow",
-   "status_explanation": "Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.",
-   "public": true,
-   "manifest": "shadow/jp_mod/manifest.json",
-   "has_production_records": false,
-   "research": {
-    "source_families": [
-     {
-      "name": "Ministry of Defense — news feed (Japanese)",
-      "format": "RSS — 142 items measured 2026-08-26: 134 HTML, 8 PDF",
-      "note": "Families: /j/press/ 105, /j/approach/ 37."
-     },
-     {
-      "name": "Ministry of Defense — site update feed (Japanese)",
-      "format": "RSS — 391 items measured 2026-08-26: 342 HTML, 0 PDF",
-      "note": "A whole-site stream, not a press-release feed: /j/press/ 126, /j/budget/ 93, /j/profile/ 76, /j/approach/ 63, /j/policy/ 21, /j/presiding/ 11, /j/kids/ 1. Every item is labeled by its family and nothing is filtered out."
-     },
-     {
-      "name": "Joint Staff — press releases (English)",
-      "format": "HTML index — challenged (403), not collected",
-      "note": "Declared so the Joint Staff stays distinguishable. Carried by neither RSS feed, and its own index is challenged. Nothing has been collected from it."
-     },
-     {
-      "name": "Ministry of Defense — press releases (English)",
-      "format": "HTML index — challenged (403), not collected",
-      "note": "Declared so the English estate stays distinguishable. Nothing has been collected from it."
-     }
-    ],
-    "observed_volume_subject": "Joint Staff press releases",
-    "observed_volume": [
-     [
-      "2026, to mid-August",
-      "135"
-     ],
-     [
-      "2025, full year",
-      "214"
-     ],
-     [
-      "2014-2026, whole archive",
-      "895"
-     ]
-    ],
-    "volume_caveat": "These figures describe what the ministry published and what its feeds carry. They are not a record count and nothing here has been collected into the public record. Only documents published as PDF carry text; on the news feed that was 8 of 142 items on 2026-08-26.",
-    "blockers": [
-     [
-      "Documents published as HTML cannot be retrieved.",
-      "The ministry's RSS feeds and its PDF documents are served normally, but HTML documents on the same host are returned behind an interactive challenge. Those items are discovered and recorded as unretrieved rather than inferred to be absent. An institution that wants to refuse this collector must be able to recognise it and say so, so defeating the challenge would destroy the capability that rule protects. Resolving this means requesting an official route."
-     ],
-     [
-      "Collection-health thresholds remain unset.",
-      "Publication cadence and silence thresholds are calibrated only after shadow collection has run. Guessing now would create false alarms or hide real silence."
-     ]
-    ],
-    "resolved": [
-     [
-      "Official discovery access — resolved 2026-08-26.",
-      "The listing pages remain challenged, but the ministry publishes two official RSS feeds that are served normally and support conditional requests. Discovery no longer depends on the challenged pages."
-     ],
-     [
-      "PDF text extraction wired to a collector — resolved 2026-08-26.",
-      "The dormant extractor is now used by the Japan shadow adapter, and by nothing on the production collection path."
-     ],
-     [
-      "Repeated titles — resolved 2026-08-26.",
-      "On the 2026 listing “Japan-U.S. Bilateral Exercise” appears 27 times for distinct events, and a title-only rule would collapse 26 of those 27 records. Deduplication is by canonical URL and by content hash of the extracted text, never by title, so a recurring ministry title stays as many records as there were publications."
-     ]
-    ]
-   },
-   "limits": [
-    "No source is enabled in production. Nothing collected here reaches the production database, the public site, or any public count.",
-    "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
-    "Both collected feeds are Japanese-language. The English estate and the Joint Staff are declared but not collected, and neither is reachable.",
-    "Shadow testing began 2026-08-26. No qualification period has elapsed and no desk-readiness claim follows from it."
-   ]
-  },
-  {
-   "slug": "korea",
-   "name": "South Korea Desk",
-   "route": "korea.html",
-   "scope": "One current private research family: Ministry of National Defense (국방부) press releases republished by the Korean government Policy Briefing portal. No direct MND collector, DAPA, whole-government coverage, or public reference admission.",
-   "status": "shadow",
-   "status_explanation": "A scheduled isolated Korea shadow collector and existing-Git, metadata-only private search reader operate, but all Korean original documents remain held for independent human-language, source-specific rights and owner editorial approvals. This is an INTERNAL desk declaration only: no public Korea page, no production source and no admitted archive record.",
-   "public": false,
-   "manifest": null,
-   "has_production_records": false,
-   "research": {
-    "source_families": [
-     {
-      "name": "Ministry of National Defense — Policy Briefing republications (Korean)",
-      "format": "Original Korean HWPX attached to government-portal press releases; separately preserved isolated shadow Git state",
-      "note": "Exact source family kr_policy_mnd_releases; original issuer 국방부, publisher 대한민국 정책브리핑. It is not direct MND.gov.kr or DAPA material. Private reader checks source identity and SHA; five October 11 originals separately passed real HWPX parity."
-     }
-    ],
-    "observed_volume": [],
-    "volume_caveat": "Five verified originals at shadow commit dcb43b9c4edb471d6def5876701ec4a2e39d5264 are private research evidence, not public production records or an asserted comprehensive Ministry output. New shadow records may be present after that commit but are not automatically approved.",
-    "blockers": [
-     [
-      "Independent Korean original-language review is not signed.",
-      "A real Korean-language reviewer must inspect each rendered HWPX, original text, names, dates and technical terminology. The machine parity audit and AI Korean-language analysis are not a qualified human signoff."
-     ],
-     [
-      "Source-specific text and attachment reuse gates remain held.",
-      "The Policy Briefing pages show text-only KOGL Type 1 attribution conditions, not blanket rights over attached HWPX graphics/media. A per-item rights decision and owner editorial signoff are required."
-     ],
-     [
-      "Public source-reference and archive admission remain disabled.",
-      "Five-source gated workbench and private preview exist; no signed human/rights/owner approvals have been admitted, and the public Korea desk must not be enabled without a separate reviewed release decision. Thirty-day reliability qualification for any production promotion remains separate."
-     ]
-    ],
-    "resolved": [
-     [
-      "Private SHA-pinned reader and real-source verification operate.",
-      "PRs #410, #413 and #414 merged on October 11: metadata-only reader, bounded five-document review workbench and an on-demand GitHub Actions workflow. No publisher fetch, public body export, production collection or deployment."
-     ]
-    ]
-   },
-   "limits": [
-    "Internal registry entry only: public=false, manifest=null, no production records and no public Korea route.",
-    "One Policy Briefing MND-republication source family, not direct Ministry of National Defense collection or countrywide coverage.",
-    "Five preserved HWPX originals passed machine byte/text parity, but all remain held for real human language, rights and owner review.",
-    "No DAPA, additional institution, new source schedule, production corpus admission, automatic Sunday Brief or public-reference publication is authorized."
-   ]
-  },
-  {
-   "slug": "philippines",
-   "name": "Philippines Desk",
-   "route": "philippines.html",
-   "scope": "Bounded first-party Armed Forces of the Philippines (AFP) public-affairs publications and Philippine National Security Council (NSC) official statements. Not a comprehensive defense, military, foreign-policy or whole-of-government archive.",
-   "status": "shadow",
-   "status_explanation": "AFP and Philippine NSC operate distinct isolated shadow collection and private research readers. AFP has preserved originals under review; the NSC source had no articles at the pinned October 11 snapshot. Neither is admitted to the production IPR corpus, and reliability, human source-review and rights gates remain incomplete.",
-   "public": true,
-   "manifest": null,
-   "has_production_records": false,
-   "research": {
-    "source_families": [
-     {
-      "name": "Armed Forces of the Philippines — first-party publications",
-      "format": "Official English-language articles; separate scheduled shadow-state storage",
-      "note": "Institutionally attributed AFP publications are the initial source-admission priority. Private preserved originals are not automatically approved public IPR references or archive records."
-     },
-     {
-      "name": "Philippine National Security Council — official statements",
-      "format": "Official statement source; independent shadow-state family",
-      "note": "The October 11 pinned state held zero article rows. Do not infer missing publications or borrow AFP's reliability clock; admission requires its own source-specific review."
-     }
-    ],
-    "observed_volume": [],
-    "volume_caveat": "The private source inventories and ledgers are independently pinned for review. No shadow row contributes to the published IPR corpus or to the public reference index.",
-    "blockers": [
-     [
-      "Thirty-day reliability and human checkpoints remain pending.",
-      "AFP's earliest possible Day 7 checkpoint is October 13, 2026; November 5 is the earliest possible 30th qualifying collecting day only if every required scheduled slot succeeds. NSC must qualify separately."
-     ],
-     [
-      "Publisher-specific rights and canonical evidence custody remain unresolved.",
-      "Review the authorization for each intended use—private preservation, public Git, public title/link reference, excerpt or full body—before publication. The private reader is not a source-use license."
-     ],
-     [
-      "Two institutional sources are not countrywide coverage.",
-      "The Department of National Defense, most Philippine military releases and all other institutions are outside this initial source scope."
-     ]
-    ],
-    "resolved": []
-   },
-   "limits": [
-    "No Philippine source is enabled in the public IPR corpus; private AFP and NSC shadow states remain separate.",
-    "No original body, binary capture or shadow archive record becomes public by this desk declaration.",
-    "AFP and NSC are independently governed institutional sources, not comprehensive Philippine defense coverage."
-   ]
-  },
-  {
-   "slug": "vietnam",
-   "name": "Vietnam Desk",
-   "route": "vietnam.html",
-   "scope": "Bounded research families: the Government News English defense tag, Public Security Vietnamese foreign-affairs RSS, and Industry and Trade Vietnamese energy and foundational-industry listings. The English National Defence Journal is a separate disabled military-journal research candidate, not an operating ministry source. The Government News family is a tag that editors apply, not a complete defense category. No comprehensive ministry archive or formal government-document collection.",
-   "status": "shadow",
-   "status_explanation": "MPS foreign-affairs and both MOIT ministry families collect on distinct scheduled, isolated shadow state branches, usable only in private research. No Vietnam originals are admitted to the public IPR corpus. MOIT rights and robots-policy anomalies remain held; the Government News dispatch and National Defence Journal candidate remain inactive. Public promotion requires source-specific reliability, human original-language, rights, custody and owner review.",
-   "public": true,
-   "manifest": null,
-   "has_production_records": false,
-   "research": {
-    "source_families": [
-     {
-      "name": "Viet Nam Government News — defense tag page (English)",
-      "format": "HTML tag page and HTML articles — 24 items listed on 2026-10-06 UTC",
-      "note": "en.baochinhphu.vn. The page labels itself “Tags: defense”. Tier B: the Government newsroom's own reporting, not statements by the ministries it reports on. English as published; nothing is translated. The original English pilot is retained alongside separate ministry research."
-     },
-     {
-      "name": "Ministry of National Defence — English portal",
-      "format": "Not reached — robots.txt returned a script page, twice",
-      "note": "mod.gov.vn. Both requests for robots.txt on 2026-10-06 UTC, about six minutes apart, returned a page that sets a cookie by script and reloads, not a robots policy. With no readable policy, no ministry page was requested. Tier A if it is ever collected. The requested bqp.vn Vietnamese portal and mod.gov.vn alias also served a robots script/cookie challenge in the ministry pass. No listing or article body was reached."
-     },
-     {
-      "name": "People's Army Newspaper — military news and international relations listings (English)",
-      "format": "Not reached — HTTP 302 back to the same address",
-      "note": "en.qdnd.vn. Its robots.txt was read and does not exclude these listings. On 2026-10-06 UTC the homepage and both listings each answered with a redirect to their own address while setting a cookie, and returned no listing. Measured once each. Official military media, Tier B, and a separate institution from the ministry."
-     },
-     {
-      "name": "Government portal",
-      "format": "HTML portal — homepage read, not collected",
-      "note": "chinhphu.vn. Read once, which confirmed that it links the Government News estate as “Báo điện tử chính phủ”. It also links the Government's document system, vanban.chinhphu.vn; formal documents would be a separate Tier A family and are not part of this desk."
-     },
-     {
-      "name": "Ministry of Public Security — foreign affairs (Vietnamese)",
-      "format": "Published RSS 34 and linked portal reports; scheduled isolated shadow collection",
-      "note": "bocongan.gov.vn. Thông tin Đối ngoại only, with original Vietnamese text. Publication date is the visible article stamp; the explicitly offset RSS instant is stored separately. No broad police-news feed or archive claim."
-     },
-     {
-      "name": "Ministry of Industry and Trade — energy and foundational industry (Vietnamese)",
-      "format": "Published first category pages and linked portal reports; scheduled isolated shadow collection",
-      "note": "moit.gov.vn. Phát triển năng lượng and Công nghiệp nền tảng are separate source families and clocks sharing one host gate. Printed dates govern; conflicting metadata is kept separately. Script-only older pagination is not requested. These reports are not inferred legal instruments. The linked trade-remedies host disallows collection."
-     },
-     {
-      "name": "National Defence Journal — English edition (military journal)",
-      "format": "HTML English desktop and mobile presentations, one publication, disabled source candidate",
-      "note": "tapchiqptd.vn/en/default.html and m.tapchiqptd.vn/en. The two interfaces publish the same article IDs and are one National Defence Journal source, not two ministry feeds. Military-journal doctrine, commentary and defense scholarship are Tier B institutional media, not MOD-issued directives. Offline ID-based canonicalization is implemented; date-bounded discovery, robots permissions, extraction integrity and rights to preserve original text are not established. Footer states all rights reserved. No shadow or production collection is authorized."
-     },
-     {
-      "name": "Ministry of Finance",
-      "format": "Not reached — robots.txt returned an app shell",
-      "note": "www.mof.gov.vn, the direct target of the supplied Google redirect. Its returned HTML was not a robots rules file; no ministry listing or body was requested."
-     }
-    ],
-    "observed_volume_subject": "Items the defense tag page listed",
-    "observed_volume": [
-     [
-      "2026, to 6 October",
-      "10"
-     ],
-     [
-      "2025",
-      "7"
-     ],
-     [
-      "2024",
-      "6"
-     ],
-     [
-      "2023, from 16 November",
-      "1"
-     ]
-    ],
-    "volume_caveat": "Counted from the tag page as it was read on 2026-10-06 UTC. These figures count what editors tagged, not the newsroom's defense output, and the page reaches back only 24 items, so 2023 is cut short. They are not a record count, and nothing has been collected into the public record. At the rate listed, most days will list nothing new, and a day with nothing new shows only that the listing was read, not that article text can be retrieved.",
-    "blockers": [
-     [
-      "Government News remote dispatch remains unapproved.",
-      "The Government News English defense-tag collector has no approved remote dispatch and is separate from the operating Vietnamese MPS and MOIT ministry shadow families. Its pilot does not establish production readiness."
-     ],
-     [
-      "A tag is not a category.",
-      "The tag lists what Government News editors chose to tag. When it was read, the national security strategy summary of 4 August 2026 carried no tag at all, and a Politics item of 23 September 2026 on a meeting with the acting U.S. Navy Secretary was not on the tag page. Items the tag does not list are not collected and nothing is claimed about them; no keyword or topic filter is used to fill the gap."
-     ],
-     [
-      "The tag page shows only its 24 most recent items.",
-      "Older items load by script from an address the page never publishes as a link, and that address is not requested. An item that appears on the page after its date's window was read is reported by the review rather than silently absorbed. No archive completeness is claimed."
-     ],
-     [
-      "The ministry and the army newspaper were not reachable.",
-      "The ministry's robots.txt returned a script page instead of a policy, and the newspaper's listings redirected to themselves. Both are recorded as measured and left alone: an institution must be able to recognise this collector and refuse it. Reading either would need an official route."
-     ],
-     [
-      "Collection-health thresholds remain unset.",
-      "Publication cadence and silence thresholds are calibrated only after shadow collection has run. On a tag this sparse a long quiet stretch is ordinary, so guessing now would create false alarms or hide real silence."
-     ]
-    ]
-   },
-   "limits": [
-    "No source is enabled in production for Vietnam, and no shadow record contributes to public counts. MPS/MOIT ministry sources run on separate isolated daily shadow cadence; National Defence Journal has no active collection, remote dispatch, state or reliability clock.",
-    "Bounded newsroom and ministry publication families only. No comprehensive Vietnamese defense coverage, no complete ministry archive, no People’s Army Newspaper collection and no formal-document family.",
-    "Government News is the Government's newsroom. Its reports are not ministry statements, and a report that names a resolution or quotes a minister remains a newsroom report about it.",
-    "English and Vietnamese as published, in separate source families. No translation or recovered-original claim.",
-    "The three ministry families established remote Day 0 on 2026-10-07; required 7/14/30 human reviews and source-level rights gates remain. National Defence Journal is research-only and cannot inherit those ministry clocks or count as qualified."
-   ]
-  },
-  {
-   "slug": "us-indopacific",
-   "name": "US Indo-Pacific Reference Desk",
-   "route": "us-indopacific.html",
-   "scope": "Declared as a reference desk, deliberately bounded: the minimum US institutional output needed to read other desks' framing against a US framing of the same events. It is not a feed of US defense releases.",
-   "status": "access_blocked",
-   "status_explanation": "Declared scope only, and access-blocked at the edge. Probed once per endpoint on 2026-08-26 with the project user agent: the site root, the Press Releases and Readouts listing, and robots.txt itself all return HTTP 403 from the edge. An RSS endpoint does answer, but robots.txt cannot be read, so there is no basis on which to say collection is permitted. Collecting only through the one endpoint that happens to answer, while the same edge refuses everything else including the file that would state the rules, would be opportunistic rather than honest.",
-   "public": true,
-   "manifest": null,
-   "has_production_records": false,
-   "limits": [
-    "Nothing has been configured, enabled or collected.",
-    "robots.txt returns 403, so this project cannot establish that collection is permitted. That is a blocker on its own, independent of whether any endpoint answers.",
-    "The institution's current name is U.S. Pacific Command, restored in 2026. If a source is ever built, its identity follows the institution's own name even though the desk stays geographically labeled Indo-Pacific.",
-    "If it is ever built it is collected under the same contract, health thresholds and evidence hierarchy as every other desk. It is not “our side”."
-   ]
-  }
- ]
+  "registry_version": 1,
+  "_comment": [
+    "THE DESK REGISTRY — one authoritative list of every declared desk.",
+    "",
+    "This file is NOT a desk manifest and is deliberately not discoverable as",
+    "one. core.manifests.load_all_desks() globs desks/*/manifest.json; this",
+    "file sits one level up, so declaring a desk here cannot make",
+    "sync_desk_config() write a desk, institution or source row into the",
+    "tracked production database, and cannot enable collection.",
+    "",
+    "What a desk's manifest says is authoritative for its SOURCES. What this",
+    "file says is authoritative for its STATUS and its public presentation.",
+    "Neither invents the other: configured and enabled source counts are read",
+    "from the manifest this file points at, and a desk with no manifest has no",
+    "sources — which is a fact, not a gap to fill in.",
+    "",
+    "Record counts are never declared here. They come from the database, for",
+    "desks that have records in it.",
+    "",
+    "Statuses (core/domain.py DESK_STATUSES):",
+    "  planned        declared scope, nothing researched or configured",
+    "  research       scope researched; no enabled source and nothing",
+    "                 collecting. A collector may be built and rehearsed,",
+    "                 but it has not been launched",
+    "  shadow         collecting privately under evaluation; no public records",
+    "  live           collecting into the production corpus",
+    "  paused         configured and deliberately stopped",
+    "  access_blocked researched and reachable in principle, but official",
+    "                 discovery is not available under honest identification"
+  ],
+  "desks": [
+    {
+      "slug": "china",
+      "name": "China Desk",
+      "route": "china.html",
+      "scope": "Chinese official and state-linked defense publication surfaces: the armed forces newspaper, the defense ministry, the state news agency's military desk, and two English-language portals.",
+      "status": "live",
+      "status_explanation": "Collecting daily into the production corpus. This is the only mature collection in the project.",
+      "public": true,
+      "manifest": "desks/china/manifest.json",
+      "has_production_records": true,
+      "limits": [
+        "Coverage is selective and heavily concentrated in one source.",
+        "Not every Chinese official publication surface is implemented. One configured source has no working collector and is reported as such on every run rather than hidden.",
+        "Collection was interrupted between 2026-07-17 and 2026-07-24. The gap is preserved, not backfilled."
+      ]
+    },
+    {
+      "slug": "singapore",
+      "name": "Singapore Desk",
+      "route": "singapore.html",
+      "scope": "One publication family: official releases from the Singapore Ministry of Defence, which publishes for itself and for the Singapore Armed Forces.",
+      "status": "live",
+      "status_explanation": "Promoted 2026-09-21 (DECISION_LOG), after 33 elapsed shadow-collection days, completed Day 7 and Day 14 human checkpoint reviews, and owner sign-off. The corpus began as a one-time governed promotion of 57 corrected shadow records; the same adapter, already run daily by the shadow collector since 2026-08-19, is now also invoked by the ordinary scheduled production pipeline, so the corpus grows from further scheduled runs going forward. Two records stay held out of the promotable set for unrepaired charset damage.",
+      "public": true,
+      "manifest": "desks/singapore/manifest.json",
+      "has_production_records": true,
+      "limits": [
+        "This is not whole-of-government coverage, not armed-forces-wide, and not comprehensive Singapore defense coverage.",
+        "Other ministries, the parliamentary Hansard record, unit and recruitment pages, magazine features, social media, and procurement notices are all outside the declared scope.",
+        "The corpus began as a one-time governed promotion; new records are now collected by the ordinary scheduled production pipeline, subject to the same held-record exclusions.",
+        "Two records are held out of the promoted corpus: their CJK text was damaged by a historical extractor defect the correction overlay could not repair, and they are excluded rather than published with damaged text. See shadow/singapore_mindef/CORRECTIONS.md for which records and why."
+      ],
+      "qualification": {
+        "required_consecutive_days": 30,
+        "checkpoints": 3,
+        "explanation": "Historical qualification record, retained after promotion rather than deleted: this is evidence for how the desk reached live status, not a current gate. Day zero was 2026-08-19T23:03:09Z. Day 7 and Day 14 human checkpoint reviews are complete, both pass_with_findings, published to review/singapore-mindef. No separate Day 30 human checkpoint review is on record; the review kit's computed Day-30 packet reproduces byte-for-byte and reports publishable: yes. Owner sign-off promoting the desk to live is recorded in DECISION_LOG.md, 2026-09-21."
+      }
+    },
+    {
+      "slug": "japan",
+      "name": "Japan Desk",
+      "route": "japan.html",
+      "scope": "Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.",
+      "status": "shadow",
+      "status_explanation": "Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.",
+      "public": true,
+      "manifest": "shadow/jp_mod/manifest.json",
+      "has_production_records": false,
+      "research": {
+        "source_families": [
+          {
+            "name": "Ministry of Defense — news feed (Japanese)",
+            "format": "RSS — 142 items measured 2026-08-26: 134 HTML, 8 PDF",
+            "note": "Families: /j/press/ 105, /j/approach/ 37."
+          },
+          {
+            "name": "Ministry of Defense — site update feed (Japanese)",
+            "format": "RSS — 391 items measured 2026-08-26: 342 HTML, 0 PDF",
+            "note": "A whole-site stream, not a press-release feed: /j/press/ 126, /j/budget/ 93, /j/profile/ 76, /j/approach/ 63, /j/policy/ 21, /j/presiding/ 11, /j/kids/ 1. Every item is labeled by its family and nothing is filtered out."
+          },
+          {
+            "name": "Joint Staff — press releases (English)",
+            "format": "HTML index — challenged (403), not collected",
+            "note": "Declared so the Joint Staff stays distinguishable. Carried by neither RSS feed, and its own index is challenged. Nothing has been collected from it."
+          },
+          {
+            "name": "Ministry of Defense — press releases (English)",
+            "format": "HTML index — challenged (403), not collected",
+            "note": "Declared so the English estate stays distinguishable. Nothing has been collected from it."
+          }
+        ],
+        "observed_volume_subject": "Joint Staff press releases",
+        "observed_volume": [
+          [
+            "2026, to mid-August",
+            "135"
+          ],
+          [
+            "2025, full year",
+            "214"
+          ],
+          [
+            "2014-2026, whole archive",
+            "895"
+          ]
+        ],
+        "volume_caveat": "These figures describe what the ministry published and what its feeds carry. They are not a record count and nothing here has been collected into the public record. Only documents published as PDF carry text; on the news feed that was 8 of 142 items on 2026-08-26.",
+        "blockers": [
+          [
+            "Documents published as HTML cannot be retrieved.",
+            "The ministry's RSS feeds and its PDF documents are served normally, but HTML documents on the same host are returned behind an interactive challenge. Those items are discovered and recorded as unretrieved rather than inferred to be absent. An institution that wants to refuse this collector must be able to recognise it and say so, so defeating the challenge would destroy the capability that rule protects. Resolving this means requesting an official route."
+          ],
+          [
+            "Collection-health thresholds remain unset.",
+            "Publication cadence and silence thresholds are calibrated only after shadow collection has run. Guessing now would create false alarms or hide real silence."
+          ]
+        ],
+        "resolved": [
+          [
+            "Official discovery access — resolved 2026-08-26.",
+            "The listing pages remain challenged, but the ministry publishes two official RSS feeds that are served normally and support conditional requests. Discovery no longer depends on the challenged pages."
+          ],
+          [
+            "PDF text extraction wired to a collector — resolved 2026-08-26.",
+            "The dormant extractor is now used by the Japan shadow adapter, and by nothing on the production collection path."
+          ],
+          [
+            "Repeated titles — resolved 2026-08-26.",
+            "On the 2026 listing “Japan-U.S. Bilateral Exercise” appears 27 times for distinct events, and a title-only rule would collapse 26 of those 27 records. Deduplication is by canonical URL and by content hash of the extracted text, never by title, so a recurring ministry title stays as many records as there were publications."
+          ]
+        ]
+      },
+      "limits": [
+        "No source is enabled in production. Nothing collected here reaches the production database, the public site, or any public count.",
+        "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
+        "Both collected feeds are Japanese-language. The English estate and the Joint Staff are declared but not collected, and neither is reachable.",
+        "Shadow testing began 2026-08-26. No qualification period has elapsed and no desk-readiness claim follows from it."
+      ]
+    },
+    {
+      "slug": "korea",
+      "name": "South Korea Desk",
+      "route": "korea.html",
+      "scope": "A curated directory of five Korean Ministry of National Defense (국방부) press releases republished by Republic of Korea Policy Briefing. Original official links and bibliographic metadata only; not comprehensive coverage or a live production archive.",
+      "status": "shadow",
+      "status_explanation": "Public official-reference directory (five fixed bibliographic entries). The Korea collector itself remains isolated in shadow research: no archived Korean bodies, production records, automatic translations or independently verified military assessments are published.",
+      "public": true,
+      "manifest": null,
+      "has_production_records": false,
+      "research": {
+        "source_families": [
+          {
+            "name": "Ministry of National Defense — Policy Briefing republications (Korean)",
+            "format": "Original Korean HWPX attached to government-portal press releases; separately preserved isolated shadow Git state",
+            "note": "Exact source family kr_policy_mnd_releases; original issuer 국방부, publisher 대한민국 정책브리핑. It is not direct MND.gov.kr or DAPA material. Private reader checks source identity and SHA; five October 11 originals separately passed real HWPX parity."
+          }
+        ],
+        "observed_volume": [],
+        "volume_caveat": "Five source entries from immutable Korea shadow Git snapshot dcb43b9c4edb471d6def5876701ec4a2e39d5264 (October 11). The public bibliography is a fixed directory, not a live source or comprehensive Ministry output; future shadow arrivals remain unpublished.",
+        "blockers": [
+          [
+            "Substantive Korean-language analysis not admitted.",
+            "The five original HWPX files have passed machine parity but no independent Korean-language semantic and rendering signoff. The public directory provides official-source links and titles only, without IPR analytical summaries."
+          ],
+          [
+            "Original documents, images and future sources excluded.",
+            "Only source links and factual bibliographic metadata are shown. KOGL Type 1 source-text attribution does not cover all embedded photographs, media or HWPX components. No such material is reproduced."
+          ],
+          [
+            "Production collector promotion is separate.",
+            "Public reference links do not enable a production source, claim countrywide coverage, populate the archive or make raw Korean text eligible for AI-generated Briefs. Full production promotion requires the separate reliability and admission process."
+          ]
+        ],
+        "resolved": [
+          [
+            "Private SHA-pinned reader and real-source verification operate.",
+            "PRs #410, #413 and #414 merged on October 11: metadata-only reader, bounded five-document review workbench and an on-demand GitHub Actions workflow. No publisher fetch, public body export, production collection or deployment."
+          ],
+          [
+            "Bounded public official-link directory authorized.",
+            "Five canonical Korea Policy Briefing MND republication references are selected from a fixed, SHA-pinned private audit snapshot. The owner explicitly requested public link-only publication."
+          ]
+        ]
+      },
+      "limits": [
+        "Public scope is five frozen bibliographic links, not 5 production archive records, 5 separately corroborated sources or live Korea military coverage.",
+        "Issuing institution: Republic of Korea Ministry of National Defense (국방부); public publisher: Republic of Korea Policy Briefing (대한민국 정책브리핑). No direct MND.gov.kr ingest, DAPA or other agencies.",
+        "The directory reproduces Korean headline, canonical official link and source dates only. No IPR translation, full original Korean article body, HWPX, photo, PDF, diagram or video is published.",
+        "Source-author claims are not independently verified by IPR; original distribution and portal posting dates are shown separately. No automatic Sunday Brief or production collector admission."
+      ]
+    },
+    {
+      "slug": "philippines",
+      "name": "Philippines Desk",
+      "route": "philippines.html",
+      "scope": "Bounded first-party Armed Forces of the Philippines (AFP) public-affairs publications and Philippine National Security Council (NSC) official statements. Not a comprehensive defense, military, foreign-policy or whole-of-government archive.",
+      "status": "shadow",
+      "status_explanation": "AFP and Philippine NSC operate distinct isolated shadow collection and private research readers. AFP has preserved originals under review; the NSC source had no articles at the pinned October 11 snapshot. Neither is admitted to the production IPR corpus, and reliability, human source-review and rights gates remain incomplete.",
+      "public": true,
+      "manifest": null,
+      "has_production_records": false,
+      "research": {
+        "source_families": [
+          {
+            "name": "Armed Forces of the Philippines — first-party publications",
+            "format": "Official English-language articles; separate scheduled shadow-state storage",
+            "publisher_url": "https://www.afp.mil.ph/",
+            "note": "Institutionally attributed AFP publications are the initial source-admission priority. Private preserved originals are not automatically approved public IPR references or archive records."
+          },
+          {
+            "name": "Philippine National Security Council — official statements",
+            "format": "Official statement source; independent shadow-state family",
+            "publisher_url": "https://nsc.gov.ph/category/official-statements/",
+            "note": "The October 11 pinned state held zero article rows. Do not infer missing publications or borrow AFP's reliability clock; admission requires its own source-specific review."
+          }
+        ],
+        "observed_volume": [],
+        "volume_caveat": "The private source inventories and ledgers are independently pinned for review. No shadow row contributes to the published IPR corpus or to the public reference index.",
+        "blockers": [
+          [
+            "Thirty-day reliability and human checkpoints remain pending.",
+            "AFP's earliest possible Day 7 checkpoint is October 13, 2026; November 5 is the earliest possible 30th qualifying collecting day only if every required scheduled slot succeeds. NSC must qualify separately."
+          ],
+          [
+            "Publisher-specific rights and canonical evidence custody remain unresolved.",
+            "Review the authorization for each intended use—private preservation, public Git, public title/link reference, excerpt or full body—before publication. The private reader is not a source-use license."
+          ],
+          [
+            "Two institutional sources are not countrywide coverage.",
+            "The Department of National Defense, most Philippine military releases and all other institutions are outside this initial source scope."
+          ]
+        ],
+        "resolved": []
+      },
+      "limits": [
+        "No Philippine source is enabled in the public IPR corpus; private AFP and NSC shadow states remain separate.",
+        "No original body, binary capture or shadow archive record becomes public by this desk declaration.",
+        "AFP and NSC are independently governed institutional sources, not comprehensive Philippine defense coverage."
+      ]
+    },
+    {
+      "slug": "vietnam",
+      "name": "Vietnam Desk",
+      "route": "vietnam.html",
+      "scope": "Bounded research families: the Government News English defense tag, Public Security Vietnamese foreign-affairs RSS, and Industry and Trade Vietnamese energy and foundational-industry listings. The English National Defence Journal is a separate disabled military-journal research candidate, not an operating ministry source. The Government News family is a tag that editors apply, not a complete defense category. No comprehensive ministry archive or formal government-document collection.",
+      "status": "shadow",
+      "status_explanation": "MPS foreign-affairs and both MOIT ministry families collect on distinct scheduled, isolated shadow state branches, usable only in private research. No Vietnam originals are admitted to the public IPR corpus. MOIT rights and robots-policy anomalies remain held; the Government News dispatch and National Defence Journal candidate remain inactive. Public promotion requires source-specific reliability, human original-language, rights, custody and owner review.",
+      "public": true,
+      "manifest": null,
+      "has_production_records": false,
+      "research": {
+        "source_families": [
+          {
+            "name": "Viet Nam Government News — defense tag page (English)",
+            "format": "HTML tag page and HTML articles — 24 items listed on 2026-10-06 UTC",
+            "note": "en.baochinhphu.vn. The page labels itself “Tags: defense”. Tier B: the Government newsroom's own reporting, not statements by the ministries it reports on. English as published; nothing is translated. The original English pilot is retained alongside separate ministry research."
+          },
+          {
+            "name": "Ministry of National Defence — English portal",
+            "format": "Not reached — robots.txt returned a script page, twice",
+            "note": "mod.gov.vn. Both requests for robots.txt on 2026-10-06 UTC, about six minutes apart, returned a page that sets a cookie by script and reloads, not a robots policy. With no readable policy, no ministry page was requested. Tier A if it is ever collected. The requested bqp.vn Vietnamese portal and mod.gov.vn alias also served a robots script/cookie challenge in the ministry pass. No listing or article body was reached."
+          },
+          {
+            "name": "People's Army Newspaper — military news and international relations listings (English)",
+            "format": "Not reached — HTTP 302 back to the same address",
+            "note": "en.qdnd.vn. Its robots.txt was read and does not exclude these listings. On 2026-10-06 UTC the homepage and both listings each answered with a redirect to their own address while setting a cookie, and returned no listing. Measured once each. Official military media, Tier B, and a separate institution from the ministry."
+          },
+          {
+            "name": "Government portal",
+            "format": "HTML portal — homepage read, not collected",
+            "note": "chinhphu.vn. Read once, which confirmed that it links the Government News estate as “Báo điện tử chính phủ”. It also links the Government's document system, vanban.chinhphu.vn; formal documents would be a separate Tier A family and are not part of this desk."
+          },
+          {
+            "name": "Ministry of Public Security — foreign affairs (Vietnamese)",
+            "format": "Published RSS 34 and linked portal reports; scheduled isolated shadow collection",
+            "note": "bocongan.gov.vn. Thông tin Đối ngoại only, with original Vietnamese text. Publication date is the visible article stamp; the explicitly offset RSS instant is stored separately. No broad police-news feed or archive claim."
+          },
+          {
+            "name": "Ministry of Industry and Trade — energy and foundational industry (Vietnamese)",
+            "format": "Published first category pages and linked portal reports; scheduled isolated shadow collection",
+            "note": "moit.gov.vn. Phát triển năng lượng and Công nghiệp nền tảng are separate source families and clocks sharing one host gate. Printed dates govern; conflicting metadata is kept separately. Script-only older pagination is not requested. These reports are not inferred legal instruments. The linked trade-remedies host disallows collection."
+          },
+          {
+            "name": "National Defence Journal — English edition (military journal)",
+            "format": "HTML English desktop and mobile presentations, one publication, disabled source candidate",
+            "note": "tapchiqptd.vn/en/default.html and m.tapchiqptd.vn/en. The two interfaces publish the same article IDs and are one National Defence Journal source, not two ministry feeds. Military-journal doctrine, commentary and defense scholarship are Tier B institutional media, not MOD-issued directives. Offline ID-based canonicalization is implemented; date-bounded discovery, robots permissions, extraction integrity and rights to preserve original text are not established. Footer states all rights reserved. No shadow or production collection is authorized."
+          },
+          {
+            "name": "Ministry of Finance",
+            "format": "Not reached — robots.txt returned an app shell",
+            "note": "www.mof.gov.vn, the direct target of the supplied Google redirect. Its returned HTML was not a robots rules file; no ministry listing or body was requested."
+          }
+        ],
+        "observed_volume_subject": "Items the defense tag page listed",
+        "observed_volume": [
+          [
+            "2026, to 6 October",
+            "10"
+          ],
+          [
+            "2025",
+            "7"
+          ],
+          [
+            "2024",
+            "6"
+          ],
+          [
+            "2023, from 16 November",
+            "1"
+          ]
+        ],
+        "volume_caveat": "Counted from the tag page as it was read on 2026-10-06 UTC. These figures count what editors tagged, not the newsroom's defense output, and the page reaches back only 24 items, so 2023 is cut short. They are not a record count, and nothing has been collected into the public record. At the rate listed, most days will list nothing new, and a day with nothing new shows only that the listing was read, not that article text can be retrieved.",
+        "blockers": [
+          [
+            "Government News remote dispatch remains unapproved.",
+            "The Government News English defense-tag collector has no approved remote dispatch and is separate from the operating Vietnamese MPS and MOIT ministry shadow families. Its pilot does not establish production readiness."
+          ],
+          [
+            "A tag is not a category.",
+            "The tag lists what Government News editors chose to tag. When it was read, the national security strategy summary of 4 August 2026 carried no tag at all, and a Politics item of 23 September 2026 on a meeting with the acting U.S. Navy Secretary was not on the tag page. Items the tag does not list are not collected and nothing is claimed about them; no keyword or topic filter is used to fill the gap."
+          ],
+          [
+            "The tag page shows only its 24 most recent items.",
+            "Older items load by script from an address the page never publishes as a link, and that address is not requested. An item that appears on the page after its date's window was read is reported by the review rather than silently absorbed. No archive completeness is claimed."
+          ],
+          [
+            "The ministry and the army newspaper were not reachable.",
+            "The ministry's robots.txt returned a script page instead of a policy, and the newspaper's listings redirected to themselves. Both are recorded as measured and left alone: an institution must be able to recognise this collector and refuse it. Reading either would need an official route."
+          ],
+          [
+            "Collection-health thresholds remain unset.",
+            "Publication cadence and silence thresholds are calibrated only after shadow collection has run. On a tag this sparse a long quiet stretch is ordinary, so guessing now would create false alarms or hide real silence."
+          ]
+        ]
+      },
+      "limits": [
+        "No source is enabled in production for Vietnam, and no shadow record contributes to public counts. MPS/MOIT ministry sources run on separate isolated daily shadow cadence; National Defence Journal has no active collection, remote dispatch, state or reliability clock.",
+        "Bounded newsroom and ministry publication families only. No comprehensive Vietnamese defense coverage, no complete ministry archive, no People’s Army Newspaper collection and no formal-document family.",
+        "Government News is the Government's newsroom. Its reports are not ministry statements, and a report that names a resolution or quotes a minister remains a newsroom report about it.",
+        "English and Vietnamese as published, in separate source families. No translation or recovered-original claim.",
+        "The three ministry families established remote Day 0 on 2026-10-07; required 7/14/30 human reviews and source-level rights gates remain. National Defence Journal is research-only and cannot inherit those ministry clocks or count as qualified."
+      ]
+    },
+    {
+      "slug": "us-indopacific",
+      "name": "US Indo-Pacific Reference Desk",
+      "route": "us-indopacific.html",
+      "scope": "Declared as a reference desk, deliberately bounded: the minimum US institutional output needed to read other desks' framing against a US framing of the same events. It is not a feed of US defense releases.",
+      "status": "access_blocked",
+      "status_explanation": "Declared scope only, and access-blocked at the edge. Probed once per endpoint on 2026-08-26 with the project user agent: the site root, the Press Releases and Readouts listing, and robots.txt itself all return HTTP 403 from the edge. An RSS endpoint does answer, but robots.txt cannot be read, so there is no basis on which to say collection is permitted. Collecting only through the one endpoint that happens to answer, while the same edge refuses everything else including the file that would state the rules, would be opportunistic rather than honest.",
+      "public": true,
+      "manifest": null,
+      "has_production_records": false,
+      "limits": [
+        "Nothing has been configured, enabled or collected.",
+        "robots.txt returns 403, so this project cannot establish that collection is permitted. That is a blocker on its own, independent of whether any endpoint answers.",
+        "The institution's current name is U.S. Pacific Command, restored in 2026. If a source is ever built, its identity follows the institution's own name even though the desk stays geographically labeled Indo-Pacific.",
+        "If it is ever built it is collected under the same contract, health thresholds and evidence hierarchy as every other desk. It is not “our side”."
+      ]
+    }
+  ]
 }
