@@ -26,6 +26,8 @@ Output directory **must not exist**, be symlinked or be inside the repository. F
 - `receipt.json` — strictly metadata-only hash and HOLD proof, no text body.
 - `README_PRIVATE.md` — handling restrictions and workflow.
 
+The updated private package also includes `reviews/<newsId>.line-hashes.json`: 1-based nonblank physical line numbers and SHA-256 digests from the exact archived `.ko.txt`, without reproducing original Korean bodies in that index. Source-use packets now use `ipr-korea-source-admission/2`: 1–8 unique anchored source lines, their line hashes, statement modality (`announcement`, `plan`, `reported_action`, `assessment`, or `discussion`), private English-claim linkage, and explicit Korean-reviewer confirmation. Old /1 packets fail closed. **The structural gate cannot authenticate those digests against the source or validate their semantic meaning**: the independent reviewer must compare the `.ko.txt`, rendered HWPX, and official page before owner approval.
+
 The CLI checks all five candidate identities and pinned hashes against preserved SQLite and re-extracts the real HWPX; one mismatch blocks the entire package. The script cannot write into `output/`, repo worktrees or any existing review directory. The shadow/source records remain immutable. It uses `scripts.audit_korea_source_fidelity.source_compare`, not a second independent text extractor.
 
 ## Human gate (still OPEN)
@@ -34,7 +36,7 @@ For each record, an independent Korean-literate reviewer must visually read the 
 
 The `core.korea_reference_gate.approve` validator checks schema and date/hash consistency, **NOT the authenticity of reviewer identity/signature**. Protect completed reviewer notes and authenticated decisions outside public Actions/PR attachments. Source reuse conditions are not a substitute for source review; media are still held even with text-only Type 1 notice.
 
-After genuine authenticated decisions, perform the private, site-matched five-or-fewer record preview introduced in merged PR #416, and only then a separate owner-approved public site release. Korea `public=false` / `status=shadow` remains unchanged.
+After genuine authenticated decisions, perform the private, site-matched five-or-fewer record preview introduced in merged PR #416, and only then a separate owner-approved public site release. Korea already has a live **five-link, metadata-only public bibliography**, but still has `status=shadow`, `manifest=null`, and `has_production_records=false`. Approved English descriptors require a separate publication decision; the public bibliography never constitutes original-language signoff or production admission.
 
 ## CI and evidentiary boundary
 

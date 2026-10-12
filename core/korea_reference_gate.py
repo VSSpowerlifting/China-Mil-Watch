@@ -19,12 +19,14 @@ CANDIDATES = ROOT / "research" / "korea_reference_candidates.json"
 STATE_BRANCH = "shadow/korea-policy-briefing"
 STATE_SHA = "dcb43b9c4edb471d6def5876701ec4a2e39d5264"
 CANDIDATE_SCHEMA = "ipr-korea-reference-candidates/1"
-APPROVAL_SCHEMA = "ipr-korea-source-admission/1"
+APPROVAL_SCHEMA = "ipr-korea-source-admission/2"
 ALLOWED_IDS = frozenset({"156783602", "156783708", "156784196", "156784297", "156784652"})
 SHA = re.compile(r"[0-9a-f]{64}\Z")
 COMMIT = re.compile(r"[0-9a-f]{40}\Z")
 UTC = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\Z")
 LICENSE = "https://www.korea.kr/guide/copyRight.do"
+CLAIM_KINDS = frozenset({"announcement", "plan", "reported_action",
+                         "assessment", "discussion"})
 FIELDS = {"source_identity", "source_slug", "source_url", "title_original",
           "language", "published_date", "document_distribution_date",
           "content_sha256", "document_capture_sha256", "issuer", "publisher"}
@@ -153,6 +155,35 @@ def signed_section(value, fields, now, what):
     return timestamp(value["reviewed_at_utc"], now)
 
 
+def check_evidence_anchors(anchors):
+    """Validate private source locators, not the truth of editorial claims.
+
+    The local reviewer must verify each line digest against the frozen .ko.txt
+    AND the rendered HWPX. Hash shape alone is not source confirmation.
+    """
+    require(isinstance(anchors, list) and 1 <= len(anchors) <= 8,
+            "one to eight Korean source line anchors required")
+    seen = set()
+    for anchor in anchors:
+        exact_keys(anchor, ("line_number", "line_sha256", "claim_kind",
+                            "editorial_linkage"), "Korean evidence anchor")
+        number = anchor["line_number"]
+        require(type(number) is int and 1 <= number <= 10000 and number not in seen,
+                "source evidence line must be a unique positive integer")
+        seen.add(number)
+        require(isinstance(anchor["line_sha256"], str)
+                and SHA.fullmatch(anchor["line_sha256"]),
+                "original Korean line digest required")
+        require(isinstance(anchor["claim_kind"], str)
+                and anchor["claim_kind"] in CLAIM_KINDS,
+                "unsupported original-language statement modality")
+        note = anchor["editorial_linkage"]
+        require(isinstance(note, str) and 24 <= len(note) <= 240
+                and note == note.strip()
+                and not any(ord(c) < 32 or c in "<>" for c in note),
+                "private original-to-English editorial linkage invalid")
+
+
 def approve(rows, approvals_file, *, now=None):
     """Structural evidence checks; DOES NOT authenticate signatures or identity.
 
@@ -176,7 +207,7 @@ def approve(rows, approvals_file, *, now=None):
         exact_keys(item, ("source_identity", "content_sha256",
                           "document_capture_sha256", "human_korean_review",
                           "source_rights_review", "owner_publication_approval",
-                          "english_description"), "source approval")
+                          "evidence_anchors", "english_description"), "source approval")
         ident = item["source_identity"]
         require(isinstance(ident, str) and ident in indexed and ident not in seen,
                 "unknown or duplicate source approval")
@@ -185,17 +216,19 @@ def approve(rows, approvals_file, *, now=None):
         require(item["content_sha256"] == row["content_sha256"]
                 and item["document_capture_sha256"] == row["document_capture_sha256"],
                 "approval refers to different original text or HWPX bytes")
+        check_evidence_anchors(item["evidence_anchors"])
         human = item["human_korean_review"]
         rights = item["source_rights_review"]
         owner = item["owner_publication_approval"]
         ht = signed_section(human,
                             ("reviewer", "reviewed_at_utc", "rendered_hwpx_compared",
                              "korean_semantics_verified", "names_dates_verified",
-                             "distribution_versus_posting_checked"),
+                             "distribution_versus_posting_checked", "evidence_anchors_checked"),
                             now, "Korean-language")
         require(all(human[k] is True for k in (
             "rendered_hwpx_compared", "korean_semantics_verified",
-            "names_dates_verified", "distribution_versus_posting_checked")),
+            "names_dates_verified", "distribution_versus_posting_checked",
+            "evidence_anchors_checked")),
             "original-language review is not complete")
         rt = signed_section(rights,
                             ("reviewer", "reviewed_at_utc", "page_notice_verified",

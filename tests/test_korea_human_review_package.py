@@ -52,10 +52,13 @@ class LocalKoreaReviewerPackageTests(unittest.TestCase):
         self.assertEqual(blank["human_korean_review"]["reviewer"], "")
         self.assertIsNone(blank["human_korean_review"]["reviewed_at_utc"])
         self.assertEqual(blank["english_description"], "")
+        self.assertEqual(blank["evidence_anchors"], [])
+        self.assertFalse(blank["human_korean_review"]["evidence_anchors_checked"])
         self.assertEqual(set(blank), {
             "source_identity", "content_sha256", "document_capture_sha256",
             "human_korean_review", "source_rights_review",
-            "owner_publication_approval", "english_description",
+            "owner_publication_approval", "evidence_anchors",
+            "english_description",
         })
         # No paper-thin "reviewer exists" shortcut can make this admissible.
         packet = self.root / "unapproved.json"
@@ -65,6 +68,20 @@ class LocalKoreaReviewerPackageTests(unittest.TestCase):
         }))
         with self.assertRaises(gate.KoreaGateHold):
             gate.approve(gate.load_candidates(), packet)
+
+    def test_line_index_is_private_metadata_only(self):
+        text = "첫 문장\n\n두번째 문장\n"
+        valid = dict(self.candidate, content_sha256=pkg.sha(text.encode("utf-8")))
+        index = pkg.original_line_index(valid, text)
+        self.assertEqual([x["line_number"] for x in index["lines"]], [1, 3])
+        self.assertEqual(index["lines"][0]["line_sha256"], pkg.sha("첫 문장".encode("utf-8")))
+        self.assertEqual(index["lines"][1]["line_sha256"], pkg.sha("두번째 문장".encode("utf-8")))
+        self.assertEqual(index["content_sha256"], valid["content_sha256"])
+        with self.assertRaises(gate.KoreaGateHold):
+            pkg.original_line_index(self.candidate, text)
+        self.assertNotIn("첫 문장", json.dumps(index, ensure_ascii=False))
+        with self.assertRaises(gate.KoreaGateHold):
+            pkg.original_line_index(self.candidate, " \n")
 
     def test_tampering_or_mismatched_original_blocked(self):
         cases = [

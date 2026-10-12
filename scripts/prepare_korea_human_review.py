@@ -114,6 +114,7 @@ def make_blank(candidate):
         "source_identity": candidate["source_identity"],
         "content_sha256": candidate["content_sha256"],
         "document_capture_sha256": candidate["document_capture_sha256"],
+        "evidence_anchors": [],
         "human_korean_review": {
             "reviewer": "",
             "reviewed_at_utc": None,
@@ -121,6 +122,7 @@ def make_blank(candidate):
             "korean_semantics_verified": False,
             "names_dates_verified": False,
             "distribution_versus_posting_checked": False,
+            "evidence_anchors_checked": False,
         },
         "source_rights_review": {
             "reviewer": "",
@@ -138,6 +140,23 @@ def make_blank(candidate):
         },
         "english_description": "",
     }
+
+
+def original_line_index(candidate, text):
+    """Private no-body line-hash index for 1-based physical .ko.txt lines."""
+    require(isinstance(text, str) and
+            sha(text.encode("utf-8")) == candidate["content_sha256"],
+            "line index must match exact pinned Korean text SHA")
+    lines = [
+        {"line_number": number, "line_sha256": sha(line.encode("utf-8"))}
+        for number, line in enumerate(text.splitlines(), 1)
+        if line.strip()
+    ]
+    require(bool(lines), "archived original Korean text has no nonblank lines")
+    return {"schema": "ipr-korea-original-line-index/1",
+            "source_identity": candidate["source_identity"],
+            "content_sha256": candidate["content_sha256"],
+            "state_commit": STATE_SHA, "lines": lines}
 
 
 def checklist(candidate):
@@ -163,6 +182,8 @@ def checklist(candidate):
         "- [ ] Confirm official publisher page, original issuing institution, document distribution date and portal posting date SEPARATELY.",
         "- [ ] Check modality: announcements, plans, readiness assessments and discussions are not completed outcomes.",
         "- [ ] Record every correction in controlled reviewer notes, keeping raw source copies out of GitHub.",
+        "- [ ] For each proposed English claim, verify the exact 1-based line_number and line_sha256 from reviews/" + ident + ".line-hashes.json against .ko.txt and rendered HWPX.",
+        "- [ ] Classify the original statement as announcement, plan, reported_action, assessment or discussion and privately explain its relevance to the English wording.",
         "",
         "### Source-specific Korean review flags",
         "",
@@ -238,6 +259,9 @@ def assemble(candidates, records, state, destination):
             private_write(originals / (ident + ".hwpx"), raw)
             private_write(originals / (ident + ".ko.txt"), text.encode("utf-8"))
             private_write(reviews / (ident + ".md"), checklist(item).encode("utf-8"))
+            private_write(reviews / (ident + ".line-hashes.json"),
+                          (json.dumps(original_line_index(item, text),
+                                      ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
             unsigned.append(make_blank(item))
             receipt.append({
                 "source_identity": item["source_identity"],
@@ -260,8 +284,11 @@ def assemble(candidates, records, state, destination):
             "outside the publisher text-only KOGL notice.\n\n"
             "For each source, compare `originals/<newsId>.hwpx` and "
             "`originals/<newsId>.ko.txt` with the official release page. "
-            "Read `reviews/<newsId>.md` and record independent Korean-language and "
-            "source-specific rights decisions. ALL approval fields in "
+            "Read `reviews/<newsId>.md` and private `reviews/<newsId>.line-hashes.json` "
+            "to locate original Korean lines supporting each English claim. "
+            "Line hashes are pointers, not proof of an accurate translation. "
+            "Then record independent Korean-language and source-specific rights "
+            "decisions. ALL approval fields in "
             "`approvals_UNFILLED.json` are FALSE/BLANK. "
             "Only the real reviewers and publisher/owner may authenticate signoffs; "
             "the JSON gate is structural, not a cryptographic identity service.\n\n"
