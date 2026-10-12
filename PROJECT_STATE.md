@@ -1064,7 +1064,7 @@ deployed; independent review required.
 
 **Phase 3B Briefs catalogue in review (2026-10-12, revised after review of
 PR #418):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
-`159a13e43f` (builds and tests pinned at `e3c05ecbfb`). `analysis.html` lists the 17 Briefs as 3:2 media cards (two
+`aacdaf4069` (builds and tests pinned at `e3c05ecbfb`). `analysis.html` lists the 17 Briefs as 3:2 media cards (two
 photographs, fifteen Editorial plates) with one catalogue-media decision,
 `core/catalogue_media.py`, driven by `site/assets/catalogue/admissions.json`.
 Nos. 8 and 9 are approved; No. 10 is held pending evidence of original
