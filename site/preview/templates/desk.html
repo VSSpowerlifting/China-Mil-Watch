@@ -16,7 +16,7 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{{ desk.status_label }}</h2>
+    <h2>{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else desk.status_label }}</h2>
     <p>{{ desk.status_explanation }}</p>
   </div>
 </div>
@@ -81,7 +81,7 @@
 {% endif %}
 
 {# Reviewed public-source links are not locally archived IPR records. #}
-{% if desk.slug in ('philippines', 'vietnam') %}
+{% if desk.slug in ('philippines', 'vietnam', 'indonesia') %}
 <section class="desk-references" aria-labelledby="desk-references-heading">
 <h2 id="desk-references-heading">Individually reviewed official-source references</h2>
 <p>Source links appear only after publication-specific review. They point to the
