@@ -117,5 +117,36 @@ class IndonesiaPublicLinkGate(unittest.TestCase):
             load_reviewed_links(self.path, desk="indonesia")
 
 
+    def test_synthetic_reviewed_link_renders_on_existing_public_indonesia_route(self):
+        """Rehearse the real site template, not a guessed future Indonesia page."""
+        import sys
+        from unittest.mock import patch
+
+        root = Path(__file__).resolve().parents[1]
+        sys.path.insert(0, str(root / "site" / "preview"))
+        import generate_preview as gp
+
+        db = root / "pla_watch.db"
+        if not db.is_file():
+            self.skipTest("tracked production fixture absent")
+        approved_fixture = self.load([fixture()])[0]
+        destination = Path(self.tmp.name) / "synthetic-site"
+        with patch.object(gp, "load_public_desk_references",
+                          side_effect=lambda desk: [approved_fixture] if desk == "indonesia" else []):
+            gp.build(destination, "Synthetic Indonesia Reference Test", db,
+                     snapshot=gp.snapshot_from_corpus(db))
+        html = (destination / "indonesia.html").read_text(encoding="utf-8")
+        self.assertIn('data-reference-list', html)
+        self.assertIn('lang="id"', html)
+        self.assertIn(approved_fixture["source_url"], html)
+        self.assertIn(approved_fixture["title_original"], html)
+        self.assertIn("None collected", html)
+        self.assertNotIn("text_original", html)
+        self.assertNotIn("body_original", html)
+        self.assertNotIn(approved_fixture["source_url"],
+                         (destination / "philippines.html").read_text(encoding="utf-8"))
+        self.assertEqual(load_public_desk_references("indonesia"), [])
+
+
 if __name__ == "__main__":
     unittest.main()
