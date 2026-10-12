@@ -1,6 +1,6 @@
 # Phase 3B evidence — Briefs catalogue
 
-2026-10-12. Revised after the independent review of PR #418 (reviewed head `acf5c92404`). Candidate = branch synced with main `4717c8e38a`. Not merged, not deployed; `output/` was not regenerated. Design and engineering contract: `docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`. The frozen head the receipts belong to is named in the PR.
+2026-10-12. Revised after the independent review of PR #418 (reviewed head `acf5c92404`). Candidate = branch synced with main `dd79144399`. The browser, budget, delivery and integrity receipts and the captures were produced on the tree synced at `4717c8e38a`; the final sync brought in #426 (Philippines desk entrypoints), which touches none of this page's files, and `receipts/route-parity.json` was re-measured against `dd79144399`. Not merged, not deployed; `output/` was not regenerated. Design and engineering contract: `docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`. The frozen head the receipts belong to is named in the PR.
 
 ## Review response
 
@@ -10,7 +10,7 @@
 | 2 | Hero credit parity and a hero test | `site/preview/templates/_catalogue_credit.html` (`photo_credit`, used by card and hero); `tests/test_catalogue_media.py::HeroPhotographTests` |
 | 3 | Source-hash and origin continuity at build time | `core/catalogue_media.py::_check`; negative tests in `ResolverRuleTests` |
 | 4 | Red `offline-checks` contract | `tests/test_extraction_interface.py` (`strip_trigger_path_filters`) |
-| 5 | Sync main; re-measure parity against it | `receipts/route-parity.json` (baseline = fresh build of main `4717c8e38a`) |
+| 5 | Sync main; re-measure parity against it | `receipts/route-parity.json` (baseline = fresh build of main `dd79144399`) |
 | 6 | Report the `region.svg` weight | `receipts/analysis-budget.json` (`actual_page_weight_bytes`) |
 
 ## What to look at

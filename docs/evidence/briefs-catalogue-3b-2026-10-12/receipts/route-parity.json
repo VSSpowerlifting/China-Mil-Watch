@@ -1,6 +1,6 @@
 {
-  "baseline": "origin/main 4717c8e38a (fresh build, --snapshot-from-corpus)",
-  "candidate": "branch tree after sync with that main (--snapshot-from-corpus)",
+  "baseline": "origin/main dd79144399 (fresh build, --snapshot-from-corpus)",
+  "candidate": "branch tree after the final sync with that main (--snapshot-from-corpus)",
   "baseline_files": 5340,
   "candidate_files": 5343,
   "added": [

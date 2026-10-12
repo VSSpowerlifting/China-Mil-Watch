@@ -1,6 +1,6 @@
 {
   "statement": "Per-card decision (core/catalogue_media.py) beside what the browser rendered (scripts/verify_briefs_catalog.py). Revised after independent review of PR #418: Nos. 8 and 9 photographs; Nos. 1 and 10 held; No. 12 denied; the rest plates.",
-  "base_main": "4717c8e38a (origin/main at sync)",
+  "base_main": "4717c8e38a (origin/main when this receipt was produced; route parity was re-measured at 4717c8e38a)",
   "candidate": "this branch after the review revision (frozen head recorded in the PR)",
   "counts": {
     "cards": 17,
