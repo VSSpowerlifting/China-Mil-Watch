@@ -74,7 +74,7 @@
       "route": "japan.html",
       "scope": "Official Japanese-language Ministry of Defense RSS discovery from its news and site-update streams, plus a separate Japan Coast Guard English press-release shadow pilot. Neither covers all Japanese defense or maritime-security publications, and neither MOD feed represents Joint Staff or English MOD releases.",
       "status": "shadow",
-      "status_explanation": "Japan remains shadow-only. The two MOD Japanese-language RSS feeds support official discovery, but body retrieval is partial: PDF-published originals are retrievable while most HTML articles are challenged and retained only as dated discovery metadata. Separately, a Japan Coast Guard English HTML pilot has one verified, manually authorized October 8 Day 0. Its guarded daily collection gate and follow-up job/ledger history remain unverified, and linked PDF/media rights remain held. Nothing from either source family is admitted to the production corpus, and neither proves complete Japanese defense or maritime-security coverage.",
+      "status_explanation": "Japan remains shadow-only. The two MOD Japanese-language RSS feeds support official discovery, but body retrieval is partial: PDF-published originals are retrievable while most HTML articles are challenged and retained only as dated discovery metadata. Separately, a Japan Coast Guard English HTML pilot has one verified, manually authorized October 8 Day 0. The guarded daily gate was observed unset or unavailable in an October 12 read-only Actions run, so no subsequent JCG collecting-day continuity is established; linked PDF/media rights remain held. Nothing from either source family is admitted to the production corpus, and neither proves complete Japanese defense or maritime-security coverage.",
       "public": true,
       "manifest": "shadow/jp_mod/manifest.json",
       "has_production_records": false,
@@ -95,7 +95,7 @@
           {
             "name": "Japan Coast Guard — English press releases",
             "format": "First-party English HTML press-release index; separate guarded shadow pilot, manually authorized Day 0 on 2026-10-08",
-            "note": "The publisher's official index leads to HTML originals and separately linked PDF/media. JCG has an independent shadow branch and manual October 8 Day 0; the daily gate/job continuity is unverified. No JCG daily qualification, original-media reuse rights, human source signoff, AI use, or public-record admission is established. The English copyright footer and central PDL1.0 default require per-version rights review.",
+            "note": "The publisher's official index leads to HTML originals and separately linked PDF/media. JCG has an independent shadow branch and manual October 8 Day 0; the repository gate was observed unset or unavailable on October 12, and no later scheduled collecting days qualify. No JCG daily qualification, original-media reuse rights, human source signoff, AI use, or public-record admission is established. The English copyright footer and central PDL1.0 default require per-version rights review.",
             "publisher_url": "https://www.kaiho.mlit.go.jp/e/topics_archive/index.html"
           },
           {
@@ -124,15 +124,15 @@
             "895"
           ]
         ],
-        "volume_caveat": "These figures describe what the ministry published and what its feeds carry. They are not a record count and nothing here has been collected into the public record. Only documents published as PDF carry text; on the news feed that was 8 of 142 items on 2026-08-26.",
+        "volume_caveat": "These figures describe what the ministry published and what its feeds carry. They are not a record count and nothing here has been collected into the public record. Only PDF-format originals have yielded usable MOD text in the current shadow archive; on the news feed that was 8 of 142 items in the 2026-08-26 baseline. The October 11 ledger preserves just five text-bearing originals and 158 unretrieved URLs; extracted text is not certified as the complete PDF including imagery.",
         "blockers": [
           [
             "Documents published as HTML cannot be retrieved.",
             "The ministry's RSS feeds and its PDF documents are served normally, but HTML documents on the same host are returned behind an interactive challenge. Those items are discovered and recorded as unretrieved rather than inferred to be absent. An institution that wants to refuse this collector must be able to recognise it and say so, so defeating the challenge would destroy the capability that rule protects. Resolving this means requesting an official route."
           ],
           [
-            "Collection-health thresholds remain unset.",
-            "Publication cadence and silence thresholds are calibrated only after shadow collection has run. Guessing now would create false alarms or hide real silence."
+            "MOD PDF source completeness and qualification remain unresolved.",
+            "The 30 verified scheduled MOD collection slots from September 12 through October 11 all reported partial source health: five archived text-bearing originals, 158 unresolved retrieval gaps at the latest ledger, and no complete document-level PDF fidelity or signed Day 7/14/30 source approvals. Do not interpret scheduled operation as publisher completeness or production qualification."
           ]
         ],
         "resolved": [
@@ -153,8 +153,8 @@
       "limits": [
         "No source is enabled in production. Nothing collected here reaches the production database, the public site, or any public count.",
         "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
-        "The MOD feeds are Japanese-language. The Ministry's English press releases and Joint Staff remain access-challenged and uncollected. The separate JCG English pilot has a specifically approved manual source observation dated October 8, 2026; daily continuity, production admission and per-document rights clearance remain unverified.",
-        "MOD RSS shadow testing began 2026-08-26; the independent JCG English pilot's Day 0 was 2026-10-08. These are distinct collection clocks, neither demonstrating a completed source-specific 7/14/30-day qualification or publishing authority."
+        "The MOD feeds are Japanese-language. The Ministry's English press releases and Joint Staff remain access-challenged and uncollected. The separate JCG English pilot has a specifically approved manual source observation dated October 8, 2026; its repository gate was observed unset or unavailable on October 12 and no daily continuity, production admission or per-document rights clearance is established.",
+        "MOD RSS shadow testing began 2026-08-26, and 30 scheduled MOD collection slots from September 12 to October 11 were independently verified but all partial; named Day 7/14/30 human source reviews remain unsigned. JCG's separate manual Day 0 was 2026-10-08 with no verified daily continuity. These distinct collection clocks confer no source publication authority."
       ]
     },
     {
@@ -378,55 +378,55 @@
         "The three ministry families established remote Day 0 on 2026-10-07; required 7/14/30 human reviews and source-level rights gates remain. National Defence Journal is research-only and cannot inherit those ministry clocks or count as qualified."
       ]
     },
-  {
-   "slug": "indonesia",
-   "name": "Indonesia Desk",
-   "route": "indonesia.html",
-   "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. Coverage excludes the armed forces' wider publications, ministerial decrees, and national defense-policy documents.",
-   "status": "shadow",
-   "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. Four dated Berita links and two historical Siaran Pers press links provide attributed outbound navigation only; neither group constitutes human-reviewed IPR citations or public archive records. Five preserved originals received preliminary review; independent Indonesian-language signoff and the Day 7/14/30 collection reviews remain outstanding.",
-   "public": true,
-   "manifest": null,
-   "has_production_records": false,
-   "research": {
-    "source_families": [
-     {
-      "name": "Indonesian Ministry of Defense — Berita (Indonesian)",
-      "format": "Dated ministry news HTML; isolated shadow preservation and private research reader",
-      "note": "Institutional Berita statements on www.kemhan.go.id, not verbatim official decrees, treaties or independent verification of military capability. Original-language article text stays in shadow state. No publisher bodies, photographs or translations are displayed here."
-     },
-     {
-      "name": "Indonesian Ministry of Defense — Siaran Pers (Indonesian)",
-      "format": "Disabled parser candidate; no authorized collection",
-      "note": "Separate sparse press-release family; two 2026 ministry press statements have metadata-only outbound links, but the parser remains disabled and there is no press collector or preserved Siaran Pers state. Berita collection continuity does not establish press reliability or reuse rights."
-     }
-    ],
-    "blockers": [
-     [
-      "Original-language editorial review",
-      "Five archived Berita originals received preliminary research reading. Independent named Indonesian-language review and resolution of a publisher geographic inconsistency on one article remain required before reviewed citations, translated analysis or corpus admission."
-     ],
-     [
-      "Source-specific publisher rights",
-      "The Kemhan site identifies ministry copyright; IPR has no documented blanket licence to republish its articles, images or translations. Both public-link groups point outward to six first-party pages (four Berita and two Siaran Pers); neither permits republication of publisher originals, photographs or translations."
-     ],
-     [
-      "Collection reliability and eligibility",
-      "The initial isolated collection began October 6, 2026. The October 11 evidence preflight cannot satisfy the October 13 Day 7 checkpoint, later human Day 14/30 reviews or 30-day corpus-admission test."
-     ],
-     [
-      "Scope is not nationwide coverage",
-      "Kemhan institutional news alone cannot establish complete coverage of Indonesian defense, individual services, parliament, or formal policy documents. Siaran Pers and other agencies remain separate disabled or unreviewed sources."
-     ]
-    ]
-   },
-   "limits": [
-    "Four Berita and two Siaran Pers first-party links are available for navigation; no article body, model analysis or independently reviewed citation is published, and Indonesia has no admitted public corpus records.",
-    "Isolated shadow collection is not production collection. A daily collection-success ledger does not establish completeness of ministry releases.",
-    "Original Berita reports represent the ministry's communication, not independent confirmation of outcomes, agreements, force readiness or project completion.",
-    "Named Indonesian-language, content-rights and Day 7/14/30 decisions still govern reviewed citation releases and production admission; outbound official links are not article-republication approval."
-   ]
-  },
+    {
+      "slug": "indonesia",
+      "name": "Indonesia Desk",
+      "route": "indonesia.html",
+      "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. Coverage excludes the armed forces' wider publications, ministerial decrees, and national defense-policy documents.",
+      "status": "shadow",
+      "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. Four dated Berita links and two historical Siaran Pers press links provide attributed outbound navigation only; neither group constitutes human-reviewed IPR citations or public archive records. Five preserved originals received preliminary review; independent Indonesian-language signoff and the Day 7/14/30 collection reviews remain outstanding.",
+      "public": true,
+      "manifest": null,
+      "has_production_records": false,
+      "research": {
+        "source_families": [
+          {
+            "name": "Indonesian Ministry of Defense — Berita (Indonesian)",
+            "format": "Dated ministry news HTML; isolated shadow preservation and private research reader",
+            "note": "Institutional Berita statements on www.kemhan.go.id, not verbatim official decrees, treaties or independent verification of military capability. Original-language article text stays in shadow state. No publisher bodies, photographs or translations are displayed here."
+          },
+          {
+            "name": "Indonesian Ministry of Defense — Siaran Pers (Indonesian)",
+            "format": "Disabled parser candidate; no authorized collection",
+            "note": "Separate sparse press-release family; two 2026 ministry press statements have metadata-only outbound links, but the parser remains disabled and there is no press collector or preserved Siaran Pers state. Berita collection continuity does not establish press reliability or reuse rights."
+          }
+        ],
+        "blockers": [
+          [
+            "Original-language editorial review",
+            "Five archived Berita originals received preliminary research reading. Independent named Indonesian-language review and resolution of a publisher geographic inconsistency on one article remain required before reviewed citations, translated analysis or corpus admission."
+          ],
+          [
+            "Source-specific publisher rights",
+            "The Kemhan site identifies ministry copyright; IPR has no documented blanket licence to republish its articles, images or translations. Both public-link groups point outward to six first-party pages (four Berita and two Siaran Pers); neither permits republication of publisher originals, photographs or translations."
+          ],
+          [
+            "Collection reliability and eligibility",
+            "The initial isolated collection began October 6, 2026. The October 11 evidence preflight cannot satisfy the October 13 Day 7 checkpoint, later human Day 14/30 reviews or 30-day corpus-admission test."
+          ],
+          [
+            "Scope is not nationwide coverage",
+            "Kemhan institutional news alone cannot establish complete coverage of Indonesian defense, individual services, parliament, or formal policy documents. Siaran Pers and other agencies remain separate disabled or unreviewed sources."
+          ]
+        ]
+      },
+      "limits": [
+        "Four Berita and two Siaran Pers first-party links are available for navigation; no article body, model analysis or independently reviewed citation is published, and Indonesia has no admitted public corpus records.",
+        "Isolated shadow collection is not production collection. A daily collection-success ledger does not establish completeness of ministry releases.",
+        "Original Berita reports represent the ministry's communication, not independent confirmation of outcomes, agreements, force readiness or project completion.",
+        "Named Indonesian-language, content-rights and Day 7/14/30 decisions still govern reviewed citation releases and production admission; outbound official links are not article-republication approval."
+      ]
+    },
     {
       "slug": "us-indopacific",
       "name": "US Indo-Pacific Reference Desk",
