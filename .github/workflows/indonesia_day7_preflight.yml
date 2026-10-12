@@ -20,6 +20,9 @@ on:
       - "scripts/audit_indonesia_shadow_provenance.py"
       - "tests/test_indonesia_actions_attempts.py"
       - "tests/test_indonesia_shadow_provenance.py"
+      - "scripts/build_indonesia_site_review.py"
+      - "tests/test_indonesia_site_review.py"
+      - "site/preview/templates/desk.html"
       - "research/indonesia/public_reference_pilot_2026-10-11.json"
       - "docs/engineering/INDONESIA_ORIGINAL_LANGUAGE_RIGHTS_DAY7_2026-10-11.md"
 
@@ -49,11 +52,38 @@ jobs:
           set -euo pipefail
           sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-prod-before.sha"
           find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/indonesia-output-before.sha"
+      - name: Install existing offline template dependencies
+        shell: bash
+        run: pip install -r requirements.txt
       - name: Validate four held private-link candidates (no publisher requests)
         shell: bash
         run: |
           python -m unittest tests.test_indonesia_reference_pilot -v
           python -m scripts.preview_indonesia_reference_pilot
+      - name: Test real-template Indonesia private preview without public registration
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest tests.test_indonesia_site_review -v
+          python -m scripts.build_indonesia_site_review --out "$RUNNER_TEMP/indonesia-site-private-only"
+          python - "$RUNNER_TEMP/indonesia-site-private-only" <<'PY'
+          import json, pathlib, sys
+          base = pathlib.Path(sys.argv[1])
+          html = (base / "indonesia.html").read_text(encoding="utf-8")
+          receipt = json.loads((base / "PRIVATE_HOLD_RECEIPT.json").read_text())
+          assert html.count('lang="id"') == 4
+          assert 'content="noindex, nofollow"' in html
+          assert receipt["selected_bibliographic_candidates"] == 4
+          assert all(receipt[k] is False for k in (
+              "human_review_approved", "rights_reuse_approved",
+              "day7_checkpoint_completed", "public_release_authorized",
+              "production_changed", "registry_changed"))
+          assert not (pathlib.Path("output") / "indonesia.html").exists()
+          print("Actual desk.html Indonesia private preview: 4 held references, no release")
+          PY
+          sha256sum -c "$RUNNER_TEMP/indonesia-prod-before.sha" > /dev/null
+          sha256sum -c "$RUNNER_TEMP/indonesia-output-before.sha" > /dev/null
+          rm -rf "$RUNNER_TEMP/indonesia-site-private-only"
       - name: Resolve actual pinned October 11 shadow snapshot from GitHub only
         shell: bash
         env:
