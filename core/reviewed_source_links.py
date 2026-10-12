@@ -137,7 +137,7 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None, desk="vietnam"):
             # Berita has exact dated canonical URLs; no Siaran Pers, search URLs,
             # redirects, marketing params or other ministries may enter this lane.
             m = re.fullmatch(
-                r"/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\\.html",
+                r"/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\.html",
                 p.path)
             _require(m is not None and not p.query and
                      date(*map(int, m.groups())) == pub,
