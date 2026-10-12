@@ -1063,8 +1063,8 @@ Evidence: `docs/evidence/archive-refinement-2b-2026-10-11/`. Not merged or
 deployed; independent review required.
 
 **Phase 3B Briefs catalogue in review (2026-10-12, revised after review of
-PR #418):** branch `claude/briefs-catalogue-phase-3b-61563a`, synced with main
-`dd79144399`. `analysis.html` lists the 17 Briefs as 3:2 media cards (two
+PR #418):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
+`9586568437` (#425). `analysis.html` lists the 17 Briefs as 3:2 media cards (two
 photographs, fifteen Editorial plates) with one catalogue-media decision,
 `core/catalogue_media.py`, driven by `site/assets/catalogue/admissions.json`.
 Nos. 8 and 9 are approved; No. 10 is held pending evidence of original
@@ -1072,11 +1072,14 @@ government authorship; No. 1 is held (identifiable officers, filename alt
 text); No. 12 is refused. The resolver also fails closed when a curated
 source file or its manifest entry no longer matches the admission. The page
 adds `region.svg` and the two 720×480 derivatives to the published set; page
-JS is unchanged (3,118 B); HTML+CSS 119.4 KB. The hero lead photograph goes
+JS is unchanged (3,118 B); HTML+CSS 119.8 KB. The hero lead photograph goes
 through the same decision and the same credit macro as a card. Known
-non-green on main, unrelated: `test_analysis_keeps_every_desk_row_and_adds_
-collections_apart` (Series table has no row for the internal-only Korea desk;
-not changed here). Contract:
+non-green on main at `9586568437`, identical on this branch and not changed
+here: four Korea-owned assertions (`test_indonesia_korea_shadow` and
+`test_desk_capability_execution_plan` still expect no `korea` registry desk;
+`test_preview_prototype` flags the registry scope's "not comprehensive
+coverage" on `desks.html`; `test_site_mode_contract` finds "Korea Desk" inside
+"South Korea Desk"), plus 25 local-environment errors. Contract:
 `docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`; evidence and the
 17-card audit: `docs/evidence/briefs-catalogue-3b-2026-10-12/`. Not merged or
 deployed; independent review required. Phase 3C (article presentation) is

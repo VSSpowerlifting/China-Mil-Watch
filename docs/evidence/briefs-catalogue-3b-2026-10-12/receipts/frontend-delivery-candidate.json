@@ -1,11 +1,11 @@
 {
-  "routes_checked": 7589,
+  "routes_checked": 7590,
   "failures": [],
   "largest_html_css": {
     "route": "desks.html",
     "html_css_limit": 300000,
     "js_limit": 10000,
-    "html_css_bytes": 184976,
+    "html_css_bytes": 189219,
     "js_bytes": 2681,
     "css": [
       "desk-map.css",
@@ -37,7 +37,7 @@
       "assets/material/navy-paper.png"
     ],
     "external_assets": [],
-    "local_delivery_bytes": 463092
+    "local_delivery_bytes": 467335
   },
   "largest_local_delivery": {
     "route": "index.html",
@@ -91,7 +91,7 @@
       "route": "analysis.html",
       "html_css_limit": 300000,
       "js_limit": 10000,
-      "html_css_bytes": 119440,
+      "html_css_bytes": 119787,
       "js_bytes": 3118,
       "css": [
         "briefs-catalog.css",
@@ -128,8 +128,8 @@
         "assets/material/navy-paper.png"
       ],
       "external_assets": [],
-      "local_delivery_bytes": 451859
+      "local_delivery_bytes": 452206
     }
   ],
-  "note": "Trimmed: full per-route list omitted. Built from the branch tree synced with origin/main 4717c8e38a with --legacy-routes. asset_bytes for analysis.html does not include assets/geo/region.svg (49,760 B, via <use>); see analysis-budget.json for the corrected page weight."
+  "note": "Re-run on the tree synced with main 9586568437 (#425). 7,590 routes (one more than before: main's public Korea page). Full per-route list trimmed to the largest routes and the analysis route; shared verifier: scripts/verify_frontend_delivery.py --root <candidate build> (build flags: --snapshot-from-corpus --legacy-routes)."
 }

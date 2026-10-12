@@ -59,11 +59,19 @@ Evidence: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
 - **Collection-boundary contract.** `test_the_view_layer_is_not_on_the_
   collection_path` rejected `core/desk_registry.py` listed as a
   `pull_request.paths` trigger in the Korea internal-registry workflow (a file
-  filter, not an import). It now exempts only that literal list item inside a
-  `paths:` / `paths-ignore:` block; any import, `run:` body, `env:` value or
-  other path naming the registry still fails, and a workflow that names it must
-  keep `permissions: contents: read`. The test was not skipped or weakened for
-  collectors.
+  filter, not an import). Reconciled with main's #425: only the named
+  read-only Korea governance workflow (`korea_internal_registry_contract.yml`)
+  may carry the exact `core/desk_registry.py` item, and only under
+  `on: pull_request: paths:`. That workflow must be `contents: read`, run only
+  `tests.test_korea_internal_registry`, and have no `workflow_dispatch`, push,
+  pipeline import or other mention of the registry once the one trigger item is
+  removed. Every other workflow, collection path, import, `run:` body, `env:`
+  value or `paths` key outside `on.pull_request` still fails. Positive and
+  negative tests are kept
+  (`test_the_korea_workflow_exemption_is_the_named_read_only_contract`,
+  `test_only_a_trigger_path_filter_may_name_the_registry`). The test was not
+  skipped or weakened for collectors. Reviewer commit `9b2533dcec` used `re`
+  without importing it; the import is added in the merge.
 
 ## 2026-10-11 — Expressive frontend Phase 2b (Archive) implementation decisions
 

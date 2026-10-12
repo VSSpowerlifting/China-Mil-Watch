@@ -1,8 +1,8 @@
 {
-  "baseline": "origin/main dd79144399 (fresh build, --snapshot-from-corpus)",
-  "candidate": "branch tree after the final sync with that main (--snapshot-from-corpus)",
-  "baseline_files": 5340,
-  "candidate_files": 5343,
+  "baseline": "origin/main 9586568437 (fresh build, --snapshot-from-corpus --legacy-routes)",
+  "candidate": "branch tree merged with that main (same flags)",
+  "baseline_files": 7687,
+  "candidate_files": 7690,
   "added": [
     "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
     "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
