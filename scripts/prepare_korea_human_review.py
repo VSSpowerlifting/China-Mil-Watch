@@ -144,6 +144,9 @@ def make_blank(candidate):
 
 def original_line_index(candidate, text):
     """Private no-body line-hash index for 1-based physical .ko.txt lines."""
+    require(isinstance(text, str) and
+            sha(text.encode("utf-8")) == candidate["content_sha256"],
+            "line index must match exact pinned Korean text SHA")
     lines = [
         {"line_number": number, "line_sha256": sha(line.encode("utf-8"))}
         for number, line in enumerate(text.splitlines(), 1)
