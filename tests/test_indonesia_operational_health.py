@@ -10,6 +10,7 @@ from scripts.indonesia_operational_health import (
     HealthError, check_public_page, evaluate, monitor_day,
 )
 from core.indonesia_official_index import load as load_index
+from core.indonesia_press_index import load as load_press_index
 
 
 def ledger(run, target, start, end, before, after, count, source):
@@ -93,6 +94,8 @@ class OperationalCanaryTests(unittest.TestCase):
     def test_actual_published_index_contract_in_disposable_html(self):
         approved = load_index()
         self.assertEqual(len(approved), 4)
+        press = load_press_index()
+        self.assertEqual(len(press), 2)
         with tempfile.TemporaryDirectory(prefix="ipr-id-canary-") as tmp:
             page = Path(tmp) / "indonesia.html"
             def document(refs, good=True):
@@ -100,18 +103,31 @@ class OperationalCanaryTests(unittest.TestCase):
                     '<li><a href="%s" lang="id">%s</a></li>' %
                     (row["source_url"], row["title_original"]) for row in refs
                 )
+                press_links = "".join(
+                    '<li><a href="%s" lang="id">%s</a></li>' %
+                    (row["source_url"], row["title_original"]) for row in press
+                )
                 return (
                     "<h2>Shadow evaluation — no public corpus records</h2>"
                     "<p>No individual source references have completed</p>"
                     "<h2>Explore official Indonesian defense publications</h2>"
                     '<ol aria-label="Four external ministry news links">' + links + "</ol>"
+                    "<h2>Kemhan press releases (Siaran Pers)</h2>"
+                    '<ol aria-label="Two external ministry press release links">' +
+                    press_links + "</ol>" +
+                    " ".join(row["press_number"] for row in press)
                 ) if good else "<h1>Wrong site</h1>" + links
             page.write_text(document(approved), encoding="utf-8")
-            self.assertEqual(check_public_page(page), 4)
+            self.assertEqual(check_public_page(page), 6)
             page.write_text(document(approved[:-1]), encoding="utf-8")
             with self.assertRaises(HealthError):
                 check_public_page(page)
             page.write_text(document(approved, good=False), encoding="utf-8")
+            with self.assertRaises(HealthError):
+                check_public_page(page)
+            bad_press = document(approved).replace(press[0]["source_url"],
+                                                  "https://spoof.example/press")
+            page.write_text(bad_press, encoding="utf-8")
             with self.assertRaises(HealthError):
                 check_public_page(page)
             page.write_text(document(approved) + "text_original", encoding="utf-8")

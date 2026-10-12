@@ -1,0 +1,180 @@
+name: Indonesia Desk — guarded Kemhan press links release
+
+# Two dated, first-party press source links only. Never collects Siaran Pers,
+# copies publisher body/media, grants rights or admits production corpus rows.
+on:
+  pull_request:
+    paths:
+      - "research/indonesia_official_press_links.json"
+      - "core/indonesia_press_index.py"
+      - "site/preview/templates/desk.html"
+      - "site/preview/generate_preview.py"
+      - "desks/registry.json"
+      - "scripts/indonesia_operational_health.py"
+      - "tests/test_indonesia_operational_health.py"
+      - "tests/test_indonesia_press_links.py"
+      - ".github/workflows/indonesia_press_links_release.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "research/indonesia_official_press_links.json"
+      - ".github/workflows/indonesia_press_links_release.yml"
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  rehearse:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: pip install -r requirements.txt
+      - name: Validate both official-link families on actual static site
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-db.sha"
+          python -m unittest tests.test_indonesia_press_links tests.test_indonesia_operational_health tests.test_indonesia_official_index tests.test_desk_rollout_contract -q
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.indonesia_official_index import load as news_links
+          from core.indonesia_press_index import load as press_links
+          html = Path("output/indonesia.html").read_text(encoding="utf-8")
+          soup = BeautifulSoup(html, "html.parser")
+          news = soup.select('ol[aria-label="Four external ministry news links"] a')
+          press = soup.select('ol[aria-label="Two external ministry press release links"] a')
+          assert len(news) == 4 and len(press) == 2
+          assert [a["href"] for a in news] == [r["source_url"] for r in news_links()]
+          assert [a["href"] for a in press] == [r["source_url"] for r in press_links()]
+          assert all(a.get("lang") == "id" for a in news+press)
+          assert "No individual source references have completed" in html
+          assert "Shadow evaluation — no public corpus records" in html
+          assert "data-reference-list" not in html
+          assert all(k not in html for k in ("text_original", "body_original", "state/shadow.db"))
+          assert 'href="indonesia.html"' in Path("output/desks.html").read_text()
+          PY
+          sha256sum -c "$RUNNER_TEMP/indonesia-db.sha"
+          git diff --exit-code -- pla_watch.db
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  publish:
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      startsWith(github.event.head_commit.message, 'Release Indonesia Siaran Pers link directory')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check exact release commit and narrow change list
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-db.sha"
+          git diff --name-only HEAD^ HEAD > "$RUNNER_TEMP/press-release-files.txt"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          allowed = {
+              "research/indonesia_official_press_links.json",
+              "core/indonesia_press_index.py",
+              "site/preview/templates/desk.html",
+              "site/preview/generate_preview.py",
+              "desks/registry.json",
+              "scripts/indonesia_operational_health.py",
+              "tests/test_indonesia_operational_health.py",
+              "tests/test_indonesia_press_links.py",
+              "docs/engineering/INDONESIA_SIARAN_PERS_SOURCE_SCOPE_2026-10-12.md",
+              ".github/workflows/indonesia_press_links_release.yml",
+          }
+          changed = set((Path(os.environ["RUNNER_TEMP"]) / "press-release-files.txt")
+                        .read_text().splitlines())
+          assert "research/indonesia_official_press_links.json" in changed
+          assert changed <= allowed, changed - allowed
+          PY
+      - run: pip install -r requirements.txt
+      - name: Build only public metadata and protect production corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest tests.test_indonesia_press_links tests.test_indonesia_operational_health tests.test_indonesia_official_index tests.test_desk_rollout_contract -q
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.indonesia_official_index import load as news_links
+          from core.indonesia_press_index import load as press_links
+          import json
+          d = next(d for d in json.loads(Path("desks/registry.json").read_text())["desks"]
+                   if d["slug"] == "indonesia")
+          assert d["status"] == "shadow" and d["public"] is True
+          assert d["manifest"] is None and d["has_production_records"] is False
+          html = Path("output/indonesia.html").read_text(encoding="utf-8")
+          soup = BeautifulSoup(html, "html.parser")
+          news = soup.select('ol[aria-label="Four external ministry news links"] a')
+          press = soup.select('ol[aria-label="Two external ministry press release links"] a')
+          assert [a["href"] for a in news] == [x["source_url"] for x in news_links()]
+          assert [a["href"] for a in press] == [x["source_url"] for x in press_links()]
+          assert len(news) == 4 and len(press) == 2
+          assert "Shadow evaluation — no public corpus records" in html
+          assert "No individual source references have completed" in html
+          assert "data-reference-list" not in html
+          assert all(x not in html for x in ("text_original", "body_original", "state/shadow.db"))
+          PY
+          sha256sum -c "$RUNNER_TEMP/indonesia-db.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Commit only generated static site after race check
+        shell: bash
+        run: |
+          set -euo pipefail
+          git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' > "$RUNNER_TEMP/unexpected.txt" || true
+          test ! -s "$RUNNER_TEMP/unexpected.txt"
+          git add -A -- output/
+          git diff --cached --quiet && { echo "::error::No site output changes"; exit 1; }
+          sha256sum -c "$RUNNER_TEMP/indonesia-db.sha"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo "::error::main moved since press source release"; exit 1;
+          }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Site: link two official Kemhan Siaran Pers releases (metadata only)"
+          git push origin HEAD:main
+      - name: Publish original corpus site to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Deploy Kemhan press links: ${{ github.run_id }}'
