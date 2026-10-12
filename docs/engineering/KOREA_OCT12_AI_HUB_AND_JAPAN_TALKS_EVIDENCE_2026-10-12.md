@@ -90,6 +90,50 @@ using that number in a published IPR analytical Brief.
   timestamp and publisher/capture parity remain **pending scheduled shadow
   collection evidence**.
 
+### Second-government corroboration and statement-level attribution
+
+The [Japanese Ministry of Defense's contemporaneous **October 9** English
+statement](https://www.mod.go.jp/en/article/2026/10/7d50c715c848925cd5d115bad503a4538516bcf2.html)
+and [Japanese-language publication](https://www.mod.go.jp/j/approach/exchange/area/2026/20261009_kor-j.html)
+are **a separately authored institutional source**, not a translation of or
+syndicated copy of the Korean MND release. This materially improves source
+independence for the bilateral event, but does not authenticate Korea's HWPX.
+
+| Claim / observation | ROK MND October 12 portal body | Japan MOD October 9 original | Research-only judgment |
+| --- | --- | --- | --- |
+| Lee Doo-hee met Japan's Vice Minister Ando on October 9 | Explicitly reports Oct 8–9 visit, Ando talks | Explicitly identifies October 9 talks and both principals | **Cross-government corroborated meeting** |
+| Discussed Japan–ROK and trilateral security cooperation | Reaffirms close Korea–Japan / Korea–US–Japan coordination, framed partly around DPRK nuclear/missile threats | Exchanges views on regional security and Japan–ROK / Japan–US–ROK defense cooperation | **Broad topic corroborated**, not an independently measured threat assessment |
+| Agreed to continue defense cooperation | Says the parties would steadily pursue forward-looking defense exchanges | Says parties concurred on cooperation at various levels and continuing close trilateral coordination | **Policy intent and diplomatic coordination**, not a signed procurement or fielding decision |
+| Lee paid a courtesy call on Defense Minister Koizumi | Reported by ROK MND | Not stated in this particular Japan MOD overview | **Single-ministry assertion in these two sources**, further confirmation needed |
+| Agreed on AI and unmanned-system cooperation | ROK MND mentions future cooperation in advanced technologies | Not expressly stated in this particular Japan MOD overview | **ROK-attributed prospective discussion** only; no delivered project or bilateral instrument established |
+| First South Korean defense vice-minister visit to Japan in 16 years | Not separately substantiated by Korea's short release body | Japan MOD explicitly says first in 16 years | **Japan-MOD-attributed historical characterization**, not independent historical census |
+
+**Original-language provenance and rights (both candidate pages, separate notices).**
+The [ROK MND `156784787` first-party mobile page](https://m.korea.kr/briefing/pressReleaseView.do?newsId=156784787&pWise=mSub&pWiseSub=C4)
+displays its Korean inline body and explicitly says **KOGL Type 1
+(attribution), text only**, while excluding unlicensed photos, illustrations,
+video and other non-text materials. The distinct
+[`156784873` first-party article](https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784873)
+was also inspected in its MND-filtered page rendition, where its own
+**Type 1 text-only** notice appears. These notices are **per-page use
+observations**, not clearance to rehost a full HWPX, an embedded graphic or
+someone else's news photograph. For directly linked publisher text,
+[Policy Briefing's copyright policy](https://www.korea.kr/guide/copyRight.do)
+requires attribution and requests a linked copyright policy.
+
+| Identity | Publisher-posted date | Public HWPX *link identity* | What has **not** been obtained |
+| --- | --- | --- | --- |
+| `156784787` | 2026-10-12 | filename prefix `261009`, publisher download `fileId=198568039&tblKey=GMN` | Original HWPX bytes and capture SHA-256, HWPX visual parity, signed Korean human review |
+| `156784873` | 2026-10-12 | filename prefix `261012`, publisher download `fileId=198568436&tblKey=GMN` | Original HWPX bytes and capture SHA-256, HWPX visual parity, signed Korean human review |
+
+The attachment identifiers above are **public HTML metadata and expected
+download targets**, not proofs of successful retrieval. A separately attempted
+binary retrieval was unavailable through public web-text tooling, and no
+alternative bytes or hash are invented. Neither the first-party inline body
+nor the independent Japanese MOD account replaces archive-bound original
+file/digest checks. Do not record an approved Korean translation, owner
+publication signoff or archival completeness from these observations.
+
 ## Decisions and gates
 
 1. **Source identity:** The two October 12 press IDs `156784873` and
