@@ -35,3 +35,14 @@
 .korea-public-source-list li{border-top:1px solid var(--line,#bdc8ca);padding:1.2rem 0}
 .korea-public-source-list h3{font-size:1.12rem;line-height:1.55;margin:0 0 .6rem}
 .korea-public-source-list .meta{margin:.35rem 0}
+
+/* Korea: make current government publisher entrypoints visible next to the
+   frozen bibliography, while remaining clearly separate from admitted records. */
+.korea-publisher-shortcuts{margin:1.35rem 0 2rem;border:1px solid var(--rule);padding:1.1rem 1.25rem}
+.korea-publisher-shortcuts h3{font-size:1.04rem;margin:0 0 .45rem}
+.korea-publisher-shortcuts ul{list-style:none;padding:0;margin:.9rem 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.korea-publisher-shortcuts li{border-top:1px solid var(--rule);padding-top:.8rem;display:flex;flex-direction:column;gap:.35rem}
+.korea-publisher-shortcuts li strong{font-size:.95rem;line-height:1.4}
+.korea-publisher-shortcuts li a{align-self:flex-start}
+.korea-publisher-shortcuts li .meta{margin:0}
+@media(max-width:640px){.korea-publisher-shortcuts ul{grid-template-columns:1fr}}

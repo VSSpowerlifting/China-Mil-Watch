@@ -14,21 +14,6 @@
 .page-briefs .briefs-head-inner { padding-block: clamp(2rem, 4vw, 3.5rem); }
 .page-briefs .briefs-lead { border-top-color: var(--band-muted); }
 .page-briefs .briefs-index { position: relative; isolation: isolate; }
-.terrain-stage--margin { inset: 0 calc(-1 * var(--gutter)) auto; height: 760px; }
-.terrain-stage--margin .terrain-lines {
-  background-image: url("assets/material/contours-paper.svg");
-  background-size: 1150px auto; background-position: right top; opacity: .65;
-  mask-image: linear-gradient(90deg, transparent 65%, #000);
-}
-.page-briefs .issue-ledger-row { position: relative; }
-.page-briefs .issue-ledger-row::before {
-  content: ""; position: absolute; inset: 0 -.75rem; z-index: -1;
-  background: var(--surface); opacity: 0; pointer-events: none;
-}
-.page-briefs .issue-ledger-row:has(a:hover)::before,
-.page-briefs .issue-ledger-row:focus-within::before { opacity: .85; }
-.page-briefs .issue-ledger-row:has(a:hover) h3 a,
-.page-briefs .issue-ledger-row:focus-within h3 a { color: var(--accent-ink); text-decoration: underline; text-underline-offset: .2em; }
 .page-briefs .btn--primary { border: 1px solid var(--focus-band); background: var(--focus-band); color: var(--ink); }
 .page-briefs .band .btn--primary:hover { background: var(--band-ink); color: var(--ink); }
 .page-briefs a:focus-visible, .page-briefs summary:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; }
@@ -43,7 +28,6 @@
 }
 @media (max-width: 600px) {
   .page-briefs .briefs-head-inner { padding-block: 2rem 2.3rem; }
-  .terrain-stage--margin { height: 520px; opacity: .4; }
 }
 /* Reuse the one-shot observer. Finished art is visible if it cannot run.
    Override the generic reveal on the container; animate only its small field. */
@@ -51,7 +35,6 @@ html.js-reveal .terrain-stage[data-reveal] { opacity: 1; transform: none; transi
 @media (prefers-reduced-motion: no-preference) {
   html.js-reveal:not(.no-anim) .terrain-stage--hero .terrain-lines { transition: opacity 780ms var(--ease-rule), transform 780ms var(--ease-rule); }
   html.js-reveal:not(.no-anim) .terrain-stage--hero:not(.is-in) .terrain-lines { opacity: .2; transform: translate(-14px, 7px); }
-  .page-briefs .issue-ledger-row::before { transition: opacity 160ms var(--ease-rule); }
 }
 @media (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   html:not(.no-anim) .page-briefs .shell-menu[open] > div,
@@ -65,7 +48,6 @@ html.no-anim .page-briefs *, html.no-anim .page-briefs *::before { animation: no
 @media print, (forced-colors: active) {
   .page-briefs .terrain-stage { display: none !important; }
   .material-paper { background-image: none; }
-  .page-briefs .issue-ledger-row::before { display: none; }
 }
 @media print {
   .page-briefs .briefs-head { background: white; }
@@ -78,7 +60,52 @@ html.no-anim .page-briefs *, html.no-anim .page-briefs *::before { animation: no
 .page-briefs .terrain-stage--hero{background:transparent}
 .page-briefs .terrain-stage--hero .terrain-lines{background-image:url('assets/material/chart-shelf.svg');background-size:max(1200px,100%) auto;background-position:center bottom;opacity:1;mask-image:linear-gradient(transparent 62%,black 82%)}
 .page-briefs .briefs-head::after{content:'';position:absolute;inset:auto 0 -1px;height:44px;background:var(--bg) url('assets/material/chart-paper.png');border-radius:75% 0 0 0;z-index:0;pointer-events:none}
-.page-briefs .terrain-stage--margin{inset:0 -22px auto auto;width:18%;height:850px}
-.page-briefs .terrain-stage--margin .terrain-lines{background-image:url('assets/material/coast-profile.svg');background-size:auto 780px;background-position:right top;opacity:1;mask-image:none}
-.page-briefs .issue-ledger{position:relative;max-width:85%;background:var(--bg) url('assets/material/chart-paper.png')}
-@media(max-width:700px){.page-briefs .terrain-stage--margin{display:none}.page-briefs .issue-ledger{max-width:none}.page-briefs .briefs-head{padding-bottom:42px}}
+@media(max-width:700px){.page-briefs .briefs-head{padding-bottom:42px}}
+
+/* Catalogue: the 17 Briefs as mounted 3:2 cards. The one lift is the approved
+   Brief-card lift (B1, delivered by the relief stylesheet); nothing in this
+   file sets a shadow. A card shows
+   a credited photograph only where core/catalogue_media.py admitted one, and
+   an original Editorial plate otherwise. */
+.brief-key { margin: .35rem 0 0; max-width: 68ch; font-size: .8125rem; line-height: 1.55; color: var(--ink-2); }
+.brief-key-term { font-weight: 600; color: var(--ink); }
+.brief-cards { list-style: none; margin: 1.6rem 0 1.4rem; padding: 0; display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); }
+.brief-cards > li { display: flex; min-width: 0; max-width: none; }
+.brief-card { display: flex; flex: 1 1 auto; flex-direction: column; min-width: 0; padding: .7rem .7rem 0; }
+.brief-media { position: relative; }
+.brief-media .rl-print { position: relative; border: 1px solid var(--rule); }
+.brief-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.brief-tag { position: absolute; left: .5rem; top: .5rem; padding: .3rem .45rem; border: 1px solid var(--rule); background: var(--surface); color: var(--band); font: 600 .6875rem/1 var(--sans); letter-spacing: .06em; text-transform: uppercase; }
+.brief-ghost { position: absolute; right: .75rem; bottom: .1rem; font: 400 4.75rem/1 var(--display); letter-spacing: -.02em; font-variant-numeric: lining-nums; color: rgb(243 242 236 / .2); pointer-events: none; }
+.brief-card .issue-ledger-meta { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: .2rem .75rem; padding: .85rem .35rem 0; }
+.brief-card .issue-no { font: 400 1.65rem/1 var(--display); color: var(--ink); }
+.brief-card .issue-ledger-copy { padding: .5rem .35rem .95rem; }
+.brief-card .issue-ledger-copy h3 { max-width: none; font: 400 1.45rem/1.14 var(--display); text-wrap: balance; }
+.brief-card .issue-ledger-copy h3 a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.brief-card .issue-ledger-copy p { max-width: none; margin-top: .55rem; font-size: .9375rem; line-height: 1.5; }
+.brief-card .issue-ledger-copy .meta { margin-top: .45rem; font-size: .78rem; line-height: 1.45; }
+.brief-card:hover h3 a, .brief-card:focus-within h3 a { color: var(--accent-ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .2em; }
+.brief-card h3 a:focus-visible { outline: 0; }
+.brief-card:has(h3 a:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
+@supports not selector(:has(*)) { .brief-card h3 a:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; } }
+.brief-credit { margin: auto -.7rem 0; padding: .65rem 1.05rem .85rem; border-top: 1px solid var(--rule); font-size: .75rem; line-height: 1.5; color: var(--ink-2); }
+.brief-credit p { margin: 0; }
+.brief-credit p + p { margin-top: .35rem; }
+.brief-credit a { position: relative; z-index: 2; color: inherit; text-decoration: underline; text-underline-offset: .15em; }
+.brief-credit a:hover { color: var(--accent-ink); }
+@media (min-width: 640px) { .brief-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem 1.35rem; } }
+@media (min-width: 1040px) { .brief-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (prefers-reduced-motion: no-preference) {
+  .brief-media img { transition: transform 220ms var(--ease-out); }
+  .brief-card:focus-within .brief-media img { transform: scale(1.03); }
+  @media (hover: hover) { .brief-card:hover .brief-media img { transform: scale(1.03); } }
+}
+@media print, (forced-colors: active) {
+  .brief-card[data-media="plate"] .rl-print, .brief-ghost { display: none; }
+  .brief-tag { position: static; display: inline-block; margin-top: .5rem; border: 1px solid CanvasText; background: Canvas; color: CanvasText; }
+}
+@media print { .brief-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .brief-card { break-inside: avoid; } }
+
+/* Hero photograph caption: the same credit as a card, in the band's small type. */
+.briefs-lead-photo figcaption p { margin: 0; }
+.briefs-lead-photo figcaption p + p { margin-top: .25rem; }
