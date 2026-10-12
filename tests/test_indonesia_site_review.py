@@ -45,7 +45,9 @@ class IndonesiaSiteEquivalentReview(unittest.TestCase):
         self.assertFalse(receipt["registry_changed"])
         for asset in ("styles.css", "fonts.css", "surfaces.css",
                       "support.css", "desk-references.css",
-                      "assets/identity/selected-ipr/ipr-navy-160.png"):
+                      "assets/identity/selected-ipr/ipr-navy-160.png",
+                      "assets/fonts/inter-0.woff2",
+                      "assets/fonts/source-serif-4-1.woff2"):
             self.assertTrue((page.parent / asset).is_file(), asset)
 
     def test_no_overwrite_and_no_repo_output(self):
