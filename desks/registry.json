@@ -212,11 +212,13 @@
      {
       "name": "Armed Forces of the Philippines — first-party publications",
       "format": "Official English-language articles; separate scheduled shadow-state storage",
+     "publisher_url": "https://www.afp.mil.ph/",
       "note": "Institutionally attributed AFP publications are the initial source-admission priority. Private preserved originals are not automatically approved public IPR references or archive records."
      },
      {
       "name": "Philippine National Security Council — official statements",
       "format": "Official statement source; independent shadow-state family",
+     "publisher_url": "https://nsc.gov.ph/category/official-statements/",
       "note": "The October 11 pinned state held zero article rows. Do not infer missing publications or borrow AFP's reliability clock; admission requires its own source-specific review."
      }
     ],
