@@ -83,6 +83,16 @@ class KoreaOutputScopeTest(unittest.TestCase):
     def test_no_changes_is_safe_noop(self):
         self.assertEqual(audit_korea_output(self.root), (set(), set()))
 
+    def test_workflow_cannot_stage_entire_output(self):
+        repo_root = Path(__file__).resolve().parents[1]
+        workflow = (repo_root / ".github/workflows/korea_public_bibliography_release.yml").read_text(encoding="utf-8")
+        self.assertIn("python -m scripts.guard_korea_public_output_scope", workflow)
+        self.assertGreaterEqual(workflow.count(
+            "if: steps.korea-output-scope.outputs.publish_required == 'true'"), 3)
+        self.assertIn("git add -A -- output/korea.html output/desk-references.css", workflow)
+        self.assertNotIn("git add -A -- output/\\n", workflow)
+        self.assertIn("python -m unittest tests.test_korea_output_release_scope", workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
