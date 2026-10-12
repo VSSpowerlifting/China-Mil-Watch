@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -16,7 +16,7 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{{ 'Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label }}</h2>
+    <h2>{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}</h2>
     <p>{{ desk.status_explanation }}</p>
   </div>
 </div>
@@ -116,8 +116,21 @@
 </section>
 {% endif %}
 
+{# Indonesia has a first-party publisher *directory* link, not an article
+   citation or inherited reuse permission. No shadow originals are exposed. #}
+{% if desk.slug == 'indonesia' %}
+<section class="desk-references" aria-labelledby="indonesia-publisher-heading">
+  <h2 id="indonesia-publisher-heading">Official publisher starting point</h2>
+  <p><a href="https://www.kemhan.go.id/category/berita"
+        target="_blank" rel="noopener noreferrer" lang="id">Kementerian Pertahanan RI — Berita</a></p>
+  <p class="meta">This external link opens the ministry's own institutional-news
+  listing. It is not an IPR-hosted article, source-citation approval, or a claim
+  that every publication is preserved, verified or available here.</p>
+</section>
+{% endif %}
+
 {# Reviewed public-source links are not locally archived IPR records. #}
-{% if desk.slug in ('philippines', 'vietnam') %}
+{% if desk.slug in ('philippines', 'vietnam', 'indonesia') %}
 <section class="desk-references" aria-labelledby="desk-references-heading">
 <h2 id="desk-references-heading">Individually reviewed official-source references</h2>
 <p>Source links appear only after publication-specific review. They point to the
@@ -318,4 +331,4 @@ keeps its original number, title, date and URL — see <a href="analysis.html">{
 
 <p class="records-foot"><a href="desks.html">All desks</a></p>
 {% endblock %}
-{% block scripts %}{% if desk.slug in ('vietnam', 'philippines') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
+{% block scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}

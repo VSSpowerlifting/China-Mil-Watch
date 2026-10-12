@@ -98,16 +98,17 @@ class Evidence(Case):
                 self.assertEqual(hashlib.sha256(data).hexdigest(), row["sha256"])
                 self.assertEqual(len(data), row["bytes"])
 
-    def test_both_manifests_are_absent_from_production_and_korea_is_internal(self):
+    def test_both_manifests_are_absent_from_production_despite_public_directory(self):
         self.assertNotIn("indonesia", load_all_desks())
         self.assertNotIn("korea", load_all_desks())
-        desks = json.loads((ROOT / "desks/registry.json").read_text())["desks"]
-        self.assertNotIn("indonesia", [d["slug"] for d in desks])
-        korea = next(d for d in desks if d["slug"] == "korea")
-        self.assertFalse(korea["public"])
-        self.assertEqual(korea["status"], "shadow")
-        self.assertIsNone(korea["manifest"])
-        self.assertFalse(korea["has_production_records"])
+        entries = {d["slug"]: d for d in json.loads(
+            (ROOT / "desks/registry.json").read_text())["desks"]}
+        for slug in ("indonesia", "korea"):
+            entry = entries[slug]
+            self.assertTrue(entry["public"])
+            self.assertEqual(entry["status"], "shadow")
+            self.assertIsNone(entry["manifest"])
+            self.assertFalse(entry["has_production_records"])
 
     def test_korean_ministry_policy_blocks_the_publication_paths(self):
         rules, _ = http.robots_policy(fixture("mnd-robots.bin").decode())
