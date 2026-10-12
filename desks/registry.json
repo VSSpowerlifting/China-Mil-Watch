@@ -72,9 +72,9 @@
       "slug": "japan",
       "name": "Japan Desk",
       "route": "japan.html",
-      "scope": "Two official Japanese-language RSS feeds published by the Ministry of Defense: its news stream and its site-update stream. Not an English press-release source, and not the Joint Staff, neither of which either feed carries.",
+      "scope": "Official Japanese-language Ministry of Defense RSS discovery from its news and site-update streams, plus a separate Japan Coast Guard English press-release shadow pilot. Neither covers all Japanese defense or maritime-security publications, and neither MOD feed represents Joint Staff or English MOD releases.",
       "status": "shadow",
-      "status_explanation": "Shadow testing, scheduled daily and publishing nothing. RSS discovery works: two official Japanese-language ministry feeds answer normally and support conditional requests. Body retrieval is partial. Documents published as PDF are served and are collected in full; documents published as HTML are returned behind an interactive challenge and are kept as titled, dated discovery records with no body text and nothing inferred. Measured across the news feed on 2026-08-26, 8 of 142 items (6 percent) carried full text and 134 of 142 (94 percent) did not. That is partial retrieval, not coverage, and it does not establish complete Ministry of Defense or Joint Staff coverage.",
+      "status_explanation": "Japan remains shadow-only. The two MOD Japanese-language RSS feeds support official discovery, but body retrieval is partial: PDF-published originals are retrievable while most HTML articles are challenged and retained only as dated discovery metadata. Separately, a Japan Coast Guard English HTML pilot has one verified, manually authorized October 8 Day 0. Its guarded daily collection gate and follow-up job/ledger history remain unverified, and linked PDF/media rights remain held. Nothing from either source family is admitted to the production corpus, and neither proves complete Japanese defense or maritime-security coverage.",
       "public": true,
       "manifest": "shadow/jp_mod/manifest.json",
       "has_production_records": false,
@@ -91,6 +91,12 @@
             "format": "RSS — 391 items measured 2026-08-26: 342 HTML, 0 PDF",
             "note": "A whole-site stream, not a press-release feed: /j/press/ 126, /j/budget/ 93, /j/profile/ 76, /j/approach/ 63, /j/policy/ 21, /j/presiding/ 11, /j/kids/ 1. Every item is labeled by its family and nothing is filtered out.",
             "publisher_url": "https://www.mod.go.jp/j/update/index.html"
+          },
+          {
+            "name": "Japan Coast Guard — English press releases",
+            "format": "First-party English HTML press-release index; separate guarded shadow pilot, manually authorized Day 0 on 2026-10-08",
+            "note": "The publisher's official index leads to HTML originals and separately linked PDF/media. JCG has an independent shadow branch and manual October 8 Day 0; the daily gate/job continuity is unverified. No JCG daily qualification, original-media reuse rights, human source signoff, AI use, or public-record admission is established. The English copyright footer and central PDL1.0 default require per-version rights review.",
+            "publisher_url": "https://www.kaiho.mlit.go.jp/e/topics_archive/index.html"
           },
           {
             "name": "Joint Staff — press releases (English)",
@@ -147,8 +153,8 @@
       "limits": [
         "No source is enabled in production. Nothing collected here reaches the production database, the public site, or any public count.",
         "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
-        "Both collected feeds are Japanese-language. The English estate and the Joint Staff are declared but not collected, and neither is reachable.",
-        "Shadow testing began 2026-08-26. No qualification period has elapsed and no desk-readiness claim follows from it."
+        "The MOD feeds are Japanese-language. The Ministry's English press releases and Joint Staff remain access-challenged and uncollected. The separate JCG English pilot has a specifically approved manual source observation dated October 8, 2026; daily continuity, production admission and per-document rights clearance remain unverified.",
+        "MOD RSS shadow testing began 2026-08-26; the independent JCG English pilot's Day 0 was 2026-10-08. These are distinct collection clocks, neither demonstrating a completed source-specific 7/14/30-day qualification or publishing authority."
       ]
     },
     {
