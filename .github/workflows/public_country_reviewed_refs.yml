@@ -13,6 +13,7 @@ on:
       - "tests/test_public_desk_references.py"
       - "tests/test_vietnam_reviewed_links.py"
       - "tests/test_desk_rollout_contract.py"
+      - "tests/test_philippines_publisher_navigation.py"
       - ".github/workflows/public_country_reviewed_refs.yml"
 
 permissions:
@@ -38,7 +39,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Source-review schema and render contracts
         run: |
-          python -m unittest tests.test_public_desk_references tests.test_vietnam_reviewed_links tests.test_desk_rollout_contract tests.test_desk_map -v
+          python -m unittest tests.test_public_desk_references tests.test_vietnam_reviewed_links tests.test_desk_rollout_contract tests.test_desk_map tests.test_philippines_publisher_navigation -v
       - name: Confirm no production, shadow or site mutation
         run: |
           set -euo pipefail
