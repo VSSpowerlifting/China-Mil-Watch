@@ -225,6 +225,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: indonesia-pre-day7-counts-only-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/indonesia-checkpoint-receipts/RECEIPT.json
+          path: |
+            ${{ runner.temp }}/indonesia-checkpoint-receipts/RECEIPT.json
+            ${{ runner.temp }}/indonesia-checkpoint-receipts/RECEIPT-ATTEMPTS.json
           retention-days: 14
           if-no-files-found: error
