@@ -12,6 +12,7 @@ on:
       - "desks/registry.json"
       - "tests/test_indonesia_official_index.py"
       - "tests/test_desk_rollout_contract.py"
+      - "tests/test_extraction_interface.py"
       - ".github/workflows/indonesia_official_links_release.yml"
   push:
     branches:
@@ -104,6 +105,7 @@ jobs:
               "desks/registry.json",
               "tests/test_indonesia_official_index.py",
               "tests/test_desk_rollout_contract.py",
+              "tests/test_extraction_interface.py",
               ".github/workflows/indonesia_official_links_release.yml",
               ".github/workflows/indonesia_public_status_release_once.yml",
           }
