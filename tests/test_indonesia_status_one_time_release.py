@@ -19,6 +19,9 @@ class IndonesiaOneTimePublicationContract(unittest.TestCase):
         self.assertIn("github.ref == 'refs/heads/main'", src)
         self.assertIn("cancel-in-progress: false", src)
         self.assertIn("group: daily-update", src)
+        self.assertIn("    if: >-\\n", src)
+        self.assertIn("startsWith(github.event.head_commit.message, 'Release Indonesia status page after workflow repair')", src)
+        self.assertIn('  push:\\n    branches:\\n      - main\\n    paths:\\n      - "desks/registry.json"\\n      - ".github/workflows/indonesia_public_status_release_once.yml"', src)
 
     def test_read_only_pr_and_write_scoped_push(self):
         src = self.source

@@ -2,7 +2,8 @@ name: Indonesia status-only desk — guarded one-time publication
 
 # User-authorized status-page release. Intentionally narrower than source
 # publication or 30-day corpus admission. This workflow only auto-executes for
-# the exact owner-accepted #424 merge message. Future edits cannot auto-release.
+# an approved Indonesia status-release merge or its single-purpose YAML repair.
+# Future routine merges cannot auto-release this page.
 on:
   pull_request:
     paths:
@@ -15,6 +16,7 @@ on:
       - main
     paths:
       - "desks/registry.json"
+      - ".github/workflows/indonesia_public_status_release_once.yml"
 
 permissions:
   contents: read
@@ -67,7 +69,14 @@ jobs:
           git diff --name-only -- output/ | head -45
 
   publish:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Launch Indonesia public research-status page (PR #424)') }}
+    # A block scalar avoids treating the # in PR #424 as a YAML comment.
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      (
+        startsWith(github.event.head_commit.message, 'Launch Indonesia public research-status page (PR #424)') ||
+        startsWith(github.event.head_commit.message, 'Release Indonesia status page after workflow repair')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
