@@ -1,0 +1,64 @@
+# Manual-only, read-only authenticated GitHub API census for Korea.
+# No collection schedule, no publisher access, no source text/media upload.
+name: Korea — authenticated shadow Actions census (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_read_only:
+        description: "Acknowledge: GitHub metadata and pinned Korea ledgers only; no human signoff"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  authenticated-census:
+    if: ${{ github.ref == 'refs/heads/main' && inputs.confirm_read_only == true }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact owner-reviewed main, no persisted token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          persist-credentials: false
+      - name: Checkout Korea shadow ledger ONLY, no document files
+        uses: actions/checkout@v4
+        with:
+          ref: shadow/korea-policy-briefing
+          path: shadow-state
+          sparse-checkout: |
+            /state/ledger/**
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Collect authenticated complete run and artifact pages, then audit
+        working-directory: repo
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python -m scripts.run_korea_authenticated_actions_census \
+            --shadow-checkout "${GITHUB_WORKSPACE}/shadow-state" \
+            --output "${RUNNER_TEMP}/korea-authenticated-actions-census.json"
+      - name: Upload metadata-only receipt (even if audit found a hold)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: korea-authenticated-actions-census-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/korea-authenticated-actions-census.json
+          if-no-files-found: ignore
+          retention-days: 90
+      - name: Assert site and database unchanged
+        if: always()
+        working-directory: repo
+        run: |
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
