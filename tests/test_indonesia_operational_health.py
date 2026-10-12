@@ -99,23 +99,26 @@ class OperationalCanaryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="ipr-id-canary-") as tmp:
             page = Path(tmp) / "indonesia.html"
             def document(refs, good=True):
-                links = "".join(
-                    '<li><a href="%s" lang="id">%s</a></li>' %
-                    (row["source_url"], row["title_original"]) for row in refs
-                )
-                press_links = "".join(
-                    '<li><a href="%s" lang="id">%s</a></li>' %
-                    (row["source_url"], row["title_original"]) for row in press
-                )
+                def item(row, *, is_press=False):
+                    extra = (" · Press statement " + row["press_number"]
+                             if is_press else "")
+                    return (
+                        '<li><p><a href="%s" lang="id">%s</a></p>'
+                        '<p><time datetime="%s">%s</time>%s</p></li>' %
+                        (row["source_url"], row["title_original"],
+                         row["published_date"], row["published_date"], extra)
+                    )
+                links = "".join(item(row) for row in refs)
+                press_links = "".join(item(row, is_press=True) for row in press)
                 return (
                     "<h2>Shadow evaluation — no public corpus records</h2>"
                     "<p>No individual source references have completed</p>"
                     "<h2>Explore official Indonesian defense publications</h2>"
-                    '<ol aria-label="Four external ministry news links">' + links + "</ol>"
+                    '<ol aria-label="Four external ministry news links">' +
+                    links + "</ol>"
                     "<h2>Kemhan press releases (Siaran Pers)</h2>"
                     '<ol aria-label="Two external ministry press release links">' +
-                    press_links + "</ol>" +
-                    " ".join(row["press_number"] for row in press)
+                    press_links + "</ol>"
                 ) if good else "<h1>Wrong site</h1>" + links
             page.write_text(document(approved), encoding="utf-8")
             self.assertEqual(check_public_page(page), 6)
@@ -130,6 +133,22 @@ class OperationalCanaryTests(unittest.TestCase):
             page.write_text(bad_press, encoding="utf-8")
             with self.assertRaises(HealthError):
                 check_public_page(page)
+            # URL-only checks used to miss wrong date/title/number metadata.
+            for before, after in (
+                (approved[0]["title_original"], "Incorrect headline"),
+                ('datetime="' + approved[0]["published_date"] + '"',
+                 'datetime="2026-10-10"'),
+                ('>' + approved[0]["published_date"] + '</time>',
+                 '>2026-10-10</time>'),
+                (press[0]["title_original"], "Forged press headline"),
+                ("Press statement " + press[0]["press_number"],
+                 "Press statement " + press[1]["press_number"]),
+            ):
+                modified = document(approved).replace(before, after, 1)
+                self.assertNotEqual(modified, document(approved))
+                page.write_text(modified, encoding="utf-8")
+                with self.subTest(before=before), self.assertRaises(HealthError):
+                    check_public_page(page)
             page.write_text(document(approved) + "text_original", encoding="utf-8")
             with self.assertRaises(HealthError):
                 check_public_page(page)
