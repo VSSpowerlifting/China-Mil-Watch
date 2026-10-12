@@ -54,7 +54,11 @@ class DeskCapabilityPlanTests(unittest.TestCase):
                             or x["proposed_source_families"]))
         self.assertIsNone(next(x for x in plan["tasks"]
                                if x["scope"] == "korea")["registry_desk"])
-        self.assertNotIn("korea", {x["slug"] for x in self.registry["desks"]})
+        korea = next(x for x in self.registry["desks"] if x["slug"] == "korea")
+        self.assertTrue(korea["public"])  # Fixed link-only directory, not collector admission
+        self.assertEqual(korea["status"], "shadow")
+        self.assertIsNone(korea["manifest"])
+        self.assertFalse(korea["has_production_records"])
 
     def test_invalid_dependencies_cycles_and_wrong_wave_refused(self):
         for mutation in ("unknown", "cycle", "self", "future", "duplicate"):
