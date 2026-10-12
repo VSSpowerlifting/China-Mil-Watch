@@ -7,6 +7,7 @@ sufficient to prevent unwanted publication.
 from __future__ import annotations
 
 from pathlib import Path
+from subprocess import CalledProcessError
 
 from scripts.guard_country_research_output_scope import classify_output_changes
 
@@ -32,7 +33,7 @@ def audit_korea_output(root: Path) -> tuple[set[str], set[str]]:
 def main() -> int:
     try:
         changed, unexpected = audit_korea_output(Path.cwd())
-    except (OSError, RuntimeError) as exc:
+    except (OSError, RuntimeError, CalledProcessError) as exc:
         print(f"BLOCKED: Korea output audit could not run: {exc}")
         return 2
     print(f"Korea release generated output deltas: {len(changed)}")
