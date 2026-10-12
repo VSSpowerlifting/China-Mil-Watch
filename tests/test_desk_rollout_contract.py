@@ -288,8 +288,16 @@ class IndonesiaPublicStatusWithoutCorpus(DeskCase):
         self.assertNotIn("text_original", html)
         self.assertNotIn("body_original", html)
         self.assertNotIn("state/shadow.db", html)
-        self.assertNotIn("The Sudirman Dialogue 2027", html)
-        self.assertNotIn("Menhan Sjafrie Terima Courtesy Call", html)
+        # Four factual first-party link pointers are not the approved-citation
+        # register. They must never carry full articles or corpus admission.
+        from core.indonesia_official_index import load
+        from bs4 import BeautifulSoup
+        links = BeautifulSoup(html, "html.parser").select(
+            'ol[aria-label="Four external ministry news links"] a')
+        self.assertEqual([a["href"] for a in links],
+                         [x["source_url"] for x in load()])
+        self.assertIn("publisher references, not independently", html)
+        self.assertNotIn("NOT APPROVED FOR PUBLICATION", html)
 
     def test_public_directory_distinguishes_reference_from_production(self):
         html = self.page("desks.html")
