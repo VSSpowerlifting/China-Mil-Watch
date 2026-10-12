@@ -18,6 +18,7 @@ from scripts.audit_indonesia_shadow_provenance import utc
 DAY7 = "2026-10-13"
 FIRST = "2026-10-07"
 EARLIEST = datetime(2026, 10, 13, 16, 52, 15, tzinfo=timezone.utc)
+FIRST_NOMINAL_RUN = datetime(2026, 10, 13, 17, 17, tzinfo=timezone.utc)
 EXPECTED_DAYS = [
     "2026-10-%02d" % day for day in range(7, 14)
 ]
@@ -35,7 +36,7 @@ def require(ok, reason):
 def checkpoint(review, census, commit, now=None):
     now = now or datetime.now(timezone.utc)
     require(now.tzinfo is not None and now.utcoffset() == timedelta(0) and
-            now >= EARLIEST, "Day 7 review attempted before actual Day 7 elapsed")
+            now >= FIRST_NOMINAL_RUN, "Day 7 review attempted before required collection slot")
     require(type(commit) is str and re.fullmatch(r"[0-9a-f]{40}", commit),
             "immutable state SHA required")
     require(type(review) is dict and review.get("desk") == "indonesia" and
