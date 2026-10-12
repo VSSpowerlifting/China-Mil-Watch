@@ -1,0 +1,61 @@
+name: Korea Desk — private review-to-preview gate (offline)
+
+on:
+  pull_request:
+    paths:
+      - "core/korea_reference_gate.py"
+      - "scripts/korea_reference_workbench.py"
+      - "research/korea_reference_candidates.json"
+      - "tests/test_korea_reference_gate.py"
+      - "docs/engineering/KOREA_OPERATIONAL_RELEASE_PATH_2026-10-11.md"
+      - ".github/workflows/korea_reference_gate_offline.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  offline-five-record-admission-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Save production corpus and published output hashes
+        run: |
+          sha256sum pla_watch.db > /tmp/korea-db.sha
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/korea-output.sha
+      - name: Run bounded private review and negative admission tests
+        run: python -m unittest tests.test_korea_reference_gate -v
+      - name: Validate unsigned current five-record preview cannot be admitted
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.korea_reference_workbench --mode workbench --out "$RUNNER_TEMP/korea-private-review.html" > "$RUNNER_TEMP/korea-private-receipt.json"
+          python - "$RUNNER_TEMP/korea-private-receipt.json" <<'PY'
+          import json, sys
+          x = json.load(open(sys.argv[1], encoding="utf-8"))
+          assert x["candidate_count"] == 5
+          assert x["approved_preview_count"] == 0
+          assert x["production_activated"] is False
+          assert x["public_release_authorized"] is False
+          assert x["no_publisher_requests"] is True
+          PY
+          if python -m scripts.korea_reference_workbench --mode release-preview --out "$RUNNER_TEMP/should-not-exist.html"; then
+            echo "An unapproved Korea release-preview unexpectedly succeeded" >&2
+            exit 1
+          fi
+          test ! -e "$RUNNER_TEMP/should-not-exist.html"
+      - name: Verify repo, production DB, output and shadow state unchanged
+        run: |
+          set -euo pipefail
+          sha256sum -c /tmp/korea-db.sha
+          sha256sum -c /tmp/korea-output.sha > /dev/null
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No publisher access, artifact upload, reviewer signoff, writes, or deploy.
