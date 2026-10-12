@@ -28,6 +28,8 @@ jobs:
           set -euo pipefail
           sha256sum pla_watch.db > /tmp/korea-review-db.sha
           find output -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/korea-review-output.sha
+      - name: Install existing Korean HWPX parser dependencies
+        run: python -m pip install -r requirements.txt
       - name: Local-only tests with a genuine fixture HWPX
         run: |
           python -m unittest tests.test_korea_human_review_package tests.test_korea_source_fidelity -q
