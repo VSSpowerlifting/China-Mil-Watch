@@ -145,6 +145,8 @@ jobs:
               assert 'href="' + url + '" rel="noopener noreferrer"' in japan_html
           assert japan_html.count("Open official publisher index") == 3
           assert "manual October 8 Day 0" in japan_html
+          assert "repository gate was observed unset or unavailable" in japan_html
+          assert "30 verified scheduled MOD collection slots" in japan_html
           for forbidden in ("data-reference-list", "state/shadow.db",
                             "text_original", "body_original"):
               assert forbidden not in japan_html
