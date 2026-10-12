@@ -371,4 +371,4 @@ keeps its original number, title, date and URL — see <a href="analysis.html">{
 
 <p class="records-foot"><a href="desks.html">All desks</a></p>
 {% endblock %}
-{% block scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
+{% block scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') and not indonesia_preview | default(false) %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
