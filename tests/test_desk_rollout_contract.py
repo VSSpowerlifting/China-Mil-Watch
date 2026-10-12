@@ -279,6 +279,8 @@ class IndonesiaPublicStatusWithoutCorpus(DeskCase):
         html = self.page("indonesia.html")
         self.assertIn("Indonesia Desk", html)
         self.assertIn("Kemhan", html)
+        self.assertIn("https://www.kemhan.go.id/category/berita", html)
+        self.assertIn("Official publisher starting point", html)
         self.assertIn("Individually reviewed official-source references", html)
         self.assertIn("No individual source references have completed", html)
         self.assertIn("no admitted records", html.lower())
