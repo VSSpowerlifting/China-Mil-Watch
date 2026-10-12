@@ -1,0 +1,168 @@
+name: Indonesia Desk — limited outbound official-link release
+
+# Public link-only pilot. No Kemhan fetch, original body, translation, shadow
+# state import, model call or production-corpus admission.
+on:
+  pull_request:
+    paths:
+      - "research/indonesia_official_source_links.json"
+      - "core/indonesia_official_index.py"
+      - "site/preview/templates/desk.html"
+      - "site/preview/generate_preview.py"
+      - "desks/registry.json"
+      - "tests/test_indonesia_official_index.py"
+      - "tests/test_desk_rollout_contract.py"
+      - ".github/workflows/indonesia_official_links_release.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "research/indonesia_official_source_links.json"
+      - ".github/workflows/indonesia_official_links_release.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  rehearse:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: pip install -r requirements.txt
+      - name: Actual bounded site render with corpus checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/id-db.sha"
+          python -m unittest tests.test_indonesia_official_index tests.test_indonesia_status_one_time_release tests.test_desk_rollout_contract -q
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.indonesia_official_index import load
+          html = Path("output/indonesia.html").read_text(encoding="utf-8")
+          links = BeautifulSoup(html, "html.parser").select('ol[aria-label="Four external ministry news links"] a')
+          assert len(links) == 4
+          assert [x["href"] for x in links] == [r["source_url"] for r in load()]
+          assert "No individual source references have completed" in html
+          assert "Shadow evaluation — no public corpus records" in html
+          assert "data-reference-list" not in html
+          assert all(x not in html for x in ("text_original", "body_original", "state/shadow.db"))
+          assert 'href="indonesia.html"' in Path("output/desks.html").read_text()
+          PY
+          sha256sum -c "$RUNNER_TEMP/id-db.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+
+  publish:
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      startsWith(github.event.head_commit.message, 'Release Indonesia four-link external publisher index')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Require exact approved source-only merge
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/id-db.sha"
+          git diff --name-only HEAD^ HEAD > "$RUNNER_TEMP/id-merge-files.txt"
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          allowed = {
+              "research/indonesia_official_source_links.json",
+              "core/indonesia_official_index.py",
+              "site/preview/templates/desk.html",
+              "site/preview/generate_preview.py",
+              "desks/registry.json",
+              "tests/test_indonesia_official_index.py",
+              "tests/test_desk_rollout_contract.py",
+              ".github/workflows/indonesia_official_links_release.yml",
+              ".github/workflows/indonesia_public_status_release_once.yml",
+          }
+          changed = set((Path(os.environ["RUNNER_TEMP"]) / "id-merge-files.txt").read_text().splitlines())
+          assert "research/indonesia_official_source_links.json" in changed
+          assert changed <= allowed, changed - allowed
+          PY
+      - run: pip install -r requirements.txt
+      - name: Exact four-link release validation, no source promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest tests.test_indonesia_official_index tests.test_desk_rollout_contract -q
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.indonesia_official_index import load
+          from core.desk_registry import load_registry
+          desk = load_registry().get("indonesia")
+          assert desk.public and desk.status == "shadow"
+          assert not desk.is_collecting and desk.manifest_path is None
+          assert desk.has_production_records is False
+          html = Path("output/indonesia.html").read_text()
+          links = BeautifulSoup(html, "html.parser").select('ol[aria-label="Four external ministry news links"] a')
+          assert len(links) == 4
+          assert [x["href"] for x in links] == [r["source_url"] for r in load()]
+          assert "No individual source references have completed" in html
+          assert "data-reference-list" not in html
+          assert all(x not in html for x in ("text_original", "body_original", "state/shadow.db"))
+          PY
+          sha256sum -c "$RUNNER_TEMP/id-db.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Commit only generated site and guard against races
+        shell: bash
+        run: |
+          set -euo pipefail
+          git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' > "$RUNNER_TEMP/unexpected.txt" || true
+          test ! -s "$RUNNER_TEMP/unexpected.txt"
+          git add -A -- output/
+          git diff --cached --quiet && { echo "::error::No generated site change"; exit 1; }
+          sha256sum -c "$RUNNER_TEMP/id-db.sha"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo "::error::main moved since owner-authorized release"; exit 1;
+          }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Site: four official Indonesian ministry source links (no corpus records)"
+          git push origin HEAD:main
+      - name: Publish existing original-corpus site to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Deploy Indonesia official links: ${{ github.run_id }}'
