@@ -359,11 +359,19 @@ class TestCandidateBuild(unittest.TestCase):
         from core.desk_registry import load_registry
         declared = {e.name for e in load_registry().public_entries}
         html = (self.out / "desks.html").read_text(encoding="utf-8")
+        # Match the names of actual desk cards, not arbitrary substrings:
+        # "South Korea Desk" is declared, but "Korea Desk" alone is not.
+        shown = set(re.findall(
+            r'<h2 class="plain">\\s*<a href="[^"]+">([^<]+)</a>\\s*</h2>',
+            html))
+        self.assertTrue(shown, "no published desk cards found")
+        self.assertTrue(shown <= declared, "an undeclared desk was rendered: %r" %
+                        sorted(shown - declared))
         for absent in ("Korea Desk", "Australia Desk",
                        "Taiwan Desk", "India Desk", "Cross-Regional Desk"):
             with self.subTest(desk=absent):
                 self.assertNotIn(absent, declared)
-                self.assertNotIn(absent, html)
+                self.assertNotIn(absent, shown)
 
     def test_the_build_did_not_touch_the_tracked_database(self):
         """
