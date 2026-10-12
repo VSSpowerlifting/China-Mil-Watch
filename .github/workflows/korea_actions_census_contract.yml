@@ -1,0 +1,30 @@
+name: Korea shared Actions census — offline contract
+
+on:
+  pull_request:
+    paths:
+      - scripts/audit_korea_actions_attempts.py
+      - tests/test_korea_actions_attempts.py
+      - .github/workflows/korea_actions_census_contract.yml
+
+permissions:
+  contents: read
+
+jobs:
+  census-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Offline synthetic success/hold and attempt-provenance checks
+        run: python -m unittest tests.test_korea_actions_attempts -v
+      - name: No generated site, DB, or archived corpus touched
+        run: |
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
