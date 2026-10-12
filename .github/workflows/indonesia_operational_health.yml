@@ -5,6 +5,11 @@ name: Indonesia Desk — daily operational health (read only)
 on:
   schedule:
     - cron: '17 3 * * *'
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/indonesia_operational_health.yml"
   workflow_dispatch:
     inputs:
       expected_logical_day:
@@ -47,7 +52,12 @@ jobs:
   monitor:
     if: >-
       github.ref == 'refs/heads/main' &&
-      (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+      (
+        github.event_name == 'schedule' ||
+        github.event_name == 'workflow_dispatch' ||
+        (github.event_name == 'push' &&
+         startsWith(github.event.head_commit.message, 'Enable Indonesia daily operational health (PR #438)'))
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
