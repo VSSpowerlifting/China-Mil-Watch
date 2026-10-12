@@ -35,7 +35,7 @@ def _git_paths(root: Path, *args: str) -> set[str]:
     }
 
 
-def classify_output_changes(root: Path) -> tuple[set[str], set[str]]:
+def classify_output_changes(root: Path, reviewed_paths=None) -> tuple[set[str], set[str]]:
     """Return (all generated output deltas, paths not reviewed for release).
 
     Omitting --exclude-standard intentionally includes gitignored files:
@@ -48,7 +48,8 @@ def classify_output_changes(root: Path) -> tuple[set[str], set[str]]:
         | _git_paths(root, "diff", "--cached", "--name-only", "--no-renames")
         | _git_paths(root, "ls-files", "--others")
     )
-    return changed, changed - REVIEWED_OUTPUT_PATHS
+    allowed = REVIEWED_OUTPUT_PATHS if reviewed_paths is None else frozenset(reviewed_paths)
+    return changed, changed - allowed
 
 
 def main() -> int:
