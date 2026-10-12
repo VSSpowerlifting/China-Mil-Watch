@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines') %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -20,6 +20,65 @@
     <p>{{ desk.status_explanation }}</p>
   </div>
 </div>
+
+{# PRIVATE-only site-equivalent Korea preview, never reachable from the public
+   registry. The actual Korean publisher links are NOT human-reviewed IPR
+   references, and no original body or translation is eligible for display. #}
+{% if korea_preview | default(false) %}
+<section class="korea-private-preview" aria-labelledby="korea-preview-heading">
+  <p class="eyebrow">Private design review · unpublished · noindex</p>
+  <h2 id="korea-preview-heading">South Korea — limited source-reference pilot</h2>
+  <p>This is a nonpublic layout prototype. Candidate records remain under
+  per-record release control. A structurally complete reviewer JSON packet
+  can enable a private layout preview of proposed English reference text,
+  but this renderer <strong>cannot authenticate human signoffs</strong>.
+  They are not published IPR records, regardless of structural packet results.</p>
+  <p>Initial institutional scope: Ministry of National Defense (국방부) statements
+  <em>republished</em> by Republic of Korea Policy Briefing (대한민국 정책브리핑).
+  One publisher is not independent corroboration or comprehensive Korea coverage.</p>
+  <div class="korea-preview-metrics" role="group" aria-label="Private source-review status">
+    <div><strong>{{ korea_preview_candidates|length }}</strong><span>preserved candidates</span></div>
+    <div><strong>{{ korea_private_structural_refs|length }}</strong><span>structural-only private preview rows</span></div>
+    <div><strong>0</strong><span>human-approved references authenticated by this tool</span></div>
+    <div><strong>0</strong><span>admitted public archive records</span></div>
+  </div>
+  <ol class="korea-candidate-list" aria-label="Korean original source candidates under review">
+    {% for item in korea_preview_candidates %}
+    {% set preview = korea_private_structural_refs.get(item.source_identity) %}
+    <li class="korea-candidate" data-review-status="{{ 'private-structural-only' if preview else 'hold' }}">
+      <p class="korea-candidate-kicker">
+        {% if preview %}
+        <strong>Structurally eligible for PRIVATE QA only — signoffs unauthenticated</strong>
+        {% else %}
+        <strong>Held for independent review</strong>
+        {% endif %}
+        · Republic of Korea MND
+      </p>
+      <h3><a lang="ko" href="{{ item.source_url }}" rel="noopener noreferrer"
+             target="_blank">{{ item.title_original }}</a></h3>
+      {% if preview %}
+      <p lang="en" class="korea-private-synopsis">{{ preview.english_description }}</p>
+      <p class="meta">English analytical descriptor for private checking only;
+      not an official government translation, confirmed public permission,
+      or released citation.</p>
+      {% endif %}
+      <p class="meta">Policy Briefing posting: <time datetime="{{ item.published_date }}">{{ item.published_date }}</time>
+        · MND document distribution: <time datetime="{{ item.document_distribution_date }}">{{ item.document_distribution_date }}</time></p>
+      <p class="meta">Official source ID: {{ item.source_identity }} · archived original text SHA-256:
+        <code>{{ item.content_sha256 }}</code></p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">These are bibliographic links to official first-party pages,
+  not endorsements of the source's claims. The publisher labels release text
+  KOGL Type 1 with attribution; media and HWPX attachment components have not
+  received blanket reuse clearance.
+  <a href="https://www.korea.kr/guide/copyRight.do" rel="noopener noreferrer">Publisher copyright policy</a>.</p>
+  <p class="meta">Next release gate: qualified human Korean source review, per-record
+  content- and HWPX-hash-bound rights disposition, owner approval, and a separate
+  production release decision. No automatic Sunday Brief admission.</p>
+</section>
+{% endif %}
 
 {# Reviewed public-source links are not locally archived IPR records. #}
 {% if desk.slug in ('philippines', 'vietnam') %}

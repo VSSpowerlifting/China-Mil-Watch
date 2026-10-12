@@ -1,4 +1,4 @@
-name: Philippines and Vietnam private desk reader — offline functional tests
+name: Philippines Vietnam Korea private desk reader — offline functional tests
 
 on:
   pull_request:
@@ -7,6 +7,7 @@ on:
       - "scripts/private_country_desk_reader.py"
       - "tests/test_private_country_desk_reader.py"
       - "docs/engineering/PHILIPPINES_VIETNAM_PRIVATE_RESEARCH_DESKS_2026-10-11.md"
+      - "docs/engineering/KOREA_PRIVATE_RESEARCH_READER_2026-10-11.md"
       - ".github/workflows/private_country_desk_reader_offline.yml"
 
 permissions:

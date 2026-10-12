@@ -1,4 +1,4 @@
-name: Private Philippines and Vietnam desks — one-command functional QA
+name: Private Philippines Vietnam and Korea desks — one-command functional QA
 
 on:
   pull_request:
@@ -7,13 +7,14 @@ on:
       - "scripts/launch_private_country_desks.py"
       - "tests/test_launch_private_country_desks.py"
       - "docs/engineering/PRIVATE_COUNTRY_DESK_ONE_COMMAND_2026-10-11.md"
+      - "docs/engineering/KOREA_PRIVATE_RESEARCH_READER_2026-10-11.md"
       - ".github/workflows/private_country_desks_one_command_offline.yml"
 
 permissions:
   contents: read
 
 jobs:
-  local-only-five-source-reader:
+  local-only-six-source-reader:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -23,7 +24,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - name: Source snapshots and private browser from five synthetic Git branches
+      - name: Source snapshots and private browser from six synthetic Git branches
         run: |
           python -m unittest tests.test_private_country_desk_reader -v
           python -m unittest tests.test_launch_private_country_desks -v

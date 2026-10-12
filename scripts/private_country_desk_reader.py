@@ -1,16 +1,17 @@
-"""PRIVATE analyst-facing reader for existing Philippines and Vietnam shadow records.
+"""PRIVATE analyst-facing reader for Philippines, Vietnam and Korea shadow records.
 
 Reads literal, locally available Git commits (never mutable branch tips).
 Searches preserved article text IN MEMORY, then displays ONLY publisher metadata,
 source URLs, IDs, and exact state SHA. Does not export body text or screenshots,
 fetch publishers, approve reuse, alter SQLite/state, or touch production.
 
-Two country desks can be used for private research immediately, without
+Country desks can be used for private research immediately, without
 mistaking unapproved shadow records for publicly admitted archive records.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
 import json
 import re
@@ -33,6 +34,7 @@ SOURCES = {
     "vn_mps_foreign_affairs_vi": ("vietnam", "Ministry of Public Security", "bocongan.gov.vn", "vietnam"),
     "vn_moit_energy_vi": ("vietnam", "Ministry of Industry and Trade — Energy", "moit.gov.vn", "vietnam"),
     "vn_moit_foundational_industry_vi": ("vietnam", "Ministry of Industry and Trade — Foundational Industry", "moit.gov.vn", "vietnam"),
+    "kr_policy_mnd_releases": ("korea", "Ministry of National Defense (issuer); Korea Policy Briefing (publisher)", "www.korea.kr", "korea"),
 }
 
 
@@ -99,6 +101,42 @@ def _row(rec, slug, commit):
         raise ReaderHold("invalid source publication date") from None
     _url(url, host)
     require(rec["source_slug"] == slug, "record source family misbound")
+    if slug == "kr_policy_mnd_releases":
+        match = re.fullmatch(r"korea-policy:([0-9]{6,20})", sid)
+        require(match is not None and url ==
+                "https://www.korea.kr/briefing/pressReleaseView.do?newsId=" +
+                match.group(1), "Korea MND original identity and canonical portal URL disagree")
+        require(rec.get("language_tag") == "ko", "Korean original-language label missing")
+        try:
+            metadata = json.loads(rec["metadata_json"])
+        except (TypeError, ValueError):
+            raise ReaderHold("Korean record provenance is not valid JSON") from None
+        require(isinstance(metadata, dict) and
+                metadata.get("issuer") == "국방부" and
+                metadata.get("publisher") == "대한민국 정책브리핑" and
+                metadata.get("publication_kind") == "syndicated_press_release" and
+                metadata.get("body_scope") == "published_hwpx_text" and
+                metadata.get("attachments_collected") is True,
+                "Korean republication issuer, publisher, or document scope is unverified")
+        document_url = metadata.get("document_url")
+        document_match = re.fullmatch(
+            r"https://www\.korea\.kr/common/download\.do\?fileId=[0-9]+&tblKey=GMN",
+            document_url) if isinstance(document_url, str) else None
+        require(document_match is not None, "Korean HWPX document identity invalid")
+        require(isinstance(rec.get("text_original"), str) and
+                bool(rec["text_original"].strip()), "Korean original text missing")
+        original_sha = rec.get("content_sha256")
+        require(isinstance(original_sha, str) and
+                re.fullmatch(r"[0-9a-f]{64}", original_sha) is not None and
+                hashlib.sha256(rec["text_original"].encode("utf-8")).hexdigest() == original_sha,
+                "Korean stored original text hash mismatch")
+        for sha in (rec.get("capture_sha256"),
+                    metadata.get("document_capture_sha256")):
+            require(isinstance(sha, str) and
+                    re.fullmatch(r"[0-9a-f]{64}", sha) is not None,
+                    "Korean preserved original-document capture reference invalid")
+        # Metadata-only admission: no HWPX re-extraction, real-language review,
+        # source reuse permission, translation, or public citation authority.
     return {"country": country, "institution": institution, "source_slug": slug,
             "identity": sid, "url": url, "title": " ".join(title.split()),
             "published_date": published, "first_seen_run": first,
@@ -117,7 +155,9 @@ def _read_snapshot(slug, repo, commit, term):
         raise ReaderHold("source clock malformed") from None
     require(isinstance(clock, dict) and
             isinstance(clock.get("day_zero_run_id"), str) and
-            re.fullmatch(r"[1-9][0-9]*-[1-9][0-9]*", clock["day_zero_run_id"]) and
+            (re.fullmatch(r"[1-9][0-9]*-[1-9][0-9]*", clock["day_zero_run_id"]) or
+             (slug == "kr_policy_mnd_releases" and
+              clock["day_zero_run_id"] == "local-native-20261006-korea")) and
             isinstance(clock.get("day_zero_utc"), str),
             "source clock missing immutable Day 0 provenance")
     # Existing AFP, NSC and MPS/MOIT clock files intentionally have no desk
@@ -146,6 +186,10 @@ def _read_snapshot(slug, repo, commit, term):
             tables = {x[0] for x in cx.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
             require(expected <= tables, "pinned source schema is missing required tables")
+            if SOURCES[slug][3] == "korea":
+                require("shadow_meta" in tables and
+                        [tuple(row) for row in cx.execute("SELECT desk FROM shadow_meta")] ==
+                        [("korea",)], "Korean pinned DB is not a Korea shadow state")
             if SOURCES[slug][3] == "vietnam":
                 sql = """SELECT r.source_identity, r.source_slug, r.url,
                     v.title_original, r.published_date, r.first_seen_run,
@@ -154,6 +198,12 @@ def _read_snapshot(slug, repo, commit, term):
                     v.source_identity=r.source_identity AND
                     v.content_sha256=r.current_content_sha256
                     ORDER BY r.published_date DESC, r.source_identity"""
+            elif SOURCES[slug][3] == "korea":
+                sql = """SELECT source_identity, source_slug, url, title_original,
+                    published_date, first_seen_run, text_original, language_tag,
+                    metadata_json, content_sha256, capture_sha256
+                    FROM shadow_records
+                    ORDER BY published_date DESC, source_identity"""
             else:
                 sql = """SELECT source_identity, source_slug, url, title_original,
                     published_date, first_seen_run, text_original
@@ -181,9 +231,9 @@ def build(source_args, *, term="", country=None, max_results=100):
     require(type(max_results) is int and 1 <= max_results <= MAX_RESULTS,
             "display cap must be 1..300")
     require(isinstance(term, str) and len(term) <= 140, "query too long")
-    require(country in (None, "philippines", "vietnam"), "unknown desk filter")
+    require(country in (None, "philippines", "vietnam", "korea"), "unknown desk filter")
     parsed = [parse_input(x) for x in source_args]
-    require(parsed and len(parsed) <= len(SOURCES), "1..5 pinned sources required")
+    require(parsed and len(parsed) <= len(SOURCES), "1..6 pinned sources required")
     require(len({x[0] for x in parsed}) == len(parsed), "duplicate family source")
     all_rows, summaries = [], []
     for slug, repo, commit in parsed:
@@ -255,8 +305,8 @@ def render_html(report):
         html.escape(notice) + '</p><p>' + summary + '</p><p class="small">' +
         source_parts + '</p><div class="filters"><input id="search" type="search" '
         'aria-label="Filter displayed source metadata" placeholder="Filter titles and identities">'
-        '<select id="country" aria-label="Country filter"><option value="">Both countries</option>'
-        '<option value="philippines">Philippines</option><option value="vietnam">Vietnam</option>'
+        '<select id="country" aria-label="Country filter"><option value="">All countries</option>'
+        '<option value="philippines">Philippines</option><option value="vietnam">Vietnam</option><option value="korea">South Korea</option>'
         '</select></div><main id="items">' + "".join(meta) + '</main>'
         '<script>(function(){const q=document.getElementById("search");'
         'const c=document.getElementById("country");const a=[...document.querySelectorAll(".record")];'
@@ -273,7 +323,7 @@ def main(argv=None):
     p.add_argument("--source", action="append", required=True,
                    help="SLUG,ABSOLUTE_LOCAL_GIT_REPO,EXACT_40CHAR_COMMIT (repeat)")
     p.add_argument("--query", default="", help="private title/body search; never exports body")
-    p.add_argument("--country", choices=("philippines", "vietnam"))
+    p.add_argument("--country", choices=("philippines", "vietnam", "korea"))
     p.add_argument("--limit", type=int, default=100)
     p.add_argument("--format", choices=("json", "html"), default="json")
     p.add_argument("--output", help="required absolute OUTSIDE-repository path for HTML")
