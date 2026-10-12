@@ -186,10 +186,7 @@ jobs:
       - name: Stage only approved country research presentation files
         run: |
           set -euo pipefail
-          git add -A -- \\
-            output/philippines.html output/vietnam.html output/indonesia.html \\
-            output/japan.html output/desks.html \\
-            output/desk-references.js output/desk-references.css
+          git add -A -- output/philippines.html output/vietnam.html output/indonesia.html output/japan.html output/desks.html output/desk-references.js output/desk-references.css
           python -m scripts.guard_country_research_output_scope
           git diff --cached --name-status > "$RUNNER_TEMP/country-release-files.txt"
           echo "Generated site change count: $(wc -l < "$RUNNER_TEMP/country-release-files.txt")"
