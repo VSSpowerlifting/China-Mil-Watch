@@ -1,9 +1,9 @@
-name: Indonesia status-only desk — guarded one-time publication
+name: Indonesia status-only desk — legacy public route validation
 
-# User-authorized status-page release. Intentionally narrower than source
-# publication or 30-day corpus admission. This workflow only auto-executes for
-# an approved Indonesia status-release merge or its single-purpose YAML repair.
-# Future routine merges cannot auto-release this page.
+# The original one-time status release has already been completed.
+# Keep its read-only real-render regression for PRs, but deliberately retire
+# the obsolete full-output Pages deployment job. Owner-approved subsequent
+# link-only releases publish only explicitly scoped Indonesia Pages files.
 on:
   pull_request:
     paths:
@@ -11,12 +11,6 @@ on:
       - "desks/registry.json"
       - "site/preview/templates/desk.html"
       - "tests/test_desk_rollout_contract.py"
-  push:
-    branches:
-      - main
-    paths:
-      - "desks/registry.json"
-      - ".github/workflows/indonesia_public_status_release_once.yml"
 
 permissions:
   contents: read
@@ -58,106 +52,18 @@ jobs:
           assert "No individual source references have completed" in indonesia
           assert "https://www.kemhan.go.id/category/berita" in indonesia
           assert "data-reference-list" not in indonesia
-          # The status-only route now includes four external ministry links,
-          # not copied source text or approved IPR citations.
+          # The route contains twelve bounded Berita publisher links,
+          # no source bodies, and no independently approved corpus records.
           from core.indonesia_official_index import load
           from bs4 import BeautifulSoup
           links = BeautifulSoup(indonesia, "html.parser").select(
-              'ol[aria-label="Four external ministry news links"] a')
+              'ol[aria-label="Twelve external ministry news links"] a')
           assert [a["href"] for a in links] == [r["source_url"] for r in load()]
           for forbidden in ("state/shadow.db", "text_original", "body_original"):
               assert forbidden not in indonesia, forbidden
           assert not Path("pla_watch.db-wal").exists()
           assert not Path("pla_watch.db-shm").exists()
-          print("Indonesia status page verified; zero approved individual references")
+          assert len(links) == 12
+          print("Indonesia bibliography navigation verified; zero corpus records")
           PY
           git diff --name-only -- output/ | head -45
-
-  publish:
-    # A block scalar avoids treating the # in PR #424 as a YAML comment.
-    if: >-
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main' &&
-      (
-        startsWith(github.event.head_commit.message, 'Launch Indonesia public research-status page (PR #424)') ||
-        startsWith(github.event.head_commit.message, 'Release Indonesia status page after workflow repair')
-      )
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
-          persist-credentials: true
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.9'
-      - run: pip install -r requirements.txt
-      - name: Strict release baseline
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -z "$(git status --porcelain --untracked-files=all)"
-          sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-db-before"
-          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
-          python -m unittest tests.test_desk_rollout_contract tests.test_desk_map tests.test_country_research_release_contract -q
-      - name: Render and validate current original corpus site
-        shell: bash
-        run: |
-          set -euo pipefail
-          python site/render.py
-          python scripts/validate_output.py
-          sha256sum -c "$RUNNER_TEMP/indonesia-db-before"
-          python - <<'PY'
-          from pathlib import Path
-          import json
-          reg = json.loads(Path("desks/registry.json").read_text())
-          item = next(x for x in reg["desks"] if x["slug"] == "indonesia")
-          assert item["status"] == "shadow" and item["public"] is True
-          assert item["manifest"] is None and item["has_production_records"] is False
-          doc = Path("output/indonesia.html").read_text()
-          directory = Path("output/desks.html").read_text()
-          assert 'href="indonesia.html"' in directory
-          assert "8 declared" in directory and "2 collecting" in directory
-          assert "No individual source references have completed" in doc
-          assert "https://www.kemhan.go.id/category/berita" in doc
-          assert "data-reference-list" not in doc
-          assert "state/shadow.db" not in doc
-          assert "text_original" not in doc and "body_original" not in doc
-          assert "The Sudirman Dialogue 2027" not in doc
-          assert "Menhan Sjafrie Terima Courtesy Call" not in doc
-          assert not Path("pla_watch.db-wal").exists()
-          assert not Path("pla_watch.db-shm").exists()
-          PY
-      - name: Commit ONLY generated site with checked main-head race guard
-        shell: bash
-        run: |
-          set -euo pipefail
-          git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' > "$RUNNER_TEMP/unexpected" || true
-          test ! -s "$RUNNER_TEMP/unexpected" || {
-            echo "::error::Non-output tree changes during render"; cat "$RUNNER_TEMP/unexpected"; exit 1;
-          }
-          git add -A -- output/
-          git diff --cached --quiet && { echo "::error::No generated site change"; exit 1; }
-          sha256sum -c "$RUNNER_TEMP/indonesia-db-before"
-          git fetch origin main
-          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
-            echo "::error::Main changed after approved status merge"; exit 1;
-          }
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Site: publish Indonesia research-status directory (zero source articles)"
-          git push origin HEAD:main
-      - name: Publish validated site via existing Pages mechanism
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./output
-          publish_branch: gh-pages
-          cname: indopacificrecord.org
-          user_name: github-actions[bot]
-          user_email: 41898282+github-actions[bot]@users.noreply.github.com
-          commit_message: 'Deploy Indonesia status-only desk: ${{ github.run_id }}'
