@@ -151,6 +151,23 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
             self.assertNotIn(forbidden, page)
         self.assertIn("Shadow evaluation — no public corpus records", page)
         self.assertIn("Twelve dated Berita links and two historical Siaran Pers", page)
+        notes = soup.select("div.desk-reference-reading-notes")
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(len(notes[0].select("li")), 2)
+        note_text = " ".join(notes[0].get_text(" ", strip=True).split())
+        self.assertIn("not exclusively administrative fines", note_text)
+        for part in ("Rp3.48 trillion", "Rp1.54 trillion", "Rp8.23 trillion",
+                     "259,230.73-hectare", "mixed group", "does not prove its completion"):
+            self.assertIn(part, note_text)
+        self.assertIn("not independently certified IPR citations", note_text)
+        outgoing = {a["href"] for a in notes[0].select("a[href]")}
+        self.assertEqual(outgoing, {
+            "https://kejati-dkijakarta.kejaksaan.go.id/conference/news/14579/read",
+            "https://www.kemhan.go.id/2026/10/09/mensos-dan-wamenhan-lepas-1-509-kadet-unhan-ri-untuk-mengabdi-di-181-sekolah-rakyat.html",
+        })
+        self.assertTrue(all(a.get("rel") == ["noopener", "noreferrer"]
+                            and a.get("target") == "_blank"
+                            for a in notes[0].select("a[href]")))
         self.assertIn("<dt>Corpus records</dt><dd>Not admitted</dd>", page)
         self.assertNotIn("<dt>Records</dt><dd>None collected</dd>", page)
         self.assertNotIn("Four dated Berita links", page)
