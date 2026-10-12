@@ -2378,6 +2378,17 @@ def build(out_dir: Path, title: str, db_path: Path,
     # ordinary public build/publish path, even accidentally. The preview has
     # its own noindex-only, new external output directory; it never changes
     # the desk roster, registry, site origin, RSS, sitemap or deployed output.
+    # Fail closed if someone changes the desk registry to publish Korea
+    # without separately implementing and approving a signed reference
+    # allowlist. A mere public=true or production manifest must never turn
+    # private source-candidates into a public country page.
+    korea_release_state = load_registry().get("korea")
+    if korea_release_state is not None and (
+            korea_release_state.public or korea_release_state.status != "shadow"
+            or korea_release_state.manifest_path is not None
+            or korea_release_state.has_production_records):
+        raise ValueError("Korea public/production admission requires a separate "
+                         "human-reviewed, owner-authorized release PR")
     requested_out = Path(out_dir).expanduser()
     if review_korea:
         resolved = requested_out.resolve()
