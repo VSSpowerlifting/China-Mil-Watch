@@ -137,9 +137,9 @@ class OperationalCanaryTests(unittest.TestCase):
             for before, after in (
                 (approved[0]["title_original"], "Incorrect headline"),
                 ('datetime="' + approved[0]["published_date"] + '"',
-                 'datetime="2026-10-10"'),
+                 'datetime="1999-01-01"'),
                 ('>' + approved[0]["published_date"] + '</time>',
-                 '>2026-10-10</time>'),
+                 '>1999-01-01</time>'),
                 (press[0]["title_original"], "Forged press headline"),
                 ("Press statement " + press[0]["press_number"],
                  "Press statement " + press[1]["press_number"]),
