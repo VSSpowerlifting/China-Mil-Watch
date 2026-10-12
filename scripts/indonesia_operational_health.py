@@ -10,7 +10,9 @@ import argparse
 import json
 import sys
 from datetime import date, datetime, timedelta, timezone
-from html.parser import HTMLParser
+import re
+
+from bs4 import BeautifulSoup
 from pathlib import Path
 
 from core.indonesia_official_index import load as load_official_links
@@ -117,29 +119,33 @@ def evaluate(clock, ledgers, db_digest, expected_day, commit):
     }
 
 
-class Links(HTMLParser):
-    def __init__(self):
-        super().__init__(convert_charrefs=True)
-        self.in_index = False
-        self.in_press = False
-        self.refs = []
-        self.press_refs = []
+def published_entries(document, label, *, press=False):
+    """Read each source's *local* title/date/number as a bound list item.
 
-    def handle_starttag(self, tag, attrs):
-        values = dict(attrs)
-        if tag == "ol" and values.get("aria-label") == "Four external ministry news links":
-            self.in_index = True
-        elif tag == "ol" and values.get("aria-label") == "Two external ministry press release links":
-            self.in_press = True
-        elif tag == "a" and self.in_index:
-            self.refs.append((values.get("href"), values.get("lang")))
-        elif tag == "a" and self.in_press:
-            self.press_refs.append((values.get("href"), values.get("lang")))
-
-    def handle_endtag(self, tag):
-        if tag == "ol":
-            self.in_index = False
-            self.in_press = False
+    Static publication check only: no link dereference, source fetch or rights
+    decision. A correct URL is not sufficient if its surrounding metadata lies.
+    """
+    groups = document.select('ol[aria-label="' + label + '"]')
+    check(len(groups) == 1, "expected exactly one " + label)
+    result = []
+    for item in groups[0].find_all("li", recursive=False):
+        anchors, dates = item.find_all("a"), item.find_all("time")
+        check(len(anchors) == 1 and len(dates) == 1,
+              "publisher item must bind one link, heading and date")
+        link, published = anchors[0], dates[0]
+        entry = (link.get("href"), link.get("lang"),
+                 link.get_text(" ", strip=True),
+                 published.get("datetime"),
+                 published.get_text(" ", strip=True))
+        if press:
+            numbers = re.findall(
+                r"\bPress statement\s+(SP/[1-9][0-9]*/[IVX]+/20[0-9]{2}/ROINFOHAN)\b",
+                item.get_text(" ", strip=True))
+            check(len(numbers) == 1,
+                  "missing or duplicated local publisher press identifier")
+            entry += (numbers[0],)
+        result.append(entry)
+    return result
 
 
 def check_public_page(path, approved_links=None, approved_press_links=None):
@@ -148,16 +154,30 @@ def check_public_page(path, approved_links=None, approved_press_links=None):
     check(path.is_file() and not path.is_symlink() and
           path.stat().st_size <= 250_000, "published page missing or oversized")
     page = path.read_text(encoding="utf-8")
-    links = Links()
-    links.feed(page)
+    document = BeautifulSoup(page, "html.parser")
     known = approved_links if approved_links is not None else load_official_links()
-    check(links.refs == [(x["source_url"], "id") for x in known],
-          "Pages four-link bibliography disagrees with the source index")
     press = approved_press_links if approved_press_links is not None else load_official_press_links()
-    check(links.press_refs == [(x["source_url"], "id") for x in press],
-          "Pages two-link Kemhan press bibliography disagrees with official originals")
-    for number in (x["press_number"] for x in press):
-        check(number in page, "official publisher press-reference number missing")
+    news_entries = published_entries(
+        document, "Four external ministry news links")
+    press_entries = published_entries(
+        document, "Two external ministry press release links", press=True)
+    expected_news = [
+        (ref["source_url"], "id", ref["title_original"],
+         ref["published_date"], ref["published_date"])
+        for ref in known
+    ]
+    expected_press = [
+        (ref["source_url"], "id", ref["title_original"],
+         ref["published_date"], ref["published_date"], ref["press_number"])
+        for ref in press
+    ]
+    check(news_entries == expected_news,
+          "Pages news links, headlines or dates disagree with frozen source metadata")
+    check(press_entries == expected_press,
+          "Pages press links, headlines, dates or numbered releases disagree with frozen source metadata")
+    check(len({entry[0] for entry in news_entries + press_entries}) ==
+          len(news_entries) + len(press_entries),
+          "published ministry links are not unique")
     for phrase in ("Shadow evaluation — no public corpus records",
                    "No individual source references have completed",
                    "Explore official Indonesian defense publications",
@@ -166,7 +186,7 @@ def check_public_page(path, approved_links=None, approved_press_links=None):
     for forbidden in ("text_original", "body_original", "state/shadow.db",
                       "data-reference-list", "NOT APPROVED FOR PUBLICATION"):
         check(forbidden not in page, "unapproved source or review material in public page")
-    return len(links.refs) + len(links.press_refs)
+    return len(news_entries) + len(press_entries)
 
 
 def main(argv=None):
