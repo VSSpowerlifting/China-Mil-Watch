@@ -4,6 +4,26 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-11 — Expressive frontend Phase 2b (Archive) implementation decisions
+
+Made within the Phase 2b brief; presentation only, not visual sign-off.
+Evidence is in `docs/evidence/archive-refinement-2b-2026-10-11/`.
+
+- **B1 reach.** The finder lift on the Archive is the existing `--lift-3`
+  finder token reached through `rl-finder`. `archive.css` casts no shadow and
+  names no lift. `relief.css` is now linked by `index.html` and `archive.html`
+  only; the isolation tests allow exactly that and the finder class.
+- **Desk marker eligibility.** A marker is drawn only for desks the geo build
+  draws as a country outline (`build_geo_assets.DESKS`: China, Japan,
+  Singapore, Vietnam). The US Indo-Pacific desk is drawn as Hawaii (a command
+  seat, not a country) and the Philippines desk has no geometry; both show no
+  marker rather than an invented one. Adding a desk needs its outline in the
+  geo build, a mark file, an allowlist entry and a CSS rule.
+- **Asset form.** The marker is a CSS mask over a standalone SVG per desk
+  under `site/assets/desk-marks/`, derived byte-for-byte from `emblems.svg`.
+  Sprite fragments do not mask in Chromium (probe in the evidence). Files are
+  fetched only when a row for that desk is rendered on the page.
+
 ## 2026-10-11 — Expressive frontend Phase 2 (Home) implementation decisions
 
 These choices were made within the owner's Phase 2 Home kickoff and lean

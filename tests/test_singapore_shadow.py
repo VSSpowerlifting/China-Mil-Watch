@@ -200,12 +200,16 @@ class TestIsolationFromProduction(unittest.TestCase):
                 self.assertNotIn("pla_watch.db", code)
                 self.assertNotIn("sqlite3.connect(str(PRODUCTION_DB))", code)
 
-    def test_singapore_does_not_appear_in_the_public_renderer(self):
+    def test_singapore_shadow_collector_does_not_appear_in_public_renderer(self):
+        # Singapore has a public desk and may appear in approved asset names.
+        # What must remain isolated is the *private shadow collector* and its
+        # unpublished working tree, not the country's name on a public page.
         gp = (REPO_ROOT / "site" / "preview"
-              / "generate_preview.py").read_text(encoding="utf-8")
-        for token in ("singapore", "mindef", "sg_mindef"):
+              / "generate_preview.py").read_text(encoding="utf-8").lower()
+        for token in ("mindef", "sg_mindef", "shadow_collect",
+                      "shadow/singapore", "singapore_shadow"):
             with self.subTest(token=token):
-                self.assertNotIn(token, gp.lower())
+                self.assertNotIn(token, gp)
 
     def test_no_workflow_makes_the_shadow_run_write_to_main(self):
         wf = (REPO_ROOT / ".github" / "workflows"

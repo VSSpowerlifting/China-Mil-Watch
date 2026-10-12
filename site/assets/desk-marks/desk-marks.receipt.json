@@ -1,0 +1,26 @@
+{
+ "generator": "scripts/build_desk_marks.py",
+ "input": {
+  "file": "site/assets/geo/emblems.svg",
+  "sha256": "a22b88871fbf82370ef2dc97f0d60a0a94d85661d2bedbaa9aa221439fe9be4f"
+ },
+ "licence": "Natural Earth country boundaries (public domain), via world-atlas 2.0.2 (ISC)",
+ "outputs": {
+  "china.svg": {
+   "bytes": 3950,
+   "sha256": "f30d071eca3760aa0957c99a48d61db296749642e908c84d90fbb88f42f218dc"
+  },
+  "japan.svg": {
+   "bytes": 2707,
+   "sha256": "768c9fe84ffdc5618354ff44a79d32c882dfbc8ea89d08b270cc56198c0bcae3"
+  },
+  "singapore.svg": {
+   "bytes": 707,
+   "sha256": "a58e12362480962fed6dc0ea4a2fa953d2f92b993ea7684f7a120c71ae857880"
+  },
+  "vietnam.svg": {
+   "bytes": 2403,
+   "sha256": "6612a3e8f4f225e944d4ed8876fd03605eb83365d0a1a5330b10bad3e2f5690c"
+  }
+ }
+}

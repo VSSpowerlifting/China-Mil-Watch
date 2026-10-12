@@ -1,0 +1,71 @@
+{
+ "initial": {
+  "rows": 50,
+  "marked": 50,
+  "noDeskLink": 0,
+  "text": 8765,
+  "first": "立住谦让之德，卸下功名之累\n\nCMC Political Work Department\nPLA Daily (解放军报) · Simplified Chinese\nChina Desk\nNot selected for analysis"
+ },
+ "search": {
+  "rows": 50,
+  "marked": 50,
+  "noDeskLink": 0,
+  "text": 9888,
+  "first": "Ministry of National Defense Spokesperson Chen Xi Answers Reporter Questions Regarding Lai Ching-te's So-Called \"Double Ten\" Speech\n\n国防部新闻发言人陈曦就赖清德发表所谓“双十”讲话答记者问\n\nAnalyzed\n\nMinistry of National Defense\nMOD China (国防部) · Simplified Chinese\nChina Desk"
+ },
+ "desk_options": [
+  [
+   "",
+   "All desks"
+  ],
+  [
+   "china",
+   "China Desk (5,011)"
+  ],
+  [
+   "singapore",
+   "Singapore Desk (86)"
+  ]
+ ],
+ "filter_singapore": {
+  "rows": 50,
+  "marked": 50,
+  "noDeskLink": 0,
+  "text": 10932,
+  "first": "Fact Sheet: 50 Years of Singapore-Brunei Darussalam Defence Relations\n\nMinistry of Defence\nMINDEF Singapore — official releases · English\nSingapore Desk\nAwaiting screening"
+ },
+ "sort": {
+  "rows": 50,
+  "marked": 50,
+  "noDeskLink": 0,
+  "text": 9243,
+  "first": "Drawing Cultivation Wisdom from Traditional Culture | 'Enrolled in the Register of Warriors, One Must Not Pause for Private Concerns'\n\n从传统文化中汲取修养智慧丨“名编壮士籍，不得中顾私”\n\nAnalyzed\n\nCMC Political Work Department\nPLA Daily (解放军报) · Simplified Chinese\nChina Desk"
+ },
+ "page2": {
+  "rows": 50,
+  "marked": 50,
+  "noDeskLink": 0,
+  "text": 9191,
+  "first": "A Photograph Taken 76 Years Ago Reveals New China's First Naval Mine-Clearance Operation\n\n一张拍摄于76年前的照片，揭露新中国首次海上扫雷作战\n\nAnalyzed\n\nCMC Political Work Department\nPLA Daily (解放军报) · Simplified Chinese\nChina Desk"
+ },
+ "back": {
+  "rows": 50,
+  "marked": 50,
+  "noDeskLink": 0,
+  "text": 9243,
+  "first": "Drawing Cultivation Wisdom from Traditional Culture | 'Enrolled in the Register of Warriors, One Must Not Pause for Private Concerns'\n\n从传统文化中汲取修养智慧丨“名编壮士籍，不得中顾私”\n\nAnalyzed\n\nCMC Political Work Department\nPLA Daily (解放军报) · Simplified Chinese\nChina Desk"
+ },
+ "forward": {
+  "rows": 50,
+  "marked": 50,
+  "noDeskLink": 0,
+  "text": 9191,
+  "first": "A Photograph Taken 76 Years Ago Reveals New China's First Naval Mine-Clearance Operation\n\n一张拍摄于76年前的照片，揭露新中国首次海上扫雷作战\n\nAnalyzed\n\nCMC Political Work Department\nPLA Daily (解放军报) · Simplified Chinese\nChina Desk"
+ },
+ "errors": [],
+ "bad": [],
+ "mask_fetches": [
+  "china.svg 200",
+  "singapore.svg 200"
+ ]
+}
