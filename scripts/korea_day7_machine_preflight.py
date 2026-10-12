@@ -13,6 +13,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "ipr-korea-day7-machine-preflight/1"
 DAY7 = "2026-10-13"
 EXPECTED = ["2026-10-%02d" % x for x in range(7, 14)]
@@ -143,7 +144,8 @@ def main(argv=None):
         }, 2
     target = opts.receipt.expanduser()
     if not target.is_absolute() or not target.parent.is_dir() or \
-            target.parent.is_symlink() or target.is_symlink() or target.exists():
+            target.parent.is_symlink() or target.is_symlink() or target.exists() or \
+            target.resolve() == ROOT.resolve() or ROOT.resolve() in target.resolve().parents:
         parser.error("receipt must be a new absolute, private, non-symlink path")
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL
     if hasattr(os, "O_NOFOLLOW"):
