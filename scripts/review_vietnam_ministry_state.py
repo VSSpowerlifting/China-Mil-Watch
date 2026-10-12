@@ -199,6 +199,25 @@ def build(state_repo, state_commit, slug, checkpoint, as_of, out_dir):
             evidence["inputs"]["shadow.db"], SOURCES[slug].hash_rule)
         anomalies += sorted({json.dumps(a, sort_keys=True, ensure_ascii=False)
                              for e in ledgers for a in e["anomalies"]})
+        # Source-surface warnings (e.g. MOIT robots.txt served with an HTML
+        # MIME type) are recorded under source_anomalies, not the per-article
+        # anomalies list. Preserve each run's warning for mandatory human
+        # disposition, even when the collector reports overall health=ok.
+        # Without this, a formal Day 7/14/30 packet silently loses an
+        # access-policy observation present in its pinned source ledger.
+        surface_warnings = []
+        for e in ledgers:
+            observed = e.get("source_anomalies", [])
+            require(type(observed) is list and len(observed) <= 100 and
+                    all(type(note) is str and note.strip() and len(note) <= 1024
+                        and not any(ord(ch) < 32 or ord(ch) == 127 for ch in note)
+                        for note in observed) and
+                    len(observed) == len(set(observed)),
+                    "invalid source-surface anomaly evidence")
+            surface_warnings.extend(
+                "source-surface run %s: %s" % (e["run_id"], note)
+                for note in observed)
+        anomalies += sorted(surface_warnings)
         successes = [e for e in ledgers if e["result"] in formal.TERMINAL_OK]
         require(bool(successes), "no successful collecting run")
         latest_day = (datetime.fromisoformat(successes[-1]["finished_utc"])
