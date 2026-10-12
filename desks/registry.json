@@ -358,7 +358,7 @@
    "slug": "indonesia",
    "name": "Indonesia Desk",
    "route": "indonesia.html",
-   "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. This is not a comprehensive Indonesian armed-forces, Ministry of Defence, government-document, or defence-policy archive.",
+   "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. This is not a comprehensive Indonesian armed-forces, defense-ministry, government-document, or defense-policy archive.",
    "status": "shadow",
    "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. A source-language and rights review has examined five selected originals, but independent human signoff, the Day 7/14/30 reviews, and any individual public-link release remain outstanding. This page is a research-status directory entry only, not public article coverage.",
    "public": true,
@@ -392,7 +392,7 @@
      ],
      [
       "Scope is not nationwide coverage",
-      "Kemhan institutional news alone cannot establish comprehensive Indonesian defence, service-level, parliamentary or formal policy coverage. Siaran Pers and other agencies remain separate disabled or unreviewed sources."
+      "Kemhan institutional news alone cannot establish comprehensive Indonesian defense, service-level, parliamentary or formal policy coverage. Siaran Pers and other agencies remain separate disabled or unreviewed sources."
      ]
     ]
    },
