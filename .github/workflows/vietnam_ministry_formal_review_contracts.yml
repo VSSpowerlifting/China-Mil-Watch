@@ -1,0 +1,50 @@
+name: Vietnam ministry formal packets — source-surface review contracts
+
+on:
+  pull_request:
+    paths:
+      - "scripts/review_vietnam_ministry_state.py"
+      - "scripts/review_vietnam_shadow_state.py"
+      - "scripts/vietnam_ministry_checkpoint_rollup.py"
+      - "tests/test_vietnam_ministry_remote_review.py"
+      - "tests/test_vietnam_ministry_checkpoint_rollup.py"
+      - "tests/test_vietnam_shadow_review.py"
+      - "docs/VIETNAM_MINISTRY_THREE_SOURCE_CHECKPOINT_ROLLUP_2026-10-08.md"
+      - ".github/workflows/vietnam_ministry_formal_review_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  immutable-private-review-no-network:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install offline test dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Preserve production corpus and output hashes
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/vn-review-db.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/vn-review-output.sha"
+      - name: Exercise immutable Git and synthetic ministry packets, with no publisher network
+        run: |
+          python -m unittest \
+            tests.test_vietnam_ministry_remote_review \
+            tests.test_vietnam_ministry_checkpoint_rollup \
+            tests.test_vietnam_shadow_review -v
+      - name: Verify production, output, and shadow state were not touched
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/vn-review-db.sha"
+          sha256sum -c "$RUNNER_TEMP/vn-review-output.sha" > /dev/null
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
