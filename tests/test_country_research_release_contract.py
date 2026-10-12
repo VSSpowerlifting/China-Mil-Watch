@@ -73,7 +73,17 @@ class CountryResearchReleaseContract(unittest.TestCase):
         text = self.body
         self.assertIn("sha256sum -c", text)
         self.assertIn("git diff --exit-code -- pla_watch.db", text)
-        self.assertIn("git add -A -- output/", text)
+        self.assertNotIn("git add -A -- output/", text)
+        self.assertIn("git add -A --", text)
+        self.assertIn("output/japan.html output/desks.html", text)
+        self.assertIn("python -m scripts.guard_country_research_output_scope", text)
+        # Rehearsal + pre-stage + post-stage. Nothing else may reach Pages.
+        self.assertEqual(
+            text.count("python -m scripts.guard_country_research_output_scope"), 3
+        )
+        self.assertIn("Fail closed on unrelated full-site generated drift", text)
+        self.assertIn("scripts/guard_country_research_output_scope.py", text)
+        self.assertIn("tests/test_country_research_output_scope.py", text)
         self.assertIn("git fetch origin main", text)
         self.assertIn("git push origin HEAD:main", text)
         self.assertIn("cname: indopacificrecord.org", text)
