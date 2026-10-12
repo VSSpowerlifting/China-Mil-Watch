@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -278,4 +278,4 @@ keeps its original number, title, date and URL — see <a href="analysis.html">{
 
 <p class="records-foot"><a href="desks.html">All desks</a></p>
 {% endblock %}
-{% block scripts %}{% if desk.slug in ('vietnam', 'philippines') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
+{% block scripts %}{% if desk.slug in ('vietnam', 'philippines', 'indonesia') %}<script src="desk-references.js" defer></script>{% endif %}{% endblock %}
