@@ -33,7 +33,7 @@ class KoreaSitePreviewTests(unittest.TestCase):
     def test_exact_five_genuine_original_titles_and_dates(self):
         from core.korea_reference_gate import load_candidates
         candidates = load_candidates()
-        from html import escape
+        from markupsafe import escape
         self.assertEqual(self.page.count('data-review-status="hold"'), 5)
         self.assertIn("South Korea — limited source-reference pilot", self.page)
         for candidate in candidates:
