@@ -21,7 +21,7 @@ FIELDS = {"id", "url", "title_original", "published_date", "language"}
 EXPECTED = {"schema", "source_family", "publisher", "snapshot_date",
             "pinned_shadow_commit", "editorial_status", "collection_status",
             "references"}
-PATH = re.compile(r"/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\\.html\\Z")
+PATH = re.compile(r"/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\.html\Z")
 
 
 class PublicIndexError(ValueError):
