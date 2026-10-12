@@ -33,7 +33,7 @@ class IndonesiaOneTimePublicationContract(unittest.TestCase):
         src = self.source
         for required in (
             "python site/render.py", "python scripts/validate_output.py",
-            "output/indonesia.html", "desks/registry.json", '"status" == "shadow"',
+            "output/indonesia.html", "desks/registry.json", 'item["status"] == "shadow"',
             "No individual source references have completed",
             "data-reference-list", "state/shadow.db",
             "text_original", "body_original",
