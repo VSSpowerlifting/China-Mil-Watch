@@ -51,7 +51,7 @@
     {
       "route": "archive.html",
       "html_css_limit": 300000,
-      "html_css_bytes": 139779,
+      "html_css_bytes": 139926,
       "js_bytes": 9847,
       "css": [
         "archive.css",
@@ -92,7 +92,7 @@
     {
       "route": "analysis.html",
       "html_css_limit": 300000,
-      "html_css_bytes": 119787,
+      "html_css_bytes": 120136,
       "js_bytes": 3118,
       "css": [
         "briefs-catalog.css",

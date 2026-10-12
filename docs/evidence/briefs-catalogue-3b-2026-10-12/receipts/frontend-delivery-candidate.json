@@ -1,11 +1,11 @@
 {
-  "routes_checked": 7590,
+  "routes_checked": 7591,
   "failures": [],
   "largest_html_css": {
     "route": "desks.html",
     "html_css_limit": 300000,
     "js_limit": 10000,
-    "html_css_bytes": 189219,
+    "html_css_bytes": 191322,
     "js_bytes": 2681,
     "css": [
       "desk-map.css",
@@ -37,7 +37,7 @@
       "assets/material/navy-paper.png"
     ],
     "external_assets": [],
-    "local_delivery_bytes": 467335
+    "local_delivery_bytes": 469438
   },
   "largest_local_delivery": {
     "route": "index.html",
@@ -91,7 +91,7 @@
       "route": "analysis.html",
       "html_css_limit": 300000,
       "js_limit": 10000,
-      "html_css_bytes": 119787,
+      "html_css_bytes": 120136,
       "js_bytes": 3118,
       "css": [
         "briefs-catalog.css",
@@ -128,8 +128,8 @@
         "assets/material/navy-paper.png"
       ],
       "external_assets": [],
-      "local_delivery_bytes": 452206
+      "local_delivery_bytes": 452555
     }
   ],
-  "note": "Re-run on the tree synced with main 9586568437 (#425). 7,590 routes (one more than before: main's public Korea page). Full per-route list trimmed to the largest routes and the analysis route; shared verifier: scripts/verify_frontend_delivery.py --root <candidate build> (build flags: --snapshot-from-corpus --legacy-routes)."
+  "note": "Re-run on the tree merged with main 13d1fb7023. 7591 routes. Full per-route list trimmed to the largest routes and the analysis route; shared verifier: scripts/verify_frontend_delivery.py --root <candidate build> (build flags: --snapshot-from-corpus --legacy-routes)."
 }
