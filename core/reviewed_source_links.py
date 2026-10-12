@@ -139,8 +139,13 @@ def load_reviewed_links(path=DEFAULT_PATH, *, today=None, desk="vietnam"):
             m = re.fullmatch(
                 r"/([0-9]{4})/([0-9]{2})/([0-9]{2})/[a-z0-9-]+\.html",
                 p.path)
-            _require(m is not None and not p.query and
-                     date(*map(int, m.groups())) == pub,
+            _require(m is not None and not p.query,
+                     "Indonesia Berita canonical URL/path mismatch")
+            try:
+                path_date = date(*map(int, m.groups()))
+            except ValueError as exc:
+                raise ReviewedLinkError("Indonesia Berita date in URL is invalid") from exc
+            _require(path_date == pub,
                      "Indonesia Berita canonical path/date mismatch")
         reviewer = item["reviewed_by"]
         _require(isinstance(reviewer, str) and 3 <= len(reviewer.strip()) <= 120,
