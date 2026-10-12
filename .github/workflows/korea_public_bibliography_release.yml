@@ -1,0 +1,181 @@
+name: Korea Desk — five official-source links release
+
+# Explicit owner-authorized publication of government bibliography only.
+# Push triggers once when the bounded Korea allowlist enters main.
+# Never requests a Korean publisher, shadow Git, HWPX, model or new collector.
+on:
+  pull_request:
+    paths:
+      - "research/korea_public_reference_ids.json"
+      - "core/korea_public_bibliography.py"
+      - "desks/registry.json"
+      - "site/preview/generate_preview.py"
+      - "site/preview/templates/desk.html"
+      - "site/preview/desk-references.css"
+      - "tests/test_korea_public_bibliography.py"
+      - "tests/test_korea_internal_registry.py"
+      - "tests/test_korea_site_preview.py"
+      - ".github/workflows/korea_public_bibliography_release.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/korea_public_reference_ids.json"
+
+permissions:
+  contents: read
+
+jobs:
+  source-link-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Install actual site dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Preserve production database checksum
+        run: sha256sum pla_watch.db > /tmp/ipr-korea-links-db.sha
+      - name: Full source-link and original-review regression checks
+        run: |
+          python -m unittest tests.test_korea_public_bibliography tests.test_korea_internal_registry tests.test_korea_site_preview tests.test_korea_reference_gate tests.test_public_desk_references tests.test_desk_map tests.test_desk_rollout_contract tests.test_briefs_collection tests.test_extraction_interface -q
+      - name: Render real public site, no collectors or media reuse
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from core.korea_public_bibliography import load_public_korea_links
+          rows = load_public_korea_links()
+          assert len(rows) == 5
+          import json
+          korea = next(x for x in json.loads(Path("desks/registry.json").read_text())["desks"]
+                       if x["slug"] == "korea")
+          assert korea["public"] is True and korea["status"] == "shadow"
+          assert korea["manifest"] is None and korea["has_production_records"] is False
+          base = Path("output")
+          html = (base/"korea.html").read_text(encoding="utf-8")
+          assert html.count('data-korea-public-link=') == 5
+          assert "not IPR archived records" in html
+          assert "https://www.korea.kr/guide/copyRight.do" in html
+          assert "2026-10-04" in html and "2026-10-06" in html
+          assert "noindex, nofollow" not in html
+          for forbidden in ("text_original", "body_original", "download.do?fileId=",
+                            "data-review-status=", "english_description"):
+              assert forbidden not in html, forbidden
+          for row in rows:
+              assert row["source_url"] in html
+          assert 'href="korea.html"' in (base/"desks.html").read_text(encoding="utf-8")
+          assert "https://indopacificrecord.org/korea.html" in (
+              base/"sitemap.xml").read_text(encoding="utf-8")
+          print("Public metadata-only Korea route: exactly five official links, no source media or body.")
+          PY
+          sha256sum -c /tmp/ipr-korea-links-db.sha
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - name: Check out current main, with output history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+          cache: pip
+      - name: Pin exact release SHA and production data checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-links-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-links-head"
+      - name: Install renderer dependencies only
+        run: python -m pip install -r requirements.txt
+      - name: Validate production corpus is current
+        run: python scripts/verify_db_current.py
+      - name: Render the actual static website and assert exact public scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/render.py
+          python scripts/validate_output.py
+          python -m unittest tests.test_korea_public_bibliography tests.test_korea_internal_registry -q
+          python - <<'PY'
+          from pathlib import Path
+          from core.korea_public_bibliography import load_public_korea_links
+          assert len(load_public_korea_links()) == 5
+          import json
+          k = next(x for x in json.loads(Path("desks/registry.json").read_text())["desks"]
+                   if x["slug"] == "korea")
+          assert k["public"] is True and k["status"] == "shadow"
+          assert k["manifest"] is None and k["has_production_records"] is False
+          p = Path("output")
+          html = (p/"korea.html").read_text(encoding="utf-8")
+          assert html.count('data-korea-public-link=') == 5
+          assert "not IPR archived records" in html
+          assert "noindex, nofollow" not in html
+          assert "2026-10-04" in html and "2026-10-06" in html
+          for forbidden in ("body_original", "text_original", "download.do?fileId=",
+                            "data-review-status=", "english_description"):
+              assert forbidden not in html
+          assert 'href="korea.html"' in (p/"desks.html").read_text(encoding="utf-8")
+          assert "https://indopacificrecord.org/korea.html" in (
+              p/"sitemap.xml").read_text(encoding="utf-8")
+          print("Korea official-links-only release validated.")
+          PY
+          sha256sum -c "$RUNNER_TEMP/korea-links-db.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+      - name: Stage only rendered output; abort on unrelated file change
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- output/
+          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' || true)"
+          git diff --cached --name-status | head -n 25 || true
+          test -n "$(git diff --cached --name-only)" || {
+            echo "::error::Expected a new Korea page in output/"; exit 1;
+          }
+          test "$(git rev-parse HEAD)" = "$(cat "$RUNNER_TEMP/korea-links-head")"
+      - name: Commit exact public output to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Publish limited Korea official-source bibliography"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-links-head")" || {
+            echo "::error::Main moved; stopping instead of publishing an unreviewed revision"; exit 1;
+          }
+          git push origin HEAD:main
+      - name: Publish validated static output to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Korea five-source directory: ${{ github.run_id }}'
