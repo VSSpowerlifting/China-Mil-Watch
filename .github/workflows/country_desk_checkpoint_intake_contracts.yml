@@ -5,6 +5,7 @@ on:
     paths:
       - "scripts/compose_country_desk_checkpoint.py"
       - "tests/test_country_desk_checkpoint_intake.py"
+      - "tests/test_ph_shadow_runner.py"
       - "docs/engineering/COUNTRY_DESK_CHECKPOINT_INTAKE_2026-10-11.md"
       - ".github/workflows/country_desk_checkpoint_intake_contracts.yml"
 
@@ -40,6 +41,7 @@ jobs:
             tests.test_ph_afp_schedule \
             tests.test_ph_afp_readiness \
             tests.test_ph_afp_day0_review \
+            tests.test_ph_shadow_runner \
             tests.test_vietnam_ministry_attempt_reconciliation \
             tests.test_vietnam_ministry_checkpoint_rollup \
             tests.test_vietnam_authenticated_attempt_bridge \
