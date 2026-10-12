@@ -56,8 +56,15 @@ class KoreaOfficialIndexContracts(unittest.TestCase):
             self.assertIn('href="' + escape(DAPA_INDEX, quote=True) +
                           '" rel="noopener noreferrer">Open official publisher index', page)
             self.assertEqual(page.count("Open official publisher index"), 2)
-            self.assertEqual(page.count("data-korea-public-link="), 5)
-            for new_id in ("156784787", "156784618", "156784625"):
+            self.assertIn('<nav class="korea-publisher-shortcuts"', page)
+            self.assertIn('id="korea-publisher-shortcuts-title"', page)
+            self.assertIn("Research-only source family; no DAPA records admitted", page)
+            # Both indexes are next to the frozen bibliography, never buried
+            # behind the bottom source inventory or counted as sixth records.
+            self.assertLess(page.index("korea-publisher-shortcuts-title"),
+                            page.index('data-korea-public-link='))
+            self.assertEqual(page.count('data-korea-public-link='), 5)
+            for new_id in ("156784787", "156784873", "156784618", "156784625"):
                 self.assertNotIn(new_id, page)  # unreviewed MND and DAPA articles
             self.assertIn("not IPR archived records", page)
             self.assertNotIn("download.do?fileId=", page)

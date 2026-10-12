@@ -37,6 +37,22 @@
   <p class="meta">Original titles are presented in Korean without an
   IPR translation. Portal posting and original document distribution dates
   are distinct facts.</p>
+  <nav class="korea-publisher-shortcuts" aria-labelledby="korea-publisher-shortcuts-title">
+    <h3 id="korea-publisher-shortcuts-title">Explore current official releases</h3>
+    <p class="meta">Live government publisher indexes open on korea.kr. These links are
+    not additional IPR-reviewed references or a promise of continuous collection.</p>
+    <ul>
+      {% for source in desk.research.source_families %}
+      {% if source.publisher_url %}
+      <li>
+        <strong>{{ 'Defense Acquisition Program Administration (DAPA)' if 'B00008' in source.publisher_url else 'Ministry of National Defense (MND)' }}</strong>
+        {% if 'B00008' in source.publisher_url %}<span class="meta">Research-only source family; no DAPA records admitted</span>{% endif %}
+        <a href="{{ source.publisher_url }}" rel="noopener noreferrer">Open official publisher index</a>
+      </li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
   <ol class="korea-public-source-list" aria-label="Five official Korean source references">
     {% for ref in korea_public_links %}
     <li data-korea-public-link="{{ ref.source_identity }}">
@@ -365,7 +381,11 @@ qualification evidence, not a current gate.</p>
     <tr>
       <td data-label="Source">{{ s.name }}
         {% if s.publisher_url %}
+        {% if desk.slug == 'korea' %}
+        <p class="meta">Official publisher index is linked above the five-source bibliography.</p>
+        {% else %}
         <p class="meta"><a href="{{ s.publisher_url }}" rel="noopener noreferrer">Open official publisher index</a></p>
+        {% endif %}
         {% endif %}
       </td>
       <td data-label="Item format">{{ s.format }}</td>
