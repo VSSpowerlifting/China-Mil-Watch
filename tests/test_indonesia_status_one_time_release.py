@@ -33,7 +33,7 @@ class IndonesiaOneTimePublicationContract(unittest.TestCase):
         self.assertIn("if: github.event_name == 'pull_request'", src)
         self.assertIn("persist-credentials: false", src)
         self.assertNotIn("persist-credentials: true", src)
-        self.assertIn("ref: main" if "ref: main" in src else "actions/checkout@v4", src)
+        self.assertIn("actions/checkout@v4", src)
 
     def test_render_checks_twelve_bibliographic_links_without_corpus(self):
         src = self.source
