@@ -378,7 +378,7 @@
    "route": "indonesia.html",
    "scope": "A bounded institutional-news research desk focused initially on Kementerian Pertahanan Republik Indonesia (Kemhan) Berita, in original Indonesian. Coverage excludes the armed forces' wider publications, ministerial decrees, and national defense-policy documents.",
    "status": "shadow",
-   "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. Four dated official publisher links are offered as an attributed, frozen navigation pilot, not as human-reviewed IPR source citations or public archive records. Five preserved originals received preliminary review; independent Indonesian-language signoff and the Day 7/14/30 collection reviews remain outstanding.",
+   "status_explanation": "Kemhan Berita is collected on a separate scheduled shadow-state branch for private source evaluation. Its original Indonesian articles are not in the public IPR corpus. Four dated Berita links and two historical Siaran Pers press links provide attributed outbound navigation only; neither group constitutes human-reviewed IPR citations or public archive records. Five preserved originals received preliminary review; independent Indonesian-language signoff and the Day 7/14/30 collection reviews remain outstanding.",
    "public": true,
    "manifest": null,
    "has_production_records": false,
@@ -392,7 +392,7 @@
      {
       "name": "Indonesian Ministry of Defense — Siaran Pers (Indonesian)",
       "format": "Disabled parser candidate; no authorized collection",
-      "note": "Separate ministry press-release family. Offline parser research does not transfer Berita collection continuity, rights decisions, or release eligibility."
+      "note": "Separate sparse press-release family; two 2026 ministry press statements have metadata-only outbound links, but the parser remains disabled and there is no press collector or preserved Siaran Pers state. Berita collection continuity does not establish press reliability or reuse rights."
      }
     ],
     "blockers": [
@@ -402,7 +402,7 @@
      ],
      [
       "Source-specific publisher rights",
-      "The Kemhan site identifies ministry copyright; IPR has no documented blanket licence to republish its articles, images or translations. The public pilot points outward to four dated first-party webpages; it does not grant reuse of publisher articles, photographs or translations."
+      "The Kemhan site identifies ministry copyright; IPR has no documented blanket licence to republish its articles, images or translations. Both public-link groups point outward to six first-party pages (four Berita and two Siaran Pers); neither permits republication of publisher originals, photographs or translations."
      ],
      [
       "Collection reliability and eligibility",
@@ -415,7 +415,7 @@
     ]
    },
    "limits": [
-    "Four source-attributed publisher links are available for navigation, but no article body, model analysis or independently reviewed citation is published; there are no admitted records in the IPR corpus.",
+    "Four Berita and two Siaran Pers first-party links are available for navigation; no article body, model analysis or independently reviewed citation is published, and Indonesia has no admitted public corpus records.",
     "Isolated shadow collection is not production collection. A daily collection-success ledger does not establish completeness of ministry releases.",
     "Original Berita reports represent the ministry's communication, not independent confirmation of outcomes, agreements, force readiness or project completion.",
     "Named Indonesian-language, content-rights and Day 7/14/30 decisions still govern reviewed citation releases and production admission; outbound official links are not article-republication approval."
