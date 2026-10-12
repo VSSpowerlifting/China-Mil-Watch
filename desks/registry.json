@@ -74,7 +74,7 @@
       "route": "japan.html",
       "scope": "Official Japanese-language Ministry of Defense RSS discovery from its news and site-update streams, plus a separate Japan Coast Guard English press-release shadow pilot. Neither covers all Japanese defense or maritime-security publications, and neither MOD feed represents Joint Staff or English MOD releases.",
       "status": "shadow",
-      "status_explanation": "Japan remains shadow-only. The two MOD Japanese-language RSS feeds support official discovery, but body retrieval is partial: PDF-published originals are retrievable while most HTML articles are challenged and retained only as dated discovery metadata. Separately, a Japan Coast Guard English HTML pilot has one verified, manually authorized October 8 Day 0. The guarded daily gate was observed unset or unavailable in an October 12 read-only Actions run, so no subsequent JCG collecting-day continuity is established; linked PDF/media rights remain held. Nothing from either source family is admitted to the production corpus, and neither proves complete Japanese defense or maritime-security coverage.",
+      "status_explanation": "Japan remains shadow-only. The two MOD Japanese-language RSS feeds support official discovery, but body retrieval is partial: some PDF-published originals yield extractable text while most HTML articles are challenged and retained only as dated discovery metadata. Separately, a Japan Coast Guard English HTML pilot has one verified, manually authorized October 8 Day 0. The guarded daily gate was observed unset or unavailable in an October 12 read-only Actions run, so no subsequent JCG collecting-day continuity is established; linked PDF/media rights remain held. Nothing from either source family is admitted to the production corpus, and neither proves complete Japanese defense or maritime-security coverage.",
       "public": true,
       "manifest": "shadow/jp_mod/manifest.json",
       "has_production_records": false,
@@ -128,7 +128,7 @@
         "blockers": [
           [
             "Documents published as HTML cannot be retrieved.",
-            "The ministry's RSS feeds and its PDF documents are served normally, but HTML documents on the same host are returned behind an interactive challenge. Those items are discovered and recorded as unretrieved rather than inferred to be absent. An institution that wants to refuse this collector must be able to recognise it and say so, so defeating the challenge would destroy the capability that rule protects. Resolving this means requesting an official route."
+            "The ministry's RSS feeds and some PDF documents are served, but other PDFs fail fetch or extraction checks and HTML documents on the same host are returned behind an interactive challenge. Those items are discovered and recorded as unretrieved rather than inferred to be absent. An institution that wants to refuse this collector must be able to recognise it and say so, so defeating the challenge would destroy the capability that rule protects. Resolving this means requesting an official route."
           ],
           [
             "MOD PDF source completeness and qualification remain unresolved.",
@@ -152,7 +152,7 @@
       },
       "limits": [
         "No source is enabled in production. Nothing collected here reaches the production database, the public site, or any public count.",
-        "Retrieval is partial, and most sampled bodies are challenged. Measured on 2026-08-26, 8 of 142 news-feed items (6 percent) carried full text; the other 134 are stored as titled, dated discovery records with no body. This is not complete Ministry of Defense or Joint Staff coverage.",
+        "Retrieval is partial. On 2026-08-26, 8 of 142 news-feed items (6 percent) were PDF-format candidates and 134 were HTML; the PDF count did not establish usable or complete full text, while challenged HTML bodies were recorded as unretrieved metadata. This is not complete Ministry of Defense or Joint Staff coverage.",
         "The MOD feeds are Japanese-language. The Ministry's English press releases and Joint Staff remain access-challenged and uncollected. The separate JCG English pilot has a specifically approved manual source observation dated October 8, 2026; its repository gate was observed unset or unavailable on October 12 and no daily continuity, production admission or per-document rights clearance is established.",
         "MOD RSS shadow testing began 2026-08-26, and 30 scheduled MOD collection slots from September 12 to October 11 were independently verified but all partial; named Day 7/14/30 human source reviews remain unsigned. JCG's separate manual Day 0 was 2026-10-08 with no verified daily continuity. These distinct collection clocks confer no source publication authority."
       ]
