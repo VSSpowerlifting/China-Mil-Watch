@@ -2417,6 +2417,12 @@ def build(out_dir: Path, title: str, db_path: Path,
                 korea_entry.has_production_records or
                 korea_entry.manifest_path is not None):
             raise ValueError("Korea must remain a nonpublic, unconfigured shadow desk")
+        # Validate every provided document/rights/owner decision BEFORE
+        # creating any output directory. An invalid packet leaves no partial
+        # website behind. This is structural QA, not identity authentication.
+        from core.korea_reference_gate import approve, load_candidates
+        korea_candidates = load_candidates()
+        korea_prechecked_rows = approve(korea_candidates, korea_review_packet)
     out_dir = requested_out.resolve()
     if (review_brief or review_timeline) and site_origin:
         raise ValueError("a draft review is private: no site origin, feed or sitemap")
@@ -2851,11 +2857,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         # packet has all exact source, language, rights and owner fields. Even
         # then JSON is only STRUCTURAL; no human identity is authenticated
         # here, and the output remains inaccessible to public publication.
-        from core.korea_reference_gate import approve, load_candidates
         from core.viewmodel import DeskView
         korea = DeskView(entry=korea_entry)
-        candidates = load_candidates()
-        preview_rows = approve(candidates, korea_review_packet)
+        candidates = korea_candidates
+        preview_rows = korea_prechecked_rows
         private_review_by_identity = {
             x["source_identity"]: x for x in preview_rows
         }
