@@ -71,11 +71,14 @@ class LocalKoreaReviewerPackageTests(unittest.TestCase):
 
     def test_line_index_is_private_metadata_only(self):
         text = "첫 문장\n\n두번째 문장\n"
-        index = pkg.original_line_index(self.candidate, text)
+        valid = dict(self.candidate, content_sha256=pkg.sha(text.encode("utf-8")))
+        index = pkg.original_line_index(valid, text)
         self.assertEqual([x["line_number"] for x in index["lines"]], [1, 3])
         self.assertEqual(index["lines"][0]["line_sha256"], pkg.sha("첫 문장".encode("utf-8")))
         self.assertEqual(index["lines"][1]["line_sha256"], pkg.sha("두번째 문장".encode("utf-8")))
-        self.assertEqual(index["content_sha256"], self.candidate["content_sha256"])
+        self.assertEqual(index["content_sha256"], valid["content_sha256"])
+        with self.assertRaises(gate.KoreaGateHold):
+            pkg.original_line_index(self.candidate, text)
         self.assertNotIn("첫 문장", json.dumps(index, ensure_ascii=False))
         with self.assertRaises(gate.KoreaGateHold):
             pkg.original_line_index(self.candidate, " \n")
