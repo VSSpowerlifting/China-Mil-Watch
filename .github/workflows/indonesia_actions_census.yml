@@ -1,0 +1,110 @@
+name: Indonesia Desk — complete shared Actions attempt census
+
+# Independently enumerate the Indonesia/Korea shared workflow's API window
+# and each run's artifact list before comparing immutable Indonesia ledgers.
+# No publisher contacts, article texts, or production write.
+on:
+  pull_request:
+    paths:
+      - "scripts/fetch_indonesia_actions_census.py"
+      - "tests/test_fetch_indonesia_actions_census.py"
+      - ".github/workflows/indonesia_actions_census.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/indonesia_actions_census.yml"
+  schedule:
+    - cron: '47 3 * * *'
+  workflow_dispatch:
+    inputs:
+      as_of_logical_day:
+        description: "Optional YYYY-MM-DD nominal Indonesia collection day"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: indonesia-actions-census-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  enumerate-and-reconcile:
+    if: >-
+      github.event_name == 'pull_request' ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' &&
+       startsWith(github.event.head_commit.message, 'Enable complete Indonesia Actions census (PR #'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out exact repository code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record protected data/output baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/indonesia-census-db.sha"
+          find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/indonesia-census-output.sha"
+      - name: Run complete pagination, desk attribution and hold contracts
+        run: |
+          python -m unittest tests.test_fetch_indonesia_actions_census tests.test_indonesia_actions_attempts tests.test_indonesia_shadow_provenance -q
+      - name: Pin original Indonesia state from Git, never write to it
+        shell: bash
+        env:
+          SOURCE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/indonesia-census-git"
+          git -C "$RUNNER_TEMP/indonesia-census-git" init -q
+          git -C "$RUNNER_TEMP/indonesia-census-git" remote add origin "$SOURCE_REMOTE"
+          git -C "$RUNNER_TEMP/indonesia-census-git" fetch -q --no-tags --depth=1 origin \
+            refs/heads/shadow/indonesia-kemhan:refs/heads/shadow/indonesia-kemhan
+          pin="$(git -C "$RUNNER_TEMP/indonesia-census-git" rev-parse refs/heads/shadow/indonesia-kemhan)"
+          test "${#pin}" -eq 40
+          test "$(git -C "$RUNNER_TEMP/indonesia-census-git" ls-tree --name-only "$pin")" = state
+          echo "PINNED_INDONESIA_STATE=$pin" >> "$GITHUB_ENV"
+      - name: Enumerate authenticated runs and artifacts, reconcile pinned ledgers
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AS_OF_INPUT: ${{ inputs.as_of_logical_day }}
+        run: |
+          set -euo pipefail
+          if [ -n "$AS_OF_INPUT" ]; then
+            set -- --as-of "$AS_OF_INPUT"
+          else
+            set --
+          fi
+          python -m scripts.fetch_indonesia_actions_census \
+            --state-repo "$RUNNER_TEMP/indonesia-census-git" \
+            --state-commit "$PINNED_INDONESIA_STATE" \
+            --receipt "$RUNNER_TEMP/INDONESIA_ACTIONS_CENSUS.json" "$@"
+      - name: Prove tracked corpus, output and shadow checkout remain unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/indonesia-census-db.sha"
+          sha256sum -c "$RUNNER_TEMP/indonesia-census-output.sha" > /dev/null
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Preserve count-only authenticated audit receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: indonesia-authenticated-actions-census-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/INDONESIA_ACTIONS_CENSUS.json
+          retention-days: 21
+          if-no-files-found: warn
