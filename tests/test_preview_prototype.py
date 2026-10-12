@@ -53,6 +53,7 @@ OFFICIAL_NAMES_WITH_BRITISH_SPELLING = (
     "Singapore Ministry of Defence",
     "Ministry of National Defence",
     "National Defence Journal",
+    "Indonesian Ministry of Defence",
 )
 
 
