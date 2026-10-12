@@ -110,6 +110,19 @@ def render_private(out_dir: Path, candidate_path=None):
     for css in ("fonts.css", "styles.css", "support.css", "surfaces.css",
                 "desk-references.css"):
         shutil.copyfile(ROOT / "site" / "preview" / css, destination / css)
+    # The private template uses the site's own CSS; retain its existing local
+    # font references as well so a design review doesn't silently fall back.
+    # These bytes remain inside a disposable, non-artifacted local directory.
+    font_root = ROOT / "site" / "assets" / "fonts"
+    css_fonts = ("instrument-serif-0.woff2", "instrument-serif-1.woff2",
+                 "inter-0.woff2", "inter-1.woff2",
+                 "source-serif-4-0.woff2", "source-serif-4-1.woff2",
+                 "source-serif-4-2.woff2")
+    (destination / "assets" / "fonts").mkdir(parents=True, exist_ok=True)
+    for name in css_fonts:
+        source = font_root / name
+        require(source.is_file(), "site CSS local font missing: " + name)
+        shutil.copyfile(source, destination / "assets" / "fonts" / name)
     for name in ("ipr-navy-160.png", "ipr-navy-320.png",
                  "ipr-accent-32.png", "ipr-accent-180.png"):
         src = ROOT / "site" / "assets" / "identity" / "selected-ipr" / name
