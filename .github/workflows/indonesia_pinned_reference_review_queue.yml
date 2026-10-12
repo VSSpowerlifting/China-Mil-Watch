@@ -63,13 +63,15 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
+          from core.indonesia_official_index import load as load_public_links
+          public_link_count = len(load_public_links())
           d = Path(os.environ["RUNNER_TEMP"]) / "indonesia-review-queue"
           data = json.loads((d / "review_queue.json").read_text(encoding="utf-8"))
           counts = data["counts"]
           assert data["stored_originals"] >= 24, "pinned source record count decreased"
-          assert counts["official_link_already_public_not_reviewed"] == 8
+          assert counts["official_link_already_public_not_reviewed"] == public_link_count
           assert counts["hold_publisher_geography_inconsistent"] == 1
-          assert counts["new_source_review_candidate"] == data["stored_originals"] - 9
+          assert counts["new_source_review_candidate"] == data["stored_originals"] - public_link_count - 1
           assert sum(counts.values()) == data["stored_originals"]
           assert not data["public_renderer_consumes_queue"]
           assert not data["independent_human_review_completed"]
