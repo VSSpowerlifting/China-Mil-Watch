@@ -1,0 +1,47 @@
+{
+  "budget": {
+    "html_css_cap_bytes": 300000,
+    "js_cap_bytes": 10000
+  },
+  "baseline": {
+    "html": 29719,
+    "css": {
+      "briefs-catalog.css": 6217,
+      "fonts.css": 1855,
+      "styles.css": 30549,
+      "support.css": 27908,
+      "surfaces.css": 5630
+    },
+    "js": {
+      "reveal.js": 2746,
+      "shell.js": 372
+    },
+    "html_css": 101878,
+    "js_total": 3118
+  },
+  "candidate": {
+    "html": 41082,
+    "css": {
+      "briefs-catalog.css": 8578,
+      "fonts.css": 1855,
+      "relief.css": 4031,
+      "styles.css": 30549,
+      "support.css": 27908,
+      "surfaces.css": 5630
+    },
+    "js": {
+      "reveal.js": 2746,
+      "shell.js": 372
+    },
+    "html_css": 119633,
+    "js_total": 3118
+  },
+  "delta_html_css": 17755,
+  "photographs_bytes": {
+    "no-08-liaoning-j15-recovery.jpg": 24325,
+    "no-10-jin-class-type-094.jpg": 24412,
+    "no-09-scarborough-shoal-iss.jpg": 26510
+  },
+  "region_svg_bytes": 49760,
+  "note": "Delivery verifier (verify_frontend_delivery.py) reports 0 failures on 7589 routes for the candidate."
+}

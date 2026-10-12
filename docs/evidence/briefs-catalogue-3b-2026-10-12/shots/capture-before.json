@@ -1,0 +1,31 @@
+[
+ {
+  "mode": "default",
+  "width": 320,
+  "shot": "before-default-320.png",
+  "scrollWidth": 320,
+  "innerWidth": 320,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:60657/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:60657/assets/material/chart-paper.png",
+   "http://127.0.0.1:60657/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:60657/assets/material/navy-paper.png"
+  ]
+ },
+ {
+  "mode": "default",
+  "width": 768,
+  "shot": "before-default-768.png",
+  "scrollWidth": 768,
+  "innerWidth": 768,
+  "errors": [],
+  "images": [
+   "http://127.0.0.1:60657/assets/identity/selected-ipr/ipr-navy-160.png",
+   "http://127.0.0.1:60657/assets/material/chart-paper.png",
+   "http://127.0.0.1:60657/assets/material/chart-shelf.svg",
+   "http://127.0.0.1:60657/assets/material/coast-profile.svg",
+   "http://127.0.0.1:60657/assets/material/navy-paper.png"
+  ]
+ }
+]

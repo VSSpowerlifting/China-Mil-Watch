@@ -4,6 +4,47 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-12 — Expressive frontend Phase 3B (Briefs catalogue) implementation decisions
+
+Made within the Phase 3B brief; presentation only, not visual sign-off.
+Contract: `docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`.
+Evidence: `docs/evidence/briefs-catalogue-3b-2026-10-12/`.
+
+- **One catalogue-media decision.** `core/catalogue_media.py` decides, per
+  card, between a credited photograph and the Editorial plate from
+  `site/assets/catalogue/admissions.json` alone. It is distinct from the
+  article-image and Signal Veil resolvers and never reads a cover, a photo or
+  a veil. A card is a plate unless its record is `admitted` and passes every
+  check (file present, SHA-256, licence Public domain or CC BY 4.0 with link,
+  credit complete, not No. 12).
+- **Admissions are an engineering review, not an owner ruling.** Nos. 8
+  (CC BY 4.0), 9 and 10 (Public domain) are admitted on a Commons record check
+  and the manifest's verbatim credit, caption and alt. They are pending
+  independent confirmation and settle no wider image right. Flipping a record
+  to `held` returns that card to a plate and changes nothing else.
+- **No. 1 is held.** The photograph shows identifiable, named U.S. and PLA
+  officers at an unrelated 2012 event, selected by keyword for a Brief about
+  two former defence ministers, and its alt text is a filename. It returns to
+  the catalogue only with an owner-reviewed alt text and short caption. The
+  opened-article use is unchanged and was not assessed.
+- **No. 12 and 81.cn.** No. 12 is refused in code (B5) and no 81.cn / PLA
+  Daily image is referenced by the catalogue (B2); the verifier asserts zero
+  requests for source images and veils. CC BY-SA is not admitted (B6).
+- **Labels.** An admitted image is a "Photograph" with visible creator,
+  licence and source link, "Toned, cropped and resized by IPR." and "Visual
+  context, not evidence." It is not called a Signal Veil (B3/B4). Every other
+  card is an "Editorial plate" with "No source photograph. Outlines from
+  Natural Earth."
+- **B1 reach.** The only elevation is the existing `rl-brief` lift.
+  `briefs-catalog.css` names no shadow and no lift token. `relief.css` is now
+  linked by the homepage, the Archive and the catalogue; the isolation tests
+  allow exactly `rl-brief`, `rl-print` and the `region_plate` macro there.
+- **Hero.** The lead Brief's optional photograph renders only through the same
+  decision. Nothing changes today (the lead has no cover); a native lead with
+  an article cover no longer shows it on the catalogue by default.
+- **Publication.** The page publishes `assets/geo/region.svg` and exactly the
+  admitted files it shows. Page JavaScript is unchanged.
+
 ## 2026-10-11 — Expressive frontend Phase 2b (Archive) implementation decisions
 
 Made within the Phase 2b brief; presentation only, not visual sign-off.

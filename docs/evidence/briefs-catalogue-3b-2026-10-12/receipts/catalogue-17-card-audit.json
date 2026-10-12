@@ -1,0 +1,473 @@
+{
+  "statement": "17/17 catalogue cards: resolver decision (core/catalogue_media.py) beside what Chromium rendered at 1280 px. Generated from the committed record and the candidate build; the rendered side comes from scripts/verify_briefs_catalog.py.",
+  "head": "22293e92bcabc9887229de0d496fe4b114065efe",
+  "counts": {
+    "cards": 17,
+    "photograph": 3,
+    "plate": 14
+  },
+  "forbidden_requests": [],
+  "cards": [
+    {
+      "issue": 17,
+      "slug": "trident-resolve-regional-scale-specific-chinese-tasks",
+      "date": "2026-09-26",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china",
+        "singapore"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "Trident Resolve: What the Exercise Looked Like From Singapore and China",
+      "dek_chars": 269,
+      "labels": [
+        "Routine"
+      ],
+      "provenance": "Published as an Indo-Pacific Record brief · Retrospective edition",
+      "href": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 16,
+      "slug": "xiangshan-security-frames-defense-ties",
+      "date": "2026-09-19",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china",
+        "singapore"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "Different Security Frames, Concrete Defense Ties",
+      "dek_chars": 365,
+      "labels": [
+        "Routine"
+      ],
+      "provenance": "Published as an Indo-Pacific Record brief · Retrospective edition",
+      "href": "briefs/xiangshan-security-frames-defense-ties.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 15,
+      "slug": "maritime-cooperation-2026",
+      "date": "2026-09-19",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china",
+        "singapore"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "Maritime Cooperation 2026: One Exercise, Two Official Accounts",
+      "dek_chars": 177,
+      "labels": [
+        "Routine"
+      ],
+      "provenance": "Published as an Indo-Pacific Record brief · Retrospective edition",
+      "href": "briefs/maritime-cooperation-2026.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 14,
+      "slug": "2026-08-15",
+      "date": "2026-08-15",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: One Exercise, Five Reports East of Taiwan",
+      "dek_chars": 264,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published by Indo-Pacific Record · Retrospective edition",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-15.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 13,
+      "slug": "2026-08-08",
+      "date": "2026-08-08",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week",
+      "dek_chars": 257,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-08.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 12,
+      "slug": "2026-08-01",
+      "date": "2026-08-01",
+      "kind": "plate",
+      "reason": "denied",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Army Day, Scarborough Shoal, and a Week of Deliberate Disclosure",
+      "dek_chars": 349,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-08-01.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 11,
+      "slug": "2026-07-18",
+      "date": "2026-07-18",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Joint Sea-2026, the Y-20B Abroad, and the Week's Quieter Signals",
+      "dek_chars": 257,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-18.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 10,
+      "slug": "2026-07-11",
+      "date": "2026-07-11",
+      "kind": "photograph",
+      "reason": "admitted",
+      "plate_desks": [],
+      "served": "assets/catalogue/media/no-10-jin-class-type-094.jpg",
+      "credit": "U.S. government photo, via CRS report RL33153 (R. O'Rourke) · Public domain · via Wikimedia Commons",
+      "license": "Public domain",
+      "title": "The PLA Watch: Beijing's Public SLBM Test and What It Was Designed to Do",
+      "dek_chars": 247,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-11.html",
+      "rendered_media": "photograph",
+      "rendered_tag": "Photograph",
+      "rendered_credit": "A Jin-class (Type 094) nuclear-powered ballistic missile submarine of the PLA Navy. File photograph supplied to CRS in December 2010. Photo: U.S. government photo, via CRS report RL33153 (R. O'Rourke) · Public domain · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "rendered_credit_links": [
+        {
+          "href": "https://commons.wikimedia.org/wiki/File:Jin_(Type_094)_Class_Ballistic_Missile_Submarine.JPG",
+          "rel": "noopener",
+          "text": "Wikimedia Commons"
+        }
+      ],
+      "img": {
+        "src": "assets/catalogue/media/no-10-jin-class-type-094.jpg",
+        "alt": "A Jin-class (Type 094) nuclear-powered ballistic missile submarine of the PLA Navy underway on the surface",
+        "w": 720,
+        "h": 480,
+        "lazy": "lazy"
+      }
+    },
+    {
+      "issue": 9,
+      "slug": "2026-07-04",
+      "date": "2026-07-04",
+      "kind": "photograph",
+      "reason": "admitted",
+      "plate_desks": [],
+      "served": "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+      "credit": "NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons",
+      "license": "Public domain",
+      "title": "The PLA Watch: Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like",
+      "dek_chars": 224,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-07-04.html",
+      "rendered_media": "photograph",
+      "rendered_tag": "Photograph",
+      "rendered_credit": "Scarborough Shoal (Huangyan Island), photographed from the International Space Station during Expedition 45. Photographed 24 October 2015. Photo: NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "rendered_credit_links": [
+        {
+          "href": "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+          "rel": "noopener",
+          "text": "Wikimedia Commons"
+        }
+      ],
+      "img": {
+        "src": "assets/catalogue/media/no-09-scarborough-shoal-iss.jpg",
+        "alt": "Scarborough Shoal seen from the International Space Station: a triangular coral ring enclosing a turquoise lagoon in the South China Sea",
+        "w": 720,
+        "h": 480,
+        "lazy": "lazy"
+      }
+    },
+    {
+      "issue": 8,
+      "slug": "2026-06-27",
+      "date": "2026-06-27",
+      "kind": "photograph",
+      "reason": "admitted",
+      "plate_desks": [],
+      "served": "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+      "credit": "Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons",
+      "license": "CC BY 4.0",
+      "title": "The PLA Watch: Carriers, Drones, and the Rocket Force's Manning Problem",
+      "dek_chars": 242,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-27.html",
+      "rendered_media": "photograph",
+      "rendered_tag": "Photograph",
+      "rendered_credit": "A J-15 carrier fighter prepares to recover aboard the carrier Liaoning during western Pacific operations, May 2022. Photographed 4 May 2022. Photo: Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence.",
+      "rendered_credit_links": [
+        {
+          "href": "https://creativecommons.org/licenses/by/4.0",
+          "rel": "noopener",
+          "text": "CC BY 4.0"
+        },
+        {
+          "href": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+          "rel": "noopener",
+          "text": "Wikimedia Commons"
+        }
+      ],
+      "img": {
+        "src": "assets/catalogue/media/no-08-liaoning-j15-recovery.jpg",
+        "alt": "A J-15 carrier-based fighter on final approach to the aircraft carrier Liaoning, landing gear and arresting hook down, seen from astern",
+        "w": 720,
+        "h": 480,
+        "lazy": "lazy"
+      }
+    },
+    {
+      "issue": 7,
+      "slug": "2026-06-20",
+      "date": "2026-06-20",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: The CCG Statement That Stood Apart",
+      "dek_chars": 275,
+      "labels": [
+        "Routine"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-20.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 6,
+      "slug": "2026-06-13",
+      "date": "2026-06-13",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Combat Realism, Institutional Friction, and One Confirmation Worth Noting",
+      "dek_chars": 174,
+      "labels": [
+        "Routine"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-13.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 5,
+      "slug": "2026-06-06",
+      "date": "2026-06-06",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit",
+      "dek_chars": 246,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-06-06.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 4,
+      "slug": "2026-05-30",
+      "date": "2026-05-30",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Senior Cadre Oversight, Electronic Warfare, and the Week's Institutional Texture",
+      "dek_chars": 269,
+      "labels": [
+        "Significant"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-30.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 3,
+      "slug": "2026-05-23",
+      "date": "2026-05-23",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Institutional Friction and the Gap Between Form and Function",
+      "dek_chars": 203,
+      "labels": [
+        "Routine"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-23.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 2,
+      "slug": "2026-05-16",
+      "date": "2026-05-16",
+      "kind": "plate",
+      "reason": "no-admission-record",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure",
+      "dek_chars": 165,
+      "labels": [],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-16.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    },
+    {
+      "issue": 1,
+      "slug": "2026-05-09",
+      "date": "2026-05-09",
+      "kind": "plate",
+      "reason": "held",
+      "plate_desks": [
+        "china"
+      ],
+      "served": null,
+      "credit": null,
+      "license": null,
+      "title": "The PLA Watch: Two Defense Ministers, One Verdict",
+      "dek_chars": 303,
+      "labels": [
+        "Pilot edition"
+      ],
+      "provenance": "From the former series The PLA Watch · published under China Mil Watch",
+      "href": "https://indopacificrecord.org/the-pla-watch/posts/2026-05-09.html",
+      "rendered_media": "plate",
+      "rendered_tag": "Editorial plate",
+      "rendered_credit": "No source photograph. Outlines from Natural Earth.",
+      "rendered_credit_links": [],
+      "img": null
+    }
+  ]
+}
