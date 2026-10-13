@@ -14,30 +14,23 @@ recovery is prepared for review (three inserts, eight duplicates; no analysis
 or rendering), with evidence in
 `docs/SINGAPORE_SEPT22_RECOVERY_2026-10-07.md`.**
 
-**Laos Brief — No. 18, approved 13 October 2026; deployment pending:**
-The owner accepted the exact revised manuscript, source/claim/limited-use and
-rendered review, and the narrow doctrine §5b source-linked exception. Receipts
-are on [PR #485](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485).
-The locked canonical approval command assigned No. 18 after checking all
-Nos. 1–17. Candidate fingerprint remains
+**Laos Brief — No. 18, published 13 October 2026:**
+[What Is Being Built in Laos?](https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html)
+is live. PR #485 merged as `e1f9b003d2`; canonical approval commit `59562fbac1`,
+production-output commit `407dfd80d1`, tested head `a94c9ad34f`. Final CI
+`38443344036` passed 6,119 tests (nine documented skips), real Chromium,
+validator ten governed warnings and DB/output preservation; local full suite
+passed 6,119 tests (one skip). Output-only deploy `38449191412` succeeded.
+All five public article/Analysis/home/feed/sitemap routes returned 200 with
+exact committed bytes; live desktop/mobile JS/no-JS checks passed. Publication
+confirmed **14:46:41 EDT** on October 13. The unchanged approved fingerprint is
 `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`;
-revised DOCX hash is `43ec5cc4…d0c1`. All 11 paragraphs and seven links,
-Benjamin Yang's authorship and Dylan Tanzi's separate Lead Research Analyst
-credit are preserved. The known MOD indexed-original/Reuters syndication
-verification limits remain explicit. Complete production rendering includes
-article, Analysis, home, existing feed and sitemap; validator passes with ten
-governed warnings, focused publication/evidence suites pass 172 tests.
-Database and historical sidecars/pages remain unchanged. Rendering also carries
-current main's already-merged Japan reference navigation and template whitespace.
-Failed full CI `38350532579` ran 6,023 tests: one stale Singapore-Strait
-fixture assumption, nine skips; production preservation passed. The repair
-retains assertions with an explicit test-only Singapore lead, and extends
-current main's Phase 3C media/navigation inventory to approved No. 18. Main
-reconciliation `436413ead6` preserves the already-merged frontend/cover and
-Japan/Indonesia work. Full fresh exact-head CI/Chromium, release merge,
-output-only deployment and live-site verification are still required. Release dossier:
-`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. No collection, desk promotion, paid writer
-or third-party body/image reuse occurred.
+all 11 paragraphs, seven links, Ben byline and Dylan Lead Research Analyst
+credit are preserved. Reporting ends October 10; source-verification/limited-use
+qualifications remain explicit. No corpus, historical sidecar, MEPCOM or desk
+promotion changes. Complete diagnosis, repaired assertions, source/rights
+matrix, CI/merge/deploy and live route hashes:
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. No remaining Laos release blocker.
 
 Brief release approval was received 2026-10-05; its candidate,
 authorization recovery and QA evidence are in

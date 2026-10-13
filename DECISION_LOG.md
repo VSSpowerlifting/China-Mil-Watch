@@ -4,6 +4,19 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Laos Brief No. 18 published and independently verified
+
+The existing fingerprint-bound owner policy/editorial approvals were carried
+through the normal locked No. 18 assignment and exact-head full verification.
+PR #485 merged with its head guard as `e1f9b003d2`; output-only deployment
+`38449191412` succeeded. All five required public routes matched committed
+output exactly at 14:46:41 EDT. No manuscript, reference, author or contributor
+field changed; fingerprint remains
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+The known source-access/rights qualifications are retained, not converted into
+primary-inspection or broad reproduction claims. No collector or paid writer
+was invoked. Detailed receipts are in `docs/LAOS_BRIEF_RELEASE_2026-10-12.md`.
+
 ## 2026-10-13 — Laos final production release explicitly authorized
 
 The owner's “Codex — Laos Brief Final Production Release” request in the
