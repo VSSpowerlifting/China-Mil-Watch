@@ -125,6 +125,21 @@ def brief_route(slug: str) -> str:
     return "%s/%s.html" % (ROUTE_DIR, slug)
 
 
+def credited_author_names(sidecar: Mapping, lead_name: str) -> tuple:
+    """Keep distinct authors for metadata while displaying a readable joint byline."""
+    contributor = sidecar.get("research_contributor")
+    if (isinstance(contributor, dict) and contributor.get("credit_role") == "co-author"
+            and isinstance(contributor.get("name"), str)
+            and contributor["name"].strip()
+            and contributor["name"].strip() != lead_name):
+        return (lead_name, contributor["name"].strip())
+    return (lead_name,)
+
+
+def credited_author_name(sidecar: Mapping, lead_name: str) -> str:
+    return " and ".join(credited_author_names(sidecar, lead_name))
+
+
 #: The former series' masthead, as it opens an earlier issue's stored title.
 #: The stored title keeps it (citations quote it); headings and navigation
 #: show the title without it, since the masthead is stated in provenance.
@@ -285,7 +300,8 @@ def brief_entry(slug: str, sidecar: Mapping, media_dir=None) -> dict:
         "desks": list(sidecar["desks"]),
         "source_linked": sidecar.get("evidence_type") == "source-linked-editorial-v1",
         "approved_on": (sidecar.get("approval") or {}).get("approved_on"),
-        "author_name": identity["author_name"],
+        "author_name": credited_author_name(sidecar, identity["author_name"]),
+        "author_names": list(credited_author_names(sidecar, identity["author_name"])),
         "publication": identity["publication"],
         "publication_home_label": identity["publication_home_label"],
         "series_name": identity["series_name"],
@@ -708,7 +724,8 @@ def brief_view(slug: str, sidecar: Mapping, *, desk_names: Mapping,
             "original_summary": e["original_summary"],
             "reviewed_on": e["human_review"]["reviewed_on"],
         } for e in sidecar.get("external_evidence") or []],
-        "author_name": identity["author_name"],
+        "author_name": credited_author_name(sidecar, identity["author_name"]),
+        "author_card_name": identity["author_name"],
         "author_title": identity["author_title"],
         "author_bio": identity["author_bio"],
         "author_links": links,
@@ -764,8 +781,9 @@ def build_briefs_feed(briefs: Iterable[Mapping], *, origin: str) -> str:
             "    <id>%s</id>" % url,
             "    <updated>%s</updated>" % stamp,
             "    <published>%s</published>" % stamp,
-            "    <author><name>%s</name></author>" % xml_escape(b["author_name"]),
         ]
+        for author_name in b.get("author_names") or [b["author_name"]]:
+            lines.append("    <author><name>%s</name></author>" % xml_escape(author_name))
         if (b.get("dek") or "").strip():
             lines.append("    <summary>%s</summary>"
                          % xml_escape(b["dek"].strip()))
