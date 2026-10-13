@@ -1,7 +1,10 @@
 # Laos Brief release candidate — 12 October 2026
 
 This is an engineering and model-assisted evidence receipt, **not a human
-source-review signoff, accepted policy ruling, rights clearance or publication**.
+source-review signoff, rights clearance or publication**.
+The owner accepted the **specific, fingerprint-bound §5b supplement** on
+2026-10-13; the independent human source/rights/fidelity/rendered-review gate
+is still outstanding.
 The owner authorized narrowly scoped engineering, eligible PR merge, rendering,
 deployment and live verification conditionally in this chat's “Laos Brief
 Production Release” request. That supersedes issue #481's earlier implementation-only
@@ -108,7 +111,7 @@ ownership and observed notices above are retained explicitly. Publisher access
 is not a blanket reproduction permission. Final human limited-use acceptance
 remains separate from this practical review; no legal clearance is claimed.
 
-## Specific proposed policy supplement — not yet accepted
+## Specific source-linked policy supplement — owner accepted, 2026-10-13
 
 Current doctrine §5b and contract require live-desk production-backed evidence,
 a record-backed opening development, and standing sections. The single-live-desk
@@ -116,7 +119,7 @@ exception changes only desk count. It cannot make the Vietnamese opening evidenc
 production-backed or make Reuters an official corpus record. The MPS-only external
 evidence extension likewise cannot carry all seven references or this narrative.
 
-Proposed supplement: **An owner may explicitly authorize a source-linked editorial
+**Owner-accepted supplement (this exact candidate only):** **An owner may explicitly authorize a source-linked editorial
 narrative within Indo-Pacific Record Briefs for an exact reviewed manuscript.
 This opt-in variant uses ordered immutable paragraphs and publisher references
 instead of corpus coverage, record-backed development and standing sections.
@@ -135,15 +138,25 @@ authorize copyrighted-body redistribution, or infer coordination. Credibility
 depends on making publisher-linked analysis visibly distinct from the collected
 record. The public header and reference note implement that distinction.
 
+The owner's explicit yes to this exact §5b exception is memorialized in
+[PR #485's owner-ruling receipt](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576),
+recorded in `DECISION_LOG.md` and doctrine §5b, and bound as the draft's
+`policy_ruling` to fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+**This does not replace or satisfy `editorial_review`.** That field remains
+`null`, and numbering/publication remain blocked pending an actual reviewer.
+
 ## Release operations once the actual decisions exist
 
 1. Obtain the human source/translation/limited-use acceptance, including indexed
    MOD originals and the identified Reuters syndication route. Record actual
    reviewer/date/reference, the exact `core.brief_source_linked.fingerprint`, and
    the seven named checks in `editorial_review`; do not manufacture checkmarks.
-2. Record the accepted policy supplement in `DECISION_LOG.md` and doctrine, with
-   actual owner/date/reference and the same fingerprint in `policy_ruling`.
-   Any editorial/source/credit metadata change invalidates both fingerprints.
+2. Confirm the accepted supplement is recorded in `DECISION_LOG.md`, doctrine
+   §5b and `policy_ruling` with the owner's actual date/reference and the
+   exact fingerprint. **This policy-only step is now complete**; any later
+   editorial/source/credit metadata change invalidates the review/ruling
+   fingerprints and requires reauthorization as appropriate.
 3. Re-run `author_brief.py ready`, private rendering and fidelity comparison.
    Use normal `author_brief.py approve --approved-by 'Benjamin Yang'
    --approved-on <actual-date> --approval-reference <this exact owner's release authorization>`.
@@ -232,15 +245,15 @@ record. The public header and reference note implement that distinction.
    limited-use assessment and the revised paragraph 1 evidence limitation,
    or checks legitimately available originals, then records
    the actual exact-version source/rights/fidelity/rendered-review attestation.
-   The owner authorized only the precise sentence clarification on October 13;
-   no one has used that permission as a substitute for human source review.
+   The owner first authorized the precise sentence clarification and later
+   separately approved the §5b supplement on October 13; **neither** approval
+   was used as a substitute for human source/translation/rights review.
    No blanket full-copy permission or illustrative photograph is requested.
-2. **Owner evidence/anatomy ruling.** Existing §5b cannot represent the Vietnamese
-   opening and intact narrative. The technical variant is complete, but the release
-   instruction expressly does not silently overturn that rule. Smallest resolution:
-   accept the specific supplement above and record its actual owner/reference and
-   this candidate fingerprint in the normal governance documents and `policy_ruling`.
-   The authorized release sequence then uses existing numbering and output-only deploy.
+2. **Owner evidence/anatomy ruling — resolved 2026-10-13.** The owner accepted
+   the candidate-specific supplement above. It is now entered in doctrine §5b,
+   `DECISION_LOG.md`, and canonical `policy_ruling` at the revised fingerprint.
+   This approval **is not a human-source/rights attestation or a deployment**.
 
-Until those actual decisions exist, the article is unpublished. No issue number
-is reserved and no model-assisted work is mislabeled as human signoff.
+Until the **remaining human editorial/source/rights/fidelity/rendered-review
+signoff** and the new exact-head CI exist, the article is unpublished and
+unnumbered. No model-assisted review is mislabeled as human signoff.
