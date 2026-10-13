@@ -108,7 +108,9 @@ def _official(item):
                and bool(re.fullmatch(r"/e/topics_archive/article[0-9]+\.html",
                                      p.path)))
         _require(mod or jcg, "unrecognized Japan MOD/JCG publisher/source family")
-        _require(item["language"] in ("ja", "en"), "invalid Japan source language")
+        _require(item["language"] == "en" if jcg
+                 else item["language"] in ("ja", "en"),
+                 "invalid Japan source language")
     elif desk == "vietnam":
         match = VIETNAM_ID.fullmatch(ident)
         _require(bool(match), "bad Vietnam typed source identity")
