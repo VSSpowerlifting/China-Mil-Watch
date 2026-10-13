@@ -105,6 +105,9 @@ class Page:
 
 
 class ListingShadowAdapter(SourceAdapter):
+    # Subclasses may allow one longer initial robots request; no retries.
+    ROBOTS_TIMEOUT = 30
+
     def __init__(self, source, session=None, sleeper=time.sleep):
         super().__init__(source)
         self.session = session or requests.Session()
@@ -131,7 +134,8 @@ class ListingShadowAdapter(SourceAdapter):
             response = self.session.request(
                 "POST" if form is not None else "GET", url, data=form,
                 headers={"User-Agent": USER_AGENT, "Accept-Encoding": "identity"},
-                stream=True, allow_redirects=False, timeout=30)
+                stream=True, allow_redirects=False,
+                timeout=self.ROBOTS_TIMEOUT if robots else 30)
             headers = {k.lower(): v for k, v in response.headers.items()}
             if headers.get("content-encoding", "identity").lower() != "identity":
                 raise Refused(st.UNEXPECTED_CONTENT_TYPE, "encoded response refused")
