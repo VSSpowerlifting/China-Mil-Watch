@@ -8,7 +8,8 @@ every illustration decorative; motion only behind reduced-motion, scripting
 and scroll-timeline support. These checks hold those lines. Phase 2 links the
 primitives into the homepage; Phase 2b adds the Archive, which takes only
 `relief.css` and the finder lift (B1 names "the finder"). Phase 4A brings the Desks page into the same named-surface allowlist and
-publishes its eight local flag SVGs with the MIT notice, but no glyph sprite.
+publishes its eight local flag SVGs with the MIT notice; the Desks Source Atlas
+(Milestone B) adds the `rl-scope` panel lift, emblems and the one glyph sprite.
 """
 
 from __future__ import annotations
@@ -255,8 +256,9 @@ class ProductionIsolationTests(unittest.TestCase):
     nothing else; analysis.html (the Briefs catalogue) may reach relief.css,
     the _relief.html macros and the Brief-card lift (`rl-brief`) with its
     3:2 print frame (`rl-print`), and calls only the `region_plate` macro;
-    desks.html may use only the existing plate lift and licensed flag macro;
-    other production templates stay outside relief, and glyphs remain gallery-only.
+    desks.html may use the plate lift, the Source Atlas panel lift (`rl-scope`)
+    and exactly the flag, emblem and glyph_for macros (Milestone B, #498);
+    other production templates stay outside relief.
     """
 
     PATTERN = re.compile(r"relief\.css|_relief\.html|assets/(geo|flags|glyphs)/[\w.-]*|\brl-[a-z]+")
@@ -264,7 +266,7 @@ class ProductionIsolationTests(unittest.TestCase):
                              "rl-analysis"},
                "archive.html": {"relief.css", "rl-finder"},
                "analysis.html": {"relief.css", "_relief.html", "rl-brief", "rl-print"},
-               "desks.html": {"relief.css", "_relief.html", "rl-plate"}}
+               "desks.html": {"relief.css", "_relief.html", "rl-plate", "rl-scope"}}
 
     def test_only_the_homepage_reaches_them_and_only_what_it_uses(self):
         for path in sorted(TEMPLATES.glob("*.html")):
@@ -283,6 +285,12 @@ class ProductionIsolationTests(unittest.TestCase):
         self.assertEqual(set(re.findall(r"import (\w+) with context", analysis)), {"region_plate"})
         self.assertEqual(set(re.findall(r"\brl-[a-z]+", analysis)), {"rl-brief", "rl-print"})
         self.assertLess(analysis.index('href="relief.css"'), analysis.index('href="briefs-catalog.css"'))
+        # The Desks page imports exactly the three macros its plates and Source
+        # Atlas panels draw with: never the strait or region plate.
+        desks = (TEMPLATES / "desks.html").read_text(encoding="utf-8")
+        self.assertEqual(set(re.findall(r'from "_relief\.html" import ([\w, ]+) with context', desks)),
+                         {"flag, emblem, glyph_for"})
+        self.assertEqual(set(re.findall(r"\brl-[a-z]+", desks)), {"rl-plate", "rl-scope"})
 
     def test_stylesheets_and_base_templates_stay_out(self):
         for path in sorted(PREVIEW.glob("*.css")):
@@ -353,7 +361,8 @@ class ProductionAssetTests(unittest.TestCase):
         self.assertEqual(sorted(p.name for p in (self.out / "assets/geo").iterdir()),
                          ["emblems.svg", "region.svg", "strait.svg"])
         # A public Desk flag is an explicitly referenced asset and the MIT
-        # notice travels with it; gallery-only glyphs must still stay private.
+        # notice travels with it. The Source Atlas publishes the one glyph
+        # sprite it draws, byte-identical; the rest of the gallery stays private.
         expected = {"%s.svg" % iso for iso in FLAGS} | {"LICENSE"}
         self.assertEqual({p.name for p in (self.out / "assets/flags").iterdir()}, expected)
         self.assertEqual(set(self.gp.DESKS_PUBLIC_FLAG_ASSETS),
@@ -361,7 +370,11 @@ class ProductionAssetTests(unittest.TestCase):
         for route in self.gp.DESKS_PUBLIC_FLAG_ASSETS:
             self.assertEqual((self.out / route).read_bytes(),
                              (REPO_ROOT / "site" / route).read_bytes(), route)
-        for absent in ("assets/glyphs", "gallery-relief.html"):
+        self.assertEqual(self.gp.DESKS_ATLAS_ASSETS, ("assets/glyphs/sources.svg",))
+        self.assertEqual([p.name for p in (self.out / "assets/glyphs").iterdir()], ["sources.svg"])
+        self.assertEqual((self.out / "assets/glyphs/sources.svg").read_bytes(),
+                         (ASSETS / "glyphs" / "sources.svg").read_bytes())
+        for absent in ("gallery-relief.html",):
             self.assertFalse((self.out / absent).exists(), absent)
         self.assertFalse(any(self.out.glob("assets/**/*.receipt.json")))
 

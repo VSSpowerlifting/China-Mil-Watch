@@ -3679,9 +3679,16 @@ class TestCorpusBrowserMarkup(PreviewCase):
         self.assertIn('aria-live="polite"', block)
 
     def test_every_html_page_stays_within_the_page_budget(self):
+        # desks.html is a governed hub page (DESIGN_SYSTEM.md budgets; the
+        # hub list in scripts/verify_frontend_delivery.py): its HTML plus
+        # linked CSS is held to 300 KB there, and its Phase 4A map keeps its
+        # own cap in tests/test_desks_phase4_browser.py. DECISION_LOG
+        # 2026-10-13. Every other page keeps the strict 120 KB.
+        hubs = {"desks.html": 300_000}
         for path in sorted(self.out.rglob("*.html")):
-            with self.subTest(page=str(path.relative_to(self.out))):
-                self.assertLessEqual(path.stat().st_size, 120_000)
+            route = str(path.relative_to(self.out))
+            with self.subTest(page=route):
+                self.assertLessEqual(path.stat().st_size, hubs.get(route, 120_000))
 
 
 class TestCoverageTableSemantics(PreviewCase):

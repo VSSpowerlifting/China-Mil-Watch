@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% from "_atlas.html" import spine %}
-{% from "_relief.html" import flag with context %}
+{% from "_relief.html" import flag, emblem, glyph_for with context %}
 {% block title %}Desks — {{ title }}{% endblock %}
-{% block head_scripts %}<link rel="stylesheet" href="relief.css"><link rel="stylesheet" href="desk-map.css">{% endblock %}
+{% block head_scripts %}<link rel="stylesheet" href="relief.css"><link rel="stylesheet" href="desk-map.css"><link rel="stylesheet" href="desk-atlas.css">{% endblock %}
 {% block content %}
 <header class="page-head">
 <h1 class="page-name">Desks</h1>
@@ -107,7 +107,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
   <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
   <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
   <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
-  <p class="deskmap-seat">Institutional seat not plotted on this map.</p>
+  <p class="deskmap-seat">Institutional seat not plotted on this map. <a href="#atlas-{{ d.slug }}">What it reads</a></p>
   <dl class="deskmap-stats">
     <div><dt>{{ 'Corpus records' if d.status == 'shadow' else 'Records' }}</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}{{ 'Not admitted' if d.status == 'shadow' else 'None collected' }}{% endif %}</dd></div>
     <div><dt>{{ 'Last corpus collection' if d.status == 'shadow' else 'Last collection' }}</dt><dd>{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</dd></div>
@@ -125,14 +125,94 @@ its scope is declared, and is labeled according to what it actually does.</p>
 </nav>
 
 <h2 id="desk-scopes">What each desk reads</h2>
-<dl class="scope-register">
-{% for d in desks %}
-  <div class="scope-entry">
-    <dt><a href="{{ d.route }}">{{ d.name }}</a> <span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></dt>
-    <dd><p>{{ d.scope }}</p><p class="blocking">{{ d.status_explanation }}</p>{% if d.record_count %}<p class="card-foot"><a href="archive.html?desk={{ d.slug }}">Browse its records</a></p>{% endif %}</dd>
-  </div>
-{% endfor %}
+{# The Desks Source Atlas. Every value comes from the typed provenance adapter
+   (core/desk_source_provenance.py) through `desk_atlas` in generate_preview.py:
+   statuses and limits from the registry, source classes from the manifests and
+   reviewed bindings, run health only on production sources. A panel is an
+   `article.sa-panel`, never a `section.desk`, and carries no data-desk, so the
+   map's plate and flag-tab counts and the per-desk coverage guards are
+   unaffected. Everything here is plain text: nothing opens, toggles or needs
+   script. #}
+<div class="sa-intro">
+<p class="sa-lede">Each panel sets out what a desk reads and how IPR holds it. A source sits
+under the strongest class its records support, and a desk that references official
+material does not, by referencing it, hold a public archive of that material. Only a
+production source can carry a run result or a record count.</p>
+<dl class="sa-key">
+  <div class="sa-key-item sa-group--production"><dt>Production source</dt><dd>Collected under a validated contract; its records are in the public corpus.</dd></div>
+  <div class="sa-key-item sa-group--shadow"><dt>Shadow declaration</dt><dd>Under isolated evaluation. Not admitted to production, and not in the corpus.</dd></div>
+  <div class="sa-key-item sa-group--public_reference"><dt>Official reference</dt><dd>A publisher index, bibliography or reviewed link lane. Links, not collected records.</dd></div>
+  <div class="sa-key-item sa-group--access_blocked"><dt>Access blocked</dt><dd>The source refused or could not be reached. Not collected.</dd></div>
+  <div class="sa-key-item sa-group--insufficient_evidence"><dt>Insufficient evidence</dt><dd>Nothing recorded supports a stronger class.</dd></div>
 </dl>
+<nav class="sa-index" aria-label="Source atlas desks">
+  <ul>{% for p in desk_atlas %}<li><a href="#atlas-{{ p.desk.slug }}">{{ flag(p.desk.slug) }}<span>{{ p.desk.name }}</span></a></li>{% endfor %}</ul>
+</nav>
+</div>
+{% for p in desk_atlas %}{% set d = p.desk %}
+<article class="sa-panel rl-scope sa-panel--{{ d.status }}" id="atlas-{{ d.slug }}" aria-labelledby="atlas-{{ d.slug }}-h">
+  <header class="sa-id">
+    <div class="sa-mark" aria-hidden="true">{{ emblem(d.slug, draws=false) or '' }}</div>
+    <p class="sa-state"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+    <h3 class="sa-name" id="atlas-{{ d.slug }}-h">{{ flag(d.slug) }} <span>What the <a href="{{ d.route }}">{{ d.name }}</a> reads</span></h3>
+    <p class="sa-scope">{{ d.scope }}</p>
+    <p class="sa-explain">{{ p.prov.status_explanation }}</p>
+    {% if p.languages %}<p class="sa-langs"><span class="sa-k">Languages declared</span> {{ p.languages|join(', ') }}</p>{% endif %}
+    <ul class="sa-links">
+      <li><a href="{{ d.route }}">Open the {{ d.name }}</a></li>
+      {% if d.record_count %}<li><a href="archive.html?desk={{ d.slug }}">Browse its {{ d.record_count|count }} records</a></li>{% endif %}
+      {% if p.placed %}<li><a href="#desk-{{ d.slug }}">Locate on map</a></li>
+      {% else %}<li class="sa-unplaced">Not plotted on the map: no reviewed institutional seat position.</li>{% endif %}
+    </ul>
+  </header>
+  <div class="sa-body">
+    {% for g in p.groups %}
+    <section class="sa-group sa-group--{{ g.cls }}" aria-labelledby="atlas-{{ d.slug }}-{{ g.cls }}">
+      <h4 class="sa-class" id="atlas-{{ d.slug }}-{{ g.cls }}">{{ g.label }}</h4>
+      <ul class="sa-sources">
+      {% for r in g.rows %}{% set s = r.source %}
+        <li class="sa-source{{ ' is-failed' if r.failed }}">
+          <p class="sa-src-name">{% if r.source_type %}{{ glyph_for(r.source_type) }}{% endif %}{% if g.cls == 'production' and s.source_slug %}<a href="source/{{ s.source_slug }}.html">{{ s.name }}</a>{% else %}{{ s.name }}{% endif %}</p>
+          {% if r.meta %}<p class="sa-src-meta">{{ r.meta|join(' · ') }}</p>{% endif %}
+          {% if r.note %}<p class="sa-src-note">{{ r.note }}</p>{% endif %}
+          {% if r.health %}<p class="sa-run"><span class="sa-k">Latest run</span> {{ r.health.label }}{% if r.health.record_count is not none %} · {{ r.health.record_count|count }} records in the corpus{% endif %}</p>{% endif %}
+          {% if s.publisher_url %}<p class="sa-src-link"><a href="{{ s.publisher_url }}" rel="noopener noreferrer">{{ "Open the publisher's site" if g.cls == 'production' else 'Open the official publisher page' }}</a></p>{% endif %}
+        </li>
+      {% endfor %}
+      </ul>
+    </section>
+    {% else %}
+    <p class="sa-none">No source is declared for this desk.</p>
+    {% endfor %}
+    {% if p.references %}
+    <section class="sa-refs" aria-labelledby="atlas-{{ d.slug }}-refs">
+      <h4 class="sa-sub" id="atlas-{{ d.slug }}-refs">Official reference links</h4>
+      <ul>{% for ref in p.references %}
+        <li><a href="{{ ref.href }}">{{ ref.links }} link{{ 's' if ref.links != 1 }}</a> — {{ ref.kind }}{% if ref.publisher %}, {{ ref.publisher }}{% endif %}{% if ref.snapshot %}, snapshot {{ ref.snapshot }}{% endif %}. Outbound official pages, not IPR archived records.{% if ref.state %} {{ ref.state }}.{% endif %}</li>
+      {% endfor %}</ul>
+    </section>
+    {% endif %}
+    {% if p.rights %}
+    <section class="sa-rights" aria-labelledby="atlas-{{ d.slug }}-rights">
+      <h4 class="sa-sub" id="atlas-{{ d.slug }}-rights">Rights qualifications</h4>
+      <ul>{% for text, names in p.rights %}<li><span class="sa-k">{{ names|join('; ') }}</span> {{ text }}</li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+    {% if p.limits %}
+    <section class="sa-limits" aria-labelledby="atlas-{{ d.slug }}-limits">
+      <h4 class="sa-sub" id="atlas-{{ d.slug }}-limits">Limits</h4>
+      <ul>{% for l in p.limits %}<li>{{ l }}</li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+    {% if p.prov.blockers %}
+    <section class="sa-blockers" aria-labelledby="atlas-{{ d.slug }}-blockers">
+      <h4 class="sa-sub" id="atlas-{{ d.slug }}-blockers">Not yet resolved</h4>
+      <dl>{% for head, body in p.prov.blockers %}<div><dt>{{ head }}</dt><dd>{{ body }}</dd></div>{% endfor %}</dl>
+    </section>
+    {% endif %}
+  </div>
+</article>
+{% endfor %}
 
 <h2 id="desk-comparison">Every desk, side by side</h2>
 <div class="table-scroll">
