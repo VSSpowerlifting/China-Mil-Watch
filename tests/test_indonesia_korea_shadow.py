@@ -1,6 +1,7 @@
 """Offline tests replay exact official captures; never connect to a source."""
 import hashlib
 import io
+import requests
 import json
 import socket
 import sqlite3
@@ -49,6 +50,7 @@ class Response:
 class Session:
     def __init__(self, mutations=None):
         self.calls, self.mutations = [], mutations or {}
+        self.timeouts = []
 
     def request(self, method, url, data, headers, **kwargs):
         assert self.trust_env is False
@@ -56,6 +58,7 @@ class Session:
         assert headers["Accept-Encoding"] == "identity"
         assert kwargs["allow_redirects"] is False
         self.calls.append((method, url, data))
+        self.timeouts.append((url, kwargs["timeout"]))
         if url in self.mutations:
             value = self.mutations[url]
             if isinstance(value, Exception):
@@ -265,6 +268,27 @@ class Korea(Case):
 
 
 class Access(Case):
+    def test_korea_robots_timeout_is_extended_for_only_one_request(self):
+        korean, korean_session = adapter("korea")
+        self.assertEqual(korean.discover(CollectionWindow(TARGET, 0)).status, st.OK)
+        self.assertEqual(korean_session.timeouts[0],
+                         ("https://www.korea.kr/robots.txt", 45))
+        self.assertTrue(all(timeout == 30 for _, timeout in korean_session.timeouts[1:]))
+        indonesia, indonesia_session = adapter("indonesia")
+        self.assertEqual(indonesia.discover(CollectionWindow(TARGET, 0)).status, st.OK)
+        self.assertTrue(all(timeout == 30 for _, timeout in indonesia_session.timeouts))
+
+    def test_korea_robots_timeout_still_fails_closed_with_no_listing(self):
+        robots = "https://www.korea.kr/robots.txt"
+        korean, session = adapter("korea", {robots: requests.Timeout("synthetic")})
+        outcome = korean.discover(CollectionWindow(TARGET, 0))
+        self.assertEqual(outcome.status, st.TIMEOUT)
+        self.assertEqual(outcome.references, [])
+        self.assertIsNone(korean.robots_status)
+        self.assertEqual(session.calls, [("GET", robots, None)])
+        self.assertEqual(session.timeouts, [(robots, 45)])
+        self.assertEqual(korean.evidence, [])
+
     def test_policy_refusal_causes_no_listing_request(self):
         url = "https://www.kemhan.go.id/robots.txt"
         a, session = adapter("indonesia", {url: Response(url, b"User-agent: *\nDisallow: /", ctype="text/plain")})

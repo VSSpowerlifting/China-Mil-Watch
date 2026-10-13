@@ -73,6 +73,9 @@ def hwpx_text(payload):
 
 class KoreaPolicyAdapter(ListingShadowAdapter):
     host, listing = HOST, LISTING
+    # October 12's sole 30s timeout was at robots fetch, before listing.
+    # Allow 45s for that *one* prerequisite only, not article/HWPX fetches.
+    ROBOTS_TIMEOUT = 45
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
