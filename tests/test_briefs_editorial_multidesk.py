@@ -16,6 +16,7 @@ from core.brief_editorial_evidence import (
     EditorialEvidenceError, load_editorial_evidence, evidence_prompt,
 )
 from scripts.sunday_editorial_handoff import main
+from scripts.validate_editorial_return import validate_return, ReturnValidationError
 from tests.test_briefs_editorial_evidence import (
     packet as original_packet, scaffold, manuscript,
 )
@@ -194,6 +195,18 @@ class AdditionalDeskEditorialTests(unittest.TestCase):
             self.assertIn("External source ID-KEMHAN-W42-01",
                           output.read_text(encoding="utf-8"))
             mail.assert_not_called()
+            # Dylan's ordinary return validator must accept both new typed
+            # citation families without any new public article label.
+            original = output.read_text(encoding="utf-8")
+            edited = original.replace(
+                "Official statements around a concrete development",
+                "Official developments independently reviewed for editorial clarity", 1)
+            receipt = validate_return(original, edited)
+            self.assertEqual(receipt["external_sources"], 2)
+            with self.assertRaises(ReturnValidationError):
+                validate_return(original, edited.replace(
+                    "External source PH-AFP-W42-01 |",
+                    "External source PH-AFP-W42-99 |", 1))
 
 
 if __name__ == "__main__":
