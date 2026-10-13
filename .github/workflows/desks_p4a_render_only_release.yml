@@ -140,18 +140,24 @@ jobs:
         run: |
           set -euo pipefail
           git add -A -- output/desks.html output/desk-map.css output/assets/flags
-          python -m scripts.guard_desks_p4a_output_scope
-          test -n "$(git diff --cached --name-only)"
+          # A Pages action may fail after main's approved output commit. A
+          # second exact-SHA approved run may redeploy the same byte-identical
+          # eleven files without inventing a no-op commit.
+          python -m scripts.guard_desks_p4a_output_scope --allow-unchanged
           test -z "$(git diff --name-only)"
           sha256sum -c "$RUNNER_TEMP/desks-db.sha"
           git fetch origin main
           test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
             echo "::error::Main moved during render; preview again at the new SHA"; exit 1;
           }
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Site: publish reviewed Phase 4A Desks map only"
-          git push origin HEAD:main
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Site: publish reviewed Phase 4A Desks map only"
+            git push origin HEAD:main
+          else
+            echo "Reviewed Desks output already committed. Redeploying exact overlay."
+          fi
       - name: Assemble exactly the reviewed Pages overlay
         if: inputs.publish
         run: |
