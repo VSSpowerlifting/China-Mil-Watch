@@ -20,6 +20,7 @@ import io
 import sys
 import time
 import unittest
+from unittest import mock
 from datetime import date
 from pathlib import Path
 
@@ -460,6 +461,38 @@ class TestPdfExtraction(unittest.TestCase):
         self.assertEqual(result.status, st.EXTRACTION_FAILURE)
         self.assertEqual(result.documents, [])
         self.assertIn(pdf_text.NO_TEXT_LAYER, result.error_detail)
+
+    def test_pdf_with_one_page_parser_error_never_becomes_an_original(self):
+        # An extractor can return OK with one or more successful pages while
+        # swallowing a parse exception on another. Publishing that text as a
+        # full original would silently erase the unreadable annex.
+        a = adapter({PDF_URL: pdf_ok()})
+        a._titles[PDF_URL] = "日米合同委員会合意について"
+        capture = a.fetch(_ref(PDF_URL))
+        with mock.patch.object(pdf_text, "extract_pdf_text", return_value=pdf_text.PdfExtraction(
+                status=pdf_text.OK, text="Readable page narrative, but another annex failed.",
+                page_count=3, pages_with_text=2, pages_failed=1)):
+            result = a.extract(capture)
+        self.assertEqual(result.status, st.EXTRACTION_FAILURE)
+        self.assertEqual(result.documents, [])
+        self.assertIn("partial_page_extraction", result.error_detail)
+        self.assertIn("1 of 3", result.error_detail)
+
+    def test_a_deliberately_textless_page_is_not_a_parser_exception(self):
+        # A diagram-only page with no parse error is a separate source
+        # completeness/rights hold, not a synthetic exception. Preserve
+        # the existing text-only collector contract without adding OCR.
+        a = adapter({PDF_URL: pdf_ok()})
+        a._titles[PDF_URL] = "日米合同委員会合意について"
+        capture = a.fetch(_ref(PDF_URL))
+        text = "This original has narrative text and a distinct map-only annex."
+        with mock.patch.object(pdf_text, "extract_pdf_text", return_value=pdf_text.PdfExtraction(
+                status=pdf_text.OK, text=text,
+                page_count=2, pages_with_text=1, pages_failed=0)):
+            result = a.extract(capture)
+        self.assertEqual(result.status, st.OK)
+        self.assertEqual(len(result.documents), 1)
+        self.assertEqual(result.documents[0].text_original, text)
 
     def test_no_ocr_is_attempted(self):
         import processing.pdf_text as m

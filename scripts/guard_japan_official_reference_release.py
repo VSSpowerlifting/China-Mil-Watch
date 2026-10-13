@@ -18,16 +18,19 @@ JCG_LINKS = tuple(JCG_PREFIX + str(n) + ".html" for n in
                   (9399, 9424, 9436, 9453, 9455, 9465))
 MOD_LINKS = tuple(MOD_PREFIX + name for name in
                   ("08/27b.pdf", "08/28a.pdf", "08/28b.pdf",
-                   "08/28f.pdf", "10/05b.pdf"))
+                   "08/28f.pdf", "09/17a.pdf", "09/29d.pdf", "10/05b.pdf"))
 REVIEWED_LINKS = frozenset(JCG_LINKS + MOD_LINKS)
 REQUIRED_TEXT = (
     "Six official Japan Coast Guard publication links",
-    "Five official Japan Ministry of Defense PDF links",
+    "Seven official Japan Ministry of Defense PDF links",
     "external official-source links only",
     "not production IPR records",
     "All Japan production records remain held",
     "Japan remains shadow-only; no production or model use is authorized",
     "repository gate was observed unset or unavailable",
+    "Visual original review only: no extractable PDF text layer",
+    "No extractable text layer; not eight independent archive originals",
+    "The oversized October 2 original remains intentionally excluded.",
 )
 
 
@@ -83,7 +86,7 @@ def main(argv=None) -> int:
         print("BLOCKED: " + error)
     if errors:
         return 1
-    print("Japan release: 6 JCG + 5 MOD original links, boundaries and qualifications verified.")
+    print("Japan release: 6 JCG + 7 MOD original links, boundaries and qualifications verified.")
     return 0
 
 

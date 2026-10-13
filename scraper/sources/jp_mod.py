@@ -589,6 +589,18 @@ class JPModAdapter(SourceAdapter):
                 source_slug=self.slug, status=st.EXTRACTION_FAILURE,
                 error_detail="pdf: %s" % result.status)
 
+        # pdf_text.OK means there is some usable text, not that every page
+        # yielded safely. Its extractor can skip a page on a parse exception
+        # and still return OK with a partial body. Never archive that partial
+        # text as a complete publisher original; retain an explicit gap.
+        # Pages with no text layer but no parsing exception are a different
+        # completeness/rights question and are not mislabeled parse failures.
+        if result.pages_failed:
+            return ExtractionResult(
+                source_slug=self.slug, status=st.EXTRACTION_FAILURE,
+                error_detail="pdf: partial_page_extraction (%d of %d pages failed)"
+                             % (result.pages_failed, result.page_count))
+
         url = capture.requested_url
         title = (self._titles.get(url) or "").strip()
         if not title:
