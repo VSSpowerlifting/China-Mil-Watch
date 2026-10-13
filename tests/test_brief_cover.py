@@ -136,6 +136,18 @@ class CommittedCoverTests(unittest.TestCase):
         self.assertIn("G3", e["license_basis"])
         self.assertIn("No Chinese or Singaporean personnel are shown or implied", e["note"])
 
+    def test_g3_covers_editorial_use_and_the_date_conflict_stays_open(self):
+        e = self.entry
+        # G3 (DECISION_LOG 2026-10-12): editorial and news publication only,
+        # without claiming every commercial use is prohibited.
+        self.assertIn("editorial and news publication", e["license_basis"])
+        self.assertIn("promote IPR is a different use", e["license_basis"])
+        self.assertNotIn("not cleared", e["license_basis"])
+        # DVIDS gives two dates; both are stated and neither is asserted.
+        self.assertIn("21 September 2026 in the DVIDS caption", e["date_note"])
+        self.assertIn("date-taken field lists 20 September 2026", e["date_note"])
+        self.assertNotIn("Photographed", e["date_note"])
+
     def test_the_card_admission_agrees_with_the_cover(self):
         record = json.loads((ROOT / "site/assets/catalogue/admissions.json").read_text())
         card = [r for r in record["entries"] if r.get("source_manifest_id") == ENTRY_ID]

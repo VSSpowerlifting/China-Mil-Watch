@@ -1121,6 +1121,17 @@ normalisation then becomes strict byte equality. Contract:
 `docs/evidence/briefs-article-3c-2026-10-12/`. Not merged or deployed;
 independent review required.
 
+**No. 17 photograph cover in review (2026-10-12):** branch
+`claude/ipr-photo-cover-no17`, stacked on the Phase 3C branch (PR #457). The
+owner selected treatment B: DVIDS 9957254 (public domain, Sgt. 1st Class Timothy
+Hughes, U.S. Army) on the No. 17 catalogue card and article hero, from one
+manifest record, with an IPR navy gradient in CSS only. G3 approves editorial
+and news publication only. A new fail-closed gate, `core/brief_cover.py`, grants
+a hero cover only to the Brief its record names. No. 17 no longer opens on a
+plate. No other admission changed; No. 15 and the wider photographic rollout
+are not approved. Next: Joint Staff rights checks for Nos. 2 and 6. Not merged
+or deployed; independent code and visual QA required.
+
 ## 8. Prohibited shortcuts and human-review gates
 
 * Never invent Chinese text, translations, titles, outlets, dates, units, ranks

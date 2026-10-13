@@ -4,6 +4,33 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-12 — No. 17 photograph cover: treatment B and G3
+
+Owner decisions on the No. 17 cover proof of concept. Where this entry
+conflicts with the Phase 3C entries below, this entry governs, for No. 17 only.
+
+- **Treatment B selected.** No. 17's catalogue card and article hero show DVIDS
+  9957254 (VIRIN 260921-A-XH946-9505, Sgt. 1st Class Timothy Hughes, 18th
+  Theater Medical Command, U.S. Army) with the restrained navy-to-transparent
+  gradient, applied in CSS only. The image files stay untoned. One manifest
+  record (`trident-resolve-basarnas-drone`) and one catalogue admission serve
+  both surfaces with separate crops and identical provenance. No. 17 no longer
+  opens on the editorial plate. The unaltered photograph (A) and the duotone
+  (C) are comparison evidence only and are not shipped.
+- **G3 approved for editorial and news use only.** This individually verified
+  public-domain photograph may appear in IPR's editorial and news publication,
+  subject to the DVIDS published restrictions. It must carry the photographer
+  credit, the source link, the recorded hash and the U.S. Department of War
+  non-endorsement notice. Use to market, advertise or promote IPR is a
+  different use and needs its own review. This does not say that every
+  commercial use is prohibited, and it grants nothing to any other DVIDS image.
+- **The date discrepancy is preserved.** The DVIDS caption gives 21 September
+  2026, and the DVIDS date-taken field gives 20 September 2026. Both are stated
+  and no exact capture date is asserted.
+- **Not approved:** a card-only photograph for No. 15 (it needs a new editorial
+  decision), and any bulk admission. Nos. 2 and 6 come next, each with its own
+  Joint Staff rights check.
+
 ## 2026-10-12 — Phase 3C review revision
 
 Made within the PR review brief on the Phase 3C PR. Where this entry conflicts
