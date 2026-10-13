@@ -162,15 +162,34 @@ class SourceLinkedTests(unittest.TestCase):
         self.assertNotIn("<script>", html)
         self.assertIn("&lt;script&gt;", html)
 
-    def test_author_and_separate_contributor_card(self):
+    def test_laos_coauthor_byline_cards_and_citation(self):
         html = self.render()
-        self.assertIn("By <span class=\"byline-name\">Benjamin Yang</span>", html)
-        self.assertIn('aria-label="Research contributor"', html)
-        self.assertIn("Dylan Tanzi", html)
+        self.assertIn("By <span class=\"byline-name\">Benjamin Yang and Dylan Tanzi</span>", html)
+        self.assertEqual(html.count('aria-label="Co-author"'), 2)
+        self.assertIn('<p class="brief-author-name">Benjamin Yang</p>', html)
+        self.assertIn('<p class="brief-author-name">Dylan Tanzi</p>', html)
+        self.assertIn("Founder &amp; Director of Research and Editorial", html)
+        self.assertIn("defense, geopolitical risk, and economic security", html)
         self.assertIn("Lead Research Analyst", html)
-        self.assertIn("Indo-Pacific Record", html)
+        self.assertIn("Vietnam Research Desk", html)
+        self.assertIn('href="mailto:dt822@georgetown.edu"', html)
+        self.assertIn("Benjamin Yang and Dylan Tanzi, “What Is Being Built in Laos?”", html)
+        entry = brief_collection.brief_entry("fixture", self.value)
+        self.assertEqual(entry["author_name"], "Benjamin Yang and Dylan Tanzi")
         self.assertNotIn("0 cited records", html)
         self.assertNotIn("EDITORIAL STATUS", html)
+
+    def test_other_briefs_keep_single_author_presentation(self):
+        value = copy.deepcopy(self.value)
+        value["research_contributor"]["credit_role"] = "research"
+        view = brief_collection.brief_view("fixture", value, desk_names={},
+                    state_labels={}, state_order=[], language_label=str)
+        self.assertEqual(view["author_name"], "Benjamin Yang")
+        self.assertEqual(brief_collection.brief_entry("fixture", value)["author_name"], "Benjamin Yang")
+        html = self.render(value)
+        self.assertIn('aria-label="Research contributor"', html)
+        self.assertIn('aria-label="Author"', html)
+        self.assertNotIn('aria-label="Co-author"', html)
 
     def test_ordinary_collection_withholds_candidate(self):
         value = copy.deepcopy(self.value)
@@ -196,7 +215,7 @@ class SourceLinkedTests(unittest.TestCase):
             self.assertIn("Source-linked editorial analysis", catalog.rows[0]["provenance"])
             feed = brief_collection.build_briefs_feed(catalog.briefs, origin="https://example.org")
             self.assertIn("https://example.org/briefs/fixture.html", feed)
-            self.assertIn("Benjamin Yang", feed)
+            self.assertIn("Benjamin Yang and Dylan Tanzi", feed)
             self.assertEqual(manuscript_html_errors(value, self.render(value)), [])
             value["editorial_review"] = None
             path.write_text(json.dumps(value))
