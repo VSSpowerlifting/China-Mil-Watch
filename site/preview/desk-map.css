@@ -11,12 +11,12 @@
 .deskmap-selectors button[aria-pressed=true]{background:var(--band);color:var(--band-ink);border-color:var(--band)}
 .deskmap-selectors button:hover{border-color:var(--accent)}
 .deskmap-selection{font:14px/1.65 var(--sans);color:var(--ink-2);min-height:36px;margin:10px 0;max-width:none}
-.deskmap-stage{display:block;position:relative;background:transparent;border:0}
+.deskmap-stage{display:block;position:relative;background:transparent;border:0;margin:0}
 .deskmap-chart{position:relative;display:block;background:var(--dm-sea);padding:0;min-width:0}
 .deskmap-svg{display:block;border:1px solid var(--rule);overflow:hidden;width:100%;height:auto}
 .dm-sea{fill:var(--dm-sea)}.dm-graticule{stroke:#176c6c;stroke-opacity:.13;stroke-width:.6px}
 .dm-land{fill:var(--dm-land);stroke:var(--dm-edge);stroke-width:.6px}.dm-borders{stroke:#c3ccc9;stroke-width:.5px}
-.dm-scale text{fill:#617b79;font:19px var(--sans)}
+.dm-scale{display:inline}.dm-scale text{fill:#617b79;font:19px var(--sans)}
 .dm-country use{fill:var(--dm-land);stroke:var(--dm-edge);stroke-width:.7px}
 .dm-country.is-live use,.dm-country.is-collecting use{fill:var(--dm-on);stroke:#142e38;stroke-width:.8px}
 .dm-country.is-shadow use,.dm-country.is-quiet use{fill:var(--dm-quiet);stroke:var(--dm-quiet-edge);stroke-width:.9px;stroke-dasharray:3 2}
@@ -34,7 +34,7 @@
 .dm-leader.is-quiet{stroke:var(--dm-quiet-edge);stroke-dasharray:4 3}
 .dm-leader--wide,.dm-leader--mid{display:none}
 .deskmap-register{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px 0}
-.deskmap-plate{position:relative;min-width:0;background:var(--dm-paper);border:1px solid var(--rule);border-top:3px solid var(--dm-on);border-radius:2px;padding:16px 16px 12px;box-shadow:var(--lift-1)}
+.deskmap-plate{position:relative;left:auto;top:auto;transform:none;width:auto;min-width:0;background:var(--dm-paper);border:1px solid var(--rule);border-top:3px solid var(--dm-on);border-radius:2px;padding:16px 16px 12px;box-shadow:var(--lift-1)}
 .deskmap-plate.is-shadow,.deskmap-plate.is-quiet{border-top:3px dashed var(--dm-quiet-edge)}
 .deskmap-plate.is-blocked{border-top:3px solid #93621d}
 .deskmap-plate.is-selected{outline:2px solid var(--accent);outline-offset:2px}
