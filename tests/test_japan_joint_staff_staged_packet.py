@@ -72,5 +72,75 @@ class JapanJointStaffStagedPacketTest(unittest.TestCase):
             send.assert_not_called()
 
 
+    def test_actual_indonesia_and_japan_sources_share_one_no_send_editorial_draft(self):
+        """Real source-linked notes, one manuscript, no model, mail, or public release."""
+        from scripts.sunday_editorial_handoff import main
+        from scripts.validate_editorial_return import validate_return, ReturnValidationError
+        from core.brief_editorial_source_use import summarize_source_use
+        from tests.test_briefs_editorial_evidence import scaffold, valid_manuscript
+
+        saturday = "2026-10-17"
+        indonesia = json.loads((
+            ROOT / "research" / "briefs_editorial_evidence" /
+            (saturday + ".json")).read_text(encoding="utf-8"))
+        japan = json.loads((DIR / (saturday + ".json")).read_text(encoding="utf-8"))
+        combined = dict(indonesia, items=indonesia["items"] + japan["items"])
+        self.assertEqual(
+            {item["id"] for item in combined["items"]},
+            {"ID-W42-01", "JP-W42-07"})
+
+        m = valid_manuscript()
+        m["editorial_focus"] = (
+            "Separate reported government security activity from actual policy "
+            "implementation, without implying that two unrelated events were coordinated."
+        )
+        m["supplemental_citations"] = {key: [] for key in m["citations"]}
+        m["supplemental_citations"]["cross_desk_comparison"] = [
+            "ID-W42-01", "JP-W42-07"]
+        m["supplemental_citations"]["why_it_matters"] = ["ID-W42-01"]
+        sidecar = scaffold()
+        sidecar["week_start"], sidecar["week_ending"] = "2026-10-11", saturday
+
+        with tempfile.TemporaryDirectory() as directory:
+            folder = Path(directory)
+            packet_path = folder / (saturday + ".json")
+            packet_path.write_text(
+                json.dumps(combined, ensure_ascii=False), encoding="utf-8")
+            checked = load_editorial_evidence(saturday, saturday, directory=folder)
+            self.assertEqual({row["desk"] for row in checked},
+                             {"indonesia", "japan"})
+            audit = summarize_source_use(m, sidecar["source_trail"], checked)
+            self.assertEqual(audit["research_by_desk"]["japan"]["cited"], 1)
+            self.assertEqual(audit["research_by_desk"]["indonesia"]["cited"], 1)
+
+            scaffold_path, target = folder / "scaffold.json", folder / "result.txt"
+            scaffold_path.write_text(
+                json.dumps(sidecar), encoding="utf-8")
+            with patch("scripts.sunday_briefs_auto_writer.compose",
+                       return_value=m) as writer, patch(
+                       "scripts.sunday_editorial_handoff.send_packet") as mail:
+                main(["--sidecar", str(scaffold_path), "--out", str(target),
+                      "--write-automatic", "--full-week", "--include-research",
+                      "--research-packet", str(packet_path), "--as-of", saturday])
+            writer.assert_called_once()
+            self.assertEqual({x["id"] for x in
+                              writer.call_args.kwargs["supplemental"]},
+                             {"ID-W42-01", "JP-W42-07"})
+            mail.assert_not_called()
+            original = target.read_text(encoding="utf-8")
+            for ident in ("ID-W42-01", "JP-W42-07"):
+                self.assertIn("External source " + ident + " |", original)
+            edited = original.replace(
+                "Separate reported government security activity",
+                "Distinguish reported government security activity", 1)
+            self.assertNotEqual(edited, original)
+            self.assertEqual(validate_return(original, edited)["external_sources"], 2)
+            with self.assertRaises(ReturnValidationError):
+                validate_return(
+                    original, edited.replace(
+                        "External source JP-W42-07 |",
+                        "External source JP-W42-99 |", 1))
+
+
 if __name__ == "__main__":
     unittest.main()
