@@ -37,6 +37,40 @@ human-checkable leads, not a machine-approved English synopsis.
   Several reporters describing a ministry ceremony provide evidence of the
   event, not independent verification of the ministry's future capabilities.
 
+### October 12 within-day source chronology and Korean modality check
+
+The first-party [MND regular briefing for October 12](https://www.korea.kr/briefing/policyBriefingView.do?newsId=156784863)
+states, in **future tense**, that the minister would attend the Pangyo AX
+opening that afternoon. By **15:55 KST**, [Yonhap's October 12 report](https://en.yna.co.kr/view/AEN20261012006500315)
+described the opening as having taken place, on the ministry's account.
+The [October 12 MND press text, as surfaced in the government's
+MND-filtered portal listing](https://m.korea.kr/briefing/pressReleaseView.do?newsId=156784873&pWiseMinistry=ministryNews&repCode=A00005&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80%EC%B2%98)
+uses completed-event language for the Pangyo ceremony and prospective
+language for the network's remaining locations and use cases. This
+within-day sequence strengthens the factual *opening-event* characterization,
+but does not show an already operational robotics fleet or audited attendance.
+
+The Korean publisher language distinguishes **the opened Army Pangyo
+physical-AI location**, for which Ajou University is identified as the
+lead institution, from **plans** for the Yongsan, Daejeon, Busan and
+Yangjae locations. It also describes data collection, training models
+for humanoid/multi-legged robots, and future hazardous-area logistics,
+explosive-ordnance disposal, CBRN reconnaissance and mine removal as
+*intended work and anticipated benefits*. The cited figure of roughly
+**150 attendees** is the ministry's ceremony estimate, not an
+independently audited count. All these are **provisional original-Korean
+inline-HTML readings**, not an archived-HWPX comparison or an independent
+Korean-human signed translation. The search reader could access the
+first-party indexed body but not consistently reopen its exact page; that
+availability difference is recorded, not normalized into a successful
+Actions-run capture.
+
+Do not treat the morning briefing, the afternoon ministry press release
+and the Yonhap report based on the ministry as three independently
+proved engineering outcomes. They corroborate sequence/occurrence to
+different degrees, not deployed capability. Do not duplicate their
+photographs or source bodies in IPR.
+
 ### Forward-looking vs observed
 
 The Korean Ministry's **October 7** AX-hub explanatory page:
@@ -90,6 +124,79 @@ using that number in a published IPR analytical Brief.
   timestamp and publisher/capture parity remain **pending scheduled shadow
   collection evidence**.
 
+### October 9 reporting precedes October 12 portal republication
+
+An additional [original-language Yonhap report, transmitted **October
+9 at 17:29 KST**](https://www.yna.co.kr/amp/view/AKR20261009050500504)
+reports the vice-ministerial discussion and a courtesy call on
+Minister Koizumi, attributing these details to South Korea's
+Ministry of National Defense. [Yonhap's English dispatch, October 9
+18:07 KST](https://en.yna.co.kr/view/AEN20261009005300315)
+similarly attributes the account to Seoul's ministry. The independent
+Japanese MOD notice is also dated **October 9**, while the
+Korean Policy Briefing portal displays **October 12**. This creates
+three distinct clocks: **meeting October 9**, **contemporaneous
+official/press reporting by October 9**, and **portal republication
+October 12**. It strongly cautions against treating October 12
+as the day of a *new* bilateral meeting. The `261009` HWPX filename
+prefix is consistent with early circulation but still does not prove the
+original file's distribution timestamp or its archived bytes.
+
+The [Japanese-language Japan MOD account](https://www.mod.go.jp/j/approach/exchange/area/2026/20261009_kor-j.html)
+uses Ando's Japanese title `防衛審議官`, while Japan MOD's
+[official English edition](https://www.mod.go.jp/en/article/2026/10/7d50c715c848925cd5d115bad503a4538516bcf2.html)
+renders the role as `Vice Minister`. Preserve this
+institution-specific title difference when drafting an English
+synopsis rather than presuming identical titles/positions across
+the two ministries. Yonhap is independent journalism but its
+details are expressly ministry-attributed, **not independent
+verification of the contents of an HWPX or a signed bilateral
+agreement**. Its text/photos are not authorized for republication.
+
+### Second-government corroboration and statement-level attribution
+
+The [Japanese Ministry of Defense's contemporaneous **October 9** English
+statement](https://www.mod.go.jp/en/article/2026/10/7d50c715c848925cd5d115bad503a4538516bcf2.html)
+and [Japanese-language publication](https://www.mod.go.jp/j/approach/exchange/area/2026/20261009_kor-j.html)
+are **a separately authored institutional source**, not a translation of or
+syndicated copy of the Korean MND release. This materially improves source
+independence for the bilateral event, but does not authenticate Korea's HWPX.
+
+| Claim / observation | ROK MND October 12 portal body | Japan MOD October 9 original | Research-only judgment |
+| --- | --- | --- | --- |
+| Lee Doo-hee met Japan's Vice Minister Ando on October 9 | Explicitly reports Oct 8–9 visit, Ando talks | Explicitly identifies October 9 talks and both principals | **Cross-government corroborated meeting** |
+| Discussed Japan–ROK and trilateral security cooperation | Reaffirms close Korea–Japan / Korea–US–Japan coordination, framed partly around DPRK nuclear/missile threats | Exchanges views on regional security and Japan–ROK / Japan–US–ROK defense cooperation | **Broad topic corroborated**, not an independently measured threat assessment |
+| Agreed to continue defense cooperation | Says the parties would steadily pursue forward-looking defense exchanges | Says parties concurred on cooperation at various levels and continuing close trilateral coordination | **Policy intent and diplomatic coordination**, not a signed procurement or fielding decision |
+| Lee paid a courtesy call on Defense Minister Koizumi | Reported by ROK MND | Not stated in this particular Japan MOD overview | **Single-ministry assertion in these two sources**, further confirmation needed |
+| Agreed on AI and unmanned-system cooperation | ROK MND mentions future cooperation in advanced technologies | Not expressly stated in this particular Japan MOD overview | **ROK-attributed prospective discussion** only; no delivered project or bilateral instrument established |
+| First South Korean defense vice-minister visit to Japan in 16 years | Not separately substantiated by Korea's short release body | Japan MOD explicitly says first in 16 years | **Japan-MOD-attributed historical characterization**, not independent historical census |
+
+**Original-language provenance and rights (both candidate pages, separate notices).**
+The [ROK MND `156784787` first-party mobile page](https://m.korea.kr/briefing/pressReleaseView.do?newsId=156784787&pWise=mSub&pWiseSub=C4)
+displays its Korean inline body and explicitly says **KOGL Type 1
+(attribution), text only**, while excluding unlicensed photos, illustrations,
+video and other non-text materials. The distinct
+[`156784873` first-party article](https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784873)
+was also inspected in its MND-filtered page rendition, where its own
+**Type 1 text-only** notice appears. These notices are **per-page use
+observations**, not clearance to rehost a full HWPX, an embedded graphic or
+someone else's news photograph. For directly linked publisher text,
+[Policy Briefing's copyright policy](https://www.korea.kr/guide/copyRight.do)
+requires attribution and requests a linked copyright policy.
+
+| Identity | Publisher-posted date | Public HWPX *link identity* | What has **not** been obtained |
+| --- | --- | --- | --- |
+| `156784787` | 2026-10-12 | filename prefix `261009`, publisher download `fileId=198568039&tblKey=GMN` | Original HWPX bytes and capture SHA-256, HWPX visual parity, signed Korean human review |
+| `156784873` | 2026-10-12 | filename prefix `261012`, publisher download `fileId=198568436&tblKey=GMN` | Original HWPX bytes and capture SHA-256, HWPX visual parity, signed Korean human review |
+
+The attachment identifiers above are **public HTML metadata and expected
+download targets**, not proofs of successful retrieval. A separately attempted
+binary retrieval was unavailable through public web-text tooling, and no
+alternative bytes or hash are invented. Neither the first-party inline body
+nor the independent Japanese MOD account replaces archive-bound original
+file/digest checks. Do not record an approved Korean translation, owner
+publication signoff or archival completeness from these observations.
+
 ## Decisions and gates
 
 1. **Source identity:** The two October 12 press IDs `156784873` and
@@ -119,3 +226,73 @@ using that number in a published IPR analytical Brief.
 
 **Status:** Research evidence improved; collector admission, originality,
 independent reviewer, source-use and public release **all remain unapproved**.
+
+## 3. October 12 scheduled shadow attempt — actual runner evidence (post-event update)
+
+**This supersedes the earlier statement that the October 12 Actions attempt had
+not yet appeared.** The separate, scheduled Korea run
+[38323793488](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38323793488)
+started **2026-10-12 23:45:27 UTC** (the Korea schedule names 17:47 UTC).
+Its collector job was **failed**, not missing or unobserved. The checked-out
+collector SHA was `fefce97d8e3b9dc3396d41de6586765e265bc382`, and the
+logical target date remained **2026-10-12** (`schedule-slot`).
+
+The collector's output in job #115057704497 preserves the following fields:
+
+| Field | Verified result |
+| --- | --- |
+| `target_date` / `window_start` | `2026-10-12` / `2026-10-06` |
+| `lookback_days` / `cap` | `6` / `40` |
+| `robots_status` | `null` |
+| `listing_status` / `result` / `health` | `timeout` / `timeout` / `fail` |
+| `error_detail` | `request timed out; no retry` |
+| `requests` | empty — no complete HTTP payload was preserved for this attempt |
+| `discovered` / `selected` / `retrieved` / `extracted` | `0` / `0` / `0` / `0` |
+| `inserted` / `updated` / `duplicates` | `0` / `0` / `0` |
+| shadow database SHA-256, before and after | `80969bb7ca19b2d13d999f9cad270e94a720b3d2f3619549a889dec597e31788` |
+
+**Failure stage, not a publisher-content conclusion:** the implementation
+first requests `https://www.korea.kr/robots.txt`, sets
+`robots_status="read"` only after a complete, validated robots response,
+then proceeds to the ministry-filtered listing. Because the run has
+`robots_status=null` and `requests=[]`, the **robots fetch did not complete**
+and **no listing request was reached**. The field named `listing_status`
+is the discovery-level failure status; it does *not* establish that the
+listing endpoint timed out. The evidence does not distinguish a transient
+network problem from a longer-lived origin/client accessibility problem; it
+also does not indicate a publisher refusal, a blank listing, or a successful
+HWPX download.
+
+The candidate attempt was retained in
+[artifact #11779728345](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38323793488/artifacts/11779728345)
+(`candidate-shadow-korea-38323793488-1`).
+Because the collection step failed, the workflow skipped its explicit
+successful-state publication step. The preserved `shadow/korea-policy-briefing`
+branch's `state/ledger/` directory, inspected separately through the GitHub
+contents API, contains **seven ledgers covering October 6–11**. October 8
+successfully added a fifth record (`newsId=156784652`); the October 9–11
+scheduled ledgers were healthy duplicate-only collections, with five
+archived records still retained. The October 12 failed candidate ledger
+exists in the artifact, **not** as an accepted scheduled success ledger on
+the shadow branch.
+
+**Recovery rule:** `core/shadow_schedule.py` explicitly refuses an ordinary
+UI rerun of an ambiguous scheduled attempt. An operator can recover the
+logical date only via a *new manual workflow dispatch* for desk `korea`
+with **`target_date=2026-10-12`**, or a separately bounded local run with
+that explicit date, keeping the original failed artifact intact. This
+document records the safe action; it does not claim to have dispatched it.
+The transport intentionally does not retry, follow redirects or challenges,
+or bypass robots. A later successful run is a distinct observation and
+would still require proof that the two candidate HWPX files were in fact
+retrieved and hashed. Keep both records outside production and public
+editorial use.
+
+**CI note for this documentation PR:** the original offline check
+[run #38300787681](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38300787681)
+ended red (5,995 tests; two failures in the *Indonesia*
+`test_prepare_indonesia_reference_review_queue` fixture assumptions).
+The Korea diff itself changes documentation only; the tracked database
+and output preservation checks passed. This is not a claim that PR #471's
+required full CI passed, and the unrelated tests must be reconciled before
+merge under normal repository rules.
