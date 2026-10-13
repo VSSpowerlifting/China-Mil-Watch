@@ -21,6 +21,8 @@ on:
         default: false
         type: boolean
 
+# Phase 4A is now merged; pull-request CI must merge against the current
+# main source rather than the pre-Phase-4A base captured by the draft preview.
 # A manual release holds the daily publishing lock for its entire lifetime.
 # In the release job it ALSO acquires the existing Pages-deploy lock so a
 # simultaneous output-only deploy cannot overwrite the sparse overlay.
