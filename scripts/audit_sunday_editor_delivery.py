@@ -191,7 +191,8 @@ def fetch_live(repo, *, token=""):
         raise DeliveryAuditError("invalid repository owner/name")
     base = "https://api.github.com/repos/" + repo + "/actions/workflows/" + WORKFLOW_FILE
     state = _github_get(base, token)
-    # Include dispatches so they cannot be mistaken for missing scheduled runs.\n    runs = _github_get(base + "/runs?per_page=100", token)
+    # Include dispatches so they cannot be mistaken for missing scheduled runs.
+    runs = _github_get(base + "/runs?per_page=100", token)
     if not isinstance(state, dict) or not isinstance(runs, dict):
         raise DeliveryAuditError("invalid GitHub Actions API result")
     if not isinstance(runs.get("workflow_runs"), list):
