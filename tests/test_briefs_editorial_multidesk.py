@@ -112,6 +112,7 @@ class AdditionalDeskEditorialTests(unittest.TestCase):
             ("japan", "source_url",
              "https://www.kaiho.mlit.go.jp.evil.test/e/topics_archive/article22.html"),
             ("japan", "source_name", "Japan Ministry of Defense"),
+            ("japan", "language", "ja"),
         ]
         for desk, key, value in cases:
             with self.subTest(desk=desk, key=key, value=value):
