@@ -249,9 +249,9 @@
     {% endif %}
 
     {% endif %}
-    <section class="brief-author" aria-label="Author">
-      <p class="brief-author-label">Author</p>
-      <p class="brief-author-name">{{ brief.author_name }}</p>
+    <section class="brief-author" aria-label="{{ 'Co-author' if brief.research_contributor and brief.research_contributor.credit_role == 'co-author' else 'Author' }}">
+      <p class="brief-author-label">{{ 'Co-author' if brief.research_contributor and brief.research_contributor.credit_role == 'co-author' else 'Author' }}</p>
+      <p class="brief-author-name">{{ brief.author_card_name|default(brief.author_name) }}</p>
       {% if brief.author_title %}<p class="brief-author-title">{{ brief.author_title }}</p>{% endif %}
       {% if brief.author_bio %}<p class="brief-author-bio">{{ brief.author_bio }}</p>{% endif %}
       {% if brief.author_links %}
@@ -262,12 +262,15 @@
     </section>
 
     {% if brief.research_contributor %}
-    <section class="brief-author" aria-label="Research contributor">
-      <p class="brief-author-label">Research contributor</p>
+    <section class="brief-author" aria-label="{{ 'Co-author' if brief.research_contributor.credit_role == 'co-author' else 'Research contributor' }}">
+      <p class="brief-author-label">{{ 'Co-author' if brief.research_contributor.credit_role == 'co-author' else 'Research contributor' }}</p>
       <p class="brief-author-name">{{ brief.research_contributor.name }}</p>
       <p class="brief-author-title">{{ brief.research_contributor.title }}</p>
       <p class="brief-author-bio">{{ brief.research_contributor.bio }}</p>
-      <ul class="brief-author-links"><li><a href="{{ brief.research_contributor.linkedin }}" rel="noopener noreferrer">LinkedIn</a></li></ul>
+      <ul class="brief-author-links">
+        {% if brief.research_contributor.linkedin %}<li><a href="{{ brief.research_contributor.linkedin }}" rel="noopener noreferrer">LinkedIn</a></li>{% endif %}
+        {% if brief.research_contributor.email %}<li><a href="mailto:{{ brief.research_contributor.email }}">Email</a></li>{% endif %}
+      </ul>
     </section>
     {% endif %}
 
