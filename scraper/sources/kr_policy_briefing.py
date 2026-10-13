@@ -99,7 +99,13 @@ class KoreaPolicyAdapter(ListingShadowAdapter):
             # response; the parent records last_request and enforces delay.
             print("Korea robots GET timed out; one bounded retry after crawl delay",
                   file=sys.stderr)
-            return super()._request(url, form=form, robots=True, binary=False)
+            try:
+                return super()._request(url, form=form, robots=True, binary=False)
+            except Refused as last:
+                if last.status == st.TIMEOUT:
+                    raise Refused(st.TIMEOUT,
+                                  "robots request timed out after one bounded retry") from last
+                raise
 
     def discover(self, window):
         self.robots_timeout_retries = 0
