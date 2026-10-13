@@ -7,9 +7,8 @@ geography built deterministically from Natural Earth and recorded in a receipt;
 every illustration decorative; motion only behind reduced-motion, scripting
 and scroll-timeline support. These checks hold those lines. Phase 2 links the
 primitives into the homepage; Phase 2b adds the Archive, which takes only
-`relief.css` and the finder lift (B1 names "the finder"). Every other
-production page stays without them, and the production build publishes only
-the files those two pages use.
+`relief.css` and the finder lift (B1 names "the finder"). Phase 4A brings the Desks page into the same named-surface allowlist and
+publishes its eight local flag SVGs with the MIT notice, but no glyph sprite.
 """
 
 from __future__ import annotations
@@ -38,7 +37,7 @@ TRACKED_DB = REPO_ROOT / "pla_watch.db"
 SURFACES = ("rl-finder", "rl-card", "rl-analysis", "rl-brief", "rl-plate", "rl-scope")
 LIFTS = ("none", "var(--lift-1)", "var(--lift-2)", "var(--lift-3)")
 # flag-icons 7.3.2 (MIT), byte-identical to the release files.
-FLAGS = ("cn", "jp", "sg", "us", "vn")
+FLAGS = ("cn", "id", "jp", "kr", "ph", "sg", "us", "vn")
 GLYPHS = ("newspaper", "ministry", "agency", "journal", "portal", "feed")
 
 
@@ -248,8 +247,7 @@ class MacroTests(unittest.TestCase):
 
 
 class ProductionIsolationTests(unittest.TestCase):
-    """Phase 2, 2b and 3B: the homepage, the Archive and the Briefs catalogue
-    are the production pages allowed the primitives.
+    """Phase 2–4A: Home, Archive, Briefs and Desks are the approved surfaces.
 
     A positive allowlist per template: home.html may reach relief.css, the
     _relief.html macros, the two Natural Earth sprites and the rl-* classes;
@@ -257,15 +255,16 @@ class ProductionIsolationTests(unittest.TestCase):
     nothing else; analysis.html (the Briefs catalogue) may reach relief.css,
     the _relief.html macros and the Brief-card lift (`rl-brief`) with its
     3:2 print frame (`rl-print`), and calls only the `region_plate` macro;
-    every other production template reaches none of them. Flags and source
-    glyphs stay gallery-only.
+    desks.html may use only the existing plate lift and licensed flag macro;
+    other production templates stay outside relief, and glyphs remain gallery-only.
     """
 
     PATTERN = re.compile(r"relief\.css|_relief\.html|assets/(geo|flags|glyphs)/[\w.-]*|\brl-[a-z]+")
     ALLOWED = {"home.html": {"relief.css", "_relief.html", "rl-finder", "rl-card",
                              "rl-analysis"},
                "archive.html": {"relief.css", "rl-finder"},
-               "analysis.html": {"relief.css", "_relief.html", "rl-brief", "rl-print"}}
+               "analysis.html": {"relief.css", "_relief.html", "rl-brief", "rl-print"},
+               "desks.html": {"relief.css", "_relief.html", "rl-plate"}}
 
     def test_only_the_homepage_reaches_them_and_only_what_it_uses(self):
         for path in sorted(TEMPLATES.glob("*.html")):
@@ -309,7 +308,7 @@ def _production_build(out, **options):
 
 
 class ProductionAssetTests(unittest.TestCase):
-    """A production build publishes the homepage's relief files and nothing more.
+    """A production build admits named relief and public Desks flag assets only.
 
     Built with an approved copy of the timeline pilot, so the homepage's
     Evidence Timelines branch is the one rendered.
@@ -335,7 +334,7 @@ class ProductionAssetTests(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
-    def test_exactly_the_homepage_files_are_published_byte_identical(self):
+    def test_approved_relief_and_country_flag_assets_are_byte_identical(self):
         self.assertEqual(self.gp.RELIEF_PRODUCTION_ASSETS,
                          ("assets/geo/emblems.svg", "assets/geo/strait.svg"))
         self.assertEqual((self.out / "relief.css").read_bytes(), RELIEF_CSS.read_bytes())
@@ -348,7 +347,16 @@ class ProductionAssetTests(unittest.TestCase):
                          (REPO_ROOT / "site/assets/geo/region.svg").read_bytes())
         self.assertEqual(sorted(p.name for p in (self.out / "assets/geo").iterdir()),
                          ["emblems.svg", "region.svg", "strait.svg"])
-        for absent in ("assets/flags", "assets/glyphs", "gallery-relief.html"):
+        # A public Desk flag is an explicitly referenced asset and the MIT
+        # notice travels with it; gallery-only glyphs must still stay private.
+        expected = {"%s.svg" % iso for iso in FLAGS} | {"LICENSE"}
+        self.assertEqual({p.name for p in (self.out / "assets/flags").iterdir()}, expected)
+        self.assertEqual(set(self.gp.DESKS_PUBLIC_FLAG_ASSETS),
+                         {"assets/flags/" + name for name in expected})
+        for route in self.gp.DESKS_PUBLIC_FLAG_ASSETS:
+            self.assertEqual((self.out / route).read_bytes(),
+                             (REPO_ROOT / "site" / route).read_bytes(), route)
+        for absent in ("assets/glyphs", "gallery-relief.html"):
             self.assertFalse((self.out / absent).exists(), absent)
         self.assertFalse(any(self.out.glob("assets/**/*.receipt.json")))
 
@@ -362,14 +370,16 @@ class ProductionAssetTests(unittest.TestCase):
                 ids[path] = {s.getAttribute("id") for s in doc.getElementsByTagName("symbol")}
             self.assertIn(symbol, ids[path], "%s#%s" % (path, symbol))
 
-    def test_only_the_homepage_archive_and_catalogue_link_relief_first(self):
+    def test_only_the_approved_four_page_families_link_relief_first(self):
         self.assertLess(self.index.index('href="relief.css"'), self.index.index('href="home.css"'))
         archive = (self.out / "archive.html").read_text(encoding="utf-8")
         self.assertLess(archive.index('href="relief.css"'), archive.index('href="archive.css"'))
         catalogue = (self.out / "analysis.html").read_text(encoding="utf-8")
         self.assertLess(catalogue.index('href="relief.css"'), catalogue.index('href="briefs-catalog.css"'))
+        desks = (self.out / "desks.html").read_text(encoding="utf-8")
+        self.assertLess(desks.index('href="relief.css"'), desks.index('href="desk-map.css"'))
         for page in self.out.rglob("*.html"):
-            if page.parent != self.out or page.name not in ("index.html", "archive.html", "analysis.html"):
+            if page.parent != self.out or page.name not in ("index.html", "archive.html", "analysis.html", "desks.html"):
                 self.assertNotIn("relief.css", page.read_text(encoding="utf-8"),
                                  page.relative_to(self.out))
 
