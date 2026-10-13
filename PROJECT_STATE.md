@@ -1096,46 +1096,11 @@ the macOS temp root). Contract:
 17-card audit: `docs/evidence/briefs-catalogue-3b-2026-10-12/`. Merged to main
 as `18b57684e6`.
 
-**Phase 3C Briefs article presentation in review (2026-10-12):** branch
-`claude/ipr-phase-3c-rendering-4da02b`, from main `18b57684e6`; a review
-revision has been applied. All 17 opened Briefs (14 historical pages, 3 native)
-name their hero image's kind in text through one presentation adapter,
-`core/article_media.py`, which grants nothing and never reads
-`core/catalogue_media.py`. The treatments:
-- Seven Signal Veils keep their caption word for word behind a "Signal Veil"
-  label.
-- Nos. 8 and 9 show the manifest's full credit, licence, Commons link and IPR's
-  change note. No. 8's "統合幕僚監部" carries `lang="ja"` from the manifest's new
-  `credit_native_lang`.
-- Nos. 1, 10, 12 and 15 keep their figure markup byte for byte.
-- Nos. 4, 14, 16 and 17 open on a labelled editorial plate.
+**Briefs Phase 3C article presentation and No. 17 photography — source integrated, publication pending (2026-10-13):** The article presentation from PR #457 and the No. 17 photograph implementation from PR #489 are both in `main` through merged integration PR #492, commit `22627423c83e7a20ca9b035c9410a3b4d512a8eb`. The combined full `PR offline checks` run #38349385797 passed. PR #489 was closed as superseded after confirming its cover-gate and manifest code was already present in the integration merge; it was not merged a second time.
 
-Both templates close with a shared previous/next Brief nav, and No. 14 ↔
-No. 15 are now reciprocal through one approval-gated bridge. No JavaScript was
-added, and HTML+CSS is at most 87.3 KB per article. **Open gates:** owner
-visual sign-off on the plates (Phase 0 requirement 7 stays conditional until
-then), owner review of the manifest field, and independent review. Publishing
-needs both documented renders after merge; the historical test's temporary
-normalisation then becomes strict byte equality. Contract:
-`docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`; evidence:
-`docs/evidence/briefs-article-3c-2026-10-12/`. Not merged or deployed;
-independent review required.
+All 17 opened Briefs use the shared article-media adapter and previous/next navigation. Seven Signal Veils retain their original captions and are labelled as treated source photographs; Nos. 8 and 9 retain their independently admitted Commons photographs and full credits; Nos. 1, 10, 12 and 15 retain their protected figure markup. Nos. 4, 14 and 16 still use labelled original editorial plates as fallbacks. No. 17 now has the owner-approved DVIDS 9957254 photograph with treatment B (CSS-only navy gradient), consistent provenance on the catalogue card and article, source-specific non-endorsement notice, and fail-closed paired-surface/slug gates. G3 authorises editorial and news publication of that one image only; marketing or promotional use needs separate review. Both DVIDS dates remain recorded. No other image admission changed; No. 15 remains protected. Joint Staff rights checks for Nos. 2 and 6 remain the next candidate reviews. Contract: `docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`; cover policy: `docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`; evidence: `docs/evidence/briefs-article-3c-2026-10-12/` and `docs/evidence/brief-cover-no17-2026-10-12/`.
 
-**No. 17 photograph cover in review (2026-10-12):** branch
-`claude/ipr-photo-cover-no17`, stacked on the Phase 3C branch (PR #457). The
-owner selected treatment B: DVIDS 9957254 (public domain, Sgt. 1st Class Timothy
-Hughes, U.S. Army) on the No. 17 catalogue card and article hero, from one
-manifest record, with an IPR navy gradient in CSS only. G3 approves editorial
-and news publication only. A new fail-closed gate, `core/brief_cover.py`, grants
-a hero cover only to the Brief its record names. No. 17 no longer opens on a
-plate. No other admission changed; No. 15 and the wider photographic rollout
-are not approved. Hardening (2026-10-13): publisher notices are enforced per
-source (`core/source_terms.py`), covers name their `surfaces` and whether they
-show the `event` or `context`, and a paired cover is shown on both surfaces or
-on neither (`core/brief_photography.py`). Future covers follow
-`docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`. Next: Joint Staff rights checks for
-Nos. 2 and 6. Not merged or deployed; independent code and visual QA required.
-
+**Publication is still pending.** The source merge did not regenerate tracked `output/` or deploy `gh-pages`; the live No. 17 card/article still lack the new photograph and the opened historical pages still have the pre-Phase-3C presentation. PR #493 proposes a dedicated manual-only release gate. It rerenders the historical pages and current IPR site from existing records, validates the output and database immutability, restores unrelated generated country pages to the exact committed baseline, and allows only the explicitly reviewed Brief routes and No. 17 assets into the release. The default is preview-only; publication requires a full owner-reviewed `main` SHA and an explicit `publish=true` dispatch after inspecting the preview artifact. Do not use the output-only deploy workflow against the stale output tree.
 ## 8. Prohibited shortcuts and human-review gates
 
 * Never invent Chinese text, translations, titles, outlets, dates, units, ranks
