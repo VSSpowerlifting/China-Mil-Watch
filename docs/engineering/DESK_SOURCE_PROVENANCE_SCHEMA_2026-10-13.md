@@ -118,8 +118,12 @@ collection timestamp or evidence freshness guarantee.
 Each public desk preserves the registry's name, route, scope, status,
 `status_explanation`, limits, research blockers, resolved notes, observed-volume
 qualifications and qualification text. Sources preserve their reviewed evidence
-class, publisher name and URL, declared format, language, access method, caveats
-and rights statement. Approved bibliography/index/reviewed-link entries preserve
+class, publisher name and URL, declared format, language and access method.
+Raw source notes and shadow-manifest rights statements are **not** exposed:
+production notes are operator-only, and some shadow-manifest rights contain
+fixture/issue diagnostics. The public rights qualification comes from approved
+registry limits and independently published family notes on desk pages.
+Approved bibliography/index/reviewed-link entries preserve
 public original titles, official outbound URLs, dates, language and press numbers.
 They remain **links, never production records**.
 
@@ -127,7 +131,8 @@ The public serializer deliberately **does not emit**:
 - `undisplayed_shadow_declarations`, `unmatched_health_slugs`, `conflicts`
   or private/non-public desk rows;
 - raw `shadow/.../manifest.json` paths, source slug/config IDs, basis pointers,
-  reference loader/lane IDs, attempt/run IDs or shadow-enabled flags;
+  reference loader/lane IDs, attempt/run IDs, production operator notes,
+  shadow manifest rights statements or shadow-enabled flags;
 - production-source run health, counts or per-source latest-run timestamps.
   That material needs an independent published health contract and approval.
 
