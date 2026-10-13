@@ -50,8 +50,8 @@ def summarize_source_use(manuscript, production_trail, research=()):
             raise SourceUseError("malformed source-linked research")
         ident, desk = source.get("id"), source.get("desk")
         if (not isinstance(ident, str) or not ident or ident.isdecimal()
-                or not isinstance(desk, str) or desk not in ("japan", "vietnam")):
-            raise SourceUseError("invalid typed Japan/Vietnam research identity")
+                or not isinstance(desk, str) or desk not in ("japan", "vietnam", "philippines", "indonesia")):
+            raise SourceUseError("invalid typed official-source research identity")
         if ident in external:
             raise SourceUseError("duplicate research source ID")
         if source.get("status") != "unapproved-source-linked-editorial-candidate":
@@ -167,8 +167,8 @@ def format_private_source_use(manuscript, production_trail, research=()):
         out.append("- {}: {} in human appendix; {} actually model-offered; {} cited.".format(
             desk, item["appendix_listed"], roster_count, item["cited"]))
     out.append("")
-    out.append("NON-PRODUCTION JAPAN/VIETNAM RESEARCH USE:")
-    for desk in ("japan", "vietnam"):
+    out.append("SOURCE-LINKED EDITORIAL RESEARCH USE:")
+    for desk in sorted(set(audit["research_by_desk"]) | {"japan", "vietnam"}):
         item = audit["research_by_desk"].get(
             desk, {"offered": 0, "cited": 0, "unused_source_ids": []})
         out.append("- {}: {} offered; {} cited in manuscript.".format(

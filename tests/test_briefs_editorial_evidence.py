@@ -352,5 +352,17 @@ class UnifiedWriterTests(unittest.TestCase):
             mail.assert_not_called()
 
 
+
+def load_tests(loader, suite, pattern):
+    """Include the expanded desk-intake cases in the existing focused Sunday CI.
+
+    The scheduled-workflow suite runs this module explicitly rather than using
+    discovery. Its import is delayed so full discover and direct invocations
+    both work without circular module imports.
+    """
+    suite.addTests(loader.loadTestsFromName("tests.test_briefs_editorial_multidesk"))
+    return suite
+
+
 if __name__ == "__main__":
     unittest.main()
