@@ -26,16 +26,19 @@ remain intact in `briefs/what-is-being-built-in-laos.json`. The release
 fingerprint has accordingly changed; see the revised source-review dossier. An opt-in publisher-linked narrative
 variant uses the existing Brief collection, shell, approval numbering and
 catalog/feed/sitemap integration without corpus IDs or desk coverage. Private
-review is noindex/unnumbered; production withholds the draft. No human
-source/rights attestations or source-linked policy ruling have been fabricated.
-The exact proposed doctrine §5b supplement, seven-source/eleven-paragraph matrix,
-verification limits and release procedure are in
-`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. Engineering verification and release PR
-receipts are recorded there. No source/body imagery redistribution, database,
-desk-status, collection, paid-model or scheduled-workflow changes. Remaining
-substantive gates: human acceptance of the indexed MOD/Reuters syndicated
-source and limited-use review, and owner acceptance of the explicit evidence/
-anatomy supplement before ordinary authorized approval/numbering/deployment.
+review is noindex/unnumbered; production withholds the draft. **The owner separately approved the narrowly scoped §5b source-linked
+evidence/anatomy exception on 2026-10-13**, bound to revised candidate
+fingerprint `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+The decision is recorded in doctrine, `DECISION_LOG.md` and the candidate's
+`policy_ruling`. **This is not a human source/rights attestation.**
+The seven-source/eleven-paragraph matrix, verification limits and release
+procedure are in `docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. No source/body
+imagery redistribution, database, desk-status, collection, paid-model or
+scheduled-workflow changes. The **remaining substantive release gate** is
+actual human acceptance of the original-language source/claim/limited-use
+review, including indexed MOD and Reuters syndicated verification routes,
+plus authorship, exact-manuscript and rendered-page checks. New exact-head
+CI and ordinary authorized approval/numbering/deployment follow that signoff.
 
 Brief release approval was received 2026-10-05; its candidate,
 authorization recovery and QA evidence are in
