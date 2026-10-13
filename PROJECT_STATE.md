@@ -939,11 +939,12 @@ include the US limit wording against the disabled DVIDS shadow manifest.
 has a key, a desk index and eight `rl-scope` panels (`site/preview/desk-atlas.css`).
 Each panel shows the flag, the emblem where one exists, status, scope, the
 explanation and the declared languages. Sources are grouped by evidence class,
-and the panel adds reference lanes, rights text, the desk's public limits and
-its blockers. Run health and counts appear only on production sources. Each
+and the panel adds reference lanes, the desk's public limits (which carry its
+rights qualifications) and its blockers. Run health and counts appear only on production sources. Each
 placed desk gets "Locate on map"; Indonesia (unplaced) is reached from the
-index. Production operator notes are not printed. A temp build measured
-`desks.html` at 248,505 B HTML+CSS against the 300 KB hub cap, with 2,681 B of
+index. Production operator notes and shadow-manifest rights statements are not
+printed. A temp build measured
+`desks.html` at 247,459 B HTML+CSS against the 300 KB hub cap, with 2,681 B of
 JS (unchanged). There is no overflow at 320–1600px. The rulings are in the
 DECISION_LOG entry of 2026-10-13. Contract tests are in
 `tests/test_desks_source_atlas.py`.

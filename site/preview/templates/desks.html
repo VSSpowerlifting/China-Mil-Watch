@@ -192,12 +192,6 @@ production source can carry a run result or a record count.</p>
       {% endfor %}</ul>
     </section>
     {% endif %}
-    {% if p.rights %}
-    <section class="sa-rights" aria-labelledby="atlas-{{ d.slug }}-rights">
-      <h4 class="sa-sub" id="atlas-{{ d.slug }}-rights">Rights qualifications</h4>
-      <ul>{% for text, names in p.rights %}<li><span class="sa-k">{{ names|join('; ') }}</span> {{ text }}</li>{% endfor %}</ul>
-    </section>
-    {% endif %}
     {% if p.limits %}
     <section class="sa-limits" aria-labelledby="atlas-{{ d.slug }}-limits">
       <h4 class="sa-sub" id="atlas-{{ d.slug }}-limits">Limits</h4>

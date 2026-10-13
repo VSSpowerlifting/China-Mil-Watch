@@ -1540,7 +1540,9 @@ def desk_atlas(desks, source_views, desk_map, db_path, as_of) -> list:
     production sources; limits pass through `public_desk_limits`, so the hub
     and each desk page print the same list; glyphs come only from a stored
     `source_type`, never from a family name. Registry operator notes on
-    production sources stay internal.
+    production sources and shadow-manifest rights statements stay internal;
+    a desk's rights qualifications reach readers through its published
+    limits and family notes.
     """
     atlas = build_desk_provenance(as_of=as_of, db_path=db_path, with_health=True)
     types = {s.slug: s.source_type for s in source_views}
@@ -1580,10 +1582,6 @@ def desk_atlas(desks, source_views, desk_map, db_path, as_of) -> list:
                 })
             groups.append({"cls": cls.value, "label": rows[0]["source"].evidence_label,
                            "rows": rows})
-        rights = {}
-        for s in prov.sources:
-            if s.rights_statement:
-                rights.setdefault(s.rights_statement, []).append(s.name)
         references = [{
             "kind": ATLAS_REFERENCE_KINDS.get(g.kind, g.kind),
             "family": g.family_name, "publisher": g.publisher,
@@ -1594,7 +1592,6 @@ def desk_atlas(desks, source_views, desk_map, db_path, as_of) -> list:
         panels.append({
             "desk": desk, "prov": prov, "groups": groups,
             "limits": public_desk_limits(desk, source_views),
-            "rights": sorted(rights.items(), key=lambda kv: kv[1][0]),
             "references": references,
             "placed": desk.slug in desk_map["desks"],
             "languages": sorted({n for g in groups for r in g["rows"]

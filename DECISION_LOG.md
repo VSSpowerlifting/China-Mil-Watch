@@ -23,7 +23,13 @@ Five rulings constrain later Desks work:
    string is operator text (corpus shares, cadence, host-governance test
    references) that no public page printed. The Atlas omits it. A shadow,
    reference or access-blocked family note from `desks/registry.json` is
-   printed only because its desk page already prints it.
+   printed only because its desk page already prints it. A shadow
+   manifest's `rights` statement (today only the two Vietnam manifests)
+   is not printed either. It is operator text, with fixture and issue
+   references, and no public page prints it. The desk's rights
+   qualifications reach the panel through its published limits and
+   family notes. Reader-facing manifest rights wording needs owner
+   approval before any page prints it.
 4. **Run health and counts are production-only.** "Latest run" and record
    counts appear only on contract-validated production sources, and the
    per-source counts must sum to the desk's record count. A panel for a

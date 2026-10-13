@@ -114,15 +114,20 @@ class DesksSourceAtlas(unittest.TestCase):
         for tag in re.findall(r'<[a-z0-9]+[^>]*aria-hidden="true"[^>]*>', self.atlas):
             self.assertRegex(tag, r'^<(svg|div class="sa-mark")')
 
-    def test_rights_and_blockers_are_printed_verbatim(self):
+    def test_blockers_are_verbatim_and_manifest_rights_stay_internal(self):
+        hub = htmllib.unescape(self.html)
         for d in self.desks:
             prov = self.prov.get(d.slug)
             panel = htmllib.unescape(self.panels[d.slug])
             with self.subTest(desk=d.slug):
+                # A shadow manifest's rights statement is operator text no
+                # public page prints; the desk's rights qualification reaches
+                # the panel through its published limits and family notes.
                 rights = {s.rights_statement for s in prov.sources if s.rights_statement}
                 for text in rights:
-                    self.assertIn(text, panel)
-                self.assertEqual("sa-rights" in panel, bool(rights))
+                    self.assertNotIn(text[:60], hub)
+                if rights:
+                    self.assertIn("rights", _text(self.panels[d.slug]).lower())
                 for head, body in prov.blockers:
                     self.assertIn(head, panel)
                     self.assertIn(body, panel)
