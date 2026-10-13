@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set has_source_linked = collection.briefs|selectattr('source_linked')|list|length %}
 {% from "_plate.html" import edition_plate %}
 {% from "_terrain.html" import terrain %}
 {% from "_relief.html" import region_plate with context %}
@@ -37,8 +38,8 @@
     <div class="briefs-masthead">
       <p class="briefs-kicker">Analysis</p>
       <h1 id="briefs-title" class="page-name">{{ collection_name }}</h1>
-      <p class="briefs-lede">Human-controlled analysis built from preserved records.
-        Each Brief cites the records it rests on and names its editor.</p>
+      <p class="briefs-lede">{% if has_source_linked %}Human-controlled analysis with explicit sources and named editors. Briefs distinguish preserved corpus records from source-linked editorial references.{% else %}Human-controlled analysis built from preserved records.
+        Each Brief cites the records it rests on and names its editor.{% endif %}</p>
       <p class="briefs-browse"><a href="#briefs-published">Browse all Briefs</a>{% if briefs_feed_route %} · <a href="{{ briefs_feed_route }}">Subscribe to the feed</a>{% endif %}</p>
     </div>
     {% if lead %}
@@ -178,7 +179,7 @@
     <thead><tr><th scope="col">Collection</th><th scope="col">Status</th><th scope="col" class="num">Briefs</th></tr></thead>
     <tbody>
       <tr>
-        <td data-label="Collection">{{ collection_name }}<br><span class="meta">{% if collection.rows %}{{ collection.rows|length }} published{% if editions %}, of which {{ editions|length }} {{ 'was' if editions|length == 1 else 'were' }} first published as {{ predecessor_series }}{% if _hist %} ({{ _hist|length }} under the predecessor masthead {{ predecessor_name }}){% endif %}{% endif %}{% else %}No Brief has been published yet{% endif %}</span></td>
+        <td data-label="Collection">{{ collection_name }}<br><span class="meta">{% if collection.rows %}{% if review_mode and has_source_linked %}{{ collection.rows|rejectattr('entry.is_review')|list|length }} published · {{ collection.rows|selectattr('entry.is_review')|list|length }} unapproved review candidate{% else %}{{ collection.rows|length }} published{% endif %}{% if editions %}, of which {{ editions|length }} {{ 'was' if editions|length == 1 else 'were' }} first published as {{ predecessor_series }}{% if _hist %} ({{ _hist|length }} under the predecessor masthead {{ predecessor_name }}){% endif %}{% endif %}{% else %}No Brief has been published yet{% endif %}</span></td>
         <td data-label="Status">{% if collection.rows %}Published{% else %}In development{% endif %}</td>
         <td data-label="Briefs" class="num">{{ collection.rows|length }}</td>
       </tr>
@@ -218,6 +219,7 @@
   <p class="meta">A desk that does not collect publishes no analysis. There is nothing to read, and a
   placeholder would be an editorial claim nobody made. Each desk's collection status is on
   <a href="desks.html">Desks</a>.</p>
+  {% if has_source_linked %}<p class="meta">Source-linked editorial references belong to the Briefs collection. They do not add corpus records or change a desk's collection status.</p>{% endif %}
   </section>
 </div>
 {% endblock %}

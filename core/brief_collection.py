@@ -267,6 +267,7 @@ def brief_entry(slug: str, sidecar: Mapping, media_dir=None) -> dict:
                    "source_page": veil["source_page"]} if veil else None),
         "synthetic": bool(sidecar.get("synthetic")),
         "desks": list(sidecar["desks"]),
+        "source_linked": sidecar.get("evidence_type") == "source-linked-editorial-v1",
         "approved_on": (sidecar.get("approval") or {}).get("approved_on"),
         "author_name": identity["author_name"],
         "publication": identity["publication"],
@@ -298,6 +299,8 @@ def provenance(entry: Mapping) -> str:
             entry.get("publication"))
     if entry.get("is_retrospective"):
         text += " · " + entry["retrospective_label"]
+    if entry.get("source_linked"):
+        text += " · Source-linked editorial analysis"
     return text
 
 

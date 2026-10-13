@@ -167,6 +167,8 @@ class SourceLinkedTests(unittest.TestCase):
             row = catalog.briefs[0]
             self.assertEqual(row["url"], "briefs/fixture.html")
             self.assertEqual(row["issue"], 16)
+            self.assertTrue(row["source_linked"])
+            self.assertIn("Source-linked editorial analysis", catalog.rows[0]["provenance"])
             feed = brief_collection.build_briefs_feed(catalog.briefs, origin="https://example.org")
             self.assertIn("https://example.org/briefs/fixture.html", feed)
             self.assertIn("Benjamin Yang", feed)
@@ -175,6 +177,31 @@ class SourceLinkedTests(unittest.TestCase):
             path.write_text(json.dumps(value))
             with self.assertRaises(brief_collection.CollectionError):
                 brief_collection.load_collection([], self.registry, briefs_dir=Path(directory))
+
+    def test_catalog_describes_publisher_evidence_and_keeps_review_counts_honest(self):
+        row = brief_collection.brief_entry("fixture", self.value)
+        catalog = brief_collection.Collection(
+            rows=({"entry": row, "kind": "brief", "provenance": "Fixture"},),
+            briefs=(row,), withheld=(), sidecars={})
+        env = Environment(loader=ChoiceLoader([
+            DictLoader({"base.html": "{% block hero %}{% endblock %}{% block content %}{% endblock %}{% block after_content %}{% endblock %}",
+                        "_plate.html": "{% macro edition_plate(a,b,c) %}{% endmacro %}",
+                        "_terrain.html": "{% macro terrain(a,reveal=false) %}{% endmacro %}",
+                        "_relief.html": "{% macro region_plate(a) %}{% endmacro %}",
+                        "_catalogue_credit.html": "{% macro photo_credit(a) %}{% endmacro %}"}),
+            FileSystemLoader(ROOT / "site/preview/templates")]), autoescape=True)
+        env.filters["reader_date"] = str
+        template = env.get_template("analysis.html")
+        def render():
+            return template.render(collection=catalog, editions=[], desks={},
+                    catalogue_media={}, review_mode=True, collection_name="Indo-Pacific Record Briefs")
+        row["is_review"] = True
+        html = render()
+        self.assertIn("preserved corpus records from source-linked editorial references", html)
+        self.assertIn("0 published · 1 unapproved review candidate", html)
+        self.assertNotIn("built from preserved records", html)
+        row["source_linked"] = False
+        self.assertIn("Human-controlled analysis built from preserved records", render())
 
 
 if __name__ == "__main__":
