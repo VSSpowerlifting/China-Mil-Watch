@@ -104,6 +104,53 @@ class CountryPublisherNavigationTests(DeskCase):
         self.assertFalse(desk.has_production_records)
         self.assertNotIn("data-reference-list", self.page("japan.html"))
 
+    def test_japan_link_only_six_originals_render_with_source_gates(self):
+        """Check generated, publishable HTML, not just template literals."""
+        from html.parser import HTMLParser
+
+        class OfficialArticleLinks(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.targets = []
+            def handle_starttag(self, tag, attrs):
+                if tag != "a":
+                    return
+                values = dict(attrs)
+                url = values.get("href", "")
+                if url.startswith("https://www.kaiho.mlit.go.jp/e/topics_archive/article"):
+                    self.targets.append((url, values.get("rel", "")))
+
+        html = self.page("japan.html")
+        parser = OfficialArticleLinks()
+        parser.feed(html)
+        identifiers = ("9399", "9424", "9436", "9453", "9455", "9465")
+        self.assertEqual(
+            [url for url, _ in parser.targets],
+            ["https://www.kaiho.mlit.go.jp/e/topics_archive/article"
+             + ident + ".html" for ident in identifiers],
+        )
+        self.assertTrue(all("noopener" in rel and "noreferrer" in rel
+                            for _, rel in parser.targets))
+        for phrase in (
+            "external official-source links only",
+            "not archived IPR records",
+            "rights-approved by IPR",
+            "All Japan production records remain held",
+            "repository gate was observed unset or unavailable",
+            "October 8 shadow capture is HTML text only",
+            "Post-Day-0 source candidate; not a qualifying collecting day",
+        ):
+            self.assertIn(phrase, html)
+        self.assertIn("https://www.kaiho.mlit.go.jp/questions/post-1.html", html)
+        self.assertNotIn('href="archive.html?desk=japan"', html)
+        self.assertNotIn("data-reference-list", html)
+        self.assertNotIn("text_original", html)
+        for slug in ("vietnam", "philippines", "indonesia", "korea"):
+            other_html = self.page(slug + ".html")
+            for ident in identifiers:
+                self.assertNotIn("e/topics_archive/article" + ident + ".html",
+                                 other_html)
+
     def test_blocked_institutions_not_made_clickable_by_accident(self):
         for slug in ("japan", "vietnam"):
             sources = load_registry().get(slug).research["source_families"]
