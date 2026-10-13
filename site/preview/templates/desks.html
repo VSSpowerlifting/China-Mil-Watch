@@ -107,6 +107,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
   <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
   <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
   <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
+  <p class="deskmap-seat">Institutional seat not plotted on this map.</p>
   <dl class="deskmap-stats">
     <div><dt>{{ 'Corpus records' if d.status == 'shadow' else 'Records' }}</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}{{ 'Not admitted' if d.status == 'shadow' else 'None collected' }}{% endif %}</dd></div>
     <div><dt>{{ 'Last corpus collection' if d.status == 'shadow' else 'Last collection' }}</dt><dd>{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</dd></div>
