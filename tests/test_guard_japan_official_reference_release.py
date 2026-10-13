@@ -1,5 +1,6 @@
-"""Offline regression tests for the generated Japan 11-link release contract."""
+"""Offline regression tests for the generated Japan 13-link release contract."""
 import unittest
+from pathlib import Path
 
 from scripts.guard_japan_official_reference_release import (
     JCG_LINKS, MOD_LINKS, REQUIRED_TEXT, validate_japan_release_html,
@@ -17,7 +18,12 @@ def example_html():
 
 
 class JapanOfficialReferenceReleaseTests(unittest.TestCase):
-    def test_all_eleven_exact_reviewed_links_pass(self):
+    def test_all_thirteen_exact_reviewed_links_pass(self):
+        self.assertEqual(len(JCG_LINKS), 6)
+        self.assertEqual(len(MOD_LINKS), 7)
+        self.assertIn("https://www.mod.go.jp/j/press/news/2026/09/17a.pdf", MOD_LINKS)
+        self.assertIn("https://www.mod.go.jp/j/press/news/2026/09/29d.pdf", MOD_LINKS)
+        self.assertNotIn("https://www.mod.go.jp/j/press/news/2026/10/02b.pdf", MOD_LINKS)
         self.assertEqual(validate_japan_release_html(example_html()), [])
 
     def test_missing_reference_fails_closed(self):
@@ -47,6 +53,26 @@ class JapanOfficialReferenceReleaseTests(unittest.TestCase):
         html = example_html().replace("All Japan production records remain held", "Ready")
         self.assertTrue(any("qualification" in error
                             for error in validate_japan_release_html(html)))
+
+    def test_image_only_exception_scope_cannot_disappear(self):
+        for phrase in ("Visual original review only: no extractable PDF text layer",
+                       "No extractable text layer; not eight independent archive originals",
+                       "The oversized October 2 original remains intentionally excluded."):
+            with self.subTest(phrase=phrase):
+                self.assertTrue(any("qualification" in error for error in
+                    validate_japan_release_html(example_html().replace(phrase, "REDACTED"))))
+
+    def test_template_cites_two_new_undelivered_originals_and_holds_oversized(self):
+        template = (Path(__file__).resolve().parents[1] /
+                    "site/preview/templates/desk.html").read_text(encoding="utf-8")
+        for url in MOD_LINKS:
+            self.assertEqual(template.count('href="' + url + '"'), 1)
+        self.assertNotIn('href="https://www.mod.go.jp/j/press/news/2026/10/02b.pdf"', template)
+        self.assertIn("Seven independently inspected original Ministry PDFs", template)
+        self.assertIn("Five are text-bearing shadow source originals", template)
+        self.assertIn("visual original review only", template.lower())
+        self.assertIn("not machine-extracted records", template.lower())
+        self.assertIn("seven reviewed Japanese PDFs", template)
 
     def test_no_embedded_shadow_body_or_archive_link(self):
         for marker in ('state/shadow.db', 'text_original',
