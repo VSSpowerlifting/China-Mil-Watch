@@ -71,7 +71,7 @@ class BriefsRenderReleaseContract(unittest.TestCase):
         self.assertIn("no-17-trident-resolve-basarnas-drone.jpg", text)
         self.assertIn("trident-resolve-basarnas-drone-800.webp", text)
         self.assertIn("does not imply or constitute DoW endorsement", text)
-        self.assertIn("site/assets/editorial/trident-resolve-basarnas-drone.jpg", text)
+        self.assertIn('"site" / "assets" / "editorial" / "trident-resolve-basarnas-drone.jpg"', text)
         self.assertNotIn('"assets/editorial/trident-resolve-basarnas-drone.jpg"', text)
         self.assertIn("Downloaded from PLA Daily / 81.cn", text)
         self.assertIn("output deltas", text.lower())
