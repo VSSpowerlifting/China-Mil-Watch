@@ -231,7 +231,12 @@
   "source_trail": [],
   "coverage_by_desk": {},
   "editorial_review": null,
-  "policy_ruling": null,
+  "policy_ruling": {
+    "reviewed_by": "Benjamin Yang",
+    "reviewed_on": "2026-10-13",
+    "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576",
+    "fingerprint": "ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500"
+  },
   "research_contributor": {
     "name": "Dylan Tanzi",
     "title": "Lead Research Analyst",
