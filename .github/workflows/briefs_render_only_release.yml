@@ -41,7 +41,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test release and scope contracts
         run: |
-          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell -v
+          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell.HistoricalBriefShellTests -v
       - name: Render both historical Briefs and the current IPR site; never publish
         run: |
           set -euo pipefail
@@ -91,7 +91,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test release and scope contracts
         run: |
-          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell -v
+          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell.HistoricalBriefShellTests -v
       - name: Render both historical Briefs and the current IPR site; preview only
         run: |
           set -euo pipefail
@@ -153,7 +153,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Test release and scope contracts
         run: |
-          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell -v
+          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell.HistoricalBriefShellTests -v
       - name: Render and validate under the strict reviewed-output allow-list
         run: |
           set -euo pipefail
