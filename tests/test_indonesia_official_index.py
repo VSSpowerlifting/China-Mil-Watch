@@ -167,6 +167,9 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         self.assertIn("not independently certified IPR citations", note_text)
         self.assertIn("North Kalimantan border-battalion visits", note_text)
         self.assertIn("not independent verification", note_text)
+        self.assertIn("Pangdam Wirabuana", note_text)
+        self.assertIn("Kodam VI/Mulawarman", note_text)
+        self.assertIn("unresolved", note_text)
         outgoing = {a["href"] for a in notes[0].select("a[href]")}
         self.assertEqual(outgoing, {
             "https://kejati-dkijakarta.kejaksaan.go.id/conference/news/14579/read",
