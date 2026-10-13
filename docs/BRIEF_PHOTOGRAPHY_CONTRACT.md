@@ -54,8 +54,9 @@ rights.
 
 ## Admitting No. 18 and later Briefs
 
-No code or test changes are needed. Tests use generic fixtures, and the
-committed-record test walks every cover in the manifest.
+No code changes and no new tests are needed. The pair-rule tests use generic
+fixtures, and the committed-record test walks every cover in the manifest. A
+paired card adds one reviewed line to the card allow-lists (step 7).
 
 1. **Select by hand.** Pick one photograph from a primary publisher's own page.
    Read the publisher's terms. Do not bulk-admit. Existing 81.cn Signal Veils,
