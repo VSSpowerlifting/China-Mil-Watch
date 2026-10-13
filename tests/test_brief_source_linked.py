@@ -61,6 +61,8 @@ class SourceLinkedTests(unittest.TestCase):
         html = self.render()
         for broken in (html.replace("On October 8,", "On October 9,"),
                        html.replace('data-manuscript-paragraph="2"', 'data-omitted="2"'),
+                       html.replace('aria-label="Article text">',
+                                    'aria-label="Article text"><p>Unmarked extra paragraph</p>'),
                        html.replace(self.value["publisher_references"][0]["url"], "https://example.org/other")):
             self.assertTrue(manuscript_html_errors(self.value, broken))
         changed = copy.deepcopy(self.value)

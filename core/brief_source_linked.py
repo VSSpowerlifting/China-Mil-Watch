@@ -52,13 +52,20 @@ def manuscript_html_errors(value, html):
             super().__init__(convert_charrefs=True)
             self.paragraphs, self.links = [], []
             self.current, self.link = None, None
+            self.article_depth, self.ordinals = 0, []
 
         def handle_starttag(self, tag, attrs):
             attrs = dict(attrs)
-            if tag == "p" and "data-manuscript-paragraph" in attrs:
+            if tag == "section":
+                if self.article_depth:
+                    self.article_depth += 1
+                elif attrs.get("id") == "s-article":
+                    self.article_depth = 1
+            if tag == "p" and self.article_depth:
                 self.current = []
                 self.paragraphs.append(self.current)
                 self.links.append([])
+                self.ordinals.append(attrs.get("data-manuscript-paragraph"))
             if tag == "a" and self.current is not None:
                 self.link = [attrs.get("href"), []]
                 self.links[-1].append(self.link)
@@ -74,6 +81,8 @@ def manuscript_html_errors(value, html):
                 self.link = None
             if tag == "p":
                 self.current = None
+            if tag == "section" and self.article_depth:
+                self.article_depth -= 1
 
     reader = Reader()
     reader.feed(html)
@@ -81,6 +90,8 @@ def manuscript_html_errors(value, html):
     expected = [norm("".join(run["text"] for run in p)) for p in value["body_paragraphs"]]
     actual = [norm("".join(p)) for p in reader.paragraphs]
     problems = [] if actual == expected else ["rendered manuscript paragraphs differ in text, count or order"]
+    if reader.ordinals != [str(i + 1) for i in range(len(expected))]:
+        problems.append("rendered manuscript paragraph markers differ in count or order")
     urls = {s["id"]: s["url"] for s in value["publisher_references"]}
     expected_links = [[(urls[r["source"]], norm(r["text"])) for r in p if "source" in r]
                       for p in value["body_paragraphs"]]
