@@ -394,3 +394,69 @@ by reconciliation. Their **100** affected boundary/publication tests pass.
 A fresh ordinary render remains byte-identical. The final reconciled head
 will receive a new complete CI gate before guarded merge; the earlier green
 head is not misrepresented as that later head's receipt.
+
+## Publication completed — 13 October 2026
+
+**Indo-Pacific Record Briefs No. 18, “What Is Being Built in Laos?”, is live:**
+[public article](https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html).
+Live publication was independently confirmed at **14:46:41 EDT on October 13**
+(first complete five-route byte-equality verification; not an invented first-server-access time).
+Reporting remains October 4–10; the October 13 event remains future as of that cutoff.
+
+Release receipts:
+- Canonical locked approval/source commit: `59562fbac1ebad6e9e4cc6cfa5e9743623d78a2c`.
+- Final production-output commit: `407dfd80d1074b666ae17b50c0b44f98af7ce026`.
+- Final tested PR head: `a94c9ad34fcd5ffcf8f69b86e243980e690a39c9`.
+- [Final full CI 38443344036](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38443344036):
+  **PASS, 6,119 tests in 1785.066 seconds, nine documented skips**; real Chromium
+  148.0.7778.96, output validator ten governed warnings, unchanged DB/output,
+  no WAL/SHM. Local final-head full suite: **6,119 tests in 1124.623 seconds,
+  one documented skip**, using the verified non-symlink temp root. All final
+  publication/browser and other PR checks passed.
+- [PR #485](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485) merged
+  normally with the expected-head guard at 18:41:11 UTC as
+  `e1f9b003d2f13b8d398b02a3813dc0dc61b1aa94`.
+- Subsequent independent main additions are country-release guards and private
+  Korea review tooling; they change no Laos render/source, database, historical
+  output or deployment workflow. Normal merge preserves them. Their **44**
+  affected checks passed before deployment; all committed release output bytes
+  equal the tested head's bytes.
+- [Output-only deploy 38449191412](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38449191412)
+  **PASS**, deploying merged main `e1f9b003d2f13b8d398b02a3813dc0dc61b1aa94`;
+  deploy job completed 18:45:20 UTC. No collector, scraper, paid writer,
+  private desk activation or alternate release workflow was dispatched.
+- Approved fingerprint remains
+  `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`;
+  revised DOCX SHA-256 remains
+  `43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`.
+  Exact 11 paragraphs and seven inline phrase/URL associations, title/dek,
+  Benjamin Yang's byline and Dylan Tanzi's separate Lead Research Analyst
+  card are preserved. No renewed editorial decision was needed because
+  no manuscript/reference/credit field changed.
+
+Every required live route returned **HTTP 200 and exact committed bytes**;
+no hosting transformation was needed:
+
+| Live route | SHA-256 of served and committed bytes |
+|---|---|
+| [/briefs/what-is-being-built-in-laos.html](https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html) | `5776342aa25a2d43a96f1dfe064979a8921c918f99a0c0c1d24a7b2315a1bbe7` |
+| [/analysis.html](https://indopacificrecord.org/analysis.html) | `66167b05f0c14cd6e47220235402868c2290ba960806798a065c5da8b1877fd5` |
+| [/](https://indopacificrecord.org/) | `fe64d5bc3fa0f730174342fcd6737368107c9cf75808aa6a6515f54418d1d1a6` |
+| [/briefs/feed.xml](https://indopacificrecord.org/briefs/feed.xml) | `9cdb99b6965630c3028ecb3538b204bdc6df490c8d191496d4559b0bcece5c20` |
+| [/sitemap.xml](https://indopacificrecord.org/sitemap.xml) | `1da992245be5e708d30e7c64fd07265c689b3bc8b3b17d5a67855f1f7440b9cd` |
+
+Fresh live Chromium 147 checks also passed article/Analysis/home at 1280 and
+375 pixels, JavaScript enabled and disabled (12 checks), including body/links,
+No. 18, both credits, metadata, no private/noindex material, overflow, reduced
+motion, keyboard focus and runtime errors. A separate cached web extractor
+still returned pre-release No. 17 content and could not open the new route;
+it is not treated as live evidence. Identifiable direct HTTPS fetches and
+fresh Chromium verified the actually served No. 18 content.
+
+Historical sidecars/pages, all previous native feed entries, corpus and MEPCOM
+files remain preserved. Database SHA-256 remains
+`f31f2c553328437fdb659c0cf258123de173e582990ea07ac85da3c427c1f2b6`.
+The documented MOD indexed-original/Reuters syndication and limited-use
+qualifications remain in force. The release is complete; issue #481 may now
+be closed with these observed receipts. This closeout changes documentation
+only and does not regenerate or redeploy public output.
