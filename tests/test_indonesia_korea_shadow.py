@@ -310,6 +310,7 @@ class Access(Case):
         self.assertEqual(outcome.references, [])
         self.assertIsNone(korean.robots_status)
         self.assertEqual(korean.robots_timeout_retries, 1)
+        self.assertIn("after one bounded retry", outcome.error_detail)
         self.assertEqual(session.calls, [("GET", robots, None)] * 2)
         self.assertEqual(session.timeouts, [(robots, 45)] * 2)
         self.assertEqual(korean.evidence, [])
