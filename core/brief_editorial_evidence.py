@@ -114,8 +114,9 @@ def _official(item):
                            p.path)))
         _require(mod or jcg or joint_staff,
                  "unrecognized Japan MOD/JCG/Joint Staff publisher/source family")
-        _require(item["language"] == "ja" if joint_staff
-                 else item["language"] in ("ja", "en"),
+        _require((joint_staff and item["language"] == "ja")
+                 or (jcg and item["language"] == "en")
+                 or (mod and item["language"] in ("ja", "en")),
                  "invalid Japan source language")
     elif desk == "vietnam":
         match = VIETNAM_ID.fullmatch(ident)
