@@ -233,8 +233,8 @@
   "editorial_review": {
     "reviewed_by": "Benjamin Yang",
     "reviewed_on": "2026-10-13",
-    "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619",
-    "fingerprint": "ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500",
+    "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/514#issuecomment-6153456275",
+    "fingerprint": "3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57",
     "checks": {
       "original_language": true,
       "claim_support": true,
@@ -248,8 +248,8 @@
   "policy_ruling": {
     "reviewed_by": "Benjamin Yang",
     "reviewed_on": "2026-10-13",
-    "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576",
-    "fingerprint": "ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500"
+    "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/514#issuecomment-6153456275",
+    "fingerprint": "3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57"
   },
   "research_contributor": {
     "name": "Dylan Tanzi",
