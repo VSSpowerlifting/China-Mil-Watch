@@ -8,6 +8,8 @@ institutional intent, or that every cited paragraph is actually supported.
 """
 from __future__ import annotations
 
+from core.brief_editorial_evidence import JAPAN_ID, VIETNAM_ID, INDONESIA_W42_ID
+
 SOURCE_FIELDS = (
     "development", "opening_note", "what_stood_out", "why_it_matters",
     "what_was_routine", "what_im_watching_next", "cross_desk_comparison",
@@ -49,9 +51,11 @@ def summarize_source_use(manuscript, production_trail, research=()):
         if not isinstance(source, dict):
             raise SourceUseError("malformed source-linked research")
         ident, desk = source.get("id"), source.get("desk")
-        if (not isinstance(ident, str) or not ident or ident.isdecimal()
-                or not isinstance(desk, str) or desk not in ("japan", "vietnam")):
-            raise SourceUseError("invalid typed Japan/Vietnam research identity")
+        if (not isinstance(ident, str) or not isinstance(desk, str) or
+                not ((desk == "japan" and JAPAN_ID.fullmatch(ident))
+                     or (desk == "vietnam" and VIETNAM_ID.fullmatch(ident))
+                     or (desk == "indonesia" and ident == INDONESIA_W42_ID))):
+            raise SourceUseError("invalid typed official-source research identity")
         if ident in external:
             raise SourceUseError("duplicate research source ID")
         if source.get("status") != "unapproved-source-linked-editorial-candidate":
@@ -167,8 +171,8 @@ def format_private_source_use(manuscript, production_trail, research=()):
         out.append("- {}: {} in human appendix; {} actually model-offered; {} cited.".format(
             desk, item["appendix_listed"], roster_count, item["cited"]))
     out.append("")
-    out.append("NON-PRODUCTION JAPAN/VIETNAM RESEARCH USE:")
-    for desk in ("japan", "vietnam"):
+    out.append("SOURCE-LINKED EDITORIAL RESEARCH USE:")
+    for desk in sorted(set(audit["research_by_desk"]) | {"japan", "vietnam"}):
         item = audit["research_by_desk"].get(
             desk, {"offered": 0, "cited": 0, "unused_source_ids": []})
         out.append("- {}: {} offered; {} cited in manuscript.".format(

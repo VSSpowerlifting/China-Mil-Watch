@@ -1,0 +1,92 @@
+name: Korea Shadow — read-only mature collection-slot watchdog
+
+# One day after the preceding 17:47 UTC collector slot, after 6h grace.
+# This workflow never accesses korea.kr, reruns collection, distributes HWPX,
+# changes the isolated shadow, publishes sources or approves a Sunday Brief.
+on:
+  schedule:
+    - cron: '7 6 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "scripts/watch_korea_shadow_slots.py"
+      - "tests/test_korea_shadow_slot_watchdog.py"
+      - ".github/workflows/korea_shadow_slot_watchdog.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: korea-readonly-slot-watch-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test mature-slot boundaries, logical provenance and no source release
+        run: python -m unittest tests.test_korea_shadow_slot_watchdog -v
+      - name: Assert production and desk configuration unchanged
+        run: git diff --exit-code -- pla_watch.db output/ shadow/
+
+  inspect:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout observer code, never persist write credentials
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify synthetic calendar and schedule/recovery separation
+        run: python -m unittest tests.test_korea_shadow_slot_watchdog -q
+      - name: Fetch ONLY metadata blobs of exact Korea shadow Git tip
+        shell: bash
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          repo="$RUNNER_TEMP/korea-watch-state"
+          git init -q "$repo"
+          git -C "$repo" remote add origin "https://github.com/$GITHUB_REPOSITORY.git"
+          git -C "$repo" sparse-checkout init --no-cone
+          git -C "$repo" sparse-checkout set '/state/ledger/**' '/state/clock.json'
+          git -C "$repo" fetch --quiet --no-tags --depth=1 --filter=blob:none \
+            origin refs/heads/shadow/korea-policy-briefing
+          git -C "$repo" checkout -q -b shadow/korea-policy-briefing FETCH_HEAD
+          test "$(git -C "$repo" branch --show-current)" = shadow/korea-policy-briefing
+          test "$(git -C "$repo" ls-tree --name-only HEAD)" = state
+          test -d "$repo/state/ledger"
+          test -f "$repo/state/clock.json"
+          test ! -e "$repo/state/shadow.db"
+          test ! -e "$repo/state/captures"
+          test -z "$(git -C "$repo" status --porcelain --untracked-files=all)"
+      - name: Verify matured collection slots (no Actions census or body review)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.watch_korea_shadow_slots \
+            --shadow-checkout "$RUNNER_TEMP/korea-watch-state" \
+            --fail-current-gap
+      - name: Verify code, site and production state unchanged
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# Metadata appears only in the Actions log. No artifacts, original files,
+# emailed content, workflow dispatches, state pushes or human signoffs.

@@ -151,7 +151,7 @@ class CountryPublisherNavigationTests(DeskCase):
                 self.assertNotIn("e/topics_archive/article" + ident + ".html",
                                  other_html)
 
-    def test_japan_five_mod_original_pdfs_render_only_on_japan(self):
+    def test_japan_seven_mod_original_pdfs_render_only_on_japan(self):
         """Verify page output, not merely template source or a collector row."""
         from html.parser import HTMLParser
 
@@ -175,6 +175,8 @@ class CountryPublisherNavigationTests(DeskCase):
             "08/28a.pdf",
             "08/28b.pdf",
             "08/28f.pdf",
+            "09/17a.pdf",
+            "09/29d.pdf",
             "10/05b.pdf",
         )
         prefix = "https://www.mod.go.jp/j/press/news/2026/"
@@ -183,7 +185,10 @@ class CountryPublisherNavigationTests(DeskCase):
         self.assertTrue(all("noopener" in rel and "noreferrer" in rel
                             for _, rel in parser.links))
         for phrase in (
-            "Five official Japan Ministry of Defense PDF links",
+            "Seven official Japan Ministry of Defense PDF links",
+            "no extractable PDF text layer",
+            "not machine-extracted records",
+            "oversized October 2 original remains intentionally excluded",
             "not production IPR records",
             "conflicting with the later October 5 original",
             "not proof the activity occurred",
