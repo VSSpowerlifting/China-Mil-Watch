@@ -4,6 +4,135 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Brief cover photography: standing policy
+
+Owner direction for native Brief covers from No. 17 on. The rules are in
+`docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`.
+
+- **Photography first.** Each Brief gets one authentic, verifiably reusable
+  photograph, chosen and approved individually. The same photograph serves
+  the catalogue card and the opened article, with separate crops, unless the
+  owner records an exception. Treatment B (a restrained CSS gradient) is the
+  default. The gradient may be adjusted or omitted for legibility or fidelity.
+- **Full provenance.** Attribution, source link, image identity, hashes and
+  any publisher notice are kept on every surface. Each cover records whether
+  it shows the event or context. AI imagery is never presented as documentary.
+- **Rights are not a treatment.** Duotone, transparency, a gradient or Signal
+  Veil processing never substitutes for image rights. A publisher's required
+  notice is enforced per source (`core/source_terms.py`), separately from
+  copyright status and from IPR's own use approval.
+- **No automatic admission.** Existing 81.cn Signal Veils, Joint Staff
+  material, restricted MINDEF images and historical held photographs each
+  need their own decision. The protected imagery for Nos. 1, 10, 12 and 15
+  and the catalogue admissions for Nos. 8 and 9 are unchanged.
+- **Fail closed, together.** A paired cover is shown on both of its surfaces
+  or on neither. A catalogue-only approval never grants the article.
+- **No. 17 record wording.** The shared caption and date note were shortened
+  for the card. They state the same facts, and both DVIDS dates remain.
+
+## 2026-10-12 — No. 17 photograph cover: treatment B and G3
+
+Owner decisions on the No. 17 cover proof of concept. Where this entry
+conflicts with the Phase 3C entries below, this entry governs, for No. 17 only.
+
+- **Treatment B selected.** No. 17's catalogue card and article hero show DVIDS
+  9957254 (VIRIN 260921-A-XH946-9505, Sgt. 1st Class Timothy Hughes, 18th
+  Theater Medical Command, U.S. Army) with the restrained navy-to-transparent
+  gradient, applied in CSS only. The image files stay untoned. One manifest
+  record (`trident-resolve-basarnas-drone`) and one catalogue admission serve
+  both surfaces with separate crops and identical provenance. No. 17 no longer
+  opens on the editorial plate. The unaltered photograph (A) and the duotone
+  (C) are comparison evidence only and are not shipped.
+- **G3 approved for editorial and news use only.** This individually verified
+  public-domain photograph may appear in IPR's editorial and news publication,
+  subject to the DVIDS published restrictions. It must carry the photographer
+  credit, the source link, the recorded hash and the U.S. Department of War
+  non-endorsement notice. Use to market, advertise or promote IPR is a
+  different use and needs its own review. This does not say that every
+  commercial use is prohibited, and it grants nothing to any other DVIDS image.
+- **The date discrepancy is preserved.** The DVIDS caption gives 21 September
+  2026, and the DVIDS date-taken field gives 20 September 2026. Both are stated
+  and no exact capture date is asserted.
+- **Not approved:** a card-only photograph for No. 15 (it needs a new editorial
+  decision), and any bulk admission. Nos. 2 and 6 come next, each with its own
+  Joint Staff rights check.
+
+## 2026-10-12 — Phase 3C review revision
+
+Made within the PR review brief on the Phase 3C PR. Where this entry conflicts
+with the Phase 3C entry below, this entry governs.
+
+- **Editorial plates on every image-less Brief; owner sign-off open.** Nos. 4
+  and 14 (China Desk) and Nos. 16 and 17 (their own desks) open on the
+  labelled editorial plate: the catalogue's regional relief, original IPR
+  artwork, `aria-hidden`, captioned "Editorial plate · Original IPR artwork.
+  No source photograph. Decorative, not evidence." A plate never replaces a
+  photograph, Signal Veil or held image. This meets Phase 0 requirement 7 in
+  implementation only. **Gate:** the requirement stays conditional until the
+  owner signs off the plate's look in this log. No photograph is admitted, and
+  the media-rights rulings are not broadened.
+- **No. 8's native credit name is recorded in the manifest.** The editorial
+  manifest entry `liaoning-j15-recovery` gains `credit_native` ("統合幕僚監部")
+  and `credit_native_lang` ("ja"), from the Commons file page's author field
+  (checked 2026-10-12). The credit text is unchanged. Only that name is wrapped
+  in `lang`, and only when it occurs exactly once in the credit; a language is
+  never guessed from the script. This is a manifest data change for owner
+  review. It is not a rights decision and does not read catalogue admissions.
+- **One read-only cross-series bridge.** The newest earlier issue (No. 14)
+  links "Next Brief" to the published Brief that follows it in the
+  approval-gated collection (today No. 15). If the collection fails to load,
+  the link is omitted with a warning, never guessed. No other historical href
+  changes. This supersedes "No. 14 → No. 15 is not linked" below.
+- **Test normalisation is temporary.** The historical shell test turns the
+  current render back into the checked-in pre-3C pages only through counted,
+  context-built replacements, and a guard test proves that media, alt, source
+  and citation changes still fail. After the owner's governed rerender
+  (`scripts/rerender_pla_watch.py --no-covers`), the comparison is strict byte
+  equality with no normalisation.
+
+## 2026-10-12 — Expressive frontend Phase 3C (Brief article presentation) implementation decisions
+
+Made within the Phase 3C brief; presentation only, not visual sign-off.
+Contract: `docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`.
+Evidence: `docs/evidence/briefs-article-3c-2026-10-12/`.
+
+- **A presentation adapter, not an admission.** `core/article_media.py` only
+  says how an opened article shows the image its own resolvers already chose
+  (`pw_env` veils, the legacy cover, `brief_collection.brief_photo`). It never
+  reads `core/catalogue_media.py` or its admissions, which govern the catalogue
+  only, and it creates no photograph admission or source–image association.
+- **Kinds are named in text.** "Photograph" (curated, with the manifest's
+  credit, licence link where recorded, source link, "Toned, cropped and resized
+  by IPR." and "Visual context, not evidence."), "Signal Veil" (the pre-3C
+  caption word for word), "Editorial plate" (original IPR artwork, empty alt,
+  "Decorative, not evidence."), or no figure.
+- **A Signal Veil's stored `credit` is never read.** For a source veil it is a
+  collector's note, not an attribution. The caption is built from the source
+  id, source page and subject only.
+- **Held images stay as they were.** No. 1 (legacy cover; identifiable people,
+  filename alt), No. 10 (`jin-class-type-094-ssbn`; authorship and alt text not
+  established), No. 12 (`src-2026-08-01`, B5) and No. 15's native photograph
+  keep their pre-3C figure markup byte for byte. An unknown veil kind falls back
+  to the same preserved branch. Clearing any of them is a separate decision.
+- **No. 12.** The stored "Downloaded from PLA Daily / 81.cn" note is never
+  rendered as a credit. It was absent before 3C and stays absent; a test
+  asserts it.
+- **Navigation order.** Native Briefs follow the collection: "Previous Brief"
+  is the next older item and "Next Brief" the next newer one, across series.
+  Earlier issues keep their date-sorted sidecar targets from
+  `rerender_pla_watch.py`; only labels and titles change. The "The PLA Watch: "
+  prefix is stripped for display only. No. 14 → No. 15 is not linked, because
+  that would make historical pages depend on the native collection; the choice
+  is left to the owner.
+- **Inline rules on historical pages.** `output/briefs.css` is written only by
+  `site/render.py`, so historical pages carry an inline copy of the kind-label
+  and nav rules and are styled whichever render is published first. The
+  plate art (`assets/geo/region.svg`) arrives only with `site/render.py`, so
+  both renders must be published in the same commit.
+- **No new JavaScript.** No interaction or accessibility problem required it.
+  `scripts/pw_env.py`, `base.html`, `pla-watch-base.html`, `styles.css`,
+  and sidecars are unchanged (the manifest change is recorded above).
+
 ## 2026-10-12 — Expressive frontend Phase 3B (Briefs catalogue) implementation decisions
 
 Made within the Phase 3B brief; presentation only, not visual sign-off.

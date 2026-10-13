@@ -14,11 +14,17 @@ from urllib.parse import urlsplit
 from jinja2 import Environment, FileSystemLoader
 
 from config import SITE_ORIGIN
+from core.article_media import historical_article_media
+from core.brief_collection import (CollectionError, brief_after_issue,
+                                   load_collection)
+from core.brief_collection import display_title as series_display_title
+from core.desk_registry import load_registry
 from core.edition_identity import COLLECTION_NAME, resolve_identity
 from core.topography import topography_style
-from scripts.pw_env import format_date, inline_markup
+from scripts.pw_env import format_date, inline_markup, load_editorial_manifest
 
 ROOT = Path(__file__).resolve().parent.parent
+BRIEFS_DIR = ROOT / "briefs"
 SECTIONS = (
     ("opening_note", "s-opening", "Opening Note"),
     ("what_stood_out", "s-stood-out", "What Stood Out"),
@@ -56,8 +62,57 @@ def _historical_author_links(links: dict) -> list[dict]:
     return safe
 
 
-def render_historical_brief(context: dict) -> str:
-    """Accept the existing resolved post context; only presentation changes."""
+def _manifest_entry(veil) -> dict:
+    """The editorial manifest entry behind a curated veil, read only."""
+    if not veil or veil.get("kind") != "curated":
+        return {}
+    return next((e for e in load_editorial_manifest()
+                 if e.get("id") == veil.get("id")), {})
+
+
+def _issue_link(post) -> dict:
+    """An adjacent issue for the shared previous/next navigation."""
+    if not post:
+        return None
+    return {"href": f"{post['date']}.html", "number": post.get("issue_number"),
+            "date": post.get("week_ending"),
+            "title": series_display_title(post.get("title"))}
+
+
+def next_brief_after(sidecars, briefs_dir=BRIEFS_DIR):
+    """
+    The newest earlier issue's "Next" link: the published brief that follows
+    it in the Briefs collection order, as `{"slug", "link"}`, or None.
+
+    Older issues keep their sidecar neighbours; only the newest issue has no
+    next issue, so only it is bridged. The order and the approval gate are
+    the collection's own (`core.brief_collection.load_collection`): drafts
+    are never loaded and no synthetic fixture is allowed. A collection that
+    cannot be loaded gives no link and a warning, never a guessed one.
+    """
+    if not sidecars:
+        return None
+    editions = [{"slug": s["date"], "date": s["date"],
+                 "issue": s.get("issue_number"), "title": s.get("title") or "",
+                 "url": f"{SITE_ORIGIN}/the-pla-watch/posts/{s['date']}.html",
+                 "rendered_locally": True} for s in sidecars]
+    try:
+        collection = load_collection(editions, load_registry(),
+                                     briefs_dir=briefs_dir)
+    except CollectionError as exc:
+        print(f"WARN: no Next Brief link from the newest issue: {exc}")
+        return None
+    newest = max(s["date"] for s in sidecars)
+    link = brief_after_issue(collection, newest)
+    return {"slug": newest, "link": link} if link else None
+
+
+def render_historical_brief(context: dict, *, next_brief=None) -> str:
+    """
+    Accept the existing resolved post context; only presentation changes.
+    `next_brief` is a `next_brief_after` link, shown only when the context
+    has no next issue.
+    """
     gp = _site_definition()
     env = Environment(loader=FileSystemLoader(str(gp.TEMPLATES)),
                       autoescape=True, trim_blocks=True, lstrip_blocks=True)
@@ -68,11 +123,8 @@ def render_historical_brief(context: dict) -> str:
     # Leave the resolved author/publication context intact. Current shell and
     # historical edition data deliberately have separate namespaces.
     edition = dict(context)
-    display_title = edition.get("title", "")
-    for prefix in ("The PLA Watch: ", "The PLA Watch — ", "The PLA Watch – "):
-        if display_title.startswith(prefix):
-            display_title = display_title[len(prefix):]
-            break
+    display_title = series_display_title(edition.get("title", ""))
+    veil = edition.get("pw_veil")
     page_url = edition.get("page_url") or (
         f"{SITE_ORIGIN}/the-pla-watch/posts/{edition['date']}.html")
     rendered = env.get_template("historical-brief.html").render(
@@ -81,6 +133,11 @@ def render_historical_brief(context: dict) -> str:
         live_base=SITE_ORIGIN, page="analysis.html", root_path="../../",
         brief={}, desks=[], timelines=[], review_mode=False,
         edition=edition, display_title=display_title,
+        article_media=historical_article_media(
+            veil, edition.get("cover_media_item"), _manifest_entry(veil),
+            root="../../"),
+        adjacent={"previous": _issue_link(edition.get("prev_post")),
+                  "next": _issue_link(edition.get("next_post")) or next_brief},
         historical_author_links=_historical_author_links(edition.get("author_links")),
         sections=[(key, anchor, heading) for key, anchor, heading in SECTIONS
                   if edition.get(key)],

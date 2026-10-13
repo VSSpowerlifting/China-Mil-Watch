@@ -129,7 +129,10 @@ from core.edition_identity import (                                  # noqa: E40
 from core.brief_collection import (                                  # noqa: E402
     FEED_ROUTE as BRIEFS_FEED_ROUTE, MEDIA_DIRNAME as BRIEFS_MEDIA,
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
-    build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
+    build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose,
+    adjacent_items)
+from core.article_media import native_article_media                  # noqa: E402
+from core.brief_photography import article_cover                    # noqa: E402
 from core.brief_contract import validate_readiness
 from core.catalogue_media import (                                   # noqa: E402
     load_admissions as load_catalogue_admissions,
@@ -2834,6 +2837,20 @@ def build(out_dir: Path, title: str, db_path: Path,
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_bytes(image["file"].read_bytes())
                     written.append(route)
+            # A cover photograph is granted only by `core.brief_cover`, and
+            # only where the brief has no photograph of its own. A paired cover
+            # also needs its catalogue card to pass (`core.brief_photography`).
+            # Its files are copied exactly as recorded, never re-encoded.
+            cover = None if brief["photo"] else article_cover(
+                entry, REPO_ROOT, admissions=catalogue_admissions)
+            for image in (cover or {}).get("files", ()):
+                target = out_dir / image["route"]
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(image["file"].read_bytes())
+                written.append(image["route"])
+            brief["article_media"] = native_article_media(
+                brief["photo"], sidecar["desks"], root="../", cover=cover)
+            brief["adjacent"] = adjacent_items(collection, slug)
             # A cited record this site preserves links to its record page; one
             # it does not hold links only to the source.
             for group in brief["trail_groups"]:

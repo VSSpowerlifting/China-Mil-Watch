@@ -109,3 +109,10 @@ html.no-anim .page-briefs *, html.no-anim .page-briefs *::before { animation: no
 /* Hero photograph caption: the same credit as a card, in the band's small type. */
 .briefs-lead-photo figcaption p { margin: 0; }
 .briefs-lead-photo figcaption p + p { margin-top: .25rem; }
+
+/* A cover photograph's `gradient` treatment (core.brief_cover): the band's navy laid over the top of the frame, fading out by mid-height. It is identity, not legibility (the tag carries its own surface), and it is never drawn into the image. */
+.brief-media[data-treatment="gradient"] .rl-print::after,
+.briefs-lead-photo[data-treatment="gradient"] > a::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, color-mix(in srgb, var(--band) 60%, transparent) 0, color-mix(in srgb, var(--band) 18%, transparent) 24%, transparent 42%); }
+.briefs-lead-photo[data-treatment="gradient"] > a { position: relative; display: block; }
+@media (forced-colors: active) { .brief-media[data-treatment] .rl-print::after, .briefs-lead-photo[data-treatment] > a::after { display: none; } }
+@media print { .brief-media[data-treatment] .rl-print::after, .briefs-lead-photo[data-treatment] > a::after { display: none; } }

@@ -1,0 +1,90 @@
+{
+ "1280": {
+  "card_height_before": 869,
+  "card_height": 869,
+  "analysis": {
+   "scrollW": 1280,
+   "clientW": 1280,
+   "broken": 0,
+   "cardImg": "no-17-trident-resolve-basarnas-drone.jpg",
+   "notice": true,
+   "creditFont": "12px"
+  },
+  "card_focus": [
+   {
+    "text": "Trident Resolve: What the Exercise Looke",
+    "focused": true,
+    "outline": true
+   },
+   {
+    "text": "Public domain",
+    "focused": true,
+    "outline": true
+   },
+   {
+    "text": "DVIDS",
+    "focused": true,
+    "outline": true
+   }
+  ],
+  "article": {
+   "current": "trident-resolve-basarnas-drone-800.webp",
+   "loaded": 588,
+   "gradient_css": true,
+   "scrollW": 1280,
+   "clientW": 1280,
+   "broken": 0
+  },
+  "console_errors": [],
+  "forced_gradient_display": "none",
+  "print_article": {
+   "figure_shown": true,
+   "credit_shown": true,
+   "notice": true,
+   "gradient_display": "none"
+  },
+  "print_card": {
+   "credit_shown": true,
+   "notice": true
+  }
+ },
+ "375": {
+  "card_height_before": 906,
+  "card_height": 888,
+  "analysis": {
+   "scrollW": 375,
+   "clientW": 375,
+   "broken": 0,
+   "cardImg": "no-17-trident-resolve-basarnas-drone.jpg",
+   "notice": true,
+   "creditFont": "12px"
+  },
+  "card_focus": [
+   {
+    "text": "Trident Resolve: What the Exercise Looke",
+    "focused": true,
+    "outline": true
+   },
+   {
+    "text": "Public domain",
+    "focused": true,
+    "outline": true
+   },
+   {
+    "text": "DVIDS",
+    "focused": true,
+    "outline": true
+   }
+  ],
+  "article": {
+   "current": "trident-resolve-basarnas-drone-800.webp",
+   "loaded": 331,
+   "gradient_css": true,
+   "scrollW": 375,
+   "clientW": 375,
+   "broken": 0
+  },
+  "console_errors": [],
+  "forced_gradient_display": "none"
+ }
+}
