@@ -70,8 +70,15 @@ def validate_staged(root: Path) -> None:
 
 
 def main() -> int:
+    import argparse
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--allow-unchanged", action="store_true",
+        help="Allow an exact reviewed-output replay after a Pages-only failure",
+    )
+    args = parser.parse_args()
     try:
-        paths, _ = check(Path.cwd())
+        paths, _ = check(Path.cwd(), require_changes=not args.allow_unchanged)
         validate_staged(Path.cwd())
     except (RuntimeError, FileNotFoundError, OSError) as exc:
         print("BLOCKED:", exc)
