@@ -642,11 +642,13 @@ class Serialization(unittest.TestCase):
         raw = dsp.atlas_to_json(atlas)
         for fragment in ("us_dvids_indopacom", "shadow/jp_mod/", "shadow/id_kemhan/",
                          "manifest.json", "scrape_run_id", "source_slug",
+                         "fixtures", "rights_statement",
                          "shadow_enabled", "production_enabled", "\"basis\"",
                          "\"lane_id\"", "\"conflicts\""):
             self.assertNotIn(fragment, raw)
         self.assertIn("shadow/jp_mod/", dsp.atlas_to_internal_json(atlas))
-        self.assertIn("rights_statement", raw)
+        self.assertNotIn("rights_statement", raw)
+        self.assertNotIn('"note"', raw)
         self.assertIn("status_explanation", raw)
 
     def test_public_projection_preserves_approved_reference_links_and_limitations(self):
@@ -670,6 +672,8 @@ class Serialization(unittest.TestCase):
                 self.assertNotIn("health", source)
                 self.assertNotIn("basis", source)
                 self.assertNotIn("source_slug", source)
+                self.assertNotIn("note", source)
+                self.assertNotIn("rights_statement", source)
 
     def test_public_projection_drops_nonpublic_desk(self):
         private = desk("research-room", status="shadow")
