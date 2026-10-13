@@ -1,10 +1,12 @@
 """Offline real-HWPX reviewer-package privacy and fail-closed contracts."""
 import copy
 import hashlib
+import io
 import json
 import stat
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 from core import korea_reference_gate as gate
@@ -68,6 +70,54 @@ class LocalKoreaReviewerPackageTests(unittest.TestCase):
         }))
         with self.assertRaises(gate.KoreaGateHold):
             gate.approve(gate.load_candidates(), packet)
+
+    def test_private_inventory_binds_each_zip_part_to_real_original(self):
+        original, _ = pkg.confirm_original(self.candidate, self.record, self.state)
+        inventory = pkg.component_inventory(self.candidate, original)
+        self.assertEqual(inventory["schema"], "ipr-korea-private-hwpx-component-inventory/1")
+        self.assertEqual(inventory["hwpx_sha256"], pkg.sha(original))
+        self.assertEqual(inventory["component_count"], len(inventory["components"]))
+        self.assertGreater(inventory["component_count"], 0)
+        self.assertFalse(inventory["embedded_media_rights_approved"])
+        self.assertFalse(inventory["independent_visual_and_rights_review_completed"])
+        self.assertFalse(inventory["publish_or_upload_this_private_inventory"])
+        self.assertNotIn(self.record["text_original"], json.dumps(inventory))
+        self.assertIn("media-inventory.json", pkg.checklist(self.candidate))
+
+    def test_media_member_is_flagged_not_rights_approved(self):
+        output = io.BytesIO()
+        with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("Contents/section0.xml", "<root><p>private Korean text</p></root>")
+            archive.writestr("BinData/picture.png", b"private-image-contents")
+            archive.writestr("misc.unknown", b"review-before-reuse")
+        original = output.getvalue()
+        candidate = dict(self.candidate, document_capture_sha256=pkg.sha(original))
+        inventory = pkg.component_inventory(candidate, original)
+        self.assertEqual(inventory["media_candidate_count"], 1)
+        self.assertEqual(inventory["unclassified_count"], 1)
+        media = next(p for p in inventory["components"]
+                     if p["path"] == "BinData/picture.png")
+        self.assertEqual(media["classification"], "media_candidate")
+        self.assertEqual(media["sha256"], pkg.sha(b"private-image-contents"))
+        self.assertFalse(inventory["embedded_media_rights_approved"])
+        with self.assertRaises(gate.KoreaGateHold):
+            pkg.component_inventory(self.candidate, original)
+
+    def test_inventory_refuses_unsafe_or_duplicate_archive_members(self):
+        for members in (
+            [("Contents/section0.xml", b"x"), ("../secret.txt", b"x")],
+            [("Contents/section0.xml", b"x"), ("BinData\\evil.png", b"x")],
+            [("Contents/section0.xml", b"x"), ("Contents/section0.xml", b"x")],
+        ):
+            with self.subTest(members=members):
+                output = io.BytesIO()
+                with zipfile.ZipFile(output, "w") as archive:
+                    for name, body in members:
+                        archive.writestr(name, body)
+                original = output.getvalue()
+                candidate = dict(self.candidate, document_capture_sha256=pkg.sha(original))
+                with self.assertRaises(gate.KoreaGateHold):
+                    pkg.component_inventory(candidate, original)
 
     def test_line_index_is_private_metadata_only(self):
         text = "첫 문장\n\n두번째 문장\n"
