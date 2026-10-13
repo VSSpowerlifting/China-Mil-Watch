@@ -286,7 +286,10 @@
     },
     "derivative_builder": "scripts/build_brief_cover.py",
     "cover_treatment": "gradient",
-    "surfaces": ["article", "catalogue"],
+    "surfaces": [
+      "article",
+      "catalogue"
+    ],
     "depicts": "event",
     "focal": "58% 60%",
     "derivatives": [
@@ -307,6 +310,66 @@
         "width": 1600,
         "height": 1067,
         "sha256": "eaa5e16b2ff6ea7c0ce0c7fc122d3097f720b00cdadb42e8df798c70c1c0025f"
+      }
+    ],
+    "built_with": {
+      "pillow": "11.3.0"
+    }
+  },
+  {
+    "id": "laos-vientiane-museum-plane",
+    "file": "laos-vientiane-museum-plane.jpg",
+    "width": 2992,
+    "height": 2992,
+    "alt": "A preserved olive-green propeller aircraft displayed under a roof at the Lao People's Army Historical Museum in Vientiane, Laos.",
+    "caption": "A preserved aircraft at the Lao People's Army Historical Museum in Vientiane, photographed 15 July 2025. This historical context photograph does not depict Ban Keun Airport or any 2026 event described in the Brief.",
+    "date_note": "Photographed 15 July 2025 (not during the reporting week).",
+    "credit": "Zongalez · CC BY 4.0 · via Wikimedia Commons",
+    "creator": "Zongalez",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Plane_at_the_Lao_People%27s_Army_Historical_Museum_at_Vientiane,_Laos_09.jpg",
+    "source_label": "Wikimedia Commons",
+    "cover_treatment": "photograph",
+    "depicts": "context",
+    "sha256": "dfafcea08529ac3a890645aa5cce6bbea830e768a9cbbf924a0cc4ef300bbd09",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Plane_at_the_Lao_People%27s_Army_Historical_Museum_at_Vientiane%2C_Laos_09.jpg",
+    "license_basis": "Wikimedia Commons: own work of uploader Zongalez, CC BY 4.0; verified source description, author, 2025 date and reuse conditions on 2026-10-13.",
+    "note": "Visual context for the Laos Brief only. The aircraft is a museum exhibit; it is not a K-8, not an image of Ban Keun, and not 2026 event evidence.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": [],
+      "briefs": [
+        "what-is-being-built-in-laos"
+      ]
+    },
+    "derivative_builder": "scripts/build_brief_cover.py",
+    "surfaces": [
+      "article",
+      "catalogue"
+    ],
+    "focal": "50% 52%",
+    "derivatives": [
+      {
+        "file": "derivatives/laos-vientiane-museum-plane-1600.jpg",
+        "width": 1600,
+        "height": 1600,
+        "sha256": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14"
+      },
+      {
+        "file": "derivatives/laos-vientiane-museum-plane-800.webp",
+        "width": 800,
+        "height": 800,
+        "sha256": "2c273b5925d6eb291a14128a25e537f8e69c0ccd9dc00704d7fa9323c8f459f6"
+      },
+      {
+        "file": "derivatives/laos-vientiane-museum-plane-1600.webp",
+        "width": 1600,
+        "height": 1600,
+        "sha256": "85a18f136e892f8f3f2f43be9c2ba81de4ed257e3278946f513ba604c678adc6"
       }
     ],
     "built_with": {

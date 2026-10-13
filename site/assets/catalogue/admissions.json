@@ -110,6 +110,32 @@
       "served_sha256": "ceba1db6c39235b90c1a1490ee6c65abaa8a8e2d5d58c74f5e87d5df98303789",
       "width": 720,
       "height": 480
+    },
+    {
+      "issue": 18,
+      "week_ending": "2026-10-10",
+      "status": "admitted",
+      "source_file": "site/assets/editorial/derivatives/laos-vientiane-museum-plane-1600.jpg",
+      "source_manifest_id": "laos-vientiane-museum-plane",
+      "focal": "50% 52%",
+      "served": "assets/catalogue/media/no-18-laos-vientiane-museum-plane.jpg",
+      "alt": "A preserved olive-green propeller aircraft displayed under a roof at the Lao People's Army Historical Museum in Vientiane, Laos.",
+      "caption": "A preserved aircraft at the Lao People's Army Historical Museum in Vientiane, photographed 15 July 2025. This historical context photograph does not depict Ban Keun Airport or any 2026 event described in the Brief.",
+      "date_note": "Photographed 15 July 2025 (not during the reporting week).",
+      "credit": "Zongalez · CC BY 4.0 · via Wikimedia Commons",
+      "creator": "Zongalez",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Plane_at_the_Lao_People%27s_Army_Historical_Museum_at_Vientiane,_Laos_09.jpg",
+      "source_label": "Wikimedia Commons",
+      "cover_treatment": "photograph",
+      "depicts": "context",
+      "change_note": "Cropped and resized by IPR.",
+      "review_note": "Owner accepted a non-event-specific Laos-context photograph 2026-10-13; the caption explicitly says the aircraft is a 2025 museum exhibit, not the Ban Keun 2026 training site. No held Nos.1,10,12 photographs were admitted.",
+      "source_sha256": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14",
+      "served_sha256": "2c368eca5d024cca92cbc13bfdef24573e298c8ba9372a92f91e2be05dca670d",
+      "width": 720,
+      "height": 480
     }
   ]
 }
