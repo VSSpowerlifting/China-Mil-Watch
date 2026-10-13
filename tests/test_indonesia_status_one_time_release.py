@@ -35,17 +35,17 @@ class IndonesiaOneTimePublicationContract(unittest.TestCase):
         self.assertNotIn("persist-credentials: true", src)
         self.assertIn("actions/checkout@v4", src)
 
-    def test_render_checks_twelve_bibliographic_links_without_corpus(self):
+    def test_render_checks_thirteen_bibliographic_links_without_corpus(self):
         src = self.source
         for required in (
             "python site/render.py", "python scripts/validate_output.py",
             "output/indonesia.html", "output/desks.html",
             "No individual source references have completed",
-            "Twelve external ministry news links",
+            "Thirteen external ministry news links",
             "data-reference-list", "state/shadow.db",
             "text_original", "body_original",
             "sha256sum -c",
-            "assert len(links) == 12",
+            "assert len(links) == 13",
         ):
             with self.subTest(required=required):
                 self.assertIn(required, src)
