@@ -54,6 +54,9 @@ jobs:
             output/analysis.html
             output/briefs.css
             output/briefs-catalog.css
+            output/support.css
+            output/reveal.js
+            output/briefs/feed.xml
             output/briefs/*.html
             output/briefs/media/*.jpg
             output/briefs/media/*.webp
@@ -119,6 +122,9 @@ jobs:
             output/analysis.html
             output/briefs.css
             output/briefs-catalog.css
+            output/support.css
+            output/reveal.js
+            output/briefs/feed.xml
             output/briefs/*.html
             output/briefs/media/*.jpg
             output/briefs/media/*.webp
