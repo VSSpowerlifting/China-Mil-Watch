@@ -61,7 +61,7 @@ These are recorded, not resolved. None changes a desk status, a source class or 
 | South Korea Desk | `shadow` | 0 | 1 | 1 | 0 | 0 | 5 | 4 | 0 |
 | Philippines Desk | `shadow` | 0 | 2 | 0 | 0 | 0 | 0 | 3 | 0 |
 | Vietnam Desk | `shadow` | 0 | 5 | 0 | 3 | 1 | 0 | 5 | 0 |
-| Indonesia Desk | `shadow` | 0 | 1 | 1 | 0 | 0 | 15 | 4 | 0 |
+| Indonesia Desk | `shadow` | 0 | 1 | 1 | 0 | 0 | 17 | 4 | 0 |
 | US Indo-Pacific Reference Desk | `access_blocked` | 0 | 0 | 0 | 0 | 0 | 0 | 4 | 0 |
 
 ### China Desk (`china`)
@@ -154,7 +154,7 @@ Status: Shadow evaluation — not in corpus.
 | Indonesian Ministry of Defense — Berita (Indonesian) | `shadow` | `id_kemhan_news` | id | html | none declared |
 | Indonesian Ministry of Defense — Siaran Pers (Indonesian) | `public_reference` | — | unknown | unknown | none declared |
 
-- Reference lane `indonesia_berita_index` (official_index) for Indonesian Ministry of Defense — Berita (Indonesian): 13 outbound link(s); schema `ipr-indonesia-external-source-links/1`; editorial status `publisher_links_not_independently_human_reviewed`.
+- Reference lane `indonesia_berita_index` (official_index) for Indonesian Ministry of Defense — Berita (Indonesian): 15 outbound link(s); schema `ipr-indonesia-external-source-links/1`; editorial status `publisher_links_not_independently_human_reviewed`.
 - Reference lane `indonesia_press_index` (official_index) for Indonesian Ministry of Defense — Siaran Pers (Indonesian): 2 outbound link(s); schema `ipr-indonesia-kemhan-press-links/1`; editorial status `official_pages_spotchecked_independent_human_review_pending`.
 - Limits preserved verbatim: 4. Blockers preserved verbatim: 4.
 

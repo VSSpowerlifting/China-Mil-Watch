@@ -133,7 +133,7 @@ class RealInputs(unittest.TestCase):
         self.assertEqual([(g.lane_id, g.link_count) for g in kr], [("korea_mnd_bibliography", 5)])
         self.assertEqual((kr[0].issuer, kr[0].publisher), ("국방부", "대한민국 정책브리핑"))
         idn = {g.lane_id: g for g in self.atlas.get("indonesia").references}
-        self.assertEqual(idn["indonesia_berita_index"].link_count, 13)
+        self.assertEqual(idn["indonesia_berita_index"].link_count, 15)
         self.assertEqual(idn["indonesia_press_index"].link_count, 2)
         self.assertEqual(idn["indonesia_berita_index"].editorial_status,
                          "publisher_links_not_independently_human_reviewed")
