@@ -295,12 +295,17 @@ def validate_brief(sidecar: Mapping, registry, *,
                         or value != value.strip() or len(value) > limit):
                     problems.append("research_contributor.%s is invalid" % field)
             link = credit["linkedin"]
-            parsed = urlsplit(link) if isinstance(link, str) else urlsplit("")
+            try:
+                parsed = urlsplit(link) if isinstance(link, str) else urlsplit("")
+                port_ok = parsed.port is None
+            except ValueError:
+                parsed, port_ok = urlsplit(""), False
             if (not isinstance(link, str) or len(link) > 350
+                    or not port_ok
                     or parsed.scheme != "https"
                     or parsed.hostname not in ("www.linkedin.com", "linkedin.com")
                     or not parsed.path.startswith("/in/") or parsed.path == "/in/"
-                    or parsed.username or parsed.password or parsed.port is not None
+                    or parsed.username or parsed.password
                     or parsed.query or parsed.fragment):
                 problems.append("research_contributor.linkedin must be a LinkedIn HTTPS profile")
 
