@@ -38,6 +38,9 @@
 .deskmap-plate.is-shadow,.deskmap-plate.is-quiet{border-top:3px dashed var(--dm-quiet-edge)}
 .deskmap-plate.is-blocked{border-top:3px solid #93621d}
 .deskmap-plate.is-selected{outline:2px solid var(--accent);outline-offset:2px}
+/* Unplaced public desks sit outside the map figure; give their paper/flag
+   tokens local values rather than relying on inherited .deskmap variables. */
+.deskmap-plate.is-unplaced{--dm-paper:#fbfaf6;--dm-on:#1f4757;margin:18px 0;max-width:22rem}
 .deskmap-flag-tab{position:absolute;top:-12px;left:14px;display:inline-flex;line-height:0;padding:2px;background:var(--dm-paper);border:1px solid var(--rule-strong);border-radius:2px}
 .deskmap-flag-tab:empty{display:none}
 .deskmap-flag-tab .rl-flag{display:block;width:22px;height:16.5px;border:0;vertical-align:initial}
