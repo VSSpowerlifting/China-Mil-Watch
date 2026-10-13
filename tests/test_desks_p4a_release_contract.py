@@ -81,6 +81,8 @@ class Phase4AReleaseContract(unittest.TestCase):
         self.assertEqual(text.count("actions-gh-pages@v3"), 1)
         self.assertIn("publish_dir: ${{ runner.temp }}/desks-pages-patch", text)
         self.assertIn("keep_files: true", text)
+        self.assertIn("python -m scripts.guard_desks_p4a_output_scope --allow-unchanged", text)
+        self.assertIn("if ! git diff --cached --quiet; then", text)
         self.assertNotIn("publish_dir: ./output", text)
         self.assertIn('find "$RUNNER_TEMP/desks-pages-patch" -type f | wc -l', text)
         self.assertIn("output/assets/flags/*.svg", text)
