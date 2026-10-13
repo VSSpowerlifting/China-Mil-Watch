@@ -51,6 +51,31 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn("test -f output/indonesia.html", text)
         self.assertIn("python scripts/validate_output.py", text)
 
+    def test_isolated_full_render_stages_only_reviewed_country_artifacts(self):
+        text = self.body
+        command = ('python -m scripts.stage_country_research_output '
+                   '--from-dir "$RUNNER_TEMP/country-render" --to-dir output')
+        self.assertEqual(text.count('python site/render.py --out "$RUNNER_TEMP/country-render"'), 2)
+        self.assertEqual(text.count(command), 2)
+        self.assertNotIn("python site/render.py\n", text)
+        self.assertIn('"scripts/stage_country_research_output.py"', text)
+        self.assertIn('"tests/test_stage_country_research_output.py"', text)
+        self.assertIn("tests.test_stage_country_research_output -v", text)
+
+        # No write to the checked-in tree may precede the isolated build or
+        # allowlist-only staging. The whole output is validated afterwards.
+        for label in (
+            "Exercise actual static release build without committing or deploying",
+            "Build isolated site and stage only reviewed country presentation",
+        ):
+            section = text.split("- name: " + label, 1)[1]
+            section = section.split("\n      - name:", 1)[0]
+            self.assertLess(section.index("python site/render.py --out"),
+                            section.index(command))
+            self.assertLess(section.index(command),
+                            section.index("python scripts/validate_output.py"))
+        self.assertIn("python -m scripts.guard_country_research_output_scope", text)
+
     def test_japan_render_only_release_requires_jcg_index_without_source_admission(self):
         text = self.body
         self.assertIn("test -f output/japan.html", text)
@@ -131,7 +156,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertEqual(
             text.count("python -m scripts.guard_country_research_output_scope"), 3
         )
-        self.assertIn("Fail closed on unrelated full-site generated drift", text)
+        self.assertIn("Fail closed on unrelated staged or pre-existing generated drift", text)
         self.assertIn("scripts/guard_country_research_output_scope.py", text)
         self.assertIn("tests/test_country_research_output_scope.py", text)
         self.assertIn("git fetch origin main", text)

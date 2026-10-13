@@ -1,0 +1,238 @@
+name: Briefs presentation — render-only release
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/briefs_render_only_release.yml"
+      - "scripts/guard_briefs_render_scope.py"
+      - "scripts/run_briefs_render_release.py"
+      - "tests/test_briefs_output_scope.py"
+      - "tests/test_briefs_render_release_contract.py"
+  workflow_dispatch:
+    inputs:
+      approved_main_sha:
+        description: "Exact 40-character main commit reviewed for the Briefs release"
+        required: true
+        type: string
+      publish:
+        description: "Commit the regenerated Briefs output to main and deploy it (otherwise preview only)"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out review merge
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing render dependencies (no publisher calls)
+        run: pip install -r requirements.txt
+      - name: Test release and scope contracts
+        run: |
+          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell.HistoricalBriefShellTests -v
+      - name: Render both historical Briefs and the current IPR site; never publish
+        run: |
+          set -euo pipefail
+          python -m scripts.run_briefs_render_release --scope strict 2>&1 | tee "$RUNNER_TEMP/briefs-render-report.txt"
+      - name: Upload reviewed-route preview and scope report
+        uses: actions/upload-artifact@v4
+        with:
+          name: briefs-phase3c-render-preview
+          path: |
+            output/analysis.html
+            output/briefs.css
+            output/briefs-catalog.css
+            output/support.css
+            output/reveal.js
+            output/briefs/feed.xml
+            output/briefs/*.html
+            output/briefs/media/*.jpg
+            output/briefs/media/*.webp
+            output/the-pla-watch/posts/*.html
+            output/the-pla-watch/media/*-veil.jpg
+            output/the-pla-watch/media/2026-05-10-auto-image-optimized.jpg
+            output/styles.css
+            output/fonts.css
+            output/surfaces.css
+            output/relief.css
+            output/topography.css
+            output/citation.js
+            output/shell.js
+            output/assets/geo/**
+            output/assets/material/**
+            output/assets/fonts/**
+            output/assets/desk-marks/**
+            output/assets/identity/selected-ipr/**
+            output/assets/editorial/derivatives/*.jpg
+            output/assets/editorial/derivatives/*.webp
+            output/assets/editorial/derivatives/*.png
+            output/assets/catalogue/media/*.jpg
+          retention-days: 7
+
+  preview:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish == false && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Fail closed on stale or malformed owner-reviewed SHA
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Expected a full lowercase SHA"; exit 1; }
+          ACTUAL_SHA="$(git rev-parse HEAD)"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA" || {
+            echo "::error::main moved since release review. Actual: $ACTUAL_SHA"; exit 1;
+          }
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing render dependencies (no publisher calls)
+        run: pip install -r requirements.txt
+      - name: Test release and scope contracts
+        run: |
+          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell.HistoricalBriefShellTests -v
+      - name: Render both historical Briefs and the current IPR site; preview only
+        run: |
+          set -euo pipefail
+          python -m scripts.run_briefs_render_release --scope strict 2>&1 | tee "$RUNNER_TEMP/briefs-render-report.txt"
+      - name: Upload reviewed-route preview and scope report
+        uses: actions/upload-artifact@v4
+        with:
+          name: briefs-phase3c-render-preview
+          path: |
+            output/analysis.html
+            output/briefs.css
+            output/briefs-catalog.css
+            output/support.css
+            output/reveal.js
+            output/briefs/feed.xml
+            output/briefs/*.html
+            output/briefs/media/*.jpg
+            output/briefs/media/*.webp
+            output/the-pla-watch/posts/*.html
+            output/the-pla-watch/media/*-veil.jpg
+            output/the-pla-watch/media/2026-05-10-auto-image-optimized.jpg
+            output/styles.css
+            output/fonts.css
+            output/surfaces.css
+            output/relief.css
+            output/topography.css
+            output/citation.js
+            output/shell.js
+            output/assets/geo/**
+            output/assets/material/**
+            output/assets/fonts/**
+            output/assets/desk-marks/**
+            output/assets/identity/selected-ipr/**
+            output/assets/editorial/derivatives/*.jpg
+            output/assets/editorial/derivatives/*.webp
+            output/assets/editorial/derivatives/*.png
+            output/assets/catalogue/media/*.jpg
+          retention-days: 7
+
+  publish:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish == true && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - name: Check out main with full history
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Fail closed on stale or malformed owner-reviewed SHA
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Expected a full lowercase SHA"; exit 1; }
+          ACTUAL_SHA="$(git rev-parse HEAD)"
+          test "$ACTUAL_SHA" = "$EXPECTED_SHA" || {
+            echo "::error::main moved since release review. Actual: $ACTUAL_SHA"; exit 1;
+          }
+          sha256sum pla_watch.db > "$RUNNER_TEMP/briefs-release-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all)" || {
+            echo "::error::checkout is not clean"; exit 1;
+          }
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing render dependencies (no publisher calls)
+        run: pip install -r requirements.txt
+      - name: Test release and scope contracts
+        run: |
+          python -m unittest tests.test_briefs_render_release_contract tests.test_briefs_output_scope tests.test_brief_photography tests.test_brief_cover tests.test_catalogue_media tests.test_article_media tests.test_historical_brief_shell.HistoricalBriefShellTests -v
+      - name: Render and validate under the strict reviewed-output allow-list
+        run: |
+          set -euo pipefail
+          python -m scripts.run_briefs_render_release --scope strict 2>&1 | tee "$RUNNER_TEMP/briefs-render-report.txt"
+          sha256sum -c "$RUNNER_TEMP/briefs-release-db.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+      - name: Stage only the validated generated output
+        run: |
+          set -euo pipefail
+          python -m scripts.guard_briefs_render_scope
+          git add -A -- output/
+          python -m scripts.guard_briefs_render_scope
+          git diff --cached --name-only > "$RUNNER_TEMP/briefs-release-files.txt"
+          test -s "$RUNNER_TEMP/briefs-release-files.txt" || {
+            echo "::error::Nothing changed in output; refusing to commit or deploy"; exit 1;
+          }
+          test -z "$(git diff --cached --name-only -- pla_watch.db)"
+          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' || true)" || {
+            echo "::error::non-output worktree changes detected"; exit 1;
+          }
+      - name: Confirm main did not move during the render
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo "::error::main changed during render; do not publish this snapshot"; exit 1;
+          }
+      - name: Commit the approved Briefs presentation output to main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Site: publish reviewed Briefs presentation and No. 17 cover"
+          git push origin HEAD:main
+      - name: Publish the exact validated output to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Deploy Briefs presentation: ${{ github.run_id }}'
