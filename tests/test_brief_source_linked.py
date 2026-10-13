@@ -164,7 +164,7 @@ class SourceLinkedTests(unittest.TestCase):
 
     def test_laos_coauthor_byline_cards_and_citation(self):
         html = self.render()
-        self.assertIn("By <span class=\"byline-name\">Benjamin Yang and Dylan Tanzi</span>", html)
+        self.assertIn("By <span class=\"byline-name\">Benjamin Yang and Dylan Tanzi</span></p>", html)
         self.assertEqual(html.count('aria-label="Co-author"'), 2)
         self.assertIn('<p class="brief-author-name">Benjamin Yang</p>', html)
         self.assertIn('<p class="brief-author-name">Dylan Tanzi</p>', html)
