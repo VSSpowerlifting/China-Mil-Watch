@@ -29,8 +29,13 @@ article, Analysis, home, existing feed and sitemap; validator passes with ten
 governed warnings, focused publication/evidence suites pass 172 tests.
 Database and historical sidecars/pages remain unchanged. Rendering also carries
 current main's already-merged Japan reference navigation and template whitespace.
-Full exact-head CI/Chromium, release merge, output-only deployment and live-site
-verification are still required. Release dossier:
+Failed full CI `38350532579` ran 6,023 tests: one stale Singapore-Strait
+fixture assumption, nine skips; production preservation passed. The repair
+retains assertions with an explicit test-only Singapore lead, and extends
+current main's Phase 3C media/navigation inventory to approved No. 18. Main
+reconciliation `436413ead6` preserves the already-merged frontend/cover and
+Japan/Indonesia work. Full fresh exact-head CI/Chromium, release merge,
+output-only deployment and live-site verification are still required. Release dossier:
 `docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. No collection, desk promotion, paid writer
 or third-party body/image reuse occurred.
 

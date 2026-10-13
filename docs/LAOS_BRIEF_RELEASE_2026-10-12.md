@@ -311,3 +311,63 @@ its original private-candidate scope. Owner approvals are not requested again.
   title/dek/No. 18, Ben author/Dylan contributor, canonical, no private/noindex
   material, keyboard focus, reduced motion, overflow and runtime errors.
   Screenshots are local release artifacts, not source bodies or public uploads.
+
+## Interrupted CI repair and current-main reconciliation — 13 October 2026
+
+Failed run [38350532579](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38350532579)
+checked release head `1c7f181f7a1d4f6617b7e405436a24fee47d9ad6`.
+Exact job 115141728697 ran **6,023 tests in 1571.882 seconds**, with **one
+failure and nine skips**. The sole failure was
+`ProductionAssetTests.test_timeline_branch_survives_beside_the_strait`:
+`AssertionError: 'class="rl-strait' not found`. The rendered homepage correctly
+led with No. 18, which has no desk coverage; the test incorrectly assumed its
+mutable production lead would always include Singapore. Database/output
+preservation passed; output validation was skipped after the suite failed.
+Annotations were the test exit code 1 plus Node/runtime migration notices,
+not an unsupported model error. The Codex `gpt-6.1-sol` interruption was not
+present in that job's actual logs and is not its causal diagnosis.
+
+The smallest repair uses the existing explicitly synthetic China/Singapore
+Brief fixture for the positive Strait/timeline branch and its China-only
+negative counterpart. All original positive/negative assertions remain.
+The timeline fixture's related Brief is bound to the same test-only source.
+No real manuscript, corpus, desk or approval is fabricated or changed.
+
+The previously edited source-linked tests now assert actual approval, unique
+No. 18 and the exact owner reference instead of outdated draft status; their
+separate draft-withholding fixture explicitly resets only lifecycle fields.
+Fingerprint, source/body mutation refusal and all human gate checks remain.
+Both temporary QA scripts use ordinary Python/Playwright or HTTP/XML tools;
+neither calls an LLM. They remain outside production, now additionally pinning
+the approved fingerprint/hash/number. Live verification compares actual bytes
+to Git's committed output, not merely an editable local file.
+
+Current main advanced to `3cf0d4dd8a` with already-merged Phase 3C/No. 17 cover,
+Japan five-PDF navigation and Indonesia/Korea evidence updates. Reconciliation
+commit `436413ead6` preserves these and both decision histories. New Phase 3C
+inventory tests still assumed 17 items and an end-of-collection No. 17;
+the reconciled tests explicitly cover all 18 items, preserve every prior media
+expectation, assert No. 18's text-led/no-figure state, and test both directions
+of the No. 17/18 navigation. The renderer retains the exact reviewed
+source-linked text-led presentation; ordinary article media remains unchanged.
+Complete production regeneration carries already-merged current-main output,
+including No. 17's approved paired cover/notice and Japan/Indonesia navigation.
+Historical sidecars/pages, database and MEPCOM files remain byte-identical.
+Fresh exact-head full suite/CI, merge/deploy and live receipts remain mandatory.
+
+Reconciled local verification before final-head full runs:
+- **196** publication/media/cover/relief tests passed together.
+- **144** current-main catalogue, historical-shell (including real Chromium),
+  Japan/Indonesia and desk-rollout tests passed together. An earlier sandboxed
+  attempt failed to bind a loopback browser server; the complete group was
+  rerun with the required access and passed, without skipping assertions.
+- `check`, `ready`, exact manuscript/link comparison and deployed-output gate
+  pass; validator retains ten governed warnings. Complete regeneration is
+  deterministic across two runs. Chromium article/Analysis/home checks pass at
+  1280 and 375, JavaScript enabled and disabled, with the pinned fingerprint.
+- Local full-suite dependency `python-docx` 1.2.0 is installed only into
+  `/tmp/laos-release-deps`; the shared runtime is unmodified. Full-suite runs
+  remain required on the final committed head; none is yet described as green.
+- The complete failed-job log is retained privately (15,587 lines), SHA-256
+  `63f65ff00ff24b9e51da83a443630c7bbf4a3dad993218ba0f295c129397aebe`,
+  together with exact job metadata, annotations and the untruncated failure block.
