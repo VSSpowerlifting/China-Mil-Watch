@@ -25,6 +25,7 @@ class BriefsOutputScopeTests(unittest.TestCase):
             "output/briefs/unreviewed.html",
             "output/the-pla-watch/media/2026-08-01-veil.jpg",
             "output/assets/editorial/other-photo.jpg",
+            "output/assets/editorial/trident-resolve-basarnas-drone.jpg",
             "output/briefs/feed.xml",
         ):
             with self.subTest(path=path):

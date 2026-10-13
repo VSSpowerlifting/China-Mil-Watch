@@ -63,8 +63,9 @@ def _assert_rendered_contract() -> None:
         "historical Brief navigation is absent from the rerendered article")
     assert "Downloaded from PLA Daily / 81.cn" not in no12, (
         "the prohibited No. 12 collector note has appeared")
+    assert (ROOT / "site" / "assets" / "editorial" / "trident-resolve-basarnas-drone.jpg").is_file(), (
+        "verified source photograph is missing from the editorial source tree")
     for rel in (
-        "assets/editorial/trident-resolve-basarnas-drone.jpg",
         "assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
         "assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp",
         "assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp",

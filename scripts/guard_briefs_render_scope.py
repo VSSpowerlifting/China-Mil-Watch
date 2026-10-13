@@ -18,7 +18,6 @@ REVIEWED_OUTPUT_PATHS = frozenset({
     "output/briefs/maritime-cooperation-2026.html",
     "output/briefs/xiangshan-security-frames-defense-ties.html",
     "output/briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
-    "output/assets/editorial/trident-resolve-basarnas-drone.jpg",
     "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
     "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp",
     "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp",
