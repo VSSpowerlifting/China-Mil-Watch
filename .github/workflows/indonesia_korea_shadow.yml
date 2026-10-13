@@ -165,13 +165,40 @@ jobs:
             -m "Collector $collector_commit. State only; never merged to main."
           git push origin "HEAD:refs/heads/$STATE_BRANCH"
 
-      - name: Preserve complete attempt evidence
-        if: always()
+      # Korea originals and shadow.db are not meant for broadly accessible
+      # GitHub Actions artifacts. Keep original files in the existing state
+      # history, and upload only bounded attempt metadata here. This does NOT
+      # make the public shadow Git branch private; that needs separate review.
+      - name: Preserve Korea attempt metadata only
+        if: ${{ always() && env.SHADOW_DESK == 'korea' }}
         uses: actions/upload-artifact@v4
         with:
-          name: candidate-shadow-${{ env.SHADOW_DESK || 'unselected' }}-${{ github.run_id }}-${{ github.run_attempt }}
+          name: candidate-shadow-korea-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/candidate-state/state/ledger/*.json
+            ${{ runner.temp }}/candidate-state/state/clock.json
+            ${{ runner.temp }}/candidate-run.log
+          if-no-files-found: warn
+          retention-days: 90
+
+      # Keep Indonesia's pre-existing evidence contract out of this Korea
+      # privacy change; review that desk's retention in a separate phase.
+      - name: Preserve Indonesia complete attempt evidence
+        if: ${{ always() && env.SHADOW_DESK == 'indonesia' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-shadow-indonesia-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/candidate-state/state/
             ${{ runner.temp }}/candidate-run.log
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Preserve unselected attempt log only
+        if: ${{ always() && env.SHADOW_DESK != 'korea' && env.SHADOW_DESK != 'indonesia' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: candidate-shadow-unselected-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/candidate-run.log
           if-no-files-found: warn
           retention-days: 90
