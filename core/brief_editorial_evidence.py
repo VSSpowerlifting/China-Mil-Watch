@@ -101,13 +101,31 @@ def _official(item):
              not p.password and not p.query and not p.fragment,
              "official source URL must be HTTPS and unmodified")
     if is_jp:
-        _require(item["source_name"] == "Japan Ministry of Defense"
-                 and p.hostname == "www.mod.go.jp" and (
-                     p.path.startswith("/en/article/") and p.path.endswith(".html")
-                     or p.path.startswith("/j/press/news/") and
-                     p.path.endswith((".html", ".pdf"))),
-                 "unrecognized Japan MOD publisher/source family")
-        _require(item["language"] in ("ja", "en"), "invalid Japan source language")
+        # Separate Japanese MOD, English JCG, and Japanese Joint Staff
+        # references. Shared domain names alone are not provenance.
+        mod = (item["source_name"] == "Japan Ministry of Defense"
+               and p.hostname == "www.mod.go.jp" and (
+                   p.path.startswith("/en/article/") and p.path.endswith(".html")
+                   or p.path.startswith("/j/press/news/") and
+                   p.path.endswith((".html", ".pdf"))))
+        jcg = (item["source_name"] == "Japan Coast Guard"
+               and p.hostname == "www.kaiho.mlit.go.jp"
+               and bool(re.fullmatch(r"/e/topics_archive/article[0-9]+\.html", p.path)))
+        joint_staff = (item["source_name"] == "Japan Joint Staff"
+                       and p.hostname == "www.mod.go.jp"
+                       and bool(re.fullmatch(
+                           r"/js/pdf/20[0-9]{2}/p20[0-9]{6}_[0-9]{2}\.pdf", p.path)))
+        _require(mod or jcg or joint_staff,
+                 "unrecognized Japan MOD/JCG/Joint Staff source family")
+        _require((mod and item["language"] in ("ja", "en"))
+                 or (jcg and item["language"] == "en")
+                 or (joint_staff and item["language"] == "ja"),
+                 "invalid Japan source language")
+        if jcg or joint_staff:
+            # No qualified archived-original hash rule for these new families.
+            _require(item["source_kind"] ==
+                     "official-publisher-page-reviewed-for-research",
+                     "JCG/Joint Staff sources require independently reviewed links")
     elif is_vn:
         match = VIETNAM_ID.fullmatch(ident)
         _require(item["source_name"] == "Vietnam Ministry of Public Security"
@@ -141,6 +159,18 @@ def _item(item, start, cutoff):
     date_published = _day(item["published_date"])
     _require(start <= date_published <= cutoff,
              "research evidence published outside the reporting cutoff")
+    if item["desk"] == "japan" and item["source_name"] == "Japan Joint Staff":
+        # The publisher filename embeds the actual reported posting date.
+        # This verifies internal consistency, not the source's factual claims.
+        match = re.fullmatch(
+            r"/js/pdf/(20[0-9]{2})/p(20[0-9]{6})_[0-9]{2}\.pdf",
+            urlsplit(item["source_url"]).path)
+        _require(bool(match)
+                 and match.group(1) == date_published.strftime("%Y")
+                 and match.group(2) == date_published.strftime("%Y%m%d")
+                 and int(item["id"].split("-")[1][1:]) ==
+                 cutoff.isocalendar()[1],
+                 "Japan Joint Staff URL date/ISO-week identity mismatch")
     _require(_line(item["title_original"], min_length=10, max_length=350),
              "missing original-language headline")
     _require(isinstance(item["source_kind"], str) and
