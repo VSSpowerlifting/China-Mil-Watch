@@ -65,7 +65,7 @@ class RealResearchEvidenceTests(unittest.TestCase):
         self.assertEqual(len(rows), 6)
         self.assertEqual({x["desk"] for x in rows}, {"japan", "vietnam"})
         self.assertEqual(load_editorial_evidence(SAT, FRI), rows)
-        self.assertEqual(load_editorial_evidence("2026-10-17", "2026-10-17"), [])
+        self.assertEqual(load_editorial_evidence("2026-10-24", "2026-10-24"), [])
         self.assertEqual({x["status"] for x in rows},
                          {"unapproved-source-linked-editorial-candidate"})
         self.assertTrue(all("text_original" not in x for x in rows))
@@ -350,6 +350,75 @@ class UnifiedWriterTests(unittest.TestCase):
             self.assertEqual(writer.call_args.kwargs["supplemental"],
                              self.research)
             mail.assert_not_called()
+
+
+
+class IndonesiaSundayWeek42Tests(unittest.TestCase):
+    """One genuine Week 42 Sunday source, but no Indonesian production records."""
+
+    WEEK = "2026-10-17"
+
+    def candidate(self):
+        rows = load_editorial_evidence(self.WEEK, self.WEEK)
+        self.assertEqual(len(rows), 1)
+        return rows[0]
+
+    def test_current_week_original_identity_and_nonproduction_status(self):
+        row = self.candidate()
+        self.assertEqual(row["id"], "ID-W42-01")
+        self.assertEqual(row["desk"], "indonesia")
+        self.assertEqual(row["published_date"], "2026-10-12")
+        self.assertEqual(row["state_commit"],
+                         "43d9bc7bc94dcb0e257866e0f24e1ce404e98149")
+        self.assertEqual(row["source_content_sha256"],
+                         "3475c65c11e5ea7fbee196a435865e9b9ecfb422d2ef88658a1af9efe303393e")
+        self.assertEqual(row["hash_rule"], "sha256-text-original-utf8")
+        self.assertEqual(row["status"], "unapproved-source-linked-editorial-candidate")
+        self.assertEqual(row["copy_scope"], "private-model-drafting-only-no-source-body")
+        self.assertNotIn("text_original", row)
+        self.assertNotIn("production_record_id", row)
+        self.assertEqual(load_editorial_evidence(self.WEEK, "2026-10-16"), [row])
+        self.assertIn('id="ID-W42-01"', evidence_prompt([row]))
+
+    def test_indonesia_only_one_exact_publisher_version_can_enter_sunday(self):
+        original = json.loads((ROOT / "research/briefs_editorial_evidence" /
+                               (self.WEEK + ".json")).read_text(encoding="utf-8"))
+        cases = (
+            ("id", "ID-W42-02"),
+            ("source_url", "https://www.kemhan.go.id/2026/10/13/other.html"),
+            ("source_name", "Indonesia Navy"),
+            ("language", "en"),
+            ("published_date", "2026-10-13"),
+            ("state_commit", "a" * 40),
+            ("source_content_sha256", "a" * 64),
+            ("hash_rule", "mps-vi-content-v1"),
+            ("source_kind", "official-publisher-page-reviewed-for-research"),
+            ("status", "approved"),
+            ("copy_scope", "permission_to_republish"),
+            ("article_body", "unsourced full publisher text"),
+        )
+        for key, value in cases:
+            bad = copy.deepcopy(original)
+            bad["items"][0][key] = value
+            with self.subTest(key=key), tempfile.TemporaryDirectory() as root:
+                folder = Path(root)
+                (folder / (self.WEEK + ".json")).write_text(
+                    json.dumps(bad, ensure_ascii=False), encoding="utf-8")
+                with self.assertRaises(EditorialEvidenceError):
+                    load_editorial_evidence(self.WEEK, self.WEEK, directory=folder)
+
+    def test_week42_research_appears_in_unified_model_schema_only_as_string(self):
+        source = self.candidate()
+        schema = writing_schema([1, 2], supplemental_ids=[source["id"]])
+        self.assertEqual(schema["properties"]["citations"]["properties"][
+            "opening_note"]["items"]["enum"], [1, 2])
+        self.assertEqual(schema["properties"]["supplemental_citations"]["properties"][
+            "opening_note"]["items"]["enum"], ["ID-W42-01"])
+        self.assertEqual(source["topics"], ["security_industry", "regional_partnerships"])
+
+    def test_week41_evidence_unchanged_and_out_of_scope_weeks_empty(self):
+        self.assertEqual(len(load_editorial_evidence("2026-10-10", "2026-10-10")), 6)
+        self.assertEqual(load_editorial_evidence("2026-10-24", "2026-10-24"), [])
 
 
 if __name__ == "__main__":
