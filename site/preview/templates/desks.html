@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_atlas.html" import spine %}
+{% from "_relief.html" import flag with context %}
 {% block title %}Desks — {{ title }}{% endblock %}
 {% block head_scripts %}<link rel="stylesheet" href="desk-map.css">{% endblock %}
 {% block content %}
@@ -40,8 +41,9 @@ its scope is declared, and is labeled according to what it actually does.</p>
       <clipPath id="dm-frame"><rect width="{{ desk_map.width }}" height="{{ desk_map.height }}"/></clipPath>
       <g clip-path="url(#dm-frame)">
 {% include "_desk_map_geo.svg" %}
-      {% for d in desks if d.slug in placed %}
-      <a class="dm-country" href="#desk-{{ d.slug }}" tabindex="-1" data-desk="{{ d.slug }}"><use href="#dm-geo-{{ d.slug }}"/></a>
+      {# Regional U.S. Indo-Pacific is a Hawaii seat, never an America polygon. #}
+      {% for d in desks if d.slug in placed and d.slug != 'us-indopacific' %}
+      <a class="dm-country {{ 'is-live' if d.is_collecting else 'is-quiet' }}" href="#desk-{{ d.slug }}" tabindex="-1" data-desk="{{ d.slug }}"><use href="#dm-geo-{{ d.slug }}"/></a>
       {% endfor %}
       </g>
       <g class="dm-leaders">
@@ -60,16 +62,12 @@ its scope is declared, and is labeled according to what it actually does.</p>
       </a>
       {% endfor %}
     </svg>
-    <p class="deskmap-chart-note">Institutional seats · Miller projection</p>
-    <div class="deskmap-context" aria-label="Selected desk scope">
-      <p class="deskmap-context-default">Each point locates a desk's publishing institutions. Select a desk to read its scope and current limitations; use its entry to open the desk.</p>
-      {% for d in desks if d.slug in placed %}<div class="deskmap-context-entry" data-context-desk="{{ d.slug }}" hidden><p class="deskmap-context-title">{{ d.name }}</p><p>{{ d.scope }}</p><p>{{ d.status_explanation }}</p><a href="{{ d.route }}">Open {{ d.name }}</a></div>{% endfor %}
-    </div>
     </div>
     <div class="deskmap-register">
     {% for d in desks if d.slug in placed %}{% set m = placed[d.slug] %}
-    <section class="desk desk--{{ d.status }} deskmap-plate {{ 'is-collecting' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow' }}{{ ' is-mid-side' if m.mid.hang in ('left', 'right') }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
+    <section class="desk desk--{{ d.status }} deskmap-plate {{ 'is-collecting is-live' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow is-quiet' }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
       style="--wl:{{ m.wide.left }};--wt:{{ m.wide.top }};--wtx:{{ m.wide.tx }};--wty:{{ m.wide.ty }};--ml:{{ m.mid.left }};--mt:{{ m.mid.top }};--mtx:{{ m.mid.tx }};--mty:{{ m.mid.ty }}">
+      <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
       <span class="deskmap-selected-label" hidden>Selected desk</span>
       <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
       <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
@@ -83,20 +81,25 @@ its scope is declared, and is labeled according to what it actually does.</p>
     {% endfor %}
     </div>
   </div>
+  <p class="deskmap-chart-note">Institutional seats · Miller projection</p>
+  <div class="deskmap-context" aria-label="Selected desk scope">
+      <p class="deskmap-context-default">Each point locates a desk's publishing institutions. Select a desk to read its scope and current limitations; use its entry to open the desk.</p>
+      {% for d in desks if d.slug in placed %}<div class="deskmap-context-entry" data-context-desk="{{ d.slug }}" hidden><p class="deskmap-context-title">{{ d.name }}</p><p>{{ d.scope }}</p><p>{{ d.status_explanation }}</p><a href="{{ d.route }}">Open {{ d.name }}</a></div>{% endfor %}
+    </div>
+    </div>
   <figcaption id="deskmap-key" class="deskmap-key">
-    <span class="deskmap-key-item"><svg viewBox="0 0 28 10" aria-hidden="true"><line x1="0" y1="5" x2="20" y2="5"/><circle cx="23" cy="5" r="3.2"/></svg>Collecting into the record</span>
-    <span class="deskmap-key-item is-quiet"><svg viewBox="0 0 28 10" aria-hidden="true"><line x1="0" y1="5" x2="20" y2="5"/><circle cx="23" cy="5" r="3.2"/></svg>Declared, not collecting</span>
-    <span class="deskmap-key-note">Each point marks where a desk's publishing institutions are based, not an area
-    of coverage. Statuses come from the desk registry; record counts come from the corpus, and only a
-    collecting desk has one. Boundaries are Natural Earth 1:50m (public domain), generalized, showing
-    de facto lines; no boundary claim is made. Miller projection.</span>
+    <span class="deskmap-key-item"><span class="deskmap-key-swatch" aria-hidden="true"></span>Collecting into the record</span>
+    <span class="deskmap-key-item"><span class="deskmap-key-swatch is-quiet" aria-hidden="true"></span>Declared, not collecting</span>
+    <span class="deskmap-key-item"><span class="deskmap-key-swatch is-seat" aria-hidden="true"></span>Seat only: regional reference, not a country fill</span>
+    <span class="deskmap-key-note">Each point marks where a desk's publishing institutions are based, not an area of coverage. Statuses come from the desk registry; record counts come from the corpus, and only a collecting desk has one. Boundaries are Natural Earth 1:50m (public domain), generalized, showing de facto lines; no boundary claim is made. Miller projection.</span>
   </figcaption>
 </figure>
 {# Hover or focus on a plate, its leader, or its country lights all three. One
    rule per placed desk, so the pairing comes from the same data as the map. #}
 <style>{% for slug in placed %}
-.deskmap:has([data-desk="{{ slug }}"]:is(:hover, :focus-within)) [data-desk="{{ slug }}"] { --on: 1; }{% endfor %}
-</style>
+.deskmap:has([data-desk="{{ slug }}"]:is(:hover,:focus-within)) .dm-leader[data-desk="{{ slug }}"]{opacity:1;stroke-width:2}
+.deskmap:has([data-desk="{{ slug }}"]:is(:hover,:focus-within)) .dm-country[data-desk="{{ slug }}"] use{filter:brightness(.9)}
+{% endfor %}</style>
 {% for d in desks if d.slug not in placed %}
 <section class="desk desk--{{ d.status }} deskmap-plate is-unplaced" data-desk="{{ d.slug }}">
   <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
