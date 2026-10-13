@@ -8,11 +8,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import shutil
 import sqlite3
 import tempfile
+import zipfile
 from pathlib import Path
 
 from core.korea_reference_gate import (
@@ -108,6 +110,81 @@ def confirm_original(candidate, row, state):
     return original, text
 
 
+def component_inventory(candidate, original):
+    """Private HWPX ZIP member inventory; never clears embedded-media rights.
+
+    Binds all component digests to the original archived capture. Classifies
+    likely binary/media parts conservatively, but treats every part as needing
+    qualified visual and legal review regardless of its filename.
+    """
+    require(sha(original) == candidate["document_capture_sha256"],
+            "media inventory is not bound to reviewed original HWPX")
+    components = []
+    try:
+        with zipfile.ZipFile(io.BytesIO(original)) as archive:
+            entries = archive.infolist()
+            require(0 < len(entries) <= 200 and
+                    len({entry.filename for entry in entries}) == len(entries),
+                    "HWPX component count or member identity unsafe")
+            require(sum(entry.file_size for entry in entries) <= 10_000_000,
+                    "HWPX component expanded size exceeds cap")
+            for entry in entries:
+                name = entry.filename
+                require(isinstance(name, str) and 0 < len(name) <= 1024
+                        and not name.startswith("/")
+                        and not any(segment in ("", ".", "..")
+                                    for segment in name.rstrip("/").split("/"))
+                        and "\\\\" not in name and
+                        not any(ord(char) < 32 for char in name)
+                        and not (entry.flag_bits & 1),
+                        "unsafe or encrypted original HWPX component")
+                if entry.is_dir():
+                    continue
+                raw = archive.read(entry)
+                require(len(raw) == entry.file_size,
+                        "original HWPX member length mismatched")
+                lowered = name.lower()
+                media = (
+                    lowered.startswith(("bindata/", "pictures/", "images/",
+                                        "preview/", "attachments/"))
+                    or lowered.endswith((".png", ".jpg", ".jpeg", ".gif",
+                                         ".bmp", ".webp", ".tif", ".tiff",
+                                         ".svg", ".wmf", ".emf", ".ico",
+                                         ".mp3", ".mp4", ".avi", ".wav",
+                                         ".pdf", ".ole", ".bin"))
+                )
+                structural = lowered.endswith((".xml", ".rels", ".hpf",
+                                               ".json", ".css", ".txt")) or lowered == "mimetype"
+                kind = ("media_candidate" if media else
+                        "structured_part" if structural else "unclassified_part")
+                components.append({
+                    "path": name, "classification": kind,
+                    "uncompressed_bytes": len(raw), "sha256": sha(raw),
+                })
+            require(any(x["path"].startswith("Contents/section") and
+                        x["path"].endswith(".xml") for x in components),
+                    "HWPX inventory missing original document sections")
+    except (OSError, EOFError, RuntimeError, ValueError, zipfile.BadZipFile) as exc:
+        raise KoreaGateHold("original HWPX media inventory unreadable") from exc
+
+    return {
+        "schema": "ipr-korea-private-hwpx-component-inventory/1",
+        "state_commit": STATE_SHA,
+        "source_identity": candidate["source_identity"],
+        "hwpx_sha256": candidate["document_capture_sha256"],
+        "component_count": len(components),
+        "media_candidate_count": sum(
+            x["classification"] == "media_candidate" for x in components),
+        "unclassified_count": sum(
+            x["classification"] == "unclassified_part" for x in components),
+        "components": components,
+        "classification_is_heuristic_only": True,
+        "embedded_media_rights_approved": False,
+        "independent_visual_and_rights_review_completed": False,
+        "publish_or_upload_this_private_inventory": False,
+    }
+
+
 def make_blank(candidate):
     """Deliberately INVALID for source admission until humans supply checks."""
     return {
@@ -195,6 +272,7 @@ def checklist(candidate):
         "",
         "- [ ] Reopen the exact publisher page at the canonical URL above.",
         "- [ ] Confirm KOGL Type 1 **text-only** label and legally adequate attribution for the *proposed use*.",
+        "- [ ] Open reviews/" + ident + ".media-inventory.json and compare ALL ZIP members with the rendered HWPX; candidate classification is a heuristic, never media rights permission.",
         "- [ ] Examine the archived HWPX for excluded photographs, graphics, annexes, QR media or third-party material; do not infer they are licensed.",
         "- [ ] Confirm final output will contain only original human-edited short English descriptions, bibliographic identity and outbound official links.",
         "- [ ] Record whether any element requires additional owner permission; HOLD when uncertain.",
@@ -244,7 +322,7 @@ def assemble(candidates, records, state, destination):
             "candidate/original record identity mismatch")
     for entry in candidates:
         original, text = confirm_original(entry, records[entry["source_identity"]], state)
-        data.append((entry, original, text))
+        data.append((entry, original, text, component_inventory(entry, original)))
     destination = output_ok(destination)
     destination.mkdir(mode=0o700)
     try:
@@ -254,7 +332,7 @@ def assemble(candidates, records, state, destination):
         reviews.mkdir(mode=0o700)
         unsigned = []
         receipt = []
-        for item, raw, text in data:
+        for item, raw, text, inventory in data:
             ident = item["source_identity"].partition(":")[2]
             private_write(originals / (ident + ".hwpx"), raw)
             private_write(originals / (ident + ".ko.txt"), text.encode("utf-8"))
@@ -262,6 +340,8 @@ def assemble(candidates, records, state, destination):
             private_write(reviews / (ident + ".line-hashes.json"),
                           (json.dumps(original_line_index(item, text),
                                       ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
+            private_write(reviews / (ident + ".media-inventory.json"),
+                          (json.dumps(inventory, ensure_ascii=False, indent=2) + "\n").encode("utf-8"))
             unsigned.append(make_blank(item))
             receipt.append({
                 "source_identity": item["source_identity"],
@@ -270,6 +350,7 @@ def assemble(candidates, records, state, destination):
                 "original_document_parity": "PASS",
                 "qualified_human_approval": False,
                 "source_rights_approval": False,
+                "media_component_review_completed": False,
                 "owner_publication_approval": False,
             })
         packet = {"schema": APPROVAL_SCHEMA, "state_commit": STATE_SHA,
@@ -284,7 +365,8 @@ def assemble(candidates, records, state, destination):
             "outside the publisher text-only KOGL notice.\n\n"
             "For each source, compare `originals/<newsId>.hwpx` and "
             "`originals/<newsId>.ko.txt` with the official release page. "
-            "Read `reviews/<newsId>.md` and private `reviews/<newsId>.line-hashes.json` "
+            "Read `reviews/<newsId>.md`, private `reviews/<newsId>.line-hashes.json`, "
+            "and private `reviews/<newsId>.media-inventory.json` "
             "to locate original Korean lines supporting each English claim. "
             "Line hashes are pointers, not proof of an accurate translation. "
             "Then record independent Korean-language and source-specific rights "
