@@ -80,17 +80,17 @@ class IndonesiaPressLinks(unittest.TestCase):
         out = Path(self.tmp.name) / "site"
         gp.build(out, "Offline Indonesia Press Links Pilot", database,
                  snapshot=gp.snapshot_from_corpus(database))
-        self.assertEqual(check_public_page(out / "indonesia.html"), 15)
+        self.assertEqual(check_public_page(out / "indonesia.html"), 17)
         page = (out / "indonesia.html").read_text(encoding="utf-8")
         doc = BeautifulSoup(page, "html.parser")
         press = doc.select('ol[aria-label="Two external ministry press release links"] a')
-        news = doc.select('ol[aria-label="Thirteen external ministry news links"] a')
+        news = doc.select('ol[aria-label="Fifteen external ministry news links"] a')
         self.assertEqual([a["href"] for a in press],
                          [r["source_url"] for r in load()])
         self.assertEqual([a["href"] for a in news],
                          [r["source_url"] for r in load_news()])
         self.assertTrue(all(a.get("lang") == "id" for a in press))
-        self.assertEqual(len(set(a["href"] for a in press+news)), 15)
+        self.assertEqual(len(set(a["href"] for a in press+news)), 17)
         self.assertIn("SP/17/VIII/2026/ROINFOHAN", page)
         self.assertIn("SP/10/III/2026/ROINFOHAN", page)
         self.assertIn("press parser is disabled", page)

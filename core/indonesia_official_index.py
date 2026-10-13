@@ -19,7 +19,8 @@ PINNED = "43d9bc7bc94dcb0e257866e0f24e1ce404e98149"
 # ID-05 deliberately omitted: Kemhan's Yonif TP 880 text conflicts on Kaltara/Kalbar.
 IDS = ("id-01", "id-02", "id-03", "id-04",
        "id-06", "id-07", "id-08", "id-09",
-       "id-10", "id-11", "id-12", "id-13", "id-14")
+       "id-10", "id-11", "id-12", "id-13", "id-14",
+       "id-15", "id-16")
 # Freeze newly selected identities, original Indonesian titles, and exact dates.
 # Each addition must be explicitly reviewed; the directory must not expand
 # merely because a publisher URL is syntactically valid.
@@ -69,6 +70,16 @@ ADDED = {
         "Wamenhan RI Terima Audiensi Ketua Yayasan Gedung Veteran RI, Bahas Pengelolaan dan Pemanfaatan Aset",
         "2026-10-09",
     ),
+    "id-15": (
+        "/2026/10/03/kunker-ke-malinau-menhan-sjafrie-tinjau-yonif-tp-921-alang-impang-dan-tegaskan-peran-prajurit-di-perbatasan.html",
+        "Kunker ke Malinau, Menhan Sjafrie Tinjau Yonif TP 921/Alang Impang dan Tegaskan Peran Prajurit di Perbatasan",
+        "2026-10-03",
+    ),
+    "id-16": (
+        "/2026/10/03/menhan-beri-motivasi-prajurit-yonif-tp-922-ut-dalam-mengemban-tugas-di-perbatasan.html",
+        "Menhan Beri Motivasi Prajurit Yonif TP 922/UT dalam Mengemban Tugas di Perbatasan",
+        "2026-10-03",
+    ),
 }
 FIELDS = {"id", "url", "title_original", "published_date", "language"}
 EXPECTED = {"schema", "source_family", "publisher", "snapshot_date",
@@ -105,7 +116,7 @@ def validate(data):
             "public source-index provenance or status changed")
     entries = data["references"]
     require(type(entries) is list and len(entries) == len(IDS),
-            "this frozen source directory permits exactly thirteen external publisher links")
+            "this frozen source directory permits exactly fifteen external publisher links")
     require([p.get("id") for p in entries if type(p) is dict] == list(IDS),
             "unrecognized or reordered pilot reference")
     seen = set()
