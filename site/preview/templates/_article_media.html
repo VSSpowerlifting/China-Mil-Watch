@@ -24,3 +24,16 @@
     </figure>
 {% endif %}
 {%- endmacro %}
+{#- A brief's cover photograph, granted by `core.brief_cover` and shown by
+    `core.article_media.cover_view`. The authoritative caption, then the
+    full credit with its licence and source linked, IPR's change note and any
+    notice the source's terms require. The treatment only names a CSS class:
+    the pixels are the resized photograph, and a gradient is drawn over the
+    frame, never into the image. -#}
+{% macro cover_figure(m, aria_label='Photograph: visual context, not evidence') -%}
+    <figure class="brief-cover brief-cover--{{ m.treatment }}" data-editorial-id="{{ m.id }}" data-article-media="photograph" aria-label="{{ aria_label }}">
+      <span class="brief-cover-frame"><picture><source type="image/webp" srcset="{{ m.srcset }}" sizes="(max-width:900px) calc(100vw - 44px), 46vw"><img src="{{ m.src }}" width="{{ m.width }}" height="{{ m.height }}" alt="{{ m.alt }}"{% if m.focus %} style="object-position:{{ m.focus }}"{% endif %} fetchpriority="high" decoding="async"></picture></span>
+      <figcaption><span class="article-media-kind">{{ m.label }}</span> · {{ m.caption }}{% if m.date_note %} {{ m.date_note }}{% endif %}
+        <span class="brief-cover-credit">Photo: {% for p in m.credit %}{{ p.before }}{% if p.href %}<a href="{{ p.href }}" rel="{{ p.rel }}">{{ p.text }}</a>{% else %}{{ p.text }}{% endif %}{% if not loop.last %} · {% endif %}{% endfor %}. {{ m.notes | join(' ') }}{% if m.notice %} {{ m.notice }}{% endif %}</span></figcaption>
+    </figure>
+{%- endmacro %}

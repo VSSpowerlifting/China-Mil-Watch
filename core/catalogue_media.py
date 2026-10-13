@@ -31,6 +31,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Optional
 
+from core.brief_cover import TREATMENT_NOTES
+
 KIND_PHOTOGRAPH = "photograph"
 KIND_PLATE = "plate"
 
@@ -64,7 +66,11 @@ _REQUIRED = ("alt", "caption", "credit", "creator", "license", "source_page",
 # Manifest fields the admission record must still agree with at build time.
 # The manifest is read only to confirm that the curated source an admission
 # was reviewed against is the one on disk; it grants nothing.
-_CONTINUITY = ("license", "license_url", "source_page", "credit")
+# A notice the source requires (the DoW non-endorsement disclaimer) and the
+# cover treatment are agreed here too, so the card can never drop the one or
+# describe a different image from the other.
+_CONTINUITY = ("license", "license_url", "source_page", "credit", "notice",
+               "cover_treatment")
 
 
 @dataclass(frozen=True)
@@ -163,6 +169,9 @@ def _check(entry: Mapping, repo_root: Path) -> Optional[str]:
     for key in _CONTINUITY:
         if (curated.get(key) or "") != (entry.get(key) or ""):
             return "manifest-changed:" + key
+    treatment = entry.get("cover_treatment")
+    if treatment and entry["change_note"] != TREATMENT_NOTES.get(treatment):
+        return "change-note-not-treatment"
     path = repo_root / "site" / served
     if not path.is_file():
         return "file-missing"
@@ -199,7 +208,8 @@ def resolve_catalogue_media(row: Mapping, admissions: Mapping, *,
     photo = {k: record.get(k, "") for k in (
         "alt", "caption", "credit", "creator", "creator_native", "creator_native_lang",
         "license", "license_url", "source_page", "source_label", "date_note",
-        "change_note", "served", "width", "height", "focal")}
+        "change_note", "served", "width", "height", "focal", "notice",
+        "cover_treatment")}
     return CatalogueMedia(KIND_PHOTOGRAPH, "admitted", issue, (), photo)
 
 

@@ -1,8 +1,9 @@
 {#- The one credit for an admitted catalogue photograph (core/catalogue_media.py).
     Card and hero both call it, so the licence link, creator (with native
-    name), source link and change note cannot drift apart. `ph` is the
+    name), source link, change note and any notice the source's terms require
+    cannot drift apart. `ph` is the
     `photo` mapping of a resolved CatalogueMedia. -#}
 {% macro photo_credit(ph) -%}
 <p>{{ ph.caption }}{% if ph.date_note %} {{ ph.date_note }}{% endif %}</p>
-<p>Photo: {{ ph.creator }}{% if ph.creator_native %} (<span lang="{{ ph.creator_native_lang }}">{{ ph.creator_native }}</span>){% endif %} · {% if ph.license_url %}<a href="{{ ph.license_url }}" rel="noopener">{{ ph.license }}</a>{% else %}{{ ph.license }}{% endif %} · via <a href="{{ ph.source_page }}" rel="noopener">{{ ph.source_label }}</a>. {{ ph.change_note }} Visual context, not evidence.</p>
+<p>Photo: {{ ph.creator }}{% if ph.creator_native %} (<span lang="{{ ph.creator_native_lang }}">{{ ph.creator_native }}</span>){% endif %} · {% if ph.license_url %}<a href="{{ ph.license_url }}" rel="noopener">{{ ph.license }}</a>{% else %}{{ ph.license }}{% endif %} · via <a href="{{ ph.source_page }}" rel="noopener">{{ ph.source_label }}</a>. {{ ph.change_note }} Visual context, not evidence.{% if ph.notice %} {{ ph.notice }}{% endif %}</p>
 {%- endmacro %}

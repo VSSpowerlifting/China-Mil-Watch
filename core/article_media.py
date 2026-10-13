@@ -18,7 +18,8 @@ image those resolvers returned is presented, as one of these kinds:
 * ``preserved`` — an image whose existing markup is kept byte for byte
   because a ruling holds it (see ``PRESERVED_MEDIA``).
 
-Nothing here grants a photograph. It never reads catalogue admissions
+Nothing here grants a photograph: a brief's cover is granted by
+`core.brief_cover`, and only shown here. It never reads catalogue admissions
 (`core.catalogue_media` governs the catalogue only), never creates an image
 association, and never infers ownership or a licence from an article URL. A
 Signal Veil's `credit` field is never shown: for a source veil it is a
@@ -27,6 +28,8 @@ collector note, not an attribution.
 from __future__ import annotations
 
 from typing import Mapping, Optional
+
+from core.brief_cover import TREATMENT_NOTES
 
 PHOTOGRAPH = "photograph"
 SIGNAL_VEIL = "signal-veil"
@@ -174,18 +177,45 @@ def historical_article_media(veil: Optional[Mapping],
 
 
 def native_article_media(photo: Optional[Mapping], desks=(),
-                         root: Optional[str] = None) -> dict:
+                         root: Optional[str] = None,
+                         cover: Optional[Mapping] = None) -> dict:
     """
     How a brief's hero image is shown. A brief's photograph (`brief_photo`)
-    keeps its existing figure and two-level credit (Phase 0 §1.2). Without
-    one, and given `root`, the hero carries the editorial plate for the
-    brief's own desks; otherwise it is text-led.
+    keeps its existing figure and two-level credit (Phase 0 §1.2). Otherwise
+    a cover granted by `core.brief_cover.brief_cover` is shown as a
+    photograph with its full credit, licence, source, change note and any
+    notice its terms require. Without either, and given `root`, the hero
+    carries the editorial plate for the brief's own desks; otherwise it is
+    text-led. `cover` is only ever what that gate returned: nothing here
+    re-checks or widens a grant.
     """
     if photo:
         return {"kind": PRESERVED, "reason": "Phase 0 §1.2: brief photograph"}
+    if cover:
+        return cover_view(cover, root or "")
     if root is not None:
         return editorial_plate(root, desks)
     return {"kind": NONE}
+
+
+def cover_view(cover: Mapping, root: str) -> dict:
+    """A granted cover as a photograph view, with responsive sources."""
+    entry = cover["entry"]
+    treatment = entry["cover_treatment"]
+    return {"kind": PHOTOGRAPH, "label": LABELS[PHOTOGRAPH], "cover": True,
+            "id": entry["id"], "treatment": treatment,
+            "src": root + cover["src"]["route"],
+            "width": cover["src"]["width"], "height": cover["src"]["height"],
+            "srcset": ", ".join("%s%s %dw" % (root, f["route"], f["width"])
+                                for f in cover["webp"]),
+            "alt": entry["alt"], "focus": entry.get("focal") or "",
+            "caption": entry["caption"], "date_note": entry.get("date_note") or "",
+            "credit": credit_parts(
+                entry["credit"], license_name=entry["license"],
+                license_url=entry.get("license_url") or "",
+                source_page=entry["source_page"]),
+            "notes": (TREATMENT_NOTES[treatment], CONTEXT_NOTE),
+            "notice": entry.get("notice") or ""}
 
 
 def editorial_plate(root: str, desks=()) -> dict:

@@ -28,7 +28,11 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {8, 9}
+PHOTO_ISSUES = {8, 9, 17}
+#: Where each admitted card's source page may be. No. 17 is the DVIDS cover
+#: proof of concept (owner selection pending); the others are Commons files.
+SOURCE_HOSTS = {8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
+                17: "https://www.dvidshub.net/image/"}
 HELD_ISSUES = {1, 10}
 
 
@@ -143,6 +147,31 @@ class ResolverRuleTests(unittest.TestCase):
         self.manifest.unlink()
         self.assertEqual(self.resolve(row).reason, "manifest-entry-missing")
 
+    def test_a_card_notice_and_treatment_must_agree_with_the_manifest(self):
+        row = _row(8, "2026-06-27")
+        notice = "Non-endorsement notice."
+        self.write_manifest(notice=notice, cover_treatment="gradient")
+        note = "Cropped and resized by IPR; IPR gradient overlaid."
+        self.assertTrue(self.resolve(row, notice=notice, cover_treatment="gradient",
+                                     change_note=note).is_photograph)
+        # A dropped notice or a different treatment is a different record.
+        self.assertEqual(self.resolve(row, cover_treatment="gradient", change_note=note).reason,
+                         "manifest-changed:notice")
+        self.assertEqual(self.resolve(row, notice=notice, cover_treatment="photograph",
+                                      change_note="Cropped and resized by IPR.").reason,
+                         "manifest-changed:cover_treatment")
+
+    def test_a_treated_card_must_say_what_was_done_to_it(self):
+        row = _row(8, "2026-06-27")
+        self.write_manifest(cover_treatment="gradient")
+        m = self.resolve(row, cover_treatment="gradient",
+                         change_note="Cropped and resized by IPR.")
+        self.assertEqual((m.kind, m.reason), (cm.KIND_PLATE, "change-note-not-treatment"))
+        m = self.resolve(row, cover_treatment="gradient",
+                         change_note="Cropped and resized by IPR; IPR gradient overlaid.")
+        self.assertTrue(m.is_photograph)
+        self.assertEqual((m.photo["cover_treatment"], m.photo["notice"]), ("gradient", ""))
+
     def test_the_source_must_belong_to_the_manifest_entry_it_names(self):
         m = self.resolve(_row(8, "2026-06-27"), source_manifest_id="other")
         self.assertEqual(m.reason, "source-not-from-manifest-entry")
@@ -211,7 +240,7 @@ class CommittedRecordTests(unittest.TestCase):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
         cls.manifest = {m["id"]: m for m in manifest}
 
-    def test_every_row_is_a_card_and_only_the_cleared_two_are_photographs(self):
+    def test_every_row_is_a_card_and_only_the_admitted_issues_are_photographs(self):
         # Row-count agnostic: publishing No. 18 must not turn this red.
         self.assertEqual(len(self.audit), len(self.rows))
         self.assertGreaterEqual(len(self.audit), 17)
@@ -253,7 +282,7 @@ class CommittedRecordTests(unittest.TestCase):
             for key in ("source_file", "served"):
                 self.assertNotRegex(str(entry.get(key, "")), r"veil|source-image|81\.cn|81cn")
 
-    def test_admissions_are_exactly_the_two_approved_photographs(self):
+    def test_admissions_are_exactly_the_admitted_photographs(self):
         admitted = {e["issue"] for e in self.record["entries"] if e["status"] == "admitted"}
         self.assertEqual(admitted, PHOTO_ISSUES)
         self.assertEqual(sorted(p.name for p in MEDIA.iterdir()),
@@ -268,7 +297,7 @@ class CommittedRecordTests(unittest.TestCase):
                 self.assertIn(e["license"], cm.ALLOWED_LICENCES)
                 if e["license"] in cm.LICENCE_NEEDS_LINK:
                     self.assertTrue(e["license_url"].startswith("https://"))
-                self.assertTrue(e["source_page"].startswith("https://commons.wikimedia.org/"))
+                self.assertTrue(e["source_page"].startswith(SOURCE_HOSTS[e["issue"]]))
                 self.assertEqual((e["width"], e["height"]), (720, 480))
                 self.assertTrue(e["alt"] and e["caption"] and e["change_note"])
 

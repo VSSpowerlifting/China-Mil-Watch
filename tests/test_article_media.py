@@ -26,6 +26,7 @@ sys.path.insert(0, str(ROOT / "site" / "preview"))
 import generate_preview as gp                                    # noqa: E402
 from core import article_media as am                             # noqa: E402
 from core import brief_collection as bc                          # noqa: E402
+from core.brief_cover import brief_cover                         # noqa: E402
 from core.desk_registry import load_registry                     # noqa: E402
 from scripts.historical_brief_render import (next_brief_after,  # noqa: E402
                                              render_historical_brief)
@@ -50,7 +51,8 @@ EXPECTED = {
     13: am.SIGNAL_VEIL,
     14: am.PLATE,
     15: am.PRESERVED,    # a native brief's own photograph (Phase 0 §1.2)
-    16: am.PLATE, 17: am.PLATE,
+    16: am.PLATE,
+    17: am.PHOTOGRAPH,   # trident-resolve-basarnas-drone, a brief cover (PoC)
 }
 
 #: Han, kana and CJK punctuation: script that needs a declared language.
@@ -60,6 +62,11 @@ CJK = re.compile(r"[\u3000-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uff00-\uffef]")
 #: A `_wm…` suffix is the CMS's watermarked rendition of the same asset.
 ARTICLE_ID = re.compile(r"/(\d{6,})\.s?html?$")
 IMAGE_ID = re.compile(r"/(\d{6,})_[0-9a-f]{16,}(?:_wm[0-9a-f]+)?\.[a-z]+$", re.I)
+
+
+def am_sha(path):
+    from core.brief_cover import sha256_file
+    return sha256_file(path)
 
 
 def hero(soup):
@@ -142,13 +149,18 @@ class ArticleMediaPagesTests(unittest.TestCase):
         for number, (entry, page, soup) in self.native.items():
             with self.subTest(brief=number):
                 desks = self.collection.sidecars[entry["slug"]]["desks"]
-                media = am.native_article_media(entry.get("photo"), desks, root="../")
+                cover = None if entry.get("photo") else brief_cover(entry["slug"], ROOT)
+                media = am.native_article_media(entry.get("photo"), desks, root="../",
+                                                cover=cover)
                 self.assertEqual(media["kind"], EXPECTED[number])
                 photo = hero(soup).select("figure.brief-opening-photo")
                 plate = hero(soup).select("figure[data-article-media=plate]")
+                covers = hero(soup).select("figure.brief-cover[data-article-media=photograph]")
                 self.assertEqual(len(photo), 1 if EXPECTED[number] == am.PRESERVED else 0)
                 self.assertEqual(len(plate), 1 if EXPECTED[number] == am.PLATE else 0)
-                self.assertEqual(len(soup.select("figure[data-article-media]")), len(plate))
+                self.assertEqual(len(covers), 1 if EXPECTED[number] == am.PHOTOGRAPH else 0)
+                self.assertEqual(len(soup.select("figure[data-article-media]")),
+                                 len(plate) + len(covers))
                 self.assertIn("brief-hero--photo", hero(soup)["class"])
                 if plate:
                     uses = [u["href"] for u in plate[0].select("use")]
@@ -173,7 +185,7 @@ class ArticleMediaPagesTests(unittest.TestCase):
                                  "Editorial plate")
                 for text in (am.PLATE_NOTE, am.PLATE_CONTEXT):
                     self.assertIn(text, plate.figcaption.get_text())
-        self.assertEqual(sorted(plated), [4, 14, 16, 17])
+        self.assertEqual(sorted(plated), [4, 14, 16])
         # A historical plate is the China Desk's, the desk that published them.
         for number in (4, 14):
             uses = [u["href"] for u in self.historical[number][3].select("figure[data-article-media=plate] use")]
@@ -252,6 +264,43 @@ class ArticleMediaPagesTests(unittest.TestCase):
         self.assertEqual(licence.get_text(), "CC BY 4.0")
         # A licence without a recorded deed is named, not linked.
         self.assertIsNone(self.historical[9][3].select_one("figure a[rel~=license]"))
+
+    def test_a_brief_cover_carries_credit_licence_notice_and_treatment(self):
+        entry = {e["id"]: e for e in json.loads(MANIFEST.read_text())}[
+            "trident-resolve-basarnas-drone"]
+        figure = hero(self.native[17][2]).select_one("figure.brief-cover")
+        self.assertEqual(figure["data-editorial-id"], entry["id"])
+        self.assertIn("brief-cover--gradient", figure["class"])
+        img = figure.select_one("img")
+        self.assertEqual(img["alt"], entry["alt"])
+        self.assertEqual((img["width"], img["height"]), ("1600", "1067"))
+        self.assertEqual(img["src"], "../assets/editorial/derivatives/%s-1600.jpg" % entry["id"])
+        caption = figure.figcaption.get_text(" ", strip=True)
+        for text in (entry["caption"], entry["date_note"], entry["creator"], entry["notice"],
+                     "Cropped and resized by IPR; IPR gradient overlaid.", am.CONTEXT_NOTE):
+            self.assertIn(text, caption)
+        links = {a.get_text(): a["href"] for a in figure.select("a")}
+        self.assertEqual(links, {"Public domain": entry["license_url"],
+                                 "DVIDS": entry["source_page"]})
+        # The served derivatives are the recorded ones, byte for byte.
+        for d in entry["derivatives"]:
+            built = self.tmp / "assets/editorial" / d["file"]
+            self.assertEqual(am_sha(built), d["sha256"])
+
+    def test_the_cover_reaches_only_its_brief_and_the_catalogue(self):
+        reached = sorted(str(p.relative_to(self.tmp)) for p in self.tmp.rglob("*.html")
+                         if "trident-resolve-basarnas-drone" in p.read_text(errors="ignore"))
+        slug = self.native[17][0]["slug"]
+        self.assertEqual(reached, sorted(["briefs/%s.html" % slug, "analysis.html"]))
+        cat = BeautifulSoup((self.tmp / "analysis.html").read_text(), "html.parser")
+        notice = "does not imply or constitute DoW endorsement"
+        treated = cat.select("[data-treatment=gradient]")
+        self.assertTrue(treated)
+        for node in treated:
+            scope = node.find_parent(["article", "figure", "li"]) or node
+            self.assertIn(notice, scope.get_text())
+        # No other card or lead carries a treatment or the DoW notice.
+        self.assertEqual(cat.get_text().count(notice), len(treated))
 
     def test_native_script_in_a_photograph_credit_declares_its_language(self):
         # No. 8's credit names the Joint Staff in Japanese. Only that name is

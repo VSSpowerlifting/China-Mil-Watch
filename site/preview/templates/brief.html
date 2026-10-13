@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "_atlas.html" import breadcrumb %}
 {% from "_article_nav.html" import issue_nav %}
-{% from "_article_media.html" import article_figure %}
+{% from "_article_media.html" import article_figure, cover_figure %}
 {#- One Indo-Pacific Record Brief, at briefs/<slug>.html.
 
     The existing article anatomy — edition head, signal, development, coverage,
@@ -32,7 +32,7 @@
 {%- endmacro %}
 
 {% block hero %}
-<section class="band brief-hero{% if brief.photo or (brief.article_media and brief.article_media.kind == 'plate') %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
+<section class="band brief-hero{% if brief.photo or (brief.article_media and brief.article_media.kind in ('plate', 'photograph')) %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
   <div class="wrap brief-hero-inner">
     {% if brief.is_review %}<p class="brief-fixture" role="note">Editorial review candidate · unapproved, unnumbered and unpublished.</p>{% endif %}
     {% if brief.synthetic %}
@@ -52,6 +52,8 @@
     </figure>
     {% elif brief.article_media and brief.article_media.kind == 'plate' %}
 {{ article_figure(brief.article_media) }}
+    {% elif brief.article_media and brief.article_media.kind == 'photograph' %}
+{{ cover_figure(brief.article_media) }}
     {% endif %}
     <div class="brief-context">    <p class="brief-dek">{{ brief.dek }}</p>
     <p class="brief-byline">By <span class="byline-name">{{ brief.author_name }}</span>{% if brief.author_title %}<span class="byline-title">{{ brief.author_title }}</span>{% endif %}</p>

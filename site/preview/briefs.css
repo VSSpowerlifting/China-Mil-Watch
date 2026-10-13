@@ -32,3 +32,9 @@
 @media(max-width:600px){.brief-issue-nav{grid-template-columns:minmax(0,1fr)}.brief-issue-nav-next{grid-column:1;align-items:flex-start;text-align:left}}
 @media print{.brief-issue-nav{display:none}}
 @media(forced-colors:active){.brief-issue-nav a,.brief-issue-nav-label,.brief-issue-nav-meta{color:LinkText}}
+/* A brief's cover photograph (core.brief_cover). The pixels are the resized photograph; the `gradient` treatment only lays the band's navy over its lower edge so the image settles into the hero. Nothing is drawn into the image, and the caption sits below it, never on it. */
+.brief-cover{grid-area:photo;margin:32px 0 0;max-width:none}.brief-cover-frame{position:relative;display:block;aspect-ratio:3/2;overflow:hidden;background:var(--band-raised)}.brief-cover-frame picture,.brief-cover-frame img{display:block;width:100%;height:100%}.brief-cover-frame img{object-fit:cover}.brief-cover--gradient .brief-cover-frame::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,color-mix(in srgb,var(--band) 72%,transparent) 0,color-mix(in srgb,var(--band) 24%,transparent) 26%,transparent 48%)}.brief-cover figcaption{font:13px/1.6 var(--sans);margin-top:13px;max-width:none;color:var(--band-muted);overflow-wrap:anywhere}.brief-cover-credit{display:block;margin-top:6px}
+@media(max-width:900px){.brief-cover{margin:0}.brief-cover-frame{aspect-ratio:4/3}}
+@media(max-width:600px){.brief-cover figcaption{font-size:12px;line-height:1.65}}
+@media(forced-colors:active){.brief-cover--gradient .brief-cover-frame::after{display:none}.brief-cover figcaption{color:CanvasText}}
+@media print{.brief-cover-frame{aspect-ratio:auto}.brief-cover-frame img{max-height:50mm;width:auto}.brief-cover-frame::after{display:none}}

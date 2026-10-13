@@ -241,5 +241,74 @@
         "sha256": "19232d6e3d6cb85f97128bf562c4837bee11364223c9e2af2b48f48b181b1da3"
       }
     ]
+  },
+  {
+    "id": "trident-resolve-basarnas-drone",
+    "file": "trident-resolve-basarnas-drone.jpg",
+    "width": 2000,
+    "height": 1334,
+    "alt": "Four rescue workers in orange uniforms and yellow helmets at a concrete culvert spray-marked “unstable”, beside an orange truck lettered BASARNAS; a small quadcopter drone hovers at upper right.",
+    "caption": "Personnel of BASARNAS, Indonesia’s national search and rescue agency, work at a simulated collapsed structure as a drone flies overhead during the earthquake-response drill of Exercise Trident Resolve 2026 in Banten, Indonesia.",
+    "date_note": "Photographed 21 September 2026, the date in the DVIDS caption and marked on the structure; the DVIDS record lists 20 September.",
+    "display_label": "Photograph",
+    "credit": "Sgt. 1st Class Timothy Hughes, 18th Theater Medical Command, U.S. Army · Public domain · via DVIDS",
+    "creator": "Sgt. 1st Class Timothy Hughes, 18th Theater Medical Command, U.S. Army",
+    "institution": "U.S. Army",
+    "license": "Public domain",
+    "license_url": "https://www.dvidshub.net/about/copyright",
+    "license_basis": "Marked PUBLIC DOMAIN on its DVIDS page, read on 12 October 2026, subject to the restrictions at https://www.dvidshub.net/about/copyright: no waiver of the publicity or privacy rights of people shown; insignia and marks are not licensed for commerce; non-commercial, historical and newsworthy use is authorised, and the non-endorsement notice must be displayed. Not inferred from the subject or from government authorship. Commercial or promotional reuse is an open owner decision (G3).",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "source_page": "https://www.dvidshub.net/image/9957254",
+    "source_label": "DVIDS",
+    "source_title": "US, Indonesia Co-chair Largest ASEAN Defense Ministers' Meeting (ADMM)-Plus Exercise in a Decade with the Participation of 2,200 Personnel from 19 Countries [Image 9 of 9]",
+    "dod_id": "260921-A-XH946-9505",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/2609/9957254/2000w_q95.jpg",
+    "retrieval": {
+      "rendition": "DVIDS public 2000 px rendition (2000×1334 JPEG). The 6386×4259 original requires a DVIDS sign-in and was not retrieved.",
+      "http_status": 200,
+      "content_length": 1046870,
+      "etag": "\"332233605ad9c753fd2ad0e941afdd14\"",
+      "last_modified": "Wed, 23 Sep 2026 01:38:40 GMT",
+      "user_agent": "IndoPacificRecord-editorial-review (+https://github.com/VSSpowerlifting/China-Mil-Watch)"
+    },
+    "sha256": "6e54dcd6a7e261d60359680ffc9a0fa8029399ae111421f79c7481c608a0b118",
+    "downloaded_at": "2026-10-13T02:44:06Z",
+    "note": "Native Brief No. 17 cover (proof of concept, owner selection pending). The DVIDS caption describes a multinational earthquake-response drill; the people shown are identified here only as BASARNAS personnel, from the truck lettering and uniform markings. No Chinese or Singaporean personnel are shown or implied. The retained file is the retrieved bytes, unaltered; derivatives are resized copies (scripts/build_brief_cover.py). Visual context for the Brief, not evidence for any of its claims.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": [],
+      "briefs": [
+        "trident-resolve-regional-scale-specific-chinese-tasks"
+      ]
+    },
+    "derivative_builder": "scripts/build_brief_cover.py",
+    "cover_treatment": "gradient",
+    "focal": "58% 60%",
+    "derivatives": [
+      {
+        "file": "derivatives/trident-resolve-basarnas-drone-1600.jpg",
+        "width": 1600,
+        "height": 1067,
+        "sha256": "9f7d4969b9aeb68c54e351217a16b3a72b0cde5c862c4db5adc8188159afd3e4"
+      },
+      {
+        "file": "derivatives/trident-resolve-basarnas-drone-800.webp",
+        "width": 800,
+        "height": 534,
+        "sha256": "76d3359dd571940fd439f42b3c62eedb5c0bcaf2a6967b60bb7479cc2b524d24"
+      },
+      {
+        "file": "derivatives/trident-resolve-basarnas-drone-1600.webp",
+        "width": 1600,
+        "height": 1067,
+        "sha256": "eaa5e16b2ff6ea7c0ce0c7fc122d3097f720b00cdadb42e8df798c70c1c0025f"
+      }
+    ],
+    "built_with": {
+      "pillow": "11.3.0"
+    }
   }
 ]
