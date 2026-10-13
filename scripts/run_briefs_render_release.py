@@ -120,6 +120,13 @@ def main(argv=None) -> int:
     if initial_status:
         raise SystemExit("BLOCKED: worktree must be clean before rendering")
 
+    from scripts.guard_briefs_render_scope import classify_output_changes
+    preexisting, _ = classify_output_changes(ROOT)
+    if preexisting:
+        raise SystemExit(
+            "BLOCKED: pre-existing tracked, untracked, or ignored output drift: "
+            + "; ".join(sorted(preexisting)[:20]))
+
     db_hash = _sha256(db)
     _run(sys.executable, "scripts/build_brief_cover.py", "--check")
     _run(sys.executable, "scripts/build_catalogue_media.py", "--check")
@@ -130,25 +137,37 @@ def main(argv=None) -> int:
     _assert_rendered_contract()
     _check_db_and_worktree(db_hash)
 
-    from scripts.guard_briefs_render_scope import classify_output_changes
+    from scripts.guard_briefs_render_scope import (
+        classify_output_changes, restore_unreviewed_output,
+    )
     changed, unexpected = classify_output_changes(ROOT)
-    print(f"Briefs release output deltas: {len(changed)}")
+    print(f"Briefs release output deltas before scope reconciliation: {len(changed)}")
     for path in sorted(changed):
-        print(("BLOCKED: " if path in unexpected else "REVIEWED: ") + path)
+        print(("OUT OF SCOPE: " if path in unexpected else "REVIEWED: ") + path)
+    if unexpected and args.scope == "strict":
+        print("Returning unreviewed generated routes to the committed HEAD baseline.")
+        restore_unreviewed_output(ROOT, unexpected)
+        _run(sys.executable, "scripts/validate_output.py")
+        _assert_rendered_contract()
+        _check_db_and_worktree(db_hash)
+        changed, unexpected = classify_output_changes(ROOT)
+        print(f"Briefs release output deltas after reconciliation: {len(changed)}")
+        for path in sorted(changed):
+            print(("BLOCKED: " if path in unexpected else "REVIEWED: ") + path)
+    elif unexpected:
+        print("PREVIEW ONLY: unexpected output paths are reported, not published.")
     if unexpected:
-        print("Unreviewed output drift:")
+        print("Unreviewed output drift remains after reconciliation:")
         for path in sorted(unexpected):
             print("  " + path)
         if args.scope == "strict":
-            raise SystemExit(
-                "BLOCKED: strict release scope failed; do not commit or deploy")
-        print("PREVIEW ONLY: unexpected output paths are reported, not published.")
+            raise SystemExit("BLOCKED: strict release scope failed; do not commit or deploy")
     elif not changed:
         print("No generated output changes.")
         if args.scope == "strict":
             raise SystemExit("BLOCKED: no changes to release")
     else:
-        print("Output scope is within the explicit Briefs release allow-list.")
+        print("Final output scope is within the explicit Briefs release allow-list.")
     return 0
 
 

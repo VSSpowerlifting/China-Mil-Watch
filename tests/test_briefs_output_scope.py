@@ -6,6 +6,7 @@ import unittest
 
 from scripts.guard_briefs_render_scope import (
     REVIEWED_OUTPUT_PATHS, classify_output_changes, is_reviewed_path,
+    restore_unreviewed_output,
 )
 
 
@@ -28,6 +29,44 @@ class BriefsOutputScopeTests(unittest.TestCase):
         ):
             with self.subTest(path=path):
                 self.assertFalse(is_reviewed_path(path))
+
+
+    def test_unreviewed_generated_routes_return_to_exact_baseline(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "output").mkdir()
+            (root / ".gitignore").write_text("output/hidden-preview.bin\\n", encoding="utf-8")
+            (root / "output" / "analysis.html").write_text("old reviewed", encoding="utf-8")
+            (root / "output" / "indonesia.html").write_text("old country page", encoding="utf-8")
+
+            def git(*args):
+                subprocess.run(
+                    ["git", *args], cwd=root, check=True,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                )
+
+            git("init", "-q")
+            git("config", "user.name", "test")
+            git("config", "user.email", "test@example.invalid")
+            git("add", "-A")
+            git("commit", "-qm", "baseline")
+            (root / "output" / "analysis.html").write_text("new reviewed", encoding="utf-8")
+            (root / "output" / "indonesia.html").write_text("new unreviewed", encoding="utf-8")
+            (root / "output" / "hidden-preview.bin").write_bytes(b"generated ignored file")
+
+            changed, unexpected = classify_output_changes(root)
+            self.assertIn("output/indonesia.html", unexpected)
+            self.assertIn("output/hidden-preview.bin", unexpected)
+            restore_unreviewed_output(root, unexpected)
+
+            remaining, remaining_unexpected = classify_output_changes(root)
+            self.assertEqual(remaining, {"output/analysis.html"})
+            self.assertEqual(remaining_unexpected, set())
+            self.assertEqual(
+                (root / "output" / "indonesia.html").read_text(encoding="utf-8"),
+                "old country page",
+            )
+            self.assertFalse((root / "output" / "hidden-preview.bin").exists())
 
     def test_guard_sees_tracked_and_ignored_untracked_output(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -1,4 +1,4 @@
-"""Fail closed on unrelated output drift in the Briefs presentation release.
+"""Audit output scope for the Briefs presentation release.
 
 This allow-list covers Phase 3C's historical article shells, native Brief pages,
 the catalogue, and the individually approved No. 17 cover assets only. A Pages
@@ -70,6 +70,43 @@ def classify_output_changes(root: Path) -> tuple[set[str], set[str]]:
     )
     return changed, changed - REVIEWED_OUTPUT_PATHS
 
+
+
+def restore_unreviewed_output(root: Path, paths) -> list[str]:
+    """Return every unreviewed generated path to the exact HEAD baseline.
+
+    Tracked paths are restored from HEAD. Newly generated, untracked or ignored
+    files are removed. This is safe only in the release workflow's clean CI
+    checkout: classify_output_changes is checked before rendering to prove no
+    pre-existing output drift is being discarded. No allow-list is widened.
+    """
+    import shutil
+
+    root = Path(root).resolve()
+    restored = []
+    for rel in sorted(set(paths)):
+        parts = Path(rel).parts
+        if not rel.startswith("output/") or not parts or parts[0] != "output" or ".." in parts:
+            raise ValueError("refusing to restore a path outside output/: " + repr(rel))
+        target = root / rel
+        tracked = subprocess.run(
+            ["git", "ls-files", "--error-unmatch", "--", rel],
+            cwd=root, capture_output=True, text=True,
+        )
+        if tracked.returncode == 0:
+            subprocess.run(
+                ["git", "restore", "--source=HEAD", "--worktree", "--", rel],
+                cwd=root, check=True,
+            )
+            print("RESTORED TO HEAD BASELINE: " + rel)
+        else:
+            if target.is_symlink() or target.is_file():
+                target.unlink()
+            elif target.exists():
+                shutil.rmtree(target)
+            print("REMOVED GENERATED UNTRACKED PATH: " + rel)
+        restored.append(rel)
+    return restored
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)

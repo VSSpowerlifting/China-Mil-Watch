@@ -52,6 +52,7 @@ class BriefsRenderReleaseContract(unittest.TestCase):
         self.assertLess(stage, push)
         self.assertLess(push, deploy)
         self.assertIn("python -m scripts.guard_briefs_render_scope", text)
+        self.assertIn("restore_unreviewed_output", text)
 
     def test_preview_uploads_artifact_and_does_not_commit_or_deploy(self):
         text = self.workflow
