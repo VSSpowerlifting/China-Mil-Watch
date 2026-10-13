@@ -281,6 +281,29 @@ def validate_brief(sidecar: Mapping, registry, *,
                         % ", ".join(EDITORIAL_STATUSES))
     approved = status == STATUS_APPROVED
 
+    # Optional, individually attributed research credit. It never changes
+    # the author byline, citation, corpus status or publication approval.
+    credit = sidecar.get("research_contributor")
+    if credit is not None:
+        fields = {"name", "title", "bio", "linkedin"}
+        if not isinstance(credit, Mapping) or set(credit) != fields:
+            problems.append("research_contributor needs name, title, bio and linkedin")
+        else:
+            for field, limit in (("name", 120), ("title", 120), ("bio", 360)):
+                value = credit[field]
+                if (not isinstance(value, str) or not value.strip()
+                        or value != value.strip() or len(value) > limit):
+                    problems.append("research_contributor.%s is invalid" % field)
+            link = credit["linkedin"]
+            parsed = urlsplit(link) if isinstance(link, str) else urlsplit("")
+            if (not isinstance(link, str) or len(link) > 350
+                    or parsed.scheme != "https"
+                    or parsed.hostname not in ("www.linkedin.com", "linkedin.com")
+                    or not parsed.path.startswith("/in/") or parsed.path == "/in/"
+                    or parsed.username or parsed.password or parsed.port is not None
+                    or parsed.query or parsed.fragment):
+                problems.append("research_contributor.linkedin must be a LinkedIn HTTPS profile")
+
     if _text(sidecar.get("title")).lower().startswith(SERIES_NAME.lower()):
         problems.append("the title begins %r; no new issue is published as %s"
                         % (SERIES_NAME, SERIES_NAME))
