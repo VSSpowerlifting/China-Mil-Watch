@@ -62,6 +62,7 @@ import hashlib
 import html as _html
 import json
 import os
+import re
 import shutil
 import sys
 from collections import Counter, defaultdict
