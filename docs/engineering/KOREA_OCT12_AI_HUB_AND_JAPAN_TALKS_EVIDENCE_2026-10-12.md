@@ -37,6 +37,40 @@ human-checkable leads, not a machine-approved English synopsis.
   Several reporters describing a ministry ceremony provide evidence of the
   event, not independent verification of the ministry's future capabilities.
 
+### October 12 within-day source chronology and Korean modality check
+
+The first-party [MND regular briefing for October 12](https://www.korea.kr/briefing/policyBriefingView.do?newsId=156784863)
+states, in **future tense**, that the minister would attend the Pangyo AX
+opening that afternoon. By **15:55 KST**, [Yonhap's October 12 report](https://en.yna.co.kr/view/AEN20261012006500315)
+described the opening as having taken place, on the ministry's account.
+The [October 12 MND press text, as surfaced in the government's
+MND-filtered portal listing](https://m.korea.kr/briefing/pressReleaseView.do?newsId=156784873&pWiseMinistry=ministryNews&repCode=A00005&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80%EC%B2%98)
+uses completed-event language for the Pangyo ceremony and prospective
+language for the network's remaining locations and use cases. This
+within-day sequence strengthens the factual *opening-event* characterization,
+but does not show an already operational robotics fleet or audited attendance.
+
+The Korean publisher language distinguishes **the opened Army Pangyo
+physical-AI location**, for which Ajou University is identified as the
+lead institution, from **plans** for the Yongsan, Daejeon, Busan and
+Yangjae locations. It also describes data collection, training models
+for humanoid/multi-legged robots, and future hazardous-area logistics,
+explosive-ordnance disposal, CBRN reconnaissance and mine removal as
+*intended work and anticipated benefits*. The cited figure of roughly
+**150 attendees** is the ministry's ceremony estimate, not an
+independently audited count. All these are **provisional original-Korean
+inline-HTML readings**, not an archived-HWPX comparison or an independent
+Korean-human signed translation. The search reader could access the
+first-party indexed body but not consistently reopen its exact page; that
+availability difference is recorded, not normalized into a successful
+Actions-run capture.
+
+Do not treat the morning briefing, the afternoon ministry press release
+and the Yonhap report based on the ministry as three independently
+proved engineering outcomes. They corroborate sequence/occurrence to
+different degrees, not deployed capability. Do not duplicate their
+photographs or source bodies in IPR.
+
 ### Forward-looking vs observed
 
 The Korean Ministry's **October 7** AX-hub explanatory page:
@@ -89,6 +123,35 @@ using that number in a published IPR analytical Brief.
 - The original HWPX byte hash, actual HWPX text extraction, original release
   timestamp and publisher/capture parity remain **pending scheduled shadow
   collection evidence**.
+
+### October 9 reporting precedes October 12 portal republication
+
+An additional [original-language Yonhap report, transmitted **October
+9 at 17:29 KST**](https://www.yna.co.kr/amp/view/AKR20261009050500504)
+reports the vice-ministerial discussion and a courtesy call on
+Minister Koizumi, attributing these details to South Korea's
+Ministry of National Defense. [Yonhap's English dispatch, October 9
+18:07 KST](https://en.yna.co.kr/view/AEN20261009005300315)
+similarly attributes the account to Seoul's ministry. The independent
+Japanese MOD notice is also dated **October 9**, while the
+Korean Policy Briefing portal displays **October 12**. This creates
+three distinct clocks: **meeting October 9**, **contemporaneous
+official/press reporting by October 9**, and **portal republication
+October 12**. It strongly cautions against treating October 12
+as the day of a *new* bilateral meeting. The `261009` HWPX filename
+prefix is consistent with early circulation but still does not prove the
+original file's distribution timestamp or its archived bytes.
+
+The [Japanese-language Japan MOD account](https://www.mod.go.jp/j/approach/exchange/area/2026/20261009_kor-j.html)
+uses Ando's Japanese title `防衛審議官`, while Japan MOD's
+[official English edition](https://www.mod.go.jp/en/article/2026/10/7d50c715c848925cd5d115bad503a4538516bcf2.html)
+renders the role as `Vice Minister`. Preserve this
+institution-specific title difference when drafting an English
+synopsis rather than presuming identical titles/positions across
+the two ministries. Yonhap is independent journalism but its
+details are expressly ministry-attributed, **not independent
+verification of the contents of an HWPX or a signed bilateral
+agreement**. Its text/photos are not authorized for republication.
 
 ### Second-government corroboration and statement-level attribution
 
