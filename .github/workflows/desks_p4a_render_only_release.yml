@@ -26,6 +26,23 @@ permissions:
 
 jobs:
   contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test exact release paths and provenance (draft-safe)
+        run: python -m unittest tests.test_desks_p4a_release_contract -v
+
+  rehearsal:
+    needs: contract
+    # The build depends on the Phase 4A source and licensed flag assets
+    # joining main first. A draft PR can verify all code contracts now.
     if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -39,8 +56,6 @@ jobs:
           cache: pip
       - name: Install existing build dependencies
         run: pip install -r requirements.txt
-      - name: Test exact release paths and provenance
-        run: python -m unittest tests.test_desks_p4a_release_contract -v
       - name: Rehearse isolated Desks build and stage with no publication
         run: |
           set -euo pipefail
