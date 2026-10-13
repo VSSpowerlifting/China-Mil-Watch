@@ -97,6 +97,22 @@ def main() -> int:
                     reduced_motion="reduce",
                 )
                 forced.goto((destination / "desks.html").as_uri(), wait_until="load")
+                sample = forced.evaluate("""() => {
+                    const fill = sel => getComputedStyle(document.querySelector(sel)).fill;
+                    const reset = getComputedStyle(document.querySelector('.deskmap-reset'));
+                    return {
+                        canvas:fill('.dm-sea'),
+                        live:fill('.dm-country.is-live use'),
+                        quiet:fill('.dm-country.is-quiet use'),
+                        buttonText:reset.color,
+                        buttonBackground:reset.backgroundColor
+                    };
+                }""")
+                receipts.append({"mode":"forced-colors", "sample":sample})
+                if sample["canvas"] != sample["live"] or sample["canvas"] != sample["quiet"]:
+                    failures.append("forced colours: country fills obscure the map")
+                if sample["buttonText"] == sample["buttonBackground"]:
+                    failures.append("forced colours: selected desk button text invisible")
                 forced.locator("figure.deskmap").screenshot(
                     path=str(OUT / "desks-forced-colors-375.png")
                 )
