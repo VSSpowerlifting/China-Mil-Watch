@@ -173,12 +173,29 @@ class SourceLinkedTests(unittest.TestCase):
         self.assertIn("Lead Research Analyst", html)
         self.assertIn("Vietnam Research Desk", html)
         self.assertIn('href="mailto:dt822@georgetown.edu"', html)
-        self.assertIn("Benjamin Yang and Dylan Tanzi, “What Is Being Built in Laos?”", html)
+        self.assertIn("Benjamin Yang and Dylan Tanzi, “What Is Being Built in Laos?,”", html)
         entry = brief_collection.brief_entry("fixture", self.value)
         self.assertEqual(entry["author_name"], "Benjamin Yang and Dylan Tanzi")
         self.assertEqual(entry["author_names"], ["Benjamin Yang", "Dylan Tanzi"])
         self.assertNotIn("0 cited records", html)
         self.assertNotIn("EDITORIAL STATUS", html)
+
+    def test_source_linked_coauthor_credit_is_validated_narrowly(self):
+        # A longer co-author biography is valid only with the explicit,
+        # owner-reviewed source-linked credit role; no other free-form keys.
+        self.assertEqual(brief_contract.validate_brief(self.value, self.registry), [])
+        for field, value in (("email", "javascript:alert(1)"),
+                             ("credit_role", "authorish"),
+                             ("bio", "x" * 701)):
+            changed = copy.deepcopy(self.value)
+            changed["research_contributor"][field] = value
+            self.assertTrue(brief_contract.validate_brief(changed, self.registry))
+        changed = copy.deepcopy(self.value)
+        changed["research_contributor"]["unexpected"] = "not allowed"
+        self.assertTrue(brief_contract.validate_brief(changed, self.registry))
+        changed = copy.deepcopy(self.value)
+        changed.pop("evidence_type")
+        self.assertTrue(brief_contract.validate_brief(changed, self.registry))
 
     def test_other_briefs_keep_single_author_presentation(self):
         value = copy.deepcopy(self.value)
