@@ -70,7 +70,7 @@ class IndonesiaEditorialEvidence(unittest.TestCase):
         self.assertFalse(packet["source_candidates"][0]["original_body_independently_human_verified"])
 
     def test_outside_october_week_does_not_replay_research(self):
-        self.assertEqual(load_indonesia_writer_sources("2026-10-17", "2026-10-16"), [])
+        self.assertEqual(load_indonesia_writer_sources("2026-10-24", "2026-10-23"), [])
         self.assertEqual(load_indonesia_writer_sources("2026-10-03", "2026-10-02"), [])
         with self.assertRaisesRegex(ValueError, "restricted"):
             load_indonesia_writer_sources("2026-10-10", "2026-10-08")
