@@ -476,21 +476,28 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
         self.assertNotIn("desk--live", block)
         self.assertIn("Hanoi", block)
 
-    def test_only_a_side_hung_tablet_plate_is_narrowed(self):
-        """At tablet width plates hang into the bands above and below the map;
-        a plate hung sideways instead sits on the map and must be narrowed.
-        The class follows the geography file, not a slug."""
+    def test_tablet_directory_uses_all_desk_plates_at_full_width(self):
+        """Phase 4A uses a responsive register rather than side-hung cards.
+
+        Geography still records Vietnam's side-oriented tablet leader, but
+        no mapped plate receives the legacy narrow-width class at 760–1100px.
+        Keeping that class would trigger support.css's old 25% width rule
+        and make the entry unreadable inside the new register.
+        """
         import json
         places = json.loads((MANIFESTS / "geography.json")
                             .read_text(encoding="utf-8"))["desks"]
         side = {slug for slug, place in places.items()
                 if place["card"]["mid"]["hang"] in ("left", "right")}
+        self.assertEqual(side, {"vietnam"})
         html = self.page("desks.html")
         narrowed = {slug for cls, slug in re.findall(
             r'<section class="([^"]*\bdeskmap-plate\b[^"]*)"[^>]*data-desk="([^"]+)"', html)
             if "is-mid-side" in cls.split()}
-        self.assertEqual(narrowed, side)
-        self.assertEqual(narrowed, {"vietnam"})
+        self.assertFalse(narrowed)
+        css = (REPO_ROOT / "site/preview/desk-map.css").read_text(encoding="utf-8")
+        self.assertIn(".deskmap-register{grid-template-columns:repeat(2", css)
+        self.assertIn(".deskmap-plate{position:relative", css)
 
 
 class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):
