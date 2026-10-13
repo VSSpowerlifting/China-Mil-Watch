@@ -60,7 +60,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertNotIn("python site/render.py\n", text)
         self.assertIn('"scripts/stage_country_research_output.py"', text)
         self.assertIn('"tests/test_stage_country_research_output.py"', text)
-        self.assertIn("tests.test_stage_country_research_output -v", text)
+        self.assertIn("tests.test_stage_country_research_output", text)
 
         # No write to the checked-in tree may precede the isolated build or
         # allowlist-only staging. The whole output is validated afterwards.
