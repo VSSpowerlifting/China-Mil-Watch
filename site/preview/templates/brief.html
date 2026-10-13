@@ -262,7 +262,7 @@
     </section>
 
     {% if brief.research_contributor %}
-    <section class="brief-author" aria-label="{{ 'Co-author' if brief.research_contributor.credit_role == 'co-author' else 'Research contributor' }}">
+    <section class="brief-author" {% if brief.research_contributor.credit_role == 'co-author' %}aria-label="Co-author"{% else %}aria-label="Research contributor"{% endif %}>
       <p class="brief-author-label">{{ 'Co-author' if brief.research_contributor.credit_role == 'co-author' else 'Research contributor' }}</p>
       <p class="brief-author-name">{{ brief.research_contributor.name }}</p>
       <p class="brief-author-title">{{ brief.research_contributor.title }}</p>
