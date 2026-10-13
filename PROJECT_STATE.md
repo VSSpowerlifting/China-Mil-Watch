@@ -30,15 +30,18 @@ review is noindex/unnumbered; production withholds the draft. **The owner separa
 evidence/anatomy exception on 2026-10-13**, bound to revised candidate
 fingerprint `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
 The decision is recorded in doctrine, `DECISION_LOG.md` and the candidate's
-`policy_ruling`. **This is not a human source/rights attestation.**
-The seven-source/eleven-paragraph matrix, verification limits and release
-procedure are in `docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. No source/body
-imagery redistribution, database, desk-status, collection, paid-model or
-scheduled-workflow changes. The **remaining substantive release gate** is
-actual human acceptance of the original-language source/claim/limited-use
-review, including indexed MOD and Reuters syndicated verification routes,
-plus authorship, exact-manuscript and rendered-page checks. New exact-head
-CI and ordinary authorized approval/numbering/deployment follow that signoff.
+`policy_ruling`. **The owner additionally and expressly accepted the seven-source/claim/
+limited-use assessment, revised manuscript, and rendered page on 2026-10-13.**
+That actual human confirmation is [recorded on PR #485](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619),
+and the candidate's `editorial_review` binds all seven checks to the same
+fingerprint. The known Reuters-syndication/MOD indexed-source limitations remain
+explicit rather than being represented as new primary-source inspections.
+The source matrix and release procedure are in
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. No source/image reuse, database,
+desk-status, collection or paid workflow was authorized by editorial signoff.
+**Remaining operations:** canonical locked issue numbering and approval,
+regenerated public output, full exact-head CI, merge, output-only deployment
+and live-site verification. Until then the article remains unnumbered and unpublished.
 
 Brief release approval was received 2026-10-05; its candidate,
 authorization recovery and QA evidence are in
