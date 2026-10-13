@@ -1,0 +1,54 @@
+{
+  "protocol": "ipr_indonesia_week42_nonproduction_research_v1",
+  "week_start": "2026-10-11",
+  "reporting_friday": "2026-10-16",
+  "week_ending": "2026-10-17",
+  "status": "source_verified_analyst_research_without_human_approval",
+  "source_scope": "Indonesia Ministry of Defense original-language Kemhan Berita; NOT a production desk",
+  "shadow_state_branch": "shadow/indonesia-kemhan",
+  "shadow_state_commit": "43d9bc7bc94dcb0e257866e0f24e1ce404e98149",
+  "shadow_run_id": "38323090522-1",
+  "shadow_ledger_path": "state/ledger/20261012T233845.700831+0000-38323090522-1.json",
+  "source_candidates": [
+    {
+      "candidate_id": "ID-W42-01",
+      "institution": "Kementerian Pertahanan Republik Indonesia",
+      "source_family": "Kemhan Berita",
+      "source_language": "id",
+      "publisher_date": "2026-10-12",
+      "event_date": "2026-10-11",
+      "title": "Menhan Dampingi Presiden Dalam Pertemuan Bilateral dengan Presiden Republik Arab Mesir",
+      "public_source_url": "https://www.kemhan.go.id/2026/10/12/menhan-dampingi-presiden-dalam-pertemuan-bilateral-dengan-presiden-republik-arab-mesir.html",
+      "captured_response_sha256": "f43c2bc45be28b41b3ab798df2da4e59553f4280b886032f1c9170e58f71184b",
+      "original_text_sha256": "3475c65c11e5ea7fbee196a435865e9b9ecfb422d2ef88658a1af9efe303393e",
+      "evidence_representation": "analyst_paraphrase_of_official_original_not_an_archived_body_in_prompt",
+      "source_comparison_url": "https://www.setneg.go.id/baca/index/pertemuan_presiden_prabowo_dan_presiden_el_sisi_hasilkan_empat_kesepakatan_kerja_sama",
+      "provisional_claims": [
+        "Indonesia's Ministry of Defense reported that Defense Minister Sjafrie Sjamsoeddin accompanied President Prabowo Subianto at the October 11 bilateral meeting in Jakarta with Egyptian President Abdel Fattah El-Sisi; Kemhan published its account on October 12.",
+        "Kemhan reported discussions of strengthened Indonesia–Egypt defense-industry cooperation, military education and training, and exchanges of expertise. This is the ministry's account of intended cooperation, not proof of a separately signed defense-industry instrument or procurement."
+      ],
+      "caveats": [
+        "The bilateral meeting occurred October 11; the Kemhan publication is dated October 12. Do not collapse event and publication dates.",
+        "The Indonesian State Secretariat separately enumerated four announced agreements in foreign-affairs planning, diplomatic/service passports, statistics, and marine/fisheries cooperation; its enumerated list does not contain a separate defense-industry MOU.",
+        "The president's broader remarks mentioned defense industry, but neither checked government account establishes a separate signed defense procurement contract, disbursement, delivery or operational milestone.",
+        "The ministry and State Secretariat are distinct governmental publishers discussing the same event, not independent field verification of any future defense cooperation outcome.",
+        "The photograph is credited to BPMI Setpres; no article body, third-party photo or translated article is licensed for public republication by this source packet.",
+        "Dylan must independently compare the Indonesian originals, exact claims, context and source-use restrictions before any public Brief uses this provisional evidence."
+      ],
+      "shadow_record_id": null,
+      "production_record_id": null,
+      "original_body_independently_human_verified": false,
+      "source_admission_approved": false,
+      "editorial_inclusion_approved": false,
+      "source_reuse_cleared": false
+    }
+  ],
+  "editorial_handling": {
+    "may_offer_to_single_provisional_ai_call": true,
+    "requires_two_live_production_desks": true,
+    "section_citations_must_keep_separate_namespace": true,
+    "independent_human_verification_before_publication": true,
+    "never_counts_as_live_desk": true,
+    "never_modify_production_database": true
+  }
+}
