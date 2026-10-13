@@ -217,8 +217,8 @@ class SourceLinkedTests(unittest.TestCase):
             self.assertIn("Source-linked editorial analysis", catalog.rows[0]["provenance"])
             feed = brief_collection.build_briefs_feed(catalog.briefs, origin="https://example.org")
             self.assertIn("https://example.org/briefs/fixture.html", feed)
-            self.assertIn("    <author><name>Benjamin Yang</name></author>\\n"
-                          "    <author><name>Dylan Tanzi</name></author>".replace("\\\\n", "\\n"), feed)
+            self.assertIn("    <author><name>Benjamin Yang</name></author>\n"
+                          "    <author><name>Dylan Tanzi</name></author>", feed)
             self.assertNotIn("<name>Benjamin Yang and Dylan Tanzi</name>", feed)
             self.assertEqual(manuscript_html_errors(value, self.render(value)), [])
             value["editorial_review"] = None
