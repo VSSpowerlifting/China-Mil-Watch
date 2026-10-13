@@ -47,6 +47,36 @@ class Phase4AReleaseContract(unittest.TestCase):
             with self.assertRaises(ValueError):
                 stage(src, src)
 
+    def test_sparse_overlay_preserves_live_country_and_editorial_routes(self):
+        # Simulate the real case: gh-pages:indonesia.html is newer than the
+        # tracked output/ version, so a full publish would regress it.
+        untouched = {
+            "indonesia.html": b"approved newer live bibliography",
+            "analysis.html": b"published Briefs incl No.18",
+            "index.html": b"existing homepage",
+            "korea.html": b"reviewed five-reference Korea page",
+            "briefs.css": b"existing Briefs styling",
+            "briefs/no-18.html": b"unrelated editorial file",
+        }
+        with tempfile.TemporaryDirectory(prefix="desks-pages-overlay-") as tmp:
+            root = Path(tmp)
+            source, live = root / "staged", root / "gh-pages"
+            for rel in REVIEWED_PATHS:
+                file = source / rel.removeprefix("output/")
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_bytes(rel.encode("utf-8"))
+            for path, content in untouched.items():
+                file = live / path
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_bytes(content)
+            (live / "desks.html").write_bytes(b"old map")
+            names = stage(source, live)
+            self.assertEqual(len(names), 11)
+            for path, content in untouched.items():
+                self.assertEqual((live / path).read_bytes(), content, path)
+            self.assertEqual((live / "desks.html").read_bytes(),
+                             b"output/desks.html")
+
     def test_owner_sha_pin_and_manual_only_publication(self):
         text = WF.read_text(encoding="utf-8")
         self.assertIn("workflow_dispatch:", text)
