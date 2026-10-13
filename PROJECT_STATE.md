@@ -17,9 +17,13 @@ or rendering), with evidence in
 **Laos Brief (12 October 2026, unpublished release candidate):** the owner
 conditionally authorized engineering, eligible merges and editorial deployment
 in the current release chat. Contributor support #480 passed exact-head CI and
-merged as `579d3f3db`. The frozen DOCX hash is `54ede479…89b26`; its 11
-paragraphs and seven inline source links are preserved in the canonical draft
-`briefs/what-is-being-built-in-laos.json`. An opt-in publisher-linked narrative
+merged as `579d3f3db`. The original publication-candidate DOCX
+SHA-256 was `54ede479…89b26`. On October 13 the owner approved a **single
+paragraph 1 clarification** (no event-coordination proof claim); the revised
+DOCX SHA-256 is `43ec5cc4…d0c1`. All eleven paragraphs and seven inline source
+link associations, apart from that precisely documented sentence substitution,
+remain intact in `briefs/what-is-being-built-in-laos.json`. The release
+fingerprint has accordingly changed; see the revised source-review dossier. An opt-in publisher-linked narrative
 variant uses the existing Brief collection, shell, approval numbering and
 catalog/feed/sitemap integration without corpus IDs or desk coverage. Private
 review is noindex/unnumbered; production withholds the draft. No human
