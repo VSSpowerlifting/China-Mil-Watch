@@ -2743,7 +2743,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             # at the start of lines whose next token is an HTML/SVG tag.
             # The newline remains intact: text spacing and all SVG path
             # coordinates are preserved, and other pages are untouched.
-            page_html = re.sub(r"(?m)^[ \\t]+(?=<)", "", page_html)
+            page_html = re.sub(r"(?m)^[ \t]+(?=<)", "", page_html)
         (out_dir / target).write_text(page_html, encoding="utf-8")
         written.append(target)
 
