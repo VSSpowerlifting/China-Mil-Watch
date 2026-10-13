@@ -4,6 +4,12 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Phase 3C source integration; publication pending
+
+Merged integration PR #492 put Phase 3C's article presentation and the No. 17 DVIDS cover implementation into `main` at `22627423c83e7a20ca9b035c9410a3b4d512a8eb`. The combined full `PR offline checks` run #38349385797 passed. PR #489 was closed as superseded after its implementation was verified in the integration merge; it was not merged separately.
+
+This was a source integration, **not a publication**. Tracked `output/` and `gh-pages` remain at the pre-Phase-3C article presentation, and the No. 17 cover is not live. PR #493 proposes a manual, exact-main-SHA release workflow with preview-only default. It renders the historical Briefs and current IPR site, validates the result and database immutability, restores out-of-scope generated pages to their committed baseline, and permits only the explicit Briefs/No. 17 output allow-list into a publish. The preview artifact is not the live site. Do not use the output-only deploy workflow until reviewed generated output has been committed.
+
 ## 2026-10-13 — Brief cover photography: standing policy
 
 Owner direction for native Brief covers from No. 17 on. The rules are in
