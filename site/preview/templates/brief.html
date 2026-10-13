@@ -233,6 +233,16 @@
       {% endif %}
     </section>
 
+    {% if brief.research_contributor %}
+    <section class="brief-author" aria-label="Research contributor">
+      <p class="brief-author-label">Research contributor</p>
+      <p class="brief-author-name">{{ brief.research_contributor.name }}</p>
+      <p class="brief-author-title">{{ brief.research_contributor.title }}</p>
+      <p class="brief-author-bio">{{ brief.research_contributor.bio }}</p>
+      <ul class="brief-author-links"><li><a href="{{ brief.research_contributor.linkedin }}" rel="noopener noreferrer">LinkedIn</a></li></ul>
+    </section>
+    {% endif %}
+
     <section class="brief-section" id="s-cite" aria-labelledby="h-cite">
       <h2 id="h-cite">Cite this brief</h2>
       <div class="ed-cite brief-cite">

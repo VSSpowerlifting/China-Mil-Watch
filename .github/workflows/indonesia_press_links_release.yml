@@ -55,9 +55,9 @@ jobs:
           from core.indonesia_press_index import load as press_links
           html = Path("output/indonesia.html").read_text(encoding="utf-8")
           soup = BeautifulSoup(html, "html.parser")
-          news = soup.select('ol[aria-label="Eight external ministry news links"] a')
+          news = soup.select('ol[aria-label="Twelve external ministry news links"] a')
           press = soup.select('ol[aria-label="Two external ministry press release links"] a')
-          assert len(news) == 8 and len(press) == 2
+          assert len(news) == 12 and len(press) == 2
           assert [a["href"] for a in news] == [r["source_url"] for r in news_links()]
           assert [a["href"] for a in press] == [r["source_url"] for r in press_links()]
           assert all(a.get("lang") == "id" for a in news+press)
@@ -138,11 +138,11 @@ jobs:
           assert d["manifest"] is None and d["has_production_records"] is False
           html = Path("output/indonesia.html").read_text(encoding="utf-8")
           soup = BeautifulSoup(html, "html.parser")
-          news = soup.select('ol[aria-label="Eight external ministry news links"] a')
+          news = soup.select('ol[aria-label="Twelve external ministry news links"] a')
           press = soup.select('ol[aria-label="Two external ministry press release links"] a')
           assert [a["href"] for a in news] == [x["source_url"] for x in news_links()]
           assert [a["href"] for a in press] == [x["source_url"] for x in press_links()]
-          assert len(news) == 8 and len(press) == 2
+          assert len(news) == 12 and len(press) == 2
           assert "Shadow evaluation — no public corpus records" in html
           assert "No individual source references have completed" in html
           assert "data-reference-list" not in html

@@ -1,0 +1,51 @@
+# Japan MOD August 28 archived PDFs — all-page visual source review (2026-10-12)
+
+**Verdict: original page structure and content boundaries reviewed for all three publisher-served August 28 PDFs; exact archived text-byte parity, photo/map rights, publisher exceptions, formal qualification and production/model use remain HOLD.** This is metadata-only research; no official PDF/HTML text, screenshots, photographs, cartographic data or original bytes are reproduced in this repository.
+
+## What was independently inspected
+
+On October 12, 2026, directly opened the three exact [MOD press-notice index](https://www.mod.go.jp/j/press/news/) PDF originals in the independent first-party PDF reader and inspected **all their rendered pages**:
+
+- [`2026/08/28a.pdf`](https://www.mod.go.jp/j/press/news/2026/08/28a.pdf): **1 page**, Japanese Ministry of Defense earthquake-recovery response infographic.
+- [`2026/08/28b.pdf`](https://www.mod.go.jp/j/press/news/2026/08/28b.pdf): **3 pages**, August 28 umbrella notice + two U.S.–Japan Joint Committee temporary-use matters.
+- [`2026/08/28f.pdf`](https://www.mod.go.jp/j/press/news/2026/08/28f.pdf): **5 pages**, August 28 umbrella notice + three Joint Committee *matters* across five facility identities.
+
+All pages have been visually opened and read with their original-language tables/maps, not just machine-readable text. The independent reader did not provide/download exact original PDF bytes, current source SHA-256, archive capture SHA, or the pinned `shadow_records` text for direct character alignment. Prior archived metadata in the [five-PDF dossier](JAPAN_MOD_FIVE_PDF_DOCUMENT_REVIEW_2026-10-12.md) remains the source of each historical `content_sha256`. **Do not equate reader page access with a compliant GitHub Actions collector's access, raw-byte custody, exact content-hash equivalence or a legal permission ruling.**
+
+## 28a: one-page infographic, photo/media exception
+
+- The original PDF has **no internal exact day**: masthead says **August 2026 (令和８年８月)**. The *publisher index date* is **Aug 28**; those must remain distinct.
+- It is fundamentally a **visually designed single page** about response/recovery following the 2026 Kumamoto earthquake, incorporating **six source photographs**: water supply, bathing, rescue, logistical transport, a private ship, and shipboard bathing/support.
+- It states two separate **approximate budget categories**: disaster personnel-related allowances around **¥130 million** and privately operated ship costs around **¥320 million**. This is the government infographic's presented **planned/secured resources**, not independent proof of actual payments, final incurred costs or vessel operating expenditure.
+- Previously archived `jp_mod_news_ja` machine text length is **232 Japanese characters**. Even full literal extraction would **not** capture the six visual disclosures or establish rights for people, photographers, private maritime contractors or third-party imagery. **HOLD whole-PDF completeness, photo custody and model-image use**. A text-only, accurate index-to-original-date-labelled source candidate is conceptually distinct from the entire document.
+
+## 28b: August 28 publication, two independently dated exercise-use matters
+
+| Original PDF page | Matter in this **one** publisher notice | Date and source-fidelity constraints | Graphic/media boundary |
+| --- | --- | --- | --- |
+| **1** | Aug 28 MOD `お知らせ` announcing the Hamamatsu matter **and one more** | Release date **Aug 28**, not the annexes' different Joint Committee approval date. | Cover without map. |
+| **2** | **Hamamatsu Air Base / FAC 3193**, Shizuoka; partial temporary facility use for the U.S.–Japan–Korea joint training **Freedom Edge 26** | Annex records **Aug 18** approval; about **600,000 m² land** and portions of three buildings **~220 m²**; stated **Sept 4–11** use window plus any necessary deployment/recovery time. **Temporary authorized use, not new construction.** | Complex hatched airfield land and building schematic; cannot be reconstructed from Japanese text alone. |
+| **3** | **Tsuiki Air Base / FAC 5121**, Fukuoka; **additional** temporary building use for the same named training | Annex also records **Aug 18** approval; **part of one building ~20 m²**; **Sept 7–11** stated usage plus deployment/recovery where needed. The annex's location field itself prints **福岡県春日市 (Kasuga City)**; preserve that exact issuer-stated location in original-bound records and **seek publisher clarification** before editorial normalization to a different air-base municipality. Do not silently “correct” an official source field. | Site plan with hatched building corner and bilingual legend; not a captured image record. |
+
+**Date taxonomy:** a single **Aug 28 publication** contains two matters approved **Aug 18**, with distinct subsequent September use periods. Their associated training labels are **publisher-stated intended uses**, not independent attestation that the exercise took place on all scheduled days. Earlier preliminary documents identified Tsuiki and Hamamatsu but did not verify every page/map and internal annex period.
+
+## 28f: five pages, three matters and a real issuer enumeration defect
+
+| Original PDF page | Publisher-origin matter | Dates, volume and structural interpretation | Visual and rights hold |
+| --- | --- | --- | --- |
+| **1** | Aug 28 `お知らせ` cover identifies the **Camp Kuwae / Camp Zukeran / Makiminato** joint-use matter **and two others** | This is **one umbrella publisher release**; five FAC site identities across annexes do **not** mean five independent releases. | Cover, no map. |
+| **2** | First matter, **Yama Sakura 91** joint training: **FAC 6043 Camp Kuwae**, **FAC 6044 Camp Zukeran**, and **FAC 6056 Makiminato Service Area** | Underlying approval **Aug 6**; Camp Kuwae land ~**1,800 m²**, Camp Zukeran land ~**5,700 m²** plus a building ~**1,100 m²**, Makiminato land ~**3,100 m²** plus a building ~**6,900 m²**. Actual shared use is scheduled **Aug 29–Sept 10**. | Plan outlines Kuwae zone. Page's descriptive table starts a matter spanning several FACs. |
+| **3** | Continuation of **the same first matter** for Camp Zukeran and Makiminato | Publisher's sub-item labels visibly progress **(1), (2), (4)**, apparently skipping **(3)**. This is a **source-original enumeration anomaly**; preserve original labels and **do not invent a fourth matter**, missing site, or corrected source text. | **Two substantial maps** for Zukeran and Makiminato, with different hatching legends and location callouts. |
+| **4** | Second matter: **FAC 6064 Naha Port Facility** joint use for **Yama Sakura 91** | **Aug 6** approval, **~1,900 m² land** and **Aug 29–Sept 10** joint-use window. This is authorization for shared use, not a finished infrastructure project. | Detailed Naha port site plan. |
+| **5** | Third matter: **FAC 6048 White Beach Area**, Okinawa | **Aug 18** approval; **~14,000 m²** land for Japanese Self-Defense Forces survey into possible access-road works to Katsuren. Usage period defined **from authorization until the survey ends**—**no fixed end date** printed here. This is survey access approval, **not proof that access-road construction is completed**. | Detailed base/map with marked survey zone. |
+
+The **publisher's own enumeration discontinuity** makes automatic splitting by printed `(n)` headings unsafe. The first annex relates to **three named FAC sites**, spans two PDF pages, and is **one** agreement matter. Pages 4–5 are two more matters. August 6/18 were **approval dates**, not dates this PDF was released (August 28) or the start/end of all training. Do not treat the August 28 printed heading `日米合同委員会合意について` as an identity key without its exact canonical PDF URL: other original documents share the same title.
+
+## Archive, rights and promotion disposition
+
+- **Resolved:** a bounded, current **full visual page-presence** inventory for these **three** first-party originals. The separate [August 27 all-page review](JAPAN_MOD_AUG27B_ELEVEN_PAGE_ORIGINAL_REVIEW_2026-10-12.md), under PR #476, handles the fourth publicly reader-accessible August original. Together those reviews move the original-document **render inspection** gate forward, but **not** complete archive extraction verification.
+- **Not resolved:** the historical shadow's **232, 929 and 1,403 Japanese extracted characters** have **not** been aligned byte-for-byte/page-for-page against current reader text; underlying SHA versions not re-acquired; exact photo rights, cartographic base maps, partner/third-party items, attribution, modifications or AI-model processing permission remain unknown. Neither the publisher's PDL1.0 default nor first-party HTTP access is a per-image ownership determination.
+- **Publisher original not accessible here:** [October 5 PDF `2026/10/05b.pdf`](https://www.mod.go.jp/j/press/news/2026/10/05b.pdf) still failed direct public reader inspection on October 12. Its historical pinned text and original capture digest are real, but **the current document's pages and raw bytes cannot be freshly verified** by this review. Do not invent a page count or assert current parity.
+- **Production source scope:** Japan's MOD lane retains five text-bearing originals, 158 unretrieved URLs and **all-partial** 30 reviewed scheduled collection slots at the pinned October 11 state. No owner/named Day 7/14/30 rights/admissibility signoff exists. This PDF work **does not alter one shadow row**, backfill a body, promote a record, turn on a source or publish/translate original content. The two MOD Japanese RSS streams still exclude Joint Staff and the separate English JCG source.
+
+**Next independent substantive gate:** publisher-compliant exact raw-PDF SHA and page-based original-text/archived-text comparison for these known originals; source-level media ownership/rights exceptions; named reviewer decisions, source-health assessment and owner-approved narrowly labelled PDF-only production rehearsal. The website may continue to **link** first-party documents externally as research sources while data/copyright gates remain held.

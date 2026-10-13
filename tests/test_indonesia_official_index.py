@@ -18,10 +18,10 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.path = Path(self.temp.name) / "index.json"
 
-    def test_eight_first_party_links_keep_original_four_and_exclude_held_source(self):
+    def test_twelve_first_party_links_keep_original_four_and_exclude_held_source(self):
         actual = load()
         pilot = load_private_pilot()
-        self.assertEqual(len(actual), 8)
+        self.assertEqual(len(actual), 12)
         self.assertEqual(self.candidates["pinned_shadow_commit"], PINNED)
         self.assertEqual(
             [(x["source_url"], x["title_original"], x["published_date"])
@@ -36,22 +36,25 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         self.assertEqual(
             [x["id"] for x in actual],
             ["id-01", "id-02", "id-03", "id-04",
-             "id-06", "id-07", "id-08", "id-09"],
+             "id-06", "id-07", "id-08", "id-09",
+             "id-10", "id-11", "id-12", "id-13"],
         )
         self.assertFalse(any("yonif-tp-880-banuanta" in x["source_url"] for x in actual))
         self.assertEqual(
             [(x["id"], x["published_date"]) for x in actual[4:]],
             [("id-06", "2026-09-30"), ("id-07", "2026-10-03"),
-             ("id-08", "2026-10-07"), ("id-09", "2026-10-09")],
+             ("id-08", "2026-10-07"), ("id-09", "2026-10-09"),
+             ("id-10", "2026-10-08"), ("id-11", "2026-10-08"),
+             ("id-12", "2026-10-08"), ("id-13", "2026-10-09")],
         )
 
     def test_public_registry_numbers_match_frozen_source_directories(self):
-        """The reader-facing desk must not claim four links while showing eight."""
+        """The reader-facing desk must not claim four links while showing twelve."""
         from core.indonesia_press_index import load as load_press
         from core.desk_registry import load_registry
 
         news, press = load(), load_press()
-        self.assertEqual((len(news), len(press)), (8, 2))
+        self.assertEqual((len(news), len(press)), (12, 2))
         desk = load_registry().get("indonesia")
         self.assertTrue(desk.public)
         self.assertEqual(desk.status, "shadow")
@@ -63,13 +66,13 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
             (DEFAULT.parents[1] / "desks" / "registry.json").read_text(encoding="utf-8")
         )
         entry = next(row for row in registry["desks"] if row["slug"] == "indonesia")
-        self.assertIn("Eight dated Berita links and two", entry["status_explanation"])
+        self.assertIn("Twelve dated Berita links and two", entry["status_explanation"])
         self.assertIn(
-            "ten first-party pages (eight Berita and two Siaran Pers)",
+            "fourteen first-party pages (twelve Berita and two Siaran Pers)",
             entry["research"]["blockers"][1][1],
         )
         self.assertIn(
-            "Eight Berita and two Siaran Pers first-party links",
+            "Twelve Berita and two Siaran Pers first-party links",
             entry["limits"][0],
         )
         self.assertNotIn("four berita", json.dumps(entry).lower())
@@ -89,6 +92,9 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
             lambda x: x["references"][4].update(title_original="Unreviewed inserted headline"),
             lambda x: x["references"][5].update(url="https://www.kemhan.go.id/2026/10/03/forged-source.html"),
             lambda x: x["references"][6].update(published_date="2026-10-08"),
+            lambda x: x["references"][9].update(url="https://www.kemhan.go.id/2026/10/08/forged-source.html"),
+            lambda x: x["references"][10].update(title_original="A new invented title"),
+            lambda x: x["references"][11].update(published_date="2026-10-10"),
             lambda x: x["references"].insert(4, copy.deepcopy(x["references"][0])),
             lambda x: x.update(editorial_status="independently_reviewed"),
             lambda x: x.update(collection_status="production_admitted"),
@@ -107,13 +113,13 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         with self.assertRaises(PublicIndexError):
             load(self.path)
         self.path.write_text(json.dumps(self.candidates, ensure_ascii=False), encoding="utf-8")
-        self.assertEqual(len(load(self.path)), 8)
+        self.assertEqual(len(load(self.path)), 12)
         duplicate = self.path.parent / "symlink.json"
         duplicate.symlink_to(self.path)
         with self.assertRaises(PublicIndexError):
             load(duplicate)
 
-    def test_real_site_has_eight_external_links_and_no_public_corpus(self):
+    def test_real_site_has_twelve_external_links_and_no_public_corpus(self):
         import sys
         from bs4 import BeautifulSoup
         root = Path(__file__).resolve().parents[1]
@@ -130,8 +136,8 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         soup = BeautifulSoup(page, "html.parser")
         targets = soup.select("#indonesia-links-heading ~ ol a")
         if not targets:
-            targets = soup.select('ol[aria-label="Eight external ministry news links"] a')
-        self.assertEqual(len(targets), 8)
+            targets = soup.select('ol[aria-label="Twelve external ministry news links"] a')
+        self.assertEqual(len(targets), 12)
         self.assertEqual(
             {x["href"] for x in targets},
             {x["source_url"] for x in load()},
@@ -144,7 +150,24 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
                           "NOT APPROVED FOR PUBLICATION"):
             self.assertNotIn(forbidden, page)
         self.assertIn("Shadow evaluation — no public corpus records", page)
-        self.assertIn("Eight dated Berita links and two historical Siaran Pers", page)
+        self.assertIn("Twelve dated Berita links and two historical Siaran Pers", page)
+        notes = soup.select("div.desk-reference-reading-notes")
+        self.assertEqual(len(notes), 1)
+        self.assertEqual(len(notes[0].select("li")), 2)
+        note_text = " ".join(notes[0].get_text(" ", strip=True).split())
+        self.assertIn("not exclusively administrative fines", note_text)
+        for part in ("Rp3.48 trillion", "Rp1.54 trillion", "Rp8.23 trillion",
+                     "259,230.73-hectare", "mixed group", "does not prove its completion"):
+            self.assertIn(part, note_text)
+        self.assertIn("not independently certified IPR citations", note_text)
+        outgoing = {a["href"] for a in notes[0].select("a[href]")}
+        self.assertEqual(outgoing, {
+            "https://kejati-dkijakarta.kejaksaan.go.id/conference/news/14579/read",
+            "https://www.kemhan.go.id/2026/10/09/mensos-dan-wamenhan-lepas-1-509-kadet-unhan-ri-untuk-mengabdi-di-181-sekolah-rakyat.html",
+        })
+        self.assertTrue(all(a.get("rel") == ["noopener", "noreferrer"]
+                            and a.get("target") == "_blank"
+                            for a in notes[0].select("a[href]")))
         self.assertIn("<dt>Corpus records</dt><dd>Not admitted</dd>", page)
         self.assertNotIn("<dt>Records</dt><dd>None collected</dd>", page)
         self.assertNotIn("Four dated Berita links", page)
