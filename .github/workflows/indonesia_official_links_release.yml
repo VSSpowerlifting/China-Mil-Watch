@@ -1,6 +1,6 @@
 name: Indonesia Desk — limited outbound official-link release
 
-# Guarded thirteen-link publisher bibliography. No Kemhan fetch, original body, translation, shadow
+# Guarded fifteen-link publisher bibliography. No Kemhan fetch, original body, translation, shadow
 # state import, model call or production-corpus admission.
 on:
   pull_request:
@@ -54,8 +54,8 @@ jobs:
           from bs4 import BeautifulSoup
           from core.indonesia_official_index import load
           html = Path("output/indonesia.html").read_text(encoding="utf-8")
-          links = BeautifulSoup(html, "html.parser").select('ol[aria-label="Thirteen external ministry news links"] a')
-          assert len(links) == 13
+          links = BeautifulSoup(html, "html.parser").select('ol[aria-label="Fifteen external ministry news links"] a')
+          assert len(links) == 15
           assert [x["href"] for x in links] == [r["source_url"] for r in load()]
           assert "No individual source references have completed" in html
           assert "Shadow evaluation — no public corpus records" in html
@@ -72,7 +72,7 @@ jobs:
     if: >-
       github.event_name == 'push' &&
       github.ref == 'refs/heads/main' &&
-      startsWith(github.event.head_commit.message, 'Release Indonesia thirteen-link external publisher index')
+      startsWith(github.event.head_commit.message, 'Release Indonesia fifteen-link external publisher index')
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
@@ -118,7 +118,7 @@ jobs:
           assert changed <= allowed, changed - allowed
           PY
       - run: pip install -r requirements.txt
-      - name: Exact thirteen-link release validation, no source promotion
+      - name: Exact fifteen-link release validation, no source promotion
         shell: bash
         run: |
           set -euo pipefail
@@ -135,8 +135,8 @@ jobs:
           assert not desk.is_collecting and desk.manifest_path is None
           assert desk.has_production_records is False
           html = Path("output/indonesia.html").read_text()
-          links = BeautifulSoup(html, "html.parser").select('ol[aria-label="Thirteen external ministry news links"] a')
-          assert len(links) == 13
+          links = BeautifulSoup(html, "html.parser").select('ol[aria-label="Fifteen external ministry news links"] a')
+          assert len(links) == 15
           assert [x["href"] for x in links] == [r["source_url"] for r in load()]
           assert "No individual source references have completed" in html
           assert "data-reference-list" not in html
@@ -160,7 +160,7 @@ jobs:
           }
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Site: thirteen official Indonesian ministry source links (no corpus records)"
+          git commit -m "Site: fifteen official Indonesian ministry source links (no corpus records)"
           git push origin HEAD:main
       - name: Publish existing original-corpus site to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
