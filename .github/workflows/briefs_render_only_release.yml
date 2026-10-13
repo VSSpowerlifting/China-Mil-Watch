@@ -55,12 +55,27 @@ jobs:
             output/briefs.css
             output/briefs-catalog.css
             output/briefs/*.html
+            output/briefs/media/*.jpg
+            output/briefs/media/*.webp
             output/the-pla-watch/posts/*.html
-            output/assets/editorial/trident-resolve-basarnas-drone.jpg
-            output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg
-            output/assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp
-            output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp
-            output/assets/catalogue/media/no-17-trident-resolve-basarnas-drone.jpg
+            output/the-pla-watch/media/*-veil.jpg
+            output/the-pla-watch/media/2026-05-10-auto-image-optimized.jpg
+            output/styles.css
+            output/fonts.css
+            output/surfaces.css
+            output/relief.css
+            output/topography.css
+            output/citation.js
+            output/shell.js
+            output/assets/geo/**
+            output/assets/material/**
+            output/assets/fonts/**
+            output/assets/desk-marks/**
+            output/assets/identity/selected-ipr/**
+            output/assets/editorial/derivatives/*.jpg
+            output/assets/editorial/derivatives/*.webp
+            output/assets/editorial/derivatives/*.png
+            output/assets/catalogue/media/*.jpg
           retention-days: 7
 
   preview:
@@ -105,12 +120,27 @@ jobs:
             output/briefs.css
             output/briefs-catalog.css
             output/briefs/*.html
+            output/briefs/media/*.jpg
+            output/briefs/media/*.webp
             output/the-pla-watch/posts/*.html
-            output/assets/editorial/trident-resolve-basarnas-drone.jpg
-            output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg
-            output/assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp
-            output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp
-            output/assets/catalogue/media/no-17-trident-resolve-basarnas-drone.jpg
+            output/the-pla-watch/media/*-veil.jpg
+            output/the-pla-watch/media/2026-05-10-auto-image-optimized.jpg
+            output/styles.css
+            output/fonts.css
+            output/surfaces.css
+            output/relief.css
+            output/topography.css
+            output/citation.js
+            output/shell.js
+            output/assets/geo/**
+            output/assets/material/**
+            output/assets/fonts/**
+            output/assets/desk-marks/**
+            output/assets/identity/selected-ipr/**
+            output/assets/editorial/derivatives/*.jpg
+            output/assets/editorial/derivatives/*.webp
+            output/assets/editorial/derivatives/*.png
+            output/assets/catalogue/media/*.jpg
           retention-days: 7
 
   publish:

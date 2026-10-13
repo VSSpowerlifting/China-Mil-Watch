@@ -95,7 +95,7 @@ def restore_unreviewed_output(root: Path, paths) -> list[str]:
         )
         if tracked.returncode == 0:
             subprocess.run(
-                ["git", "restore", "--source=HEAD", "--worktree", "--", rel],
+                ["git", "restore", "--source=HEAD", "--staged", "--worktree", "--", rel],
                 cwd=root, check=True,
             )
             print("RESTORED TO HEAD BASELINE: " + rel)
