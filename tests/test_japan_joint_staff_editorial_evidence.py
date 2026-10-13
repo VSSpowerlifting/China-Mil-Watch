@@ -11,6 +11,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from core.brief_editorial_evidence import (
     EditorialEvidenceError, evidence_prompt, load_editorial_evidence,
@@ -137,6 +138,47 @@ class JapanJointStaffEditorialTests(unittest.TestCase):
         duplicate["id"] = "JP-W42-08"
         with self.assertRaises(EditorialEvidenceError):
             load(source(), duplicate)
+
+    def test_joint_staff_note_reaches_existing_private_no_send_handoff(self):
+        # Test the *shape* of the source-linked handoff, not a model call,
+        # publication or publisher rights approval. The writer is mocked.
+        from scripts.sunday_editorial_handoff import main
+        from tests.test_briefs_editorial_evidence import scaffold, manuscript
+
+        with tempfile.TemporaryDirectory() as d:
+            folder = Path(d)
+            packet = folder / (SAT + ".json")
+            packet.write_text(json.dumps({
+                "schema": "ipr-private-drafting-evidence/1",
+                "week_ending": SAT,
+                "status": "unapproved-source-linked-editorial-candidate",
+                "items": [source()],
+            }, ensure_ascii=False), encoding="utf-8")
+            sidecar = scaffold()
+            sidecar["week_start"] = "2026-10-11"
+            sidecar["week_ending"] = SAT
+            sidecar_path = folder / "scaffold.json"
+            sidecar_path.write_text(json.dumps(sidecar), encoding="utf-8")
+            preview = folder / "no-send-preview.txt"
+            proposed = manuscript()
+            proposed["supplemental_citations"]["cross_desk_comparison"] = [
+                "JP-W42-07"
+            ]
+            with patch("scripts.sunday_briefs_auto_writer.compose",
+                       return_value=proposed) as writer, \\
+                 patch("scripts.sunday_editorial_handoff.send_packet") as send:
+                main([
+                    "--sidecar", str(sidecar_path),
+                    "--out", str(preview),
+                    "--write-automatic", "--full-week", "--include-research",
+                    "--research-packet", str(packet), "--as-of", SAT,
+                ])
+            writer.assert_called_once()
+            self.assertEqual(
+                writer.call_args.kwargs["supplemental"][0]["source_url"], URL)
+            self.assertIn("External source JP-W42-07",
+                          preview.read_text(encoding="utf-8"))
+            send.assert_not_called()
 
 
 if __name__ == "__main__":
