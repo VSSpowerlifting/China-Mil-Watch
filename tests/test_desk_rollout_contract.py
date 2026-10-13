@@ -288,12 +288,12 @@ class IndonesiaPublicStatusWithoutCorpus(DeskCase):
         self.assertNotIn("text_original", html)
         self.assertNotIn("body_original", html)
         self.assertNotIn("state/shadow.db", html)
-        # Twelve factual first-party link pointers are not the approved-citation
+        # Thirteen factual first-party link pointers are not the approved-citation
         # register. They must never carry full articles or corpus admission.
         from core.indonesia_official_index import load
         from bs4 import BeautifulSoup
         links = BeautifulSoup(html, "html.parser").select(
-            'ol[aria-label="Twelve external ministry news links"] a')
+            'ol[aria-label="Thirteen external ministry news links"] a')
         self.assertEqual([a["href"] for a in links],
                          [x["source_url"] for x in load()])
         self.assertIn("publisher references, not independently", html)
