@@ -52,7 +52,13 @@ class SourceLinkedTests(unittest.TestCase):
                                           for s in self.value["publisher_references"]]
         digest = hashlib.sha256(json.dumps(fields, ensure_ascii=False, sort_keys=True,
                                           separators=(",", ":")).encode()).hexdigest()
-        self.assertEqual(digest, "4562e65893620126a0413ed82612290762844bb08e3e8766cae927dbaa5a2cf4")
+        self.assertEqual(digest, "234abf080980e675931ef1b0222e56d1ce8965275a2e5cb3428992aa541fad73")
+        self.assertIn("The available sources do not establish any coordination among these events.",
+                      self.value["body_paragraphs"][0][0]["text"])
+        self.assertNotIn("These events were not coordinated, and the evidence does not suggest otherwise.",
+                         self.value["body_paragraphs"][0][0]["text"])
+        self.assertEqual(self.value["manuscript_sha256"],
+                         "43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1")
         self.assertEqual(len(self.value["body_paragraphs"]), 11)
         self.assertEqual(len(self.value["publisher_references"]), 7)
         self.assertEqual(manuscript_html_errors(self.value, self.render()), [])
