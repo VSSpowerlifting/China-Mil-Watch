@@ -621,9 +621,62 @@ class Serialization(unittest.TestCase):
         data = json.loads(dsp.atlas_to_json(atlas))
         self.assertEqual(data["schema"], dsp.ATLAS_SCHEMA)
         self.assertEqual(data["desks"][0]["sources"][0]["evidence_class"], "production")
-        self.assertEqual(data["desks"][0]["sources"][0]["health"]["state"], "no_history")
+        self.assertNotIn("health", data["desks"][0]["sources"][0])
+        self.assertEqual(dsp.atlas_to_internal_dict(atlas)["desks"][0]
+                         ["sources"][0]["health"]["state"], "no_history")
         self.assertEqual(dsp.atlas_to_json(atlas), json.dumps(data, ensure_ascii=False, indent=2,
                                                               sort_keys=True) + "\n")
+
+    def test_public_json_excludes_private_shadow_diagnostics(self):
+        atlas = real_atlas()
+        public = dsp.atlas_to_dict(atlas)
+        internal = dsp.atlas_to_internal_dict(atlas)
+        self.assertEqual(public["schema"], dsp.ATLAS_SCHEMA)
+        self.assertEqual(len(public["desks"]), 8)
+        self.assertIn("undisplayed_shadow_declarations", internal)
+        self.assertTrue(any("us_dvids_indopacom" in x for x in
+                            internal["undisplayed_shadow_declarations"]))
+        for key in ("undisplayed_shadow_declarations", "unmatched_health_slugs",
+                    "conflicts", "health_supplied"):
+            self.assertNotIn(key, public)
+        raw = dsp.atlas_to_json(atlas)
+        for fragment in ("us_dvids_indopacom", "shadow/jp_mod/", "shadow/id_kemhan/",
+                         "manifest.json", "scrape_run_id", "source_slug",
+                         "shadow_enabled", "production_enabled", "\"basis\"",
+                         "\"lane_id\"", "\"conflicts\""):
+            self.assertNotIn(fragment, raw)
+        self.assertIn("shadow/jp_mod/", dsp.atlas_to_internal_json(atlas))
+        self.assertIn("rights_statement", raw)
+        self.assertIn("status_explanation", raw)
+
+    def test_public_projection_preserves_approved_reference_links_and_limitations(self):
+        public = dsp.atlas_to_dict(real_atlas())
+        by_slug = {d["slug"]: d for d in public["desks"]}
+        for entry in load_registry():
+            if not entry.public:
+                self.assertNotIn(entry.slug, by_slug)
+                continue
+            d = by_slug[entry.slug]
+            self.assertEqual(d["limits"], list(entry.limits))
+            self.assertEqual(d["status_explanation"], entry.status_explanation)
+        kr = by_slug["korea"]["references"]
+        self.assertEqual(len(kr), 1)
+        self.assertEqual(len(kr[0]["entries"]), 5)
+        self.assertEqual(kr[0]["issuer"], "국방부")
+        idn = by_slug["indonesia"]["references"]
+        self.assertEqual(sum(len(group["entries"]) for group in idn), 17)
+        for desk in public["desks"]:
+            for source in desk["sources"]:
+                self.assertNotIn("health", source)
+                self.assertNotIn("basis", source)
+                self.assertNotIn("source_slug", source)
+
+    def test_public_projection_drops_nonpublic_desk(self):
+        private = desk("research-room", status="shadow")
+        private.public = False
+        atlas = build([private], {"research-room": {"shadow_desk_ids": [], "families": []}})
+        self.assertEqual(dsp.atlas_to_dict(atlas)["desks"], [])
+        self.assertEqual(len(dsp.atlas_to_internal_dict(atlas)["desks"]), 1)
 
     def test_matrix_escapes_cells_and_omits_health_values(self):
         atlas = build([desk("alpha", status="live", sources=[src("p_one")],
