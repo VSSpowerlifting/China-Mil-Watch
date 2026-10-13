@@ -303,13 +303,13 @@ def validate_brief(sidecar: Mapping, registry, *,
             link = credit["linkedin"]
             if (not isinstance(link, str) or len(link) > 350
                     or not re.fullmatch(
-                        r"https://(?:www\\.)?linkedin\\.com/in/[A-Za-z0-9._-]+/?",
+                        r"https://(?:www\.)?linkedin\.com/in/[A-Za-z0-9._-]+/?",
                         link)):
                 problems.append("research_contributor.linkedin must be a LinkedIn HTTPS profile")
             if coauthor:
                 email = credit["email"]
                 if (not isinstance(email, str) or len(email) > 254
-                        or not re.fullmatch(r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+", email)):
+                        or not re.fullmatch(r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", email)):
                     problems.append("research_contributor.email must be a valid email address")
 
     if _text(sidecar.get("title")).lower().startswith(SERIES_NAME.lower()):
