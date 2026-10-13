@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia', 'japan') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -169,6 +169,43 @@
   Indonesian originals and individual rights dispositions, documented Day 7
   evidence, named human approval, and an owner-accepted, source-scoped site
   release. A private preview never grants any of those approvals.</p>
+</section>
+{% endif %}
+
+{# Japan: fixed link-only bibliography from the six verified official
+   source/attachment pairs, October 12. No shadow DB reads, PDF/body
+   republication, source admission or automated future additions. #}
+{% if desk.slug == 'japan' %}
+<section class="desk-references" aria-labelledby="japan-official-references-title">
+  <p class="eyebrow">Official-source navigation · six fixed first-party references</p>
+  <h2 id="japan-official-references-title">Japan Coast Guard — selected original releases</h2>
+  <p>These six original English release pages were individually inspected with
+  their publisher-linked PDF companions on October 12, 2026. They are
+  <strong>external official-source links only</strong>, not archived IPR records,
+  independent verification of the events reported, or continuously collected
+  Japan Coast Guard coverage.</p>
+  <ol class="desk-reference-list" aria-label="Six official Japan Coast Guard publication links">
+    <li><a href="https://www.kaiho.mlit.go.jp/e/topics_archive/article9399.html" rel="noopener noreferrer">PCG vessel towing and damage-control training</a>
+      <p class="meta">Japan Coast Guard · September 7, 2026 · Historical source candidate, not in the pinned Day 0 capture (October 8)</p></li>
+    <li><a href="https://www.kaiho.mlit.go.jp/e/topics_archive/article9424.html" rel="noopener noreferrer">22nd Heads of Asian Coast Guard Agencies Meeting (HACGAM)</a>
+      <p class="meta">Japan Coast Guard · September 18, 2026 · Linked PDF contains a distinct multilateral statement; rights not cleared</p></li>
+    <li><a href="https://www.kaiho.mlit.go.jp/e/topics_archive/article9436.html" rel="noopener noreferrer">Indonesia BAKAMLA maritime law-enforcement training</a>
+      <p class="meta">Japan Coast Guard · September 29, 2026 · October 8 shadow capture is HTML text only</p></li>
+    <li><a href="https://www.kaiho.mlit.go.jp/e/topics_archive/article9453.html" rel="noopener noreferrer">Philippine Coast Guard arrest-techniques instructor training</a>
+      <p class="meta">Japan Coast Guard · October 6, 2026 · October 8 shadow capture is HTML text only</p></li>
+    <li><a href="https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html" rel="noopener noreferrer">Philippine Coast Guard environmental-investigation training</a>
+      <p class="meta">Japan Coast Guard · October 6, 2026 · Separate official event from the arrest-techniques release</p></li>
+    <li><a href="https://www.kaiho.mlit.go.jp/e/topics_archive/article9465.html" rel="noopener noreferrer">Malaysia third-country maritime law-enforcement training</a>
+      <p class="meta">Japan Coast Guard · October 9, 2026 · Post-Day-0 source candidate; not a qualifying collecting day</p></li>
+  </ol>
+  <p class="meta">Only independently linked official pages are shown. Every linked
+  PDF provides additional factual detail, photographs or, in the HACGAM case,
+  a separate joint statement. These materials are <strong>not reproduced or
+  rights-approved by IPR</strong>. The Japanese JCG central PDL1.0 default and
+  the English publication pages' copyright footer require a source-version
+  review before archiving, translating or model-processing original bodies.
+  <a href="https://www.kaiho.mlit.go.jp/questions/post-1.html" rel="noopener noreferrer">JCG official reuse terms</a>.
+  All Japan production records remain held.</p>
 </section>
 {% endif %}
 
