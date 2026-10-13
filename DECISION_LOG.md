@@ -4,6 +4,20 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Laos final production release explicitly authorized
+
+The owner's “Codex — Laos Brief Final Production Release” request in the
+current release chat authorizes canonical locked approval/numbering, complete
+production regeneration, source/output commits, exact-head full QA, PR #485
+merge, `deploy_output_only.yml` on main and actual public-route verification.
+It also authorizes updating and closing issue #481 after all acceptance criteria
+pass. Existing policy and human editorial approvals bind fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`;
+no further manuscript edit, source licence, desk promotion, collection run,
+paid writer or Dylan delivery is authorized. The locked command assigned
+No. 18 on October 13 after verifying Nos. 1–17. Publication remains pending
+final CI/merge/deployment/live checks; receipts belong in the release dossier.
+
 ## 2026-10-13 — Laos owner final editorial review confirmed
 
 The owner expressly answered “yes” to whether they personally reviewed and accepted the documented seven-source limitations, claims, limited-use assessment, revised manuscript and page presentation. The approval is documented in [PR #485](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619) and bound to fingerprint `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500` in the canonical editorial review. The known source-verification and reuse limitations remain unchanged. This does not replace the canonical numbered-approval process or final production validation and deployment.

@@ -146,8 +146,8 @@ The owner's explicit yes to this exact §5b exception is memorialized in
 recorded in `DECISION_LOG.md` and doctrine §5b, and bound as the draft's
 `policy_ruling` to fingerprint
 `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
-**This does not replace or satisfy `editorial_review`.** That field remains
-`null`, and numbering/publication remain blocked pending an actual reviewer.
+**This does not replace or satisfy `editorial_review`.** The separate human
+acceptance subsequently supplied that exact-version review, as recorded below.
 
 ## Release operations once the actual decisions exist
 
@@ -268,3 +268,46 @@ recorded in `DECISION_LOG.md` and doctrine §5b, and bound as the draft's
    `deploy_output_only.yml` from `main` and verify the actual live
    article, collection, home, feed and sitemap. **Until all these operations
    succeed, this article is not publicly published.**
+
+## Final production release — 13 October 2026
+
+The final production request explicitly authorizes normal approval/numbering,
+source and output commits, PR merge after exact-head gates, output-only deploy,
+live verification and issue #481 closure only after publication. This supersedes
+its original private-candidate scope. Owner approvals are not requested again.
+
+- Latest source reconciled with main `0460e1dc4856d1eb64ed7417930479d75f36173f`;
+  already-merged Philippines MEPCOM files are preserved verbatim.
+- `check` and `ready` passed before and after the locked `approve` command,
+  using Benjamin Yang, October 13 and the existing human-acceptance URL.
+  All existing Nos. 1–17 were inventoried; **No. 18** was assigned uniquely.
+  Exact candidate fingerprint remains `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+- Source-linked/publication/collection/external-evidence/IPR focused suites:
+  **172 tests passed**. The first invocation included a mistaken singular
+  module name (`test_brief_collection`) and failed discovery; the corrected
+  plural module and complete focused group passed together.
+- Independently extracted the original frozen DOCX, applied only the expressly
+  authorized paragraph-one sentence replacement in memory, and compared every
+  title/subtitle/body run and all seven link associations to canonical source.
+  The revised extraction checksum test also passed. The original Downloads
+  files remain unaltered; this is not a claim to have reopened a revised DOCX
+  file that is not present in this worktree.
+- Production renderer regenerated complete `output/`; article/home/Analysis,
+  the existing native Atom feed and sitemap include No. 18. Deploy validator
+  passed with all **ten governed warnings**. No private/noindex review material
+  is emitted. Existing historical sidecar and historical HTML bytes are unchanged;
+  prior modern Brief changes are whitespace only. Complete rendering also
+  reflects Japan navigation already merged in main (#483), plus whitespace from
+  existing desk templates; no unmerged frontend/source work was incorporated.
+- Database SHA-256 remains
+  `f31f2c553328437fdb659c0cf258123de173e582990ea07ac85da3c427c1f2b6`;
+  no production WAL/SHM, record, desk registry, collector or scheduled writer changes.
+- Final full CI, merge/deploy and live-verification receipts will be added only
+  when observed. Approval and generated output alone are not live publication.
+
+- Production Chromium 147.0.7727.15 QA passed article, Analysis and home at
+  1280×900 and 375×900, both JavaScript enabled and disabled (12 route checks).
+  Reviewed full-page screenshots; checked exact ordered paragraphs/links,
+  title/dek/No. 18, Ben author/Dylan contributor, canonical, no private/noindex
+  material, keyboard focus, reduced motion, overflow and runtime errors.
+  Screenshots are local release artifacts, not source bodies or public uploads.
