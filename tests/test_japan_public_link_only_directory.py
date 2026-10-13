@@ -65,7 +65,7 @@ class JapanPublicLinkOnlyDirectory(unittest.TestCase):
             "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
         )
         pdf_links = re.findall(
-            r'href="(https://www\\.mod\\.go\\.jp/j/press/news/2026/(?:08|10)/\\d{2}[a-z]\\.pdf)"',
+            r'href="(https://www[.]mod[.]go[.]jp/j/press/news/2026/(?:08|10)/[0-9]{2}[a-z][.]pdf)"',
             self.section,
         )
         self.assertEqual(pdf_links, list(expected))
