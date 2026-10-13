@@ -81,6 +81,35 @@
       "week_ending": "2026-08-01",
       "status": "denied",
       "reason": "B5 (DECISION_LOG 2026-10-10): the existing image stays only on its existing surfaces. Its attribution and image-to-article match are unresolved and its metadata note carries mismatched 81.cn text. No new surface may use it."
+    },
+    {
+      "issue": 17,
+      "week_ending": "2026-09-26",
+      "status": "admitted",
+      "source_file": "site/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
+      "source_manifest_id": "trident-resolve-basarnas-drone",
+      "focal": "58% 60%",
+      "served": "assets/catalogue/media/no-17-trident-resolve-basarnas-drone.jpg",
+      "alt": "Four rescue workers in orange uniforms and yellow helmets at a concrete culvert spray-marked “unstable”, beside an orange truck lettered BASARNAS; a small quadcopter drone hovers at upper right.",
+      "caption": "BASARNAS (Indonesia’s national search and rescue agency) personnel at a simulated collapsed structure, a drone overhead, in the Exercise Trident Resolve 2026 earthquake-response drill, Banten, Indonesia.",
+      "credit": "Sgt. 1st Class Timothy Hughes, 18th Theater Medical Command, U.S. Army · Public domain · via DVIDS",
+      "creator": "Sgt. 1st Class Timothy Hughes, 18th Theater Medical Command, U.S. Army",
+      "creator_native": "",
+      "creator_native_lang": "",
+      "license": "Public domain",
+      "license_url": "https://www.dvidshub.net/about/copyright",
+      "source_page": "https://www.dvidshub.net/image/9957254",
+      "source_label": "DVIDS",
+      "date_note": "DVIDS dates: 21 September 2026 (caption); 20 September 2026 (date-taken field).",
+      "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+      "cover_treatment": "gradient",
+      "depicts": "event",
+      "change_note": "Cropped and resized by IPR; IPR gradient overlaid.",
+      "review_note": "Treatment B (IPR gradient) selected by the owner, 2026-10-12. Public domain per DVIDS, subject to its stated restrictions; displays the DoW non-endorsement notice. G3 approved for editorial and news publication; marketing or promotional use is not covered and needs its own review.",
+      "source_sha256": "9f7d4969b9aeb68c54e351217a16b3a72b0cde5c862c4db5adc8188159afd3e4",
+      "served_sha256": "ceba1db6c39235b90c1a1490ee6c65abaa8a8e2d5d58c74f5e87d5df98303789",
+      "width": 720,
+      "height": 480
     }
   ]
 }

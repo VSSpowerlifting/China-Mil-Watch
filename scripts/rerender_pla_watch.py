@@ -494,6 +494,8 @@ def main() -> int:
 
     # Second pass: render posts with prev/next neighbors resolved.
     by_date_asc = sorted(sidecars, key=lambda s: s.get("date", ""))
+    from scripts.historical_brief_render import next_brief_after
+    bridge = next_brief_after(by_date_asc)
     for i, sidecar in enumerate(by_date_asc):
         # Never overwrite a published post with an empty body. Sidecars that
         # predate body-field storage would otherwise render prose-less pages.
@@ -508,7 +510,9 @@ def main() -> int:
         ctx["prev_post"] = by_date_asc[i - 1] if i > 0 else None
         ctx["next_post"] = by_date_asc[i + 1] if i + 1 < len(by_date_asc) else None
         from scripts.historical_brief_render import render_historical_brief
-        html = render_historical_brief(ctx)
+        html = render_historical_brief(
+            ctx, next_brief=bridge["link"]
+            if bridge and bridge["slug"] == sidecar["date"] else None)
         out_path = POSTS_DIR / f"{sidecar['date']}.html"
         out_path.write_text(html, encoding="utf-8")
         print(f"Wrote {out_path.relative_to(ROOT)}")

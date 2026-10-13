@@ -4,21 +4,121 @@ import hashlib
 import json
 import functools
 import http.server
+import re
 import shutil
 import socketserver
 import tempfile
 import threading
 from pathlib import Path
 import unittest
+import unittest.mock
 
 from bs4 import BeautifulSoup
+from markupsafe import escape
 
-from scripts.historical_brief_render import render_historical_brief, render_historical_utility, SECTIONS
-from scripts.pw_env import inline_markup, make_pw_env
+from core.article_media import (CHANGE_NOTE, CONTEXT_NOTE, PLATE_ART, PLATE_NOTE,
+                                PLATE_CONTEXT, PLATE_VIEWBOX, PRESERVED_MEDIA)
+from scripts.historical_brief_render import (next_brief_after, render_historical_brief,
+                                             render_historical_utility, SECTIONS)
+from scripts.pw_env import format_date, inline_markup, make_pw_env
 from scripts.rerender_pla_watch import _build_post_context, _flatten_term
 
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "output/the-pla-watch/posts"
+
+# Temporary, until the owner's governed rerender of the earlier issues
+# (`scripts/rerender_pla_watch.py --no-covers`). Until then the checked-in
+# pages carry the pre-3C form. The checked-in page is never edited: the
+# current render alone is turned back into the exact pre-3C form, one counted
+# replacement per known Phase 3C change, and every other byte must match.
+# Each replacement is rebuilt from the issue's own context, so a changed image
+# source, alt text, caption source, citation or held figure still fails.
+# Once the rerendered pages carry PHASE_3C_MARKER the comparison is strict
+# byte equality with no transform at all.
+PHASE_3C_MARKER = "brief-issue-nav-label"
+_TEMPLATE = (ROOT / "site/preview/templates/historical-brief.html").read_text()
+_3C_STYLE = _TEMPLATE[_TEMPLATE.index("/* Phase 3C."):
+                      _TEMPLATE.index("@media print{.brief-issue-nav{display:none}")
+                      + len("@media print{.brief-issue-nav{display:none}")]
+_PRE_3C_NAV_STYLE = (".historical-issue-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin:2rem 0}\n"
+                     ".historical-issue-nav a{min-height:44px;display:inline-flex;align-items:center}\n")
+_NAV_ANCHOR = ".brief-citation{overflow-wrap:anywhere;font:15px/1.8 var(--sans)}\n"
+_NAV = re.compile(r'    <nav class="brief-issue-nav historical-issue-nav" aria-label="Adjacent historical issues">\n.*?</nav>\n', re.S)
+_MODEL_FLAG = '<span class="evidence evidence--model">Model-flagged</span>'
+
+
+def _plate_block(desks=("china",)):
+    art = "../../" + PLATE_ART
+    uses = "".join(f'<use href="{art}#region-{d}"/>' for d in desks)
+    return ('    <figure class="article-plate" data-article-media="plate">\n'
+            f'      <svg class="article-plate-art" viewBox="{PLATE_VIEWBOX}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><use href="{art}#region"/>{uses}</svg>\n'
+            f'      <figcaption><span class="article-media-kind">Editorial plate</span> · {PLATE_NOTE} {PLATE_CONTEXT}</figcaption>\n'
+            '    </figure>\n')
+
+
+def _once(page, old, new):
+    if page.count(old) != 1:
+        raise AssertionError(f"expected exactly one Phase 3C change: {old[:60]!r}")
+    return page.replace(old, new, 1)
+
+
+def _as_published_before_3c(page, ctx, bridge_href=None):
+    """The current render in its exact pre-3C form (see PHASE_3C_MARKER)."""
+    head, end, body = page.partition("</style>")
+    head = _once(head, _3C_STYLE, "@media print{")
+    head = _once(head, _NAV_ANCHOR, _NAV_ANCHOR + _PRE_3C_NAV_STYLE)
+    kind = re.findall(r'data-article-media="([a-z-]+)"', body)
+    if kind == ["plate"]:
+        body = _once(body, " brief-hero--photo", "")
+        body = _once(body, _plate_block(), "")
+    elif kind == ["signal-veil"]:
+        body = _once(body, ' data-article-media="signal-veil"', "")
+        body = _once(body, '<span class="article-media-kind">Signal Veil</span> · ', "")
+    elif kind == ["photograph"]:
+        veil = ctx["pw_veil"]
+        body = _once(body, ' data-article-media="photograph"', "")
+        new = re.findall(r'      <figcaption><span class="article-media-kind">Photograph</span>.*</figcaption>\n', body)
+        if len(new) != 1:
+            raise AssertionError("expected one Photograph caption")
+        subject = f" · {escape(veil['subject'])}" if veil.get("subject") else ""
+        body = _once(body, new[0], f'      <figcaption>Image: <a href="{escape(veil["source_page"])}" rel="noopener nofollow">{escape(veil["source_id"])}</a>{subject} · Context, not evidence.</figcaption>\n')
+    elif kind:
+        raise AssertionError(f"unexpected article media {kind}")
+    body = body.replace(_MODEL_FLAG, "Model-flagged")
+    nav = _NAV.findall(body)
+    if len(nav) != 1:
+        raise AssertionError("expected one issue navigation")
+    hrefs = re.findall(r'href="([^"]+)"', nav[0])
+    prev, nxt = ctx.get("prev_post"), ctx.get("next_post")
+    expected = ([prev["date"] + ".html"] if prev else []) + (
+        [nxt["date"] + ".html"] if nxt else [bridge_href] if bridge_href else [])
+    if hrefs != expected:
+        raise AssertionError(f"issue navigation {hrefs} != {expected}")
+    links = ""
+    if prev:
+        links += f'<a href="{prev["date"]}.html">← No. {prev["issue_number"]} · {format_date(prev["week_ending"])}</a>'
+    if nxt:  # the cross-series bridge did not exist before Phase 3C
+        links += f'<a href="{nxt["date"]}.html">No. {nxt["issue_number"]} · {format_date(nxt["week_ending"])} →</a>'
+    body = _once(body, nav[0], '    <nav class="historical-issue-nav" aria-label="Adjacent historical issues">\n'
+                 + links + "    </nav>\n")
+    return head + end + body
+
+
+def _without_output_refresh_hooks(page):
+    # Source-only candidates may add these two inert presentation hooks and
+    # the owned stylesheet before an authorized output refresh.
+    return page.replace(' data-surface="historical" data-route="analysis.html"', '').replace(
+        '<link rel="stylesheet" href="../../surfaces.css">\n', '')
+
+
+def _published_and_current(ctx, rendered, bridge_href=None):
+    """(checked-in page, current render in comparable form) for one issue."""
+    published = (POSTS / (ctx["date"] + ".html")).read_text(encoding="utf-8")
+    published = _without_output_refresh_hooks(published)
+    candidate = _without_output_refresh_hooks(rendered)
+    if PHASE_3C_MARKER not in published:
+        candidate = _as_published_before_3c(candidate, ctx, bridge_href)
+    return published, candidate
 
 
 class HistoricalBriefShellTests(unittest.TestCase):
@@ -30,15 +130,25 @@ class HistoricalBriefShellTests(unittest.TestCase):
                             for p in cls.files}
         sides = sorted((json.loads(p.read_text()) for p in POSTS.glob("*.json")),
                        key=lambda s: s["date"])
+        cls.bridge = next_brief_after(sides)
         for i, side in enumerate(sides):
             ctx = _build_post_context(side)
             ctx["prev_post"] = sides[i - 1] if i else None
             ctx["next_post"] = sides[i + 1] if i + 1 < len(sides) else None
             before = copy.deepcopy(ctx)
-            page = render_historical_brief(ctx)
+            page = render_historical_brief(ctx, next_brief=cls.next_brief(ctx))
             if ctx != before:
                 raise AssertionError("renderer mutated historical context")
             cls.posts.append((ctx, page, BeautifulSoup(page, "html.parser")))
+
+    @classmethod
+    def next_brief(cls, ctx):
+        bridge = cls.bridge
+        return bridge["link"] if bridge and bridge["slug"] == ctx["date"] else None
+
+    def bridge_href(self, ctx):
+        link = self.next_brief(ctx)
+        return link["href"] if link else None
 
     def test_every_real_issue_is_exercised(self):
         self.assertEqual(len(self.posts), len(list(POSTS.glob("*.json"))))
@@ -161,10 +271,35 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 self.assertEqual(figure.img["src"], original["duo"])
                 self.assertEqual(figure.img["alt"], original["alt"])
                 self.assertIn(original["mask_focus"], figure.img["style"])
-                self.assertEqual(figure.a["href"], original["source_page"])
-                self.assertIn(original["source_id"], figure.get_text())
-                self.assertIn(original.get("subject") or "", figure.get_text())
-                self.assertIn("Context, not evidence", figure.get_text())
+                caption = figure.figcaption.get_text()
+                self.assertIn(original.get("subject") or "", caption)
+                hrefs = [a["href"] for a in figure.select("a[href]")]
+                if original["id"] in PRESERVED_MEDIA:
+                    # Held: the pre-3C figure, unrelabelled.
+                    self.assertFalse(figure.has_attr("data-article-media"))
+                    self.assertEqual(hrefs, [original["source_page"]])
+                    self.assertTrue(caption.startswith("Image: "))
+                    self.assertIn(original["source_id"], caption)
+                    self.assertIn("Context, not evidence", caption)
+                elif original["kind"] == "source":
+                    self.assertEqual(figure["data-article-media"], "signal-veil")
+                    self.assertEqual(figure.select_one(".article-media-kind").get_text(), "Signal Veil")
+                    self.assertEqual(hrefs, [original["source_page"]])
+                    self.assertIn(original["source_id"], caption)
+                    self.assertIn("Context, not evidence", caption)
+                    # The collector note is never shown as a credit.
+                    if original.get("credit"):
+                        self.assertNotIn(original["credit"], caption)
+                else:
+                    self.assertEqual(original["kind"], "curated")
+                    self.assertEqual(figure["data-article-media"], "photograph")
+                    self.assertEqual(figure.select_one(".article-media-kind").get_text(), "Photograph")
+                    self.assertIn(original["source_page"], hrefs)
+                    for segment in original["credit"].split(" · "):
+                        self.assertIn(segment.strip(), caption)
+                    self.assertIn(original["license"], caption)
+                    self.assertIn(CHANGE_NOTE, caption)
+                    self.assertIn(CONTEXT_NOTE, caption)
                 self.assertFalse(soup.select(".brief-opening-photo"),
                     "Resolved Signal Veil replaces in-page cover, not duplicates it")
 
@@ -217,20 +352,77 @@ class HistoricalBriefShellTests(unittest.TestCase):
         )
 
     def test_checked_in_pages_equal_current_sidecar_render(self):
+        marked = [PHASE_3C_MARKER in (POSTS / (ctx["date"] + ".html")).read_text()
+                  for ctx, _, _ in self.posts]
+        # The governed rerender refreshes every issue at once, never a subset.
+        self.assertIn(sum(marked), (0, len(self.posts)))
         for ctx, rendered, _ in self.posts:
             with self.subTest(issue=ctx["issue_number"]):
-                published = POSTS / (ctx["date"] + ".html")
-                # Source-only candidates may add these two inert presentation hooks
-                # and the owned stylesheet before an authorized output refresh.
-                # Every other byte (including source trails/citations) must match.
-                candidate = rendered.replace(' data-surface="historical" data-route="analysis.html"', '')
-                candidate = candidate.replace('<link rel="stylesheet" href="../../surfaces.css">\n', '')
-                # Apply the same narrow normalization after a later authorized
-                # output refresh; all other bytes still have to be identical.
-                checked_in = published.read_text(encoding="utf-8").replace(
-                    ' data-surface="historical" data-route="analysis.html"', '').replace(
-                    '<link rel="stylesheet" href="../../surfaces.css">\n', '')
-                self.assertEqual(checked_in, candidate)
+                published, candidate = _published_and_current(
+                    ctx, rendered, self.bridge_href(ctx))
+                self.assertEqual(published, candidate)
+
+    def _guard_fails(self, ctx, rendered):
+        try:
+            published, candidate = _published_and_current(
+                ctx, rendered, self.bridge_href(ctx))
+        except AssertionError:
+            return True
+        return published != candidate
+
+    def test_regression_guard_still_catches_media_alt_source_and_citation_changes(self):
+        by_kind = {}
+        for ctx, page, soup in self.posts:
+            figure = soup.select_one("figure[data-article-media]")
+            by_kind.setdefault(figure["data-article-media"] if figure else "preserved",
+                               (ctx, page))
+        self.assertEqual(set(by_kind), {"photograph", "signal-veil", "plate", "preserved"})
+        for kind in ("photograph", "signal-veil"):
+            ctx, page = by_kind[kind]
+            self.assertFalse(self._guard_fails(ctx, page))
+            for field, value in (("duo", "../../assets/editorial/other.jpg"),
+                                 ("alt", "A different description"),
+                                 ("source_page", "https://example.org/other"),
+                                 ("source_id", "Another outlet")):
+                with self.subTest(kind=kind, field=field):
+                    changed = copy.deepcopy(ctx)
+                    changed["pw_veil"][field] = value
+                    self.assertTrue(self._guard_fails(
+                        changed, render_historical_brief(changed, next_brief=self.next_brief(ctx))))
+        for kind, (ctx, page) in by_kind.items():
+            with self.subTest(kind=kind, change="citation"):
+                cite = re.search(r'<p class="brief-citation" id="pw-cite">.*?</p>', page).group(0)
+                self.assertTrue(self._guard_fails(ctx, page.replace(cite, cite.replace("No.", "Issue"), 1)))
+            with self.subTest(kind=kind, change="model flag removed"):
+                if _MODEL_FLAG in page:
+                    self.assertTrue(self._guard_fails(ctx, page.replace(_MODEL_FLAG, "", 1)))
+        held = 0
+        for ctx, page, soup in self.posts:
+            figure = soup.select_one("figure.historical-veil:not([data-article-media]), figure.brief-opening-photo")
+            if figure is None:
+                continue
+            held += 1
+            img = figure.select_one("img")
+            with self.subTest(issue=ctx["issue_number"], change="held figure"):
+                old = f'alt="{escape(img["alt"])}"'
+                self.assertEqual(page.count(old), 1)
+                self.assertTrue(self._guard_fails(ctx, page.replace(old, 'alt="changed"', 1)))
+        self.assertEqual(held, 3)  # Nos. 1, 10 and 12
+
+    def test_photograph_caption_links_are_pinned(self):
+        # The pre-3C normalisation swaps the whole Photograph caption, so its
+        # licence deed and file-page links are pinned here, exactly.
+        expected = {
+            "2026-06-27": ["https://creativecommons.org/licenses/by/4.0",
+                           "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg"],
+            "2026-07-04": ["https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg"],
+        }
+        found = {}
+        for ctx, page, soup in self.posts:
+            figure = soup.select_one('figure[data-article-media="photograph"]')
+            if figure is not None:
+                found[ctx["date"]] = [a["href"] for a in figure.select("figcaption a")]
+        self.assertEqual(found, expected)
 
     def test_links_and_assets_use_the_correct_two_level_root(self):
         for ctx, page, soup in self.posts:
@@ -244,6 +436,45 @@ class HistoricalBriefShellTests(unittest.TestCase):
                 if neighbor:
                     self.assertIn(neighbor["date"] + '.html',
                                   [a["href"] for a in soup.select('.historical-issue-nav a')])
+
+    def test_newest_issue_and_first_brief_link_each_other(self):
+        from core.brief_collection import adjacent_items, load_collection
+        from core.desk_registry import load_registry
+        from scripts.historical_brief_render import _site_definition
+        newest_ctx, _, newest = self.posts[-1]
+        nav = [a["href"] for a in newest.select(".historical-issue-nav a")]
+        self.assertEqual(nav, [self.posts[-2][0]["date"] + ".html",
+                               "../../briefs/maritime-cooperation-2026.html"])
+        self.assertEqual(newest.select_one('.historical-issue-nav a[rel="next"]')["href"],
+                         self.bridge_href(newest_ctx))
+        # The brief's own previous link, from the collection the site builds.
+        collection = load_collection(_site_definition().load_editions(ROOT),
+                                     load_registry(), briefs_dir=ROOT / "briefs")
+        previous = adjacent_items(collection, "maritime-cooperation-2026")["previous"]
+        self.assertEqual(previous["href"], "../the-pla-watch/posts/%s.html" % newest_ctx["date"])
+        self.assertEqual(previous["number"], newest_ctx["issue_number"])
+        # Every earlier issue keeps its own sidecar neighbours; none gains a brief.
+        for ctx, _, soup in self.posts[:-1]:
+            with self.subTest(issue=ctx["issue_number"]):
+                self.assertTrue(all(a["href"].endswith(".html") and "/" not in a["href"]
+                                    for a in soup.select(".historical-issue-nav a")))
+
+    def test_bridge_is_approval_gated_and_never_guessed(self):
+        sides = sorted((json.loads(p.read_text()) for p in POSTS.glob("*.json")),
+                       key=lambda s: s["date"])
+        brief = json.loads((ROOT / "briefs/maritime-cooperation-2026.json").read_text())
+        with tempfile.TemporaryDirectory() as tmp:
+            empty = Path(tmp)
+            self.assertIsNone(next_brief_after(sides, briefs_dir=empty))
+            draft = dict(brief, editorial_status="draft")
+            (empty / "maritime-cooperation-2026.json").write_text(json.dumps(draft))
+            self.assertIsNone(next_brief_after(sides, briefs_dir=empty))
+            (empty / "maritime-cooperation-2026.json").write_text(
+                json.dumps(dict(brief, editorial_status="pending")))
+            with unittest.mock.patch("builtins.print") as warned:
+                self.assertIsNone(next_brief_after(sides, briefs_dir=empty))
+            self.assertIn("WARN", warned.call_args[0][0])
+        self.assertIsNone(next_brief_after([]))
 
     def test_no_invented_dates_source_fields_or_unsafe_markup(self):
         ctx = copy.deepcopy(self.posts[0][0])
@@ -270,6 +501,9 @@ class HistoricalBriefBrowserTests(unittest.TestCase):
             shutil.copy2(ROOT / 'site/preview' / name, cls.root / name)
         shutil.copytree(ROOT / 'output/assets', cls.root / 'assets')
         shutil.copytree(ROOT / 'site/assets/material', cls.root / 'assets/material', dirs_exist_ok=True)
+        # The editorial plate's art ships with the build (CATALOGUE_STATIC_ASSETS)
+        # and is not yet in the checked-in output.
+        shutil.copy2(ROOT / 'site/assets/geo/region.svg', cls.root / 'assets/geo/region.svg')
         for name in ('media', 'covers'):
             shutil.copytree(ROOT / 'output/the-pla-watch' / name,
                             cls.root / 'the-pla-watch' / name)

@@ -1077,7 +1077,7 @@ hung from the desks heading by hairlines. It is not merged or deployed, and
 independent review is required. Open PRs #314/#323 overlap `home.html` and
 `generate_preview.py`. The sequence after merge, each phase in its own session:
 - Phase 2b Archive (in review, below)
-- Phase 3 Briefs: 3A provenance merged; 3B catalogue in review (below); 3C article presentation
+- Phase 3 Briefs: 3A provenance merged; 3B catalogue merged (#418); 3C article presentation in review (below)
 - Phase 4 Desks
 
 **Phase 2b Archive in review (2026-10-11):** branch
@@ -1094,8 +1094,8 @@ Indo-Pacific desks get no marker. `browse.js` is byte-identical (9,847 B).
 Evidence: `docs/evidence/archive-refinement-2b-2026-10-11/`. Not merged or
 deployed; independent review required.
 
-**Phase 3B Briefs catalogue in review (2026-10-12, revised after review of
-PR #418):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
+**Phase 3B Briefs catalogue merged (2026-10-12, PR #418 as `18b57684e6`,
+revised after review):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
 `1102462e4f` (after the Indonesia Siaran Pers link directory, #445/#446; the catalogue build,
 parity and browser checks were re-run at `f315e0a3fa`, and the later main commits, the dedup workbench
 and Vietnam review state, change no build input, so they were not repeated; the full local suite pair was last measured at
@@ -1113,9 +1113,48 @@ suite is green on this branch apart from the 25 local-environment errors that
 clean main shows too (`python-docx` absent locally; `test_evidence_store` and
 the macOS temp root). Contract:
 `docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`; evidence and the
-17-card audit: `docs/evidence/briefs-catalogue-3b-2026-10-12/`. Not merged or
-deployed; independent review required. Phase 3C (article presentation) is
-separate.
+17-card audit: `docs/evidence/briefs-catalogue-3b-2026-10-12/`. Merged to main
+as `18b57684e6`.
+
+**Phase 3C Briefs article presentation in review (2026-10-12):** branch
+`claude/ipr-phase-3c-rendering-4da02b`, from main `18b57684e6`; a review
+revision has been applied. All 17 opened Briefs (14 historical pages, 3 native)
+name their hero image's kind in text through one presentation adapter,
+`core/article_media.py`, which grants nothing and never reads
+`core/catalogue_media.py`. The treatments:
+- Seven Signal Veils keep their caption word for word behind a "Signal Veil"
+  label.
+- Nos. 8 and 9 show the manifest's full credit, licence, Commons link and IPR's
+  change note. No. 8's "統合幕僚監部" carries `lang="ja"` from the manifest's new
+  `credit_native_lang`.
+- Nos. 1, 10, 12 and 15 keep their figure markup byte for byte.
+- Nos. 4, 14, 16 and 17 open on a labelled editorial plate.
+
+Both templates close with a shared previous/next Brief nav, and No. 14 ↔
+No. 15 are now reciprocal through one approval-gated bridge. No JavaScript was
+added, and HTML+CSS is at most 87.3 KB per article. **Open gates:** owner
+visual sign-off on the plates (Phase 0 requirement 7 stays conditional until
+then), owner review of the manifest field, and independent review. Publishing
+needs both documented renders after merge; the historical test's temporary
+normalisation then becomes strict byte equality. Contract:
+`docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`; evidence:
+`docs/evidence/briefs-article-3c-2026-10-12/`. Not merged or deployed;
+independent review required.
+
+**No. 17 photograph cover in review (2026-10-12):** branch
+`claude/ipr-photo-cover-no17`, stacked on the Phase 3C branch (PR #457). The
+owner selected treatment B: DVIDS 9957254 (public domain, Sgt. 1st Class Timothy
+Hughes, U.S. Army) on the No. 17 catalogue card and article hero, from one
+manifest record, with an IPR navy gradient in CSS only. G3 approves editorial
+and news publication only. A new fail-closed gate, `core/brief_cover.py`, grants
+a hero cover only to the Brief its record names. No. 17 no longer opens on a
+plate. No other admission changed; No. 15 and the wider photographic rollout
+are not approved. Hardening (2026-10-13): publisher notices are enforced per
+source (`core/source_terms.py`), covers name their `surfaces` and whether they
+show the `event` or `context`, and a paired cover is shown on both surfaces or
+on neither (`core/brief_photography.py`). Future covers follow
+`docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`. Next: Joint Staff rights checks for
+Nos. 2 and 6. Not merged or deployed; independent code and visual QA required.
 
 ## 8. Prohibited shortcuts and human-review gates
 

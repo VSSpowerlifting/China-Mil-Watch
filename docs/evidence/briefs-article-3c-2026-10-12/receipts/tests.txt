@@ -1,0 +1,26 @@
+# Tests — Phase 3C (run with .venv python 3.9.6; the repo has no pytest)
+
+## Focused suites: tests.test_article_media tests.test_historical_brief_shell tests.test_briefs_collection
+Ran 117 tests in 36.708s
+OK
+
+## Full suite: python -m unittest discover -s tests
+----------------------------------------------------------------------
+Ran 5966 tests in 1080.661s
+
+FAILED (errors=25, skipped=1)
+
+0 failures. The 25 errors are local-environment errors in suites that import none of the changed modules
+(grep for brief_collection|article_media|historical_brief_render|generate_preview in them returns nothing):
+  21 tests.test_evidence_store
+   1 tests.test_sunday_editor_docx
+   1 tests.test_sunday_editor_readable
+   1 tests.test_sunday_editor_word_return
+   1 tests.test_sunday_pilot_owner_release
+
+Causes:
+   4 No module named 'docx'
+  21 unsafe_store_root
+  unsafe_store_root: core/evidence_snapshot.py refuses this machine's temporary store root (EvidenceContractError).
+  No module named 'docx': python-docx is not installed in the local .venv.
+CI (pr_offline_checks) runs the same discover on ubuntu with requirements installed; its result is the authority.

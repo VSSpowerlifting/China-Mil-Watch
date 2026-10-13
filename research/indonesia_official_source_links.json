@@ -2,8 +2,8 @@
   "schema": "ipr-indonesia-external-source-links/1",
   "source_family": "id_kemhan_news",
   "publisher": "Kementerian Pertahanan Republik Indonesia",
-  "snapshot_date": "2026-10-11",
-  "pinned_shadow_commit": "17dfae7e6e1e9e1142d81c89764f022ebf03552f",
+  "snapshot_date": "2026-10-12",
+  "pinned_shadow_commit": "43d9bc7bc94dcb0e257866e0f24e1ce404e98149",
   "editorial_status": "publisher_links_not_independently_human_reviewed",
   "collection_status": "shadow_not_public_corpus",
   "references": [
@@ -89,6 +89,13 @@
       "url": "https://www.kemhan.go.id/2026/10/09/wamenhan-ri-terima-audiensi-ketua-yayasan-gedung-veteran-ri-bahas-pengelolaan-dan-pemanfaatan-aset.html",
       "title_original": "Wamenhan RI Terima Audiensi Ketua Yayasan Gedung Veteran RI, Bahas Pengelolaan dan Pemanfaatan Aset",
       "published_date": "2026-10-09",
+      "language": "id"
+    },
+    {
+      "id": "id-14",
+      "url": "https://www.kemhan.go.id/2026/10/12/menhan-dampingi-presiden-dalam-pertemuan-bilateral-dengan-presiden-republik-arab-mesir.html",
+      "title_original": "Menhan Dampingi Presiden Dalam Pertemuan Bilateral dengan Presiden Republik Arab Mesir",
+      "published_date": "2026-10-12",
       "language": "id"
     }
   ]

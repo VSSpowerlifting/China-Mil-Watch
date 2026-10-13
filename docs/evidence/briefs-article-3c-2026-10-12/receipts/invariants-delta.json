@@ -1,0 +1,497 @@
+{
+ "base": "18b57684e6f17acf063ac9c50f8d0966a4000b7b",
+ "fields": [
+  "title",
+  "meta",
+  "links",
+  "h1",
+  "headings",
+  "ids",
+  "article_paragraphs",
+  "hrefs",
+  "external_hrefs",
+  "lang_spans",
+  "imgs",
+  "figcaptions",
+  "citation",
+  "provenance",
+  "byline",
+  "model_flagged_count"
+ ],
+ "unchanged_on_all_17": [
+  "title",
+  "meta",
+  "links",
+  "h1",
+  "headings",
+  "ids",
+  "article_paragraphs",
+  "lang_spans",
+  "imgs",
+  "citation",
+  "provenance",
+  "byline",
+  "model_flagged_count"
+ ],
+ "routes": {
+  "briefs/maritime-cooperation-2026.html": {
+   "hrefs": {
+    "added": [
+     [
+      "../the-pla-watch/posts/2026-08-15.html",
+      "← Previous Brief No. 14 · 15 August 2026 One Exercise, Five Reports East of Taiwan"
+     ],
+     [
+      "xiangshan-security-frames-defense-ties.html",
+      "Next Brief → No. 16 · 19 September 2026 Different Security Frames, Concrete Defense Ties"
+     ]
+    ],
+    "removed": []
+   }
+  },
+  "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html": {
+   "hrefs": {
+    "added": [
+     [
+      "xiangshan-security-frames-defense-ties.html",
+      "← Previous Brief No. 16 · 19 September 2026 Different Security Frames, Concrete Defense Ties"
+     ]
+    ],
+    "removed": []
+   }
+  },
+  "briefs/xiangshan-security-frames-defense-ties.html": {
+   "hrefs": {
+    "added": [
+     [
+      "maritime-cooperation-2026.html",
+      "← Previous Brief No. 15 · 19 September 2026 Maritime Cooperation 2026: One Exercise, Two Official Accounts"
+     ],
+     [
+      "trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "Next Brief → No. 17 · 26 September 2026 Trident Resolve: What the Exercise Looked Like From Singapore and China"
+     ]
+    ],
+    "removed": []
+   }
+  },
+  "the-pla-watch/posts/2026-05-09.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-05-16.html",
+      "Next Brief → No. 2 · 16 May 2026 Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-05-16.html",
+      "No. 2 · 16 May 2026 →"
+     ]
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-05-16.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-05-09.html",
+      "← Previous Brief No. 1 · 9 May 2026 Two Defense Ministers, One Verdict"
+     ],
+     [
+      "2026-05-23.html",
+      "Next Brief → No. 3 · 23 May 2026 Institutional Friction and the Gap Between Form and Function"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-05-09.html",
+      "← No. 1 · 9 May 2026"
+     ],
+     [
+      "2026-05-23.html",
+      "No. 3 · 23 May 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Signal Veil · Image: PLA Daily (81.cn) · Fujian air wing / KJ-600 carrier qualifications · Context, not evidence."
+    ],
+    "removed": [
+     "Image: PLA Daily (81.cn) · Fujian air wing / KJ-600 carrier qualifications · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-05-23.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-05-16.html",
+      "← Previous Brief No. 2 · 16 May 2026 Fujian’s Air Wing Takes Shape as the Rocket Force Trains for Failure"
+     ],
+     [
+      "2026-05-30.html",
+      "Next Brief → No. 4 · 30 May 2026 Senior Cadre Oversight, Electronic Warfare, and the Week's Institutional Texture"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-05-16.html",
+      "← No. 2 · 16 May 2026"
+     ],
+     [
+      "2026-05-30.html",
+      "No. 4 · 30 May 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Signal Veil · Image: PLA Daily (81.cn) · Rockets Roar Over the Karakoram — Training images, Xinjiang MD… · Context, not evidence."
+    ],
+    "removed": [
+     "Image: PLA Daily (81.cn) · Rockets Roar Over the Karakoram — Training images, Xinjiang MD… · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-05-30.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-05-23.html",
+      "← Previous Brief No. 3 · 23 May 2026 Institutional Friction and the Gap Between Form and Function"
+     ],
+     [
+      "2026-06-06.html",
+      "Next Brief → No. 5 · 6 June 2026 Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-05-23.html",
+      "← No. 3 · 23 May 2026"
+     ],
+     [
+      "2026-06-06.html",
+      "No. 5 · 6 June 2026 →"
+     ]
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-06-06.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-05-30.html",
+      "← Previous Brief No. 4 · 30 May 2026 Senior Cadre Oversight, Electronic Warfare, and the Week's Institutional Texture"
+     ],
+     [
+      "2026-06-13.html",
+      "Next Brief → No. 6 · 13 June 2026 Combat Realism, Institutional Friction, and One Confirmation Worth Noting"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-05-30.html",
+      "← No. 4 · 30 May 2026"
+     ],
+     [
+      "2026-06-13.html",
+      "No. 6 · 13 June 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Signal Veil · Image: PLA Daily (解放军报) · Who Is Imitating and Copying the 'Aerial Moped'? Lessons from R… · Context, not evidence."
+    ],
+    "removed": [
+     "Image: PLA Daily (解放军报) · Who Is Imitating and Copying the 'Aerial Moped'? Lessons from R… · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-06-13.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-06-06.html",
+      "← Previous Brief No. 5 · 6 June 2026 Loitering Munitions, Rocket Force Readiness, and the Coast Guard's Expanding Remit"
+     ],
+     [
+      "2026-06-20.html",
+      "Next Brief → No. 7 · 20 June 2026 The CCG Statement That Stood Apart"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-06-06.html",
+      "← No. 5 · 6 June 2026"
+     ],
+     [
+      "2026-06-20.html",
+      "No. 7 · 20 June 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Signal Veil · Image: PLA Daily (解放军报) · Ministry of National Defense Routine Press Briefing, Early June… · Context, not evidence."
+    ],
+    "removed": [
+     "Image: PLA Daily (解放军报) · Ministry of National Defense Routine Press Briefing, Early June… · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-06-20.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-06-13.html",
+      "← Previous Brief No. 6 · 13 June 2026 Combat Realism, Institutional Friction, and One Confirmation Worth Noting"
+     ],
+     [
+      "2026-06-27.html",
+      "Next Brief → No. 8 · 27 June 2026 Carriers, Drones, and the Rocket Force's Manning Problem"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-06-13.html",
+      "← No. 6 · 13 June 2026"
+     ],
+     [
+      "2026-06-27.html",
+      "No. 8 · 27 June 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Signal Veil · Image: PLA Daily (解放军报) · Defending National Sovereignty and Maritime Rights: The Shared… · Context, not evidence."
+    ],
+    "removed": [
+     "Image: PLA Daily (解放军报) · Defending National Sovereignty and Maritime Rights: The Shared… · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-06-27.html": {
+   "hrefs": {
+    "added": [
+     [
+      "https://creativecommons.org/licenses/by/4.0",
+      "CC BY 4.0"
+     ],
+     [
+      "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+      "Wikimedia Commons"
+     ],
+     [
+      "2026-06-20.html",
+      "← Previous Brief No. 7 · 20 June 2026 The CCG Statement That Stood Apart"
+     ],
+     [
+      "2026-07-04.html",
+      "Next Brief → No. 9 · 4 July 2026 Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like"
+     ]
+    ],
+    "removed": [
+     [
+      "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+      "JAPAN MOD · JOINT STAFF · CC BY 4.0"
+     ],
+     [
+      "2026-06-20.html",
+      "← No. 7 · 20 June 2026"
+     ],
+     [
+      "2026-07-04.html",
+      "No. 9 · 4 July 2026 →"
+     ]
+    ]
+   },
+   "external_hrefs": {
+    "added": [
+     "https://creativecommons.org/licenses/by/4.0"
+    ],
+    "removed": []
+   },
+   "figcaptions": {
+    "added": [
+     "Photograph · LIAONING (CV-16) · J-15 RECOVERY · Japan Ministry of Defense, Joint Staff (統合幕僚監部) · CC BY 4.0 · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence."
+    ],
+    "removed": [
+     "Image: JAPAN MOD · JOINT STAFF · CC BY 4.0 · LIAONING (CV-16) · J-15 RECOVERY · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-07-04.html": {
+   "hrefs": {
+    "added": [
+     [
+      "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+      "Wikimedia Commons"
+     ],
+     [
+      "2026-06-27.html",
+      "← Previous Brief No. 8 · 27 June 2026 Carriers, Drones, and the Rocket Force's Manning Problem"
+     ],
+     [
+      "2026-07-11.html",
+      "Next Brief → No. 10 · 11 July 2026 Beijing's Public SLBM Test and What It Was Designed to Do"
+     ]
+    ],
+    "removed": [
+     [
+      "https://commons.wikimedia.org/wiki/File:ISS045-E-77332_-_View_of_Scarborough_Shoal.jpg",
+      "ISS045-E-77332 · NASA · PD"
+     ],
+     [
+      "2026-06-27.html",
+      "← No. 8 · 27 June 2026"
+     ],
+     [
+      "2026-07-11.html",
+      "No. 10 · 11 July 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Photograph · SCARBOROUGH SHOAL (HUANGYAN) · NASA / ISS Expedition 45 · Public domain · via Wikimedia Commons. Toned, cropped and resized by IPR. Visual context, not evidence."
+    ],
+    "removed": [
+     "Image: ISS045-E-77332 · NASA · PD · SCARBOROUGH SHOAL (HUANGYAN) · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-07-11.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-07-04.html",
+      "← Previous Brief No. 9 · 4 July 2026 Scarborough Shoal, July 1st Loyalty, and What Routine Looks Like"
+     ],
+     [
+      "2026-07-18.html",
+      "Next Brief → No. 11 · 18 July 2026 Joint Sea-2026, the Y-20B Abroad, and the Week's Quieter Signals"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-07-04.html",
+      "← No. 9 · 4 July 2026"
+     ],
+     [
+      "2026-07-18.html",
+      "No. 11 · 18 July 2026 →"
+     ]
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-07-18.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-07-11.html",
+      "← Previous Brief No. 10 · 11 July 2026 Beijing's Public SLBM Test and What It Was Designed to Do"
+     ],
+     [
+      "2026-08-01.html",
+      "Next Brief → No. 12 · 1 August 2026 Army Day, Scarborough Shoal, and a Week of Deliberate Disclosure"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-07-11.html",
+      "← No. 10 · 11 July 2026"
+     ],
+     [
+      "2026-08-01.html",
+      "No. 12 · 1 August 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Signal Veil · Image: PLA Daily (解放军报) · Spreading Wings, Sailing Far! Officers and Soldiers of an Air F… · Context, not evidence."
+    ],
+    "removed": [
+     "Image: PLA Daily (解放军报) · Spreading Wings, Sailing Far! Officers and Soldiers of an Air F… · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-08-01.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-07-18.html",
+      "← Previous Brief No. 11 · 18 July 2026 Joint Sea-2026, the Y-20B Abroad, and the Week's Quieter Signals"
+     ],
+     [
+      "2026-08-08.html",
+      "Next Brief → No. 13 · 8 August 2026 Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-07-18.html",
+      "← No. 11 · 18 July 2026"
+     ],
+     [
+      "2026-08-08.html",
+      "No. 13 · 8 August 2026 →"
+     ]
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-08-08.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-08-01.html",
+      "← Previous Brief No. 12 · 1 August 2026 Army Day, Scarborough Shoal, and a Week of Deliberate Disclosure"
+     ],
+     [
+      "2026-08-15.html",
+      "Next Brief → No. 14 · 15 August 2026 One Exercise, Five Reports East of Taiwan"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-08-01.html",
+      "← No. 12 · 1 August 2026"
+     ],
+     [
+      "2026-08-15.html",
+      "No. 14 · 15 August 2026 →"
+     ]
+    ]
+   },
+   "figcaptions": {
+    "added": [
+     "Signal Veil · Image: PLA Daily (解放军报) · Ministry of National Defense Routine Press Briefing, Early Augu… · Context, not evidence."
+    ],
+    "removed": [
+     "Image: PLA Daily (解放军报) · Ministry of National Defense Routine Press Briefing, Early Augu… · Context, not evidence."
+    ]
+   }
+  },
+  "the-pla-watch/posts/2026-08-15.html": {
+   "hrefs": {
+    "added": [
+     [
+      "2026-08-08.html",
+      "← Previous Brief No. 13 · 8 August 2026 Scarborough Shoal, Platform Disclosures, and the Limits of Anniversary Week"
+     ]
+    ],
+    "removed": [
+     [
+      "2026-08-08.html",
+      "← No. 13 · 8 August 2026"
+     ]
+    ]
+   }
+  }
+ }
+}

@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 {% from "_atlas.html" import breadcrumb %}
+{% from "_article_nav.html" import issue_nav %}
+{% from "_article_media.html" import article_figure, cover_figure %}
 {#- One Indo-Pacific Record Brief, at briefs/<slug>.html.
 
     The existing article anatomy — edition head, signal, development, coverage,
     the standing sections, term, what to watch, source trail, author, citation —
     in the site's own shell, so a brief is published by Indo-Pacific Record and
     reads as one. The hero is the sanctioned Night Desk crossover: the dark
-    band, with the Signal Veil when the brief's image provenance resolves
-    (`core.brief_collection.brief_veil`) and a text-led band when it does not.
+    band, with the brief's photograph when its provenance resolves
+    (`core.brief_collection.brief_photo`) and otherwise the Editorial plate
+    (`core.article_media.editorial_plate`): original artwork, never evidence.
 
     Everything shown comes from `brief_view`, which composes nothing. Headings
     are real headings. Nothing here requires JavaScript; `citation.js` only
@@ -29,7 +32,7 @@
 {%- endmacro %}
 
 {% block hero %}
-<section class="band brief-hero{% if brief.photo %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
+<section class="band brief-hero{% if brief.photo or (brief.article_media and brief.article_media.kind in ('plate', 'photograph')) %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
   <div class="wrap brief-hero-inner">
     {% if brief.is_review %}<p class="brief-fixture" role="note">Editorial review candidate · unapproved, unnumbered and unpublished.</p>{% endif %}
     {% if brief.synthetic %}
@@ -41,12 +44,16 @@
     <p class="brief-edition">{% if brief.number %}<span class="ed-no">No. {{ brief.number }}</span> · {% endif %}<span>Week ending <time datetime="{{ brief.week_ending }}">{{ brief.week_ending|reader_date }}</time></span>{% if brief.edition_type or brief.is_retrospective %} <span class="brief-status">{% if brief.edition_type %}<span class="brief-badge">{{ brief.edition_type }}</span>{% endif %}{% if brief.is_retrospective %} <span class="brief-badge">{{ brief.timing_label }}</span>{% endif %}</span>{% endif %}</p>
     <h1 id="brief-title" class="brief-title">{{ brief.title }}</h1>
 </div>
-    {% if brief.photo %}
+    {% if brief.photo and (brief.article_media is not defined or brief.article_media.kind == 'preserved') %}
     <figure class="brief-opening-photo"><picture><source type="image/webp" srcset="{{ brief.photo.srcset }}" sizes="(max-width:900px) calc(100vw - 44px), 46vw"><img src="{{ brief.photo.route }}" width="{{ brief.photo.width }}" height="{{ brief.photo.height }}" fetchpriority="high" alt="{{ brief.photo.alt }}" data-editorial-id="{{ brief.photo.id }}" aria-label="{{ brief.photo.alt }}"></picture>
       <figcaption>{{ brief.photo.credit }}. <a href="{{ brief.photo.source_page }}" rel="noopener nofollow">{{ brief.photo.source }}</a> · <a href="#{{ brief.photo.anchor }}">Cited record {{ brief.photo.record_id }}</a>. Context, not evidence.
         <details class="brief-photo-credit-detail"><summary>Full photograph credit</summary><p>{{ brief.photo.credit }}. Image: <a href="{{ brief.photo.source_page }}" rel="noopener nofollow">{{ brief.photo.source }}</a>{% if brief.photo.subject %}, published with “{{ brief.photo.subject }}”{% endif %} (<a href="#{{ brief.photo.anchor }}">cited record {{ brief.photo.record_id }}</a>). Context, not evidence.</p></details>
       </figcaption>
     </figure>
+    {% elif brief.article_media and brief.article_media.kind == 'plate' %}
+{{ article_figure(brief.article_media) }}
+    {% elif brief.article_media and brief.article_media.kind == 'photograph' %}
+{{ cover_figure(brief.article_media) }}
     {% endif %}
     <div class="brief-context">    <p class="brief-dek">{{ brief.dek }}</p>
     <p class="brief-byline">By <span class="byline-name">{{ brief.author_name }}</span>{% if brief.author_title %}<span class="byline-title">{{ brief.author_title }}</span>{% endif %}</p>
@@ -275,6 +282,7 @@
       <p class="meta">{% if brief.is_review %}Review candidate. Approval pending.{% else %}Approved {{ brief.approval.approved_on|reader_date }}.{% endif %} Part of {{ brief.series_name }}.</p>
     </section>
 
+{% if brief.adjacent is defined %}{{ issue_nav(brief.adjacent.previous, brief.adjacent.next, 'Adjacent Briefs') }}{% endif %}
     <p class="meta brief-back"><a href="../analysis.html">← All analysis</a></p>
   </article>
 </div>
