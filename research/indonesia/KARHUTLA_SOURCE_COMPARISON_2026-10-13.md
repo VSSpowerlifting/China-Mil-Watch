@@ -1,0 +1,31 @@
+# Indonesia Desk — October 13 wildfire meeting: original-language cross-institution assessment
+
+**Review date:** 2026-10-13. **Primary source family:** Kemhan Berita (`id_kemhan_news`). **Event:** 2026-10-12. **New first-party publication:** 2026-10-13. **Disposition:** research-only, evidence for potential bounded metadata reference; **NOT shadow-captured at the frozen 2026-10-12 state, human-certified, cleared for article/image republication, or admitted into IPR's production database**.
+
+## Three first-party originals, one event — distinguish corroboration from independence
+
+| Publishing institution and date | Original source | What its own reporting can establish |
+| --- | --- | --- |
+| **Kementerian Pertahanan** — 13 October | [Menhan RI Hadiri Rapat Terbatas Bahas Penanganan Karhutla](https://www.kemhan.go.id/2026/10/13/menhan-ri-hadiri-rapat-terbatas-bahas-penanganan-karhutla.html) | Kemhan says its minister attended an Oct 12 hybrid meeting with President Prabowo on forest/land fires in six affected provinces, especially Central Kalimantan and South Sumatra. It describes requests for better coordination and mobilization of resources, **not independently verified extinguishment or new deployments**. The page credits image documentation to **BPMI Setpres**. |
+| **Sekretariat Negara / BPMI Setpres** — 12 October | [Pemerintah Intensifkan Penanganan Karhutla, Operasi Darat dan Udara Terus Dioptimalkan](https://www.setneg.go.id/baca/index/pemerintah_intensifkan_penanganan_karhutla_operasi_darat_dan_udara_terus_dioptimalkan) | Quotes BNPB head Suharyanto's **as-of-Oct-12 situation report** during the same meeting, with six priority provinces, a **639.23-ha area actively being addressed**, and **513.89 ha at Tanjung Puting**; describes limits to aircraft operating with smoke-reduced visibility in Central Kalimantan. These are **attributed BNPB situational claims**, not IPR field verification. |
+| **Sekretariat Negara / BPMI Setpres** — 12 October | [Penanganan Karhutla di Enam Provinsi Berlanjut, Presiden Prabowo Instruksikan Optimalisasi Upaya Pemadaman](https://www.setneg.go.id/baca/index/penanganan_karhutla_di_enam_provinsi_berlanjut_presiden_prabowo_instruksikan_optimalisasi_upaya_pemadaman) | Corroborates that the meeting occurred and that Central Kalimantan and South Sumatra received particular focus. Separately relays executive-branch statements about **60,177 combined ground personnel** and **over-80% daily extinguishing progress**. Neither number may be converted into a confirmed newly deployed TNI force size, independently measured performance rate or attributable improvement from this particular meeting. |
+
+**Independent reading outcome:** The cross-institution overlap is strongest for **the occurrence/date of the presidential meeting, the stated agenda, institutional participation and reported coordination priorities**, not for externally verified firefighting effectiveness. The State Secretariat is a *second government institutional publisher*, not a disinterested field auditor; articles on the same event may ultimately share a presidency/BNPB information source. Do not label their numerical repetition as independent data validation.
+
+## Numerical, chronological and geography guardrails
+
+- **Published Oct 13 vs occurred Oct 12:** the Kemhan article must retain both dates. Never backdate the publisher entry to Oct 12.
+- **Six provinces in the BNPB/State Secretariat original:** Central Kalimantan, South Sumatra, South Kalimantan, Jambi, West Kalimantan and Riau. The two principal *meeting priorities* were reported as **Central Kalimantan and South Sumatra**, not the only two affected provinces.
+- **639.23 ha** means the area *currently reported as under suppression on Oct 12* across the six priority provinces; it is **not** annual cumulative hectares burned or hectares successfully extinguished. **513.89 ha** at Tanjung Puting is an area within the larger reported emergency, **not a further amount to sum on top**.
+- **Operations are not outcomes:** Central Kalimantan's reported aerial operations were constrained by smoke visibility. Mentions of aircraft, weather modification and additional ground personnel are not proof of completed response, delivered defense goods, military-readiness gains or future successful fire containment.
+- **Scope limitation:** This Berita candidate does not automatically extend IPR to all BNPB, State Secretariat or national disaster-response publications; their pages remain separate *cross-checks*, not secretly enrolled collectors.
+
+## Source-specific use and technical provenance gates
+
+**What can be considered for future link-only navigation:** original Kemhan publisher name, exact Indonesian headline, original date and canonical external URL, plus a short independently worded, clearly attributed reading qualification. This does **not** require copying the article body into the public website, but must still follow the desk's explicit limited-release process.
+
+**What is not cleared:** substantive article-text and translated-text republication; any Kemhan-hosted photo identified as **BPMI Setpres**; State Secretariat image, transcript or article-text redistribution; assuming government hosting means public domain. The State Secretariat pages explicitly carry their own copyright notice. No publisher inquiry has been sent and no broad article-use license has been substantiated.
+
+**Immutable capture:** The latest authenticated **Oct 12** Indonesia shadow state remains `43d9bc7bc94dcb0e257866e0f24e1ce404e98149` with **26** originals; this **Oct 13** publisher article was identified *after* that immutable snapshot. Its **capture SHA, SQLite row ID, fetch status, extraction equality, accepted canonical identity, and Oct 13 run ID are intentionally blank/unasserted** until a **real Oct 13** Actions ledger and state commit are available. Do not inject it into the older Oct 12 state or increase the public bibliography's 13 Berita count on the basis of this research note.
+
+**Decision:** **Editorially useful HADR and defense–civil coordination candidate, on HOLD for source capture/qualification**, prospective original-language review, rights-use disposition and actual Day 7/14/30 oversight; **not** an independently verified defense outcome, a public corpus record, or a government source-body license.
