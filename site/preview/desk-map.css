@@ -101,6 +101,10 @@
  .deskmap-chart{background:Canvas}.dm-sea,.dm-land,.dm-country use{fill:Canvas;stroke:CanvasText}
  .dm-graticule,.dm-borders{stroke:CanvasText}.dm-label,.dm-scale text{fill:CanvasText;stroke:Canvas;stroke-width:4px}
  .dm-dot{fill:CanvasText;stroke:Canvas}.dm-ocean{fill:CanvasText}
+ /* SVG hit circles are deliberately transparent at every contrast setting.
+    Otherwise Chromium repaints their 120-unit mobile tap targets as Highlight
+    blue discs, obscuring the actual coastlines. Keep their click area. */
+ .dm-hit{fill:transparent;stroke:none;forced-color-adjust:none}
  /* Match the higher-specificity status fills in forced colours; otherwise
     live/quiet national shapes collapse into system Highlight blobs. */
  .dm-country.is-live use,.dm-country.is-quiet use{fill:Canvas;stroke:CanvasText}
