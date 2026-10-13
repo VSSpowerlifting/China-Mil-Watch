@@ -11,6 +11,18 @@ This is an independent **source-identification engineering checkpoint**, not a c
 - A [July 2026 paginated archive](https://mepcom.coastguard.gov.ph/2026/07/page/8/) independently demonstrates historical listing navigation and displays **July 28** posting dates for multiple articles, including an ASEAN-focused abandoned fishing-gear coordination meeting. A page/8 route is not proof of complete chronology or stable pagination.
 - The sampled WordPress-style article paths contain percent-encoded mathematical-alphabet Unicode characters. A slug reconstructed from normalized display text will **not** necessarily refer to the same resource. Preserve the exact publisher-linked URL, including percent escape case, as the source identity.
 
+## Original publisher article review — verified in a public reader
+
+Both source-linked article pages were opened directly through the MEPCOM homepage's own article anchors on October 12 (not through a search-engine title match):
+
+- **Fiscal / program performance review (MEPCOM):** the original publisher page explicitly says **posted September 10, 2026**. Its body dates the unit performance and budget-utilization review to **July 21, 2026**. This is MEPCOM's **self-reported internal administrative review**, not evidence of completed maritime patrols, delivered procurements, or operational military exercise activity.
+- **Central Visayas oil-spill training (MEPG-CV):** the original publisher page explicitly says **posted September 10, 2026** and dates the training to **July 21–22, 2026**. It describes classroom instruction, equipment familiarization, and a tabletop coordination exercise. This is **a subordinate environmental-response training activity**, not proof of a live oil-spill response deployment or a second independent PCG publication.
+- **Opaque permalinks:** the actual linked source URL strings match the exact two URLs recorded in the packet. The math-alphabet percent encoding is part of the publisher's permalink and must not be reconstructed from plain Latin titles.
+
+**Method limit:** These are public web-reader observations with issuer/date content visible on each page. No reproducible raw HTTP response, checksum, server headers, full HTML fidelity check, or collector-identity acceptance was obtained. They establish a preliminary source-specific **semantic/date review**, not archive fidelity or permission to store/redistribute publisher text or imagery.
+
+**Robots/access check:** public web retrieval of the first-party `/robots.txt` returned an internal access error. A separate, single bounded HTTP request to `/robots.txt` with an identified research User-Agent failed at **DNS resolution**, before any server response. This does **not** establish robots allowed, robots denied, or a publisher policy. Do not activate a collector.
+
 ## Bounded source record candidate metadata
 
 The two original article URLs from the homepage and their date distinctions are in [discovery_2026-10-12.json](discovery_2026-10-12.json). The offline verifier `scripts/validate_ph_mepcom_candidate.py` refuses URL normalization, invented raw bytes or archive IDs, reverse-dating events, generic PCG relabeling of subordinate units, and accidental authorizations.
