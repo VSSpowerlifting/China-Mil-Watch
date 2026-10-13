@@ -86,7 +86,6 @@ its scope is declared, and is labeled according to what it actually does.</p>
       <p class="deskmap-context-default">Each point locates a desk's publishing institutions. Select a desk to read its scope and current limitations; use its entry to open the desk.</p>
       {% for d in desks if d.slug in placed %}<div class="deskmap-context-entry" data-context-desk="{{ d.slug }}" hidden><p class="deskmap-context-title">{{ d.name }}</p><p>{{ d.scope }}</p><p>{{ d.status_explanation }}</p><a href="{{ d.route }}">Open {{ d.name }}</a></div>{% endfor %}
     </div>
-    </div>
   <figcaption id="deskmap-key" class="deskmap-key">
     <span class="deskmap-key-item"><span class="deskmap-key-swatch" aria-hidden="true"></span>Collecting into the record</span>
     <span class="deskmap-key-item"><span class="deskmap-key-swatch is-quiet" aria-hidden="true"></span>Declared, not collecting</span>
