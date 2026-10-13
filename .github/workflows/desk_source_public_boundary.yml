@@ -49,7 +49,8 @@ jobs:
           serialized = json.dumps(data)
           for token in ("undisplayed_shadow_declarations", "unmatched_health_slugs",
                         "us_dvids_indopacom", "scrape_run_id", '"source_slug"',
-                        '"basis"', '"lane_id"', '"conflicts"'):
+                        '"basis"', '"lane_id"', '"conflicts"', '"note"',
+                        '"rights_statement"', "fixture"):
               assert token not in serialized, token
           for desk in data["desks"]:
               assert desk["public"] is True
