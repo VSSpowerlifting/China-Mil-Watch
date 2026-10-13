@@ -41,11 +41,15 @@ jobs:
           set -euo pipefail
           export GIT_TERMINAL_PROMPT=0
           git clone --quiet --single-branch --branch shadow/korea-policy-briefing "$STATE_REMOTE" "$RUNNER_TEMP/korea-originals-state"
-          tip="$(git -C "$RUNNER_TEMP/korea-originals-state" rev-parse HEAD)"
-          test "$tip" = "dcb43b9c4edb471d6def5876701ec4a2e39d5264"
+          # A newer successful collector changes the shadow *tip* without
+          # changing the frozen five-original pilot. Reject history rewrites,
+          # but review only the exact owner-reviewed immutable snapshot.
+          frozen=dcb43b9c4edb471d6def5876701ec4a2e39d5264
+          git -C "$RUNNER_TEMP/korea-originals-state" cat-file -e "$frozen^{commit}"
+          git -C "$RUNNER_TEMP/korea-originals-state" merge-base --is-ancestor "$frozen" HEAD
           python -m scripts.prepare_korea_human_review \
             --state-repo "$RUNNER_TEMP/korea-originals-state" \
-            --state-commit "$tip" \
+            --state-commit "$frozen" \
             --out "$RUNNER_TEMP/korea-private-source-originals" \
             --acknowledge-private-originals \
             > "$RUNNER_TEMP/korea-metadata-receipt.json"
