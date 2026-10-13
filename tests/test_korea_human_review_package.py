@@ -46,8 +46,7 @@ class LocalKoreaReviewerPackageTests(unittest.TestCase):
         self.assertIn('--state-commit "$frozen"', workflow)
         self.assertNotIn('test "$tip" =', workflow)
         self.assertNotIn('--state-commit "$tip"', workflow)
-        self.assertIn("No artifact", workflow.lower().replace("no artifact", "No artifact")
-                      if "no artifact" in workflow.lower() else workflow)
+        self.assertNotIn("uses: actions/upload-artifact@", workflow)
         # Frozen exports still independently check ancestry again at runtime.
         self.assertEqual(pkg.STATE_SHA, gate.STATE_SHA)
 
