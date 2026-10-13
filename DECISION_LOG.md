@@ -4,6 +4,10 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Laos owner final editorial review confirmed
+
+The owner expressly answered “yes” to whether they personally reviewed and accepted the documented seven-source limitations, claims, limited-use assessment, revised manuscript and page presentation. The approval is documented in [PR #485](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619) and bound to fingerprint `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500` in the canonical editorial review. The known source-verification and reuse limitations remain unchanged. This does not replace the canonical numbered-approval process or final production validation and deployment.
+
 ## 2026-10-13 — Narrow §5b source-linked Laos Brief exception expressly approved
 
 In this conversation the owner explicitly said **yes** when asked to approve the
