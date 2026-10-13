@@ -93,6 +93,14 @@ class JapanJointStaffIndexTests(unittest.TestCase):
                 with self.assertRaises(JointStaffIndexError):
                     inspect_index_html(index(Y9), week_ending=ending, cutoff=cutoff)
 
+    def test_missing_index_source_evidence_does_not_claim_silence(self):
+        for html in ("<html><body>Navigation only</body></html>",
+                     "<html><body><a href='/js/pdf/2025/p20250101_01.pdf'>"
+                     "2025年1月1日</a></body></html>"):
+            with self.subTest(html=html):
+                with self.assertRaises(JointStaffIndexError):
+                    self.report(html)
+
     def test_operator_rehearsal_writes_metadata_only_and_does_not_network(self):
         with tempfile.TemporaryDirectory() as t:
             directory = Path(t)
