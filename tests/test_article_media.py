@@ -53,7 +53,7 @@ EXPECTED = {
     15: am.PRESERVED,    # a native brief's own photograph (Phase 0 §1.2)
     16: am.PLATE,
     17: am.PHOTOGRAPH,   # trident-resolve-basarnas-drone, a brief cover (PoC)
-    18: am.NONE,         # exact owner-reviewed source-linked narrative, text-led
+    18: am.PHOTOGRAPH,   # source-linked editorial analysis, museum aircraft context (not Ban Keun)
 }
 
 #: Han, kana and CJK punctuation: script that needs a declared language.

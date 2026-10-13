@@ -135,7 +135,9 @@
       "source_sha256": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14",
       "served_sha256": "2c368eca5d024cca92cbc13bfdef24573e298c8ba9372a92f91e2be05dca670d",
       "width": 720,
-      "height": 480
+      "height": 480,
+      "creator_native": "",
+      "creator_native_lang": ""
     }
   ]
 }
