@@ -82,6 +82,18 @@ class SundayJapanOfferIntegrity(unittest.TestCase):
                 inspect_offer(week_ending=FIRST_SATURDAY,
                               as_of=FIRST_SATURDAY, directory=path.parent)
 
+
+    def test_week42_existing_indonesia_source_is_in_actual_sunday_offer(self):
+        report = inspect_offer(
+            week_ending="2026-10-17", as_of="2026-10-17",
+            directory=ROOT / "research/briefs_editorial_evidence")
+        self.assertEqual(report["japan_research_offered"], 0)
+        self.assertEqual(report["vietnam_research_offered"], 0)
+        self.assertEqual(report["indonesia_research_offered"], 1)
+        self.assertEqual(report["all_offered_source_ids"], ["ID-W42-01"])
+        self.assertFalse(report["source_use_or_editorial_approved"])
+        self.assertFalse(report["email_sent"])
+
     def test_future_no_japan_reports_omission_not_silence(self):
         with tempfile.TemporaryDirectory() as d:
             week = "2026-10-17"
