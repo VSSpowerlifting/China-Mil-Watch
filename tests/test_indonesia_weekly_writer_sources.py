@@ -233,5 +233,95 @@ class IndonesiaEditorialEvidence(unittest.TestCase):
         self.assertNotEqual(path, source)
 
 
+
+class IndonesiaWeek42Evidence(unittest.TestCase):
+    """The second week's separate source pin never upgrades the desk."""
+
+    def test_week42_provisional_source_uses_real_oct12_pin(self):
+        from scripts.indonesia_weekly_writer_sources import (
+            WEEK42_PACKET, WEEK42_SOURCE_ID, WEEK42_CAPTURE_SHA256,
+            WEEK42_STATE_COMMIT, WEEK42_TEXT_SHA256,
+        )
+        packet = json.loads(WEEK42_PACKET.read_text(encoding="utf-8"))
+        source = packet["source_candidates"][0]
+        result = load_indonesia_writer_sources("2026-10-17", "2026-10-16")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["id"], WEEK42_SOURCE_ID)
+        self.assertEqual(result[0]["shadow_state_commit"], WEEK42_STATE_COMMIT)
+        self.assertEqual(result[0]["captured_response_sha256"], WEEK42_CAPTURE_SHA256)
+        self.assertEqual(source["original_text_sha256"], WEEK42_TEXT_SHA256)
+        self.assertEqual(source["publisher_date"], "2026-10-12")
+        self.assertEqual(source["event_date"], "2026-10-11")
+        self.assertEqual(result[0]["source_language"], "id")
+        self.assertEqual(result[0]["desk"], "indonesia")
+        self.assertEqual(result[0]["status"], STATUS)
+        self.assertNotIn("production_record_id", result[0])
+        self.assertIsNone(source["production_record_id"])
+        self.assertFalse(source["editorial_inclusion_approved"])
+        self.assertFalse(source["source_reuse_cleared"])
+
+    def test_week42_does_not_change_historical_week41_or_other_weeks(self):
+        self.assertEqual(indonesia()[0]["id"], SOURCE_ID)
+        self.assertEqual(load_indonesia_writer_sources("2026-10-24", "2026-10-23"), [])
+        for cutoff in ("2026-10-15", "2026-10-17"):
+            with self.subTest(cutoff=cutoff), self.assertRaisesRegex(ValueError, "October 16"):
+                load_indonesia_writer_sources("2026-10-17", cutoff)
+
+    def test_week42_tampered_claims_and_source_rights_fail_closed(self):
+        from scripts.indonesia_weekly_writer_sources import WEEK42_PACKET
+        packet = json.loads(WEEK42_PACKET.read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as root:
+            path = Path(root) / "week42.json"
+            for key, value in (
+                ("candidate_id", "ID-W42-999"),
+                ("publisher_date", "2026-10-11"),
+                ("captured_response_sha256", "0" * 64),
+                ("original_text_sha256", "0" * 64),
+                ("production_record_id", 9999),
+                ("editorial_inclusion_approved", True),
+                ("source_reuse_cleared", True),
+                ("text_original", "unauthorized original body"),
+            ):
+                wrong = copy.deepcopy(packet)
+                wrong["source_candidates"][0][key] = value
+                path.write_text(json.dumps(wrong), encoding="utf-8")
+                with self.subTest(key=key), self.assertRaises(ValueError):
+                    load_indonesia_writer_sources("2026-10-17", "2026-10-16",
+                                                  packet_path=path)
+            wrong = copy.deepcopy(packet)
+            wrong["source_candidates"][0]["provisional_claims"][1] = (
+                "Indonesia and Egypt signed a new defense procurement agreement."
+            )
+            path.write_text(json.dumps(wrong), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "claims"):
+                load_indonesia_writer_sources("2026-10-17", "2026-10-16",
+                                              packet_path=path)
+            wrong = copy.deepcopy(packet)
+            wrong["editorial_handling"]["never_counts_as_live_desk"] = False
+            path.write_text(json.dumps(wrong), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "nonproduction"):
+                load_indonesia_writer_sources("2026-10-17", "2026-10-16",
+                                              packet_path=path)
+
+    def test_week42_missing_packet_is_hold_not_silent_success(self):
+        with tempfile.TemporaryDirectory() as root:
+            with self.assertRaisesRegex(ValueError, "missing or unsafe"):
+                load_indonesia_writer_sources(
+                    "2026-10-17", "2026-10-16",
+                    packet_path=Path(root) / "missing.json",
+                )
+
+    def test_week42_stays_supplemental_not_production_citation(self):
+        from scripts.indonesia_weekly_writer_sources import WEEK42_SOURCE_ID
+        source = load_indonesia_writer_sources("2026-10-17", "2026-10-16")
+        schema = writing_schema([1, 2], supplemental_ids=[s["id"] for s in source])
+        self.assertEqual(schema["properties"]["supplemental_citations"]["properties"][
+            "what_stood_out"]["items"]["enum"], [WEEK42_SOURCE_ID])
+        self.assertEqual(schema["properties"]["citations"]["properties"][
+            "what_stood_out"]["items"]["enum"], [1, 2])
+        self.assertNotIn("text_original", source[0])
+        self.assertNotIn("body", source[0])
+
+
 if __name__ == "__main__":
     unittest.main()
