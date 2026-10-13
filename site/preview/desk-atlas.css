@@ -1,0 +1,77 @@
+/* Desks Source Atlas: one paper panel per declared desk (templates/desks.html).
+   Evidence classes are told apart by a rule's style as well as its colour, and
+   always by their heading text; nothing here is a badge or a statistic. No
+   new shadow (rl-scope supplies the paper elevation), no script, no motion. */
+.sa-intro{margin:0 0 var(--sp-5)}
+.sa-lede{font:var(--step-body)/1.6 var(--serif);color:var(--ink-2);max-width:var(--measure);margin:0 0 var(--sp-4)}
+.sa-key{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:var(--sp-3) var(--sp-4);margin:0 0 var(--sp-4);padding:0}
+.sa-key-item{padding-left:12px;border-left:3px solid var(--rule)}
+.sa-key dt{font:600 var(--step-meta)/1.4 var(--sans);color:var(--ink)}
+.sa-key dd{margin:2px 0 0;font:var(--step-meta)/1.5 var(--sans);color:var(--muted)}
+.sa-index{border-block:1px solid var(--rule);padding:var(--sp-2) 0}
+.sa-index ul{display:flex;flex-wrap:wrap;gap:0 var(--sp-4);list-style:none;margin:0;padding:0}
+.sa-index a{display:inline-flex;align-items:center;gap:8px;min-height:44px;font:500 var(--step-meta)/1.3 var(--sans);color:var(--ink);text-decoration:none}
+.sa-index a span{text-decoration:underline;text-decoration-color:var(--rule-strong);text-underline-offset:3px}
+.sa-index a:hover span{text-decoration-color:var(--accent)}
+
+.sa-panel{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4);padding:var(--sp-4);margin:0 0 var(--sp-5);scroll-margin-top:5rem}
+.sa-panel:target{border-color:var(--accent)}
+.sa-id{min-width:0}
+.sa-mark:empty{display:none}
+.sa-mark .rl-emblem{width:auto;height:84px;max-width:100%;margin:0 0 var(--sp-3)}
+.sa-state{margin:0 0 6px;font:var(--step-meta)/1.4 var(--sans)}
+.sa-name{font:400 1.5rem/1.2 var(--display);margin:0 0 var(--sp-3);display:flex;align-items:baseline;gap:10px}
+.sa-name .rl-flag{flex:none;align-self:center}
+.sa-name a{color:var(--ink);text-decoration-color:var(--rule-strong);text-underline-offset:4px}
+.sa-scope{font:var(--step-body)/1.55 var(--serif);margin:0 0 var(--sp-2)}
+.sa-explain{font:var(--step-meta)/1.55 var(--sans);color:var(--ink-2);margin:0 0 var(--sp-3)}
+.sa-k{font:600 var(--step-meta)/1.4 var(--sans);color:var(--ink);margin-right:4px}
+.sa-langs{font:var(--step-meta)/1.5 var(--sans);color:var(--ink-2);margin:0 0 var(--sp-3)}
+.sa-links{list-style:none;margin:0;padding:var(--sp-2) 0 0;border-top:1px solid var(--rule)}
+.sa-links li{font:var(--step-meta)/1.5 var(--sans)}
+.sa-links a{display:inline-block;padding:10px 0;min-height:44px;box-sizing:border-box}
+.sa-unplaced{padding:10px 0;color:var(--muted)}
+
+.sa-body{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-4);align-content:start}
+.sa-group{padding-left:14px;border-left:3px solid var(--rule)}
+.sa-group--production{border-left-color:var(--band)}
+.sa-group--shadow{border-left-style:dashed;border-left-color:var(--accent)}
+.sa-group--public_reference{border-left-style:dotted;border-left-color:var(--accent)}
+.sa-group--access_blocked{border-left-color:var(--warning)}
+.sa-group--insufficient_evidence{border-left-style:dotted;border-left-color:var(--rule-strong)}
+.sa-class,.sa-sub{font:600 var(--step-meta)/1.4 var(--sans);letter-spacing:.02em;color:var(--ink);margin:0 0 var(--sp-2)}
+.sa-sources{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-3)}
+.sa-source{padding-top:var(--sp-2);border-top:1px solid var(--rule-soft, var(--rule))}
+.sa-source:first-child{border-top:0;padding-top:0}
+.sa-source p{margin:0 0 4px;max-width:var(--measure)}
+.sa-src-name{font:600 var(--step-body)/1.35 var(--serif);display:flex;align-items:baseline;gap:8px}
+.sa-src-name .rl-glyph{flex:none;align-self:center;color:var(--band)}
+.sa-src-meta{font:var(--step-meta)/1.5 var(--sans);color:var(--muted)}
+.sa-src-note{font:var(--step-meta)/1.6 var(--sans);color:var(--ink-2)}
+.sa-run{font:var(--step-meta)/1.5 var(--sans);color:var(--ink-2)}
+.sa-source.is-failed .sa-run{color:var(--warning)}
+.sa-src-link{font:var(--step-meta)/1.5 var(--sans)}
+.sa-src-link a{display:inline-block;padding:6px 0;overflow-wrap:anywhere}
+.sa-none{font:var(--step-meta)/1.5 var(--sans);color:var(--muted);margin:0}
+.sa-refs,.sa-limits,.sa-blockers{border-top:1px solid var(--rule);padding-top:var(--sp-3)}
+.sa-refs ul,.sa-limits ul{margin:0;padding-left:1.1em;display:grid;grid-template-columns:minmax(0,1fr);gap:6px}
+.sa-refs li,.sa-limits li{font:var(--step-meta)/1.6 var(--sans);color:var(--ink-2);max-width:var(--measure)}
+.sa-blockers dl{margin:0;display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-2)}
+.sa-blockers dt{font:600 var(--step-meta)/1.45 var(--sans);color:var(--ink)}
+.sa-blockers dd{margin:2px 0 0;font:var(--step-meta)/1.6 var(--sans);color:var(--ink-2);max-width:var(--measure)}
+
+@media(min-width:900px){
+  .sa-panel{grid-template-columns:minmax(14rem,19rem) minmax(0,1fr);gap:var(--sp-5);padding:var(--sp-5)}
+  .sa-body{border-left:1px solid var(--rule);padding-left:var(--sp-5)}
+}
+@media(forced-colors:active){
+  .sa-key-item,.sa-group{border-left-color:CanvasText}
+  .sa-panel:target{border-color:Highlight}
+}
+@media print{
+  .sa-index{display:none}
+  .sa-panel{break-inside:auto;padding:12pt;margin-bottom:12pt}
+  .sa-source,.sa-blockers div{break-inside:avoid}
+  .sa-src-link a::after{content:" (" attr(href) ")";overflow-wrap:anywhere}
+}
+.sa-panel :is(p,li,dd,dt,h3,h4){overflow-wrap:break-word}

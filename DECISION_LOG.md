@@ -4,6 +4,45 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Desks Source Atlas presentation rulings (Milestone B of #498)
+
+The Atlas replaces the prose "What each desk reads" section with one paper
+panel per declared desk, built only from the provenance adapter (PR #516).
+Five rulings constrain later Desks work:
+
+1. **Hub budget, not page budget.** `desks.html` is a governed 300 KB hub in
+   `scripts/verify_frontend_delivery.py`. Two older tests capped it at the
+   120 KB page budget. They now check that the HTML plus linked CSS stays
+   within 300 KB. `test_desks_phase4_browser` still caps the map figure at
+   100 KB, and every other page keeps the 120 KB limit.
+2. **Panel limits are the desk's public limits.** Each panel prints
+   `public_desk_limits` verbatim, the same list the desk page prints, in plain
+   text with no disclosure widget. Matrix finding #5 (the US limit wording)
+   stays an owner question and was not reworded here.
+3. **Production operator notes stay internal.** A registry `sources[].notes`
+   string is operator text (corpus shares, cadence, host-governance test
+   references) that no public page printed. The Atlas omits it. A shadow,
+   reference or access-blocked family note from `desks/registry.json` is
+   printed only because its desk page already prints it. A shadow
+   manifest's `rights` statement (today only the two Vietnam manifests)
+   is not printed either. It is operator text, with fixture and issue
+   references, and no public page prints it. The desk's rights
+   qualifications reach the panel through its published limits and
+   family notes. Reader-facing manifest rights wording needs owner
+   approval before any page prints it.
+4. **Run health and counts are production-only.** "Latest run" and record
+   counts appear only on contract-validated production sources, and the
+   per-source counts must sum to the desk's record count. A panel for a
+   research or shadow desk shows no archive link, run line or record count,
+   even when it cites official material.
+5. **Graphics.** Desks may use `rl-scope`, the existing `emblem` / `flag`
+   macros and the original source glyph sprite (`assets/glyphs/sources.svg`).
+   Glyphs map from a production source's registry `source_type`, never from a
+   family name. Korea, the Philippines and Indonesia have no emblem; nobody
+   draws one to fill the gap. Indonesia has no map seat, so it is reached from
+   the index and its unplaced plate links to its panel. The panel heading reads
+   "What the X Desk reads", so the desk name is not repeated as a bare title.
+
 ## 2026-10-13 — Laos Brief No. 18 published and independently verified
 
 The existing fingerprint-bound owner policy/editorial approvals were carried

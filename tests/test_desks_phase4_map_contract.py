@@ -43,7 +43,7 @@ class DesksPhase4MapContract(unittest.TestCase):
         self.assertNotIn("private_originals", self.html)
 
     def test_flags_are_licensed_local_assets(self):
-        self.assertIn('from "_relief.html" import flag with context', self.html)
+        self.assertIn('from "_relief.html" import flag, emblem, glyph_for with context', self.html)
         for iso, slug in (("cn", "china"), ("sg", "singapore"), ("jp", "japan"),
                           ("vn", "vietnam"), ("us", "us-indopacific"),
                           ("kr", "korea"), ("ph", "philippines"),

@@ -80,6 +80,8 @@ from core.viewmodel import PublicView                               # noqa: E402
 from core.topography import topography_style                         # noqa: E402
 from scripts.reconcile_db import _read_only                         # noqa: E402
 from scripts.desk_map import layout as desk_map_layout              # noqa: E402
+from scripts.desk_source_provenance import build as build_desk_provenance  # noqa: E402
+from core.desk_source_provenance import EvidenceClass, RunState         # noqa: E402
 
 TEMPLATES = Path(__file__).parent / "templates"
 DEFAULT_OUT = REPO_ROOT / "preview"
@@ -94,6 +96,9 @@ RELIEF_PRODUCTION_ASSETS = ("assets/geo/emblems.svg", "assets/geo/strait.svg")
 DESKS_PUBLIC_FLAG_ASSETS = tuple("assets/flags/%s.svg" % iso
                                  for iso in ("cn", "id", "jp", "kr", "ph", "sg", "us", "vn")) + (
                                      "assets/flags/LICENSE",)
+# The Desks Source Atlas marks production sources with the IPR-drawn
+# source-family glyphs. The one sprite, named; never the folder or a receipt.
+DESKS_ATLAS_ASSETS = ("assets/glyphs/sources.svg",)
 # The Archive's desk markers (archive.css masks), one outline per country
 # desk. Named one by one; the folder's receipt stays out of a production tree.
 ARCHIVE_MARK_ASSETS = tuple("assets/desk-marks/%s.svg" % s
@@ -1504,6 +1509,97 @@ def public_desk_limits(desk, source_views) -> list:
             if not (all_contributed and limit == stale_note)]
 
 
+#: BCP 47 tags a manifest declares -> reader names. A tag with no entry is
+#: printed as declared, never guessed.
+ATLAS_LANGUAGE_NAMES = {"zh-Hans": "Chinese (simplified)", "en": "English",
+                        "ja": "Japanese", "ko": "Korean", "vi": "Vietnamese",
+                        "id": "Indonesian"}
+ATLAS_REFERENCE_KINDS = {"bibliography": "Bibliography of official releases",
+                         "official_index": "Official publisher index",
+                         "reviewed_links": "Reviewed official links"}
+#: Reference-lane editorial states, as the gated loaders record them. An
+#: unlisted state is omitted rather than paraphrased.
+ATLAS_REFERENCE_STATES = {
+    "publisher_links_not_independently_human_reviewed":
+        "Publisher links, not independently human-reviewed",
+    "official_pages_spotchecked_independent_human_review_pending":
+        "Official pages spot-checked; independent human review pending",
+}
+#: Declared access methods -> reader text. An unlisted value is printed as
+#: declared; an undeclared one is left out rather than inferred.
+ATLAS_ACCESS_METHODS = {"html": "HTML", "rss": "RSS"}
+#: Desk-page anchor for a reference lane, where the desk page carries one.
+ATLAS_REFERENCE_ANCHORS = {"korea_mnd_bibliography": "#korea-bibliography-title"}
+
+
+def desk_atlas(desks, source_views, desk_map, db_path, as_of) -> list:
+    """One Source Atlas panel per declared desk, in registry order.
+
+    Built from the typed provenance adapter (core/desk_source_provenance.py)
+    reading the same database this build renders. Run health exists only on
+    production sources; limits pass through `public_desk_limits`, so the hub
+    and each desk page print the same list; glyphs come only from a stored
+    `source_type`, never from a family name. Registry operator notes on
+    production sources and shadow-manifest rights statements stay internal;
+    a desk's rights qualifications reach readers through its published
+    limits and family notes.
+    """
+    atlas = build_desk_provenance(as_of=as_of, db_path=db_path, with_health=True)
+    types = {s.slug: s.source_type for s in source_views}
+    panels = []
+    for desk in desks:
+        prov = atlas.get(desk.slug)
+        if prov is None:
+            raise ValueError("desk %s has no provenance entry" % desk.slug)
+        groups = []
+        for cls in prov.evidence_classes:
+            rows = []
+            for s in prov.sources_of(cls):
+                production = cls is EvidenceClass.PRODUCTION
+                source_type = types.get(s.source_slug) if production else None
+                languages = [ATLAS_LANGUAGE_NAMES.get(t, t) for t in s.language_tags]
+                meta = ([SOURCE_TYPE_LABELS.get(source_type, source_type)]
+                        if source_type else [])
+                if languages:
+                    meta.append(", ".join(languages))
+                if s.access_method:
+                    meta.append("Access: " + ATLAS_ACCESS_METHODS.get(
+                        s.access_method, s.access_method))
+                if s.declared_format and s.declared_format != s.access_method:
+                    meta.append(s.declared_format)
+                rows.append({
+                    "source": s,
+                    "source_type": source_type,
+                    "languages": languages,
+                    "meta": meta,
+                    # A production source's note is the registry's internal
+                    # operator note, published on no page; a research family's
+                    # note is the one its desk page already prints.
+                    "note": None if production else s.note,
+                    "health": s.health if production else None,
+                    "failed": production and s.health is not None
+                              and s.health.state is RunState.COLLECTION_FAILED,
+                })
+            groups.append({"cls": cls.value, "label": rows[0]["source"].evidence_label,
+                           "rows": rows})
+        references = [{
+            "kind": ATLAS_REFERENCE_KINDS.get(g.kind, g.kind),
+            "family": g.family_name, "publisher": g.publisher,
+            "links": g.link_count, "snapshot": g.snapshot_date,
+            "state": ATLAS_REFERENCE_STATES.get(g.editorial_status),
+            "href": desk.route + ATLAS_REFERENCE_ANCHORS.get(g.lane_id, ""),
+        } for g in prov.references]
+        panels.append({
+            "desk": desk, "prov": prov, "groups": groups,
+            "limits": public_desk_limits(desk, source_views),
+            "references": references,
+            "placed": desk.slug in desk_map["desks"],
+            "languages": sorted({n for g in groups for r in g["rows"]
+                                 for n in r["languages"]}),
+        })
+    return panels
+
+
 def run_status_summary(latest_run, run_results, collecting_desks,
                        unmapped_executed=0):
     """
@@ -2595,6 +2691,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # max id of 3,256), so "records 1–3250" would be false. Both values come
     # from the declared snapshot, which is the single governed source.
     citation = corpus_citation(title, snapshot)
+    desk_map = desk_map_layout(desks)
 
     ctx = {
         "title": title,
@@ -2628,7 +2725,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
         "desks": desks,
         # Where each desk's plate hangs on the Desks-page map; geography only.
-        "desk_map": desk_map_layout(desks),
+        "desk_map": desk_map,
+        # The Desks Source Atlas: provenance per desk, from the rendered DB.
+        "desk_atlas": desk_atlas(desks, source_views, desk_map,
+                                 db_path, snapshot["date"]),
         "live_desk_count": desks.collecting_count,
         "developing_desk_count": desks.not_collecting_count,
         "metrics": metrics,
@@ -2813,6 +2913,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                 if (not asset.is_file() or asset.name.endswith(".receipt.json")
                         or "assets/%s/%s" % (folder, asset.name) in RELIEF_PRODUCTION_ASSETS
                         or "assets/%s/%s" % (folder, asset.name) in DESKS_PUBLIC_FLAG_ASSETS
+                        or "assets/%s/%s" % (folder, asset.name) in DESKS_ATLAS_ASSETS
                         or "assets/%s/%s" % (folder, asset.name) in CATALOGUE_STATIC_ASSETS):
                     continue
                 route = "assets/%s/%s" % (folder, asset.name)
@@ -3045,12 +3146,13 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
+    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-atlas.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
-    # Explicit named assets only: homepage relief sprites and Phase 4A Desks
-    # flag tabs (including the MIT notice). No unrelated glyphs or gallery art.
-    for route in RELIEF_PRODUCTION_ASSETS + DESKS_PUBLIC_FLAG_ASSETS:
+    # Explicit named assets only: homepage relief sprites, Phase 4A Desks
+    # flag tabs (including the MIT notice) and the Atlas's one glyph sprite.
+    # No gallery art.
+    for route in RELIEF_PRODUCTION_ASSETS + DESKS_PUBLIC_FLAG_ASSETS + DESKS_ATLAS_ASSETS:
         target = out_dir / route
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((REPO_ROOT / "site" / route).read_bytes())

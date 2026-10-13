@@ -6,6 +6,7 @@ production state. Captures geometry; it does not declare aesthetic sign-off.
 """
 from __future__ import annotations
 
+import re
 import shutil
 import sys
 import tempfile
@@ -84,7 +85,18 @@ class DeskMapResponsiveBrowser(unittest.TestCase):
     def test_desks_markup_respects_strict_page_size_without_losing_labels(self):
         path = self.out / "desks.html"
         html = path.read_text(encoding="utf-8")
-        self.assertLessEqual(path.stat().st_size, 120_000)
+        # The Phase 4A map keeps its own strict cap. The page as a whole is a
+        # hub page: HTML plus every linked stylesheet stays within the
+        # 300 KB delivery budget (DESIGN_SYSTEM.md, frontend delivery gate),
+        # now that the Source Atlas shares it (DECISION_LOG 2026-10-13).
+        deskmap = re.search(r'<figure class="deskmap.*?</figure>', html, re.S)
+        self.assertIsNotNone(deskmap)
+        self.assertLessEqual(len(deskmap.group(0).encode("utf-8")), 100_000)
+        sheets = re.findall(r'<link rel="stylesheet" href="([^"]+)"', html)
+        self.assertIn("desk-atlas.css", sheets)
+        total = path.stat().st_size + sum(
+            (self.out / href).stat().st_size for href in sheets)
+        self.assertLessEqual(total, 300_000)
         # The renderer strips only tag-line indentation, not the page's
         # source limits, statuses, source link labels or map SVG attributes.
         self.assertNotRegex(html, r"(?m)^ +(?=<)")

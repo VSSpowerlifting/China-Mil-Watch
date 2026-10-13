@@ -920,6 +920,35 @@ hangs beside the seat instead of into a band (`is-mid-side`, narrower), the
 one exception, because Hanoi sits between Beijing and Singapore. A private
 render measured `desks.html` at 98,442 bytes.
 
+**Desk source provenance adapter (2026-10-13, Milestone A of #498; PR #516
+open, not merged):** `core/desk_source_provenance.py` merges the registry, the
+reviewed family bindings in `config/desk_source_provenance.json`, shadow
+declarations, the gated reference loaders and read-only `source_run_results`
+into five evidence classes: production, shadow, public_reference,
+access_blocked, insufficient_evidence. Conflicts can downgrade a source but
+never promote one. Run health attaches only to contract-validated production
+slugs; China (5) and Singapore (1) are the only production sources. Limits and
+status explanations stay verbatim. The adapter itself renders nothing. The schema is in
+`docs/engineering/DESK_SOURCE_PROVENANCE_SCHEMA_2026-10-13.md`. The
+eight-desk matrix and six owner-review findings are in
+`docs/engineering/DESK_SOURCE_PROVENANCE_MATRIX_2026-10-13.md`; the findings
+include the US limit wording against the disabled DVIDS shadow manifest.
+
+**Desks Source Atlas (2026-10-13, Milestone B of #498; PR B open, stacked on
+#516):** `desks.html` replaces the prose "What each desk reads" section. It now
+has a key, a desk index and eight `rl-scope` panels (`site/preview/desk-atlas.css`).
+Each panel shows the flag, the emblem where one exists, status, scope, the
+explanation and the declared languages. Sources are grouped by evidence class,
+and the panel adds reference lanes, the desk's public limits (which carry its
+rights qualifications) and its blockers. Run health and counts appear only on production sources. Each
+placed desk gets "Locate on map"; Indonesia (unplaced) is reached from the
+index. Production operator notes and shadow-manifest rights statements are not
+printed. A temp build measured
+`desks.html` at 247,459 B HTML+CSS against the 300 KB hub cap, with 2,681 B of
+JS (unchanged). There is no overflow at 320–1600px. The rulings are in the
+DECISION_LOG entry of 2026-10-13. Contract tests are in
+`tests/test_desks_source_atlas.py`.
+
 **Homepage atlas experiment (2026-10-01):**
 `styles.css` replaces the home page's margin grid with a compact pale blue-gray
 vector field: thirteen closely spaced abstract contours and two polygon fills.
