@@ -110,7 +110,16 @@ class ReadOnlyObserverTests(unittest.TestCase):
             with self.subTest(data=data), self.assertRaises(DeliveryAuditError):
                 diagnose(data, now=SUNDAY)
 
-    def test_live_snapshot_preserves_manual_run_but_does_not_substitute_it(self):\n        def fake_get(url, token):\n            return ({"state": "active"} if "/runs?" not in url\n                    else {"workflow_runs": [row(event="workflow_dispatch")]})\n        with patch("scripts.audit_sunday_editor_delivery._github_get", side_effect=fake_get):\n            result = fetch_live("VSSpowerlifting/China-Mil-Watch")\n        self.assertEqual(diagnose(result, now=SUNDAY)["verdict"], "MISSING_SCHEDULED_RUN")\n        self.assertEqual(diagnose(result, now=SUNDAY)["manual_runs_same_sunday"], [9001])\n\n    def test_read_only_fetch_requires_valid_repo_and_gets_exact_workflow(self):
+    def test_live_snapshot_preserves_manual_run_but_does_not_substitute_it(self):
+        def fake_get(url, token):
+            return ({"state": "active"} if "/runs?" not in url
+                    else {"workflow_runs": [row(event="workflow_dispatch")]})
+        with patch("scripts.audit_sunday_editor_delivery._github_get", side_effect=fake_get):
+            result = fetch_live("VSSpowerlifting/China-Mil-Watch")
+        self.assertEqual(diagnose(result, now=SUNDAY)["verdict"], "MISSING_SCHEDULED_RUN")
+        self.assertEqual(diagnose(result, now=SUNDAY)["manual_runs_same_sunday"], [9001])
+
+    def test_read_only_fetch_requires_valid_repo_and_gets_exact_workflow(self):
         def fake_get(url, token):
             self.assertIn("/actions/workflows/", url)\n            self.assertNotIn("event=schedule", url)
             self.assertNotIn("POST", url)
