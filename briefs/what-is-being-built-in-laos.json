@@ -230,7 +230,21 @@
   "desks": [],
   "source_trail": [],
   "coverage_by_desk": {},
-  "editorial_review": null,
+  "editorial_review": {
+    "reviewed_by": "Benjamin Yang",
+    "reviewed_on": "2026-10-13",
+    "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619",
+    "fingerprint": "ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500",
+    "checks": {
+      "original_language": true,
+      "claim_support": true,
+      "chronology": true,
+      "limited_source_use": true,
+      "authorship": true,
+      "manuscript_fidelity": true,
+      "rendered_review": true
+    }
+  },
   "policy_ruling": {
     "reviewed_by": "Benjamin Yang",
     "reviewed_on": "2026-10-13",
