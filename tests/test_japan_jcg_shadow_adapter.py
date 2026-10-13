@@ -135,6 +135,30 @@ class JCGSourceContracts(unittest.TestCase):
         self.assertIn("maritime law enforcement", parsed.text_original)
         self.assertNotIn("IGNORE", parsed.text_original)
 
+    def test_real_day_zero_pdf_attachment_identities_remain_link_only(self):
+        # The three independently reviewed publisher PDFs contain extra mission
+        # schedule, personnel and photograph/caption material beyond the HTML
+        # text; preserve their URLs without claiming a full-PDF capture.
+        rows = (
+            ("9455", "EN_sousa260823_29.pdf", "2026-10-06"),
+            ("9453", "EN_seiatsu260809_13.pdf", "2026-10-06"),
+            ("9436", "2609Indonesia_En.pdf", "2026-09-29"),
+        )
+        for ident, basename, day in rows:
+            with self.subTest(ident=ident):
+                url = "https://www.kaiho.mlit.go.jp/e/topics_archive/article" + ident + ".html"
+                page = article(ident, "Capacity Building Support", when=day,
+                               iso=day).replace(
+                    "upload/file.pdf", "upload/" + basename)
+                doc = self.adapter.parse_article(page, url)
+                self.assertEqual(
+                    doc.extra["attachment_urls"],
+                    ["https://www.kaiho.mlit.go.jp/e/topics_archive/upload/" + basename])
+                self.assertFalse(doc.extra["attachments_collected"])
+                self.assertEqual(doc.extra["body_scope"], "published_html_text_only")
+                self.assertNotIn(basename, doc.text_original)
+                self.assertEqual(doc.extra["source_identity"], "jcg-en:" + ident)
+
     def test_observed_2021_stale_html_datetime_is_disclosed_not_hidden(self):
         url = "https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html"
         html = article("9455", "PCG Training", iso="2021-3-1")
