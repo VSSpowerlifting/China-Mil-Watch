@@ -2,8 +2,8 @@
 A native Brief's cover photograph: the one gate that may give an opened Brief a
 curated photograph from the editorial manifest.
 
-A cover is granted only by a manifest entry that names the Brief's slug in
-`match.briefs`, is built by `scripts/build_brief_cover.py`, carries a licence
+A cover is granted only by a manifest entry that names the Brief's slug, and
+only that slug, in `match.briefs`, is built by `scripts/build_brief_cover.py`, carries a licence
 this project accepts with its full credit, and whose retained source and
 derivatives still match their recorded digests. Exactly one entry may name a
 slug; two are a conflict and grant nothing. The entry must match nothing
@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Iterable, Mapping, Optional
 
@@ -57,6 +58,8 @@ TREATMENT_NOTES = {
 SURFACES = frozenset({"article", "catalogue"})
 #: What a cover shows: the event the Brief covers, or context for it.
 DEPICTS = frozenset({"event", "context"})
+#: A Brief slug as the collection writes it: lowercase words joined by hyphens.
+SLUG_PATTERN = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 
 _REQUIRED = ("id", "file", "sha256", "alt", "caption", "credit", "creator",
              "license", "source_page", "source_label", "cover_treatment",
@@ -115,6 +118,10 @@ def problem(entry: Mapping, repo_root: Path) -> Optional[str]:
     match = entry.get("match") or {}
     if any(match.get(k) for k in _EXCLUSIVE) or entry.get("placement"):
         return "matches-another-surface"
+    briefs = match.get("briefs")
+    if not (isinstance(briefs, list) and len(briefs) == 1 and isinstance(briefs[0], str)
+            and SLUG_PATTERN.fullmatch(briefs[0])):
+        return "brief-slug-invalid"
     if entry["license"] not in ALLOWED_LICENCES:
         return "licence-not-allowed"
     if entry["license"] in LICENCE_NEEDS_LINK and not entry.get("license_url"):

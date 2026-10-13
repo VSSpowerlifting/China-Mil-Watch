@@ -3,14 +3,20 @@
 Standing policy (DECISION_LOG 2026-10-13): photography first, a restrained
 editorial gradient, full provenance, and one photographic identity across the
 catalogue card and the opened article. This contract says what a Brief cover
-must carry and how the code enforces it. It applies to native Briefs from
-No. 17 on. It changes nothing for Briefs whose imagery is held by an existing
-ruling (Nos. 1, 10, 12 and 15) or for the catalogue admissions of Nos. 8 and 9.
+must carry and how the code enforces it. Its implemented scope is native
+Briefs from No. 17 on. It does not admit historical articles or earlier
+Briefs retroactively: each needs its own decision under these rules. It
+changes nothing for Briefs whose imagery is held by an existing ruling
+(Nos. 1, 10, 12 and 15) or for the catalogue admissions of Nos. 8 and 9.
 
-A cover is not a Signal Veil. Veils are abstract editorial artwork. A cover
-is a verified photograph of a real scene. Neither can stand in for the other,
-and duotone, transparency, a gradient or a veil never stands in for image
-rights.
+A cover is not a Signal Veil. Existing Signal Veils are IPR treatments
+(duotone, transparency, crop) of real source photographs, whose provenance
+and rights standing vary by image. They keep their existing surface-specific
+permissions, which this contract neither widens nor converts into cover
+grants. A cover is a verified photograph admitted with its own rights
+receipt. Neither stands in for the other. Duotone, transparency, a gradient
+or a veil treatment never establishes reuse rights that the source does not
+grant.
 
 ## What a cover must carry
 
@@ -21,7 +27,7 @@ rights.
 | Owner use approval | DECISION_LOG entry naming the image and its scope | review. The code never infers it |
 | Event or context | `depicts`: `"event"` (the photograph shows what the Brief covers) or `"context"` (it shows something related) | both gates. It must be one of the two and the same on both records |
 | Caption and alt limited to what the source states | `caption`, `alt`, `date_note` (state source date conflicts; never assert one) | both gates require them; the card must equal the manifest |
-| Explicit surface grants | `surfaces`: `["article"]` or `["article", "catalogue"]`; `match.briefs`: exactly one slug | `surfaces-invalid`, `cover-conflict`, `cover-names-another-brief` |
+| Explicit surface grants | `surfaces`: `["article"]` or `["article", "catalogue"]`; `match.briefs`: exactly one well-formed slug | `brief-slug-invalid`, `surfaces-invalid`, `cover-conflict`, `cover-names-another-brief` |
 | One image on both surfaces | the catalogue record's `source_manifest_id` is the cover's `id` | `pair-card-shows-another-image`, `cover-claimed-twice` |
 | Separate responsive crops | article: `-1600.jpg`, `-800.webp`, `-1600.webp` (`scripts/build_brief_cover.py`); card: 720×480 cut from `-1600.jpg` around `focal` (`scripts/build_catalogue_media.py`) | `source-not-cover-derivative` |
 | Deterministic assets and hashes | retained source `sha256`, each derivative `sha256`, card `source_sha256` and `served_sha256`, `built_with` | `--check` on both builders; hash checks on both gates |

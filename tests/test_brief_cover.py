@@ -99,6 +99,20 @@ class GateRuleTests(unittest.TestCase):
         self.assertEqual(bcv.problem(self.changed(placement="home"), self.tmp),
                          "matches-another-surface")
 
+    def test_a_cover_names_exactly_one_well_formed_brief_slug(self):
+        for briefs in (["s", "t"], ["s", "s"], [], [""], ["S"], ["s t"], ["s/../t"],
+                       ["-s"], ["s-"], [1], "s", None):
+            with self.subTest(briefs=briefs):
+                e = copy.deepcopy(self.entry)
+                e["match"]["briefs"] = briefs
+                self.assertEqual(bcv.problem(e, self.tmp), "brief-slug-invalid")
+        e = copy.deepcopy(self.entry)
+        e["match"]["briefs"] = ["s", "t"]
+        for slug in ("s", "t"):
+            with self.subTest(granted_to=slug):
+                self.assertIsNone(bcv.brief_cover(slug, self.tmp, manifest=[e]))
+        self.assertEqual(bcv.problem(self.changed(match={"briefs": ["s-30"]}), self.tmp), None)
+
     def test_unknown_treatment_other_builder_and_http_source_grant_nothing(self):
         self.assertEqual(bcv.problem(self.changed(cover_treatment="duotone"), self.tmp),
                          "unknown-treatment")
