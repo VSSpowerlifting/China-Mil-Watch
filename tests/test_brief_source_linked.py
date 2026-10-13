@@ -82,7 +82,10 @@ class SourceLinkedTests(unittest.TestCase):
         self.assertEqual(brief_contract.validate_brief(self.value, self.registry), [])
         errors = brief_contract.validate_readiness(self.value, self.registry)
         self.assertIn("human editorial/source/rights review", " ".join(errors))
-        self.assertIn("owner source-linked evidence policy ruling", " ".join(errors))
+        self.assertNotIn("owner source-linked evidence policy ruling", " ".join(errors))
+        self.assertEqual(self.value["policy_ruling"]["fingerprint"], fingerprint(self.value))
+        self.assertEqual(self.value["policy_ruling"]["reviewed_by"], "Benjamin Yang")
+        self.assertIsNone(self.value["editorial_review"])
         self.assertIsNone(self.value["issue_number"])
         with self.assertRaises(brief_contract.BriefContractError):
             brief_contract.approve(self.value, collection=[], registry=self.registry,
