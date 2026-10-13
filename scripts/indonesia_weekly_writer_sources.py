@@ -53,6 +53,11 @@ def load_indonesia_writer_sources(week_ending, as_of, *, packet_path=DEFAULT_PAC
     Same-week missing/tampered source state refuses the automatic handoff.
     """
     ending, cutoff = _iso(week_ending), _iso(as_of)
+    if ending == WEEK42_SATURDAY:
+        if cutoff != WEEK42_FRIDAY or cutoff.weekday() != 4:
+            raise IndonesiaEditorialSourceError("Indonesia research restricted to October 16 Friday")
+        week42_path = WEEK42_PACKET if Path(packet_path) == DEFAULT_PACKET else Path(packet_path)
+        return _load_week42(week42_path)
     if ending != SATURDAY:
         return []
     if cutoff != FRIDAY or cutoff.weekday() != 4 or ending != cutoff + timedelta(days=1):
@@ -136,4 +141,128 @@ def load_indonesia_writer_sources(week_ending, as_of, *, packet_path=DEFAULT_PAC
         "status": STATUS, "claims": list(claims), "caveats": list(caveats),
         "shadow_state_commit": STATE_COMMIT, "shadow_run_id": "37693074726-1",
         "captured_response_sha256": CAPTURE_SHA256,
+    }]
+
+# The October 11–17 brief may use one separately corroborated October 12
+# original, without changing the historical Week 41 packet or production scope.
+WEEK42_FRIDAY = date(2026, 10, 16)
+WEEK42_SATURDAY = date(2026, 10, 17)
+WEEK42_PACKET = (Path(__file__).resolve().parents[1] /
+                 "research/indonesia/friday_2026-10-16/official_source_candidates.json")
+WEEK42_SOURCE_ID = "ID-W42-01"
+WEEK42_SOURCE_URL = (
+    "https://www.kemhan.go.id/2026/10/12/"
+    "menhan-dampingi-presiden-dalam-pertemuan-bilateral-dengan-presiden-republik-arab-mesir.html"
+)
+WEEK42_STATE_COMMIT = "43d9bc7bc94dcb0e257866e0f24e1ce404e98149"
+WEEK42_CAPTURE_SHA256 = "f43c2bc45be28b41b3ab798df2da4e59553f4280b886032f1c9170e58f71184b"
+WEEK42_TEXT_SHA256 = "3475c65c11e5ea7fbee196a435865e9b9ecfb422d2ef88658a1af9efe303393e"
+WEEK42_CLAIMS = (
+    "Indonesia's Ministry of Defense reported that Defense Minister Sjafrie Sjamsoeddin accompanied President Prabowo Subianto at the October 11 bilateral meeting in Jakarta with Egyptian President Abdel Fattah El-Sisi; Kemhan published its account on October 12.",
+    "Kemhan reported discussions of strengthened Indonesia–Egypt defense-industry cooperation, military education and training, and exchanges of expertise. This is the ministry's account of intended cooperation, not proof of a separately signed defense-industry instrument or procurement.",
+)
+WEEK42_CAVEATS = (
+    "The bilateral meeting occurred October 11; the Kemhan publication is dated October 12. Do not collapse event and publication dates.",
+    "The Indonesian State Secretariat separately enumerated four announced agreements in foreign-affairs planning, diplomatic/service passports, statistics, and marine/fisheries cooperation; its enumerated list does not contain a separate defense-industry MOU.",
+    "The president's broader remarks mentioned defense industry, but neither checked government account establishes a separate signed defense procurement contract, disbursement, delivery or operational milestone.",
+    "The ministry and State Secretariat are distinct governmental publishers discussing the same event, not independent field verification of any future defense cooperation outcome.",
+    "The photograph is credited to BPMI Setpres; no article body, third-party photo or translated article is licensed for public republication by this source packet.",
+    "Dylan must independently compare the Indonesian originals, exact claims, context and source-use restrictions before any public Brief uses this provisional evidence.",
+)
+WEEK42_COMPARISON_URL = (
+    "https://www.setneg.go.id/baca/index/"
+    "pertemuan_presiden_prabowo_dan_presiden_el_sisi_hasilkan_empat_kesepakatan_kerja_sama"
+)
+
+
+def _load_week42(packet_path):
+    """Read one immutable, Week-42-only analyst synopsis; never a production row."""
+    path = Path(packet_path)
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > 20000:
+        raise IndonesiaEditorialSourceError("missing or unsafe Indonesia research packet")
+    try:
+        packet = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise IndonesiaEditorialSourceError("unreadable Indonesia source packet") from exc
+    if not isinstance(packet, dict):
+        raise IndonesiaEditorialSourceError("invalid Indonesia source packet")
+    header = {
+        "protocol": "ipr_indonesia_week42_nonproduction_research_v1",
+        "status": "source_verified_analyst_research_without_human_approval",
+        "source_scope": "Indonesia Ministry of Defense original-language Kemhan Berita; NOT a production desk",
+        "week_start": "2026-10-11",
+        "reporting_friday": "2026-10-16",
+        "week_ending": "2026-10-17",
+        "shadow_state_branch": "shadow/indonesia-kemhan",
+        "shadow_state_commit": WEEK42_STATE_COMMIT,
+        "shadow_run_id": "38323090522-1",
+        "shadow_ledger_path": "state/ledger/20261012T233845.700831+0000-38323090522-1.json",
+    }
+    if set(packet) != set(header) | {"source_candidates", "editorial_handling"}:
+        raise IndonesiaEditorialSourceError("unrecognized Week 42 packet fields")
+    if any(packet.get(key) != value for key, value in header.items()):
+        raise IndonesiaEditorialSourceError("unrecognized Week 42 source lineage")
+    rows = packet.get("source_candidates")
+    if not isinstance(rows, list) or len(rows) != 1 or not isinstance(rows[0], dict):
+        raise IndonesiaEditorialSourceError("one explicit Indonesia source required")
+    row = rows[0]
+    expected = {
+        "candidate_id": WEEK42_SOURCE_ID,
+        "institution": "Kementerian Pertahanan Republik Indonesia",
+        "source_family": "Kemhan Berita",
+        "source_language": "id",
+        "publisher_date": "2026-10-12",
+        "event_date": "2026-10-11",
+        "title": "Menhan Dampingi Presiden Dalam Pertemuan Bilateral dengan Presiden Republik Arab Mesir",
+        "public_source_url": WEEK42_SOURCE_URL,
+        "captured_response_sha256": WEEK42_CAPTURE_SHA256,
+        "original_text_sha256": WEEK42_TEXT_SHA256,
+        "evidence_representation":
+            "analyst_paraphrase_of_official_original_not_an_archived_body_in_prompt",
+        "source_comparison_url": WEEK42_COMPARISON_URL,
+        "provisional_claims": list(WEEK42_CLAIMS),
+        "caveats": list(WEEK42_CAVEATS),
+        "shadow_record_id": None,
+        "production_record_id": None,
+        "original_body_independently_human_verified": False,
+        "source_admission_approved": False,
+        "editorial_inclusion_approved": False,
+        "source_reuse_cleared": False,
+    }
+    if set(row) != set(expected) or any(
+        type(row.get(key)) is not type(value) or row.get(key) != value
+        for key, value in expected.items()
+    ):
+        raise IndonesiaEditorialSourceError("unrecognized Week 42 source identity or claims")
+    url = urlsplit(row["public_source_url"])
+    if (url.scheme != "https" or url.hostname != "www.kemhan.go.id"
+            or url.username or url.password or url.query or url.fragment
+            or _iso(row["event_date"]) > _iso(row["publisher_date"])
+            or _iso(row["publisher_date"]) > WEEK42_FRIDAY):
+        raise IndonesiaEditorialSourceError("invalid Week 42 source URL or chronology")
+    handling = {
+        "may_offer_to_single_provisional_ai_call": True,
+        "requires_two_live_production_desks": True,
+        "section_citations_must_keep_separate_namespace": True,
+        "independent_human_verification_before_publication": True,
+        "never_counts_as_live_desk": True,
+        "never_modify_production_database": True,
+    }
+    if packet.get("editorial_handling") != handling:
+        raise IndonesiaEditorialSourceError("nonproduction source rules changed")
+    return [{
+        "id": WEEK42_SOURCE_ID,
+        "desk": "indonesia",
+        "issuer": row["institution"],
+        "url": row["public_source_url"],
+        "published_date": row["publisher_date"],
+        "title": row["title"],
+        "source_language": "id",
+        "evidence_representation": row["evidence_representation"],
+        "status": STATUS,
+        "claims": list(WEEK42_CLAIMS),
+        "caveats": list(WEEK42_CAVEATS),
+        "shadow_state_commit": WEEK42_STATE_COMMIT,
+        "shadow_run_id": header["shadow_run_id"],
+        "captured_response_sha256": WEEK42_CAPTURE_SHA256,
     }]
