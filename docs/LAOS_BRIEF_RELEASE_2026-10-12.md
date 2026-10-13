@@ -1,10 +1,13 @@
 # Laos Brief release candidate — 12 October 2026
 
-This is an engineering and model-assisted evidence receipt, **not a human
-source-review signoff, rights clearance or publication**.
-The owner accepted the **specific, fingerprint-bound §5b supplement** on
-2026-10-13; the independent human source/rights/fidelity/rendered-review gate
-is still outstanding.
+This is an engineering and model-assisted evidence dossier, augmented by
+**two actual owner confirmations** for the exact revised candidate. The owner
+accepted the fingerprint-bound §5b supplement and subsequently personally
+accepted the documented seven-source limitations, factual claims, rights/
+limited-use assessment, revised manuscript and page presentation on
+2026-10-13. These confirmations are linked below. This does **not** imply
+a Reuters-primary/Vantor imagery inspection, a full-text/image use licence,
+CI completion, numbered release or public deployment.
 The owner authorized narrowly scoped engineering, eligible PR merge, rendering,
 deployment and live verification conditionally in this chat's “Laos Brief
 Production Release” request. That supersedes issue #481's earlier implementation-only
@@ -234,26 +237,34 @@ recorded in `DECISION_LOG.md` and doctrine §5b, and bound as the draft's
   trees were removed, retaining the private preview and screenshots. Fresh-runner
   final-head GitHub CI is the authoritative full offline/browser/preservation gate.
 
-## Exact substantive blockers
+## Editorial gates resolved; release operations still pending
 
-1. **Human source/translation and limited-use review.** All seven references have
-   available support mapped above; four were opened directly, two MOD originals
-   were inspected through indexed original text, and Reuters through an explicitly
-   attributed syndication. Those routes do not constitute a completed human review
-   or a verified Reuters-original inspection. Smallest resolution: Ben (or the
-   authorized human reviewer) accepts these specifically identified routes and the
-   limited-use assessment and the revised paragraph 1 evidence limitation,
-   or checks legitimately available originals, then records
-   the actual exact-version source/rights/fidelity/rendered-review attestation.
-   The owner first authorized the precise sentence clarification and later
-   separately approved the §5b supplement on October 13; **neither** approval
-   was used as a substitute for human source/translation/rights review.
-   No blanket full-copy permission or illustrative photograph is requested.
-2. **Owner evidence/anatomy ruling — resolved 2026-10-13.** The owner accepted
-   the candidate-specific supplement above. It is now entered in doctrine §5b,
-   `DECISION_LOG.md`, and canonical `policy_ruling` at the revised fingerprint.
-   This approval **is not a human-source/rights attestation or a deployment**.
+1. **Owner source/claim/limited-use/manuscript/render acceptance — confirmed
+   2026-10-13.** The owner answered **“yes”** to the direct question asking
+   whether they had personally reviewed and accepted the documented source
+   limitations, factual claims, rights assessment, revised manuscript and page
+   presentation. [The exact affirmative and the question are recorded in
+   PR #485's review receipt](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619).
+   The canonical `editorial_review` now records the actual owner, date,
+   reference, seven true checks and candidate fingerprint
+   `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+   The underlying evidentiary limitations above are **accepted**, not erased:
+   the inaccessible original MOD/Reuters URLs were not magically reopened,
+   Vantor imagery was not independently inspected, and no rights to reproduce
+   their copyrighted bodies or imagery are claimed. This records the owner's
+   actual in-chat acceptance, not a purported GitHub comment authored by them.
 
-Until the **remaining human editorial/source/rights/fidelity/rendered-review
-signoff** and the new exact-head CI exist, the article is unpublished and
-unnumbered. No model-assisted review is mislabeled as human signoff.
+2. **Owner §5b evidence/anatomy ruling — confirmed 2026-10-13.** The owner
+   expressly accepted the specific source-linked narrative rule. It appears
+   in `DECISION_LOG.md`, doctrine §5b, and the canonical `policy_ruling`
+   bound to the same fingerprint; see the separate
+   [policy receipt](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576).
+
+3. **Remaining operational requirements:** Run `scripts/author_brief.py ready`
+   and use its **locked, canonical approval/numbering mechanism** only against
+   the then-current whole collection. Re-render the full source/output under
+   the exact final approved sidecar; check output validation, full offline
+   CI/Chromium and site integrity before merging. Deploy via
+   `deploy_output_only.yml` from `main` and verify the actual live
+   article, collection, home, feed and sitemap. **Until all these operations
+   succeed, this article is not publicly published.**
