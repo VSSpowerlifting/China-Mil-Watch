@@ -121,7 +121,8 @@ class ReadOnlyObserverTests(unittest.TestCase):
 
     def test_read_only_fetch_requires_valid_repo_and_gets_exact_workflow(self):
         def fake_get(url, token):
-            self.assertIn("/actions/workflows/", url)\n            self.assertNotIn("event=schedule", url)
+            self.assertIn("/actions/workflows/", url)
+            self.assertNotIn("event=schedule", url)
             self.assertNotIn("POST", url)
             self.assertEqual(token, "")
             return ({"state": "active"} if "/runs?" not in url
