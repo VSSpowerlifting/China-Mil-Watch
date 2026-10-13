@@ -1,0 +1,57 @@
+{
+  "schema": "ph_mepcom_discovery_v1",
+  "desk": "philippines",
+  "family": "pcg_subcommand_mepcom_environment",
+  "mode": "offline_discovery_only",
+  "publisher_host": "mepcom.coastguard.gov.ph",
+  "publisher_institution": "Philippine Coast Guard — Marine Environmental Protection Command",
+  "review_cutoff": "2026-10-12",
+  "index_observation": {
+    "url": "https://mepcom.coastguard.gov.ph/news-2/",
+    "inspection": "readable_page_no_article_links_in_text_view",
+    "complete_enumerator_verified": false,
+    "homepage_has_article_links": true,
+    "paginated_archive_example": "https://mepcom.coastguard.gov.ph/2026/07/page/8/",
+    "archive_completeness_verified": false
+  },
+  "holds": {
+    "robots_txt": "unverified",
+    "http_access_policy": "unverified",
+    "site_terms": "unverified",
+    "per_item_text_rights": "unverified",
+    "per_item_image_rights": "unverified",
+    "raw_capture_parity": "unverified",
+    "collector_authorized": false,
+    "scheduled_collection_enabled": false,
+    "archived_records_exist": false,
+    "production_admission_approved": false
+  },
+  "candidates": [
+    {
+      "id": "mepcom-observation-01",
+      "url": "https://mepcom.coastguard.gov.ph/%F0%9D%90%8C%F0%9D%90%80%F0%9D%90%91%F0%9D%90%88%F0%9D%90%8D%F0%9D%90%84-%F0%9D%90%84%F0%9D%90%8D%F0%9D%90%95%F0%9D%90%88%F0%9D%90%91%F0%9D%90%8E%F0%9D%90%8D%F0%9D%90%8C%F0%9D%90%84%F0%9D%90%8D-8/",
+      "visible_post_date": "2026-09-10",
+      "reported_event_start": "2026-07-21",
+      "reported_event_end": "2026-07-21",
+      "issuing_unit": "MEPCOM",
+      "label": "FY2026 Q2 performance review",
+      "classification": "marine_environmental_command_administration",
+      "raw_response_sha256": null,
+      "archive_record_id": null,
+      "rights_approval": null
+    },
+    {
+      "id": "mepcom-observation-02",
+      "url": "https://mepcom.coastguard.gov.ph/%F0%9D%91%B4%F0%9D%92%82%F0%9D%92%93%F0%9D%92%8A%F0%9D%92%8F%F0%9D%92%86-%F0%9D%91%AC%F0%9D%92%8F%F0%9D%92%97%F0%9D%92%8A%F0%9D%92%93%F0%9D%92%90%F0%9D%92%8F%F0%9D%92%8E%F0%9D%92%86%F0%9D%92%8F/",
+      "visible_post_date": "2026-09-10",
+      "reported_event_start": "2026-07-21",
+      "reported_event_end": "2026-07-22",
+      "issuing_unit": "MEPG-CV (MEPCOM subordinate)",
+      "label": "Central Visayas oil-spill response training",
+      "classification": "marine_pollution_response_training",
+      "raw_response_sha256": null,
+      "archive_record_id": null,
+      "rights_approval": null
+    }
+  ]
+}
