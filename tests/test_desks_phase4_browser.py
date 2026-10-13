@@ -81,6 +81,17 @@ class DeskMapResponsiveBrowser(unittest.TestCase):
             cls.playwright.stop()
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
+    def test_desks_markup_respects_strict_page_size_without_losing_labels(self):
+        path = self.out / "desks.html"
+        html = path.read_text(encoding="utf-8")
+        self.assertLessEqual(path.stat().st_size, 120_000)
+        # The renderer strips only tag-line indentation, not the page's
+        # source limits, statuses, source link labels or map SVG attributes.
+        self.assertNotRegex(html, r"(?m)^ +(?=<)")
+        for label in ("What each desk reads", "Not admitted",
+                      "Institutional seats", "Every desk, side by side"):
+            self.assertIn(label, html)
+
     def test_map_card_geometry_and_desktop_labels(self):
         for width in WIDTHS:
             with self.subTest(width=width):
