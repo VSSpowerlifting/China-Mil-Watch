@@ -99,6 +99,22 @@ class DeskMapResponsiveBrowser(unittest.TestCase):
                 finally:
                     page.close()
 
+    def test_all_flag_tabs_really_load_in_the_public_build(self):
+        page = self.browser.new_page(viewport={"width":375,"height":812})
+        try:
+            page.goto((self.out / "desks.html").as_uri(), wait_until="load")
+            flags = page.locator(".deskmap-flag-tab img")
+            self.assertEqual(flags.count(), 8)
+            images = flags.evaluate_all(
+                "(nodes) => nodes.map(n => ({src:n.getAttribute('src'), "
+                "complete:n.complete, naturalWidth:n.naturalWidth}))"
+            )
+            self.assertTrue(all(i["complete"] and i["naturalWidth"] > 0
+                                for i in images), images)
+            self.assertTrue((self.out / "assets/flags/LICENSE").is_file())
+        finally:
+            page.close()
+
     def test_no_javascript_still_exposes_every_public_desk(self):
         context = self.browser.new_context(viewport={"width":375,"height":812},
                                            java_script_enabled=False)
