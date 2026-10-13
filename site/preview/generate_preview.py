@@ -62,6 +62,7 @@ import hashlib
 import html as _html
 import json
 import os
+import re
 import shutil
 import sys
 from collections import Counter, defaultdict
@@ -87,6 +88,12 @@ TRACKED_DB = REPO_ROOT / "pla_watch.db"
 # The relief assets the homepage references (home.html, via _relief.html),
 # delivered by name. relief.css travels with the stylesheets.
 RELIEF_PRODUCTION_ASSETS = ("assets/geo/emblems.svg", "assets/geo/strait.svg")
+# Phase 4A: the public Desks chart uses the licensed country flags as paper
+# tabs. Publish only the eight mapped/declared desk flags plus the MIT notice,
+# never a whole asset folder or gallery-only sprite.
+DESKS_PUBLIC_FLAG_ASSETS = tuple("assets/flags/%s.svg" % iso
+                                 for iso in ("cn", "id", "jp", "kr", "ph", "sg", "us", "vn")) + (
+                                     "assets/flags/LICENSE",)
 # The Archive's desk markers (archive.css masks), one outline per country
 # desk. Named one by one; the folder's receipt stays out of a production tree.
 ARCHIVE_MARK_ASSETS = tuple("assets/desk-marks/%s.svg" % s
@@ -2732,9 +2739,15 @@ def build(out_dir: Path, title: str, db_path: Path,
     }
     written = []
     for target, template in pages.items():
-        (out_dir / target).write_text(
-            env.get_template(template).render(page=target, **ctx),
-            encoding="utf-8")
+        page_html = env.get_template(template).render(page=target, **ctx)
+        if target == "desks.html":
+            # Desks embeds the canonical 1:50m map inline. Its accessible
+            # directory keeps every status/limit, so trim only indentation
+            # at the start of lines whose next token is an HTML/SVG tag.
+            # The newline remains intact: text spacing and all SVG path
+            # coordinates are preserved, and other pages are untouched.
+            page_html = re.sub(r"(?m)^[ \t]+(?=<)", "", page_html)
+        (out_dir / target).write_text(page_html, encoding="utf-8")
         written.append(target)
 
     if timelines:
@@ -2799,6 +2812,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             for asset in sorted((REPO_ROOT / "site/assets" / folder).iterdir()):
                 if (not asset.is_file() or asset.name.endswith(".receipt.json")
                         or "assets/%s/%s" % (folder, asset.name) in RELIEF_PRODUCTION_ASSETS
+                        or "assets/%s/%s" % (folder, asset.name) in DESKS_PUBLIC_FLAG_ASSETS
                         or "assets/%s/%s" % (folder, asset.name) in CATALOGUE_STATIC_ASSETS):
                     continue
                 route = "assets/%s/%s" % (folder, asset.name)
@@ -3034,9 +3048,9 @@ def build(out_dir: Path, title: str, db_path: Path,
     for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
-    # The relief sprites home.html references, named one by one: no folder,
-    # flag set, glyph sprite or region plate reaches a production tree.
-    for route in RELIEF_PRODUCTION_ASSETS:
+    # Explicit named assets only: homepage relief sprites and Phase 4A Desks
+    # flag tabs (including the MIT notice). No unrelated glyphs or gallery art.
+    for route in RELIEF_PRODUCTION_ASSETS + DESKS_PUBLIC_FLAG_ASSETS:
         target = out_dir / route
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((REPO_ROOT / "site" / route).read_bytes())
