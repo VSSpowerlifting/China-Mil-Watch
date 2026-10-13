@@ -35,6 +35,22 @@ class LocalKoreaReviewerPackageTests(unittest.TestCase):
             "issuer": "국방부", "publisher": "대한민국 정책브리핑",
         }
 
+    def test_real_original_ci_keeps_frozen_snapshot_after_shadow_appends(self):
+        workflow = (ROOT / ".github/workflows/korea_human_review_handoff_qa.yml"
+                    ).read_text(encoding="utf-8")
+        # Exact five-source review must survive legitimate later append-only
+        # Korea shadow runs while refusing a rewritten/missing old commit.
+        self.assertIn("frozen=" + gate.STATE_SHA, workflow)
+        self.assertIn('cat-file -e "$frozen^{commit}"', workflow)
+        self.assertIn('merge-base --is-ancestor "$frozen" HEAD', workflow)
+        self.assertIn('--state-commit "$frozen"', workflow)
+        self.assertNotIn('test "$tip" =', workflow)
+        self.assertNotIn('--state-commit "$tip"', workflow)
+        self.assertIn("No artifact", workflow.lower().replace("no artifact", "No artifact")
+                      if "no artifact" in workflow.lower() else workflow)
+        # Frozen exports still independently check ancestry again at runtime.
+        self.assertEqual(pkg.STATE_SHA, gate.STATE_SHA)
+
     def test_genuine_fixture_hwpx_parity_and_local_handoff(self):
         hwpx, text = pkg.confirm_original(self.candidate, self.record, self.state)
         self.assertEqual(pkg.sha(hwpx), self.candidate["document_capture_sha256"])
