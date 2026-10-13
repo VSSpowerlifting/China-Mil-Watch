@@ -170,11 +170,15 @@ class IndonesiaOfficialSourceIndexTests(unittest.TestCase):
         self.assertIn("Pangdam Wirabuana", note_text)
         self.assertIn("Kodam VI/Mulawarman", note_text)
         self.assertIn("unresolved", note_text)
+        self.assertIn("Indonesian Army", note_text)
+        self.assertIn("Tana Tidung", note_text)
         outgoing = {a["href"] for a in notes[0].select("a[href]")}
         self.assertEqual(outgoing, {
             "https://kejati-dkijakarta.kejaksaan.go.id/conference/news/14579/read",
             "https://www.kemhan.go.id/2026/10/09/mensos-dan-wamenhan-lepas-1-509-kadet-unhan-ri-untuk-mengabdi-di-181-sekolah-rakyat.html",
             "https://www.setneg.go.id/baca/index/pertemuan_presiden_prabowo_dan_presiden_el_sisi_hasilkan_empat_kesepakatan_kerja_sama",
+            "https://ppid.tniad.mil.id/index.php/i/29112/komisi%20-i%20-dpr%20-ri%20-gelar%20-rdp%20-spesifik%20-dengan%20-kodam%20-vimulawarman%20-bahas%20-penguatan%20-pertahanan%20-di%20-kaltim%E2%80%93kaltara",
+            "https://tanatidungkab.go.id/pustaka-10457-Bupati-Tana-Tidung-Hadiri-Sertijab-Danrem-092Maharajalila-Tega-jpg-",
         })
         self.assertTrue(all(a.get("rel") == ["noopener", "noreferrer"]
                             and a.get("target") == "_blank"
