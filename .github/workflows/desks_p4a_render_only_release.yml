@@ -152,12 +152,24 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "Site: publish reviewed Phase 4A Desks map only"
           git push origin HEAD:main
-      - name: Publish reviewed output to GitHub Pages
+      - name: Assemble exactly the reviewed Pages overlay
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          python -m scripts.stage_desks_p4a_output --from-dir output --to-dir "$RUNNER_TEMP/desks-pages-patch"
+          test "$(find "$RUNNER_TEMP/desks-pages-patch" -type f | wc -l)" -eq 11
+          sha256sum -c "$RUNNER_TEMP/desks-db.sha"
+      - name: Overlay only reviewed Desks files on existing GitHub Pages
         if: inputs.publish
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./output
+          # The deployed gh-pages branch can contain reviewed content not
+          # yet synchronized to main's output/ (e.g. Indonesia desk receipts).
+          # Never overwrite it by republishing all of output/. Overlay only
+          # our exact eleven files, preserving every unrelated public page.
+          publish_dir: ${{ runner.temp }}/desks-pages-patch
+          keep_files: true
           publish_branch: gh-pages
           cname: indopacificrecord.org
           user_name: github-actions[bot]
