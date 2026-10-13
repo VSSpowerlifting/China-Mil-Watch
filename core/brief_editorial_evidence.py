@@ -107,8 +107,16 @@ def _official(item):
                and p.hostname == "www.kaiho.mlit.go.jp"
                and bool(re.fullmatch(r"/e/topics_archive/article[0-9]+\.html",
                                      p.path)))
-        _require(mod or jcg, "unrecognized Japan MOD/JCG publisher/source family")
-        _require(item["language"] in ("ja", "en"), "invalid Japan source language")
+        joint_staff = (item["source_name"] == "Japan Joint Staff"
+                       and p.hostname == "www.mod.go.jp"
+                       and bool(re.fullmatch(
+                           r"/js/pdf/20[0-9]{2}/p20[0-9]{6}_[0-9]{2}\\.pdf",
+                           p.path)))
+        _require(mod or jcg or joint_staff,
+                 "unrecognized Japan MOD/JCG/Joint Staff publisher/source family")
+        _require(item["language"] == "ja" if joint_staff
+                 else item["language"] in ("ja", "en"),
+                 "invalid Japan source language")
     elif desk == "vietnam":
         match = VIETNAM_ID.fullmatch(ident)
         _require(bool(match), "bad Vietnam typed source identity")
@@ -148,6 +156,19 @@ def _item(item, start, cutoff):
     date_published = _day(item["published_date"])
     _require(start <= date_published <= cutoff,
              "research evidence published outside the reporting cutoff")
+    if item["desk"] == "japan" and item["source_name"] == "Japan Joint Staff":
+        # Publisher path embeds the notice's date. This checks identity/date
+        # consistency only: it does not replace independent source verification.
+        path = urlsplit(item["source_url"]).path
+        matched_js = re.fullmatch(
+            r"/js/pdf/(20[0-9]{2})/p(20[0-9]{6})_[0-9]{2}\\.pdf", path)
+        _require(bool(matched_js)
+                 and matched_js.group(1) == date_published.strftime("%Y")
+                 and matched_js.group(2) == date_published.strftime("%Y%m%d")
+                 and int(item["id"].split("-")[1][1:]) == cutoff.isocalendar()[1],
+                 "Joint Staff date/ISO-week identity mismatch")
+        _require(item["source_kind"] == "official-publisher-page-reviewed-for-research",
+                 "Joint Staff PDF has no qualified archived-text provenance")
     if item["desk"] in ("philippines", "indonesia"):
         matched = (AFP_ID if item["desk"] == "philippines" else KEMHAN_ID).fullmatch(
             item["id"])
@@ -165,8 +186,8 @@ def _item(item, start, cutoff):
     if item["source_kind"] == "shadow-extracted-original":
         # New publisher families use independently checked publisher links
         # until an exact collector-specific extraction hash rule is reviewed.
-        _require(item["desk"] in ("japan", "vietnam") and
-                 item["source_name"] != "Japan Coast Guard",
+        _require(item["source_name"] in (
+                     "Japan Ministry of Defense", "Vietnam Ministry of Public Security"),
                  "new publisher source needs separately qualified shadow hash rule")
         expected_rule = ("mps-vi-content-v1" if item["desk"] == "vietnam"
                          else "sha256-text-original-utf8")
