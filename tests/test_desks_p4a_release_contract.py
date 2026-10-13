@@ -58,7 +58,9 @@ class Phase4AReleaseContract(unittest.TestCase):
         self.assertIn("test \"$(git rev-parse HEAD)\" = \"$EXPECTED_SHA\"", text)
         self.assertIn("test \"$(git rev-parse origin/main)\" = \"$(git rev-parse HEAD)\"", text)
         self.assertIn("if: inputs.publish", text)
-        self.assertIn("group: daily-update", text)
+        self.assertIn("github.event_name == 'workflow_dispatch' && 'daily-update'", text)
+        self.assertIn("inputs.publish && 'pages-deploy'", text)
+        self.assertIn("cancel-in-progress: false", text)
         self.assertIn("permissions:\n  contents: read", text)
         self.assertIn("      contents: write", text)
 
