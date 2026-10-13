@@ -68,7 +68,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
     </div>
     <div class="deskmap-register">
     {% for d in desks if d.slug in placed %}{% set m = placed[d.slug] %}
-    <section class="desk desk--{{ d.status }} deskmap-plate {{ 'is-collecting is-live' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow is-quiet' }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
+    <section class="desk desk--{{ d.status }} deskmap-plate rl-plate {{ 'is-collecting is-live' if d.is_collecting else 'is-blocked' if d.status == 'access_blocked' else 'is-shadow is-quiet' }}" id="desk-{{ d.slug }}" data-desk="{{ d.slug }}"
       style="--wl:{{ m.wide.left }};--wt:{{ m.wide.top }};--wtx:{{ m.wide.tx }};--wty:{{ m.wide.ty }};--ml:{{ m.mid.left }};--mt:{{ m.mid.top }};--mtx:{{ m.mid.tx }};--mty:{{ m.mid.ty }}">
       <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
       <span class="deskmap-selected-label" hidden>Selected desk</span>
@@ -103,7 +103,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
 .deskmap:has([data-desk="{{ slug }}"]:is(:hover,:focus-within)) .dm-country[data-desk="{{ slug }}"] use{filter:brightness(.9)}
 {% endfor %}</style>
 {% for d in desks if d.slug not in placed %}
-<section class="desk desk--{{ d.status }} deskmap-plate is-unplaced" data-desk="{{ d.slug }}">
+<section class="desk desk--{{ d.status }} deskmap-plate rl-plate is-unplaced" data-desk="{{ d.slug }}">
   <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
   <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
   <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
