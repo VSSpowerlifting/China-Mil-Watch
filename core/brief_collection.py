@@ -622,6 +622,10 @@ def brief_view(slug: str, sidecar: Mapping, *, desk_names: Mapping,
             "entries": [t for t in trail.values() if t["desk"] == d],
         } for d in sidecar["desks"]],
         "trail_count": len(trail),
+        "source_linked": sidecar.get("evidence_type") == "source-linked-editorial-v1",
+        "body_paragraphs": sidecar.get("body_paragraphs") or [],
+        "publisher_references": sidecar.get("publisher_references") or [],
+        "publisher_urls": {s["id"]: s["url"] for s in sidecar.get("publisher_references") or []},
         # Additional *publisher-linked* references: never count these as
         # archived corpus rows, production desk coverage or source-trail IDs.
         "external_evidence": [{

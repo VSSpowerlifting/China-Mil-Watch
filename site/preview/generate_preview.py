@@ -2532,7 +2532,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         draft = json.loads(path.read_text(encoding="utf-8"))
         if draft.get("editorial_status") != "draft":
             raise ValueError("--review-brief is for an unapproved draft only")
-        problems = validate_readiness(draft, load_registry())
+        from core.brief_source_linked import is_source_linked
+        from core.brief_contract import validate_brief
+        problems = (validate_brief(draft, load_registry()) if is_source_linked(draft)
+                    else validate_readiness(draft, load_registry()))
         if problems:
             raise ValueError("draft review: " + "; ".join(problems))
         entry = brief_entry(path.stem, draft, briefs_dir / BRIEFS_MEDIA)
