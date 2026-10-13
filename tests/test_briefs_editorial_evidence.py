@@ -453,8 +453,11 @@ class IndonesiaSundayWeek42Tests(unittest.TestCase):
             original = out.read_text(encoding="utf-8")
             self.assertIn("External source ID-W42-01 | indonesia", original)
             self.assertIn("EXTERNAL SOURCE IDS: ID-W42-01", original)
-            edited = original.replace("## EDITORIAL FOCUS\\n",
-                                      "## EDITORIAL FOCUS\\nEdited for clarity: ", 1)
+            edited = original.replace(
+                "A defined defense cooperation discussion",
+                "An editor-clarified defense cooperation discussion", 1)
+            self.assertNotEqual(edited, original)
+            self.assertIn("An editor-clarified defense cooperation discussion", edited)
             self.assertEqual(validate_return(original, edited)["external_sources"], 1)
             with self.assertRaises(ReturnValidationError):
                 validate_return(original, edited.replace(
