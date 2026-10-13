@@ -78,18 +78,25 @@ class SourceLinkedTests(unittest.TestCase):
         changed["body_paragraphs"].append(changed["body_paragraphs"][0])
         self.assertTrue(manuscript_html_errors(self.value, self.render(changed)))
 
-    def test_real_candidate_is_unapproved_and_release_held(self):
+    def test_owner_signed_exact_candidate_is_ready_but_not_yet_numbered(self):
         self.assertEqual(brief_contract.validate_brief(self.value, self.registry), [])
-        errors = brief_contract.validate_readiness(self.value, self.registry)
-        self.assertIn("human editorial/source/rights review", " ".join(errors))
-        self.assertNotIn("owner source-linked evidence policy ruling", " ".join(errors))
+        self.assertEqual(brief_contract.validate_readiness(self.value, self.registry), [])
+        self.assertEqual(self.value["editorial_status"], "draft")
+        self.assertIsNone(self.value["issue_number"])
+        self.assertIsNone(self.value.get("approval"))
         self.assertEqual(self.value["policy_ruling"]["fingerprint"], fingerprint(self.value))
         self.assertEqual(self.value["policy_ruling"]["reviewed_by"], "Benjamin Yang")
-        self.assertIsNone(self.value["editorial_review"])
-        self.assertIsNone(self.value["issue_number"])
-        with self.assertRaises(brief_contract.BriefContractError):
-            brief_contract.approve(self.value, collection=[], registry=self.registry,
-                                   approved_by="No authority", approved_on="2026-10-12")
+        self.assertEqual(self.value["editorial_review"]["fingerprint"], fingerprint(self.value))
+        self.assertEqual(self.value["editorial_review"]["reviewed_by"], "Benjamin Yang")
+        self.assertEqual(set(self.value["editorial_review"]["checks"]), CHECKS)
+        self.assertTrue(all(v is True for v in self.value["editorial_review"]["checks"].values()))
+        for field in ("editorial_review", "policy_ruling"):
+            changed = copy.deepcopy(self.value)
+            changed[field] = None
+            self.assertTrue(brief_contract.validate_readiness(changed, self.registry))
+        revised = copy.deepcopy(self.value)
+        revised["body_paragraphs"][0][0]["text"] += " Unreviewed change."
+        self.assertTrue(brief_contract.validate_readiness(revised, self.registry))
 
     def test_reviewed_fixture_uses_existing_numbering_not_desk_quotas(self):
         value = self.reviewed_fixture()
