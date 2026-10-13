@@ -72,6 +72,18 @@ def _assert_rendered_contract() -> None:
         "assets/catalogue/media/no-17-trident-resolve-basarnas-drone.jpg",
     ):
         assert (out / rel).is_file(), f"required No. 17 asset is missing: {rel}"
+    for source_rel, output_rel in (
+        ("site/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
+         "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg"),
+        ("site/assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp",
+         "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp"),
+        ("site/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp",
+         "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp"),
+        ("site/assets/catalogue/media/no-17-trident-resolve-basarnas-drone.jpg",
+         "output/assets/catalogue/media/no-17-trident-resolve-basarnas-drone.jpg"),
+    ):
+        assert _sha256(ROOT / source_rel) == _sha256(ROOT / output_rel), (
+            "public output asset hash mismatch: " + output_rel)
     for date in HISTORICAL_DATES:
         assert (out / "the-pla-watch" / "posts" / f"{date}.html").is_file(), (
             f"historical Brief page missing after render: {date}")
@@ -169,6 +181,11 @@ def main(argv=None) -> int:
             raise SystemExit("BLOCKED: no changes to release")
     else:
         print("Final output scope is within the explicit Briefs release allow-list.")
+    if args.scope == "strict" and (
+        ROOT / "output" / "assets" / "editorial" / "trident-resolve-basarnas-drone.jpg"
+    ).exists():
+        raise SystemExit(
+            "BLOCKED: unmodified source JPEG must not be present in public output")
     return 0
 
 

@@ -72,6 +72,8 @@ class BriefsRenderReleaseContract(unittest.TestCase):
         self.assertIn("trident-resolve-basarnas-drone-800.webp", text)
         self.assertIn("does not imply or constitute DoW endorsement", text)
         self.assertIn('"site" / "assets" / "editorial" / "trident-resolve-basarnas-drone.jpg"', text)
+        self.assertIn("public output asset hash mismatch", text)
+        self.assertIn("unmodified source JPEG must not be present in public output", text)
         self.assertNotIn('"assets/editorial/trident-resolve-basarnas-drone.jpg"', text)
         self.assertIn("Downloaded from PLA Daily / 81.cn", text)
         self.assertIn("output deltas", text.lower())
