@@ -371,3 +371,26 @@ Reconciled local verification before final-head full runs:
 - The complete failed-job log is retained privately (15,587 lines), SHA-256
   `63f65ff00ff24b9e51da83a443630c7bbf4a3dad993218ba0f295c129397aebe`,
   together with exact job metadata, annotations and the untruncated failure block.
+
+## Verified full gate and final independent-main reconciliation
+
+Exact head `407dfd80d1074b666ae17b50c0b44f98af7ce026` passed
+[full CI 38418467936](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38418467936):
+**6,100 tests in 1732.863 seconds, nine documented skips**, Chromium
+148.0.7778.96 launched, validator ten governed warnings, database/output
+preservation and no WAL/SHM. All other non-publication PR checks passed.
+The first full Mac run is explicitly not green (21 `unsafe_store_root`
+setup errors from symlinked default-temp parents, five browser load timeouts).
+Using `/private/tmp` with unchanged safety assertions, the complete local
+suite passed **6,100 tests in 1141.376 seconds, one documented skip**; all
+previously timed-out browser cases passed. No storage guard or test was weakened.
+
+Main subsequently advanced to `06cca1e63d5d2bb7f918534fb64a3ef0fe76fa1a`.
+These additions are separate Briefs/country render-scope tooling, a single
+45-second Korea robots prerequisite, and research documentation. They change
+no Laos manuscript/render inputs, production database, historical records or
+MEPCOM files. Both decision histories are retained; no workflow is dispatched
+by reconciliation. Their **100** affected boundary/publication tests pass.
+A fresh ordinary render remains byte-identical. The final reconciled head
+will receive a new complete CI gate before guarded merge; the earlier green
+head is not misrepresented as that later head's receipt.
