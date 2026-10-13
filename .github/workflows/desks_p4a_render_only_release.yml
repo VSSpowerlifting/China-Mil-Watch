@@ -21,6 +21,14 @@ on:
         default: false
         type: boolean
 
+# A manual release holds the daily publishing lock for its entire lifetime.
+# In the release job it ALSO acquires the existing Pages-deploy lock so a
+# simultaneous output-only deploy cannot overwrite the sparse overlay.
+# PR contract checks receive a distinct per-PR concurrency group.
+concurrency:
+  group: ${{ github.event_name == 'workflow_dispatch' && 'daily-update' || format('desks-p4a-pr-{0}', github.event.pull_request.number) }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -87,7 +95,7 @@ jobs:
     permissions:
       contents: write
     concurrency:
-      group: daily-update
+      group: ${{ inputs.publish && 'pages-deploy' || format('desks-p4a-preview-{0}', github.run_id) }}
       cancel-in-progress: false
     steps:
       - name: Check out exact current main with write access
