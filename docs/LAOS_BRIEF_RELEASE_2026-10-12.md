@@ -63,7 +63,7 @@ maps the same sequence mechanically. This is a model-assisted assessment.
 
 | Paragraph / opening | Evidence | Assessment and unresolved limits |
 |---|---|---|
-| 1 “On October 8…” | S1, S3, S4, S5 | Dates/developments align. Common institutional-capability question is editorial framing; no source establishes coordination, and prose expressly does not assert it. |
+| 1 “On October 8…” | S1, S3, S4, S5 | Dates/developments align; the common capability question is editorial framing. The exact sentence “These events were not coordinated, and the evidence does not suggest otherwise.” is a negative coordination inference. These reports contain no affirmative coordination evidence, but cannot independently prove its absence. Human review must assess that inference’s basis; it is not certified here as an established fact. |
 | 2 “The Vietnamese project…” | S1 | Reported delivery, issuance and LAeID usage are attributed to Vietnam. Independent auditing and durable technical arrangements remain unknown. |
 | 3 “The significance…” | S1 | Administrative-capability interpretation is original analysis. VNeID conditionality is explicit; public account supplies no cross-border-access/control allocation. |
 | 4 “The same day…” | S2 | Two documents and respective ministries/departments match. Framework characterization is analysis; implementation is not documented by this source. |
@@ -75,7 +75,9 @@ maps the same sequence mechanically. This is a model-assisted assessment.
 | 10 “The cases are most revealing…” | S1, S4, S5 | Synthesis distinguishes observable reported assistance from unproved control/influence. Official training goal is known; actual operating responsibilities remain unverified. |
 | 11 “The next stage…” | S1, S4, S5, S6 | Follow-up agenda, not new established factual outcomes. Later October 13 reporting must remain separate from this frozen window. |
 
-No material contradiction was found in the available texts. That finding is
+No material contradiction was found in the available texts. The paragraph 1
+negative coordination inference remains explicitly distinguished from verified
+reporting, without altering the frozen sentence. That finding is
 not an independent human source/translation review or a claim that unavailable
 original Reuters/MOD pages were opened.
 
@@ -154,7 +156,7 @@ record. The public header and reference note implement that distinction.
   `c9c226211309e03dfbceb8c46b6786925731d4725335a24aca85078a4b8c3dc0`.
 - Focused existing/new publication, collection, external-evidence and IPR Brief
   suites: 170 tests passed before the additional approved-catalog/feed test;
-  all ten final source-linked tests passed afterward. Final-head offline CI
+  all eleven final source-linked tests passed afterward. Final-head offline CI
   runs every test, including the added test and Chromium launch.
 - Private canonical rendering at `/tmp/ipr-laos-review-20261012` succeeded.
   Rendered-body/link comparison passed. Chromium inspection at 1280×900 and
@@ -185,6 +187,17 @@ record. The public header and reference note implement that distinction.
 - `graphify update .` refreshes the structural map locally using AST extraction,
   without an LLM call; graph artifacts are not publication source or source evidence.
 
+- Final integration review adds conditional Analysis/home provenance for this
+  evidence type; the existing record-backed introduction remains unchanged
+  when no source-linked article is present. Private catalog counts distinguish
+  17 published Briefs from one unapproved candidate. The final focused existing/
+  new suite passed 171 tests before the additional catalog-copy fixture, and
+  all eleven final source-linked tests passed afterward. The full local run
+  aborted on temporary-write disk exhaustion (`OSError 28`) and is **not green**;
+  sandboxed Chromium also could not launch. Task-owned intermediate production
+  trees were removed, retaining the private preview and screenshots. Fresh-runner
+  final-head GitHub CI is the authoritative full offline/browser/preservation gate.
+
 ## Exact substantive blockers
 
 1. **Human source/translation and limited-use review.** All seven references have
@@ -193,8 +206,12 @@ record. The public header and reference note implement that distinction.
    attributed syndication. Those routes do not constitute a completed human review
    or a verified Reuters-original inspection. Smallest resolution: Ben (or the
    authorized human reviewer) accepts these specifically identified routes and the
-   limited-use assessment, or checks legitimately available originals, then records
+   limited-use assessment, including the paragraph 1 negative coordination inference,
+   or checks legitimately available originals, then records
    the actual exact-version source/rights/fidelity/rendered-review attestation.
+   If that categorical negative lacks a defensible editorial basis, identify the
+   basis or authorize a precise clarification of that sentence; no change to it
+   is applied by this implementation.
    No blanket full-copy permission or illustrative photograph is requested.
 2. **Owner evidence/anatomy ruling.** Existing §5b cannot represent the Vietnamese
    opening and intact narrative. The technical variant is complete, but the release
