@@ -133,6 +133,19 @@ class DeskMapResponsiveBrowser(unittest.TestCase):
                                    forced_colors="active",reduced_motion="reduce")
         try:
             page.goto((self.out / "desks.html").as_uri(), wait_until="load")
+            background = page.locator(".dm-sea").evaluate(
+                "(el) => getComputedStyle(el).fill"
+            )
+            for selector in (".dm-country.is-live use", ".dm-country.is-quiet use"):
+                with self.subTest(selector=selector):
+                    fill = page.locator(selector).first.evaluate(
+                        "(el) => getComputedStyle(el).fill"
+                    )
+                    self.assertEqual(fill, background, selector)
+            reset = page.locator(".deskmap-reset")
+            text_color = reset.evaluate("(el) => getComputedStyle(el).color")
+            button_bg = reset.evaluate("(el) => getComputedStyle(el).backgroundColor")
+            self.assertNotEqual(text_color, button_bg)
             button=page.locator('[data-select-desk="singapore"]').first
             button.click()
             self.assertEqual(button.get_attribute("aria-pressed"), "true")
