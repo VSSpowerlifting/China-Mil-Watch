@@ -218,8 +218,8 @@
   "publication": "Indo-Pacific Record",
   "publication_timing": "regular",
   "author_name": "Benjamin Yang",
-  "author_title": "Creator and Editor, Indo-Pacific Record",
-  "author_bio": "Benjamin Yang is the creator and editor of Indo-Pacific Record. He studies International Affairs at George Washington University’s Elliott School, with interests in U.S.–China relations, public diplomacy, and security affairs. He writes Indo-Pacific Record Briefs and maintains the project’s collection pipeline.",
+  "author_title": "Founder & Director of Research and Editorial",
+  "author_bio": "Benjamin Yang is the founder and director of research and editorial at Indo-Pacific Record. He studies International Affairs at George Washington University’s Elliott School, with interests in defense, geopolitical risk, and economic security. At IPR, he directs the organization’s research agenda, editorial operations, and technical development, overseeing primary-source research, analytical publications, and the expansion of its regional coverage.",
   "collection": "Indo-Pacific Record Briefs",
   "brief_schema": 1,
   "evidence_type": "source-linked-editorial-v1",
@@ -254,8 +254,10 @@
   "research_contributor": {
     "name": "Dylan Tanzi",
     "title": "Lead Research Analyst",
-    "bio": "Indo-Pacific Record",
-    "linkedin": "https://www.linkedin.com/in/dylan-tanzi/"
+    "bio": "Dylan Tanzi is pursuing a B.S. in Foreign Service at Georgetown University, majoring in International Politics. His interests focus on Southeast Asian affairs, international security, and foreign policy, particularly the political, economic, and strategic dynamics shaping the Indo-Pacific. At Indo-Pacific Record, he contributes to Southeast Asia research and editorial development, including work on the Vietnam Research Desk, primary-source verification, translation review, and analytical editing.",
+    "linkedin": "https://www.linkedin.com/in/dylan-tanzi/",
+    "email": "dt822@georgetown.edu",
+    "credit_role": "co-author"
   },
   "paragraph_support": [
     {
