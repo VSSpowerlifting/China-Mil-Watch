@@ -1,0 +1,33 @@
+{
+  "schema": "ipr-private-drafting-evidence/1",
+  "week_ending": "2026-10-17",
+  "status": "unapproved-source-linked-editorial-candidate",
+  "items": [
+    {
+      "id": "ID-W42-01",
+      "desk": "indonesia",
+      "source_name": "Indonesia Ministry of Defense",
+      "source_url": "https://www.kemhan.go.id/2026/10/12/menhan-dampingi-presiden-dalam-pertemuan-bilateral-dengan-presiden-republik-arab-mesir.html",
+      "published_date": "2026-10-12",
+      "language": "id",
+      "title_original": "Menhan Dampingi Presiden Dalam Pertemuan Bilateral dengan Presiden Republik Arab Mesir",
+      "source_kind": "shadow-extracted-original",
+      "state_commit": "43d9bc7bc94dcb0e257866e0f24e1ce404e98149",
+      "source_content_sha256": "3475c65c11e5ea7fbee196a435865e9b9ecfb422d2ef88658a1af9efe303393e",
+      "hash_rule": "sha256-text-original-utf8",
+      "summary": "Indonesia's Ministry of Defense reported on October 12 that Minister Sjafrie accompanied President Prabowo at the October 11 meeting with Egypt's president in Jakarta. It described discussions about deepening defense-industry cooperation, education, training and exchange of expertise; it did not document a separately signed defense-industry agreement or completed procurement.",
+      "caveats": [
+        "The presidential meeting was on October 11; the Kemhan account was published October 12. Preserve the distinct event and publication dates.",
+        "The State Secretariat's four explicitly enumerated agreements concern foreign affairs, visas, statistics and marine/fisheries cooperation; none is a separately listed defense-industry MOU.",
+        "Defense-industry cooperation was discussed, not independently established as a signed defense procurement contract, delivered capability or implemented project.",
+        "BPMI Setpres is credited for the imagery. This analyst synopsis neither reproduces the article nor licenses its text, photographs or translations; human source review remains required."
+      ],
+      "topics": [
+        "security_industry",
+        "regional_partnerships"
+      ],
+      "status": "unapproved-source-linked-editorial-candidate",
+      "copy_scope": "private-model-drafting-only-no-source-body"
+    }
+  ]
+}
