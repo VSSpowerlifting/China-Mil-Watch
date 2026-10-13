@@ -84,7 +84,7 @@ def render_packet(sidecar, *, manuscript=None, as_of=None,
         "Keep the source appendix intact. Give record IDs for factual claims.",
         "Do not guess at translations, infer coordination, or assign an issue number.",
         "Source listings are candidates, not endorsed editorial selections.",
-        ("Private model research: {} source-linked Japan/Vietnam/Indonesia candidate(s) "
+        ("Private model research: {} source-linked official-source candidate(s) "
          "available for drafting; all require independent human verification. "
          "They are NOT production records, desk promotion, or publication approval."
          .format(len(research_evidence)) if research_evidence else
@@ -273,7 +273,7 @@ def send_packet(path, week_ending, *, provisional=False, full_week=False,
             "Private owner-only preview of the unapproved Sunday IPR Brief.\n\n"
             "This attachment was NOT delivered to Dylan. Inspect the generated "
             "single-theme manuscript, all numeric production record citations, "
-            "Japan/Vietnam typed official-source references, their source-language "
+            "typed official-source research references, their source-language "
             "meaning and any unsupported claims. You must separately authorize "
             "editor delivery after independent source verification.\n\n"
             "Do not publish, number or forward as an approved Brief.\n\n"
@@ -335,7 +335,7 @@ def main(argv=None):
     parser.add_argument("--full-week", action="store_true",
                         help="Sunday full-week draft from records through Saturday")
     parser.add_argument("--include-research", action="store_true",
-                        help="privately synthesize checked-format Japan/Vietnam official source notes")
+                        help="privately synthesize bounded source-linked official research notes")
     parser.add_argument("--research-packet", type=Path,
                         help="optional exact-week temporary private JSON from a separately validated shadow exporter")
     args = parser.parse_args(argv)
