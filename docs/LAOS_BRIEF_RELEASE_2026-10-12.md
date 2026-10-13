@@ -10,11 +10,23 @@ scope. It does not authorize fabricated human attestations or silent doctrine ch
 ## Frozen article and attribution
 
 Title: **What Is Being Built in Laos?** Reporting window: 4–10 October 2026.
-The locally supplied DOCX matches SHA-256
+**Owner-authorized paragraph 1 clarification (13 October 2026):** The original
+locally supplied publication DOCX has SHA-256
 `54ede4791a46511a332040ab0871dd3fd6b7d3a4479c8aa68a9218810c789b26`.
-Canonical article: `briefs/what-is-being-built-in-laos.json`. Eleven body
-paragraphs, original subtitle, punctuation and seven inline linked phrases are
-extracted without rewriting. DOCX paragraphs 0 and 14 are workflow metadata;
+After explicit owner approval in this conversation, the specific sentence
+“These events were not coordinated, and the evidence does not suggest otherwise.”
+was replaced by “The available sources do not establish any coordination among
+these events.” The revised, independently saved DOCX has SHA-256
+`43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`;
+the original file remains unaltered as provenance. **This approval concerns
+only that wording edit**, not human source/rights clearance or doctrine §5b.
+The revised DOCX was rendered at two pages and visually inspected.
+
+Canonical article: `briefs/what-is-being-built-in-laos.json`. The revised
+DOCX preserves all eleven body paragraphs, original title/subtitle and seven
+inline linked phrases with unchanged URL associations; the one sentence
+substitution is the only authorized change. DOCX paragraphs 0 and 14 are
+workflow metadata;
 paragraphs 1 and 2 are title/subtitle; 3–13 are the public body. No DOCX, private
 editorial note or third-party source body is uploaded or emitted into the site.
 
@@ -63,7 +75,7 @@ maps the same sequence mechanically. This is a model-assisted assessment.
 
 | Paragraph / opening | Evidence | Assessment and unresolved limits |
 |---|---|---|
-| 1 “On October 8…” | S1, S3, S4, S5 | Dates/developments align; the common capability question is editorial framing. The exact sentence “These events were not coordinated, and the evidence does not suggest otherwise.” is a negative coordination inference. These reports contain no affirmative coordination evidence, but cannot independently prove its absence. Human review must assess that inference’s basis; it is not certified here as an established fact. |
+| 1 “On October 8…” | S1, S3, S4, S5 | Dates/developments align; the common capability question is editorial framing. The owner-approved sentence now reads “The available sources do not establish any coordination among these events.” That reports a limit of the reviewed evidence, **not a determination that coordination never occurred**. A human reviewer must still assess the seven-source review and the whole revised manuscript; wording approval is not a source/rights signoff. |
 | 2 “The Vietnamese project…” | S1 | Reported delivery, issuance and LAeID usage are attributed to Vietnam. Independent auditing and durable technical arrangements remain unknown. |
 | 3 “The significance…” | S1 | Administrative-capability interpretation is original analysis. VNeID conditionality is explicit; public account supplies no cross-border-access/control allocation. |
 | 4 “The same day…” | S2 | Two documents and respective ministries/departments match. Framework characterization is analysis; implementation is not documented by this source. |
@@ -75,9 +87,10 @@ maps the same sequence mechanically. This is a model-assisted assessment.
 | 10 “The cases are most revealing…” | S1, S4, S5 | Synthesis distinguishes observable reported assistance from unproved control/influence. Official training goal is known; actual operating responsibilities remain unverified. |
 | 11 “The next stage…” | S1, S4, S5, S6 | Follow-up agenda, not new established factual outcomes. Later October 13 reporting must remain separate from this frozen window. |
 
-No material contradiction was found in the available texts. The paragraph 1
-negative coordination inference remains explicitly distinguished from verified
-reporting, without altering the frozen sentence. That finding is
+No material contradiction was found in the available source texts. The
+previous unsupported categorical negative in paragraph 1 was replaced with
+the narrower, owner-approved observation of **what the reviewed sources do not
+establish**; that still does not prove the absence of coordination. This is
 not an independent human source/translation review or a claim that unavailable
 original Reuters/MOD pages were opened.
 
@@ -148,12 +161,22 @@ record. The public header and reference note implement that distinction.
 
 ## Engineering verification receipts
 
-- Exact DOCX-to-canonical title/subtitle/body comparison passed, including all
-  11 paragraphs, punctuation, seven linked phrases and their URL associations.
-  Frozen extraction checksum (stable JSON of those fields):
-  `4562e65893620126a0413ed82612290762844bb08e3e8766cae927dbaa5a2cf4`.
-  Full candidate fingerprint:
+- Original unamended DOCX-to-canonical title/subtitle/body/link comparison
+  passed at the previous head; its extraction checksum was
+  `4562e65893620126a0413ed82612290762844bb08e3e8766cae927dbaa5a2cf4`
+  and candidate fingerprint was
   `c9c226211309e03dfbceb8c46b6786925731d4725335a24aca85078a4b8c3dc0`.
+  Both are **superseded** and must not be used for release approval.
+- The owner-approved revised DOCX preserves 11 body paragraphs and seven
+  original inline link associations with one exact sentence change. Its
+  full-text extraction checksum (same deterministic JSON calculation, including
+  the revised DOCX SHA-256) is
+  `234abf080980e675931ef1b0222e56d1ce8965275a2e5cb3428992aa541fad73`;
+  its new `core.brief_source_linked.fingerprint` is
+  `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+  The revised DOCX itself was rendered and visually inspected in this chat;
+  new **repository exact-head CI and HTML fidelity checks remain to be completed**
+  after the updated source/test/document commits.
 - Focused existing/new publication, collection, external-evidence and IPR Brief
   suites: 170 tests passed before the additional approved-catalog/feed test;
   all eleven final source-linked tests passed afterward. Final-head offline CI
@@ -206,12 +229,11 @@ record. The public header and reference note implement that distinction.
    attributed syndication. Those routes do not constitute a completed human review
    or a verified Reuters-original inspection. Smallest resolution: Ben (or the
    authorized human reviewer) accepts these specifically identified routes and the
-   limited-use assessment, including the paragraph 1 negative coordination inference,
+   limited-use assessment and the revised paragraph 1 evidence limitation,
    or checks legitimately available originals, then records
    the actual exact-version source/rights/fidelity/rendered-review attestation.
-   If that categorical negative lacks a defensible editorial basis, identify the
-   basis or authorize a precise clarification of that sentence; no change to it
-   is applied by this implementation.
+   The owner authorized only the precise sentence clarification on October 13;
+   no one has used that permission as a substitute for human source review.
    No blanket full-copy permission or illustrative photograph is requested.
 2. **Owner evidence/anatomy ruling.** Existing §5b cannot represent the Vietnamese
    opening and intact narrative. The technical variant is complete, but the release
