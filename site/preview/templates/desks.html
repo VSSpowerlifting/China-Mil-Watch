@@ -13,7 +13,10 @@ its scope is declared, and is labeled according to what it actually does.</p>
 {{ desks.collecting_count }} collecting into the record ·
 {{ desks.not_collecting_count }} not collecting.</p>
 </header>
-{# The map is the directory. Each declared desk is a plate hung from the place
+{# The map locates each verified institutional seat. At ordinary viewport widths,
+   the growing public desk roster uses a readable register; on sufficiently
+   wide screens the plates hang from their separately reviewed geography.
+   The original directory used plates hung from the place
    its publishing institutions sit, by a leader drawn from `desks/geography.json`
    through the same projection that drew the coastline (scripts/desk_map.py).
    Everything a plate says still comes from the registry and the corpus; the
@@ -101,6 +104,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
 {% endfor %}</style>
 {% for d in desks if d.slug not in placed %}
 <section class="desk desk--{{ d.status }} deskmap-plate is-unplaced" data-desk="{{ d.slug }}">
+  <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
   <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
   <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
   <dl class="deskmap-stats">
