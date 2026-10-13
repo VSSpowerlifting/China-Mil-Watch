@@ -61,7 +61,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
         <circle class="dm-hit" r="50"/>
         <circle class="dm-ring" r="25"/>
         <circle class="dm-dot" r="1"/>
-        <text class="dm-label{{ ' is-west' if placed[d.slug].label_west }}" x="{{ -30 if placed[d.slug].label_west else 30 }}" y="18">{{ d.name|replace(' Desk', '')|replace(' Reference', '') }}</text>
+        <text class="dm-label{{ ' is-west' if placed[d.slug].label_west }}" x="{{ -30 if placed[d.slug].label_west else 30 }}" y="18">{{ 'ROK' if d.slug == 'korea' else d.name|replace(' Desk', '')|replace(' Reference', '') }}</text>
       </a>
       {% endfor %}
     </svg>
