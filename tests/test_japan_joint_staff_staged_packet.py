@@ -54,16 +54,16 @@ class JapanJointStaffStagedPacketTest(unittest.TestCase):
             result["supplemental_citations"]["cross_desk_comparison"] = [
                 "JP-W42-07"
             ]
-            with (patch("scripts.sunday_briefs_auto_writer.compose",
-                        return_value=result) as writer,
-                  patch("scripts.sunday_editorial_handoff.send_packet") as send):
-                main([
-                    "--sidecar", str(sidecar_path),
-                    "--out", str(target),
-                    "--write-automatic", "--full-week", "--include-research",
-                    "--research-packet", str(DIR / "2026-10-17.json"),
-                    "--as-of", "2026-10-17",
-                ])
+            with patch("scripts.sunday_briefs_auto_writer.compose",
+                       return_value=result) as writer:
+                with patch("scripts.sunday_editorial_handoff.send_packet") as send:
+                    main([
+                        "--sidecar", str(sidecar_path),
+                        "--out", str(target),
+                        "--write-automatic", "--full-week", "--include-research",
+                        "--research-packet", str(DIR / "2026-10-17.json"),
+                        "--as-of", "2026-10-17",
+                    ])
             writer.assert_called_once()
             self.assertEqual(
                 writer.call_args.kwargs["supplemental"][0]["source_url"], URL)
