@@ -128,6 +128,26 @@ class DeskMapResponsiveBrowser(unittest.TestCase):
         finally:
             context.close()
 
+    def test_mobile_forced_colours_hit_targets_are_invisible(self):
+        page = self.browser.new_page(viewport={"width":375,"height":812},
+                                     forced_colors="active",reduced_motion="reduce")
+        try:
+            page.goto((self.out / "desks.html").as_uri(), wait_until="load")
+            hits = page.locator(".dm-hit").evaluate_all(
+                "(nodes) => nodes.map(n => ({fill:getComputedStyle(n).fill, "
+                "adjust:getComputedStyle(n).forcedColorAdjust, "
+                "events:getComputedStyle(n).pointerEvents}))"
+            )
+            self.assertEqual(len(hits), 7, hits)
+            for hit in hits:
+                self.assertEqual(hit["adjust"], "none", hit)
+                self.assertTrue(hit["fill"] in ("transparent", "none")
+                                or hit["fill"].startswith("rgba(")
+                                and hit["fill"].endswith(", 0)"), hit)
+                self.assertNotEqual(hit["events"], "none", hit)
+        finally:
+            page.close()
+
     def test_selection_and_forced_color_readability(self):
         page=self.browser.new_page(viewport={"width":1280,"height":900},
                                    forced_colors="active",reduced_motion="reduce")
