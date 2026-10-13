@@ -15,7 +15,73 @@ The [DAPA-filtered official press-release index](https://www.korea.kr/briefing/p
 
 **Provenance precision:** the official pages label these as government agency press releases that the Policy Briefing service has republished. A PDF and HWPX attached to the *same release* are alternate file formats, **not two corroborating original sources**. The displayed attachment filename prefixes are **date cues**; neither their binary payloads nor internal document creation/distribution times have been obtained here. On the public page renderer, the article body appears as a linked `content` shell; page availability alone is not proof of reviewed original text.
 
-## 2. Per-page rights decision and the important policy discrepancy
+## 2. Exact DAPA publisher attachment targets (link identities, NOT retrieved originals)
+
+The public first-party Policy Briefing HTML exposes the following download links,
+with `tblKey=GMN`, and the web browser resolves each target to an
+`application/x-download` response that its text reader **cannot render**:
+
+| Portal press ID | Document format and visible `261008` label | Original publisher-hosted download identity | Bytes, digest and text fidelity |
+| --- | --- | --- | --- |
+| `156784618` | Joint DAPA/KASA **PDF** | [`fileId=198567088`](https://www.korea.kr/common/download.do?fileId=198567088&tblKey=GMN) | **Not retrieved or hashed** |
+| `156784618` | Joint DAPA/KASA **HWPX** | [`fileId=198567089`](https://www.korea.kr/common/download.do?fileId=198567089&tblKey=GMN) | **Not retrieved or hashed** |
+| `156784625` | DAPA exam **HWPX** | [`fileId=198567114`](https://www.korea.kr/common/download.do?fileId=198567114&tblKey=GMN) | **Not retrieved or hashed** |
+| `156784625` | DAPA exam **PDF** | [`fileId=198567115`](https://www.korea.kr/common/download.do?fileId=198567115&tblKey=GMN) | **Not retrieved or hashed** |
+
+These are exact first-party **link** identities, not archival capture
+receipts. A local attempt to reach the publisher from the available
+execution environment failed DNS resolution, which establishes
+**environmental inaccessibility only**, not an invalid publisher URL or
+publisher access restriction. No response bytes, file SHA-256, embedded
+media permission, page-count parity, original document publication time,
+or successful Actions-run retrieval is asserted.
+
+## 3. Joint release cross-posted by Korea AeroSpace Administration — rights conflict
+
+The [Korea AeroSpace Administration (KASA) own-host press release
+`plcyBrfNo=518`](https://www.kasa.go.kr/prog/plcyBrf/brief/kor/sub01_01_04/view.do?plcyBrfNo=518)
+is a **separately hosted publication by the joint announcing agency**
+about the same October 8 mutual-aid eligibility reform. It reports
+**posted October 8, 2026, 08:00 KST** and explicitly describes the
+membership expansion as implemented effective October 8. The KASA
+article body discusses the underlying legal change, qualifying
+aerospace/space/defense-support suppliers and the added eligible
+guarantee-business scope. This is contemporaneous first-party
+corroboration of the agencies' joint public *announcement*, **not an
+independently observed uptake, payment or insurance-cost outcome**.
+
+The KASA page links one `261009(조간)` **HWPX** and one similarly
+named **HWP**, contrasting with the Policy Briefing DAPA edition's
+`261008` **HWPX/PDF** pair. These labels reflect distinct public
+distribution editions and anticipated morning publication, and
+**do not authenticate the internal creation timestamps or byte-level
+equivalence of any of the four files**. A separate
+[KASA-attributed Policy Briefing republication
+`newsId=156784666`](https://m.korea.kr/briefing/pressReleaseView.do?newsId=156784666&pWiseMinistry=ministryNews&repCode=B00026&repCodeType=%EC%A0%95%EB%B6%80%EB%B6%80%EC%B2%98)
+also exists. It has a distinct portal newsId/issuer filter, but
+the underlying announcement is the **same policy event**. Do not
+duplicate counts or mistake cross-posting for independent claims.
+
+**Material rights conflict:** the DAPA-attributed Policy Briefing page
+`156784618` displays **KOGL Type 0, for text only**. KASA's
+*own-host page* prominently displays **KOGL Type 4 (attribution,
+non-commercial use only, no modification)** on its own publication.
+These are **different edition-specific publisher rights notices**;
+neither is a blanket license for the other's article or attachments.
+In particular, do **not** use the Type 0 notice to reproduce,
+translate/adapt or commercially reuse KASA's Type 4 original text
+or HWP/HWPX. Independent third-party media remain separately held,
+even where another edition displays a permissive text-only notice.
+
+The right engineering abstraction is a **single policy-event cluster
+with multiple publisher editions**, each keeping its own issuer,
+publisher host, original format, source-date cues, rights notice,
+capture hashes (pending), text-review disposition (pending), and
+editorial approval flag (false). This does not add the KASA host
+to the DAPA or MND shadow collector or approve a cross-host request.
+
+## 4. Per-page rights decision and the important policy discrepancy
+
 
 Both specific release pages expressly mark their **text** with `공공누리 제0유형(자유이용)` (KOGL Type 0: free use) and immediately distinguish photographs, illustrations, video and other non-text materials, whose rights might belong to third parties. This is a genuine **page-specific Type 0** observation, not an absent or automatically defective KOGL mark.
 
@@ -31,7 +97,7 @@ However, the portal's separately published [general copyright policy](https://ww
 
 The same host's publicly readable [robots policy](https://www.korea.kr/robots.txt) currently gives wildcard `Allow: /`; this **does not** substitute for the independently required DAPA GitHub-runner, robots-first canary, response inspection, and separate second-institution approval. DAPA must not inherit the MND collector's qualification or its exactly-one-HWPX shape rule.
 
-## 3. What remains before admission
+## 5. What remains before admission
 
 The [Phase 2 Korea issue #221](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/221) describes the manual, one-shot DAPA source-access canary added under PR #381. That canary remains a **separately authorized operator action**, not a completed observation in this dossier. Required subsequent gates:
 
