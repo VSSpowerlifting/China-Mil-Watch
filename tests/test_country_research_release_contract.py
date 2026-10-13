@@ -57,7 +57,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
                    '--from-dir "$RUNNER_TEMP/country-render" --to-dir output')
         self.assertEqual(text.count('python site/render.py --out "$RUNNER_TEMP/country-render"'), 2)
         self.assertEqual(text.count(command), 2)
-        self.assertNotIn("python site/render.py\\n", text)
+        self.assertNotIn("python site/render.py\n", text)
         self.assertIn('"scripts/stage_country_research_output.py"', text)
         self.assertIn('"tests/test_stage_country_research_output.py"', text)
         self.assertIn("tests.test_stage_country_research_output -v", text)
@@ -69,7 +69,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
             "Build isolated site and stage only reviewed country presentation",
         ):
             section = text.split("- name: " + label, 1)[1]
-            section = section.split("\\n      - name:", 1)[0]
+            section = section.split("\n      - name:", 1)[0]
             self.assertLess(section.index("python site/render.py --out"),
                             section.index(command))
             self.assertLess(section.index(command),
