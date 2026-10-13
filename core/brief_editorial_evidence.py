@@ -110,7 +110,7 @@ def _official(item):
         joint_staff = (item["source_name"] == "Japan Joint Staff"
                        and p.hostname == "www.mod.go.jp"
                        and bool(re.fullmatch(
-                           r"/js/pdf/20[0-9]{2}/p20[0-9]{6}_[0-9]{2}\\.pdf",
+                           r"/js/pdf/20[0-9]{2}/p20[0-9]{6}_[0-9]{2}\.pdf",
                            p.path)))
         _require(mod or jcg or joint_staff,
                  "unrecognized Japan MOD/JCG/Joint Staff publisher/source family")
@@ -161,7 +161,7 @@ def _item(item, start, cutoff):
         # consistency only: it does not replace independent source verification.
         path = urlsplit(item["source_url"]).path
         matched_js = re.fullmatch(
-            r"/js/pdf/(20[0-9]{2})/p(20[0-9]{6})_[0-9]{2}\\.pdf", path)
+            r"/js/pdf/(20[0-9]{2})/p(20[0-9]{6})_[0-9]{2}\.pdf", path)
         _require(bool(matched_js)
                  and matched_js.group(1) == date_published.strftime("%Y")
                  and matched_js.group(2) == date_published.strftime("%Y%m%d")
