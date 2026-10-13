@@ -1,0 +1,302 @@
+{
+ "access_failures": 0,
+ "anomalies": [],
+ "cap": 40,
+ "captures": [
+  {
+   "content_type": "text/plain; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 68,
+   "payload_sha256": "f734c312f9f372bf52793c7d003cc2907454cb022ff550e0d13d7ebc1abe7d1b",
+   "retrieved_at": "2026-10-13T22:45:31+00:00",
+   "role": "robots",
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "content_type": "application/xml; charset=utf-8",
+   "http_status": 200,
+   "payload_bytes": 12364,
+   "payload_sha256": "f70ac7cf3e8e112594cb0ef67297d8201ce007e9ac8e8d6db38b459126bc4d22",
+   "retrieved_at": "2026-10-13T22:45:34+00:00",
+   "role": "listing",
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "content_sha256": "a65fb441e41d0cc521e4c709b2fb251b29c12a82aef3e348550a57ef3eaa087e",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/tang-cuong-hop-tac-giua-bo-cong-an-viet-nam-va-bo-tu-phap-trung-quoc-1791882878",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 417279,
+   "payload_sha256": "a070d299ff3cd17d10da7b5db20129a556af1bfca5ba420346c73be36cef4710",
+   "retrieved_at": "2026-10-13T22:45:37+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791882878",
+   "url": "https://bocongan.gov.vn/bai-viet/tang-cuong-hop-tac-giua-bo-cong-an-viet-nam-va-bo-tu-phap-trung-quoc-1791882878"
+  },
+  {
+   "content_sha256": "dd1c2144e9c74e2754fd8229c32d2e69b14f5e20d55c8acb2afc365dfc5e90b6",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/viet-nam-lien-bang-nga-thuc-day-hop-tac-trong-cong-tac-thi-hanh-an-hinh-su-1791881212",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 423861,
+   "payload_sha256": "cc036502a76f4a4d1d99903a0364d9af702d88b94c2397c1bcdb1ffdce6d5a7b",
+   "retrieved_at": "2026-10-13T22:45:40+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791881212",
+   "url": "https://bocongan.gov.vn/bai-viet/viet-nam-lien-bang-nga-thuc-day-hop-tac-trong-cong-tac-thi-hanh-an-hinh-su-1791881212"
+  },
+  {
+   "content_sha256": "07dd8b58f589f893fda706ec8e368621a47f82c8af42c048e86874bdd7fa1887",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/tang-cuong-hop-tac-bao-ve-ban-quyen-so-phat-trien-dien-anh-cong-an-nhan-dan-1791864418",
+   "http_status": 200,
+   "outcome": "new",
+   "payload_bytes": 426575,
+   "payload_sha256": "efd665fe8102678d6be44b4cbba3ba23d5b4b98eb17d6de85cbc6554ad835e34",
+   "retrieved_at": "2026-10-13T22:45:43+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791864418",
+   "url": "https://bocongan.gov.vn/bai-viet/tang-cuong-hop-tac-bao-ve-ban-quyen-so-phat-trien-dien-anh-cong-an-nhan-dan-1791864418"
+  },
+  {
+   "content_sha256": "2fc8d711881ea1125d9825ecd3150f2c6a4e346315a682fdda5ca6ec67e4c3f9",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/bo-truong-luong-tam-quang-tiep-giam-doc-co-quan-thi-hanh-an-lien-bang-nga-1791803388",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 421788,
+   "payload_sha256": "c1806070db143a7174a0c0b95828d7abcfe87c9ba9909dbd8f116c4acdb9f53a",
+   "retrieved_at": "2026-10-13T22:45:48+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791803388",
+   "url": "https://bocongan.gov.vn/bai-viet/bo-truong-luong-tam-quang-tiep-giam-doc-co-quan-thi-hanh-an-lien-bang-nga-1791803388"
+  },
+  {
+   "content_sha256": "d5b372499a12ff3df54c74d768d93d20da1913280eb2b4c4cda851345f731224",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/bo-truong-luong-tam-quang-chao-xa-giao-pho-thu-tuong-thu-nhat-campuchia-neth-savoeun-1791608910",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 419277,
+   "payload_sha256": "8bc78ff6b724e09074c4cf9bf8a80e623fdfbd50758b3af2961e89b6dffb9eb2",
+   "retrieved_at": "2026-10-13T22:45:52+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791608910",
+   "url": "https://bocongan.gov.vn/bai-viet/bo-truong-luong-tam-quang-chao-xa-giao-pho-thu-tuong-thu-nhat-campuchia-neth-savoeun-1791608910"
+  },
+  {
+   "content_sha256": "8775cb700db1dddfb17209c292b7a03864c65683cc190792c88939a9dd7740ef",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 416806,
+   "payload_sha256": "c9e16c9ce7ca1e86eb29454342b4c03d0ab6eb3b6b89f7a3f8e02b62bc00afb4",
+   "retrieved_at": "2026-10-13T22:45:55+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791535381",
+   "url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381"
+  },
+  {
+   "content_sha256": "8707eaee31b0423d8b6835fee0d02a25207c2a8e5813718aa57c434c927fd6b5",
+   "content_type": "text/html;charset=utf-8",
+   "final_url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010",
+   "http_status": 200,
+   "outcome": "unchanged",
+   "payload_bytes": 421148,
+   "payload_sha256": "0e2ca7d78efebccd9552cc5c093a9616b31aa3a4bd133f61ddc17b327b7a3957",
+   "retrieved_at": "2026-10-13T22:45:58+00:00",
+   "role": "article",
+   "source_identity": "mps-vi:1791366010",
+   "url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010"
+  }
+ ],
+ "challenged": 0,
+ "changed": 0,
+ "collector_commit": "6eb354701b069279b8d6994daa88403a05dd50e0",
+ "collector_identity": "IndoPacificRecord-ShadowCollector/0.1 (+https://indopacificrecord.org; research archive; contact via site)",
+ "content_hash_rule": "mps-vi-content-v1",
+ "corpus_range": [
+  "2026-10-02",
+  "2026-10-13"
+ ],
+ "day_zero_utc": "2026-10-07T17:16:33+00:00",
+ "desk_id": "vietnam",
+ "discovered": 7,
+ "error_detail": null,
+ "extraction_failures": 0,
+ "failures": [],
+ "fetch_failures": 0,
+ "finished_utc": "2026-10-13T22:45:58+00:00",
+ "health": "ok",
+ "listing_report": {
+  "coverage": "proven",
+  "items_listed": 10,
+  "listed": [
+   [
+    "1791882878",
+    "2026-10-13"
+   ],
+   [
+    "1791881212",
+    "2026-10-13"
+   ],
+   [
+    "1791864418",
+    "2026-10-13"
+   ],
+   [
+    "1791803388",
+    "2026-10-12"
+   ],
+   [
+    "1791608910",
+    "2026-10-10"
+   ],
+   [
+    "1791535381",
+    "2026-10-09"
+   ],
+   [
+    "1791366010",
+    "2026-10-07"
+   ],
+   [
+    "1791199677",
+    "2026-10-05"
+   ],
+   [
+    "1791199100",
+    "2026-10-05"
+   ],
+   [
+    "1790933646",
+    "2026-10-02"
+   ]
+  ],
+  "listed_after_window": 0,
+  "listing_url": "https://bocongan.gov.vn/api/rss/34.xml",
+  "newest_listed": "2026-10-13",
+  "oldest_listed": "2026-10-02",
+  "pages_read": 1,
+  "pagination": "finite RSS snapshot; no archive or older endpoint requested",
+  "selected": 7,
+  "window_end": "2026-10-13",
+  "window_start": "2026-10-07"
+ },
+ "listing_status": "ok",
+ "lookback_days": 6,
+ "new_records": 3,
+ "request_ceiling": 42,
+ "requests": [
+  {
+   "bytes": 68,
+   "ended_utc": "2026-10-13T22:45:31.905644+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:30+00:00",
+   "started_utc": "2026-10-13T22:45:30.304507+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/robots.txt"
+  },
+  {
+   "bytes": 12364,
+   "ended_utc": "2026-10-13T22:45:34.263557+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:33+00:00",
+   "started_utc": "2026-10-13T22:45:33.908712+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/api/rss/34.xml"
+  },
+  {
+   "bytes": 417279,
+   "ended_utc": "2026-10-13T22:45:37.292272+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:36+00:00",
+   "started_utc": "2026-10-13T22:45:36.266498+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/tang-cuong-hop-tac-giua-bo-cong-an-viet-nam-va-bo-tu-phap-trung-quoc-1791882878"
+  },
+  {
+   "bytes": 423861,
+   "ended_utc": "2026-10-13T22:45:40.231994+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:39+00:00",
+   "started_utc": "2026-10-13T22:45:39.295064+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/viet-nam-lien-bang-nga-thuc-day-hop-tac-trong-cong-tac-thi-hanh-an-hinh-su-1791881212"
+  },
+  {
+   "bytes": 426575,
+   "ended_utc": "2026-10-13T22:45:43.513120+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:42+00:00",
+   "started_utc": "2026-10-13T22:45:42.234839+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/tang-cuong-hop-tac-bao-ve-ban-quyen-so-phat-trien-dien-anh-cong-an-nhan-dan-1791864418"
+  },
+  {
+   "bytes": 421788,
+   "ended_utc": "2026-10-13T22:45:48.003684+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:45+00:00",
+   "started_utc": "2026-10-13T22:45:45.515957+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/bo-truong-luong-tam-quang-tiep-giam-doc-co-quan-thi-hanh-an-lien-bang-nga-1791803388"
+  },
+  {
+   "bytes": 419277,
+   "ended_utc": "2026-10-13T22:45:52.401712+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:50+00:00",
+   "started_utc": "2026-10-13T22:45:50.006432+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/bo-truong-luong-tam-quang-chao-xa-giao-pho-thu-tuong-thu-nhat-campuchia-neth-savoeun-1791608910"
+  },
+  {
+   "bytes": 416806,
+   "ended_utc": "2026-10-13T22:45:55.544524+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:54+00:00",
+   "started_utc": "2026-10-13T22:45:54.404418+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381"
+  },
+  {
+   "bytes": 421148,
+   "ended_utc": "2026-10-13T22:45:58.667590+00:00",
+   "gate_interval_s": 2.0,
+   "gate_wait_s": 0.0,
+   "requested_at": "2026-10-13T22:45:57+00:00",
+   "started_utc": "2026-10-13T22:45:57.547297+00:00",
+   "status": 200,
+   "url": "https://bocongan.gov.vn/bai-viet/dua-hop-tac-an-ninh-thuc-thi-phap-luat-tro-thanh-tru-cot-trong-quan-he-viet-nam-australia-1791366010"
+  }
+ ],
+ "result": "ok",
+ "retrieved": 7,
+ "reverted": 0,
+ "robots_status": "read",
+ "run_id": "38479812992-1",
+ "selected": 7,
+ "shadow_day": 6,
+ "source_slug": "vn_mps_foreign_affairs_vi",
+ "started_utc": "2026-10-13T22:45:30+00:00",
+ "state_sha256_after": "d8f3835302a50f299798380143b0f856887817556af810dcf9ea1720cd2b3f0f",
+ "state_sha256_before": "55d2b37ce6a9022aa6fcac605d979164508cbc92c9251209e829a1290c5c7ba6",
+ "stored_total": 10,
+ "target_date": "2026-10-13",
+ "target_date_source": "schedule-slot",
+ "unchanged": 4,
+ "versions_total": 10,
+ "window_start": "2026-10-07"
+}
