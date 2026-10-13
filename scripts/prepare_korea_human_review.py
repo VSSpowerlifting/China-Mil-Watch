@@ -134,7 +134,7 @@ def component_inventory(candidate, original):
                         and not name.startswith("/")
                         and not any(segment in ("", ".", "..")
                                     for segment in name.rstrip("/").split("/"))
-                        and "\\\\" not in name and
+                        and "\\" not in name and
                         not any(ord(char) < 32 for char in name)
                         and not (entry.flag_bits & 1),
                         "unsafe or encrypted original HWPX component")
