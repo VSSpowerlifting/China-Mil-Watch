@@ -2852,7 +2852,10 @@ def build(out_dir: Path, title: str, db_path: Path,
                 target.write_bytes(image["file"].read_bytes())
                 written.append(image["route"])
             brief["article_media"] = native_article_media(
-                brief["photo"], sidecar["desks"], root="../", cover=cover)
+                brief["photo"], sidecar["desks"],
+                # The exact owner-reviewed source-linked narrative is text-led;
+                # it supplies no desk geography or photograph admission.
+                root=None if brief["source_linked"] else "../", cover=cover)
             brief["adjacent"] = adjacent_items(collection, slug)
             # A cited record this site preserves links to its record page; one
             # it does not hold links only to the source.
