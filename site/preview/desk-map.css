@@ -101,11 +101,16 @@
  .deskmap-chart{background:Canvas}.dm-sea,.dm-land,.dm-country use{fill:Canvas;stroke:CanvasText}
  .dm-graticule,.dm-borders{stroke:CanvasText}.dm-label,.dm-scale text{fill:CanvasText;stroke:Canvas;stroke-width:4px}
  .dm-dot{fill:CanvasText;stroke:Canvas}.dm-ocean{fill:CanvasText}
- .dm-country.is-selected use{fill:Highlight}
+ /* Match the higher-specificity status fills in forced colours; otherwise
+    live/quiet national shapes collapse into system Highlight blobs. */
+ .dm-country.is-live use,.dm-country.is-quiet use{fill:Canvas;stroke:CanvasText}
+ .dm-country.is-live use{stroke-width:1.7px;stroke-dasharray:none}
+ .dm-country.is-quiet use{stroke-width:1px;stroke-dasharray:4 3}
+ .dm-country.is-selected use{fill:Canvas;stroke:Highlight;stroke-width:2px}
  .deskmap-plate{box-shadow:none;border:1px solid CanvasText;border-top:3px solid CanvasText}
  .deskmap-plate.is-selected{outline-color:Highlight}
  .deskmap-selectors button{background:ButtonFace;color:ButtonText;border-color:ButtonText}
- .deskmap-selectors button[aria-pressed=true]{background:Highlight;color:HighlightText}
+ .deskmap-selectors button[aria-pressed=true]{background:ButtonFace;color:ButtonText;border-color:Highlight;outline:3px solid Highlight;outline-offset:0}
  .deskmap-key-swatch{forced-color-adjust:none}
 }
 @media print{
