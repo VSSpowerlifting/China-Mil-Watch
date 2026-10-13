@@ -163,3 +163,73 @@ publication signoff or archival completeness from these observations.
 
 **Status:** Research evidence improved; collector admission, originality,
 independent reviewer, source-use and public release **all remain unapproved**.
+
+## 3. October 12 scheduled shadow attempt — actual runner evidence (post-event update)
+
+**This supersedes the earlier statement that the October 12 Actions attempt had
+not yet appeared.** The separate, scheduled Korea run
+[38323793488](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38323793488)
+started **2026-10-12 23:45:27 UTC** (the Korea schedule names 17:47 UTC).
+Its collector job was **failed**, not missing or unobserved. The checked-out
+collector SHA was `fefce97d8e3b9dc3396d41de6586765e265bc382`, and the
+logical target date remained **2026-10-12** (`schedule-slot`).
+
+The collector's output in job #115057704497 preserves the following fields:
+
+| Field | Verified result |
+| --- | --- |
+| `target_date` / `window_start` | `2026-10-12` / `2026-10-06` |
+| `lookback_days` / `cap` | `6` / `40` |
+| `robots_status` | `null` |
+| `listing_status` / `result` / `health` | `timeout` / `timeout` / `fail` |
+| `error_detail` | `request timed out; no retry` |
+| `requests` | empty — no complete HTTP payload was preserved for this attempt |
+| `discovered` / `selected` / `retrieved` / `extracted` | `0` / `0` / `0` / `0` |
+| `inserted` / `updated` / `duplicates` | `0` / `0` / `0` |
+| shadow database SHA-256, before and after | `80969bb7ca19b2d13d999f9cad270e94a720b3d2f3619549a889dec597e31788` |
+
+**Failure stage, not a publisher-content conclusion:** the implementation
+first requests `https://www.korea.kr/robots.txt`, sets
+`robots_status="read"` only after a complete, validated robots response,
+then proceeds to the ministry-filtered listing. Because the run has
+`robots_status=null` and `requests=[]`, the **robots fetch did not complete**
+and **no listing request was reached**. The field named `listing_status`
+is the discovery-level failure status; it does *not* establish that the
+listing endpoint timed out. The evidence does not distinguish a transient
+network problem from a longer-lived origin/client accessibility problem; it
+also does not indicate a publisher refusal, a blank listing, or a successful
+HWPX download.
+
+The candidate attempt was retained in
+[artifact #11779728345](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38323793488/artifacts/11779728345)
+(`candidate-shadow-korea-38323793488-1`).
+Because the collection step failed, the workflow skipped its explicit
+successful-state publication step. The preserved `shadow/korea-policy-briefing`
+branch's `state/ledger/` directory, inspected separately through the GitHub
+contents API, contains **seven ledgers covering October 6–11**. October 8
+successfully added a fifth record (`newsId=156784652`); the October 9–11
+scheduled ledgers were healthy duplicate-only collections, with five
+archived records still retained. The October 12 failed candidate ledger
+exists in the artifact, **not** as an accepted scheduled success ledger on
+the shadow branch.
+
+**Recovery rule:** `core/shadow_schedule.py` explicitly refuses an ordinary
+UI rerun of an ambiguous scheduled attempt. An operator can recover the
+logical date only via a *new manual workflow dispatch* for desk `korea`
+with **`target_date=2026-10-12`**, or a separately bounded local run with
+that explicit date, keeping the original failed artifact intact. This
+document records the safe action; it does not claim to have dispatched it.
+The transport intentionally does not retry, follow redirects or challenges,
+or bypass robots. A later successful run is a distinct observation and
+would still require proof that the two candidate HWPX files were in fact
+retrieved and hashed. Keep both records outside production and public
+editorial use.
+
+**CI note for this documentation PR:** the original offline check
+[run #38300787681](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38300787681)
+ended red (5,995 tests; two failures in the *Indonesia*
+`test_prepare_indonesia_reference_review_queue` fixture assumptions).
+The Korea diff itself changes documentation only; the tracked database
+and output preservation checks passed. This is not a claim that PR #471's
+required full CI passed, and the unrelated tests must be reconciled before
+merge under normal repository rules.
