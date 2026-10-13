@@ -23,6 +23,10 @@ class DesksPhase4MapContract(unittest.TestCase):
         self.css = STYLE.read_text(encoding="utf-8")
         self.relief = RELIEF.read_text(encoding="utf-8")
 
+    def test_template_compiles_as_jinja(self):
+        from jinja2 import Environment
+        Environment().parse(self.html)
+
     def test_no_us_sovereign_fill(self):
         self.assertIn("d.slug != 'us-indopacific'", self.html)
         self.assertIn('href="#dm-geo-{{ d.slug }}"', self.html)
