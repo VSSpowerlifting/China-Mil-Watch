@@ -65,7 +65,7 @@ class Phase4AReleaseContract(unittest.TestCase):
     def test_one_isolated_render_then_exact_allowlist_stage(self):
         text = WF.read_text(encoding="utf-8")
         self.assertEqual(text.count('python site/render.py --out "$RUNNER_TEMP/desks-render"'), 2)
-        self.assertEqual(text.count("python -m scripts.stage_desks_p4a_output --from-dir"), 2)
+        self.assertEqual(text.count("python -m scripts.stage_desks_p4a_output --from-dir"), 3)
         self.assertEqual(text.count("python -m scripts.guard_desks_p4a_output_scope"), 3)
         self.assertIn("python scripts/validate_output.py", text)
         self.assertIn("sha256sum -c", text)
@@ -79,6 +79,10 @@ class Phase4AReleaseContract(unittest.TestCase):
     def test_no_publisher_permissions_or_unreviewed_generated_assets(self):
         text = WF.read_text(encoding="utf-8")
         self.assertEqual(text.count("actions-gh-pages@v3"), 1)
+        self.assertIn("publish_dir: ${{ runner.temp }}/desks-pages-patch", text)
+        self.assertIn("keep_files: true", text)
+        self.assertNotIn("publish_dir: ./output", text)
+        self.assertIn('find "$RUNNER_TEMP/desks-pages-patch" -type f | wc -l', text)
         self.assertIn("output/assets/flags/*.svg", text)
         self.assertIn("output/assets/flags/LICENSE", text)
         self.assertNotIn("output/assets/geo/**", text)
