@@ -22,6 +22,7 @@ from scripts.sunday_briefs_auto_writer import (
     compose, validate_manuscript, writing_schema,
 )
 from scripts.sunday_editorial_handoff import main, render_packet
+from core.brief_editorial_source_use import summarize_source_use, SourceUseError
 from scripts.validate_editorial_return import (
     ReturnValidationError, validate_return,
 )
@@ -419,6 +420,56 @@ class IndonesiaSundayWeek42Tests(unittest.TestCase):
     def test_week41_evidence_unchanged_and_out_of_scope_weeks_empty(self):
         self.assertEqual(len(load_editorial_evidence("2026-10-10", "2026-10-10")), 6)
         self.assertEqual(load_editorial_evidence("2026-10-24", "2026-10-24"), [])
+
+    def test_exact_source_reaches_no_send_manuscript_and_dylan_return(self):
+        """A valid packet alone is insufficient: the real renderer must accept it."""
+        row = self.candidate()
+        sidecar = scaffold()
+        sidecar["week_start"], sidecar["week_ending"] = "2026-10-11", self.WEEK
+        m = valid_manuscript()
+        m["editorial_focus"] = (
+            "A defined defense cooperation discussion needs careful separation "
+            "from a subsequently signed and implemented policy announcement."
+        )
+        m["supplemental_citations"] = {key: [] for key in m["citations"]}
+        m["supplemental_citations"]["cross_desk_comparison"] = [row["id"]]
+        m["supplemental_citations"]["why_it_matters"] = [row["id"]]
+        audit = summarize_source_use(m, sidecar["source_trail"], [row])
+        self.assertEqual(audit["research_by_desk"]["indonesia"]["offered"], 1)
+        self.assertEqual(audit["research_by_desk"]["indonesia"]["cited"], 1)
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            sidecar_path, out = d / "sidecar.json", d / "manuscript.txt"
+            sidecar_path.write_text(json.dumps(sidecar), encoding="utf-8")
+            packet_path = ROOT / "research/briefs_editorial_evidence" / (self.WEEK + ".json")
+            with patch("scripts.sunday_briefs_auto_writer.compose", return_value=m) as model, \
+                 patch("scripts.sunday_editorial_handoff.send_packet") as mail:
+                main(["--sidecar", str(sidecar_path), "--out", str(out),
+                      "--write-automatic", "--full-week", "--include-research",
+                      "--research-packet", str(packet_path), "--as-of", self.WEEK])
+            model.assert_called_once()
+            self.assertEqual(model.call_args.kwargs["supplemental"], [row])
+            mail.assert_not_called()
+            original = out.read_text(encoding="utf-8")
+            self.assertIn("External source ID-W42-01 | indonesia", original)
+            self.assertIn("EXTERNAL SOURCE IDS: ID-W42-01", original)
+            edited = original.replace("## EDITORIAL FOCUS\\n",
+                                      "## EDITORIAL FOCUS\\nEdited for clarity: ", 1)
+            self.assertEqual(validate_return(original, edited)["external_sources"], 1)
+            with self.assertRaises(ReturnValidationError):
+                validate_return(original, edited.replace(
+                    "External source ID-W42-01 |",
+                    "External source ID-W42-99 |", 1))
+
+    def test_source_use_rejects_renamed_or_nonexistent_indonesia_ids(self):
+        sidecar = scaffold()
+        m = valid_manuscript()
+        m["supplemental_citations"] = {key: [] for key in m["citations"]}
+        for replacement in ("ID-W42-02", "ID-W41-01", "42"):
+            bad = copy.deepcopy(self.candidate())
+            bad["id"] = replacement
+            with self.subTest(replacement=replacement), self.assertRaises(SourceUseError):
+                summarize_source_use(m, sidecar["source_trail"], [bad])
 
 
 if __name__ == "__main__":
