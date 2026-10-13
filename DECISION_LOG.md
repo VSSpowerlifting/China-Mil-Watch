@@ -4,6 +4,38 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Narrow §5b source-linked Laos Brief exception expressly approved
+
+In this conversation the owner explicitly said **yes** when asked to approve the
+specific §5b evidence/anatomy exception for the revised “What Is Being Built
+in Laos?” candidate. The exact ruling and approved policy language are
+memorialized in [PR #485 comment](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576).
+The ruling binds only revised candidate fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`
+and is stored in the draft's `policy_ruling`; its revised DOCX SHA-256 is
+`43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`.
+
+**Accepted exception:** For this precisely reviewed manuscript, the
+`source-linked-editorial-v1` variant may use publisher-linked evidence and
+the intact eleven-paragraph narrative within the *existing* numbered Briefs
+collection. Publisher references disclose issuer, date, source language,
+verification route and independence; paragraph claims map to those sources.
+They are **not** production archive records, create no desk coverage and cannot
+be confused with normally collected, record-backed research. All other
+record-backed §5b rules, edition identities, release numbering and production
+admission requirements remain unchanged. Future manuscripts require
+independent fingerprint-specific owner decisions; see
+`docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md`, §5b.
+
+**Remaining independent hold:** The owner's yes **did not claim** that they
+personally completed the seven-reference original-language/source/translation/
+rights, claim, chronology, authorship, fidelity and rendered-page review.
+The `editorial_review` field is still `null`; source-linked readiness must
+fail closed until an actual reviewer/date/reference and all seven checks are
+properly recorded against this fingerprint. No issue number, final release
+approval, merge, output regeneration or deployment was authorized by this
+policy ruling alone.
+
 ## 2026-10-13 — Laos Brief paragraph 1 clarification authorized; release still held
 
 Following a specific editorial recommendation in this conversation, the owner
