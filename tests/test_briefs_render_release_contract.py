@@ -56,7 +56,7 @@ class BriefsRenderReleaseContract(unittest.TestCase):
     def test_preview_uploads_artifact_and_does_not_commit_or_deploy(self):
         text = self.workflow
         preview = text.split("  preview:", 1)[1].split("  publish:", 1)[0]
-        self.assertIn("--scope report-only", preview)
+        self.assertIn("--scope strict", preview)
         self.assertIn("actions/upload-artifact@v4", preview)
         self.assertIn("output/styles.css", preview)
         self.assertIn("output/assets/identity/selected-ipr/**", preview)
