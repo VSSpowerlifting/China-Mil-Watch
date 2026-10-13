@@ -165,7 +165,7 @@ class JapanJointStaffEditorialTests(unittest.TestCase):
                 "JP-W42-07"
             ]
             with patch("scripts.sunday_briefs_auto_writer.compose",
-                       return_value=proposed) as writer, \\
+                       return_value=proposed) as writer, \
                  patch("scripts.sunday_editorial_handoff.send_packet") as send:
                 main([
                     "--sidecar", str(sidecar_path),
