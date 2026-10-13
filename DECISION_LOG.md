@@ -4,6 +4,36 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Laos Brief paragraph 1 clarification authorized; release still held
+
+Following a specific editorial recommendation in this conversation, the owner
+approved replacing the opening-paragraph sentence
+
+> These events were not coordinated, and the evidence does not suggest otherwise.
+
+with
+
+> The available sources do not establish any coordination among these events.
+
+This narrows an unproved categorical assertion to the actual limit of the
+reviewed evidence. **The authorization is for this exact language change only**;
+it does not constitute human source/translation/limited-use signoff, acceptance
+of Reuters' syndication as a substitute for primary review, approval of the
+source-linked §5b evidence/anatomy supplement, release numbering or deployment.
+
+Original publication-candidate DOCX SHA-256:
+`54ede4791a46511a332040ab0871dd3fd6b7d3a4479c8aa68a9218810c789b26`.
+The revised two-page DOCX, edited without changing its other paragraphs or
+seven hyperlink associations, has SHA-256:
+`43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`.
+The superseded candidate fingerprint was
+`c9c226211309e03dfbceb8c46b6786925731d4725335a24aca85078a4b8c3dc0`;
+the revised candidate fingerprint is
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+Any future actual human review and owner §5b policy ruling must bind to the
+**revised** exact fingerprint, and the document still must pass new exact-head
+CI and rendered fidelity review before final release consideration.
+
 ## 2026-10-12 — Laos release engineering authorized; policy decision remains separate
 
 The owner’s “Laos Brief Production Release” request in Codex chat
