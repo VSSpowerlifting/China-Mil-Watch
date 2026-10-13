@@ -46,7 +46,8 @@ class DesksPhase4MapContract(unittest.TestCase):
         self.assertIn('from "_relief.html" import flag with context', self.html)
         for iso, slug in (("cn", "china"), ("sg", "singapore"), ("jp", "japan"),
                           ("vn", "vietnam"), ("us", "us-indopacific"),
-                          ("kr", "korea"), ("ph", "philippines")):
+                          ("kr", "korea"), ("ph", "philippines"),
+                          ("id", "indonesia")):
             with self.subTest(slug=slug):
                 self.assertTrue((FLAGS / (iso + ".svg")).is_file())
                 self.assertIn("'" + slug + "': '" + iso + "'", self.relief)
