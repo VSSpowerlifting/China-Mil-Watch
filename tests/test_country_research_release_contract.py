@@ -156,7 +156,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertEqual(
             text.count("python -m scripts.guard_country_research_output_scope"), 3
         )
-        self.assertIn("Fail closed on unrelated full-site generated drift", text)
+        self.assertIn("Fail closed on unrelated staged or pre-existing generated drift", text)
         self.assertIn("scripts/guard_country_research_output_scope.py", text)
         self.assertIn("tests/test_country_research_output_scope.py", text)
         self.assertIn("git fetch origin main", text)
