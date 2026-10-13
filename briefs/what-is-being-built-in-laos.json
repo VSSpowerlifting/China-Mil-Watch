@@ -223,8 +223,8 @@
   "collection": "Indo-Pacific Record Briefs",
   "brief_schema": 1,
   "evidence_type": "source-linked-editorial-v1",
-  "editorial_status": "draft",
-  "issue_number": null,
+  "editorial_status": "approved",
+  "issue_number": 18,
   "week_start": "2026-10-04",
   "week_ending": "2026-10-10",
   "desks": [],
@@ -333,5 +333,10 @@
         "s6"
       ]
     }
-  ]
+  ],
+  "approval": {
+    "approved_by": "Benjamin Yang",
+    "approved_on": "2026-10-13",
+    "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619"
+  }
 }

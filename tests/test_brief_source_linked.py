@@ -25,6 +25,7 @@ class SourceLinkedTests(unittest.TestCase):
 
     def reviewed_fixture(self):
         value = copy.deepcopy(self.value)
+        value.update(editorial_status="draft", issue_number=None, approval=None)
         attestation = {"reviewed_by": "Human fixture (simulated only)",
                        "reviewed_on": "2026-10-12", "reference": "test-only attestation",
                        "fingerprint": fingerprint(value)}
@@ -78,12 +79,18 @@ class SourceLinkedTests(unittest.TestCase):
         changed["body_paragraphs"].append(changed["body_paragraphs"][0])
         self.assertTrue(manuscript_html_errors(self.value, self.render(changed)))
 
-    def test_owner_signed_exact_candidate_is_ready_but_not_yet_numbered(self):
+    def test_owner_signed_exact_release_is_approved_in_the_existing_collection(self):
         self.assertEqual(brief_contract.validate_brief(self.value, self.registry), [])
         self.assertEqual(brief_contract.validate_readiness(self.value, self.registry), [])
-        self.assertEqual(self.value["editorial_status"], "draft")
-        self.assertIsNone(self.value["issue_number"])
-        self.assertIsNone(self.value.get("approval"))
+        self.assertEqual(self.value["editorial_status"], "approved")
+        self.assertEqual(self.value["issue_number"], 18)
+        self.assertEqual(self.value["approval"], {
+            "approved_by": "Benjamin Yang", "approved_on": "2026-10-13",
+            "reference": "https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619"})
+        collection = author_brief.existing_issues(SOURCE.resolve())
+        self.assertNotIn(self.value["issue_number"], [v["issue_number"] for v in collection])
+        self.assertEqual(brief_contract.validate_brief(self.value, self.registry,
+                                                      collection=collection), [])
         self.assertEqual(self.value["policy_ruling"]["fingerprint"], fingerprint(self.value))
         self.assertEqual(self.value["policy_ruling"]["reviewed_by"], "Benjamin Yang")
         self.assertEqual(self.value["editorial_review"]["fingerprint"], fingerprint(self.value))
@@ -166,8 +173,10 @@ class SourceLinkedTests(unittest.TestCase):
         self.assertNotIn("EDITORIAL STATUS", html)
 
     def test_ordinary_collection_withholds_candidate(self):
+        value = copy.deepcopy(self.value)
+        value.update(editorial_status="draft", issue_number=None, approval=None)
         with tempfile.TemporaryDirectory() as directory:
-            Path(directory, "fixture.json").write_text(json.dumps(self.value))
+            Path(directory, "fixture.json").write_text(json.dumps(value))
             published, withheld = brief_collection.load_briefs(Path(directory), self.registry)
             self.assertEqual(published, [])
             self.assertEqual(withheld, ["fixture"])
