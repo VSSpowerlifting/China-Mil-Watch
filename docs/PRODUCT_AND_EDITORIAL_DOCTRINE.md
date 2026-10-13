@@ -317,6 +317,37 @@ the trail entries that document it. It compares how the relevant governments or
 institutions officially describe or respond to that development. It is not a
 digest of a week's volume, and not one desk's round-up.
 
+**Narrow source-linked editorial exception — owner ruling, 2026-10-13.**
+The owner may explicitly authorize an *exact-manuscript*, source-linked editorial
+narrative **within the existing Indo-Pacific Record Briefs collection**, instead
+of the default production-record-backed development, two-desk evidence trail and
+standing-section anatomy. The opt-in `source-linked-editorial-v1` variant
+preserves ordered manuscript paragraphs and publisher links; each publisher
+reference states its issuer, publisher, language, date, independence, time role
+and actual verification method, and every paragraph maps its factual support.
+It is visibly labeled as source-linked analysis. **Publisher references are
+not production corpus records**: they create no desk coverage, shadow-source
+promotion, collection activity, or new journal/series/feed.
+
+This exception **does not waive source integrity or the publication gate**.
+The owner must approve the exact candidate fingerprint; actual human review of
+the original-language sources, claims/chronology, limited source use, authorship,
+manuscript fidelity and rendered page must independently bind that fingerprint.
+Only then may the existing approval contract assign the next collection number,
+render the public page and deploy it. The default record-backed rules and
+cross-desk provenance requirements above/below remain fully applicable to every
+ordinary Brief. See `core/brief_source_linked.py` and
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`.
+
+**The approval of 2026-10-13 applies only to** “What Is Being Built in Laos?”
+with fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`;
+the owner ruling is memorialized in
+[PR #485 comment](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576).
+It **does not** constitute human source/rights clearance, manuscript approval,
+issue numbering, merge authorization or public deployment. Any further article
+requires its own explicit, fingerprint-specific owner ruling and review.
+
 **Desks.** A brief draws evidence from at least two live desks by default. A
 single-desk brief is an explicitly approved exception, recorded in the sidecar
 (`single_desk_exception`: who approved it, when, and why). No brief has to
