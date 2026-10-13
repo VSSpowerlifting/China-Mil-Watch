@@ -54,6 +54,33 @@ class PublicationChecks(unittest.TestCase):
         return self.run_command('approve', str(path or self.path), '--approved-by', 'Fixture owner',
                                 '--approved-on', '2026-10-04', '--approval-reference', reference)
 
+    def test_research_contributor_card_is_optional_and_source_validated(self):
+        self.assertNotIn('research_contributor', self.pending)
+        self.assertEqual(contract.validate_brief(self.pending, self.registry), [])
+        credit = {
+            'name': 'Dylan Tanzi',
+            'title': 'Lead Research Analyst',
+            'bio': 'International Politics student at Georgetown University.',
+            'linkedin': 'https://www.linkedin.com/in/dylan-tanzi/',
+        }
+        self.pending['research_contributor'] = credit
+        self.assertEqual(contract.validate_brief(self.pending, self.registry), [])
+        view = collection.brief_view(
+            'fixture', self.pending, desk_names={}, state_labels={},
+            state_order=[], language_label=lambda lang: lang)
+        self.assertEqual(view['research_contributor'], credit)
+        self.assertEqual(view['author_name'], 'Owner (test fixture)')
+        template = (ROOT / 'site/preview/templates/brief.html').read_text()
+        self.assertIn('{% if brief.research_contributor %}', template)
+        self.assertIn('aria-label="Research contributor"', template)
+
+        self.pending['research_contributor']['linkedin'] = 'javascript:alert(1)'
+        self.assertIn('LinkedIn HTTPS profile', ' '.join(
+            contract.validate_brief(self.pending, self.registry)))
+        self.pending['research_contributor'] = {'name': 'Dylan Tanzi'}
+        self.assertIn('needs name, title, bio and linkedin', ' '.join(
+            contract.validate_brief(self.pending, self.registry)))
+
     def test_empty_schema_valid_draft_is_not_release_ready(self):
         self.pending['opening_note'] = ''
         self.assertEqual(contract.validate_brief(self.pending, self.registry), [])

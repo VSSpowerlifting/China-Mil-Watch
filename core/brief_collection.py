@@ -640,6 +640,7 @@ def brief_view(slug: str, sidecar: Mapping, *, desk_names: Mapping,
         "author_title": identity["author_title"],
         "author_bio": identity["author_bio"],
         "author_links": links,
+        "research_contributor": sidecar.get("research_contributor"),
         "publication_home_label": identity["publication_home_label"],
         "veil": veil,
     }
