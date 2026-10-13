@@ -36,10 +36,10 @@ The first-party [September 29 PDF](https://www.mod.go.jp/j/press/news/2026/09/29
 | --- | --- |
 | **1** | Cover: introductory notice for joint use involving **FAC 6022 Kadena Ammunition Storage Area**, **FAC 6037 Kadena Air Base**, **FAC 6077 Tori Shima Range**, and **FAC 6078 Idesuna Jima Range**, plus seven other approvals. |
 | **2–5** | **First matter**, multiple associated facilities and map pages: Kadena Ammunition Storage Area, Kadena Air Base, Tori Shima and Idesuna Jima. Military exercise cited as **Keen Sword 27**. Some relevant land uses are prospective October 19–29; one Kadena usage area extends October 1–31. Airspace/land/building scopes differ and **should not be summed indiscriminately**. |
-| **6** | **Second matter**, **FAC 5121 Tsuiki Air Base**: limited use of additional building property. Distinct from the August 28 and October 5 Tsuiki originals: **do not deduplicate on facility or generic title**. |
+| **6** | **Second matter**, **FAC 5121 Tsuiki Air Base**: limited use of a portion of one building, approximately **20 m²**. The annex prints **福岡県春日市 (Kasuga City, Fukuoka Prefecture)** as the location, like the independently reviewed August 28 original; the later October 5 notice instead names **Chikujo Town and Yukuhashi City**. Preserve this as a source-specific municipality conflict pending an official correction; do not silently harmonize. These are distinct original notices: **do not deduplicate on facility or generic title**. |
 | **7–8** | **Third matter**, facilities around **Oyanohara/Kirishima** and Japan Ground Self-Defense Force garrison locations, with distinct training areas and building details; two annex pages, **not two separate ministry release identities**. |
 | **9** | **Fourth matter**, **FAC 3017 Fuchu Air Base**: limited use of land/property. |
-| **10** | **Fifth matter**, **FAC 3189 Asaka Dependent Housing Area / Asaka**: limited use of property, including buildings. |
+| **10** | **Fifth matter**, **FAC 3189 Asaka Garrison (朝霞駐屯地)**: limited use of property, including buildings; the original does **not** label this site as a dependent housing area. |
 | **11** | **Sixth matter**, **FAC 3035 Narashino Training Area**: land and building scopes separately specified. |
 | **12** | **Seventh matter**, **FAC 4161 Komatsu Air Base (Kyogamisaki communications-related site)**: limited land and building use. |
 | **13** | **Eighth matter**, **FAC 4180 Hofu Kita Air Base**: limited land/property use, with prospective October training time period. |
