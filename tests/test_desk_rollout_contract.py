@@ -492,7 +492,7 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
         self.assertEqual(side, {"vietnam"})
         html = self.page("desks.html")
         narrowed = {slug for cls, slug in re.findall(
-            r'<section class="([^"]*\\bdeskmap-plate\\b[^"]*)"[^>]*data-desk="([^"]+)"', html)
+            r'<section class="([^"]*\bdeskmap-plate\b[^"]*)"[^>]*data-desk="([^"]+)"', html)
             if "is-mid-side" in cls.split()}
         self.assertFalse(narrowed)
         css = (REPO_ROOT / "site/preview/desk-map.css").read_text(encoding="utf-8")
