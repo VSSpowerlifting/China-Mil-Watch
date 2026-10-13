@@ -2,8 +2,8 @@
 Phase 3C: how an opened article presents its hero image and its neighbours.
 
 The contract is `core.article_media` plus the two shared macros
-(`_article_media.html`, `_article_nav.html`), exercised on all 17 published
-items: the 14 earlier issues rendered from their sidecars, and the 3 native
+(`_article_media.html`, `_article_nav.html`), exercised on all 18 approved
+items: the 14 earlier issues rendered from their sidecars, and the 4 native
 Briefs from a disposable build. Nothing here writes to `output/`.
 """
 import ast
@@ -53,6 +53,7 @@ EXPECTED = {
     15: am.PRESERVED,    # a native brief's own photograph (Phase 0 §1.2)
     16: am.PLATE,
     17: am.PHOTOGRAPH,   # trident-resolve-basarnas-drone, a brief cover (PoC)
+    18: am.NONE,         # exact owner-reviewed source-linked narrative, text-led
 }
 
 #: Han, kana and CJK punctuation: script that needs a declared language.
@@ -115,7 +116,7 @@ class ArticleMediaPagesTests(unittest.TestCase):
     def tearDownClass(cls):
         shutil.rmtree(cls.tmp, ignore_errors=True)
 
-    def test_all_seventeen_items_are_covered(self):
+    def test_all_eighteen_items_are_covered(self):
         self.assertEqual(sorted(self.historical) + sorted(self.native),
                          sorted(EXPECTED))
 
@@ -145,12 +146,13 @@ class ArticleMediaPagesTests(unittest.TestCase):
                 # Every opened issue now has an image card in its hero.
                 self.assertIn("brief-hero--photo", hero(soup)["class"])
 
-    def test_native_briefs_keep_their_photograph_or_carry_a_plate(self):
+    def test_native_briefs_keep_their_recorded_media_treatment(self):
         for number, (entry, page, soup) in self.native.items():
             with self.subTest(brief=number):
                 desks = self.collection.sidecars[entry["slug"]]["desks"]
                 cover = None if entry.get("photo") else article_cover(entry, ROOT)
-                media = am.native_article_media(entry.get("photo"), desks, root="../",
+                media = am.native_article_media(entry.get("photo"), desks,
+                                                root=None if entry["source_linked"] else "../",
                                                 cover=cover)
                 self.assertEqual(media["kind"], EXPECTED[number])
                 photo = hero(soup).select("figure.brief-opening-photo")
@@ -161,7 +163,14 @@ class ArticleMediaPagesTests(unittest.TestCase):
                 self.assertEqual(len(covers), 1 if EXPECTED[number] == am.PHOTOGRAPH else 0)
                 self.assertEqual(len(soup.select("figure[data-article-media]")),
                                  len(plate) + len(covers))
-                self.assertIn("brief-hero--photo", hero(soup)["class"])
+                if EXPECTED[number] == am.NONE:
+                    self.assertEqual(number, 18)
+                    self.assertTrue(entry["source_linked"])
+                    self.assertEqual(desks, [])
+                    self.assertEqual(hero(soup).select("figure"), [])
+                    self.assertNotIn("brief-hero--photo", hero(soup)["class"])
+                else:
+                    self.assertIn("brief-hero--photo", hero(soup)["class"])
                 if plate:
                     uses = [u["href"] for u in plate[0].select("use")]
                     self.assertEqual(uses, ["../assets/geo/region.svg#region"] + [
@@ -349,7 +358,13 @@ class ArticleMediaPagesTests(unittest.TestCase):
         prev15 = self.native[15][2].select_one("nav.brief-issue-nav a[rel=prev]")
         self.assertEqual(prev15["href"], "../the-pla-watch/posts/2026-08-15.html")
         self.assertIn("No. 14", prev15.get_text())
-        self.assertIsNone(self.native[17][2].select_one("nav.brief-issue-nav a[rel=next]"))
+        next17 = self.native[17][2].select_one("nav.brief-issue-nav a[rel=next]")
+        self.assertEqual(next17["href"], "what-is-being-built-in-laos.html")
+        self.assertIn("No. 18", next17.get_text())
+        prev18 = self.native[18][2].select_one("nav.brief-issue-nav a[rel=prev]")
+        self.assertEqual(prev18["href"], "trident-resolve-regional-scale-specific-chinese-tasks.html")
+        self.assertIn("No. 17", prev18.get_text())
+        self.assertIsNone(self.native[18][2].select_one("nav.brief-issue-nav a[rel=next]"))
 
     def test_historical_pages_carry_their_own_nav_and_media_rules(self):
         # A rerendered issue can be published before briefs.css changes.

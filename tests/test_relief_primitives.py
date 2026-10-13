@@ -311,8 +311,9 @@ def _production_build(out, **options):
 class ProductionAssetTests(unittest.TestCase):
     """A production build publishes the homepage's relief files and nothing more.
 
-    Built with an approved copy of the timeline pilot, so the homepage's
-    Evidence Timelines branch is the one rendered.
+    Built with an approved copy of the timeline pilot and the existing
+    test-only China/Singapore Brief fixture. The positive Strait branch must
+    not depend on which real Brief happens to lead the published collection.
     """
 
     @classmethod
@@ -320,15 +321,19 @@ class ProductionAssetTests(unittest.TestCase):
         if not TRACKED_DB.exists():
             raise unittest.SkipTest("production database not present")
         from tests.test_timelines import approve_fixture
+        from tests.brief_fixtures import FIXTURE_SLUG, stage
         cls.tmp = Path(tempfile.mkdtemp(prefix="relief-production-"))
+        briefs = stage(cls.tmp)
         sources = cls.tmp / "timelines"
         sources.mkdir()
         sc = json.loads((REPO_ROOT / "timelines/maritime-cooperation-2026.json").read_text(encoding="utf-8"))
         sc["editor_name"] = "Fixture editor"
+        sc["related_briefs"] = [FIXTURE_SLUG]
         approve_fixture(sc)
         (sources / (sc["slug"] + ".json")).write_text(json.dumps(sc), encoding="utf-8")
         cls.out = cls.tmp / "build"
-        cls.gp = _production_build(cls.out, timelines_dir=sources)
+        cls.gp = _production_build(cls.out, timelines_dir=sources,
+                                  briefs_dir=briefs, allow_synthetic_briefs=True)
         cls.index = (cls.out / "index.html").read_text(encoding="utf-8")
 
     @classmethod
@@ -382,7 +387,7 @@ class ProductionAssetTests(unittest.TestCase):
         self.assertIn("Follow the dates.", self.index)
         self.assertIn("Explore the timeline", self.index)
         self.assertIn('href="timeline/maritime-cooperation-2026.html"', self.index)
-        # The lead Brief lists the Singapore desk, so the strait is drawn and captioned.
+        # The pinned fixture lists Singapore, so the strait is drawn and captioned.
         self.assertIn('class="rl-strait', self.index)
         self.assertIn("Decorative; not a navigation or boundary chart.", self.index)
 
@@ -390,8 +395,8 @@ class ProductionAssetTests(unittest.TestCase):
 class StraitScopeTests(unittest.TestCase):
     """The Singapore Strait is drawn only beside a Brief that lists Singapore.
 
-    The published lead lists china and singapore; this build narrows the lead
-    entry's desks in memory to china alone (no sidecar is touched).
+    The test-only fixture lists China and Singapore; this build narrows that
+    entry's desks in memory to China alone (no real sidecar is touched).
     """
 
     @classmethod
@@ -400,6 +405,7 @@ class StraitScopeTests(unittest.TestCase):
             raise unittest.SkipTest("production database not present")
         sys.path.insert(0, str(PREVIEW))
         import generate_preview as gp
+        from tests.brief_fixtures import stage
         original = gp.load_collection
 
         def china_only(*args, **kwargs):
@@ -409,9 +415,11 @@ class StraitScopeTests(unittest.TestCase):
             return collection
 
         cls.tmp = Path(tempfile.mkdtemp(prefix="relief-strait-"))
+        briefs = stage(cls.tmp)
         gp.load_collection = china_only
         try:
-            _production_build(cls.tmp / "build")
+            _production_build(cls.tmp / "build", briefs_dir=briefs,
+                              allow_synthetic_briefs=True)
         finally:
             gp.load_collection = original
         cls.index = (cls.tmp / "build" / "index.html").read_text(encoding="utf-8")

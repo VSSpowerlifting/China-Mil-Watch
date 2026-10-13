@@ -4,6 +4,104 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Laos final production release explicitly authorized
+
+The owner's “Codex — Laos Brief Final Production Release” request in the
+current release chat authorizes canonical locked approval/numbering, complete
+production regeneration, source/output commits, exact-head full QA, PR #485
+merge, `deploy_output_only.yml` on main and actual public-route verification.
+It also authorizes updating and closing issue #481 after all acceptance criteria
+pass. Existing policy and human editorial approvals bind fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`;
+no further manuscript edit, source licence, desk promotion, collection run,
+paid writer or Dylan delivery is authorized. The locked command assigned
+No. 18 on October 13 after verifying Nos. 1–17. Publication remains pending
+final CI/merge/deployment/live checks; receipts belong in the release dossier.
+
+## 2026-10-13 — Laos owner final editorial review confirmed
+
+The owner expressly answered “yes” to whether they personally reviewed and accepted the documented seven-source limitations, claims, limited-use assessment, revised manuscript and page presentation. The approval is documented in [PR #485](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619) and bound to fingerprint `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500` in the canonical editorial review. The known source-verification and reuse limitations remain unchanged. This does not replace the canonical numbered-approval process or final production validation and deployment.
+
+## 2026-10-13 — Narrow §5b source-linked Laos Brief exception expressly approved
+
+In this conversation the owner explicitly said **yes** when asked to approve the
+specific §5b evidence/anatomy exception for the revised “What Is Being Built
+in Laos?” candidate. The exact ruling and approved policy language are
+memorialized in [PR #485 comment](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576).
+The ruling binds only revised candidate fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`
+and is stored in the draft's `policy_ruling`; its revised DOCX SHA-256 is
+`43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`.
+
+**Accepted exception:** For this precisely reviewed manuscript, the
+`source-linked-editorial-v1` variant may use publisher-linked evidence and
+the intact eleven-paragraph narrative within the *existing* numbered Briefs
+collection. Publisher references disclose issuer, date, source language,
+verification route and independence; paragraph claims map to those sources.
+They are **not** production archive records, create no desk coverage and cannot
+be confused with normally collected, record-backed research. All other
+record-backed §5b rules, edition identities, release numbering and production
+admission requirements remain unchanged. Future manuscripts require
+independent fingerprint-specific owner decisions; see
+`docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md`, §5b.
+
+**Remaining independent hold:** The owner's yes **did not claim** that they
+personally completed the seven-reference original-language/source/translation/
+rights, claim, chronology, authorship, fidelity and rendered-page review.
+The `editorial_review` field is still `null`; source-linked readiness must
+fail closed until an actual reviewer/date/reference and all seven checks are
+properly recorded against this fingerprint. No issue number, final release
+approval, merge, output regeneration or deployment was authorized by this
+policy ruling alone.
+
+## 2026-10-13 — Laos Brief paragraph 1 clarification authorized; release still held
+
+Following a specific editorial recommendation in this conversation, the owner
+approved replacing the opening-paragraph sentence
+
+> These events were not coordinated, and the evidence does not suggest otherwise.
+
+with
+
+> The available sources do not establish any coordination among these events.
+
+This narrows an unproved categorical assertion to the actual limit of the
+reviewed evidence. **The authorization is for this exact language change only**;
+it does not constitute human source/translation/limited-use signoff, acceptance
+of Reuters' syndication as a substitute for primary review, approval of the
+source-linked §5b evidence/anatomy supplement, release numbering or deployment.
+
+Original publication-candidate DOCX SHA-256:
+`54ede4791a46511a332040ab0871dd3fd6b7d3a4479c8aa68a9218810c789b26`.
+The revised two-page DOCX, edited without changing its other paragraphs or
+seven hyperlink associations, has SHA-256:
+`43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`.
+The superseded candidate fingerprint was
+`c9c226211309e03dfbceb8c46b6786925731d4725335a24aca85078a4b8c3dc0`;
+the revised candidate fingerprint is
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+Any future actual human review and owner §5b policy ruling must bind to the
+**revised** exact fingerprint, and the document still must pass new exact-head
+CI and rendered fidelity review before final release consideration.
+
+## 2026-10-12 — Laos release engineering authorized; policy decision remains separate
+
+The owner’s “Laos Brief Production Release” request in Codex chat
+`01a13335-2a6f-7c91-878e-b4fd6cee9e6c` (request SHA-256
+`7fd70a06c1bcdce894890d8995fcbee0026c78658a8d7eb6b26fc72627191715`) authorizes
+narrow engineering, eligible PR merge, output regeneration and deployment of
+“What Is Being Built in Laos?” if substantive gates pass. Canonical DOCX:
+`54ede4791a46511a332040ab0871dd3fd6b7d3a4479c8aa68a9218810c789b26`.
+This supersedes #481’s older implementation-only scope; it does not establish
+human source review, grant third-party reproduction rights or silently change
+§5b’s production-backed evidence/anatomy rule. The current source-linked
+variant is a gated engineering proposal within the same Brief collection.
+The exact supplemental rule and source/rights limitations are documented in
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`; the actual owner ruling and exact-version
+human attestations remain required before it can be approved or numbered.
+No new issue, desk admission, collector activation or deployment is approved
+by this implementation receipt alone.
+
 ## 2026-10-13 — Phase 3C source integration; publication pending
 
 Merged integration PR #492 put Phase 3C's article presentation and the No. 17 DVIDS cover implementation into `main` at `22627423c83e7a20ca9b035c9410a3b4d512a8eb`. The combined full `PR offline checks` run #38349385797 passed. PR #489 was closed as superseded after its implementation was verified in the integration merge; it was not merged separately.

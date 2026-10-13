@@ -270,6 +270,10 @@ def _validate_briefs(output_dir, errors):
             errors.append("%s is missing for approved No. %s" % (route, sidecar["issue_number"]))
             continue
         text = page.read_text(encoding="utf-8")
+        from core.brief_source_linked import is_source_linked, manuscript_html_errors
+        if is_source_linked(sidecar):
+            errors.extend("%s: %s" % (route, problem)
+                          for problem in manuscript_html_errors(sidecar, text))
         from html import escape
         if escape(sidecar["title"]) not in text or "No. %s" % sidecar["issue_number"] not in text:
             errors.append("%s title/number disagrees with its approved source" % route)
