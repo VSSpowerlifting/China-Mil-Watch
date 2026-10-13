@@ -47,6 +47,15 @@ def main() -> int:
                     page.goto((destination / "desks.html").as_uri(), wait_until="load")
                     result = page.evaluate(PROBE)
                     result["page_errors"] = errors
+                    result["flag_images"] = page.locator(".deskmap-flag-tab img").evaluate_all(
+                        "(nodes) => nodes.map(n => ({src:n.getAttribute('src'), "
+                        "complete:n.complete, naturalWidth:n.naturalWidth}))"
+                    )
+                    if len(result["flag_images"]) != 8 or any(
+                        not im["complete"] or im["naturalWidth"] == 0
+                        for im in result["flag_images"]
+                    ):
+                        failures.append(f"{width}: missing or broken public flag SVG")
                     receipts.append(result)
                     if result["cards"] != 7 or result["unplaced"] != 1:
                         failures.append(f"{width}: incomplete 7+1 desk roster")
