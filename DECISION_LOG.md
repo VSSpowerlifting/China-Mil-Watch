@@ -4,6 +4,24 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-12 — Laos release engineering authorized; policy decision remains separate
+
+The owner’s “Laos Brief Production Release” request in Codex chat
+`01a13335-2a6f-7c91-878e-b4fd6cee9e6c` (request SHA-256
+`7fd70a06c1bcdce894890d8995fcbee0026c78658a8d7eb6b26fc72627191715`) authorizes
+narrow engineering, eligible PR merge, output regeneration and deployment of
+“What Is Being Built in Laos?” if substantive gates pass. Canonical DOCX:
+`54ede4791a46511a332040ab0871dd3fd6b7d3a4479c8aa68a9218810c789b26`.
+This supersedes #481’s older implementation-only scope; it does not establish
+human source review, grant third-party reproduction rights or silently change
+§5b’s production-backed evidence/anatomy rule. The current source-linked
+variant is a gated engineering proposal within the same Brief collection.
+The exact supplemental rule and source/rights limitations are documented in
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`; the actual owner ruling and exact-version
+human attestations remain required before it can be approved or numbered.
+No new issue, desk admission, collector activation or deployment is approved
+by this implementation receipt alone.
+
 ## 2026-10-12 — Expressive frontend Phase 3B (Briefs catalogue) implementation decisions
 
 Made within the Phase 3B brief; presentation only, not visual sign-off.

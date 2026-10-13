@@ -14,6 +14,25 @@ recovery is prepared for review (three inserts, eight duplicates; no analysis
 or rendering), with evidence in
 `docs/SINGAPORE_SEPT22_RECOVERY_2026-10-07.md`.**
 
+**Laos Brief (12 October 2026, unpublished release candidate):** the owner
+conditionally authorized engineering, eligible merges and editorial deployment
+in the current release chat. Contributor support #480 passed exact-head CI and
+merged as `579d3f3db`. The frozen DOCX hash is `54ede479…89b26`; its 11
+paragraphs and seven inline source links are preserved in the canonical draft
+`briefs/what-is-being-built-in-laos.json`. An opt-in publisher-linked narrative
+variant uses the existing Brief collection, shell, approval numbering and
+catalog/feed/sitemap integration without corpus IDs or desk coverage. Private
+review is noindex/unnumbered; production withholds the draft. No human
+source/rights attestations or source-linked policy ruling have been fabricated.
+The exact proposed doctrine §5b supplement, seven-source/eleven-paragraph matrix,
+verification limits and release procedure are in
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. Engineering verification and release PR
+receipts are recorded there. No source/body imagery redistribution, database,
+desk-status, collection, paid-model or scheduled-workflow changes. Remaining
+substantive gates: human acceptance of the indexed MOD/Reuters syndicated
+source and limited-use review, and owner acceptance of the explicit evidence/
+anatomy supplement before ordinary authorized approval/numbering/deployment.
+
 Brief release approval was received 2026-10-05; its candidate,
 authorization recovery and QA evidence are in
 `docs/BRIEF_RELEASE_REVIEW_2026-10-04.md`. The older desk measurements below
