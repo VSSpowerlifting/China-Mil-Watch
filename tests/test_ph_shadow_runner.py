@@ -191,10 +191,10 @@ class TestIsolation(StateCase):
                 self.assertNotIn("scripts/shadow_collect_ph.py", text)
                 if path.name == "country_desk_checkpoint_intake_contracts.yml":
                     # PR-only tests observe producer contracts without collecting.
-                    self.assertIn("on:\\n  pull_request:", text)
-                    self.assertIn("permissions:\\n  contents: read", text)
+                    self.assertIn("on:\n  pull_request:", text)
+                    self.assertIn("permissions:\n  contents: read", text)
                     self.assertNotRegex(
-                        text, r"(?m)^\\s*(?:schedule|workflow_dispatch|push|pull_request_target):")
+                        text, r"(?m)^\s*(?:schedule|workflow_dispatch|push|pull_request_target):")
                     for unsafe in ("contents: write", "actions: write",
                                    "shadow_collect_ph", "git push",
                                    "curl ", "wget ", "secrets.", "GITHUB_TOKEN"):
