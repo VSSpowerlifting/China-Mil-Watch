@@ -2735,9 +2735,15 @@ def build(out_dir: Path, title: str, db_path: Path,
     }
     written = []
     for target, template in pages.items():
-        (out_dir / target).write_text(
-            env.get_template(template).render(page=target, **ctx),
-            encoding="utf-8")
+        page_html = env.get_template(template).render(page=target, **ctx)
+        if target == "desks.html":
+            # Desks embeds the canonical 1:50m map inline. Its accessible
+            # directory keeps every status/limit, so trim only indentation
+            # at the start of lines whose next token is an HTML/SVG tag.
+            # The newline remains intact: text spacing and all SVG path
+            # coordinates are preserved, and other pages are untouched.
+            page_html = re.sub(r"(?m)^[ \\t]+(?=<)", "", page_html)
+        (out_dir / target).write_text(page_html, encoding="utf-8")
         written.append(target)
 
     if timelines:
