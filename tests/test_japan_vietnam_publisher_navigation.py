@@ -151,6 +151,55 @@ class CountryPublisherNavigationTests(DeskCase):
                 self.assertNotIn("e/topics_archive/article" + ident + ".html",
                                  other_html)
 
+    def test_japan_five_mod_original_pdfs_render_only_on_japan(self):
+        """Verify page output, not merely template source or a collector row."""
+        from html.parser import HTMLParser
+
+        class OfficialPDFLinks(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.links = []
+            def handle_starttag(self, tag, attrs):
+                if tag != "a":
+                    return
+                a = dict(attrs)
+                url = a.get("href", "")
+                if url.startswith("https://www.mod.go.jp/j/press/news/2026/") and url.endswith(".pdf"):
+                    self.links.append((url, a.get("rel", "")))
+
+        html = self.page("japan.html")
+        parser = OfficialPDFLinks()
+        parser.feed(html)
+        expected = (
+            "08/27b.pdf",
+            "08/28a.pdf",
+            "08/28b.pdf",
+            "08/28f.pdf",
+            "10/05b.pdf",
+        )
+        prefix = "https://www.mod.go.jp/j/press/news/2026/"
+        self.assertEqual([url for url, _ in parser.links],
+                         [prefix + suffix for suffix in expected])
+        self.assertTrue(all("noopener" in rel and "noreferrer" in rel
+                            for _, rel in parser.links))
+        for phrase in (
+            "Five official Japan Ministry of Defense PDF links",
+            "not production IPR records",
+            "conflicting with the later October 5 original",
+            "not proof the activity occurred",
+            "archived-text extraction parity",
+            "no production or model use is authorized",
+            "repository gate was observed unset or unavailable",
+        ):
+            self.assertIn(phrase, html)
+        for forbidden in ('href="archive.html?desk=japan"', "data-reference-list",
+                          "state/shadow.db", "text_original", "body_original"):
+            self.assertNotIn(forbidden, html)
+        for slug in ("vietnam", "philippines", "indonesia", "korea"):
+            other = self.page(slug + ".html")
+            for suffix in expected:
+                self.assertNotIn(prefix + suffix, other)
+
     def test_blocked_institutions_not_made_clickable_by_accident(self):
         for slug in ("japan", "vietnam"):
             sources = load_registry().get(slug).research["source_families"]
