@@ -7,6 +7,9 @@ accessible interaction, and label/plate collision probes.
 from pathlib import Path
 import unittest
 
+from core.desk_registry import load_registry
+from scripts import desk_map
+
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE = ROOT / "site/preview/templates/desks.html"
 STYLE = ROOT / "site/preview/desk-map.css"
@@ -66,6 +69,34 @@ class DesksPhase4MapContract(unittest.TestCase):
         self.assertIn("prefers-reduced-motion:no-preference", self.css)
         self.assertIn("forced-colors:active", self.css)
         self.assertIn("@media print", self.css)
+
+    def test_wide_plate_projection_has_no_obvious_pairwise_overlap(self):
+        """Conservative box preflight; does NOT certify real-browser labels.
+
+        Real browser B10 probe is still required before publication. Use a
+        deliberately generous paper-plate bounding box (232 x 265 px) at the
+        shell's max map width, 1280 px, rather than a five-desk mockup.
+        """
+        map_width = 1280.0
+        map_height = map_width * desk_map.HEIGHT / desk_map.WIDTH
+        width, height = 232.0, 265.0
+        bounds = {}
+        for slug, place in desk_map.layout(load_registry().public_entries)["desks"].items():
+            card = place["wide"]
+            x = float(card["left"].rstrip("%")) * map_width / 100
+            y = float(card["top"].rstrip("%")) * map_height / 100
+            x += float(card["tx"].rstrip("%")) * width / 100
+            y += float(card["ty"].rstrip("%")) * height / 100
+            bounds[slug] = (x, y, x + width, y + height)
+            self.assertGreaterEqual(x, 0, slug)
+            self.assertLessEqual(x + width, map_width, slug)
+        slugs = sorted(bounds)
+        for i, left_slug in enumerate(slugs):
+            a = bounds[left_slug]
+            for right_slug in slugs[i + 1:]:
+                b = bounds[right_slug]
+                overlap = a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
+                self.assertFalse(overlap, "%s overlaps %s" % (left_slug, right_slug))
 
 
 if __name__ == "__main__":
