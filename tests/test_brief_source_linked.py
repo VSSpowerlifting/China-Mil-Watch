@@ -176,6 +176,7 @@ class SourceLinkedTests(unittest.TestCase):
         self.assertIn("Benjamin Yang and Dylan Tanzi, “What Is Being Built in Laos?”", html)
         entry = brief_collection.brief_entry("fixture", self.value)
         self.assertEqual(entry["author_name"], "Benjamin Yang and Dylan Tanzi")
+        self.assertEqual(entry["author_names"], ["Benjamin Yang", "Dylan Tanzi"])
         self.assertNotIn("0 cited records", html)
         self.assertNotIn("EDITORIAL STATUS", html)
 
@@ -186,6 +187,7 @@ class SourceLinkedTests(unittest.TestCase):
                     state_labels={}, state_order=[], language_label=str)
         self.assertEqual(view["author_name"], "Benjamin Yang")
         self.assertEqual(brief_collection.brief_entry("fixture", value)["author_name"], "Benjamin Yang")
+        self.assertEqual(brief_collection.brief_entry("fixture", value)["author_names"], ["Benjamin Yang"])
         html = self.render(value)
         self.assertIn('aria-label="Research contributor"', html)
         self.assertIn('aria-label="Author"', html)
@@ -215,7 +217,9 @@ class SourceLinkedTests(unittest.TestCase):
             self.assertIn("Source-linked editorial analysis", catalog.rows[0]["provenance"])
             feed = brief_collection.build_briefs_feed(catalog.briefs, origin="https://example.org")
             self.assertIn("https://example.org/briefs/fixture.html", feed)
-            self.assertIn("Benjamin Yang and Dylan Tanzi", feed)
+            self.assertIn("    <author><name>Benjamin Yang</name></author>\\n"
+                          "    <author><name>Dylan Tanzi</name></author>".replace("\\\\n", "\\n"), feed)
+            self.assertNotIn("<name>Benjamin Yang and Dylan Tanzi</name>", feed)
             self.assertEqual(manuscript_html_errors(value, self.render(value)), [])
             value["editorial_review"] = None
             path.write_text(json.dumps(value))
