@@ -248,8 +248,8 @@
     "width": 2000,
     "height": 1334,
     "alt": "Four rescue workers in orange uniforms and yellow helmets at a concrete culvert spray-marked “unstable”, beside an orange truck lettered BASARNAS; a small quadcopter drone hovers at upper right.",
-    "caption": "Personnel of BASARNAS, Indonesia’s national search and rescue agency, work at a simulated collapsed structure as a drone flies overhead during the earthquake-response drill of Exercise Trident Resolve 2026 in Banten, Indonesia.",
-    "date_note": "Dated 21 September 2026 in the DVIDS caption; the DVIDS date-taken field lists 20 September 2026.",
+    "caption": "BASARNAS (Indonesia’s national search and rescue agency) personnel at a simulated collapsed structure, a drone overhead, in the Exercise Trident Resolve 2026 earthquake-response drill, Banten, Indonesia.",
+    "date_note": "DVIDS dates: 21 September 2026 (caption); 20 September 2026 (date-taken field).",
     "display_label": "Photograph",
     "credit": "Sgt. 1st Class Timothy Hughes, 18th Theater Medical Command, U.S. Army · Public domain · via DVIDS",
     "creator": "Sgt. 1st Class Timothy Hughes, 18th Theater Medical Command, U.S. Army",
@@ -286,6 +286,8 @@
     },
     "derivative_builder": "scripts/build_brief_cover.py",
     "cover_treatment": "gradient",
+    "surfaces": ["article", "catalogue"],
+    "depicts": "event",
     "focal": "58% 60%",
     "derivatives": [
       {

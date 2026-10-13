@@ -132,7 +132,7 @@ from core.brief_collection import (                                  # noqa: E40
     build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose,
     adjacent_items)
 from core.article_media import native_article_media                  # noqa: E402
-from core.brief_cover import brief_cover                               # noqa: E402
+from core.brief_photography import article_cover                    # noqa: E402
 from core.brief_contract import validate_readiness
 from core.catalogue_media import (                                   # noqa: E402
     load_admissions as load_catalogue_admissions,
@@ -2838,9 +2838,11 @@ def build(out_dir: Path, title: str, db_path: Path,
                     target.write_bytes(image["file"].read_bytes())
                     written.append(route)
             # A cover photograph is granted only by `core.brief_cover`, and
-            # only where the brief has no photograph of its own; its files are
-            # copied exactly as recorded, never re-encoded.
-            cover = None if brief["photo"] else brief_cover(slug, REPO_ROOT)
+            # only where the brief has no photograph of its own. A paired cover
+            # also needs its catalogue card to pass (`core.brief_photography`).
+            # Its files are copied exactly as recorded, never re-encoded.
+            cover = None if brief["photo"] else article_cover(
+                entry, REPO_ROOT, admissions=catalogue_admissions)
             for image in (cover or {}).get("files", ()):
                 target = out_dir / image["route"]
                 target.parent.mkdir(parents=True, exist_ok=True)

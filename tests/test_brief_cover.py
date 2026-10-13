@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from core import brief_cover as bcv                              # noqa: E402
+from core.source_terms import required_notice                   # noqa: E402
 
 SLUG = "trident-resolve-regional-scale-specific-chinese-tasks"
 ENTRY_ID = "trident-resolve-basarnas-drone"
@@ -43,6 +44,8 @@ class GateRuleTests(unittest.TestCase):
             "creator": "c", "license": "Public domain",
             "source_page": "https://www.dvidshub.net/image/1", "source_label": "DVIDS",
             "cover_treatment": "gradient", "derivative_builder": bcv.BUILDER,
+            "surfaces": ["article"], "depicts": "event",
+            "notice": required_notice({"source_label": "DVIDS"}),
             "derivatives": derivs,
             "match": {"article_urls": [], "categories": [], "threads": [], "editions": [],
                       "routes": [], "briefs": ["s"]}}
@@ -144,8 +147,8 @@ class CommittedCoverTests(unittest.TestCase):
         self.assertIn("promote IPR is a different use", e["license_basis"])
         self.assertNotIn("not cleared", e["license_basis"])
         # DVIDS gives two dates; both are stated and neither is asserted.
-        self.assertIn("21 September 2026 in the DVIDS caption", e["date_note"])
-        self.assertIn("date-taken field lists 20 September 2026", e["date_note"])
+        self.assertIn("21 September 2026 (caption)", e["date_note"])
+        self.assertIn("20 September 2026 (date-taken field)", e["date_note"])
         self.assertNotIn("Photographed", e["date_note"])
 
     def test_the_card_admission_agrees_with_the_cover(self):

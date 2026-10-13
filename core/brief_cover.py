@@ -12,10 +12,18 @@ its other match lists stay empty and it has no `placement`. Any failure
 leaves the Brief on its existing opening (the Editorial plate), never on a
 guess.
 
-This module grants the opened article only. The catalogue card is a separate
-surface with its own admission record (`core/catalogue_media.py`), which must
-agree with the entry here on credit, licence, source, notice and treatment.
-`core/article_media.py` decides how a granted cover is shown.
+An entry also names the surfaces it is approved for (`surfaces`). It must
+include "article", and it may include "catalogue". An entry that names
+"catalogue" is a paired cover: one photograph, cropped separately for the card
+and the opened article. Neither surface keeps the photograph if the other's
+record or files fail (`core.brief_photography`). Any notice the source's terms
+require is checked here word for word (`core.source_terms`).
+
+This module checks the opened article's half only. The catalogue card is a
+separate surface with its own admission record (`core/catalogue_media.py`),
+which must agree with the entry here on credit, licence, source, notice and
+treatment. `core/article_media.py` decides how a granted cover is shown. The
+contract every cover follows is `docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`.
 """
 from __future__ import annotations
 
@@ -23,6 +31,8 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Iterable, Mapping, Optional
+
+from core.source_terms import notice_problem
 
 BUILDER = "scripts/build_brief_cover.py"
 MANIFEST_PATH = Path("site/assets/editorial/manifest.json")
@@ -43,8 +53,14 @@ TREATMENT_NOTES = {
     "gradient": "Cropped and resized by IPR; IPR gradient overlaid.",
 }
 
+#: The surfaces a cover may be approved for. "article" is always required.
+SURFACES = frozenset({"article", "catalogue"})
+#: What a cover shows: the event the Brief covers, or context for it.
+DEPICTS = frozenset({"event", "context"})
+
 _REQUIRED = ("id", "file", "sha256", "alt", "caption", "credit", "creator",
-             "license", "source_page", "source_label", "cover_treatment")
+             "license", "source_page", "source_label", "cover_treatment",
+             "surfaces", "depicts")
 _EXCLUSIVE = ("article_urls", "categories", "threads", "editions", "routes")
 _DERIVATIVES = ("-1600.jpg", "-800.webp", "-1600.webp")
 
@@ -63,6 +79,25 @@ def load_manifest(repo_root: Path) -> list:
     except (OSError, ValueError):
         return []
     return [e for e in data if isinstance(e, dict)] if isinstance(data, list) else []
+
+
+def is_cover(entry: Optional[Mapping]) -> bool:
+    """True for an entry built or matched as a Brief cover. Such an entry
+    keeps the cover rules wherever it is used."""
+    if not entry:
+        return False
+    return (entry.get("derivative_builder") == BUILDER
+            or bool((entry.get("match") or {}).get("briefs")))
+
+
+def is_paired(entry: Mapping) -> bool:
+    """True when the cover is also approved for its catalogue card."""
+    return "catalogue" in (entry.get("surfaces") or ())
+
+
+def derivative_path(entry: Mapping, suffix: str) -> str:
+    """A derivative's path relative to the editorial root."""
+    return "derivatives/" + entry["id"] + suffix
 
 
 def cover_entries(manifest: Iterable[Mapping], slug: str) -> list:
@@ -88,13 +123,22 @@ def problem(entry: Mapping, repo_root: Path) -> Optional[str]:
         return "source-page-not-https"
     if entry["cover_treatment"] not in TREATMENT_NOTES:
         return "unknown-treatment"
+    surfaces = entry["surfaces"]
+    if (not isinstance(surfaces, list) or "article" not in surfaces
+            or not set(surfaces) <= SURFACES):
+        return "surfaces-invalid"
+    if entry["depicts"] not in DEPICTS:
+        return "depicts-invalid"
+    notice = notice_problem(entry)
+    if notice:
+        return notice
     root = Path(repo_root) / EDITORIAL_ROOT
     source = root / entry["file"]
     if not source.is_file() or sha256_file(source) != entry["sha256"]:
         return "source-hash-mismatch"
     recorded = {d.get("file"): d for d in entry.get("derivatives") or ()}
     for suffix in _DERIVATIVES:
-        rel = "derivatives/" + entry["id"] + suffix
+        rel = derivative_path(entry, suffix)
         rec = recorded.get(rel)
         if not rec:
             return "derivative-unrecorded:" + suffix
@@ -106,7 +150,9 @@ def problem(entry: Mapping, repo_root: Path) -> Optional[str]:
 
 def brief_cover(slug: str, repo_root: Path,
                 manifest: Optional[Iterable[Mapping]] = None) -> Optional[dict]:
-    """The cover granted to the Brief `slug`, or None."""
+    """The article half of the cover for the Brief `slug`, or None. A page
+    builder calls `core.brief_photography.article_cover`, which adds the
+    paired-cover check."""
     entries = cover_entries(load_manifest(repo_root) if manifest is None else manifest, slug)
     if len(entries) != 1 or problem(entries[0], repo_root):
         return None
@@ -115,7 +161,7 @@ def brief_cover(slug: str, repo_root: Path,
     derivs = {d["file"]: d for d in entry["derivatives"]}
     files = []
     for suffix in _DERIVATIVES:
-        rel = "derivatives/" + entry["id"] + suffix
+        rel = derivative_path(entry, suffix)
         files.append({"file": root / rel, "route": ROUTE_PREFIX + rel,
                       "width": derivs[rel]["width"], "height": derivs[rel]["height"]})
     return {"entry": dict(entry), "files": files,

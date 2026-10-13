@@ -21,6 +21,16 @@ nothing else:
     plate: the record was reviewed against that source, not a later one.
   * No. 12 is refused here regardless of what a record says (DECISION_LOG
     2026-10-10, B5), and a record cannot admit a file from a veil path.
+  * Any notice the source's terms require must be on the record word for
+    word (`core.source_terms`). Agreement with the manifest is not enough,
+    since both records could lose the notice together.
+  * A card cut from a Brief cover (`core.brief_cover.is_cover`) is the
+    catalogue half of a paired cover. It needs the cover's own gate to pass,
+    including the article's WebP derivatives. The cover must be approved for
+    the catalogue and must name this card's Brief. The card must be cut from
+    the cover's own derivative, and only one record may claim the cover. If
+    any of these fails, the card shows a plate. The article side runs the
+    same check through `core.brief_photography`.
 """
 from __future__ import annotations
 
@@ -31,7 +41,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Optional
 
+from core import brief_cover as bcv
 from core.brief_cover import TREATMENT_NOTES
+from core.source_terms import notice_problem
 
 KIND_PHOTOGRAPH = "photograph"
 KIND_PLATE = "plate"
@@ -151,6 +163,9 @@ def _check(entry: Mapping, repo_root: Path) -> Optional[str]:
         return "licence-link-missing"
     if not str(entry["source_page"]).startswith("https://"):
         return "source-page-not-https"
+    notice = notice_problem(entry)
+    if notice:
+        return notice
     # Origin continuity: the curated source this admission was reviewed
     # against must still be the file on disk and the manifest entry it names.
     # A swapped or removed source fails to a plate instead of silently
@@ -172,11 +187,42 @@ def _check(entry: Mapping, repo_root: Path) -> Optional[str]:
     treatment = entry.get("cover_treatment")
     if treatment and entry["change_note"] != TREATMENT_NOTES.get(treatment):
         return "change-note-not-treatment"
+    if bcv.is_cover(curated):
+        if not bcv.is_paired(curated):
+            return "cover-not-approved-for-catalogue"
+        cover = bcv.problem(curated, repo_root)
+        if cover:
+            return "cover-failed:" + cover
+        if source != SOURCE_ROOT + bcv.derivative_path(curated, "-1600.jpg"):
+            return "source-not-cover-derivative"
+        for key in ("alt", "caption", "creator", "source_label", "date_note", "depicts"):
+            if (curated.get(key) or "") != (entry.get(key) or ""):
+                return "cover-record-differs:" + key
     path = repo_root / "site" / served
     if not path.is_file():
         return "file-missing"
     if sha256_file(path) != entry["served_sha256"]:
         return "hash-mismatch"
+    return None
+
+
+def _pair_problem(record: Mapping, slug, admissions: Mapping,
+                  repo_root: Path) -> Optional[str]:
+    """For a card cut from a Brief cover: the cover belongs to this card's
+    Brief, it is the only cover naming that Brief, and no other record
+    claims it. None for any other card."""
+    manifest = bcv.load_manifest(repo_root)
+    curated = next((e for e in manifest if e.get("id") == record.get("source_manifest_id")), None)
+    if not bcv.is_cover(curated):
+        return None
+    if slug not in ((curated.get("match") or {}).get("briefs") or ()):
+        return "cover-names-another-brief"
+    if len(bcv.cover_entries(manifest, slug)) != 1:
+        return "cover-conflict"
+    claims = [r for r in admissions.values()
+              if r.get("source_manifest_id") == curated.get("id")]
+    if len(claims) != 1:
+        return "cover-claimed-twice"
     return None
 
 
@@ -202,14 +248,14 @@ def resolve_catalogue_media(row: Mapping, admissions: Mapping, *,
         return plate("no-admission-record")
     if record.get("status") != "admitted":
         return plate(str(record.get("status") or "held"))
-    problem = _check(record, root)
+    problem = _check(record, root) or _pair_problem(record, entry.get("slug"), admissions, root)
     if problem:
         return plate(problem)
     photo = {k: record.get(k, "") for k in (
         "alt", "caption", "credit", "creator", "creator_native", "creator_native_lang",
         "license", "license_url", "source_page", "source_label", "date_note",
         "change_note", "served", "width", "height", "focal", "notice",
-        "cover_treatment")}
+        "cover_treatment", "depicts")}
     return CatalogueMedia(KIND_PHOTOGRAPH, "admitted", issue, (), photo)
 
 

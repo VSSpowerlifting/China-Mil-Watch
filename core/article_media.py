@@ -19,8 +19,9 @@ image those resolvers returned is presented, as one of these kinds:
   because a ruling holds it (see ``PRESERVED_MEDIA``).
 
 Nothing here grants a photograph: a brief's cover is granted by
-`core.brief_cover`, and only shown here. It never reads catalogue admissions
-(`core.catalogue_media` governs the catalogue only), never creates an image
+`core.brief_photography.article_cover` (the cover gate plus, for a paired
+cover, its card), and only shown here. It never reads catalogue admissions
+itself (`core.catalogue_media` governs the catalogue), never creates an image
 association, and never infers ownership or a licence from an article URL. A
 Signal Veil's `credit` field is never shown: for a source veil it is a
 collector note, not an attribution.
@@ -182,7 +183,7 @@ def native_article_media(photo: Optional[Mapping], desks=(),
     """
     How a brief's hero image is shown. A brief's photograph (`brief_photo`)
     keeps its existing figure and two-level credit (Phase 0 §1.2). Otherwise
-    a cover granted by `core.brief_cover.brief_cover` is shown as a
+    a cover granted by `core.brief_photography.article_cover` is shown as a
     photograph with its full credit, licence, source, change note and any
     notice its terms require. Without either, and given `root`, the hero
     carries the editorial plate for the brief's own desks; otherwise it is

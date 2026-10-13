@@ -26,7 +26,7 @@ sys.path.insert(0, str(ROOT / "site" / "preview"))
 import generate_preview as gp                                    # noqa: E402
 from core import article_media as am                             # noqa: E402
 from core import brief_collection as bc                          # noqa: E402
-from core.brief_cover import brief_cover                         # noqa: E402
+from core.brief_photography import article_cover               # noqa: E402
 from core.desk_registry import load_registry                     # noqa: E402
 from scripts.historical_brief_render import (next_brief_after,  # noqa: E402
                                              render_historical_brief)
@@ -149,7 +149,7 @@ class ArticleMediaPagesTests(unittest.TestCase):
         for number, (entry, page, soup) in self.native.items():
             with self.subTest(brief=number):
                 desks = self.collection.sidecars[entry["slug"]]["desks"]
-                cover = None if entry.get("photo") else brief_cover(entry["slug"], ROOT)
+                cover = None if entry.get("photo") else article_cover(entry, ROOT)
                 media = am.native_article_media(entry.get("photo"), desks, root="../",
                                                 cover=cover)
                 self.assertEqual(media["kind"], EXPECTED[number])

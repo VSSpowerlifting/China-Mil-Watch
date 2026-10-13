@@ -4,6 +4,32 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Brief cover photography: standing policy
+
+Owner direction for native Brief covers from No. 17 on. The rules are in
+`docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`.
+
+- **Photography first.** Each Brief gets one authentic, verifiably reusable
+  photograph, chosen and approved individually. The same photograph serves
+  the catalogue card and the opened article, with separate crops, unless the
+  owner records an exception. Treatment B (a restrained CSS gradient) is the
+  default. The gradient may be adjusted or omitted for legibility or fidelity.
+- **Full provenance.** Attribution, source link, image identity, hashes and
+  any publisher notice are kept on every surface. Each cover records whether
+  it shows the event or context. AI imagery is never presented as documentary.
+- **Rights are not a treatment.** Duotone, transparency, a gradient or Signal
+  Veil processing never substitutes for image rights. A publisher's required
+  notice is enforced per source (`core/source_terms.py`), separately from
+  copyright status and from IPR's own use approval.
+- **No automatic admission.** Existing 81.cn Signal Veils, Joint Staff
+  material, restricted MINDEF images and historical held photographs each
+  need their own decision. The protected imagery for Nos. 1, 10, 12 and 15
+  and the catalogue admissions for Nos. 8 and 9 are unchanged.
+- **Fail closed, together.** A paired cover is shown on both of its surfaces
+  or on neither. A catalogue-only approval never grants the article.
+- **No. 17 record wording.** The shared caption and date note were shortened
+  for the card. They state the same facts, and both DVIDS dates remain.
+
 ## 2026-10-12 — No. 17 photograph cover: treatment B and G3
 
 Owner decisions on the No. 17 cover proof of concept. Where this entry

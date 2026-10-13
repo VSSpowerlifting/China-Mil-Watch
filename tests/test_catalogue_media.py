@@ -29,8 +29,8 @@ ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
 PHOTO_ISSUES = {8, 9, 17}
-#: Where each admitted card's source page may be. No. 17 is the DVIDS cover
-#: proof of concept (owner selection pending); the others are Commons files.
+#: Where each admitted card's source page may be. No. 17 is the paired DVIDS
+#: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
 SOURCE_HOSTS = {8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
                 17: "https://www.dvidshub.net/image/"}
 HELD_ISSUES = {1, 10}

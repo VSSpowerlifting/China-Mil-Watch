@@ -1129,8 +1129,12 @@ manifest record, with an IPR navy gradient in CSS only. G3 approves editorial
 and news publication only. A new fail-closed gate, `core/brief_cover.py`, grants
 a hero cover only to the Brief its record names. No. 17 no longer opens on a
 plate. No other admission changed; No. 15 and the wider photographic rollout
-are not approved. Next: Joint Staff rights checks for Nos. 2 and 6. Not merged
-or deployed; independent code and visual QA required.
+are not approved. Hardening (2026-10-13): publisher notices are enforced per
+source (`core/source_terms.py`), covers name their `surfaces` and whether they
+show the `event` or `context`, and a paired cover is shown on both surfaces or
+on neither (`core/brief_photography.py`). Future covers follow
+`docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`. Next: Joint Staff rights checks for
+Nos. 2 and 6. Not merged or deployed; independent code and visual QA required.
 
 ## 8. Prohibited shortcuts and human-review gates
 

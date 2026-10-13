@@ -56,17 +56,74 @@ No other route differs. Tracked `output/` was not modified. An overlay of
 tracked `output/` plus the fresh render passes `scripts/validate_output.py`
 with 7 warnings, the same count as the base-branch overlay.
 
+## Hardening (2026-10-13)
+
+The standing policy is DECISION_LOG 2026-10-13, and the contract is
+`docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`.
+
+- **Source notice.** `core/source_terms.py` lists the publishers whose terms
+  require a notice. DVIDS is matched by host or by source label. Both gates
+  (`core.brief_cover.problem` and `core.catalogue_media._check`) fail closed:
+  `required-notice-missing` or `required-notice-altered`. This is independent
+  of whether the two records agree. Commons and NASA records inherit no notice.
+- **Two-surface pairing.** The manifest entry now declares
+  `surfaces: ["article", "catalogue"]` and `depicts: "event"`. The card gate
+  re-runs the cover gate, and the card must equal the manifest on alt,
+  caption, creator, source label, date note and depicts. The article keeps the
+  photograph only while its own card resolves to the same cover
+  (`core.brief_photography`). Failures carry reason codes:
+  - `source-not-cover-derivative`
+  - `cover-claimed-twice`
+  - `cover-names-another-brief`
+  - `cover-conflict`
+
+  A catalogue-only record never grants the article.
+- **Card copy.** The caption and date note are shorter. Photographer, licence
+  link, source link, the event/context disclaimer and the DVIDS notice are
+  unchanged. The new date note reads "DVIDS dates: 21 September 2026
+  (caption); 20 September 2026 (date-taken field)." It still asserts no
+  capture date. The mobile card went from 906 to 888 px; the desktop card
+  stayed at 869 px.
+- **Tests.** `tests/test_brief_photography.py` has 23 tests, using generic
+  fixtures plus a walk over every committed cover. The focused suites
+  (`test_brief_photography`, `test_brief_cover`, `test_catalogue_media`,
+  `test_article_media`) give 102 OK. The Briefs and frontend-contract suites
+  give 715 OK, with 1 skipped.
+- **Fail-closed probes on a real render.** I swapped the article's `-800.webp`
+  for other bytes, then, separately, the card's JPEG. Both times:
+  - the article opened on its Editorial plate (`data-article-media="plate"`);
+  - `analysis.html` showed no No. 17 photograph;
+  - no No. 17 image files were emitted;
+  - Nos. 8 and 9 stayed photographs.
+
+  I restored the files after each probe, and both builders' `--check` pass.
+  The unit tests cover the remaining failures: retained source,
+  `-1600.jpg`, `-1600.webp`, attribution, notice and identity.
+- **Route parity.** Against the pre-hardening render of bb8091cc41, only the
+  No. 17 caption and date text differ, on `analysis.html` and the No. 17
+  article. Asset hashes are unchanged. The overlay validator passes with 7
+  warnings.
+
 ## Screenshots
 
-`shots/B-{card,lead,article}-{1280,375}.png` show treatment B as shipped,
-rendered from this branch's records. They were captured with Playwright in
-Chromium with reduced motion, using `tools/cover_shots_b.py`. Checks at 1280
-and 375:
+`shots/B-{card,lead,article}-{1280,375}.png` show treatment B as shipped
+after hardening. `shots/B-{card,article}-forced-{1280,375}.png` show forced
+colours. They were captured with Playwright in Chromium with reduced motion,
+using `tools/hard_shots.py`; the machine-readable results are in
+`shots/qa-report.json`. Checks at 1280 and 375:
 
 - no console errors;
 - no broken images;
 - no horizontal overflow;
-- the hero loads `-800.webp`.
+- the hero loads `-800.webp`;
+- the gradient is a CSS `::after` on `.brief-cover-frame`, removed under
+  forced colours and print;
+- each card link (headline, licence, source) takes visible keyboard focus;
+- the DVIDS notice is visible on the card, not hover-only;
+- in print emulation the article figure, credit and notice remain, and so do
+  the card credit and notice.
+
+`tools/cover_shots_b.py` is the original selection-time capture script.
 
 `comparison/sheet-*.jpg` set A, B and C side by side, as shown to the owner
 before the decision. Their captions carry the earlier date wording, which the
