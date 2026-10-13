@@ -105,7 +105,9 @@ def main() -> int:
                         live:fill('.dm-country.is-live use'),
                         quiet:fill('.dm-country.is-quiet use'),
                         buttonText:reset.color,
-                        buttonBackground:reset.backgroundColor
+                        buttonBackground:reset.backgroundColor,
+                        hitFill: getComputedStyle(document.querySelector('.dm-hit')).fill,
+                        hitAdjust: getComputedStyle(document.querySelector('.dm-hit')).forcedColorAdjust
                     };
                 }""")
                 receipts.append({"mode":"forced-colors", "sample":sample})
@@ -113,6 +115,12 @@ def main() -> int:
                     failures.append("forced colours: country fills obscure the map")
                 if sample["buttonText"] == sample["buttonBackground"]:
                     failures.append("forced colours: selected desk button text invisible")
+                if (sample["hitAdjust"] != "none" or not (
+                    sample["hitFill"] in ("transparent", "none")
+                    or sample["hitFill"].startswith("rgba(")
+                    and sample["hitFill"].endswith(", 0)")
+                )):
+                    failures.append("forced colours: invisible map hit targets become visible")
                 forced.locator("figure.deskmap").screenshot(
                     path=str(OUT / "desks-forced-colors-375.png")
                 )
