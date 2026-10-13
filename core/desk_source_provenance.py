@@ -804,8 +804,13 @@ _PUBLIC_DESK_FIELDS = (
     "volume_caveat", "qualification",
 )
 _PUBLIC_SOURCE_FIELDS = (
-    "name", "evidence_class", "publisher_url", "declared_format", "note",
-    "language_tags", "access_method", "authority_tier", "rights_statement",
+    # Provenance.note can include private production operator notes; the
+    # shadow-manifest rights_statement also contains internal fixture/issue
+    # diagnostics. Neither is approved for direct public JSON serialization.
+    # Public limits and pre-approved reference links remain on their own
+    # independently reviewed surfaces.
+    "name", "evidence_class", "publisher_url", "declared_format",
+    "language_tags", "access_method", "authority_tier",
 )
 _PUBLIC_REFERENCE_FIELDS = (
     "kind", "family_name", "publisher", "issuer", "editorial_status",
