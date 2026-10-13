@@ -475,6 +475,42 @@ class Runner(Case):
         self.assertNotIn("actions-gh-pages", raw)
         self.assertEqual(reviewer.BRANCHES, {desk: spec[2] for desk, spec in runner.DESKS.items()})
 
+    def test_korea_attempt_artifacts_exclude_original_capture_and_shadow_db(self):
+        raw = (ROOT / ".github/workflows/indonesia_korea_shadow.yml").read_text()
+
+        def step(name):
+            return raw.split("      - name: " + name + "\n", 1)[1].split(
+                "      - name:", 1)[0]
+
+        korea = step("Preserve Korea attempt metadata only")
+        self.assertIn("if: ${{ always() && env.SHADOW_DESK == 'korea' }}", korea)
+        self.assertIn("name: candidate-shadow-korea-${{ github.run_id }}-${{ github.run_attempt }}", korea)
+        paths = korea.split("          path: |\n", 1)[1].split(
+            "          if-no-files-found:", 1)[0]
+        self.assertEqual([line.strip() for line in paths.strip().splitlines()], [
+            "${{ runner.temp }}/candidate-state/state/ledger/*.json",
+            "${{ runner.temp }}/candidate-state/state/clock.json",
+            "${{ runner.temp }}/candidate-run.log",
+        ])
+        # No bare state-directory glob may package archived HWPX, capture
+        # bodies, media, Korean full text or the SQLite source database.
+        self.assertNotIn("/candidate-state/state/\n", korea)
+        self.assertNotIn("/candidate-state/state/captures", korea)
+        self.assertNotIn("/candidate-state/state/shadow.db", korea)
+        self.assertIn("retention-days: 90", korea)
+
+        indonesia = step("Preserve Indonesia complete attempt evidence")
+        self.assertIn("if: ${{ always() && env.SHADOW_DESK == 'indonesia' }}", indonesia)
+        self.assertIn("name: candidate-shadow-indonesia-${{ github.run_id }}-${{ github.run_attempt }}", indonesia)
+        self.assertIn("${{ runner.temp }}/candidate-state/state/", indonesia)
+        self.assertIn("${{ runner.temp }}/candidate-run.log", indonesia)
+
+        unselected = step("Preserve unselected attempt log only")
+        self.assertIn("env.SHADOW_DESK != 'korea' && env.SHADOW_DESK != 'indonesia'", unselected)
+        self.assertIn("name: candidate-shadow-unselected-${{ github.run_id }}-${{ github.run_attempt }}", unselected)
+        self.assertIn("path: ${{ runner.temp }}/candidate-run.log", unselected)
+        self.assertNotIn("candidate-state/state/", unselected)
+
     def test_workflow_shell_blocks_parse(self):
         import re
         import subprocess
