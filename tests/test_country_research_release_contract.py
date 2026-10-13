@@ -76,6 +76,29 @@ class CountryResearchReleaseContract(unittest.TestCase):
                             section.index("python scripts/validate_output.py"))
         self.assertIn("python -m scripts.guard_country_research_output_scope", text)
 
+    def test_japan_eleven_originals_are_checked_on_rendered_release_output(self):
+        text = self.body
+        check = "python -m scripts.guard_japan_official_reference_release"
+        self.assertEqual(text.count(check), 2)
+        self.assertIn('"scripts/guard_japan_official_reference_release.py"', text)
+        self.assertIn('"tests/test_guard_japan_official_reference_release.py"', text)
+        self.assertIn("tests.test_guard_japan_official_reference_release -v", text)
+        self.assertIn("python site/render.py --out", text)
+        self.assertIn("python -m scripts.stage_country_research_output", text)
+        # Check the actual staged output after scratch rendering; neither
+        # validating just the template nor scanning the stale committed HTML
+        # certifies the source-directory publication.
+        for label in (
+            "Exercise actual static release build without committing or deploying",
+            "Build isolated site and stage only reviewed country presentation",
+        ):
+            section = text.split("- name: " + label, 1)[1]
+            section = section.split("\n      - name:", 1)[0]
+            self.assertLess(section.index("python -m scripts.stage_country_research_output"),
+                            section.index(check))
+            self.assertLess(section.index(check),
+                            section.index("python scripts/validate_output.py"))
+
     def test_japan_render_only_release_requires_jcg_index_without_source_admission(self):
         text = self.body
         self.assertIn("test -f output/japan.html", text)
