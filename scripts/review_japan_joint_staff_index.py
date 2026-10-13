@@ -99,6 +99,9 @@ def inspect_index_html(html: str, *, week_ending: str, cutoff: str):
             "editorial_approved": False,
             "production_record": False,
         })
+    if current_year_links == 0:
+        raise JointStaffIndexError(
+            "no in-scope publisher PDF links were parsed; not proof of silence")
     return {
         "schema": "ipr-japan-joint-staff-index-review/1",
         "publisher_index": INDEX,
