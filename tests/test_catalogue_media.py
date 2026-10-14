@@ -28,10 +28,10 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {2, 3, 4, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18}
+PHOTO_ISSUES = {2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
-SOURCE_HOSTS = {2: "https://commons.wikimedia.org/", 3: "https://www.dvidshub.net/", 4: "https://www.dvidshub.net/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/", 11: "https://commons.wikimedia.org/",
+SOURCE_HOSTS = {2: "https://commons.wikimedia.org/", 3: "https://www.dvidshub.net/", 4: "https://www.dvidshub.net/", 5: "https://commons.wikimedia.org/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/", 11: "https://commons.wikimedia.org/",
                 13: "https://commons.wikimedia.org/",
                 14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/", 16: "https://www.dvidshub.net/",
                 17: "https://www.dvidshub.net/image/",
@@ -382,6 +382,22 @@ class CommittedRecordTests(unittest.TestCase):
         self.assertNotEqual(three["source_page"], four["source_page"])
         self.assertEqual(next(a for a in self.audit if a["issue"] == 3)["kind"], "photograph")
         self.assertEqual(next(a for a in self.audit if a["issue"] == 4)["kind"], "photograph")
+
+    def test_wave9_real_chinese_coast_guard_photo_is_2018_enforcement_only(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        five, seven = by_issue[5], by_issue[7]
+        self.assertNotEqual(five["source_page"], seven["source_page"])
+        self.assertIn("2018", five["caption"])
+        self.assertIn("Coast Guard patrol vessel 2301", five["caption"])
+        self.assertIn("not the June 2026 patrol east of Taiwan", five["caption"])
+        self.assertIn("loitering-munition", five["caption"])
+        self.assertIn("Rocket Force", five["caption"])
+        self.assertEqual(five["license"], "Public domain")
+        from core.source_terms import required_notice
+        self.assertEqual(five["notice"], required_notice({"source_label": "DVIDS"}))
+        self.assertIn("180621-G-G0217-1005",
+                      self.manifest[five["source_manifest_id"]]["license_basis"])
+        self.assertEqual(next(a for a in self.audit if a["issue"] == 5)["kind"], "photograph")
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:
