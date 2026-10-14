@@ -1,21 +1,21 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Brief reading architecture (13 October 2026, owner-review candidate):**
-`codex/briefs-editorial-architecture-v2` is based on main
-`97485edea28ec9a7152f77b562adc37b84623ccd` (merged Laos coauthor and context-photo
-work included). A separately validated `brief-presentation-v1` manifest adds
-explicit paragraph sections, navigation, exact-excerpt emphasis and optional
-existing-admission figure placement. The Laos manifest is **draft/private-only**;
-its five headings and paragraph-10 finding placement await owner review. No
-canonical Brief, approval, media admission, output, DB or Sunday delivery changes.
-Independent-review correction: public loading now withholds recognized drafts
-before editorial validation; private review and approved manifests remain strict.
-Current Laos editorial fingerprint remains
-`3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57`.
-Authoring/approval boundary: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`.
-Visual and validation receipts: `docs/evidence/briefs-editorial-v2/README.md`.
-Next action: owner reviews the scoped PR and private reading candidate; separate
-exact presentation approval is required before any public layout activation.
+**Brief editorial journal (14 October 2026, owner-review candidate):**
+`codex/ipr-editorial-design-system-20261014` builds on verified main
+`3799e78a833715741b2a4b3e9abe4a376f8a1407` (PR #567 merged; dependency CI
+`38593731223` passed). All 18 Briefs and future native/source-linked articles
+share a clean paper folio, sea-glass editorial/source objects, section rhythm,
+responsive reading navigation and print/forced-color fallbacks. Historical
+inline presentation is consolidated into the shared stylesheet; native and
+historical adapters share a navigation macro. Five isolated future fixtures
+exercise granted/no photography, long cross-desk, short and source-linked
+reading variants through actual contracts. No canonical manuscripts, approvals,
+media, DB, sources, feeds or desk status changes. The existing exact approved
+Laos presentation remains authoritative. Implementation/limits/release scope:
+`docs/BRIEFS_JOURNAL_DESIGN_SYSTEM_2026-10-14.md`; browser and preservation
+receipts: `docs/evidence/ipr-journal/README.md`. The reviewed candidate requires
+owner visual review and successful exact-head CI before any landing decision;
+no merge or deployment is authorized by this task.
 
 **Current operational snapshot and handoff. Desk statuses checked 2026-09-28
 against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
