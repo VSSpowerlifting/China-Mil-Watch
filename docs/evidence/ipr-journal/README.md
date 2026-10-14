@@ -24,8 +24,8 @@ Design/architecture/release scope:
   underlying surface colors; the faint decoration was separately inspected.
 - **Delivery stays within budget.** Maximum article HTML plus recursively
   linked CSS: 94,800 bytes; maximum executable JS: 5,336 bytes. No external
-  dependency. Article CSS gzip increases 920 bytes; disclosure JS gzip increases
-  -12 bytes. No new fonts or documentary assets:
+  dependency. Article CSS gzip increases 920 bytes; disclosure JS gzip decreases
+  12 bytes (source grows 14 bytes). No new fonts or documentary assets:
   [performance receipt](performance-receipts.json).
 - **Output validator:** passes with ten existing governed warnings. Scope guard
   permits exactly the shared CSS/JS and eighteen article pages changed here;
@@ -97,6 +97,9 @@ as broken images; and CSS zoom below the supported floor was removed from the
 required matrix. Real local image files were independently decoded, eager
 images still must load, and actual browser zoom remains required. The final
 511-check receipt above is the corrected complete run, not a partial rerun.
+The later shared-script compaction is verified by
+[90 layout/resize checks plus Escape](compact-script-receipts.json).
+Its behavior is unchanged; homepage/archive script budgets are also checked.
 
 ## Test and release handoff
 
@@ -106,6 +109,18 @@ future/presentation/cover stage passed 39 tests. The obsolete inline-style
 historical expectation and its former pre-3C transform were removed only after
 the governed rerender; current pages now require exact byte equality, alongside
 unchanged prose, image/source/credit and citation assertions.
+
+The separate release/media contract stage passes 143 tests. The all-route
+delivery stage passes four tests, including every generated route. Initial
+full-run findings included the obsolete inline-CSS test and a real hub script
+budget overrun, both corrected without raising budgets or weakening media
+gates. A concurrent 40-test browser stage timed out after a disclosure click;
+the complete corrected stage subsequently passed all 40 tests. The first local
+full run also failed 21 custody fixtures because macOS's default temporary
+path traverses the `/var` symlink. Using canonical `TMPDIR=/private/tmp` makes
+those 21 tests pass without changing the custody guard. The initial full run
+was interrupted after diagnosis and is not counted as green; the complete
+suite is restarted with the canonical temporary path.
 
 The full offline command is `.venv/bin/python -m unittest discover -s tests -t . -v`.
 The review PR records its final full result and the authoritative successful
