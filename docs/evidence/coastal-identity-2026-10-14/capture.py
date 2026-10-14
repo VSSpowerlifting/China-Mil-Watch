@@ -2,6 +2,7 @@
 Run with the project Python after rendering /tmp/ipr-coastal-{before,after}
 and their private -review and -fixture companions (see README).
 """
+import argparse
 import functools
 import http.server
 import json
@@ -12,7 +13,9 @@ import threading
 from PIL import Image
 from playwright.sync_api import sync_playwright
 
-EVIDENCE = Path(__file__).resolve().parent
+SOURCE_EVIDENCE = Path(__file__).resolve().parent
+EVIDENCE = Path("/tmp/ipr-coastal-evidence-complete")
+RENDER_PREFIX = "ipr-coastal"
 ROUTES = {
     'home': ('', 'index.html'),
     'analysis': ('', 'analysis.html'),
@@ -39,7 +42,7 @@ def main():
                 context.add_init_script("sessionStorage.setItem('ipr-intro','1')")
                 for name, (suffix, route) in ROUTES.items():
                     page = context.new_page()
-                    url = f'http://127.0.0.1:{server.server_port}/ipr-coastal-{phase}{suffix}/{route}'
+                    url = f'http://127.0.0.1:{server.server_port}/{RENDER_PREFIX}-{phase}{suffix}/{route}'
                     response = page.goto(url, wait_until='networkidle')
                     page.evaluate('document.fonts.ready')
                     page.evaluate('''async () => {for (const i of document.images) i.loading='eager'; await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})))}''')
@@ -107,7 +110,7 @@ def supplemental():
             page.add_init_script("sessionStorage.setItem('ipr-intro','1')")
             for name,route,selector in targets:
                 suffix,path=ROUTES[route]
-                page.goto(f'http://127.0.0.1:{server.server_port}/ipr-coastal-after{suffix}/{path}',wait_until='networkidle')
+                page.goto(f'http://127.0.0.1:{server.server_port}/{RENDER_PREFIX}-after{suffix}/{path}',wait_until='networkidle')
                 page.evaluate('document.fonts.ready')
                 node=page.locator(selector).first
                 if not node.is_visible():
@@ -143,7 +146,7 @@ def refresh_modes():
             page.add_init_script("sessionStorage.setItem('ipr-intro','1')")
             for route,(suffix,path) in ROUTES.items():
                 page.emulate_media(media='screen',forced_colors='none')
-                page.goto(f'http://127.0.0.1:{server.server_port}/ipr-coastal-after{suffix}/{path}',wait_until='networkidle')
+                page.goto(f'http://127.0.0.1:{server.server_port}/{RENDER_PREFIX}-after{suffix}/{path}',wait_until='networkidle')
                 page.evaluate('document.fonts.ready')
                 page.keyboard.press('Tab')
                 for mode in ('focus','forced','print'):
@@ -158,5 +161,13 @@ def refresh_modes():
 
 
 if __name__ == '__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--out',type=Path,default=EVIDENCE,help='External complete evidence directory')
+    parser.add_argument('--render-prefix',default=RENDER_PREFIX,help='Prefix of fresh /tmp render directories')
+    args=parser.parse_args();EVIDENCE=args.out.resolve();RENDER_PREFIX=args.render_prefix
+    repository=SOURCE_EVIDENCE.parents[2]
+    if EVIDENCE==repository or repository in EVIDENCE.parents or EVIDENCE in repository.parents:
+        parser.error('complete captures must be outside the repository')
+    EVIDENCE.mkdir(parents=True,exist_ok=True)
     main()
     supplemental()

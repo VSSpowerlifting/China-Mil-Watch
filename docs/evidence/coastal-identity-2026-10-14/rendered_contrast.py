@@ -1,4 +1,5 @@
 """Measure migrated text roles against actual inherited/composited backgrounds."""
+import argparse
 import functools
 import http.server
 import json
@@ -8,11 +9,11 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 from capture import ROUTES, EVIDENCE
-sys.path.insert(0, str(EVIDENCE.parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from tests.test_palette_and_accessibility import contrast
 
 
-def main():
+def main(render_prefix="ipr-coastal"):
     server=http.server.ThreadingHTTPServer(('127.0.0.1',0),functools.partial(http.server.SimpleHTTPRequestHandler,directory='/tmp'))
     threading.Thread(target=server.serve_forever,daemon=True).start()
     results=[]
@@ -22,7 +23,7 @@ def main():
             page=browser.new_page(viewport={'width':width,'height':900}, reduced_motion='reduce')
             page.add_init_script("sessionStorage.setItem('ipr-intro','1')")
             for route,(suffix,path) in ROUTES.items():
-                page.goto(f'http://127.0.0.1:{server.server_port}/ipr-coastal-after{suffix}/{path}',wait_until='networkidle')
+                page.goto(f'http://127.0.0.1:{server.server_port}/{render_prefix}-after{suffix}/{path}',wait_until='networkidle')
                 page.evaluate('document.fonts.ready')
                 pairs=page.evaluate('''() => {
                   let rgb=s=>s.match(/[0-9.]+/g).map(Number);
@@ -46,6 +47,7 @@ def main():
             page.close()
         browser.close()
     server.shutdown()
+    EVIDENCE.mkdir(parents=True,exist_ok=True)
     (EVIDENCE/'rendered-contrast.json').write_text(json.dumps(results,indent=2))
     failures=[r for r in results if r['ratio']<r['required']]
     print(f'{len(results)} migrated rendered text consumers measured; {len(failures)} contrast failures')
@@ -53,4 +55,7 @@ def main():
     assert not failures
 
 
-if __name__=='__main__': main()
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--render-prefix',default='ipr-coastal')
+    main(parser.parse_args().render_prefix)

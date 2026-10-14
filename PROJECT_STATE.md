@@ -7,12 +7,18 @@ SVG now use jade for human analysis and slate-blue for machine output, with
 surface-specific text and non-colour cues. Navy, turquoise, ivory, original
 photographs/flags and warning/positive semantics are retained. Evidence, contrast,
 comparison captures and verification: `docs/evidence/coastal-identity-2026-10-14/README.md`.
-Focused integration (110 tests), final palette (27), 48 route/viewport captures
-and both validators (ten warnings) pass. Full local run: 6,254 tests, 21 storage
-root errors reproduced on exact main plus two unresolved intro timing findings;
-CI remains a gate. No canonical Brief, approval, media admission, database,
-collector or tracked output changes. Next action: owner visual review of the focused PR; no merge
-or deployment authorized.
+PR #566 remains draft. Pre-merge cleanup retains 33 representative images
+(7.3 MB, down 88.8% from 65.4 MB) with full-capture reproduction and receipts.
+The two intro checks pass three repetitions each on base and candidate;
+separate scheduling negative controls reproduce both timing paths on both.
+No intro regression is demonstrated or behaviour changed. The existing desktop
+print credit/finder overlap is 9px on both revisions; the URL itself wraps.
+Focused integration (110 tests), contrast and validator rechecks are recorded in
+the evidence index. Original full-run 21 macOS store errors and two intro timing
+findings remain disclosed; no safeguards are weakened. No canonical Brief,
+approval, media admission, database, collector, stylesheet, typography/layout or
+tracked output changes in cleanup. Ready to be marked for review to run exact-head
+CI; kept draft as requested. No merge or deployment authorized.
 
 **Brief reading architecture (#561 merged 14 October 2026):**
 The source components are integrated in main; Laos's presentation manifest

@@ -33,5 +33,32 @@
     "tests": 23,
     "passed": true,
     "does_not_supersede_full_run": true
+  },
+  "pre_merge_cleanup": {
+    "start_head": "a2629323ca6d972495073a7cd8e1e6d8608fad46",
+    "images_before": 112,
+    "bytes_before": 65380052,
+    "images_retained": 33,
+    "bytes_retained": 7322214,
+    "realtime_intro_each_revision": {
+      "checks": 6,
+      "passed": 6
+    },
+    "negative_controls": "same two expected timing failure paths on base and candidate; separate diagnostic results",
+    "print_credit": "no horizontal overflow; baseline and candidate share 9px finder overlap at1280",
+    "intro_and_store_safeguards_changed": false,
+    "site_styling_changed": false,
+    "focused_tests": {
+      "tests": 110,
+      "passed": true
+    },
+    "rendered_contrast": {
+      "consumers": 64,
+      "failures": 0
+    },
+    "validator_warnings": {
+      "tracked": 10,
+      "isolated": 10
+    }
   }
 }

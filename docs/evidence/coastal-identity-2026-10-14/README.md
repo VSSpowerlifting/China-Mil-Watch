@@ -58,43 +58,67 @@ and keyboard focus require 3. Pale semantic tones are scoped to dark surfaces.
 | `--machine-on-dark` | 1.49 (dark only) | 1.61 (dark only) | 1.32 (dark only) | 1.40 (dark only) | 8.49 |
 | `--focus-band` | 1.48 (dark only) | 1.60 (dark only) | 1.32 (dark only) | 1.40 (dark only) | 8.54 |
 
-## Comparison index
+## Retained review screenshots
 
-| Route / component | 375px before → after | 768px before → after | 1280px before → after |
-|---|---|---|---|
-| home | [Before](shots/before-home-375.jpg) · [After](shots/after-home-375.jpg) | [Before](shots/before-home-768.jpg) · [After](shots/after-home-768.jpg) | [Before](shots/before-home-1280.jpg) · [After](shots/after-home-1280.jpg) |
-| analysis | [Before](shots/before-analysis-375.jpg) · [After](shots/after-analysis-375.jpg) | [Before](shots/before-analysis-768.jpg) · [After](shots/after-analysis-768.jpg) | [Before](shots/before-analysis-1280.jpg) · [After](shots/after-analysis-1280.jpg) |
-| laos | [Before](shots/before-laos-375.jpg) · [After](shots/after-laos-375.jpg) | [Before](shots/before-laos-768.jpg) · [After](shots/after-laos-768.jpg) | [Before](shots/before-laos-1280.jpg) · [After](shots/after-laos-1280.jpg) |
-| historical | [Before](shots/before-historical-375.jpg) · [After](shots/after-historical-375.jpg) | [Before](shots/before-historical-768.jpg) · [After](shots/after-historical-768.jpg) | [Before](shots/before-historical-1280.jpg) · [After](shots/after-historical-1280.jpg) |
-| native | [Before](shots/before-native-375.jpg) · [After](shots/after-native-375.jpg) | [Before](shots/before-native-768.jpg) · [After](shots/after-native-768.jpg) | [Before](shots/before-native-1280.jpg) · [After](shots/after-native-1280.jpg) |
-| record | [Before](shots/before-record-375.jpg) · [After](shots/after-record-375.jpg) | [Before](shots/before-record-768.jpg) · [After](shots/after-record-768.jpg) | [Before](shots/before-record-1280.jpg) · [After](shots/after-record-1280.jpg) |
-| laos-v2-private | [Before](shots/before-laos-v2-private-375.jpg) · [After](shots/after-laos-v2-private-375.jpg) | [Before](shots/before-laos-v2-private-768.jpg) · [After](shots/after-laos-v2-private-768.jpg) | [Before](shots/before-laos-v2-private-1280.jpg) · [After](shots/after-laos-v2-private-1280.jpg) |
-| evidence-fixture | [Before](shots/before-evidence-fixture-375.jpg) · [After](shots/after-evidence-fixture-375.jpg) | [Before](shots/before-evidence-fixture-768.jpg) · [After](shots/after-evidence-fixture-768.jpg) | [Before](shots/before-evidence-fixture-1280.jpg) · [After](shots/after-evidence-fixture-1280.jpg) |
+The committed set is curated from the original complete capture archive:
+**33 images / 7,322,214 bytes (7.0 MiB)**, down from **112 / 65,380,052 bytes
+(62.4 MiB)**: an 88.8% reduction. Screenshots retain their original pixel width;
+page excerpts use WebP quality 80 and component/mode crops remain lossless.
+Only review screenshots are compressed; production photos/assets are unchanged.
 
-[Desktop comparisons](shots/comparison-1280-0.jpg) ·
-[Mobile comparisons](shots/comparison-375-0.jpg) ·
-[Article comparisons](shots/comparison-1280-1.jpg) ·
-[Private v2 comparisons](shots/comparison-1280-2.jpg).
-[Dark keyboard focus, mobile](shots/after-home-dark-focus-375.webp) ·
-[Dark keyboard focus, desktop](shots/after-home-dark-focus-1280.webp) ·
-[Final homepage editorial cue](shots/after-home-editorial-1280.webp) ·
-[Native Signal](shots/after-native-signal-375.webp) ·
-[Private v2 finding](shots/after-v2-finding-1280.webp) ·
-[Custody markers](shots/after-record-custody-1280.webp).
-[Print sample](shots/after-native-1280-print.webp) ·
-[Forced-colors sample](shots/after-record-1280-forced.webp).
-Every normal route also has `after-<route>-<width>-focus/print/forced.webp`
-companions at 375 and 1280. Record custody remains hidden in the existing
-compact layout; its shape close-up is desktop only.
+Desktop and mobile before/after pairs retain the homepage and openings/reading
+excerpts for Analysis, source records, native and source-linked Briefs, plus one
+historical article. Full homepage captures are retained; other route pairs are
+explicit **top-page excerpts**, not full-page evidence. Exact crop bounds,
+source/output dimensions and hashes are in [image-inventory.json](image-inventory.json).
 
+| Route | 375px before → after | 1280px before → after |
+|---|---|---|
+| home | [Before](shots/before-home-375.webp) · [After](shots/after-home-375.webp) | [Before](shots/before-home-1280.webp) · [After](shots/after-home-1280.webp) |
+| analysis | [Before](shots/before-analysis-375.webp) · [After](shots/after-analysis-375.webp) | [Before](shots/before-analysis-1280.webp) · [After](shots/after-analysis-1280.webp) |
+| record | [Before](shots/before-record-375.webp) · [After](shots/after-record-375.webp) | [Before](shots/before-record-1280.webp) · [After](shots/after-record-1280.webp) |
+| native | [Before](shots/before-native-375.webp) · [After](shots/after-native-375.webp) | [Before](shots/before-native-1280.webp) · [After](shots/after-native-1280.webp) |
+| laos | [Before](shots/before-laos-375.webp) · [After](shots/after-laos-375.webp) | [Before](shots/before-laos-1280.webp) · [After](shots/after-laos-1280.webp) |
+| historical | [Before](shots/before-historical-375.webp) · [After](shots/after-historical-375.webp) | [Before](shots/before-historical-1280.webp) · [After](shots/after-historical-1280.webp) |
 
-Public Laos uses its unchanged fallback. `laos-v2-private` uses the existing
-draft presentation in an isolated review destination; `evidence-fixture` uses
-existing exact-excerpt fixtures and is neither approved nor public. Captures
-use Chromium, real local font files and assets, 375/768/1280 widths, 900px viewport,
-reduced motion, the intro's existing session skip, and eager loading for complete
-screenshot imagery. Full captures are JPEG (long mobile pages exceed WebP's size
-limit); supplemental focus/print/forced-colors captures are lossless PNG/WebP.
+Focused retained examples:
+
+- [Human editorial cue](shots/after-home-editorial-1280.webp),
+  [machine/source custody](shots/after-record-custody-1280.webp),
+  [native Signal](shots/after-native-signal-375.webp),
+  [private v2 finding](shots/after-v2-finding-1280.webp).
+- [Navy keyboard focus](shots/after-home-dark-focus-375.webp),
+  [forced-colors source record](shots/after-record-1280-forced.webp).
+- [Homepage print before](shots/before-home-1280-print.webp) /
+  [after](shots/after-home-1280-print.webp),
+  [native print](shots/after-native-1280-print.webp).
+
+## Complete locally generated evidence
+
+`capture.py --out /tmp/ipr-coastal-evidence-complete` regenerates all **48 full
+captures** (eight routes × three widths × before/after), mode captures and
+component supplements outside the repository. The 768px views, long page tails,
+private v2 full-page views, evidence fixture, comparison sheets and unretained
+mode examples are **locally generated evidence**, not links to committed files.
+
+[Browser receipts](browser-receipts.json) and [parity](parity.json) preserve the
+original 48-run results and 24 exact text/link/image/geometry comparisons.
+[Original archive hashes](original-screenshot-hashes.json) identify the original
+112 images; their names refer to a complete local archive, not `shots/` here.
+[Retained hashes](screenshot-hashes.json) describe only the 33 committed files.
+The original full-resolution archive was preserved locally during cleanup at
+`/tmp/ipr-coastal-evidence-original/shots`; it is temporary, not a durable download.
+The exact original rasters also remain recoverable from starting commit
+`a2629323ca6d972495073a7cd8e1e6d8608fad46` (archive its evidence `shots/` path).
+This cleanup reduces the current tree/PR diff, not historical Git object storage;
+branch history is not rewritten. Scripts and receipts provide durable reproduction
+rather than claiming that uncommitted files are bundled in the current tree.
+
+Public Laos keeps its existing fallback. The private v2 finding and separate
+exact-excerpt fixture remain draft/unapproved. Captures use actual local fonts
+and assets, 900px viewports, reduced motion, the existing session intro skip and
+eager image loading. `curate_shots.py --source <complete-shots-directory>` rebuilds
+the retained subset; no resizing or recolouring of production assets occurs.
 
 ## Verification
 
@@ -120,7 +144,7 @@ limit); supplemental focus/print/forced-colors captures are lossless PNG/WebP.
   samples, not a claim that every interaction or print pagination was audited.
   Print remaps semantic label markers to black and applies white grounds to
   homepage/Brief heroes with legible, non-transitioning button text (the earlier dark print ground
-  is visible in `shots/before-home-1280-print.webp`). Final media captures were refreshed
+  is visible in [the retained baseline print view](shots/before-home-1280-print.webp)). Final media captures were refreshed
   with `capture.refresh_modes()` after this print-only refinement. Normal before/after
   paint and geometry are unchanged by a print media rule.
 - Tracked-output and isolated-overlay validators both **pass with ten governed
@@ -144,11 +168,69 @@ not converted to a green full-suite claim by an isolated pass. CI on the final
 PR head remains the engineering gate; no unrelated intro/store repair is included.
 
 Candidate intro-only characterization: **23 tests passed** in isolation. This
-does not override the broader-run failures above; CI is still pending.
+does not override the broader-run failures above; CI is skipped while the PR remains draft; marking it ready enables the gate.
 
 [Full local summary](verification.json) records counts and exact baseline identity.
-The source-only PR is ready for owner visual review, with full-suite limitations
-and pending CI disclosed.
+The cleanup is ready to be marked for review so exact-head CI can run; PR #566
+remains draft as requested, with the original full-suite limitations disclosed.
+
+## Cleanup verification
+
+Fresh isolated production and private-v2 renders completed without changing
+tracked output. The same focused integration targets pass **110 tests**; all
+**64** remeasured migrated text consumers pass contrast. Tracked-output and
+fresh isolated-overlay validators retain **ten governed warnings** each.
+Application styles, typography, intro, templates, canonical evidence/approvals,
+assets, store safeguards, database, desk/shadow state and workflows are byte-
+unchanged from starting head `a2629323ca6d972495073a7cd8e1e6d8608fad46`.
+Retained image hashes, lossless component pixels and README link targets were
+checked. A capture guard check rejects generating the full archive inside Git.
+The original 48-run receipts remain historical evidence; cleanup does not claim
+another full 48-capture execution or a green full offline suite.
+
+## Pre-merge characterization
+
+### Intro timing
+
+The existing two checks were repeated serially **three times per exact base and
+candidate** with one shared fixture build/browser per revision: **6/6 passed on
+each**. Intro and test source hashes are identical. External init-script tracing
+records DOMContentLoaded, FCP, overlay attachment/fade/removal, script request/
+response and context-loss timing. Receipts: [base](intro-base-timings.json),
+[candidate](intro-candidate-timings.json). Instrumentation is diagnostic and does
+not establish reliability under every full-suite load.
+
+Two separately labelled **negative controls** reproduce the same failure paths
+on both revisions without modifying intro behaviour:
+
+- Delaying the local `intro.js` response 2.1s lets FCP occur first; the existing
+  late-arrival guard declines to attach an overlay, and the original attachment
+  check times out. A longer selector wait cannot restore a declined startup.
+- Delaying the context-loss test's dispatch 1.85s allows the original 1.75s
+  dismissal deadline to fire first. Both traces show `is-out` before
+  `loss-request`; the original assertion reports “ended by the timeline”.
+
+These deliberately induced failures are not test passes and do not prove the
+cause of the original broader-run findings. They characterize scheduling-sensitive
+paths already present on main; no palette-related regression is demonstrated.
+No intro implementation/test or store safeguard was changed. The original full
+suite result and 21 reproduced macOS store errors above remain in force; CI is
+the engineering gate once this draft is marked ready.
+
+### Homepage print photo credit
+
+[Measured print credit](print-credit.json) compares actual print-mode DOM geometry
+at 375 and 1280px. On both revisions the credit's scroll width equals its client
+width (375/1280px), and the generated URL uses `overflow-wrap:anywhere` with
+normal whitespace. No horizontal URL overflow is measured.
+
+At 1280px the next finder panel overlaps the credit's bottom **9px** on both
+revisions; hit tests across that lower line return the finder panel. This is an
+existing print-layout occlusion, consistent with the sample's apparent clipping,
+not a new palette wrapping regression. At 375px there is no measured overlap.
+The homepage print rule makes the credit static but preserves the finder's
+negative margin; colour changes do not change this geometry. No wrapping, layout,
+URL, attribution or CSS fix is included in this cleanup.
 
 ## Reproduction
 
@@ -161,6 +243,10 @@ The macOS storage-root failures persist under that configuration; no guard was
 bypassed or weakened.
 
 1. At the base commit, render with `site/render.py --out /tmp/ipr-coastal-before`.
+   Use a new directory prefix if a previous private review exists; the review
+   renderer deliberately refuses to overwrite it. For example replace `ipr-coastal`
+   with `ipr-coastal-cleanup` in every destination and fixture style-base, and pass
+   `--render-prefix ipr-coastal-cleanup` to capture/contrast/credit scripts.
    Run `render_isolated_history.py /tmp/ipr-coastal-before` to render unchanged
    historical contexts and carry existing assets/exports without replacing fresh
    assets. The same command uses `after` for the candidate.
@@ -170,9 +256,15 @@ bypassed or weakened.
    `docs/evidence/briefs-editorial-v2/render_fixture.py --out
    /tmp/ipr-coastal-before-fixture --style-base /ipr-coastal-before-review`.
 3. Repeat on the candidate using `after` in the destinations, then run
-   `capture.py` and `rendered_contrast.py`. They serve only the private /tmp
-   renders on localhost; no external collection is performed.
-4. Run `python -m unittest tests.test_coastal_palette
+   `capture.py --out /tmp/ipr-coastal-evidence-complete` and
+   `rendered_contrast.py`. They serve the private /tmp renders on localhost,
+   writing generated evidence outside Git. Curate using `curate_shots.py --source
+   /tmp/ipr-coastal-evidence-complete/shots`; no external collection is performed.
+4. For timing reproduction, run `characterize_intro.py --root <exact-base-export>
+   --revision <base-sha> --out /tmp/intro-base.json`, then the same command for
+   the candidate, serially, using the same interpreter. Run
+   `check_print_credit.py --out /tmp/print-credit.json` for the credit comparison.
+5. Run `python -m unittest tests.test_coastal_palette
    tests.test_palette_and_accessibility tests.test_brief_presentation
    tests.test_brief_presentation_integration tests.test_frontend_production
    tests.test_relief_primitives tests.test_historical_brief_shell`, followed by
