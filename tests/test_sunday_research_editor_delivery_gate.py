@@ -41,7 +41,7 @@ class ResearchEmailPermissionTests(unittest.TestCase):
     def test_model_only_consent_permits_private_no_send_with_vietnam(self):
         result = check(week_ending=WEEK, as_of=WEEK,
                        packet=self.write(), send_email=False)
-        self.assertGreater(result["vietnam_count"], 0)
+        self.assertGreater(result["vietnam_private_model_sources"], 0)
         self.assertTrue(result["vietnam_editor_send_authorized"])
         self.assertFalse(result["email_sent"])
         self.assertFalse(result["publication_or_source_approval"])
@@ -52,7 +52,7 @@ class ResearchEmailPermissionTests(unittest.TestCase):
             with self.subTest(reviewed=reviewed):
                 with self.assertRaisesRegex(
                         EditorDeliveryNotAuthorized,
-                        "requires separate exact-week owner approval"):
+                        "supply a private scratch output"):
                     check(week_ending=WEEK, as_of=WEEK, packet=path,
                           send_email=True, vietnam_email_approved_week=reviewed)
         # Refuse prior to the model and any SMTP, not after distribution.
@@ -114,7 +114,7 @@ class ResearchEmailPermissionTests(unittest.TestCase):
                                       if r["desk"] == "japan"])
         result = check(week_ending=WEEK, as_of=WEEK,
                        packet=self.write(data), send_email=True)
-        self.assertEqual(result["vietnam_count"], 0)
+        self.assertEqual(result["vietnam_private_model_sources"], 0)
         self.assertEqual(result["source_count"], 3)
         self.assertTrue(result["vietnam_editor_send_authorized"])
 
@@ -142,7 +142,7 @@ class ResearchEmailPermissionTests(unittest.TestCase):
         self.assertIn("--safe-out \"$scratch/$IPR_SUNDAY_WEEK_END.json\"", workflow)
         self.assertIn("IPR_SUNDAY_VIETNAM_EDITOR_SEND_REVIEWED_WEEK", workflow)
         self.assertIn("steps.editor_scope.outputs.packet", workflow)
-        self.assertIn('echo "vietnam_withheld="', workflow)
+        self.assertIn('print("vietnam_withheld="', workflow)
         self.assertIn('if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]', workflow)
         self.assertIn("scripts.sunday_research_editor_delivery_gate", workflow)
         self.assertNotIn("actions/upload-artifact", workflow)
