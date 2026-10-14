@@ -56,7 +56,7 @@ class ResearchEmailPermissionTests(unittest.TestCase):
                     check(week_ending=WEEK, as_of=WEEK, packet=path,
                           send_email=True, vietnam_email_approved_week=reviewed)
         # Refuse prior to the model and any SMTP, not after distribution.
-        with patch("scripts.sunday_editorial_handoff.send_packet") as sender, \\
+        with patch("scripts.sunday_editorial_handoff.send_packet") as sender, \
              patch("scripts.sunday_briefs_auto_writer.compose") as writer:
             with self.assertRaises(EditorDeliveryNotAuthorized):
                 check(week_ending=WEEK, as_of=WEEK, packet=path, send_email=True)
