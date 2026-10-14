@@ -2,7 +2,7 @@
   "version": "brief-presentation-v1",
   "article": "what-is-being-built-in-laos",
   "manuscript_fingerprint": "3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57",
-  "status": "draft",
+  "status": "approved",
   "sections": [
     {
       "id": "reading-introduction",
@@ -35,7 +35,18 @@
       "heading": "What to Watch Next"
     }
   ],
-  "approval": null,
+  "approval": {
+    "reviewed_by": "Benjamin Yang",
+    "reviewed_on": "2026-10-14",
+    "reference": "Owner explicitly approved the exact Laos headings, paragraph ranges and central-finding excerpt in Indo-Pacific Record project chat on 2026-10-14, as specified in PR #561 issuecomment-6170353638.",
+    "fingerprint": "e86480c3478d43744c9e2f82b691113e1c7f721135c1f9751ac5699d79284cf2",
+    "checks": {
+      "headings": true,
+      "excerpts": true,
+      "media": true,
+      "rendered_page": true
+    }
+  },
   "central_finding": {
     "paragraph": 10,
     "quote": "The available record establishes more about the capabilities being developed than about who will ultimately control their use.",
