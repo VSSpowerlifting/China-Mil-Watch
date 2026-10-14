@@ -86,6 +86,25 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(ids, {"mps-vi:1791199100", "mps-vi:1791199677"})
         self.assertEqual(load_candidates("2026-10-17", "2026-10-16"), [])
 
+    def test_sunday_full_week_handoff_preserves_friday_shadow_candidates(self):
+        # On Sunday the full-week production draft uses Saturday as its
+        # cutoff. The two pinned MPS candidates remain available to the
+        # editor, while none becomes a production source-trail record.
+        friday = load_candidates(SAT, FRI)
+        sunday = load_candidates(SAT, SAT)
+        self.assertEqual(sunday, friday)
+        packet = render_packet(scaffold(), as_of=SAT, vietnam_candidates=sunday)
+        self.assertIn("VIETNAM SHADOW CANDIDATES", packet)
+        self.assertIn("REQUIRES INDEPENDENT HUMAN REVIEW", packet)
+        self.assertNotIn("Desks: china, singapore, vietnam", packet)
+        self.assertNotIn("Record mps-vi:", packet)
+
+    def test_sunday_does_not_expand_unreviewed_candidate_source_window(self):
+        fixture = pack()
+        fixture["candidates"][0]["published_date"] = SAT
+        with self.assertRaisesRegex(VietnamCandidateError, "Sunday-Friday"):
+            self.load(fixture, sat=SAT, fri=SAT)
+
     def test_valid_local_candidate_is_unapproved(self):
         rows = self.load()
         self.assertEqual(rows[0]["review_status"],
@@ -96,7 +115,7 @@ class CandidateTests(unittest.TestCase):
     def test_wrong_week_or_cutoff_refused(self):
         for sat, fri in [(SAT, "2026-10-08"),
                          ("2026-10-09", "2026-10-08"),
-                         (SAT, "2026-10-10")]:
+                         (SAT, "2026-10-11")]:
             with self.subTest(sat=sat, fri=fri), self.assertRaises(VietnamCandidateError):
                 load_candidates(sat, fri, directory=self.directory)
 
