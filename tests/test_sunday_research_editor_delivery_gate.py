@@ -115,7 +115,7 @@ class ResearchEmailPermissionTests(unittest.TestCase):
         result = check(week_ending=WEEK, as_of=WEEK,
                        packet=self.write(data), send_email=True)
         self.assertEqual(result["vietnam_private_model_sources"], 0)
-        self.assertEqual(result["source_count"], 3)
+        self.assertEqual(result["editor_packet_source_count"], 3)
         self.assertTrue(result["vietnam_editor_send_authorized"])
 
     def test_malformed_or_wrong_week_packet_does_not_bypass_gate(self):
