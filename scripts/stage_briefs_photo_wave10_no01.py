@@ -3,11 +3,11 @@
 from pathlib import Path
 from urllib.request import Request, urlopen
 from urllib.parse import urlencode, urlsplit
-import hashlib, io, json
+import hashlib, io, json, sys
 from PIL import Image
-from scripts.build_catalogue_media import derive
-
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0,str(ROOT))
+from scripts.build_catalogue_media import derive
 TITLE = "File:2018-06-27 Beijing Ministry of National Defense.jpg"
 EXPECT_SHA1 = "a07e6f412425ca46c7b1a16a1474f57500e5d3fc"
 EXPECT_SIZE = 3049499
