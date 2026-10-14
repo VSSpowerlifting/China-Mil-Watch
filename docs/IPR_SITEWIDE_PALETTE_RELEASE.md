@@ -24,6 +24,15 @@ routes, new media, data, feeds, historical canonical JSON, assets, or symlinks
 as `blocked-noncosmetic`. It also fails if the database changes, a WAL/SHM
 sidecar appears, or any file outside `output/` changes.
 
+The sitewide receipt also attests SHA-256 parity between every changed
+coastal stylesheet and its corresponding first-party source. For changed
+HTML pages, it compares the newly generated document against committed
+`HEAD` via the stdlib HTML parser; textual content, byline/citation links,
+photograph references and alt text, metadata and inline scripts must remain
+identical. CSS presentation-only changes are permitted for review. Newly
+generated HTML routes have no baseline and are blocked in a cosmetic release.
+These checks do not establish visual suitability or waive manuscript review.
+
 Even a successful run is **not a release approval**. Review all reported
 HTML changes and historical/canonical content, verify article paragraphs,
 approved presentation/author cards, links, image attributions, desk status,
