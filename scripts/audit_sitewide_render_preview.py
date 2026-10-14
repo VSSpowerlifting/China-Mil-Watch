@@ -67,7 +67,12 @@ def inventory(root: Path, expected_db_sha: str) -> dict:
     rows = []
     for path in sorted(changed):
         target = root / path
-        kind = "blocked-symlink" if target.is_symlink() else classify(path)
+        if target.is_symlink():
+            kind = "blocked-symlink"
+        elif not target.is_file():
+            kind = "blocked-deleted-or-nonfile"
+        else:
+            kind = classify(path)
         rows.append({
             "path": path, "kind": kind,
             "sha256": sha256(target) if target.is_file() and not target.is_symlink() else None,
