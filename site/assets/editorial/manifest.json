@@ -581,5 +581,49 @@
     "credit": "Mass Communication Specialist 1st Class Brandon Roberson, U.S. Navy · Public domain · via DVIDS",
     "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
     "depicts": "context"
+  },
+  {
+    "id": "chan-paparo-mindef-jan2026",
+    "file": "chan-paparo-mindef-jan2026.jpg",
+    "width": 1000,
+    "height": 665,
+    "sha256": "a63c4c42c813dcdb474881af4bd381a8465f879861dac644cd329890b204f2e5",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/2601/9490647/1000w_q95.jpg",
+    "source_fingerprint": {
+      "sha256": "a63c4c42c813dcdb474881af4bd381a8465f879861dac644cd329890b204f2e5",
+      "sha1": "d8d54f5fd55f0ad2d6631712a5e03fc62b60f788"
+    },
+    "origin_reference": "https://www.dvidshub.net/image/9490647/usindopacom-commander-reinforces-us-singapore-defense-partnership-during-singapore-visit",
+    "focal": "48% 48%",
+    "license_basis": "DVIDS No.9490647 (VIRIN 260121-A-GJ727-1132), official U.S. Army photographer public-domain photo; source is 1000w DVIDS preview, not original 4078x2713 file.",
+    "note": "No.16 visualizes Chan Chun Sing as central speaker only; the event pictured is a DIFFERENT US-Singapore defense meeting, NOT Chan–Dong or Xiangshan.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/chan-paparo-mindef-jan2026-1600.jpg",
+        "width": 1000,
+        "height": 665,
+        "sha256": "748dbf767a88ec6b7d50070f76f5f59a4cafc8f750af61d5deeb41581e5d24d1"
+      }
+    ],
+    "alt": "Singapore Defence Minister Chan Chun Sing and U.S. Indo-Pacific Command commander Adm. Samuel Paparo meet at Singapore's Ministry of Defence in January 2026.",
+    "caption": "Singapore Defence Minister Chan Chun Sing meets U.S. Indo-Pacific Command commander Adm. Samuel Paparo in Singapore, January 2026. This is an earlier U.S.–Singapore meeting, not the September 2026 Xiangshan Forum or Chan's meeting with Chinese Defence Minister Dong Jun.",
+    "date_note": "DVIDS date-taken field: 21 January 2026; descriptive caption: 22 January 2026.",
+    "credit": "Staff Sgt. Angel Heraldez, U.S. Army · Public domain · via DVIDS",
+    "creator": "Staff Sgt. Angel Heraldez, U.S. Army",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_label": "DVIDS",
+    "source_page": "https://www.dvidshub.net/image/9490647/usindopacom-commander-reinforces-us-singapore-defense-partnership-during-singapore-visit",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
   }
 ]
