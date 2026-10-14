@@ -97,7 +97,7 @@ class Phase4BReleaseContracts(unittest.TestCase):
         self.assertIn("sha256sum -c", text)
         self.assertIn("test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm", text)
         self.assertIn("keep_files: true", text)
-        self.assertIn("publish_dir: \${{ runner.temp }}/desks-pages-patch", text)
+        self.assertIn("publish_dir: " + "$" + "{{ runner.temp }}/desks-pages-patch", text)
         self.assertNotIn("publish_dir: ./output", text)
         self.assertIn("output/assets/glyphs/sources.svg", text)
         self.assertNotIn("output/briefs", text)
