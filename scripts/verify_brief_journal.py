@@ -178,6 +178,11 @@ def verify(root, baseline, out, fixture_root=None):
                         page.goto(base + route)
                         position(page, selector)
                         page.screenshot(path=str(out / ('laos-%s-%s-%s.png' % (part, phase, device))))
+                    page.goto(base + REPRESENTATIVES['native'][0])
+                    position(page, '#s-sources')
+                    page.screenshot(path=str(out / ('native-sources-%s-%s.png' % (phase, device))))
+                    page.goto(base + REPRESENTATIVES['laos'][0])
+                    page.screenshot(path=str(out / ('laos-hero-%s-%s.png' % (phase, device))))
 
         page.set_viewport_size({'width': 1280, 'height': 900})
         page.goto(url + REPRESENTATIVES['laos'][0])
