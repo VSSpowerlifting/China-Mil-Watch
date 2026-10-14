@@ -1,0 +1,40 @@
+name: Temporary distinct Liaoning No. 6 source replacement
+on:
+  push:
+    branches: [editorial/briefs-photo-wave2-20261013]
+    paths: [.github/workflows/temp_wave2_fix_distinct_no06.yml]
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install matching encoder and tests
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install Pillow==11.3.0
+      - name: Verify distinct Commons original and update metadata + assets
+        run: |
+          python scripts/repair_wave2_no06_unique.py
+          python scripts/build_catalogue_media.py --check
+          python -m unittest tests.test_catalogue_media -v
+      - name: Rebuild isolated catalogue and update precisely output analysis and No.6 card
+        run: |
+          set -euo pipefail
+          python site/render.py --out "$RUNNER_TEMP/photo-wave2-unique"
+          cp "$RUNNER_TEMP/photo-wave2-unique/analysis.html" output/analysis.html
+          cp "$RUNNER_TEMP/photo-wave2-unique/assets/catalogue/media/no-06-liaoning-j15-may2022.jpg" output/assets/catalogue/media/no-06-liaoning-j15-may2022.jpg
+          git add -- site/assets/editorial/liaoning-j15-may2022.jpg site/assets/editorial/derivatives/liaoning-j15-may2022-1600.jpg site/assets/catalogue/media/no-06-liaoning-j15-may2022.jpg site/assets/editorial/manifest.json site/assets/catalogue/admissions.json output/analysis.html output/assets/catalogue/media/no-06-liaoning-j15-may2022.jpg
+          git diff --cached --name-only
+          test "$(git diff --cached --name-only | wc -l)" -eq 7
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+41898282@users.noreply.github.com"
+          git commit -m "Replace duplicate No. 6 image with distinct Japanese MOD takeoff photograph"
+          git push origin HEAD:editorial/briefs-photo-wave2-20261013
