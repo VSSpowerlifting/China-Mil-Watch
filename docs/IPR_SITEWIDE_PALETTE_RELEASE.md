@@ -1,5 +1,16 @@
 # Coastal identity — full-site release preview and handoff
 
+> **Release status, 14 October 2026:** Coastal identity PR #566 is merged,
+> and the normal daily production run #38606036281 already rendered, validated,
+> committed and deployed the palette. All five active source, generated and
+> published stylesheets were independently confirmed byte-identical; public
+> homepage, Analysis, No. 18 Laos, record and historical Brief output likewise
+> match GitHub Pages. **Do not trigger this preview to publish that completed
+> release.** The process below is retained as a guarded option for *future*
+> cosmetic output releases, not an outstanding task. Manual-preview PR #573
+> corrected escaped Actions expressions; draft PR #574 adds optional fidelity
+> checks. Neither workflow is a substitute for the daily publisher.
+
 This is a **review-only** mechanism. Source changes in palette PR #566 do not
 become live on merge: GitHub Pages deploys the committed generated `output/`,
 not the CSS/templates under `site/preview/`. The existing Briefs release
@@ -23,6 +34,15 @@ homepage/Analysis/record/Brief markup as `html-manual-review`, and unknown
 routes, new media, data, feeds, historical canonical JSON, assets, or symlinks
 as `blocked-noncosmetic`. It also fails if the database changes, a WAL/SHM
 sidecar appears, or any file outside `output/` changes.
+
+The sitewide receipt also attests SHA-256 parity between every changed
+coastal stylesheet and its corresponding first-party source. For changed
+HTML pages, it compares the newly generated document against committed
+`HEAD` via the stdlib HTML parser; textual content, byline/citation links,
+photograph references and alt text, metadata and inline scripts must remain
+identical. CSS presentation-only changes are permitted for review. Newly
+generated HTML routes have no baseline and are blocked in a cosmetic release.
+These checks do not establish visual suitability or waive manuscript review.
 
 Even a successful run is **not a release approval**. Review all reported
 HTML changes and historical/canonical content, verify article paragraphs,

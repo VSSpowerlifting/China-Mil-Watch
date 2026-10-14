@@ -1,26 +1,28 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Coastal visual identity (14 October 2026, owner-review candidate):**
-`codex/coastal-visual-identity` starts at exact latest main
-`216dfbb8babc6a0d4d711494c7787a29f84e201e` (#561 merged). Active IPR CSS and edition
-SVG now use jade for human analysis and slate-blue for machine output, with
-surface-specific text and non-colour cues. Navy, turquoise, ivory, original
-photographs/flags and warning/positive semantics are retained. Evidence, contrast,
-comparison captures and verification: `docs/evidence/coastal-identity-2026-10-14/README.md`.
-PR #566 is ready for review. Pre-merge cleanup retains 33 representative images
-(7.3 MB, down 88.8% from 65.4 MB) with full-capture reproduction and receipts.
-The two intro checks pass three repetitions each on base and candidate;
-separate scheduling negative controls reproduce both timing paths on both.
-No intro regression is demonstrated or behaviour changed. The existing desktop
-print credit/finder overlap is 9px on both revisions; the URL itself wraps.
-Focused integration (110 tests), contrast and validator rechecks are recorded in
-the evidence index. Original full-run 21 macOS store errors and two intro timing
-findings remain disclosed; no safeguards are weakened. No canonical Brief,
-approval, media admission, database, collector, stylesheet, typography/layout or
-tracked output changes in cleanup. Initial exact-head Linux CI passed
-(6,255 tests, nine skips; output validator and preservation checks), followed
-by a public-Laos integration test and documentation refresh requiring renewed
-CI. No merge or deployment authorized.
+**Coastal visual identity (merged and deployed 14 October 2026):**
+PR #566 merged after exact-head integration CI passed (6,255 tests, nine skips).
+Jade identifies human analysis and slate-blue identifies machine output, with
+shared navy/ivory foundations, shape and label distinctions, accessible text
+contrast, and retained licensed photography/flags. The independent PR #567
+ruling keeps native/source-linked Brief Signals and central findings turquoise.
+PR #566's 33-image (7.3 MB) comparative review and measured contrast receipts
+remain at `docs/evidence/coastal-identity-2026-10-14/README.md`.
+The normal daily production workflow completed render, output validation,
+commit and Pages deploy in run #38606036281; deployment was not caused by the
+failed manual preview. On 2026-10-14, exact GitHub blob SHA comparisons found
+all five source CSS files equal to both committed `output/` and deployed
+`gh-pages`, and the homepage, Analysis, Laos No. 18, a representative record
+and a historical Brief equal between committed output and Pages. The structured
+approved Laos No. 18 and two-author byline are present. No additional
+palette render/deploy should be launched merely because the optional
+preview workflow was red.
+PR #573 fixed the manual preview's literal-backslash Actions expression bug
+and merged after passing checks. Draft PR #574 adds optional future release
+integrity checks (source-to-output CSS parity and noncosmetic HTML drift);
+it is not a prerequisite for the already completed palette publication.
+Local macOS-only store-root errors and timing-sensitive intro observations
+were disclosed in the original review without weakening safeguards.
 
 **Brief reading architecture (#561, Laos release #565 and unification #567 merged 14 October 2026):**
 The source components are integrated in main. PR #565 separately approved the
