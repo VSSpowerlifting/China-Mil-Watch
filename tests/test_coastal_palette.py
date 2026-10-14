@@ -3,6 +3,7 @@ The guard examines styles and SVG paint, never manuscript text, photos, flags
 or archival source documents. Production output and editorial records are read-only.
 """
 import colorsys
+import json
 import re
 import unittest
 from pathlib import Path
@@ -76,6 +77,32 @@ class CoastalPalette(unittest.TestCase):
         for role in ('editorial', 'machine'):
             self.assertIn('--'+role+'-ink', names)
             self.assertIn('--'+role+'-on-dark', names)
+
+
+    def test_approved_laos_public_markup_uses_structured_reading_with_coastal_css(self):
+        """After approved PR #565, guard the public v2 article against palette drift.
+
+        This checks the tracked public HTML's manuscript/presentation contract
+        against the proposed palette source. It does NOT claim generated output
+        CSS is updated before the separate render-only release.
+        """
+        from core.brief_presentation import presentation_html_errors
+        from core.brief_source_linked import manuscript_html_errors
+
+        slug = 'what-is-being-built-in-laos'
+        manifest = json.loads((ROOT / 'briefs/presentation' / (slug + '.json')).read_text())
+        if manifest['status'] != 'approved':
+            self.skipTest('Laos presentation was not yet approved at this branch base')
+        article = json.loads((ROOT / 'briefs' / (slug + '.json')).read_text())
+        public_path = ROOT / 'output/briefs' / (slug + '.html')
+        html = public_path.read_text()
+        self.assertIn('brief-layout--structured', html)
+        self.assertIn('class="brief-reading-finding"', html)
+        self.assertEqual(manuscript_html_errors(article, html), [])
+        self.assertEqual(presentation_html_errors(manifest, html), [])
+        css = (PREVIEW / 'briefs.css').read_text()
+        self.assertIn('var(--editorial-ink)', css)
+        self.assertNotIn('var(--crimson', css)
 
 
 class BrowserRoles(unittest.TestCase):
