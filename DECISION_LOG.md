@@ -4,6 +4,22 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-13 — Brief reading architecture prepared for owner review
+
+The owner's Editorial Architecture v2 task authorizes implementation, isolated
+QA, commit/push and one review PR, with no merge, deployment or editorial approval
+amendment. The candidate keeps manuscript and presentation records separate.
+New source-linked authoring requires an explicitly selected outline and a
+separate exact-content presentation receipt before numbering; existing numbered
+publications retain their fallback. No automated heading/excerpt authoring or
+inherited manuscript sign-off. Laos's manifest remains draft and is visible only
+in the private presentation preview. Its approved manuscript, seven references,
+joint byline and admitted photograph are unchanged. This entry records an
+implementation-review boundary, **not approval of the proposed headings,
+emphasis, evidence classification or public release**. Contract and evidence:
+`docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md` and
+`docs/evidence/briefs-editorial-v2/README.md`.
+
 ## 2026-10-13 — Laos Brief No. 18 published and independently verified
 
 The existing fingerprint-bound owner policy/editorial approvals were carried

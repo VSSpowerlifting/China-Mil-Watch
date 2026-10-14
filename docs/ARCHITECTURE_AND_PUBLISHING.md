@@ -156,6 +156,12 @@ PROJECT_STATE.md, and none is ever cleared by invention.
 
 ## 7. Editorial production flow
 
+Source-linked manuscript reading structure is a separate, fingerprint-bound
+presentation manifest. Its private preview, independent approval receipt and
+future authoring gates are documented in
+[`BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`](BRIEFS_EDITORIAL_ARCHITECTURE_V2.md).
+It does not amend canonical manuscript approvals or the native Sunday anatomy.
+
 **Indo-Pacific Record Briefs** (since 2026-09-23; doctrine §5b):
 
 1. `scripts/author_brief.py scaffold --desks … --week-ending …` drafts from the

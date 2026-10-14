@@ -1,0 +1,38 @@
+{
+  "route": "http://127.0.0.1:8877/review/briefs/what-is-being-built-in-laos.html",
+  "html_sha256": "a86251ce41ea48bcfca26a5ca0f1e64faa9020cf2722f7a0c154355fa899a542",
+  "html_bytes": 28765,
+  "print": {
+    "http": 200,
+    "matchesPrint": true,
+    "h2Text": "Introduction",
+    "computedFontSize": "38px",
+    "declaredPrintRule": [
+      "@media print {\n  .brief-reading-finding { border-color: rgb(0, 0, 0); margin-bottom: 24px; }\n  .brief-reading-section { margin-top: 32px; }\n  .brief-reading-section > h2, .brief-reading-evidence > h2 { font-size: 18pt; }\n  .brief-reading-section > h2, .brief-reading-evidence h2, .brief-reading-evidence h3 { break-after: avoid; }\n  .brief-reading-finding blockquote p, .brief-reading-evidence blockquote p, .brief-reading-section > p { font-size: 11pt; line-height: 1.6; }\n  .brief-reading-finding, .brief-reading-figure { break-inside: avoid; }\n  .brief-reading-evidence > div { display: block; }\n  .brief-reading-evidence > div > section + section { border-left: 0px; padding: 16px 0px 0px; }\n}"
+    ],
+    "overflow": false,
+    "pdf_bytes": 1410210
+  },
+  "css": [
+    {
+      "url": "http://127.0.0.1:8877/review/fonts.css",
+      "sha256": "4291a9d4718adcbdc487acd7b30d648cf5f957fe76af3199e2b88ca9aa219f8b",
+      "bytes": 1855
+    },
+    {
+      "url": "http://127.0.0.1:8877/review/styles.css",
+      "sha256": "8ccef7f2f09a5e1c2b4ab2d81cda0a90e9b0cb8ce2ed4c6c2af072bfd8f6c5d7",
+      "bytes": 30549
+    },
+    {
+      "url": "http://127.0.0.1:8877/review/surfaces.css",
+      "sha256": "23ef9b498fe7e4c69b735c6bbaa8d56457d369d5c1942ec0501b13fabad018ad",
+      "bytes": 5630
+    },
+    {
+      "url": "http://127.0.0.1:8877/review/briefs.css",
+      "sha256": "ad898230a66a25bb2af31a4d6be01f9126a54c46a0cf28ebea6b0e629ace4b7e",
+      "bytes": 15678
+    }
+  ]
+}
