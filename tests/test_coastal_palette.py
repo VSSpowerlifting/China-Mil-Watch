@@ -101,7 +101,11 @@ class CoastalPalette(unittest.TestCase):
         self.assertEqual(manuscript_html_errors(article, html), [])
         self.assertEqual(presentation_html_errors(manifest, html), [])
         css = (PREVIEW / 'briefs.css').read_text()
-        self.assertIn('var(--editorial-ink)', css)
+        # The unified Briefs reading system (PR #567) deliberately keeps
+        # turquoise for its Signal/finding components. Semantic jade still
+        # marks human analysis on the other public surfaces.
+        self.assertIn('var(--accent)', css)
+        self.assertIn('var(--accent-ink)', css)
         self.assertNotIn('var(--crimson', css)
 
 
