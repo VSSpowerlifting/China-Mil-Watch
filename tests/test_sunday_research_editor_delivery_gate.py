@@ -143,7 +143,19 @@ class ResearchEmailPermissionTests(unittest.TestCase):
         self.assertIn("IPR_SUNDAY_VIETNAM_EDITOR_SEND_REVIEWED_WEEK", workflow)
         self.assertIn("steps.editor_scope.outputs.packet", workflow)
         self.assertIn('print("vietnam_withheld="', workflow)
-        self.assertIn('if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]', workflow)
+        self.assertIn(
+            'if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" || "$IPR_PREVIEW_REQUESTED" == "true" ]]; then',
+            workflow,
+        )
+        # Even an owner-only preview is an actual SMTP transmission:
+        # no separate Vietnam email consent means filter it before modeling.
+        gate = workflow[workflow.index(
+            "- name: Separate Vietnam private-model and editor-email research scope"
+        ):workflow.index(
+            "- name: Attest Japan research offer"
+        )]
+        self.assertIn("IPR_PREVIEW_REQUESTED:", gate)
+        self.assertIn("args+=(--send-email)", gate)
         self.assertIn("scripts.sunday_research_editor_delivery_gate", workflow)
         self.assertNotIn("actions/upload-artifact", workflow)
 
