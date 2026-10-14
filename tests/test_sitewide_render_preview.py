@@ -90,6 +90,11 @@ class RenderPreviewGitIntegration(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             inventory(self.root, self.db_sha)
 
+    def test_deleted_tracked_stylesheet_is_blocked(self):
+        (self.root / "output/styles.css").unlink()
+        result = inventory(self.root, self.db_sha)
+        self.assertIn("output/styles.css", result["blocked"])
+
     def test_generated_symlink_is_blocked(self):
         (self.root / "output/styles.css").unlink()
         (self.root / "output/styles.css").symlink_to(self.root / "README.txt")
