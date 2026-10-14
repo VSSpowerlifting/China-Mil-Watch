@@ -247,13 +247,60 @@ jobs:
           print("Neither source rights nor official silence nor publication approved.")
           PY
 
+      # Privately drafted MPS synopses must not flow into any emailed
+      # worksheet (Dylan or owner-only preview) without separately approved,
+      # exact-week distribution consent. Keep private no-send drafting intact.
+      # For an email lacking consent, preserve non-Vietnam editorial delivery
+      # using a verified temporary packet; never mutate the private original.
+      - name: Separate Vietnam private-model and editor-email research scope
+        id: editor_scope
+        env:
+          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+          IPR_VN_EMAIL_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_VIETNAM_EDITOR_SEND_REVIEWED_WEEK }}
+          IPR_PREVIEW_REQUESTED: ${{ env.SUNDAY_OWNER_PREVIEW == 'true' || (github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "$PRIVATE_WEEK_PACKET" && -f "$PRIVATE_WEEK_PACKET" ]] || {
+            echo "::error::Current-week research packet missing before editor-send gate"
+            exit 2
+          }
+          scratch="$(mktemp -d "$RUNNER_TEMP/ipr-editor-safe-XXXXXXXX")"
+          args=(--week-ending "$IPR_SUNDAY_WEEK_END"
+                --as-of "$IPR_SUNDAY_AS_OF"
+                --packet "$PRIVATE_WEEK_PACKET"
+                --approved-week "$IPR_VN_EMAIL_REVIEWED_WEEK"
+                --safe-out "$scratch/$IPR_SUNDAY_WEEK_END.json")
+          # Both editor delivery and owner preview transmit data via SMTP.
+          # Private no-send drafting is the only path that keeps Vietnam rows
+          # without a separate week-specific email authorization.
+          if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" || "$IPR_PREVIEW_REQUESTED" == "true" ]]; then
+            args+=(--send-email)
+          fi
+          python -m scripts.sunday_research_editor_delivery_gate "${args[@]}" > "$scratch/scope.json"
+          python - "$scratch/scope.json" >> "$GITHUB_OUTPUT" <<'PY'
+          import json, sys
+          receipt = json.load(open(sys.argv[1], encoding="utf-8"))
+          print("packet=" + receipt["effective_packet"])
+          print("vietnam_withheld=" + str(receipt["vietnam_withheld_from_editor_count"]))
+          PY
+          # Only sanitized counts; never print research claims or source bodies.
+          python - "$scratch/scope.json" <<'PY'
+          import json, sys
+          r=json.load(open(sys.argv[1], encoding="utf-8"))
+          print("Private MPS model-only synopses withheld from email:",
+                r["vietnam_withheld_from_editor_count"])
+          print("Editor-safe official-source research count:",
+                r["editor_packet_source_count"])
+          PY
+
       # Confirm the ACTUAL scratch packet reaching the unified model still
       # contains Japan. For the Oct10 pilot require the exact three pinned
       # Japan MOD research IDs; for later weeks label omitted Japan explicitly.
       # This step neither verifies original PDF fidelity nor approves sources.
       - name: Attest Japan research offer in the refreshed single-theme packet
         env:
-          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+          PRIVATE_WEEK_PACKET: ${{ steps.editor_scope.outputs.packet }}
         shell: bash
         run: |
           set -euo pipefail
@@ -307,7 +354,7 @@ jobs:
           IPR_PREVIEW_REQUESTED: ${{ env.SUNDAY_OWNER_PREVIEW == 'true' || (github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true) }}
           IPR_SUNDAY_OWNER_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_WEEK }}
           IPR_SUNDAY_OWNER_REVIEWED_SHA256: ${{ vars.IPR_SUNDAY_OWNER_REVIEWED_SHA256 }}
-          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+          PRIVATE_WEEK_PACKET: ${{ steps.editor_scope.outputs.packet }}
         shell: bash
         run: |
           [[ -n "$PRIVATE_WEEK_PACKET" && -f "$PRIVATE_WEEK_PACKET" ]] || {
