@@ -28,12 +28,12 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {6, 7, 8, 9, 13, 14, 15, 17, 18}
+PHOTO_ISSUES = {6, 7, 8, 9, 13, 14, 15, 16, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
 SOURCE_HOSTS = {6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
                 13: "https://commons.wikimedia.org/",
-                14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/",
+                14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/", 16: "https://www.dvidshub.net/",
                 17: "https://www.dvidshub.net/image/",
                 18: "https://commons.wikimedia.org/"}
 HELD_ISSUES = {1, 10}
@@ -319,6 +319,21 @@ class CommittedRecordTests(unittest.TestCase):
         self.assertIn("1000px", self.manifest[fifteen["source_manifest_id"]]["license_basis"])
         by_audit = {a["issue"]: a for a in self.audit}
         self.assertEqual(by_audit[15]["kind"], "photograph")
+
+    def test_wave5_no16_is_not_claiming_xiangshan_scene(self):
+        by_issue = {entry["issue"]: entry for entry in self.record["entries"]}
+        entry = by_issue[16]
+        from core.source_terms import required_notice
+        self.assertIn("Chan Chun Sing", entry["caption"])
+        self.assertIn("January 2026", entry["caption"])
+        self.assertIn("U.S.", entry["caption"])
+        self.assertIn("not the September 2026 Xiangshan Forum", entry["caption"])
+        self.assertIn("Dong Jun", entry["caption"])
+        self.assertEqual(entry["notice"], required_notice(entry))
+        self.assertEqual(entry["source_label"], "DVIDS")
+        self.assertIn("1000w", self.manifest[entry["source_manifest_id"]]["license_basis"])
+        by_audit = {item["issue"]: item for item in self.audit}
+        self.assertEqual(by_audit[16]["kind"], "photograph")
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:
