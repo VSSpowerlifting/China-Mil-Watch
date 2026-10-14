@@ -7,7 +7,7 @@ SVG now use jade for human analysis and slate-blue for machine output, with
 surface-specific text and non-colour cues. Navy, turquoise, ivory, original
 photographs/flags and warning/positive semantics are retained. Evidence, contrast,
 comparison captures and verification: `docs/evidence/coastal-identity-2026-10-14/README.md`.
-PR #566 remains draft. Pre-merge cleanup retains 33 representative images
+PR #566 is ready for review. Pre-merge cleanup retains 33 representative images
 (7.3 MB, down 88.8% from 65.4 MB) with full-capture reproduction and receipts.
 The two intro checks pass three repetitions each on base and candidate;
 separate scheduling negative controls reproduce both timing paths on both.
@@ -17,18 +17,23 @@ Focused integration (110 tests), contrast and validator rechecks are recorded in
 the evidence index. Original full-run 21 macOS store errors and two intro timing
 findings remain disclosed; no safeguards are weakened. No canonical Brief,
 approval, media admission, database, collector, stylesheet, typography/layout or
-tracked output changes in cleanup. Ready to be marked for review to run exact-head
-CI; kept draft as requested. No merge or deployment authorized.
+tracked output changes in cleanup. Initial exact-head Linux CI passed
+(6,255 tests, nine skips; output validator and preservation checks), followed
+by a public-Laos integration test and documentation refresh requiring renewed
+CI. No merge or deployment authorized.
 
-**Brief reading architecture (#561 merged 14 October 2026):**
-The source components are integrated in main; Laos's presentation manifest
-remains draft/private-only. Public loading continues to withhold it. Its five
-headings and paragraph-10 finding placement still require separate exact
-presentation approval. Canonical Laos editorial fingerprint remains
+**Brief reading architecture (#561 and Laos release #565 merged 14 October 2026):**
+The source components are integrated in main. PR #565 separately approved the
+exact five-section, paragraph-10 finding presentation for Laos No. 18 and
+committed its structured public article output. This replaces the previous
+draft/private-only state. The independent exact-content approval is bound to
+the presentation fingerprint; the original canonical manuscript is unchanged. Canonical Laos editorial fingerprint remains
 `3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57`.
 Contract: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`; original receipts:
-`docs/evidence/briefs-editorial-v2/README.md`. Coastal QA includes both the
-public fallback and isolated v2 candidate without altering the manifest.
+`docs/evidence/briefs-editorial-v2/README.md`. Earlier coastal screenshots
+compared the public fallback with the private candidate before PR #565 merged;
+they are historical design evidence, not a substitute for final merged-main
+verification of the approved structured article.
 
 **Current operational snapshot and handoff. Desk statuses checked 2026-09-28
 against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
