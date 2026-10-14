@@ -1,0 +1,37 @@
+name: Singapore shadow integrity — mixed-success failure contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/singapore_shadow_integrity_contracts.yml
+      - scripts/shadow_collect.py
+      - tests/test_singapore_shadow.py
+      - scraper/sources/sg_mindef.py
+
+permissions:
+  contents: read
+
+jobs:
+  shadow-offline:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install declared offline dependencies
+        run: pip install -r requirements.txt
+      - name: Require complete source accounting, failure-clock integrity and unchanged production collection
+        run: python -m unittest tests.test_singapore_shadow tests.test_singapore_scheduled_production -v
+      - name: Ensure no production or tracked shadow state was written
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          test -z "$(git diff --name-only -- pla_watch.db output/ shadow/)"
+      # Never starts shadow collection, model, source-site requests, SMTP or public release.
