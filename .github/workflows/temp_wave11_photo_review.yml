@@ -1,0 +1,58 @@
+name: Temporary Wave11 Photo Admission Review
+on:
+  push:
+    branches: [editorial/briefs-photo-wave11-no01-admission-20261014]
+    paths:
+      - .github/workflows/temp_wave11_photo_review.yml
+permissions:
+  contents: write
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          pip install -r requirements.txt
+          pip install Pillow==11.3.0
+      - name: Stage and test authentic approved image
+        run: |
+          python scripts/stage_briefs_photo_wave11_no01.py
+          python scripts/build_catalogue_media.py --check
+          python -m unittest tests.test_catalogue_media -q
+          python site/render.py --out "$RUNNER_TEMP/photo-preview"
+          python - "$RUNNER_TEMP/photo-preview/analysis.html" <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          import sys
+          root=Path(sys.argv[1]).parent
+          cards=BeautifulSoup(Path(sys.argv[1]).read_text(),"html.parser").select("article.brief-card")
+          photos=[x for x in cards if x.get("data-media")=="photograph"]
+          assert len(cards)==18 and len(photos)==16
+          for n,kind in ((1,"photograph"),(10,"plate"),(12,"plate")):
+              row=next(x for x in cards if x.select_one(".issue-no").get_text(strip=True)==f"No. {n}")
+              assert row.get("data-media")==kind
+              if n==1:
+                  assert (root/row.select_one("img")["src"]).is_file()
+                  assert "Li Shangfu is not pictured" in row.get_text(" ",strip=True)
+          assert "Benjamin Yang and Dylan Tanzi" in (root/"briefs/what-is-being-built-in-laos.html").read_text()
+          print("Passed 18 cards, 16 photographs; No10 and No12 protected")
+          PY
+      - name: Commit only governed images and preview, without publishing
+        run: |
+          cp "$RUNNER_TEMP/photo-preview/analysis.html" output/analysis.html
+          cp "$RUNNER_TEMP/photo-preview/assets/catalogue/media/no-01-wei-fenghe-mattis-official-usarmy-2018.jpg" output/assets/catalogue/media/no-01-wei-fenghe-mattis-official-usarmy-2018.jpg
+          git add site/assets/editorial/manifest.json site/assets/catalogue/admissions.json
+          git add site/assets/editorial/wei-fenghe-mattis-official-usarmy-2018.jpg
+          git add site/assets/editorial/derivatives/wei-fenghe-mattis-official-usarmy-2018-1600.jpg
+          git add site/assets/catalogue/media/no-01-wei-fenghe-mattis-official-usarmy-2018.jpg
+          git add output/analysis.html output/assets/catalogue/media/no-01-wei-fenghe-mattis-official-usarmy-2018.jpg
+          test "$(git diff --cached --name-only | wc -l)" -eq 7
+          git diff --exit-code -- pla_watch.db
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+41898282@users.noreply.github.com"
+          git commit -m "Wave11: stage approved historical Wei Fenghe photographic card"
+          git push origin HEAD:editorial/briefs-photo-wave11-no01-admission-20261014
