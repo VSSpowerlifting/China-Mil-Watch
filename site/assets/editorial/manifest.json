@@ -451,5 +451,91 @@
         "sha256": "2a5d51283a96d18f660d5ffa00a65d632924d26e50d3334a60ee3c27a72fa388"
       }
     ]
+  },
+  {
+    "id": "ccg-shadowing-uscg-stratton-2019",
+    "file": "ccg-shadowing-uscg-stratton-2019.jpg",
+    "width": 1000,
+    "height": 717,
+    "sha256": "7403262fc510ca1b2f0bbfd9bb562681e657c6e81630c70d93f1cae0043903fe",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/1909/5771576/1000w_q95.jpg",
+    "source_fingerprint": {
+      "sha256": "7403262fc510ca1b2f0bbfd9bb562681e657c6e81630c70d93f1cae0043903fe",
+      "sha1": "c05c8c57993b3562536727d54c7cd6b6ffa5e428"
+    },
+    "origin_reference": "https://www.dvidshub.net/image/5771576/coast-guard-cutter-stratton-crew-conducts-operations-south-china-sea",
+    "origin_note": "DVIDS image 5771576, USCG 190916-G-LS819-1002. Source file is the publisher's 1000px JPEG derivative, not the 3996px camera original.",
+    "focal": "50% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/ccg-shadowing-uscg-stratton-2019-1600.jpg",
+        "width": 1000,
+        "height": 717,
+        "sha256": "74ab5505f609e7f8cffba43f6f57788429b38dc5009e7e142d62ecf7d9f9aa2f"
+      }
+    ],
+    "alt": "A U.S. Coast Guard small boat moves across the South China Sea with a China Coast Guard vessel visible on the horizon.",
+    "caption": "A China Coast Guard ship appears on the horizon as a U.S. Coast Guard crew operates in the South China Sea in September 2019. Historical Chinese coast guard context, not a photograph of June 2026 activity east of Taiwan.",
+    "date_note": "Photographed 16 September 2019, in a different sea and year from this Brief's reporting week.",
+    "creator": "Petty Officer 1st Class Nate Littlejohn, U.S. Coast Guard",
+    "license": "Public domain",
+    "license_url": "",
+    "credit": "Petty Officer 1st Class Nate Littlejohn, U.S. Coast Guard · Public domain · via DVIDS",
+    "source_page": "https://www.dvidshub.net/image/5771576/coast-guard-cutter-stratton-crew-conducts-operations-south-china-sea",
+    "source_label": "DVIDS",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "scarborough-shoal-nasa-iss77330",
+    "file": "scarborough-shoal-nasa-iss77330.jpg",
+    "width": 4928,
+    "height": 3280,
+    "sha256": "10cd441481589b04461408748c614f20fd8c11c2af6b5428717c45ab273ea6be",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/c/c7/ISS045-E-77330_-_View_of_Scarborough_Shoal.jpg",
+    "source_fingerprint": {
+      "sha256": "10cd441481589b04461408748c614f20fd8c11c2af6b5428717c45ab273ea6be",
+      "sha1": "79002962e0cfe12ebe4e065500220b6c8c49c812"
+    },
+    "origin_reference": "https://commons.wikimedia.org/wiki/File:ISS045-E-77330_-_View_of_Scarborough_Shoal.jpg",
+    "origin_note": "NASA frame ISS045-E-77330. Distinct original from already published No.9 frame ISS045-E-77332, though same orbital pass.",
+    "focal": "50% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/scarborough-shoal-nasa-iss77330-1600.jpg",
+        "width": 1600,
+        "height": 1065,
+        "sha256": "f4665ab6d1630923f0842aac1c47d2734974ce333913d19c1ad419d28c71fae6"
+      }
+    ],
+    "alt": "Scarborough Shoal seen as a turquoise reef within dark ocean water from the International Space Station in 2015.",
+    "caption": "Scarborough Shoal photographed from the International Space Station on 24 October 2015 (NASA frame ISS045-E-77330). Historical geographic context, not a depiction of PLA operations or disclosures in August 2026.",
+    "date_note": "Photographed 24 October 2015; adjacent-but-distinct orbital frame from No. 9's existing NASA image.",
+    "creator": "NASA Johnson Space Center / ISS Expedition 45",
+    "license": "Public domain",
+    "license_url": "",
+    "credit": "NASA Johnson Space Center / ISS Expedition 45 · Public domain · via Wikimedia Commons",
+    "source_page": "https://commons.wikimedia.org/wiki/File:ISS045-E-77330_-_View_of_Scarborough_Shoal.jpg",
+    "source_label": "Wikimedia Commons",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "notice": "",
+    "depicts": "context"
   }
 ]
