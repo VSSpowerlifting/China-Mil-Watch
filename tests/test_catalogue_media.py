@@ -28,10 +28,10 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {6, 7, 8, 9, 13, 14, 15, 16, 17, 18}
+PHOTO_ISSUES = {2, 6, 7, 8, 9, 13, 14, 15, 16, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
-SOURCE_HOSTS = {6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
+SOURCE_HOSTS = {2: "https://commons.wikimedia.org/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
                 13: "https://commons.wikimedia.org/",
                 14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/", 16: "https://www.dvidshub.net/",
                 17: "https://www.dvidshub.net/image/",
@@ -334,6 +334,22 @@ class CommittedRecordTests(unittest.TestCase):
         self.assertIn("1000w", self.manifest[entry["source_manifest_id"]]["license_basis"])
         by_audit = {item["issue"]: item for item in self.audit}
         self.assertEqual(by_audit[16]["kind"], "photograph")
+
+    def test_wave6_shipyard_photo_does_not_claim_airwing_qualification(self):
+        e = next(e for e in self.record["entries"] if e["issue"] == 2)
+        manifest = self.manifest[e["source_manifest_id"]]
+        self.assertIn("Jiangnan Shipyard", e["caption"])
+        self.assertIn("April 2022", e["caption"])
+        self.assertIn("not a photograph", e["caption"])
+        self.assertIn("KJ-600", e["caption"])
+        self.assertIn("Rocket Force", e["caption"])
+        self.assertIn("CC0 1.0", e["credit"])
+        self.assertIn("Raysonho", e["creator"])
+        self.assertIn("Meeepmep", e["creator"])
+        self.assertIn("d932f61c8c317ea93f87a6f0d3742e3d4480aabc",
+                      manifest["source_fingerprint"]["sha1"])
+        audits = {a["issue"]: a for a in self.audit}
+        self.assertEqual(audits[2]["kind"], "photograph")
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:
