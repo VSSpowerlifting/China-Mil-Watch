@@ -27,7 +27,7 @@ on:
         type: boolean
 
 # Phase 4B must be merged to main before rehearsal; pull-request CI must merge against the current
-# main source rather than the pre-Phase-4A base captured by the draft preview.
+# main source rather than the pre-Phase-4B base captured by a draft preview.
 # A manual release holds the daily publishing lock for its entire lifetime.
 # In the release job it ALSO acquires the existing Pages-deploy lock so a
 # simultaneous output-only deploy cannot overwrite the sparse overlay.
@@ -56,8 +56,8 @@ jobs:
 
   rehearsal:
     needs: contract
-    # The build depends on the Phase 4B source and reviewed source Atlas assets
-    # joining main first. A draft PR can verify all code contracts now.
+    # The build depends on the Phase 4B source and reviewed Atlas assets
+    # joining main first. A draft PR only verifies contracts, not render readiness.
     if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -165,7 +165,7 @@ jobs:
           git add -A -- output/desks.html output/desk-atlas.css output/assets/glyphs/sources.svg
           # A Pages action may fail after main's approved output commit. A
           # second exact-SHA approved run may redeploy the same byte-identical
-          # eleven files without inventing a no-op commit.
+          # three files without inventing a no-op commit.
           python -m scripts.guard_desks_p4b_output_scope --allow-unchanged
           test -z "$(git diff --name-only)"
           sha256sum -c "$RUNNER_TEMP/desks-db.sha"
@@ -176,7 +176,7 @@ jobs:
           if ! git diff --cached --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git commit -m "Site: publish reviewed Phase 4B Desks map only"
+            git commit -m "Site: publish reviewed Phase 4B Source Atlas only"
             git push origin HEAD:main
           else
             echo "Reviewed Desks output already committed. Redeploying exact overlay."
@@ -196,7 +196,7 @@ jobs:
           # The deployed gh-pages branch can contain reviewed content not
           # yet synchronized to main's output/ (e.g. Indonesia desk receipts).
           # Never overwrite it by republishing all of output/. Overlay only
-          # our exact eleven files, preserving every unrelated public page.
+          # our exact three files, preserving every unrelated public page.
           publish_dir: ${{ runner.temp }}/desks-pages-patch
           keep_files: true
           publish_branch: gh-pages
