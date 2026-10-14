@@ -1,0 +1,35 @@
+{
+  "schema": "vietnam-editorial-notes/1",
+  "entries": [
+    {
+      "source_identity": "mps-vi:1791881212",
+      "source_url": "https://bocongan.gov.vn/bai-viet/viet-nam-lien-bang-nga-thuc-day-hop-tac-trong-cong-tac-thi-hanh-an-hinh-su-1791881212",
+      "published_date": "2026-10-13",
+      "content_sha256": "dd1c2144e9c74e2754fd8229c32d2e69b14f5e20d55c8acb2afc365dfc5e90b6",
+      "summary": "Vietnam's Ministry of Public Security reported October 13 talks in Hanoi between Deputy Minister Nguyen Van Long and Russian Federal Penitentiary Service director Arkady Gostev. It says the agencies signed a cooperation programme for 2026–2028 concerning criminal sentence enforcement and discussed training, detention management and information exchange. The account does not demonstrate that the future activities have occurred.",
+      "caveats": [
+        "A cooperation programme for 2026–2028 was reportedly signed on October 13; distinguish it from the earlier October 2025 memorandum, and do not describe all planned activities as implemented.",
+        "The Russian counterpart was the Federal Penitentiary Service, not the Russian defence ministry or military; neither procurement nor military deployment is established.",
+        "This is the Vietnamese public-security ministry's account. The original is captured privately; this independently written synopsis is not approval to republish source text, images or translations."
+      ],
+      "topics": [
+        "regional_partnerships"
+      ]
+    },
+    {
+      "source_identity": "mps-vi:1791882878",
+      "source_url": "https://bocongan.gov.vn/bai-viet/tang-cuong-hop-tac-giua-bo-cong-an-viet-nam-va-bo-tu-phap-trung-quoc-1791882878",
+      "published_date": "2026-10-13",
+      "content_sha256": "a65fb441e41d0cc521e4c709b2fb251b29c12a82aef3e348550a57ef3eaa087e",
+      "summary": "Vietnam's Ministry of Public Security reported an October 13 meeting between Deputy Minister Le Van Tuyen and a Chinese vice minister of justice during National Assembly Chairman Tran Thanh Man's October 11–15 China visit. The ministry framed the talks as part of bilateral legal and public-security cooperation; the available account does not by itself establish a military agreement or completed enforcement operation.",
+      "caveats": [
+        "The October 11–15 dates describe the broader parliamentary visit, not a completed series of new bilateral public-security actions.",
+        "Vietnam's Ministry of Public Security and China's Ministry of Justice are the institutions involved; do not mislabel the discussion a defence-ministry meeting.",
+        "Treat reported ambitions for future cooperation as intentions unless a separately documented agreement or action is verified; no publisher body or media are reproduced."
+      ],
+      "topics": [
+        "regional_partnerships"
+      ]
+    }
+  ]
+}
