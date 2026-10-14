@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+      - name: Install declared import dependency for read-only writer modules
+        run: python -m pip install 'python-dotenv>=1.0.1'
       - name: Run actual default-selection observer using synthetic data only
         run: python -m unittest tests.test_audit_sunday_source_cover -v
       - name: Source, database and output must remain unchanged
