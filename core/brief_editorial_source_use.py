@@ -8,7 +8,7 @@ institutional intent, or that every cited paragraph is actually supported.
 """
 from __future__ import annotations
 
-from core.brief_editorial_evidence import JAPAN_ID, VIETNAM_ID, INDONESIA_W42_ID
+from core.brief_editorial_evidence import (JAPAN_ID, VIETNAM_ID, INDONESIA_W42_ID, KEMHAN_ID, AFP_ID)
 
 SOURCE_FIELDS = (
     "development", "opening_note", "what_stood_out", "why_it_matters",
@@ -54,7 +54,9 @@ def summarize_source_use(manuscript, production_trail, research=()):
         if (not isinstance(ident, str) or not isinstance(desk, str) or
                 not ((desk == "japan" and JAPAN_ID.fullmatch(ident))
                      or (desk == "vietnam" and VIETNAM_ID.fullmatch(ident))
-                     or (desk == "indonesia" and ident == INDONESIA_W42_ID))):
+                     or (desk == "indonesia" and (ident == INDONESIA_W42_ID
+                                                 or KEMHAN_ID.fullmatch(ident)))
+                     or (desk == "philippines" and AFP_ID.fullmatch(ident)))):
             raise SourceUseError("invalid typed official-source research identity")
         if ident in external:
             raise SourceUseError("duplicate research source ID")

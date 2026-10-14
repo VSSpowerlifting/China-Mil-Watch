@@ -475,5 +475,11 @@ class IndonesiaSundayWeek42Tests(unittest.TestCase):
                 summarize_source_use(m, sidecar["source_trail"], [bad])
 
 
+def load_tests(loader, suite, pattern):
+    """Run new desk-intake cases in the existing Sunday focused CI module."""
+    suite.addTests(loader.loadTestsFromName("tests.test_briefs_editorial_multidesk"))
+    return suite
+
+
 if __name__ == "__main__":
     unittest.main()

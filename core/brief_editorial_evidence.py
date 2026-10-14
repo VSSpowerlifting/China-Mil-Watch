@@ -33,6 +33,10 @@ HEX40 = re.compile(r"[0-9a-f]{40}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 JAPAN_ID = re.compile(r"JP-W[0-9]{2}-[0-9]{2}\Z")
 VIETNAM_ID = re.compile(r"VN-MPS-([1-9][0-9]{6,20})\Z")
+# Typed editorial identities are never integer production IDs.
+# The new families encode the reporting Saturday's ISO week.
+AFP_ID = re.compile(r"PH-AFP-W(0[1-9]|[1-4][0-9]|5[0-3])-[0-9]{2}\Z")
+KEMHAN_ID = re.compile(r"ID-KEMHAN-W(0[1-9]|[1-4][0-9]|5[0-3])-[0-9]{2}\Z")
 # One reviewed research provenance identity, not an open-ended Indonesia feed.
 INDONESIA_W42_ID = "ID-W42-01"
 INDONESIA_W42_URL = (
@@ -41,6 +45,7 @@ INDONESIA_W42_URL = (
 )
 INDONESIA_W42_COMMIT = "43d9bc7bc94dcb0e257866e0f24e1ce404e98149"
 INDONESIA_W42_TEXT_SHA256 = "3475c65c11e5ea7fbee196a435865e9b9ecfb422d2ef88658a1af9efe303393e"
+
 
 
 class EditorialEvidenceError(ValueError):
@@ -80,16 +85,14 @@ def _line(value, *, min_length=1, max_length=700):
 
 
 def _official(item):
+    """Constrain editorial links to source families, not any government host.
+
+    This is a format/identity gate, not fact verification or reuse approval.
+    Source-specific human checks remain required before model use/publication.
+    """
     ident = item["id"]
     _require(isinstance(ident, str), "external ID must be a string")
-    is_jp = item["desk"] == "japan"
-    is_vn = item["desk"] == "vietnam"
-    is_id = item["desk"] == "indonesia"
-    _require(is_jp or is_vn or is_id,
-             "only bounded Japan, Vietnam and Indonesia research families")
-    _require(bool(JAPAN_ID.fullmatch(ident)) if is_jp else
-             bool(VIETNAM_ID.fullmatch(ident)) if is_vn else
-             ident == INDONESIA_W42_ID, "bad typed source identity")
+    desk = item["desk"]
     url = item["source_url"]
     _require(_line(url, min_length=35, max_length=1800), "invalid source URL")
     try:
@@ -100,37 +103,67 @@ def _official(item):
     _require(p.scheme == "https" and no_port and not p.username and
              not p.password and not p.query and not p.fragment,
              "official source URL must be HTTPS and unmodified")
-    if is_jp:
-        _require(item["source_name"] == "Japan Ministry of Defense"
-                 and p.hostname == "www.mod.go.jp" and (
-                     p.path.startswith("/en/article/") and p.path.endswith(".html")
-                     or p.path.startswith("/j/press/news/") and
-                     p.path.endswith((".html", ".pdf"))),
-                 "unrecognized Japan MOD publisher/source family")
-        _require(item["language"] in ("ja", "en"), "invalid Japan source language")
-    elif is_vn:
+
+    if desk == "japan":
+        _require(bool(JAPAN_ID.fullmatch(ident)),
+                 "bad Japan typed source identity")
+        mod = (item["source_name"] == "Japan Ministry of Defense"
+               and p.hostname == "www.mod.go.jp" and
+               (p.path.startswith("/en/article/") and p.path.endswith(".html")
+                or p.path.startswith("/j/press/news/") and
+                p.path.endswith((".html", ".pdf"))))
+        jcg = (item["source_name"] == "Japan Coast Guard"
+               and p.hostname == "www.kaiho.mlit.go.jp"
+               and bool(re.fullmatch(r"/e/topics_archive/article[0-9]+\.html",
+                                     p.path)))
+        _require(mod or jcg, "unrecognized Japan MOD/JCG publisher/source family")
+        # The JCG pilot is the English press-release family, not a Japanese
+        # publisher source with unreviewed translation/provenance rules.
+        _require(item["language"] == "en" if jcg else
+                 item["language"] in ("ja", "en"),
+                 "invalid Japan source language")
+    elif desk == "vietnam":
         match = VIETNAM_ID.fullmatch(ident)
+        _require(bool(match), "bad Vietnam typed source identity")
         _require(item["source_name"] == "Vietnam Ministry of Public Security"
                  and p.hostname == "bocongan.gov.vn"
                  and p.path.startswith("/bai-viet/")
                  and p.path.endswith("-" + match.group(1))
                  and item["language"] == "vi",
                  "unrecognized Vietnam MPS publisher/source family")
+    elif desk == "philippines":
+        _require(bool(AFP_ID.fullmatch(ident)), "bad Philippines source identity")
+        _require(item["source_name"] == "Armed Forces of the Philippines"
+                 and p.hostname == "www.afp.mil.ph"
+                 and bool(re.fullmatch(
+                     r"/news/[a-z0-9]+(?:-[a-z0-9]+)*", p.path))
+                 and item["language"] == "en",
+                 "unrecognized Philippines AFP publisher/source family")
+    elif desk == "indonesia":
+        if ident == INDONESIA_W42_ID:
+            # Preserve exact-source evidence already reviewed for Week 42.
+            _require(item["source_name"] == "Indonesia Ministry of Defense"
+                     and item["source_url"] == INDONESIA_W42_URL
+                     and p.hostname == "www.kemhan.go.id"
+                     and item["language"] == "id"
+                     and item["published_date"] == "2026-10-12"
+                     and item["source_kind"] == "shadow-extracted-original"
+                     and item["state_commit"] == INDONESIA_W42_COMMIT
+                     and item["source_content_sha256"] == INDONESIA_W42_TEXT_SHA256
+                     and item["hash_rule"] == "sha256-text-original-utf8",
+                     "unrecognized Indonesia Week 42 original/version")
+        else:
+            _require(bool(KEMHAN_ID.fullmatch(ident)), "bad Indonesia source identity")
+            _require(item["source_name"] == "Indonesia Ministry of Defense"
+                     and p.hostname == "www.kemhan.go.id"
+                     and bool(re.fullmatch(
+                         r"/20[0-9]{2}/(?:0[1-9]|1[0-2])/"
+                         r"(?:0[1-9]|[12][0-9]|3[01])/"
+                         r"[a-z0-9]+(?:-[a-z0-9]+)*\.html", p.path))
+                     and item["language"] == "id",
+                     "unrecognized Indonesia Kemhan publisher/source family")
     else:
-        # One exact source, date, version and metadata class was independently
-        # cross-checked. No generic 'kemhan' allowlist is created by this pilot.
-        _require(item["id"] == INDONESIA_W42_ID
-                 and item["source_name"] == "Indonesia Ministry of Defense"
-                 and item["source_url"] == INDONESIA_W42_URL
-                 and p.hostname == "www.kemhan.go.id"
-                 and item["language"] == "id"
-                 and item["published_date"] == "2026-10-12"
-                 and item["source_kind"] == "shadow-extracted-original"
-                 and item["state_commit"] == INDONESIA_W42_COMMIT
-                 and item["source_content_sha256"] == INDONESIA_W42_TEXT_SHA256
-                 and item["hash_rule"] == "sha256-text-original-utf8",
-                 "unrecognized Indonesia Week 42 original/version")
-
+        raise EditorialEvidenceError("research desk/source family is not supported")
 
 def _item(item, start, cutoff):
     _require(isinstance(item, dict) and set(item) == FIELDS,
@@ -141,12 +174,28 @@ def _item(item, start, cutoff):
     date_published = _day(item["published_date"])
     _require(start <= date_published <= cutoff,
              "research evidence published outside the reporting cutoff")
+    if (item["desk"] == "philippines" or
+            (item["desk"] == "indonesia" and item["id"] != INDONESIA_W42_ID)):
+        matched = (AFP_ID if item["desk"] == "philippines" else KEMHAN_ID).fullmatch(
+            item["id"])
+        _require(int(matched.group(1)) == cutoff.isocalendar()[1],
+                 "research ID must match the reporting ISO week")
+    if item["desk"] == "indonesia":
+        _require(urlsplit(item["source_url"]).path.startswith(
+            date_published.strftime("/%Y/%m/%d/")),
+            "Indonesia publisher URL date does not match claimed publication date")
     _require(_line(item["title_original"], min_length=10, max_length=350),
              "missing original-language headline")
     _require(isinstance(item["source_kind"], str) and
              item["source_kind"] in KINDS, "unknown provenance class")
     commit, digest = item["state_commit"], item["source_content_sha256"]
     if item["source_kind"] == "shadow-extracted-original":
+        # New publisher families use independently checked publisher links
+        # until an exact collector-specific extraction hash rule is reviewed.
+        _require((item["desk"] in ("japan", "vietnam") and
+                  item["source_name"] != "Japan Coast Guard") or
+                 (item["desk"] == "indonesia" and item["id"] == INDONESIA_W42_ID),
+                 "new publisher source needs separately qualified shadow hash rule")
         expected_rule = ("mps-vi-content-v1" if item["desk"] == "vietnam"
                          else "sha256-text-original-utf8")
         _require(isinstance(commit, str) and HEX40.fullmatch(commit)
