@@ -93,6 +93,7 @@ def main() -> None:
     # Fail closed before downloading anything if a branch replay would duplicate an image.
     for p in PHOTOS:
         assert p["id"] not in existing_ids and p["issue"] not in existing_issues, p["id"]
+    from core.source_terms import required_notice
     for p in PHOTOS:
         raw = fetch_verified(p)
         id_ = p["id"]
@@ -113,6 +114,7 @@ def main() -> None:
             "license_url": p["license_url"], "credit": credit,
             "source_page": p["source_page"], "source_label": "Wikimedia Commons",
             "depicts": "context",
+            "notice": required_notice({"source_label": "DVIDS"}) if p["issue"] == 14 else "",
         }
         manifest.append({
             "id": id_, "file": source.name, "width": p["size"][0], "height": p["size"][1],
