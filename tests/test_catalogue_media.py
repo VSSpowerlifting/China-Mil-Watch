@@ -273,6 +273,9 @@ class CommittedRecordTests(unittest.TestCase):
         by_issue = {e["issue"]: e for e in self.record["entries"]}
         six, fourteen = by_issue[6], by_issue[14]
         self.assertNotEqual(six["source_page"], fourteen["source_page"])
+        eight = by_issue[8]
+        self.assertNotEqual(six["source_page"], eight["source_page"])
+        self.assertNotEqual(self.manifest[six["source_manifest_id"]]["sha256"], self.manifest[eight["source_manifest_id"]].get("sha256"))
         self.assertIn("2022", six["caption"])
         self.assertIn("2026", six["caption"])
         self.assertIn("2016", fourteen["caption"])
