@@ -5,7 +5,7 @@ The Briefs catalogue's one media decision (Phase 3B).
 the original Editorial plate. These tests hold it to the Phase 0 rulings
 (B2 no 81.cn, B3/B4 labels, B5 No. 12, B6 no share-alike) and to the Phase 3A
 ledger: a plate is the default; Nos. 8 and 9 are the only photographs;
-Nos. 1 and 10 are held; No. 12 is refused; an article cover never grants anything.
+No. 10 remains held; No. 12 is denied; No. 1 uses a separately rights-checked, owner-approved replacement, not the disqualified 2012 photo.
 """
 from __future__ import annotations
 
@@ -28,15 +28,15 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18}
+PHOTO_ISSUES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
-SOURCE_HOSTS = {2: "https://commons.wikimedia.org/", 3: "https://www.dvidshub.net/", 4: "https://www.dvidshub.net/", 5: "https://commons.wikimedia.org/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/", 11: "https://commons.wikimedia.org/",
+SOURCE_HOSTS = {1: "https://commons.wikimedia.org/", 2: "https://commons.wikimedia.org/", 3: "https://www.dvidshub.net/", 4: "https://www.dvidshub.net/", 5: "https://commons.wikimedia.org/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/", 11: "https://commons.wikimedia.org/",
                 13: "https://commons.wikimedia.org/",
                 14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/", 16: "https://www.dvidshub.net/",
                 17: "https://www.dvidshub.net/image/",
                 18: "https://commons.wikimedia.org/"}
-HELD_ISSUES = {1, 10}
+HELD_ISSUES = {10}
 
 
 def _row(issue, date, kind="issue", **entry):
@@ -252,13 +252,33 @@ class CommittedRecordTests(unittest.TestCase):
         plates = sum(a["kind"] == cm.KIND_PLATE for a in self.audit)
         self.assertEqual(plates, len(self.rows) - len(PHOTO_ISSUES))
 
-    def test_numbers_one_and_ten_are_held_and_number_twelve_is_denied(self):
+    def test_remaining_number_ten_hold_and_number_twelve_denial(self):
         by_issue = {a["issue"]: a for a in self.audit}
         for issue in HELD_ISSUES:
             with self.subTest(issue=issue):
                 self.assertEqual((by_issue[issue]["kind"], by_issue[issue]["reason"]),
                                  ("plate", "held"))
         self.assertEqual((by_issue[12]["kind"], by_issue[12]["reason"]), ("plate", "denied"))
+
+    def test_wave11_no01_replaces_bad_2012_officers_image_only_with_wei_source(self):
+        one = next(e for e in self.record["entries"] if e["issue"] == 1)
+        self.assertEqual(one["status"], "admitted")
+        self.assertIn("wei-fenghe-mattis", one["served"])
+        self.assertIn("Wei Fenghe", one["caption"])
+        self.assertIn("June 2018", one["caption"])
+        self.assertIn("Li Shangfu is not pictured", one["caption"])
+        self.assertIn("not depict the May 2026 verdict", one["caption"])
+        self.assertIn("Sgt. Amber I. Smith", one["creator"])
+        self.assertIn("does not imply or constitute DoW endorsement", one["notice"])
+        self.assertNotIn("2012", one["source_page"])
+        manifest = self.manifest[one["source_manifest_id"]]
+        self.assertEqual(
+            manifest["source_fingerprint"]["sha1"],
+            "a07e6f412425ca46c7b1a16a1474f57500e5d3fc")
+        self.assertIn("not DVIDS #4517865", manifest["license_basis"])
+        row = next(r for r in self.audit if r["issue"] == 1)
+        self.assertEqual(row["kind"], "photograph")
+        self.assertFalse(list(MEDIA.glob("no-01-*2012*")))
 
     def test_number_ten_is_held_for_authorship_and_serves_nothing(self):
         record = next(e for e in self.record["entries"] if e["issue"] == 10)

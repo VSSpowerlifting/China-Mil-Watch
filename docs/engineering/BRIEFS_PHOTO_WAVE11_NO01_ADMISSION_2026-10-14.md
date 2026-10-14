@@ -1,0 +1,13 @@
+# Wave 11 — No. 1 replacement image: source-specific admission ruling (October 14, 2026)
+
+Owner expressly approved all proposed photographic covers in the October 14 conversation, including the Wave 10 new Wei Fenghe original and crop. The **2012 unrelated-officers image was never approved**; the new image is a different source, not a relabeling or waiver.
+
+- **Source:** [Wikimedia Commons: 2018-06-27 Beijing Ministry of National Defense.jpg](https://commons.wikimedia.org/wiki/File:2018-06-27_Beijing_Ministry_of_National_Defense.jpg), originally published by the U.S. Secretary of Defense Flickr account. U.S. Army official-duty photograph by **Sgt. Amber I. Smith**, **June 2018**, 5,880 × 3,925 pixels, 3,049,499 bytes.
+- **Source identity:** Commons SHA-1 a07e6f412425ca46c7b1a16a1474f57500e5d3fc; verified original SHA-256 31f65b10bd45ae2ba70e09019f8f8164367ec1ddc7f03fb111b988ac35c07a51. Original source and approved review crop retained in [Wave 10 #562](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/562).
+- **Rights:** Commons US-military public-domain official-duty classification, with originating Flickr CC BY 2.0 review documented in Wave10. Full attribution, source link, crop/resize change notice and originating DoW non-endorsement wording preserved.
+- **Caption boundary:** Then-defence minister **Wei Fenghe** meets James Mattis in Beijing in *June 2018*. **Li Shangfu is not pictured**, and this image does not show the **May 2026 verdict**. The source prose says June 28 while camera metadata suggests June 27, so no exact day is asserted.
+- **Different frame:** This is not DVIDS #4517865 / VIRIN 180627-D-SV709-0098. Both from the same 2018 official meeting but different camera originals.
+- **Old No. 1 hold (unchanged in historical record):** The previously auto-selected 25 June 2012 Marine Corps Base Hawaii image shows identifiable U.S. and PLA officers unrelated to the two defence ministers and risks falsely identifying its subjects. Its original catalogue hold remains justified for that specific image. This new, explicitly identified Wei photo supersedes it **only for the catalogue**; the opened article is outside scope.
+- **Unchanged:** No. 10 retained as held (CRS submarine photo originating authorship unverified). No. 12 retained as denied (B5 rights/subject mismatch). No source-rights rule has been relaxed.
+
+Admit to the **catalogue only** following checksum, thumbnail generation, full catalogue tests, 18-card/16-photograph isolated render and scoped checks. Remove one-off staging files after success. Still require full exact-head CI, responsive checks, owner-approved selection already on record, ordered merge and controlled Pages deployment before claiming the cover is live.
