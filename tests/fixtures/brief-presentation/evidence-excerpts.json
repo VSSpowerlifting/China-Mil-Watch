@@ -1,0 +1,68 @@
+{
+  "version": "brief-presentation-v1",
+  "article": "what-is-being-built-in-laos",
+  "manuscript_fingerprint": "3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57",
+  "status": "draft",
+  "sections": [
+    {
+      "id": "reading-introduction",
+      "start": 1,
+      "end": 1,
+      "heading": "Introduction"
+    },
+    {
+      "id": "reading-identity",
+      "start": 2,
+      "end": 5,
+      "heading": "Vietnam’s Support for Laos’s Digital Identity"
+    },
+    {
+      "id": "reading-aviation",
+      "start": 6,
+      "end": 8,
+      "heading": "China’s Aviation Training and Border Exchanges"
+    },
+    {
+      "id": "reading-implications",
+      "start": 9,
+      "end": 10,
+      "heading": "What the Projects Reveal—and What They Don’t"
+    },
+    {
+      "id": "reading-next",
+      "start": 11,
+      "end": 11,
+      "heading": "What to Watch Next"
+    }
+  ],
+  "approval": null,
+  "central_finding": {
+    "paragraph": 10,
+    "quote": "The available record establishes more about the capabilities being developed than about who will ultimately control their use.",
+    "sources": [
+      "s1",
+      "s4",
+      "s5"
+    ]
+  },
+  "evidence": {
+    "establishes": [
+      {
+        "paragraph": 2,
+        "quote": "The reported issuance figure is Vietnam’s, not an independently audited count; nonetheless, the handover concerns an administrative system and actual documented usage, rather than only a promise of future cooperation.",
+        "sources": [
+          "s1"
+        ]
+      }
+    ],
+    "uncertain": [
+      {
+        "paragraph": 7,
+        "quote": "Both China and Laos operate K-8s; photographs of parked aircraft do not establish their ownership, the presence of a permanent Chinese garrison, exclusive basing rights, or an operational combat mission.",
+        "sources": [
+          "s5"
+        ]
+      }
+    ]
+  }
+}

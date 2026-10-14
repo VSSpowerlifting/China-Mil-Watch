@@ -1,0 +1,191 @@
+{
+  "route": "http://127.0.0.1:8877/fixture/index.html",
+  "viewports": {
+    "375": {
+      "title": "Evidence component design fixture",
+      "fixtureLabel": true,
+      "labelBox": {
+        "x": 22,
+        "y": 16,
+        "width": 331,
+        "height": 185.9375,
+        "bottom": 201.9375
+      },
+      "componentBox": {
+        "x": 22,
+        "y": 265.9375,
+        "width": 331,
+        "height": 811.875,
+        "bottom": 1077.8125
+      },
+      "evidenceHeading": "Evidence and uncertainty",
+      "fontStatus": "loaded",
+      "fontFaces": [
+        {
+          "family": "Instrument Serif",
+          "status": "unloaded"
+        },
+        {
+          "family": "Instrument Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "Inter",
+          "status": "loaded"
+        },
+        {
+          "family": "Inter",
+          "status": "loaded"
+        },
+        {
+          "family": "Source Serif 4",
+          "status": "unloaded"
+        },
+        {
+          "family": "Source Serif 4",
+          "status": "loaded"
+        },
+        {
+          "family": "Source Serif 4",
+          "status": "unloaded"
+        }
+      ],
+      "fixtureFont": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+      "headingFont": "\"Instrument Serif\", Georgia, serif",
+      "traceLinks": [
+        {
+          "text": "Vietnamese Government News",
+          "href": "#publisher-s1",
+          "resolves": true
+        },
+        {
+          "text": "Reuters",
+          "href": "#publisher-s5",
+          "resolves": true
+        }
+      ],
+      "targetsResolve": true,
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "overflow": false,
+      "columns": [
+        {
+          "heading": "What the evidence establishes",
+          "display": "block",
+          "width": 331,
+          "left": 22
+        },
+        {
+          "heading": "What remains uncertain",
+          "display": "block",
+          "width": 331,
+          "left": 22
+        }
+      ],
+      "publisherReferences": 7,
+      "http": 200,
+      "screenshot": {
+        "file": "shots/fixture-evidence-375.webp",
+        "bytes": 43632,
+        "dimensions": [
+          375,
+          1085
+        ]
+      }
+    },
+    "1280": {
+      "title": "Evidence component design fixture",
+      "fixtureLabel": true,
+      "labelBox": {
+        "x": 64,
+        "y": 16,
+        "width": 686.375,
+        "height": 131.5625,
+        "bottom": 147.5625
+      },
+      "componentBox": {
+        "x": 288,
+        "y": 211.5625,
+        "width": 704,
+        "height": 483.921875,
+        "bottom": 695.484375
+      },
+      "evidenceHeading": "Evidence and uncertainty",
+      "fontStatus": "loaded",
+      "fontFaces": [
+        {
+          "family": "Instrument Serif",
+          "status": "unloaded"
+        },
+        {
+          "family": "Instrument Serif",
+          "status": "loaded"
+        },
+        {
+          "family": "Inter",
+          "status": "loaded"
+        },
+        {
+          "family": "Inter",
+          "status": "loaded"
+        },
+        {
+          "family": "Source Serif 4",
+          "status": "unloaded"
+        },
+        {
+          "family": "Source Serif 4",
+          "status": "loaded"
+        },
+        {
+          "family": "Source Serif 4",
+          "status": "unloaded"
+        }
+      ],
+      "fixtureFont": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+      "headingFont": "\"Instrument Serif\", Georgia, serif",
+      "traceLinks": [
+        {
+          "text": "Vietnamese Government News",
+          "href": "#publisher-s1",
+          "resolves": true
+        },
+        {
+          "text": "Reuters",
+          "href": "#publisher-s5",
+          "resolves": true
+        }
+      ],
+      "targetsResolve": true,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "overflow": false,
+      "columns": [
+        {
+          "heading": "What the evidence establishes",
+          "display": "block",
+          "width": 336,
+          "left": 288
+        },
+        {
+          "heading": "What remains uncertain",
+          "display": "block",
+          "width": 336,
+          "left": 656
+        }
+      ],
+      "publisherReferences": 7,
+      "http": 200,
+      "screenshot": {
+        "file": "shots/fixture-evidence-1280.webp",
+        "bytes": 45160,
+        "dimensions": [
+          1280,
+          703
+        ]
+      }
+    }
+  },
+  "source_targets_resolve": true,
+  "issues": []
+}

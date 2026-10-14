@@ -67,14 +67,14 @@ def manuscript_html_errors(value, html):
                 self.links.append([])
                 self.ordinals.append(attrs.get("data-manuscript-paragraph"))
             if tag == "a" and self.current is not None:
-                self.link = [attrs.get("href"), []]
+                self.link = [attrs.get("href"), attrs.get("data-source"), []]
                 self.links[-1].append(self.link)
 
         def handle_data(self, data):
             if self.current is not None:
                 self.current.append(data)
                 if self.link is not None:
-                    self.link[1].append(data)
+                    self.link[2].append(data)
 
         def handle_endtag(self, tag):
             if tag == "a":
@@ -86,16 +86,15 @@ def manuscript_html_errors(value, html):
 
     reader = Reader()
     reader.feed(html)
-    norm = lambda text: " ".join(text.split())
-    expected = [norm("".join(run["text"] for run in p)) for p in value["body_paragraphs"]]
-    actual = [norm("".join(p)) for p in reader.paragraphs]
+    expected = ["".join(run["text"] for run in p) for p in value["body_paragraphs"]]
+    actual = ["".join(p) for p in reader.paragraphs]
     problems = [] if actual == expected else ["rendered manuscript paragraphs differ in text, count or order"]
     if reader.ordinals != [str(i + 1) for i in range(len(expected))]:
         problems.append("rendered manuscript paragraph markers differ in count or order")
     urls = {s["id"]: s["url"] for s in value["publisher_references"]}
-    expected_links = [[(urls[r["source"]], norm(r["text"])) for r in p if "source" in r]
+    expected_links = [[(urls[r["source"]], r["source"], r["text"]) for r in p if "source" in r]
                       for p in value["body_paragraphs"]]
-    actual_links = [[(url, norm("".join(text))) for url, text in links] for links in reader.links]
+    actual_links = [[(url, source, "".join(text)) for url, source, text in links] for links in reader.links]
     if actual_links != expected_links:
         problems.append("rendered inline URLs or their manuscript associations differ")
     return problems

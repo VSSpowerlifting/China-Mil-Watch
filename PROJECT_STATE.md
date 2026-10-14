@@ -1,5 +1,20 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Brief reading architecture (13 October 2026, owner-review candidate):**
+`codex/briefs-editorial-architecture-v2` is based on main
+`97485edea28ec9a7152f77b562adc37b84623ccd` (merged Laos coauthor and context-photo
+work included). A separately validated `brief-presentation-v1` manifest adds
+explicit paragraph sections, navigation, exact-excerpt emphasis and optional
+existing-admission figure placement. The Laos manifest is **draft/private-only**;
+its five headings and paragraph-10 finding placement await owner review. No
+canonical Brief, approval, media admission, output, DB or Sunday delivery changes.
+Current Laos editorial fingerprint remains
+`3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57`.
+Authoring/approval boundary: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`.
+Visual and validation receipts: `docs/evidence/briefs-editorial-v2/README.md`.
+Next action: owner reviews the scoped PR and private reading candidate; separate
+exact presentation approval is required before any public layout activation.
+
 **Current operational snapshot and handoff. Desk statuses checked 2026-09-28
 against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
 Production and corpus figures below carry their own measurement dates. The
