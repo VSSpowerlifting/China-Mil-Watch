@@ -1,5 +1,16 @@
 # Coastal identity — full-site release preview and handoff
 
+> **Release status, 14 October 2026:** Coastal identity PR #566 is merged,
+> and the normal daily production run #38606036281 already rendered, validated,
+> committed and deployed the palette. All five active source, generated and
+> published stylesheets were independently confirmed byte-identical; public
+> homepage, Analysis, No. 18 Laos, record and historical Brief output likewise
+> match GitHub Pages. **Do not trigger this preview to publish that completed
+> release.** The process below is retained as a guarded option for *future*
+> cosmetic output releases, not an outstanding task. Manual-preview PR #573
+> corrected escaped Actions expressions; draft PR #574 adds optional fidelity
+> checks. Neither workflow is a substitute for the daily publisher.
+
 This is a **review-only** mechanism. Source changes in palette PR #566 do not
 become live on merge: GitHub Pages deploys the committed generated `output/`,
 not the CSS/templates under `site/preview/`. The existing Briefs release
