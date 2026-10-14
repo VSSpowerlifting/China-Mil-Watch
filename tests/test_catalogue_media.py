@@ -28,11 +28,12 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {8, 9, 17}
+PHOTO_ISSUES = {8, 9, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
 SOURCE_HOSTS = {8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
-                17: "https://www.dvidshub.net/image/"}
+                17: "https://www.dvidshub.net/image/",
+                18: "https://commons.wikimedia.org/"}
 HELD_ISSUES = {1, 10}
 
 

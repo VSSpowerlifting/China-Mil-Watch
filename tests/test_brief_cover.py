@@ -139,9 +139,10 @@ class CommittedCoverTests(unittest.TestCase):
         cls.manifest = bcv.load_manifest(ROOT)
         cls.entry = next(e for e in cls.manifest if e["id"] == ENTRY_ID)
 
-    def test_number_seventeen_is_the_only_granted_cover(self):
+    def test_reviewed_seventeen_and_eighteen_covers_are_granted(self):
         named = [e["id"] for e in self.manifest if (e.get("match") or {}).get("briefs")]
-        self.assertEqual(named, [ENTRY_ID])
+        self.assertEqual(set(named), {ENTRY_ID, 'laos-vientiane-museum-plane'})
+        self.assertIsNotNone(bcv.brief_cover('what-is-being-built-in-laos', ROOT))
         self.assertIsNotNone(bcv.brief_cover(SLUG, ROOT))
 
     def test_the_record_carries_its_rights_and_restrictions(self):
@@ -182,7 +183,7 @@ class CommittedCoverTests(unittest.TestCase):
         out = subprocess.run([sys.executable, str(ROOT / "scripts/build_brief_cover.py"),
                               "--check"], capture_output=True, text=True)
         self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
-        self.assertEqual(out.stdout.count("ok  "), 3)
+        self.assertEqual(out.stdout.count("ok  "), 6)
 
 
 if __name__ == "__main__":
