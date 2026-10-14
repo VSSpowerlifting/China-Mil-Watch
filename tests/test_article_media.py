@@ -331,7 +331,7 @@ class ArticleMediaPagesTests(unittest.TestCase):
         # the unrelated visual treatment.
         from core.catalogue_media import load_admissions
         from core.source_terms import required_notice
-        records = load_admissions(repo_root=REPO_ROOT)
+        records = load_admissions(repo_root=ROOT)
         # The originating DVIDS image of No.14 is served from Commons, so
         # required_notice(record) cannot infer DVIDS from that hostname.
         # Its explicitly retained originating-publisher notice still counts.
