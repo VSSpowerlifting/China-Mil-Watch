@@ -28,6 +28,30 @@
       ],
       "status": "unapproved-source-linked-editorial-candidate",
       "copy_scope": "private-model-drafting-only-no-source-body"
+    },
+    {
+      "id": "JP-W42-07",
+      "desk": "japan",
+      "source_name": "Japan Joint Staff",
+      "source_url": "https://www.mod.go.jp/js/pdf/2026/p20261013_01.pdf",
+      "published_date": "2026-10-13",
+      "language": "ja",
+      "title_original": "中国軍機の動向について",
+      "source_kind": "official-publisher-page-reviewed-for-research",
+      "state_commit": null,
+      "source_content_sha256": null,
+      "hash_rule": null,
+      "summary": "Japan's Joint Staff reported on October 13 that a Chinese military Y-9 intelligence-collection aircraft flew over the East China Sea between waters southwest of the Danjo Islands and northwest of Okinawa's main island before returning toward the continent. Japan said Air Self-Defense Force fighter aircraft scrambled in response. The account is attributed to the Japanese government.",
+      "caveats": [
+        "The Japanese government report is one institutional account, not independently confirmed flight data.",
+        "The original does not establish a territorial airspace violation, completed interception, contact, or hostile encounter.",
+        "The original flight map and photograph are linked at the publisher and are not copied into this packet."
+      ],
+      "topics": [
+        "maritime_security"
+      ],
+      "status": "unapproved-source-linked-editorial-candidate",
+      "copy_scope": "private-model-drafting-only-no-source-body"
     }
   ]
 }
