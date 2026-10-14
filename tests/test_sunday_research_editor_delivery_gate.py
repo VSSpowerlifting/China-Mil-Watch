@@ -63,6 +63,44 @@ class ResearchEmailPermissionTests(unittest.TestCase):
             writer.assert_not_called()
             sender.assert_not_called()
 
+    def test_scheduled_editor_worksheet_filters_only_model_only_vietnam(self):
+        original = self.write()
+        prior = json.loads(original.read_text(encoding="utf-8"))
+        safe_folder = self.folder / "editor-safe"
+        safe_folder.mkdir()
+        safe = safe_folder / (WEEK + ".json")
+        receipt = check(
+            week_ending=WEEK, as_of=WEEK, packet=original,
+            send_email=True, safe_out=safe,
+        )
+        self.assertEqual(receipt["vietnam_private_model_sources"], 3)
+        self.assertEqual(receipt["vietnam_withheld_from_editor_count"], 3)
+        self.assertFalse(receipt["vietnam_editor_send_authorized"])
+        self.assertEqual(receipt["editor_packet_source_count"], 3)
+        self.assertEqual(receipt["effective_packet"], str(safe.resolve()))
+        # The private model-original packet is preserved byte-for-byte.
+        self.assertEqual(json.loads(original.read_text(encoding="utf-8")), prior)
+        filtered = json.loads(safe.read_text(encoding="utf-8"))
+        self.assertEqual(
+            filtered["items"],
+            [item for item in prior["items"] if item["desk"] == "japan"],
+        )
+        self.assertTrue(all(item["desk"] != "vietnam"
+                            for item in filtered["items"]))
+        self.assertFalse(receipt["model_was_called"])
+        self.assertFalse(receipt["email_sent"])
+
+    def test_editor_safe_file_is_new_and_never_overwritten(self):
+        path = self.write()
+        safe_folder = self.folder / "editor-safe"
+        safe_folder.mkdir()
+        safe = safe_folder / (WEEK + ".json")
+        safe.write_text("original protected contents", encoding="utf-8")
+        with self.assertRaisesRegex(EditorDeliveryNotAuthorized, "new"):
+            check(week_ending=WEEK, as_of=WEEK, packet=path,
+                  send_email=True, safe_out=safe)
+        self.assertEqual(safe.read_text(), "original protected contents")
+
     def test_exact_week_editor_approval_does_not_approve_publication(self):
         result = check(week_ending=WEEK, as_of=WEEK, packet=self.write(),
                        send_email=True, vietnam_email_approved_week=WEEK)
@@ -96,12 +134,15 @@ class ResearchEmailPermissionTests(unittest.TestCase):
         workflow = WORKFLOW.read_text(encoding="utf-8")
         audit = workflow.index("- name: Verify refreshed exact-week research")
         owner = workflow.index(
-            "- name: Guard separate owner permission for Vietnam editor distribution")
+            "- name: Separate Vietnam private-model and editor-email research scope")
         model = workflow.index("- name: Generate source-cited Sunday manuscript")
         self.assertLess(audit, owner)
         self.assertLess(owner, model)
         self.assertIn("--approved-week \"$IPR_VN_EMAIL_REVIEWED_WEEK\"", workflow)
+        self.assertIn("--safe-out \"$scratch/$IPR_SUNDAY_WEEK_END.json\"", workflow)
         self.assertIn("IPR_SUNDAY_VIETNAM_EDITOR_SEND_REVIEWED_WEEK", workflow)
+        self.assertIn("steps.editor_scope.outputs.packet", workflow)
+        self.assertIn('echo "vietnam_withheld="', workflow)
         self.assertIn('if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]', workflow)
         self.assertIn("scripts.sunday_research_editor_delivery_gate", workflow)
         self.assertNotIn("actions/upload-artifact", workflow)
