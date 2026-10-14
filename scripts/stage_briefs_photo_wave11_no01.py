@@ -61,7 +61,7 @@ def main():
       notice=NOTICE,depicts="context")
     manifest.append(dict(
       id=ID,file=SOURCE.name,width=5880,height=3925,sha256=sha256_file(SOURCE),
-      original_url="https://upload.wikimedia.org/wikipedia/commons/",
+      original_url=SOURCE_URL,
       source_fingerprint=dict(sha1=COMMONS_SHA1,sha256=PHOTO_SHA256),
       origin_reference=SOURCE_URL2,
       license_basis=("Wikimedia Commons attributes photograph and EXIF to official-duty U.S. Army "
