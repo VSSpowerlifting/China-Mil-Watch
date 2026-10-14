@@ -247,16 +247,17 @@ jobs:
           print("Neither source rights nor official silence nor publication approved.")
           PY
 
-      # Privately drafted MPS synopses must not flow into Dylan's emailed
-      # worksheet without separately approved, exact-week distribution consent.
-      # If editor send is requested without it, preserve ordinary Sunday
-      # delivery by withholding ONLY Vietnam entries in a verified temporary
-      # packet; the original, model-only research packet remains untouched.
+      # Privately drafted MPS synopses must not flow into any emailed
+      # worksheet (Dylan or owner-only preview) without separately approved,
+      # exact-week distribution consent. Keep private no-send drafting intact.
+      # For an email lacking consent, preserve non-Vietnam editorial delivery
+      # using a verified temporary packet; never mutate the private original.
       - name: Separate Vietnam private-model and editor-email research scope
         id: editor_scope
         env:
           PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
           IPR_VN_EMAIL_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_VIETNAM_EDITOR_SEND_REVIEWED_WEEK }}
+          IPR_PREVIEW_REQUESTED: ${{ env.SUNDAY_OWNER_PREVIEW == 'true' || (github.event_name == 'workflow_dispatch' && inputs.preview_to_owner == true) }}
         shell: bash
         run: |
           set -euo pipefail
@@ -270,7 +271,10 @@ jobs:
                 --packet "$PRIVATE_WEEK_PACKET"
                 --approved-week "$IPR_VN_EMAIL_REVIEWED_WEEK"
                 --safe-out "$scratch/$IPR_SUNDAY_WEEK_END.json")
-          if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
+          # Both editor delivery and owner preview transmit data via SMTP.
+          # Private no-send drafting is the only path that keeps Vietnam rows
+          # without a separate week-specific email authorization.
+          if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" || "$IPR_PREVIEW_REQUESTED" == "true" ]]; then
             args+=(--send-email)
           fi
           python -m scripts.sunday_research_editor_delivery_gate "${args[@]}" > "$scratch/scope.json"
@@ -284,7 +288,7 @@ jobs:
           python - "$scratch/scope.json" <<'PY'
           import json, sys
           r=json.load(open(sys.argv[1], encoding="utf-8"))
-          print("Private MPS model-only synopses withheld from editor send:",
+          print("Private MPS model-only synopses withheld from email:",
                 r["vietnam_withheld_from_editor_count"])
           print("Editor-safe official-source research count:",
                 r["editor_packet_source_count"])
