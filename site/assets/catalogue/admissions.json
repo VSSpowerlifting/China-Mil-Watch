@@ -334,6 +334,34 @@
       "source_label": "Wikimedia Commons",
       "notice": "",
       "depicts": "context"
+    },
+    {
+      "issue": 11,
+      "week_ending": "2026-07-18",
+      "status": "admitted",
+      "source_file": "site/assets/editorial/derivatives/china-russia-iran-maritime-belt-2023-1600.jpg",
+      "source_manifest_id": "china-russia-iran-maritime-belt-2023",
+      "focal": "50% 50%",
+      "served": "assets/catalogue/media/no-11-china-russia-iran-maritime-belt-2023.jpg",
+      "source_sha256": "9e07141cabd1551fbdb04ec2651fbe8b065ca43b2bf859f1abb329880453c96e",
+      "served_sha256": "862de21e706bf7e75321dad09f6a7385bd8ccf8d662831e03db5a2652efdbedd",
+      "width": 720,
+      "height": 480,
+      "change_note": "Cropped and resized by IPR.",
+      "review_note": "Historical 2023 trilateral maritime exercise contextual to China-Russia maritime cooperation. Owner approval of image relevance/crop required.",
+      "alt": "Military ships arriving in the maritime exercise area during Maritime Security Belt 2023.",
+      "caption": "Chinese and Russian naval vessels were photographed arriving for Maritime Security Belt 2023, a trilateral maritime exercise involving Iran. Historical March 2023 maritime-cooperation context; not the July 2026 Joint Sea exercise, naval patrol or Y-20B flight in this Brief.",
+      "date_note": "Photographed 15 March 2023 in a different exercise involving Iran, China and Russia.",
+      "creator": "Mohsen Ranginkaman",
+      "creator_native": "",
+      "creator_native_lang": "",
+      "credit": "Mohsen Ranginkaman · CC BY 4.0 · via Wikimedia Commons",
+      "license": "CC BY 4.0",
+      "license_url": "https://creativecommons.org/licenses/by/4.0",
+      "source_page": "https://commons.wikimedia.org/wiki/File:Arrival_of_Chinese_and_Russian_ships_for_maritime_security_exercise_(09).jpg",
+      "source_label": "Wikimedia Commons",
+      "notice": "",
+      "depicts": "context"
     }
   ]
 }
