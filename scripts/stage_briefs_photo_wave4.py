@@ -44,7 +44,7 @@ def main():
     with Image.open(io.BytesIO(raw)) as image:
         assert image.format=="JPEG",image.format
         width,height=image.size
-        assert width==1000 and 640<=height<=710,(width,height)
+        assert (width,height)==(999,665),(width,height)  # exact bytes inspected on publisher's 1000w preview
         image.verify()
     src=ED/FILENAME
     src.write_bytes(raw)
