@@ -32,7 +32,7 @@
 <h2 id="g-colour">Colour</h2>
 <p class="meta">Tokens on <code>:root</code>. The first three are the Ocean Signal Veil's duotone ends and are not free to change.</p>
 <ul class="g-swatches">
-{% for name, role in [('bg','page ground · veil highlight'),('surface','raised paper'),('surface-inset','recessed'),('ink','text'),('ink-2','secondary text'),('muted','metadata'),('rule','hairline'),('accent','structure · veil mid-tone'),('link','links'),('band','dark band · veil shadow'),('positive','collecting desk'),('warning','blocked · attention'),('signal','machine layer'),('crimson','analysis layer'),('crimson-ink','analysis text on paper'),('crimson-text','analysis text on band')] %}
+{% for name, role in [('bg','page ground · veil highlight'),('surface','raised paper'),('surface-inset','recessed'),('ink','text'),('ink-2','secondary text'),('muted','metadata'),('rule','hairline'),('accent','structure · veil mid-tone'),('link','links'),('band','dark band · veil shadow'),('positive','collecting desk'),('warning','blocked · attention'),('machine-ink','machine layer'),('editorial-ink','analysis layer on paper'),('editorial-on-dark','analysis text on band')] %}
   <li><span class="g-chip" style="background: var(--{{ name }})"></span><code>--{{ name }}</code><span class="meta">{{ role }}</span></li>
 {% endfor %}
 </ul>
