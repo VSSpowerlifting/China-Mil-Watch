@@ -1,0 +1,52 @@
+{
+  "schema": "vietnam-reviewed-brief-citation-receipt/1",
+  "week_ending": "2026-10-10",
+  "records": [
+    {
+      "external_id": "VN-MPS-1791199100",
+      "source_identity": "mps-vi:1791199100",
+      "source_url": "https://bocongan.gov.vn/bai-viet/mo-rong-hop-tac-cong-nghe-cong-nghiep-an-ninh-voi-cac-doi-tac-tho-nhi-ky-1791199100",
+      "published_date": "2026-10-05",
+      "original_title": "Mở rộng hợp tác công nghệ, công nghiệp an ninh với các đối tác Thổ Nhĩ Kỳ",
+      "state_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
+      "source_content_sha256": "dcd9bf2a81c8adab834ae1d1790178b445d67fd6549a2080356cc2444b176b0e",
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "link_and_summary_use_basis": null,
+      "original_summary": null,
+      "checks": {
+        "source_page_opened": false,
+        "original_title_matches": false,
+        "publication_date_matches": false,
+        "issuing_institution_matches": false,
+        "complete_original_body_reviewed": false,
+        "pinned_content_version_checked": false,
+        "original_summary_fact_checked": false,
+        "no_copied_article_body": false
+      }
+    },
+    {
+      "external_id": "VN-MPS-1791199677",
+      "source_identity": "mps-vi:1791199677",
+      "source_url": "https://bocongan.gov.vn/bai-viet/cu-the-hoa-hop-tac-dao-tao-nghien-cuu-cong-nghe-an-ninh-voi-dai-hoc-concordia-1791199677",
+      "published_date": "2026-10-05",
+      "original_title": "Hợp tác đào tạo, nghiên cứu công nghệ an ninh với Đại học Concordia, Canada",
+      "state_commit": "46f6a0e59e25b03868bf7ad600963d6921ee5124",
+      "source_content_sha256": "c5d67c01fd96a6fb3d453e0d21ada152a69761b8163a512dd27ed8f8b9676691",
+      "reviewed_by": null,
+      "reviewed_on": null,
+      "link_and_summary_use_basis": null,
+      "original_summary": null,
+      "checks": {
+        "source_page_opened": false,
+        "original_title_matches": false,
+        "publication_date_matches": false,
+        "issuing_institution_matches": false,
+        "complete_original_body_reviewed": false,
+        "pinned_content_version_checked": false,
+        "original_summary_fact_checked": false,
+        "no_copied_article_body": false
+      }
+    }
+  ]
+}
