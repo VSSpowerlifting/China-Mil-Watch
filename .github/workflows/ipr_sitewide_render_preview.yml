@@ -1,0 +1,95 @@
+name: IPR sitewide cosmetic release — preview only
+
+# Cannot commit, deploy, collect, use model APIs or approve output.
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/ipr_sitewide_render_preview.yml'
+      - 'scripts/audit_sitewide_render_preview.py'
+      - 'tests/test_sitewide_render_preview.py'
+  workflow_dispatch:
+    inputs:
+      reviewed_main_sha:
+        description: 'Exact 40-character main SHA to render for human review'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run scope and fail-closed guard tests
+        run: python -m unittest tests.test_sitewide_render_preview -v
+
+  review-preview:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    concurrency:
+      group: ipr-sitewide-render-preview
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Bind preview to owner-reviewed main
+        env:
+          REVIEWED_SHA: \${{ inputs.reviewed_main_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$REVIEWED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo '::error::Malformed reviewed main SHA'; exit 1; }
+          test "$(git rev-parse HEAD)" = "$REVIEWED_SHA" || { echo '::error::main moved; re-review new SHA'; exit 1; }
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          echo "DB_SHA=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_ENV"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing render dependencies only
+        run: pip install -r requirements.txt
+      - name: Test release inventory guard
+        run: python -m unittest tests.test_sitewide_render_preview -v
+      - name: Render approved historical Briefs and site, no publication
+        run: |
+          set -euo pipefail
+          python -m scripts.run_briefs_render_release --scope report-only > "$RUNNER_TEMP/render-log.txt" 2>&1 || {
+            tail -80 "$RUNNER_TEMP/render-log.txt"; exit 1;
+          }
+      - name: Inventory generated paths; fail on noncosmetic drift
+        run: |
+          python -m scripts.audit_sitewide_render_preview \
+            --expected-db-sha "$DB_SHA" \
+            --report "$RUNNER_TEMP/sitewide-review.json"
+          python scripts/validate_output.py
+          sha256sum pla_watch.db | grep -F "$DB_SHA"
+      - name: Upload small human-review artifacts (never deploy)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sitewide-preview-\${{ github.run_id }}
+          path: |
+            \${{ runner.temp }}/sitewide-review.json
+            \${{ runner.temp }}/render-log.txt
+            output/styles.css
+            output/home.css
+            output/record.css
+            output/briefs.css
+            output/relief.css
+            output/index.html
+            output/analysis.html
+            output/briefs/what-is-being-built-in-laos.html
+          retention-days: 7
