@@ -55,6 +55,7 @@ class KoreaSharedActionsCensus(unittest.TestCase):
         self.assertEqual(r["counts"]["indonesia_attempts"], 1)
         self.assertEqual(r["mature_scheduled_dates"], ["2026-10-07"])
         self.assertEqual(r["holds"], [])
+        self.assertEqual(r["attempts_needing_followup"], [])
         for name in ("github_export_independently_authenticated",
                      "human_day7_review_completed", "production_eligible",
                      "public_new_sources_approved", "sunday_brief_eligible"):
@@ -80,6 +81,43 @@ class KoreaSharedActionsCensus(unittest.TestCase):
         self.assertIn("korea_action_attempt_without_pinned_ledger", r["holds"])
         self.assertEqual(r["counts"]["korea_failed_or_cancelled"], 1)
         self.assertEqual(r["verdict"], "HOLD")
+
+
+    def test_real_shaped_oct12_timeout_attempt_is_identified_not_exonerated(self):
+        # October 12's actual run/slot shape: the publisher timed out, and
+        # no state ledger was pushed. The census can name the failed Actions
+        # attempt but cannot infer the failure cause from artifact metadata.
+        failed = 38323793488
+        self.actions.append(action(
+            failed, "2026-10-12T23:45:27Z",
+            status="completed", conclusion="failure"))
+        self.artifacts[str(failed)] = artifact(failed)
+        report = self.check("2026-10-14T22:01:00Z")
+        attempts = report["attempts_needing_followup"]
+        self.assertEqual(len(attempts), 1)
+        self.assertEqual(attempts[0]["run_attempt_id"], "38323793488-1")
+        self.assertEqual(attempts[0]["scheduled_target_date"], "2026-10-12")
+        self.assertEqual(
+            attempts[0]["reasons"],
+            ["github_action_not_successful", "no_matched_state_ledger"])
+        self.assertFalse(attempts[0]["publisher_timeout_verified_by_this_census"])
+        self.assertFalse(attempts[0]["retrieval_retried"])
+        self.assertFalse(attempts[0]["human_review_or_desk_approval"])
+        self.assertIn("korea_failed_cancelled_or_unfinished_workflow", report["holds"])
+        self.assertIn("korea_action_attempt_without_pinned_ledger", report["holds"])
+        self.assertEqual(report["verdict"], "HOLD")
+
+    def test_failed_manual_attempt_is_not_misdated_as_scheduled(self):
+        self.actions.append(action(124, "2026-10-07T23:10:00Z",
+                                   event="workflow_dispatch",
+                                   status="completed", conclusion="failure"))
+        self.artifacts["124"] = artifact(124)
+        report = self.check()
+        flagged = report["attempts_needing_followup"]
+        self.assertEqual(len(flagged), 1)
+        self.assertEqual(flagged[0]["run_attempt_id"], "124-1")
+        self.assertIsNone(flagged[0]["scheduled_target_date"])
+        self.assertEqual(flagged[0]["event"], "workflow_dispatch")
 
     def test_empty_artifact_on_shared_failed_run_is_unattributed_global_hold(self):
         self.actions.append(action(104, "2026-10-07T23:00:00Z",
