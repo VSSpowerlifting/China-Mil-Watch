@@ -177,6 +177,55 @@ class TestIsolation(StateCase):
         self.assertTrue((REPO_ROOT / "shadow" / "ph_afp" / "manifest.json").is_file())
         self.assertFalse((REPO_ROOT / "desks" / "philippines").exists())
 
+    def assert_read_only_afp_observer(self, workflow_text):
+        """Exception is solely for metadata-only manual reviewer workflows.
+
+        This does not extend to collection, scheduled source jobs, publication,
+        or any write-scoped workflow outside the dedicated AFP shadow runner.
+        """
+        executable = "\n".join(
+            line for line in workflow_text.splitlines()
+            if not line.lstrip().startswith("#"))
+        self.assertIn("workflow_dispatch:", executable)
+        self.assertIn("permissions:\n  contents: read", executable)
+        self.assertIn("persist-credentials: false", executable)
+        self.assertIn("refs/heads/main", executable)
+        self.assertNotRegex(
+            executable, r"(?m)^\s*(?:schedule|push|pull_request_target):")
+        self.assertNotRegex(
+            executable, r"(?m)^\s*git(?:\s+-C\s+\S+)?\s+push\b")
+        for forbidden in (
+            "shadow_collect_ph", "contents: write", "actions: write",
+            "workflows: write", "pages: write", "id-token: write",
+            "secrets.", "GITHUB_TOKEN", "curl ", "wget ",
+            "scripts.pipeline", "smtp"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, executable)
+        if "gh api " in executable:
+            self.assertIn("gh api --paginate --slurp -X GET", executable)
+            self.assertNotRegex(
+                executable,
+                r"gh api[^\n]*(?:-X|--method)\s+(?:POST|PATCH|PUT|DELETE)")
+
+    def test_read_only_afp_observer_exception_rejects_unsafe_workflows(self):
+        safe = ("on:\n  workflow_dispatch:\n"
+                "permissions:\n  contents: read\n"
+                "jobs:\n  inspect:\n"
+                "    if: github.ref == 'refs/heads/main'\n"
+                "    steps:\n"
+                "      - uses: actions/checkout@v4\n"
+                "        with:\n          persist-credentials: false\n")
+        self.assert_read_only_afp_observer(safe)
+        for mutation in (
+            "  schedule:\n", "  push:\n", "  pull_request_target:\n",
+            "  contents: write\n", "  actions: write\n",
+            "      - run: python -m scripts.shadow_collect_ph\n",
+            "      - run: git push origin main\n",
+            "      - run: curl https://example.org\n"):
+            with self.subTest(forbidden_mutation=mutation):
+                with self.assertRaises(AssertionError):
+                    self.assert_read_only_afp_observer(safe + mutation)
+
     def test_no_declared_desk_or_pipeline_or_workflow_reaches_the_pilot(self):
         for rel in ("pipeline.py", "desks/registry.json", "core/registry.py"):
             with self.subTest(file=rel):
@@ -200,6 +249,14 @@ class TestIsolation(StateCase):
                                    "curl ", "wget ", "secrets.", "GITHUB_TOKEN"):
                         with self.subTest(forbidden=unsafe):
                             self.assertNotIn(unsafe, text)
+                    continue
+                if path.name in (
+                    "ph_afp_oct14_review_docket.yml",
+                    "ph_afp_day7_machine_receipt_manual.yml",
+                ):
+                    # Two explicitly named read-only reviewer facilities.
+                    # All other AFP workflow entry points remain prohibited.
+                    self.assert_read_only_afp_observer(text)
                     continue
                 self.assertNotIn("ph_afp", text)
 
