@@ -33,9 +33,9 @@ CAPTION=("Jiangnan Shipyard on Shanghai's Changxing Island, photographed April 2
 ALT="Shipbuilding facilities on Shanghai's Changxing Island, photographed in April 2022."
 SHARED={
     "alt":ALT,"caption":CAPTION,
-    "date_note":"Photographed 4 April 2022; the displayed crop was prepared on Commons June 2024.",
+    "date_note":"Photographed 4 April 2022; original creator dedicated image under CC0 1.0. Commons crop June 2024.",
     "creator":CREATOR,"creator_native":"","creator_native_lang":"",
-    "credit":CREATOR+" · Public domain (CC0 1.0) · via Wikimedia Commons",
+    "credit":CREATOR+" · Public domain · via Wikimedia Commons",
     "license":"Public domain","license_url":"","source_page":PAGE,
     "source_label":"Wikimedia Commons","notice":"","depicts":"context"
 }
