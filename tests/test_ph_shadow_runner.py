@@ -193,7 +193,7 @@ class TestIsolation(StateCase):
         self.assertNotRegex(
             executable, r"(?m)^\s*(?:schedule|push|pull_request_target):")
         self.assertNotRegex(
-            executable, r"(?m)^\s*git(?:\s+-C\s+\S+)?\s+push\b")
+            executable, r"\bgit(?:\s+-C\s+\S+)?\s+push\b")
         for forbidden in (
             "shadow_collect_ph", "contents: write", "actions: write",
             "workflows: write", "pages: write", "id-token: write",
