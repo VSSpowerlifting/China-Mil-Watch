@@ -225,6 +225,25 @@ def check_public_page(path, approved_links=None, approved_press_links=None):
     check(len({entry[0] for entry in news_entries + press_entries}) ==
           len(news_entries) + len(press_entries),
           "published ministry links are not unique")
+    # Link integrity alone did not catch two stale counts on the Oct 13
+    # deployed page (13 Berita + 2 press in prose, versus 15 + 2 in <ol>).
+    # Check reader-facing counts against the SAME independently frozen
+    # source-index metadata as the actual links. Widen this tiny word map
+    # only when a future bibliographic release changes the approved totals.
+    words = {2: "two", 15: "fifteen", 17: "seventeen"}
+    news_count, press_count = len(news_entries), len(press_entries)
+    total = news_count + press_count
+    check(all(n in words for n in (news_count, press_count, total)),
+          "bibliography count requires explicit prose vocabulary review")
+    prose_counts = (
+        "point outward to {} first-party pages ({} Berita and {} Siaran Pers)".format(
+            words[total], words[news_count], words[press_count]),
+        "{} Berita and {} Siaran Pers first-party links are available for navigation".format(
+            words[news_count].capitalize(), words[press_count]),
+    )
+    for claim in prose_counts:
+        check(page.count(claim) == 1,
+              "published bibliography prose counts disagree with source index")
     for phrase in ("Shadow evaluation — no public corpus records",
                    "No individual source references have completed",
                    "Explore official Indonesian defense publications",
