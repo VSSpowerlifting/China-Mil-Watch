@@ -114,8 +114,14 @@ This cleanup reduces the current tree/PR diff, not historical Git object storage
 branch history is not rewritten. Scripts and receipts provide durable reproduction
 rather than claiming that uncommitted files are bundled in the current tree.
 
-Public Laos keeps its existing fallback. The private v2 finding and separate
-exact-excerpt fixture remain draft/unapproved. Captures use actual local fonts
+At the original screenshot-capture base, public Laos used the fallback and its
+v2 structure appeared only in a private candidate. PR #565 subsequently
+approved the exact fingerprint-bound Laos reading presentation and published
+its structured output on main (14 October 2026). The separate evidence/excerpt
+fixture remains unapproved and test-only. Retained screenshots and 48-run
+receipts describe the earlier before/after palette capture, **not** a new
+visual inspection of the subsequently approved public Laos render. The refreshed
+PR merge check must cover that approved output before palette publication. Captures use actual local fonts
 and assets, 900px viewports, reduced motion, the existing session intro skip and
 eager image loading. `curate_shots.py --source <complete-shots-directory>` rebuilds
 the retained subset; no resizing or recolouring of production assets occurs.
@@ -164,15 +170,21 @@ The other findings are homepage-intro timing tests: first-visit overlay attachme
 timeout, and lost WebGL context ending by the timeline. Both pass in the targeted
 main run. The intro implementation and its tests are byte-unchanged; palette
 changes do not amend the intro. These broader-run findings remain recorded,
-not converted to a green full-suite claim by an isolated pass. CI on the final
-PR head remains the engineering gate; no unrelated intro/store repair is included.
+not converted to a green full-suite claim by an isolated pass. The first ready-for-review exact-head Linux CI passed on
+`d8130c3586c2f6861762e826ef24e198100ddb0c` (run 38593740911:
+6,255 tests, nine skips, output validator and DB/output preservation). The
+subsequent Laos-public reconciliation requires a fresh merge-context CI run;
+no unrelated intro/store repair is included.
 
 Candidate intro-only characterization: **23 tests passed** in isolation. This
-does not override the broader-run failures above; CI is skipped while the PR remains draft; marking it ready enables the gate.
+does not override the broader-run failures above. Initial draft CI was
+skipped, but the ready-for-review Linux run passed. Any subsequent update
+requires fresh CI.
 
 [Full local summary](verification.json) records counts and exact baseline identity.
-The cleanup is ready to be marked for review so exact-head CI can run; PR #566
-remains draft as requested, with the original full-suite limitations disclosed.
+PR #566 was marked ready for review on 14 October 2026. The first Linux CI
+completed successfully; the current integration update follows merged PR #565.
+No merge, deployment, or manuscript approval is authorized by this palette PR.
 
 ## Cleanup verification
 
