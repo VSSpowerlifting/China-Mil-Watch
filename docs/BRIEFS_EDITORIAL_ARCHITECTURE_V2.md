@@ -36,8 +36,9 @@ release checks. The shared `cover_figure` macro carries its full existing credit
 context notice and rights links. No inline figure is selected for Laos. Other
 media classes would need a separately reviewed extension; v1 grants none.
 
-Unknown fields, injected HTML, invalid ranges, unsupported references, stale
-manuscript bindings and partial receipts fail closed. Rendered checks compare
+In explicit private review/check commands and approved presentations, unknown
+fields, injected HTML, invalid ranges, unsupported references, stale manuscript
+bindings and partial receipts fail closed. Rendered checks compare
 section headings, ranges, anchors, navigation and excerpts. The independent
 `manuscript_html_errors` check compares **exact** paragraph text, ordinal markers,
 linked text, destination URLs and source IDs, including whitespace. It runs
@@ -46,7 +47,10 @@ during source-linked rendering and in `validate_output.py`.
 ## Review and approval boundary
 
 Draft presentation has `status: draft`, `approval: null`. Ordinary rendering
-withholds it completely and preserves the article's existing fallback. Existing
+withholds a recognized draft before validating its editorial payload, so unfinished
+or stale private work cannot interrupt a public build. Recognition requires the
+supported version, matching article identity and explicit draft status; corrupt
+JSON or an unclassifiable manifest still fails closed. Existing
 articles with no manifest continue to render. A private presentation preview
 marks the proposed structure, retains the original article's number and credits
 when already published, emits no public canonical/feed/sitemap, and uses noindex.

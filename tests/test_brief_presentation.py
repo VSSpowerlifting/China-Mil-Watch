@@ -60,6 +60,36 @@ class BriefPresentationTests(unittest.TestCase):
             path.write_text(json.dumps(manifest), encoding="utf-8")
             self.assertEqual(load_presentation(path, self.article, slug=SLUG), manifest)
 
+    def test_public_load_withholds_stale_and_incomplete_identified_drafts(self):
+        drafts = [dict(self.manifest, manuscript_fingerprint="0" * 64, sections=None),
+                  {"version": VERSION, "article": SLUG, "status": "draft"}]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / (SLUG + ".json")
+            for draft in drafts:
+                with self.subTest(draft=draft):
+                    path.write_text(json.dumps(draft), encoding="utf-8")
+                    self.assertIsNone(load_presentation(path, self.article, slug=SLUG))
+                    with self.assertRaises(ValueError):
+                        load_presentation(path, self.article, slug=SLUG, review=True)
+
+    def test_public_load_still_rejects_invalid_approved_or_unclassifiable_manifests(self):
+        approved = self.approved()
+        approved["manuscript_fingerprint"] = "0" * 64
+        manifests = [approved, None, [], "draft", {"status": "draft"},
+                     dict(self.manifest, status=None), dict(self.manifest, status="unknown"),
+                     dict(self.manifest, version="unknown"), dict(self.manifest, article="other")]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / (SLUG + ".json")
+            for manifest in manifests:
+                with self.subTest(manifest=manifest):
+                    path.write_text(json.dumps(manifest), encoding="utf-8")
+                    for review in (False, True):
+                        with self.assertRaises(ValueError):
+                            load_presentation(path, self.article, slug=SLUG, review=review)
+            path.write_text("{broken", encoding="utf-8")
+            with self.assertRaises(json.JSONDecodeError):
+                load_presentation(path, self.article, slug=SLUG)
+
     def test_manifest_missing_unknown_and_corrupt_fields_fail_closed(self):
         for changed in (
             {key: value for key, value in self.manifest.items() if key != "sections"},

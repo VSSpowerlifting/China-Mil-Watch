@@ -155,6 +155,12 @@ def load_presentation(path, article, *, slug, review=False):
             raise ValueError("presentation review manifest is missing")
         return None
     manifest = json.loads(path.read_text(encoding="utf-8"))
+    # A recognized draft is private editorial work, not a public build input.
+    # Classify its envelope before checking content that may be incomplete/stale.
+    if (not review and isinstance(manifest, dict) and manifest.get("status") == "draft"
+            and manifest.get("version") == VERSION and manifest.get("article") == slug
+            and isinstance(slug, str) and SLUG.fullmatch(slug) and is_source_linked(article)):
+        return None
     errors = validate_presentation(manifest, article, slug=slug)
     if errors:
         raise ValueError("presentation: " + "; ".join(errors))

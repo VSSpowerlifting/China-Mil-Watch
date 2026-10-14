@@ -166,6 +166,43 @@ class PresentationIntegrationTests(unittest.TestCase):
             self.assertEqual(presentation_html_errors(self.manifest, html), [])
             self.assertEqual(json.loads(source.read_text()), draft)
 
+    def test_stale_draft_cannot_interrupt_public_build_but_invalid_approved_fails(self):
+        import sys
+        sys.path.insert(0, str(ROOT / "site/preview"))
+        import generate_preview as gp
+        with tempfile.TemporaryDirectory() as directory:
+            briefs = Path(directory) / "briefs"
+            briefs.mkdir()
+            source = briefs / (SLUG + ".json")
+            source.write_bytes(ARTICLE_PATH.read_bytes())
+            before = source.read_bytes()
+            (briefs / "presentation").mkdir()
+            manifest_path = briefs / "presentation" / source.name
+            stale = dict(self.manifest, manuscript_fingerprint="0" * 64, sections=None)
+            manifest_path.write_text(json.dumps(stale))
+            out = Path(directory) / "public-build"
+            options = dict(snapshot=gp.snapshot_from_corpus(ROOT / "pla_watch.db"),
+                           briefs_dir=briefs, site_origin="https://indopacificrecord.org")
+            gp.build(out, gp.PUBLIC_TITLE, ROOT / "pla_watch.db", **options)
+            html = (out / "briefs" / source.with_suffix(".html").name).read_text()
+            self.assertEqual(manuscript_html_errors(self.article, html), [])
+            self.assertEqual(presentation_html_errors(None, html), [])
+            self.assertNotIn("brief-structured", html)
+            self.assertEqual(source.read_bytes(), before)
+            approved = self.fixture.approved()
+            approved["manuscript_fingerprint"] = "0" * 64
+            manifest_path.write_text(json.dumps(approved))
+            with self.assertRaisesRegex(ValueError, "binding is stale"):
+                gp.build(Path(directory) / "rejected-build", gp.PUBLIC_TITLE,
+                         ROOT / "pla_watch.db", **options)
+            self.assertEqual(source.read_bytes(), before)
+            manifest_path.write_text(json.dumps(stale))
+            with mock.patch.object(brief_presentation, "ROOT", Path(directory)), \
+                    contextlib.redirect_stderr(io.StringIO()):
+                self.assertEqual(brief_presentation.main(["check", str(manifest_path)]), 2)
+                self.assertEqual(brief_presentation.main([
+                    "preview", str(manifest_path), "--out", str(Path(directory) / "review")]), 2)
+
     def test_helper_is_explicit_deterministic_and_does_not_approve_or_overwrite(self):
         sections = [brief_presentation.section_arg("reading-article|1|11|Article")]
         a = brief_presentation.scaffold(self.article, SLUG, sections)

@@ -8,6 +8,8 @@ explicit paragraph sections, navigation, exact-excerpt emphasis and optional
 existing-admission figure placement. The Laos manifest is **draft/private-only**;
 its five headings and paragraph-10 finding placement await owner review. No
 canonical Brief, approval, media admission, output, DB or Sunday delivery changes.
+Independent-review correction: public loading now withholds recognized drafts
+before editorial validation; private review and approved manifests remain strict.
 Current Laos editorial fingerprint remains
 `3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57`.
 Authoring/approval boundary: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`.
