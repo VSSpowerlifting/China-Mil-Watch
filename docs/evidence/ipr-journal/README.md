@@ -46,6 +46,8 @@ The pilot contains no Signal; its actual Coverage Snapshot is captured instead.
 | No. 18 publisher references | [before](laos-references-before-desktop.png) → [after](laos-references-after-desktop.png) | [before](laos-references-before-mobile.png) → [after](laos-references-after-mobile.png) |
 | No. 17 Signal / development / navigation | [before](trident-before-desktop.png) → [after](trident-after-desktop.png) | [before](trident-before-mobile.png) → [after](trident-after-mobile.png) |
 | No. 15 native Signal / sections | [before](native-before-desktop.png) → [after](native-after-desktop.png) | [before](native-before-mobile.png) → [after](native-after-mobile.png) |
+| No. 15 source trail | [before](native-sources-before-desktop.png) → [after](native-sources-after-desktop.png) | [before](native-sources-before-mobile.png) → [after](native-sources-after-mobile.png) |
+| No. 18 documentary hero | [before](laos-hero-before-desktop.png) → [after](laos-hero-after-desktop.png) | [before](laos-hero-before-mobile.png) → [after](laos-hero-after-mobile.png) |
 | No. 14 historical Signal / coverage | [before](fourteen-before-desktop.png) → [after](fourteen-after-desktop.png) | [before](fourteen-before-mobile.png) → [after](fourteen-after-mobile.png) |
 | No. 1 pilot coverage / opening | [before](pilot-before-desktop.png) → [after](pilot-after-desktop.png) | [before](pilot-before-mobile.png) → [after](pilot-after-mobile.png) |
 
