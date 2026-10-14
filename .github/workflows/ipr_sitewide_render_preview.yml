@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
       - name: Bind preview to owner-reviewed main
         env:
-          REVIEWED_SHA: \${{ inputs.reviewed_main_sha }}
+          REVIEWED_SHA: ${{ inputs.reviewed_main_sha }}
         run: |
           set -euo pipefail
           [[ "$REVIEWED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo '::error::Malformed reviewed main SHA'; exit 1; }
@@ -80,10 +80,10 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sitewide-preview-\${{ github.run_id }}
+          name: sitewide-preview-${{ github.run_id }}
           path: |
-            \${{ runner.temp }}/sitewide-review.json
-            \${{ runner.temp }}/render-log.txt
+            ${{ runner.temp }}/sitewide-review.json
+            ${{ runner.temp }}/render-log.txt
             output/styles.css
             output/home.css
             output/record.css
