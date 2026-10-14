@@ -418,6 +418,34 @@
       "credit": "Chief Petty Officer Elliott Fabrizio, U.S. Navy · Public domain · via DVIDS",
       "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
       "depicts": "context"
+    },
+    {
+      "issue": 5,
+      "week_ending": "2026-06-06",
+      "status": "admitted",
+      "source_file": "site/assets/editorial/derivatives/chinese-coast-guard-2301-2018-1600.jpg",
+      "source_manifest_id": "chinese-coast-guard-2301-2018",
+      "focal": "49% 52%",
+      "served": "assets/catalogue/media/no-05-chinese-coast-guard-2301-2018.jpg",
+      "source_sha256": "e6ed9ce7a0158319982fa3b70f2010573ed77741ec7cbd7070da1462d4de2ae1",
+      "served_sha256": "8f4f2fa94cb8be0846a4b84ffa49c52f4717c38af59fd6ffaeb90f6dee2140f8",
+      "width": 720,
+      "height": 480,
+      "change_note": "Cropped and resized by IPR.",
+      "review_note": "Candidate only: genuine Chinese CCG vessel but 2018 fisheries rather than 2026 East Taiwan, and only one of three No5 editorial topics. Owner must review.",
+      "alt": "China Coast Guard patrol vessel 2301 alongside the U.S. Coast Guard cutter Alex Haley during a 2018 fisheries-enforcement handover in the Sea of Japan.",
+      "caption": "Chinese Coast Guard patrol vessel 2301 during a 2018 fisheries-law-enforcement handover with the U.S. Coast Guard in the Sea of Japan. Historical maritime-enforcement context, not the June 2026 patrol east of Taiwan, loitering-munition discussion or Rocket Force training reported in this Brief.",
+      "date_note": "Photographed 21 June 2018 (EXIF 20 June 20:00 UTC), eight years before this Brief.",
+      "creator": "Petty Officer 1st Class William Colclough, U.S. Coast Guard",
+      "creator_native": "",
+      "creator_native_lang": "",
+      "license": "Public domain",
+      "license_url": "",
+      "source_page": "https://commons.wikimedia.org/wiki/File:USCGC_Alex_Haley_transfers_detained_fishing_vessel_to_China_Coast_Guard_2301_in_Sea_of_Japan_(5-6).jpg",
+      "source_label": "Wikimedia Commons",
+      "credit": "Petty Officer 1st Class William Colclough, U.S. Coast Guard · Public domain · via Wikimedia Commons",
+      "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+      "depicts": "context"
     }
   ]
 }
