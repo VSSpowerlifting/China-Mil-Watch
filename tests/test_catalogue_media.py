@@ -28,10 +28,11 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {8, 9, 17, 18}
+PHOTO_ISSUES = {6, 8, 9, 14, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
-SOURCE_HOSTS = {8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
+SOURCE_HOSTS = {6: "https://commons.wikimedia.org/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
+                14: "https://commons.wikimedia.org/",
                 17: "https://www.dvidshub.net/image/",
                 18: "https://commons.wikimedia.org/"}
 HELD_ISSUES = {1, 10}
@@ -267,6 +268,21 @@ class CommittedRecordTests(unittest.TestCase):
         for key in ("alt", "caption", "served", "served_sha256"):
             self.assertNotIn(key, record)
         self.assertFalse(list(MEDIA.glob("no-10-*")))
+
+    def test_wave2_photographs_are_explicitly_historical_and_source_distinct(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        six, fourteen = by_issue[6], by_issue[14]
+        self.assertNotEqual(six["source_page"], fourteen["source_page"])
+        self.assertIn("2022", six["caption"])
+        self.assertIn("2026", six["caption"])
+        self.assertIn("2016", fourteen["caption"])
+        self.assertIn("2026", fourteen["caption"])
+        self.assertIn("not", fourteen["caption"].lower())
+        self.assertIn("not", six["caption"].lower())
+        from core.source_terms import required_notice
+        self.assertEqual(fourteen["notice"], required_notice({"source_label": "DVIDS"}))
+        self.assertEqual(self.audit[[a["issue"] for a in self.audit].index(6)]["kind"], "photograph")
+        self.assertEqual(self.audit[[a["issue"] for a in self.audit].index(14)]["kind"], "photograph")
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:
