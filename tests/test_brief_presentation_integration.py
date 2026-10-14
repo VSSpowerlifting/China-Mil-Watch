@@ -28,9 +28,11 @@ def renderer():
 class PresentationIntegrationTests(unittest.TestCase):
     def setUp(self):
         self.article = json.loads(ARTICLE_PATH.read_text())
-        self.manifest = json.loads((ROOT / "briefs/presentation" / (SLUG + ".json")).read_text())
         self.fixture = fixtures.BriefPresentationTests()
         self.fixture.setUp()
+        # All negative/private-preview tests exercise an explicit draft, even
+        # after the real Laos presentation is independently owner-approved.
+        self.manifest = copy.deepcopy(self.fixture.manifest)
 
     def render(self, manifest):
         from core.brief_collection import brief_view, brief_citation
@@ -210,7 +212,7 @@ class PresentationIntegrationTests(unittest.TestCase):
         self.assertIsNone(a["approval"])
         self.assertEqual(a["status"], "draft")
         with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
-            self.assertEqual(brief_presentation.main(["check", str(ROOT / "briefs/presentation" / (SLUG + ".json")), "--release"]), 2)
+            self.assertEqual(brief_presentation.main(["check", str(ROOT / "briefs/presentation" / (SLUG + ".json")), "--release"]), 0)
             self.assertEqual(brief_presentation.main(["scaffold", str(ARTICLE_PATH), "--section", "reading-article|1|11|Article"]), 2)
         media_manifest = dict(self.manifest, figures=[{"media_id": "unadmitted-image", "after_paragraph": 1}])
         with self.assertRaisesRegex(ValueError, "approved media admission"):
