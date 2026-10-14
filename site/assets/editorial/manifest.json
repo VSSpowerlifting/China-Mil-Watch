@@ -417,24 +417,24 @@
   {
     "id": "liaoning-j15-may2022",
     "file": "liaoning-j15-may2022.jpg",
-    "width": 2072,
-    "height": 1240,
-    "alt": "The aircraft carrier Liaoning photographed from the side at sea, with a J-15 fighter approaching to land.",
-    "caption": "The Liaoning carrier and a J-15 during Japanese Ministry of Defense observation in May 2022. Historical carrier context, not the June 2026 operation described in this Brief.",
-    "date_note": "Photographed 4 May 2022, not during the June 2026 reporting week.",
+    "width": 3898,
+    "height": 2476,
+    "alt": "A Chinese J-15 fighter taking off beside the bow of the aircraft carrier Liaoning at sea in 2022.",
+    "caption": "A J-15 launches near the carrier Liaoning in Japanese Ministry of Defense imagery published May 2022. Historical carrier context, not the June 2026 operation described in this Brief.",
+    "date_note": "Publisher image released 4 May 2022; the accompanying report describes observations on 3 May 2022. Not photographed during the 2026 reporting week.",
     "creator": "Japan Ministry of Defense, Joint Staff",
     "license": "CC BY 4.0",
     "license_url": "https://creativecommons.org/licenses/by/4.0",
     "credit": "Japan Ministry of Defense, Joint Staff · CC BY 4.0 · via Wikimedia Commons",
-    "source_page": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+    "source_page": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_taking_off_from_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
     "source_label": "Wikimedia Commons",
     "depicts": "context",
     "notice": "",
-    "sha256": "c900f21489f85f9f6d58476afcf0520aa71c9089edc66bb5365971bf3c300185",
-    "original_url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_%28CV-16%29_20220504.jpg",
-    "license_basis": "Verified Commons original SHA-1 36ed8a492fda1f2b38f40926ae0d049fa68dbfa4; issuing authority in linked source; image license checked 2026-10-13",
+    "sha256": "4b3cbc5a6efb1d05496f4cc7fd10bfa0478dae3c83370346fb93a1ecd08501ac",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_taking_off_from_Chinese_aircraft_carrier_PLANS_Liaoning_%28CV-16%29_20220504.jpg",
+    "license_basis": "Exact Commons original SHA-1 abb48c8d4996558b97d3308e700a90318de69c14; Japanese MOD Joint Staff original, CC BY 4.0; verified 2026-10-13",
     "origin_reference": "https://www.mod.go.jp/js/Press/press2022/press_pdf/p20220504_01.pdf",
-    "note": "Liaoning-specific historical context; independently different from issue No. 8's existing J-15 photograph.",
+    "note": "Distinct 2022 carrier-based J-15 takeoff view, NOT the landing-approach photograph already used on Brief No.8. Context only.",
     "focal": "50% 50%",
     "match": {
       "article_urls": [],
@@ -447,8 +447,8 @@
       {
         "file": "derivatives/liaoning-j15-may2022-1600.jpg",
         "width": 1600,
-        "height": 958,
-        "sha256": "26619cd3440c122efde819a5ad94e1239b97f84dc5d692604775ad2b77bc4cec"
+        "height": 1016,
+        "sha256": "2a5d51283a96d18f660d5ffa00a65d632924d26e50d3334a60ee3c27a72fa388"
       }
     ]
   }
