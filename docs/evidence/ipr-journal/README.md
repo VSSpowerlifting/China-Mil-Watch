@@ -15,15 +15,16 @@ Design/architecture/release scope:
   [browser receipt](browser-receipts.json).
 - **114 retained files are unchanged.** Thirty-one protected DB/canonical /
   presentation/material files, plus 83 retained editorial images/metadata,
-  fonts, feeds and sitemap files. All eighteen articles retain complete body
-  text/link semantics, bylines, hero captions, provenance and metadata:
+  fonts, feeds and sitemap files. All eighteen articles retain
+  canonical prose/source/citation/author text and links, image paths/alt text,
+  provenance and metadata against main `889ef3ed67`:
   [integrity receipt](integrity-receipts.json).
 - **Contrast clears AA.** Measured prose, quotation, labels, navigation,
   reference metadata, trace and author text range from 6.8:1 to 12.72:1:
   [contrast receipt](contrast-receipts.json). This measures computed foreground /
   underlying surface colors; the faint decoration was separately inspected.
 - **Delivery stays within budget.** Maximum article HTML plus recursively
-  linked CSS: 94,800 bytes; maximum executable JS: 5,336 bytes. No external
+  linked CSS: 95,871 bytes; maximum executable JS: 5,336 bytes. No external
   dependency. Article CSS gzip increases 920 bytes; disclosure JS gzip decreases
   12 bytes (source grows 14 bytes). No new fonts or documentary assets:
   [performance receipt](performance-receipts.json).
@@ -50,6 +51,12 @@ The pilot contains no Signal; its actual Coverage Snapshot is captured instead.
 | No. 18 documentary hero | [before](laos-hero-before-desktop.png) → [after](laos-hero-after-desktop.png) | [before](laos-hero-before-mobile.png) → [after](laos-hero-after-mobile.png) |
 | No. 14 historical Signal / coverage | [before](fourteen-before-desktop.png) → [after](fourteen-after-desktop.png) | [before](fourteen-before-mobile.png) → [after](fourteen-after-mobile.png) |
 | No. 1 pilot coverage / opening | [before](pilot-before-desktop.png) → [after](pilot-after-desktop.png) | [before](pilot-before-mobile.png) → [after](pilot-after-mobile.png) |
+
+These final comparisons use reconciled current-main output as the before
+baseline. Older historical output contains stale utility media/navigation
+labels; the governed renderer supplies its already-defined media-kind, plate
+fallback and adjacent-issue presentation. Canonical article/source/author /
+citation selectors and image src/alt remain exact.
 
 The screenshots were inspected for typography, paper restraint, navigation,
 prose measure, long labels, reference hierarchy and compact mobile behavior.
@@ -100,6 +107,10 @@ images still must load, and actual browser zoom remains required. The final
 The later shared-script compaction is verified by
 [90 layout/resize checks plus Escape](compact-script-receipts.json).
 Its behavior is unchanged; homepage/archive script budgets are also checked.
+Final visual inspection also caught premature photograph painting and a blank
+Chromium surface screenshot at actual browser zoom. Capture now waits for fonts,
+image decoding and painting; the zoom image uses Chromium's viewport compositor
+capture. The measured zoom/reflow checks are unchanged.
 
 ## Test and release handoff
 
@@ -120,7 +131,15 @@ full run also failed 21 custody fixtures because macOS's default temporary
 path traverses the `/var` symlink. Using canonical `TMPDIR=/private/tmp` makes
 those 21 tests pass without changing the custody guard. The initial full run
 was interrupted after diagnosis and is not counted as green; the complete
-suite is restarted with the canonical temporary path.
+suite was restarted with the canonical temporary path. That completed attempt
+ran 6,257 tests with six errors: one delivery read overlapped a render, one
+repository-root rejection saw local virtualenv symlinks first, and four errors
+involved the missing existing python-docx requirement. That dependency is now
+installed, the runtime is outside the checkout, and rendering is kept separate
+from the frozen full run. Affected environment/Word/isolation contracts pass
+as a complete 44-test stage. The reconciled article/media/presentation/workflow
+stage passes 102 tests, and the refreshed complete browser stage passes all
+511 checks. No partial or failed full run is called green.
 The new PR-only current-output replay mode and unchanged manual-publication
 boundary pass a separate 70-test workflow/contract stage. CI requires an
 idempotent committed render; manual release still refuses empty deltas.

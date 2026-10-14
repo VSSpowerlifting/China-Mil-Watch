@@ -1,4 +1,5 @@
 {
+  "base": "889ef3ed67e2984d8fbf6acce80f29e0fbc95a90",
   "assets": {
     "briefs.css": {
       "before_bytes": 16454,
@@ -17,7 +18,7 @@
     {
       "route": "the-pla-watch/posts/2026-05-09.html",
       "before": {
-        "html_css_bytes": 82434,
+        "html_css_bytes": 81562,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -51,7 +52,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 84420,
+        "html_css_bytes": 85491,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -89,7 +90,7 @@
     {
       "route": "the-pla-watch/posts/2026-05-16.html",
       "before": {
-        "html_css_bytes": 84669,
+        "html_css_bytes": 83427,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -123,7 +124,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 86655,
+        "html_css_bytes": 87726,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -161,7 +162,7 @@
     {
       "route": "the-pla-watch/posts/2026-05-23.html",
       "before": {
-        "html_css_bytes": 82545,
+        "html_css_bytes": 81243,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -195,7 +196,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 84531,
+        "html_css_bytes": 85602,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -233,7 +234,7 @@
     {
       "route": "the-pla-watch/posts/2026-05-30.html",
       "before": {
-        "html_css_bytes": 88317,
+        "html_css_bytes": 86523,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -266,7 +267,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 90303,
+        "html_css_bytes": 91374,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -303,7 +304,7 @@
     {
       "route": "the-pla-watch/posts/2026-06-06.html",
       "before": {
-        "html_css_bytes": 88661,
+        "html_css_bytes": 87172,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -337,7 +338,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 90647,
+        "html_css_bytes": 91718,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -375,7 +376,7 @@
     {
       "route": "the-pla-watch/posts/2026-06-13.html",
       "before": {
-        "html_css_bytes": 87912,
+        "html_css_bytes": 86598,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -409,7 +410,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 89898,
+        "html_css_bytes": 90969,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -447,7 +448,7 @@
     {
       "route": "the-pla-watch/posts/2026-06-20.html",
       "before": {
-        "html_css_bytes": 83439,
+        "html_css_bytes": 82112,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -481,7 +482,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 85425,
+        "html_css_bytes": 86496,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -519,7 +520,7 @@
     {
       "route": "the-pla-watch/posts/2026-06-27.html",
       "before": {
-        "html_css_bytes": 87012,
+        "html_css_bytes": 85378,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -553,7 +554,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 88998,
+        "html_css_bytes": 90069,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -591,7 +592,7 @@
     {
       "route": "the-pla-watch/posts/2026-07-04.html",
       "before": {
-        "html_css_bytes": 85538,
+        "html_css_bytes": 84154,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -625,7 +626,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 87524,
+        "html_css_bytes": 88595,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -663,7 +664,7 @@
     {
       "route": "the-pla-watch/posts/2026-07-11.html",
       "before": {
-        "html_css_bytes": 85562,
+        "html_css_bytes": 84278,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -697,7 +698,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 87548,
+        "html_css_bytes": 88619,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -735,7 +736,7 @@
     {
       "route": "the-pla-watch/posts/2026-07-18.html",
       "before": {
-        "html_css_bytes": 91788,
+        "html_css_bytes": 90377,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -769,7 +770,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 93774,
+        "html_css_bytes": 94845,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -807,7 +808,7 @@
     {
       "route": "the-pla-watch/posts/2026-08-01.html",
       "before": {
-        "html_css_bytes": 92814,
+        "html_css_bytes": 91013,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -841,7 +842,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 94800,
+        "html_css_bytes": 95871,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -879,7 +880,7 @@
     {
       "route": "the-pla-watch/posts/2026-08-08.html",
       "before": {
-        "html_css_bytes": 91338,
+        "html_css_bytes": 89579,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -913,7 +914,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 93324,
+        "html_css_bytes": 94395,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -951,7 +952,7 @@
     {
       "route": "the-pla-watch/posts/2026-08-15.html",
       "before": {
-        "html_css_bytes": 85421,
+        "html_css_bytes": 83087,
         "js_bytes": 372,
         "css": [
           "briefs.css",
@@ -984,7 +985,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 87407,
+        "html_css_bytes": 88478,
         "js_bytes": 386,
         "css": [
           "briefs.css",
@@ -1021,7 +1022,7 @@
     {
       "route": "briefs/maritime-cooperation-2026.html",
       "before": {
-        "html_css_bytes": 85096,
+        "html_css_bytes": 86167,
         "js_bytes": 5322,
         "css": [
           "briefs.css",
@@ -1058,7 +1059,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 90580,
+        "html_css_bytes": 91651,
         "js_bytes": 5336,
         "css": [
           "briefs.css",
@@ -1099,7 +1100,7 @@
     {
       "route": "briefs/xiangshan-security-frames-defense-ties.html",
       "before": {
-        "html_css_bytes": 85263,
+        "html_css_bytes": 86334,
         "js_bytes": 5322,
         "css": [
           "briefs.css",
@@ -1133,7 +1134,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 90747,
+        "html_css_bytes": 91818,
         "js_bytes": 5336,
         "css": [
           "briefs.css",
@@ -1171,7 +1172,7 @@
     {
       "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
       "before": {
-        "html_css_bytes": 86644,
+        "html_css_bytes": 87715,
         "js_bytes": 5322,
         "css": [
           "briefs.css",
@@ -1208,7 +1209,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 92128,
+        "html_css_bytes": 93199,
         "js_bytes": 5336,
         "css": [
           "briefs.css",
@@ -1249,7 +1250,7 @@
     {
       "route": "briefs/what-is-being-built-in-laos.html",
       "before": {
-        "html_css_bytes": 83599,
+        "html_css_bytes": 84670,
         "js_bytes": 5322,
         "css": [
           "briefs.css",
@@ -1286,7 +1287,7 @@
         "external_assets": []
       },
       "after": {
-        "html_css_bytes": 89069,
+        "html_css_bytes": 90140,
         "js_bytes": 5336,
         "css": [
           "briefs.css",
@@ -1325,7 +1326,7 @@
       }
     }
   ],
-  "maximum_html_css": 94800,
+  "maximum_html_css": 95871,
   "maximum_js": 5336,
   "external_dependencies": [],
   "hub_javascript": {

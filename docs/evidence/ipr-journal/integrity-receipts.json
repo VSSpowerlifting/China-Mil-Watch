@@ -1,42 +1,13 @@
 {
-  "base": "3c4b79ffbb121ee9681ad7ef7333c61474fcb30b",
-  "main": "0ff01ac9ef6d49dec88d89e62ee9c6a70107fcba",
-  "gh_pages_at_start": "5b11822585eb8c367d19ed60a607a98dbfe1b9e6",
+  "base": "889ef3ed67e2984d8fbf6acce80f29e0fbc95a90",
+  "initial_task_base": "3c4b79ffbb121ee9681ad7ef7333c61474fcb30b",
+  "upstream_reconciliation": "Approved coastal identity and ordinary daily DB/output update inherited from current main; this PR changes neither.",
+  "presentation_delta": "Historical utility media-kind labels, plate fallback and adjacent-issue labels now reflect the existing governed historical renderer. Canonical prose, source trail, attribution, citation, original URLs and image src/alt remain exact.",
   "protected": [
-    {
-      "path": "pla_watch.db",
-      "baseline": "43d808baf73dcc7539f65cc272c06a1d10178509588d8078f938b7ac9ac93cf3",
-      "actual": "43d808baf73dcc7539f65cc272c06a1d10178509588d8078f938b7ac9ac93cf3",
-      "unchanged": true
-    },
-    {
-      "path": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.json",
-      "baseline": "5bdffde8b7a2915c48cdf48777052d31d9f444cf202c1de791bb02d7649e96f0",
-      "actual": "5bdffde8b7a2915c48cdf48777052d31d9f444cf202c1de791bb02d7649e96f0",
-      "unchanged": true
-    },
-    {
-      "path": "briefs/xiangshan-security-frames-defense-ties.json",
-      "baseline": "8413fea99a7306c6222721ab403b095c87ef931017e0bfb828284fb212329755",
-      "actual": "8413fea99a7306c6222721ab403b095c87ef931017e0bfb828284fb212329755",
-      "unchanged": true
-    },
-    {
-      "path": "briefs/what-is-being-built-in-laos.json",
-      "baseline": "f6df89548e65736222cf031e8a31b0888630c97b8a02685ad2dbb07c4b4f27d5",
-      "actual": "f6df89548e65736222cf031e8a31b0888630c97b8a02685ad2dbb07c4b4f27d5",
-      "unchanged": true
-    },
     {
       "path": "briefs/maritime-cooperation-2026.json",
       "baseline": "3a758a46c65e718b502b2bfa8374375846bff9f30ba86acc6d6a8db40f79acd4",
       "actual": "3a758a46c65e718b502b2bfa8374375846bff9f30ba86acc6d6a8db40f79acd4",
-      "unchanged": true
-    },
-    {
-      "path": "briefs/presentation/what-is-being-built-in-laos.json",
-      "baseline": "d62e44e0cf1d4996289c4accd2f086cd5801def32c515b8b95c1f9b8c2357318",
-      "actual": "d62e44e0cf1d4996289c4accd2f086cd5801def32c515b8b95c1f9b8c2357318",
       "unchanged": true
     },
     {
@@ -46,351 +17,29 @@
       "unchanged": true
     },
     {
-      "path": "output/the-pla-watch/posts/2026-05-23.json",
-      "baseline": "8d1097ba8bd059960a3f5bd7c4ce9c1f847bea633b8bdcb179434c65a018f481",
-      "actual": "8d1097ba8bd059960a3f5bd7c4ce9c1f847bea633b8bdcb179434c65a018f481",
+      "path": "briefs/presentation/what-is-being-built-in-laos.json",
+      "baseline": "d62e44e0cf1d4996289c4accd2f086cd5801def32c515b8b95c1f9b8c2357318",
+      "actual": "d62e44e0cf1d4996289c4accd2f086cd5801def32c515b8b95c1f9b8c2357318",
       "unchanged": true
     },
     {
-      "path": "output/the-pla-watch/posts/2026-08-01.json",
-      "baseline": "27ea7efd14b391864675e9a59437aa9369a08398f4752c40bb16aa4ca6046fe2",
-      "actual": "27ea7efd14b391864675e9a59437aa9369a08398f4752c40bb16aa4ca6046fe2",
+      "path": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.json",
+      "baseline": "5bdffde8b7a2915c48cdf48777052d31d9f444cf202c1de791bb02d7649e96f0",
+      "actual": "5bdffde8b7a2915c48cdf48777052d31d9f444cf202c1de791bb02d7649e96f0",
       "unchanged": true
     },
     {
-      "path": "output/the-pla-watch/posts/2026-07-04.json",
-      "baseline": "602736a535d4b12b8269e9e560d1f7f432c02cf40aebee5567419677a29fdf23",
-      "actual": "602736a535d4b12b8269e9e560d1f7f432c02cf40aebee5567419677a29fdf23",
+      "path": "briefs/what-is-being-built-in-laos.json",
+      "baseline": "f6df89548e65736222cf031e8a31b0888630c97b8a02685ad2dbb07c4b4f27d5",
+      "actual": "f6df89548e65736222cf031e8a31b0888630c97b8a02685ad2dbb07c4b4f27d5",
       "unchanged": true
     },
     {
-      "path": "output/the-pla-watch/posts/2026-06-13.json",
-      "baseline": "b5994720579711464dec51281060ccda2ab2c377940afc562561d9d7b2cbe2e8",
-      "actual": "b5994720579711464dec51281060ccda2ab2c377940afc562561d9d7b2cbe2e8",
+      "path": "briefs/xiangshan-security-frames-defense-ties.json",
+      "baseline": "8413fea99a7306c6222721ab403b095c87ef931017e0bfb828284fb212329755",
+      "actual": "8413fea99a7306c6222721ab403b095c87ef931017e0bfb828284fb212329755",
       "unchanged": true
     },
-    {
-      "path": "output/the-pla-watch/posts/2026-07-18.json",
-      "baseline": "960abd5ffc8a3e929af56afbef0a3e3251f95ff2db9aa893e0c9d1b5ed834b92",
-      "actual": "960abd5ffc8a3e929af56afbef0a3e3251f95ff2db9aa893e0c9d1b5ed834b92",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-05-09.json",
-      "baseline": "dfc4ea1dba216dbf24ffc65688484035f22a0e3b63818814d4678607328c7e2a",
-      "actual": "dfc4ea1dba216dbf24ffc65688484035f22a0e3b63818814d4678607328c7e2a",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-06-20.json",
-      "baseline": "67fc9ce93cbc2f9fbb5c9570363d7934d5037d3c1e126e09c7aa43d2f68facd0",
-      "actual": "67fc9ce93cbc2f9fbb5c9570363d7934d5037d3c1e126e09c7aa43d2f68facd0",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-05-30.json",
-      "baseline": "915e106c06e6164ef0aa07e1b60a7ba835c57268c0722ab67ccd4067822faec1",
-      "actual": "915e106c06e6164ef0aa07e1b60a7ba835c57268c0722ab67ccd4067822faec1",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-08-08.json",
-      "baseline": "5e8b37192f03eaeccd8edcdc4eae55071d75b676e8d28f5965ba510531369172",
-      "actual": "5e8b37192f03eaeccd8edcdc4eae55071d75b676e8d28f5965ba510531369172",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-07-11.json",
-      "baseline": "a1331531f22a849653e75d52b723f509f91dba8f817977897a833f6d028831dd",
-      "actual": "a1331531f22a849653e75d52b723f509f91dba8f817977897a833f6d028831dd",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-05-16.json",
-      "baseline": "49dd979a72f64a2197e4648d4dba12fb56a9a80e3b2fc60d5c983299d35dfb9b",
-      "actual": "49dd979a72f64a2197e4648d4dba12fb56a9a80e3b2fc60d5c983299d35dfb9b",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-06-06.json",
-      "baseline": "ae96bb0136ee5a886415f6c3775f850a0692776a76729c442da2ebc028465cad",
-      "actual": "ae96bb0136ee5a886415f6c3775f850a0692776a76729c442da2ebc028465cad",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-08-15.json",
-      "baseline": "abc90a088b7549c5d9a519f8b14387dab6fe61f4dd54a89255f8e0dceb00c22f",
-      "actual": "abc90a088b7549c5d9a519f8b14387dab6fe61f4dd54a89255f8e0dceb00c22f",
-      "unchanged": true
-    },
-    {
-      "path": "output/the-pla-watch/posts/2026-06-27.json",
-      "baseline": "c073d5f53cdba3d24c72f34cb4ececbbd6062895388ab6fe058b1925ae12772b",
-      "actual": "c073d5f53cdba3d24c72f34cb4ececbbd6062895388ab6fe058b1925ae12772b",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/reading-profile.svg",
-      "baseline": "17a9df7baf3c9f759694a334c2555b27864822275cce97cb00da1d89d1b4055e",
-      "actual": "17a9df7baf3c9f759694a334c2555b27864822275cce97cb00da1d89d1b4055e",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/PROFILE_RECEIPT.json",
-      "baseline": "3cda19bdc8f8e868639df15673cf0bab8e53e7d832bf1b6d09585d1050d6da83",
-      "actual": "3cda19bdc8f8e868639df15673cf0bab8e53e7d832bf1b6d09585d1050d6da83",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/coast-profile.svg",
-      "baseline": "a7c94c95c1667a75e9bdb63555128b12b71e37e60f3910544243e4976417c58e",
-      "actual": "a7c94c95c1667a75e9bdb63555128b12b71e37e60f3910544243e4976417c58e",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/chart-shelf.svg",
-      "baseline": "adb199c75d25c7222aa432d223116a8a52b25664d67f408320077aa828859fa0",
-      "actual": "adb199c75d25c7222aa432d223116a8a52b25664d67f408320077aa828859fa0",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/ASSET_RECEIPT.json",
-      "baseline": "cc8d4541ed1026d24bde11d02a669c06b80376d2a28db052ff2a3c4d8f609130",
-      "actual": "cc8d4541ed1026d24bde11d02a669c06b80376d2a28db052ff2a3c4d8f609130",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/NAVY_RECEIPT.json",
-      "baseline": "86a063ff2cc5a74041811084393a252fc3942fe189367978c25c4894f16f9630",
-      "actual": "86a063ff2cc5a74041811084393a252fc3942fe189367978c25c4894f16f9630",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/contours-paper.svg",
-      "baseline": "d1ba66e45ddf74c9efaa7597ea8881358c2898c3f4076908909986f8de9bd568",
-      "actual": "d1ba66e45ddf74c9efaa7597ea8881358c2898c3f4076908909986f8de9bd568",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/chart-paper.png",
-      "baseline": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
-      "actual": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/navy-paper.png",
-      "baseline": "6ad2d6aae126462f5917033bb7714a1af38802e4ef085cac352e4e81f3e065d4",
-      "actual": "6ad2d6aae126462f5917033bb7714a1af38802e4ef085cac352e4e81f3e065d4",
-      "unchanged": true
-    },
-    {
-      "path": "site/assets/material/contours-hero.svg",
-      "baseline": "9709749816d91d6b86cb8e70135dbb7d7c4c0d4150d4c31c3b437202e206e98c",
-      "actual": "9709749816d91d6b86cb8e70135dbb7d7c4c0d4150d4c31c3b437202e206e98c",
-      "unchanged": true
-    }
-  ],
-  "article_semantics": [
-    {
-      "route": "the-pla-watch/posts/2026-05-09.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-05-16.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-05-23.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-05-30.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-06-06.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-06-13.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-06-20.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-06-27.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-07-04.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-07-11.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-07-18.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-08-01.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-08-08.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "the-pla-watch/posts/2026-08-15.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "briefs/maritime-cooperation-2026.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "briefs/xiangshan-security-frames-defense-ties.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    },
-    {
-      "route": "briefs/what-is-being-built-in-laos.html",
-      "fields": {
-        ".brief-main": true,
-        ".brief-byline": true,
-        ".brief-hero figcaption": true,
-        "h1": true,
-        ".historical-provenance": true,
-        ".brief-meta": true
-      }
-    }
-  ],
-  "retained_media_fonts_feeds_sitemap": [
     {
       "path": "output/assets/editorial/chengdu-j20.jpg",
       "baseline": "b5aafffb3963ad52f51b239d4f3866c58b6952502a664a4bdc9c9ecc0ad771a4",
@@ -525,14 +174,104 @@
     },
     {
       "path": "output/sitemap.xml",
-      "baseline": "f297ea875e3f9b875737daea029e854fe162ba08cf5d1821acbf93e4f4bf7c9e",
-      "actual": "f297ea875e3f9b875737daea029e854fe162ba08cf5d1821acbf93e4f4bf7c9e",
+      "baseline": "52418f86009e5e10981d146f088361c78e56973f8562833ecef4386957e7509c",
+      "actual": "52418f86009e5e10981d146f088361c78e56973f8562833ecef4386957e7509c",
       "unchanged": true
     },
     {
       "path": "output/the-pla-watch/feed.xml",
       "baseline": "292aa49640724c671af5895e13eb710504e2eb16fd4f2d2ff08e9698c90d0b2c",
       "actual": "292aa49640724c671af5895e13eb710504e2eb16fd4f2d2ff08e9698c90d0b2c",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-09.json",
+      "baseline": "dfc4ea1dba216dbf24ffc65688484035f22a0e3b63818814d4678607328c7e2a",
+      "actual": "dfc4ea1dba216dbf24ffc65688484035f22a0e3b63818814d4678607328c7e2a",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-16.json",
+      "baseline": "49dd979a72f64a2197e4648d4dba12fb56a9a80e3b2fc60d5c983299d35dfb9b",
+      "actual": "49dd979a72f64a2197e4648d4dba12fb56a9a80e3b2fc60d5c983299d35dfb9b",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-23.json",
+      "baseline": "8d1097ba8bd059960a3f5bd7c4ce9c1f847bea633b8bdcb179434c65a018f481",
+      "actual": "8d1097ba8bd059960a3f5bd7c4ce9c1f847bea633b8bdcb179434c65a018f481",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-30.json",
+      "baseline": "915e106c06e6164ef0aa07e1b60a7ba835c57268c0722ab67ccd4067822faec1",
+      "actual": "915e106c06e6164ef0aa07e1b60a7ba835c57268c0722ab67ccd4067822faec1",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-06.json",
+      "baseline": "ae96bb0136ee5a886415f6c3775f850a0692776a76729c442da2ebc028465cad",
+      "actual": "ae96bb0136ee5a886415f6c3775f850a0692776a76729c442da2ebc028465cad",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-13.json",
+      "baseline": "b5994720579711464dec51281060ccda2ab2c377940afc562561d9d7b2cbe2e8",
+      "actual": "b5994720579711464dec51281060ccda2ab2c377940afc562561d9d7b2cbe2e8",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-20.json",
+      "baseline": "67fc9ce93cbc2f9fbb5c9570363d7934d5037d3c1e126e09c7aa43d2f68facd0",
+      "actual": "67fc9ce93cbc2f9fbb5c9570363d7934d5037d3c1e126e09c7aa43d2f68facd0",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-27.json",
+      "baseline": "c073d5f53cdba3d24c72f34cb4ececbbd6062895388ab6fe058b1925ae12772b",
+      "actual": "c073d5f53cdba3d24c72f34cb4ececbbd6062895388ab6fe058b1925ae12772b",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-07-04.json",
+      "baseline": "602736a535d4b12b8269e9e560d1f7f432c02cf40aebee5567419677a29fdf23",
+      "actual": "602736a535d4b12b8269e9e560d1f7f432c02cf40aebee5567419677a29fdf23",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-07-11.json",
+      "baseline": "a1331531f22a849653e75d52b723f509f91dba8f817977897a833f6d028831dd",
+      "actual": "a1331531f22a849653e75d52b723f509f91dba8f817977897a833f6d028831dd",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-07-18.json",
+      "baseline": "960abd5ffc8a3e929af56afbef0a3e3251f95ff2db9aa893e0c9d1b5ed834b92",
+      "actual": "960abd5ffc8a3e929af56afbef0a3e3251f95ff2db9aa893e0c9d1b5ed834b92",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-08-01.json",
+      "baseline": "27ea7efd14b391864675e9a59437aa9369a08398f4752c40bb16aa4ca6046fe2",
+      "actual": "27ea7efd14b391864675e9a59437aa9369a08398f4752c40bb16aa4ca6046fe2",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-08-08.json",
+      "baseline": "5e8b37192f03eaeccd8edcdc4eae55071d75b676e8d28f5965ba510531369172",
+      "actual": "5e8b37192f03eaeccd8edcdc4eae55071d75b676e8d28f5965ba510531369172",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-08-15.json",
+      "baseline": "abc90a088b7549c5d9a519f8b14387dab6fe61f4dd54a89255f8e0dceb00c22f",
+      "actual": "abc90a088b7549c5d9a519f8b14387dab6fe61f4dd54a89255f8e0dceb00c22f",
+      "unchanged": true
+    },
+    {
+      "path": "pla_watch.db",
+      "baseline": "650598bf22d858c9240b5e7cc03a38b31459dcea72da4215cff31dd68410bfeb",
+      "actual": "650598bf22d858c9240b5e7cc03a38b31459dcea72da4215cff31dd68410bfeb",
       "unchanged": true
     },
     {
@@ -888,6 +627,322 @@
       "baseline": "5f94c3fd3a23131a417ab5a0c8452de57e70c3cfb9f604d88241f7065ebf9fd9",
       "actual": "5f94c3fd3a23131a417ab5a0c8452de57e70c3cfb9f604d88241f7065ebf9fd9",
       "unchanged": true
+    },
+    {
+      "path": "site/assets/material/ASSET_RECEIPT.json",
+      "baseline": "cc8d4541ed1026d24bde11d02a669c06b80376d2a28db052ff2a3c4d8f609130",
+      "actual": "cc8d4541ed1026d24bde11d02a669c06b80376d2a28db052ff2a3c4d8f609130",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/NAVY_RECEIPT.json",
+      "baseline": "86a063ff2cc5a74041811084393a252fc3942fe189367978c25c4894f16f9630",
+      "actual": "86a063ff2cc5a74041811084393a252fc3942fe189367978c25c4894f16f9630",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/PROFILE_RECEIPT.json",
+      "baseline": "3cda19bdc8f8e868639df15673cf0bab8e53e7d832bf1b6d09585d1050d6da83",
+      "actual": "3cda19bdc8f8e868639df15673cf0bab8e53e7d832bf1b6d09585d1050d6da83",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/chart-paper.png",
+      "baseline": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
+      "actual": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/chart-shelf.svg",
+      "baseline": "adb199c75d25c7222aa432d223116a8a52b25664d67f408320077aa828859fa0",
+      "actual": "adb199c75d25c7222aa432d223116a8a52b25664d67f408320077aa828859fa0",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/coast-profile.svg",
+      "baseline": "a7c94c95c1667a75e9bdb63555128b12b71e37e60f3910544243e4976417c58e",
+      "actual": "a7c94c95c1667a75e9bdb63555128b12b71e37e60f3910544243e4976417c58e",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/contours-hero.svg",
+      "baseline": "9709749816d91d6b86cb8e70135dbb7d7c4c0d4150d4c31c3b437202e206e98c",
+      "actual": "9709749816d91d6b86cb8e70135dbb7d7c4c0d4150d4c31c3b437202e206e98c",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/contours-paper.svg",
+      "baseline": "d1ba66e45ddf74c9efaa7597ea8881358c2898c3f4076908909986f8de9bd568",
+      "actual": "d1ba66e45ddf74c9efaa7597ea8881358c2898c3f4076908909986f8de9bd568",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/navy-paper.png",
+      "baseline": "6ad2d6aae126462f5917033bb7714a1af38802e4ef085cac352e4e81f3e065d4",
+      "actual": "6ad2d6aae126462f5917033bb7714a1af38802e4ef085cac352e4e81f3e065d4",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/reading-profile.svg",
+      "baseline": "17a9df7baf3c9f759694a334c2555b27864822275cce97cb00da1d89d1b4055e",
+      "actual": "17a9df7baf3c9f759694a334c2555b27864822275cce97cb00da1d89d1b4055e",
+      "unchanged": true
+    }
+  ],
+  "article_semantics": [
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "fields": {
+        ".historical-section": true,
+        ".brief-signal": true,
+        "#s-snapshot": true,
+        "#s-sources": true,
+        ".historical-author": true,
+        "#s-cite": true,
+        ".brief-byline": true,
+        "h1": true,
+        ".historical-provenance": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".brief-meta": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".brief-meta": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".brief-meta": true,
+        "hero_image_src_and_alt": true
+      }
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".brief-meta": true,
+        "hero_image_src_and_alt": true
+      }
     }
   ]
 }

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Browser receipts for every Brief; serves local trees, never publishes them."""
 import argparse
+import base64
 from contextlib import contextmanager
 import functools
 import http.server
@@ -62,6 +63,19 @@ def inspect(page):
 
 def position(page, selector):
     page.locator(selector).first.evaluate('(n)=>scrollTo(0,n.getBoundingClientRect().top+scrollY-140)')
+
+
+def capture(page, path):
+    """Wait for fonts, image decoding and a painted frame before review capture."""
+    page.wait_for_load_state('networkidle')
+    page.evaluate('''async () => {
+      await document.fonts.ready;
+      await Promise.all([...document.images].filter(i=>i.loading!=='lazy')
+        .map(i=>i.decode()));
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      await Promise.all(document.getAnimations().map(a=>a.finished.catch(()=>{})));
+    }''')
+    page.screenshot(path=str(path))
 
 
 def verify(root, baseline, out, fixture_root=None):
@@ -172,25 +186,25 @@ def verify(root, baseline, out, fixture_root=None):
                     for name, (route, selector) in REPRESENTATIVES.items():
                         page.goto(base + route)
                         position(page, selector)
-                        page.screenshot(path=str(out / ('%s-%s-%s.png' % (name, phase, device))))
+                        capture(page, out / ('%s-%s-%s.png' % (name, phase, device)))
                     route = REPRESENTATIVES['laos'][0]
                     for part, selector in (('mid', '#reading-aviation'), ('references', '#s-publishers')):
                         page.goto(base + route)
                         position(page, selector)
-                        page.screenshot(path=str(out / ('laos-%s-%s-%s.png' % (part, phase, device))))
+                        capture(page, out / ('laos-%s-%s-%s.png' % (part, phase, device)))
                     page.goto(base + REPRESENTATIVES['native'][0])
                     position(page, '#s-sources')
-                    page.screenshot(path=str(out / ('native-sources-%s-%s.png' % (phase, device))))
+                    capture(page, out / ('native-sources-%s-%s.png' % (phase, device)))
                     page.goto(base + REPRESENTATIVES['laos'][0])
-                    page.screenshot(path=str(out / ('laos-hero-%s-%s.png' % (phase, device))))
+                    capture(page, out / ('laos-hero-%s-%s.png' % (phase, device)))
 
         page.set_viewport_size({'width': 1280, 'height': 900})
         page.goto(url + REPRESENTATIVES['laos'][0])
         position(page, '#reading-finding')
         page.emulate_media(forced_colors='active')
-        page.screenshot(path=str(out / 'laos-forced-colors.png'))
+        capture(page, out / 'laos-forced-colors.png')
         page.emulate_media(forced_colors='none', media='print')
-        page.screenshot(path=str(out / 'laos-print.png'))
+        capture(page, out / 'laos-print.png')
         page.pdf(path=str(out / 'laos-print.pdf'), format='A4', print_background=False)
         page.emulate_media(media='screen')
 
@@ -208,7 +222,7 @@ def verify(root, baseline, out, fixture_root=None):
                         receipts.append(dict(data, route=route, profile='future', width=width))
                         if width in (375, 1280):
                             position(page, '.brief-main')
-                            page.screenshot(path=str(out / ('%s-%d.png' % (fixture.stem, width))))
+                            capture(page, out / ('%s-%d.png' % (fixture.stem, width)))
         browser.close()
         # Use Chromium's own setting in an isolated, disposable profile. This is
         # actual desktop browser zoom, not device scale or visual/pinch zoom.
@@ -227,7 +241,11 @@ def verify(root, baseline, out, fixture_root=None):
                 receipts.append(dict(data, route=route, profile='browser-200-percent', metrics=metrics))
                 if route == REPRESENTATIVES['laos'][0]:
                     position(page, '#reading-finding')
-                    page.screenshot(path=str(out / 'laos-browser-200-percent.png'))
+                    # Chromium's surface capture misplaces content at actual
+                    # browser zoom. Capture the browser viewport compositor.
+                    shot = zoom.new_cdp_session(page).send('Page.captureScreenshot',
+                        {'captureBeyondViewport': False, 'fromSurface': False})
+                    (out / 'laos-browser-200-percent.png').write_bytes(base64.b64decode(shot['data']))
             zoom.close()
     report = {'chromium': version, 'widths': WIDTHS, 'routes': len(routes),
               'checks': len(receipts), 'receipts': receipts, 'failures': failures,
