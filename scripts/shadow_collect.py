@@ -202,15 +202,20 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         entry.update(result=st.AUTH_FAILURE, health="fail",
                      error_detail="%d item(s) returned HTTP 403"
                                   % entry["access_failures"])
-    elif entry["fetch_failures"] and not entry["inserted"] \
-            and not entry["duplicates"]:
+    elif entry["fetch_failures"]:
+        # A successful duplicate or insertion must not conceal another
+        # selected document's fetch failure. Do not qualify an incomplete
+        # scheduled slot as healthy; the ledger still preserves both counts.
         entry.update(result=st.FETCH_FAILURE, health="fail",
-                     error_detail="%d selected item(s) could not be retrieved"
-                                  % entry["fetch_failures"])
-    elif entry["extraction_failures"] and not entry["inserted"] \
-            and not entry["duplicates"]:
+                     error_detail="%d of %d selected item(s) could not be retrieved"
+                                  % (entry["fetch_failures"], entry["selected"]))
+    elif entry["extraction_failures"]:
+        # E.g. 2026-10-13: 33 duplicate originals plus one unparsed release
+        # were incorrectly classified OK_ALL_DUPLICATES, health=ok. Partial
+        # extraction is neither a complete duplicate day nor source silence.
         entry.update(result=st.EXTRACTION_FAILURE, health="fail",
-                     error_detail="every selected item failed extraction")
+                     error_detail="%d of %d retrieved item(s) failed extraction"
+                                  % (entry["extraction_failures"], entry["retrieved"]))
     elif entry["inserted"]:
         entry.update(result=st.OK, health="ok")
     elif entry["duplicates"]:
