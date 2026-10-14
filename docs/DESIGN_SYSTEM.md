@@ -92,7 +92,12 @@ and distinct glyphs. Editorial trail membership and machine processing state
 remain different labels, not identical green success badges. Existing SVG
 flagged ticks stay taller than ordinary ticks. Meaning survives grayscale.
 `--crimson*` and `--signal*` are removed from active CSS; there are no temporary
-compatibility aliases. A `.brief-signal` is human analysis, not machine output.
+compatibility aliases. A `.brief-signal` is human analysis, not machine output. As independently
+approved in unified Briefs PR #567, the Briefs-specific Signal and central-finding
+rules and labels use the structural turquoise `--accent` / `--accent-ink` rather
+than jade. Human-analysis provenance, trail and custody roles elsewhere retain
+`--editorial-ink`; machine processing retains slate-blue. This is a semantic
+component distinction, not an exception allowing red accents.
 
 ### Paper Ledger tokens (`site/templates/base.html` — legacy rollback renderer)
 
