@@ -4,6 +4,7 @@ on:
     branches: [editorial/briefs-photo-wave11-no01-admission-20261014]
     paths:
       - .github/workflows/temp_wave11_photo_review.yml
+      - scripts/stage_briefs_photo_wave11_no01.py
 permissions:
   contents: write
 jobs:
