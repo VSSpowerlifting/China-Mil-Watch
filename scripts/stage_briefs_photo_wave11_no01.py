@@ -57,7 +57,7 @@ def main():
       date_note="June 2018. Wikimedia camera date June 27; supplied prose caption describes June 28. This image is not from 2026.",
       creator=CREATOR,creator_native="",creator_native_lang="",
       license="Public domain",license_url="",source_page=SOURCE_URL,source_label="Wikimedia Commons",
-      credit=CREATOR+" · Public domain (U.S. military official-duty photograph) · via Wikimedia Commons",
+      credit=CREATOR+" · Public domain · via Wikimedia Commons",
       notice=NOTICE,depicts="context")
     manifest.append(dict(
       id=ID,file=SOURCE.name,width=5880,height=3925,sha256=sha256_file(SOURCE),
