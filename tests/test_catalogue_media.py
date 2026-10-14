@@ -28,10 +28,10 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {2, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18}
+PHOTO_ISSUES = {2, 3, 4, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
-SOURCE_HOSTS = {2: "https://commons.wikimedia.org/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/", 11: "https://commons.wikimedia.org/",
+SOURCE_HOSTS = {2: "https://commons.wikimedia.org/", 3: "https://www.dvidshub.net/", 4: "https://www.dvidshub.net/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/", 11: "https://commons.wikimedia.org/",
                 13: "https://commons.wikimedia.org/",
                 14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/", 16: "https://www.dvidshub.net/",
                 17: "https://www.dvidshub.net/image/",
@@ -364,6 +364,24 @@ class CommittedRecordTests(unittest.TestCase):
         self.assertEqual(self.manifest[row["source_manifest_id"]]["source_fingerprint"]["sha1"],
                          "324f2d3bfb165161e988cec274a2df2e7acd160c")
         self.assertEqual(next(a for a in self.audit if a["issue"] == 11)["kind"], "photograph")
+
+    def test_wave8_institutional_photographs_are_not_may2026_events(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        three, four = by_issue[3], by_issue[4]
+        from core.source_terms import required_notice
+        self.assertIn("2015", three["caption"])
+        self.assertIn("PLA and U.S. Army", three["caption"])
+        self.assertIn("not a photograph", three["caption"])
+        self.assertIn("May 2026", three["caption"])
+        self.assertIn("Li Zuocheng", four["caption"])
+        self.assertIn("2019", four["caption"])
+        self.assertIn("not the May 2026", four["caption"])
+        self.assertIn("electronic-warfare incident", four["caption"])
+        self.assertEqual(three["notice"], required_notice(three))
+        self.assertEqual(four["notice"], required_notice(four))
+        self.assertNotEqual(three["source_page"], four["source_page"])
+        self.assertEqual(next(a for a in self.audit if a["issue"] == 3)["kind"], "photograph")
+        self.assertEqual(next(a for a in self.audit if a["issue"] == 4)["kind"], "photograph")
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:

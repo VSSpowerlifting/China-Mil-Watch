@@ -713,5 +713,93 @@
     "source_label": "Wikimedia Commons",
     "notice": "",
     "depicts": "context"
+  },
+  {
+    "id": "pla-disaster-exchange-hainan-2015",
+    "file": "pla-disaster-exchange-hainan-2015.jpg",
+    "width": 1000,
+    "height": 664,
+    "sha256": "39c458e179c44d244c190874be3fcfbba84860a2acdf8b4dacae1730882d7b6b",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/1501/1745480/1000w_q95.jpg",
+    "origin_reference": "https://www.dvidshub.net/image/1745480/us-army-soldiers-work-with-pla-soldiers",
+    "source_fingerprint": {
+      "sha1": "b13a640c0ace9d92ab6cc87e7ce4ee908e20dc3b",
+      "sha256": "39c458e179c44d244c190874be3fcfbba84860a2acdf8b4dacae1730882d7b6b"
+    },
+    "license_basis": "U.S. Army/Navy official-duty public domain per original DVIDS photo; publisher 1000w JPEG preview, not 3216x2136 full image. DVIDS non-endorsement notice observed.",
+    "note": "Public-domain U.S. Army image of Chinese PLA in 2015 hands-on training; NOT a picture of 2026 PLA implementation or reform.",
+    "focal": "46% 52%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/pla-disaster-exchange-hainan-2015-1600.jpg",
+        "width": 1000,
+        "height": 664,
+        "sha256": "a9fc64293684c4bb92204d36a05414d3e543af82b38b3fa1f06f85a1b2197668"
+      }
+    ],
+    "alt": "Chinese PLA personnel and U.S. Army soldiers construct a simulated disaster-response camp in Hainan, China, in 2015.",
+    "caption": "PLA and U.S. Army personnel set up an evacuation camp during a 2015 disaster-response field exercise in Hainan. Historical hands-on military training, not a photograph or assessment of May 2026 PLA institutional reforms.",
+    "date_note": "Photographed 18 January 2015, not during the May 2026 reporting week.",
+    "creator": "Maj. Lindsey Elder, U.S. Army Pacific",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_label": "DVIDS",
+    "source_page": "https://www.dvidshub.net/image/1745480/us-army-soldiers-work-with-pla-soldiers",
+    "credit": "Maj. Lindsey Elder, U.S. Army Pacific · Public domain · via DVIDS",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "li-zuocheng-cmc-beijing-2019",
+    "file": "li-zuocheng-cmc-beijing-2019.jpg",
+    "width": 1000,
+    "height": 666,
+    "sha256": "9e1b38f56b696e07e4020f1ec0832255b9b38e0a123ed43c038d82cce6e22c23",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/1901/5031280/1000w_q95.jpg",
+    "origin_reference": "https://www.dvidshub.net/image/5031280/cno-meets-with-chief-staff-joint-staff-department-under-chinas-central-military-commission-gen-li-zuocheng",
+    "source_fingerprint": {
+      "sha1": "b0b2f1824ca2094b044ace9b102bca0e8da6ef06",
+      "sha256": "9e1b38f56b696e07e4020f1ec0832255b9b38e0a123ed43c038d82cce6e22c23"
+    },
+    "license_basis": "U.S. Army/Navy official-duty public domain per original DVIDS photo; publisher 1000w JPEG preview, not 4000x2662 full image. DVIDS non-endorsement notice observed.",
+    "note": "Authentic named Chinese CMC Joint Staff chief in a 2019 U.S.-China meeting, NOT the 2026 oversight directive or claimed electronic jamming.",
+    "focal": "60% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/li-zuocheng-cmc-beijing-2019-1600.jpg",
+        "width": 1000,
+        "height": 666,
+        "sha256": "cf0514483c1628a4a4d39db9e7e59afd77943c17dbab5ba79123a7b397724b54"
+      }
+    ],
+    "alt": "General Li Zuocheng of China's Central Military Commission sits with Chinese military officers at a Beijing meeting in January 2019.",
+    "caption": "Gen. Li Zuocheng, then chief of staff of China's CMC Joint Staff Department, at a Beijing meeting with U.S. naval leaders in January 2019. Historical CMC leadership context, not the May 2026 senior-officer directive or electronic-warfare incident.",
+    "date_note": "Photographed 15 January 2019, seven years before this Brief's reporting period.",
+    "creator": "Chief Petty Officer Elliott Fabrizio, U.S. Navy",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_label": "DVIDS",
+    "source_page": "https://www.dvidshub.net/image/5031280/cno-meets-with-chief-staff-joint-staff-department-under-chinas-central-military-commission-gen-li-zuocheng",
+    "credit": "Chief Petty Officer Elliott Fabrizio, U.S. Navy · Public domain · via DVIDS",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
   }
 ]
