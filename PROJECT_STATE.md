@@ -22,7 +22,7 @@ tracked output changes in cleanup. Initial exact-head Linux CI passed
 by a public-Laos integration test and documentation refresh requiring renewed
 CI. No merge or deployment authorized.
 
-**Brief reading architecture (#561 and Laos release #565 merged 14 October 2026):**
+**Brief reading architecture (#561, Laos release #565 and unification #567 merged 14 October 2026):**
 The source components are integrated in main. PR #565 separately approved the
 exact five-section, paragraph-10 finding presentation for Laos No. 18 and
 committed its structured public article output. This replaces the previous
