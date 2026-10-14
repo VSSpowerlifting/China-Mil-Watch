@@ -1,14 +1,11 @@
 # Design System — Indo-Pacific Record / The PLA Watch
 
-Durable doctrine. The Night Desk tokens below are the live values in
-`site/templates/pla-watch-base.html`. The Paper Ledger table in §3 describes
-`site/templates/base.html`, which is the **legacy rollback renderer** — the
-live record site is rendered by `site/preview/generate_preview.py` and its
-tokens are in `site/preview/styles.css`. The October implementation candidate
-uses the reviewed warm paper, turquoise identity and photograph-led direction;
-its exact source and verification are in `docs/FRONTEND_PRODUCTION_2026-10-09.md`. That distinction is recorded in §3 rather than papered over. If a
-template and this document disagree, reconcile deliberately — do not silently
-fork.
+Durable doctrine. Active IPR tokens live in `site/preview/styles.css`; current
+historical articles share that shell. The earlier Night Desk and Paper Ledger
+tables are retained as rollback/history references. The 2026-10-14 coastal
+ruling in §3 governs active colour representation; the October photograph-led
+direction and source/route verification remain in
+`docs/FRONTEND_PRODUCTION_2026-10-09.md`.
 Motion and flagship visual components: docs/VISUAL_AND_MOTION_SYSTEM.md.
 
 ## October implementation candidate
@@ -18,8 +15,9 @@ visual target for the current frontend. It supersedes the older record-site
 compass, masked Ocean Signal, six-record opening and display/metadata typography
 rules below. Current display is Instrument Serif, UI is Inter, longform reading
 is Source Serif 4 and hashes/IDs use system monospace. Selected turquoise `ipr`
-artwork and natural photographs are the identity direction. Historical weekly
-surfaces retain their original doctrine. Source/route CSS and verification are
+artwork and natural photographs are the identity direction. Historical manuscripts
+and provenance retain their original identity; current article chrome follows the
+IPR shell and the coastal ruling in §3. Source/route CSS and verification are
 specified in `FRONTEND_PRODUCTION_2026-10-09.md`; this records implementation
 scope, not merge, deployment or timeline editorial approval.
 
@@ -59,8 +57,9 @@ Two expressions of one publication, distinguished by editorial function:
 - **Night Desk (dark)** — *the analysis*. All `the-pla-watch/` routes:
   editions, PW index/archive, Terms. Focused and deliberate, not cinematic.
 
-Shared DNA that makes them one publication: identical type stack, one crimson
-signal family, mono for metadata (the masthead kicker, issue numerals, hashes
+Shared DNA that makes them one publication: identical type stack, shared editorial
+and machine semantic families, mono for metadata (the masthead kicker, issue
+numerals, hashes
 and ids), 2px radius, the same ease curve and motion primitives, the same
 footer honesty language. Since 2026-09-27 the record surfaces set their
 labels in the interface sans, sentence case, each marked by a short rule in
@@ -69,6 +68,48 @@ latest-edition band is the sanctioned crossover: Night Desk material embedded
 in the Ledger. The inverse (light panels inside PW pages) is limited to print.
 
 ## 3. Color doctrine
+
+### Coastal identity — owner-directed supersession, 2026-10-14
+
+The active IPR shell, including historical opened articles, now uses navy,
+turquoise, jade, slate-blue and ivory. This supersedes the crimson/rust meaning
+rules below and the obsolete historical chrome descriptions; original publication
+identity remains in provenance and citations. Rollback templates, original
+source documents, photographs and national flags are excluded.
+
+| Semantic token | Final value | Purpose |
+|---|---|---|
+| `--editorial-ink` / `--editorial-rule` | #23665B | human analysis labels and solid rules on paper |
+| `--editorial-on-dark` | #92D5CC | editorial edge or label on navy |
+| `--editorial-tint` | `--accent-tint` (#E1EEEA) | restrained analysis trail tag |
+| `--machine-ink` / `--machine-rule` | #446C79 | machine processing labels, dotted rules, square custody marker |
+| `--machine-on-dark` | #AACFD0 | machine labels and tall model-flagged SVG ticks on navy |
+| `--machine-tint` | #E7EEF0 | machine processing state ground |
+| `--visited` | #365F68 | muted blue-teal visited links on paper |
+
+Deep navy #142E38, turquoise #176C6C, ivory #F3F2EC, raised paper #FAFBF7,
+body/rule neutrals, positive #1C6450 and warning #87511A are preserved. Warm
+tan #C6B79B is a decorative option on dark, not a required new accent. The
+machine candidate #456D7A measured 4.46:1 on #DDE7E3; the final #446C79 measures
+4.53:1 there. Editorial ink measures at least 5.32:1 on the four light grounds;
+the two pale semantic tones exceed 8.4:1 on navy and must not be ordinary paper
+text. Print uses white hero grounds, black text/buttons and black semantic
+label markers, with button transitions disabled for immediate legibility.
+Inventory and measured pairs: `evidence/coastal-identity-2026-10-14/README.md`.
+
+Source evidence stays neutral. Machine output retains descriptive labels and
+uses dotted label rules and square custody markers; human analysis uses solid
+rules and a horizontal custody mark. Live/blocked statuses retain their words
+and distinct glyphs. Editorial trail membership and machine processing state
+remain different labels, not identical green success badges. Existing SVG
+flagged ticks stay taller than ordinary ticks. Meaning survives grayscale.
+`--crimson*` and `--signal*` are removed from active CSS; there are no temporary
+compatibility aliases. A `.brief-signal` is human analysis, not machine output. As independently
+approved in unified Briefs PR #567, the Briefs-specific Signal and central-finding
+rules and labels use the structural turquoise `--accent` / `--accent-ink` rather
+than jade. Human-analysis provenance, trail and custody roles elsewhere retain
+`--editorial-ink`; machine processing retains slate-blue. This is a semantic
+component distinction, not an exception allowing red accents.
 
 ### Paper Ledger tokens (`site/templates/base.html` — legacy rollback renderer)
 
@@ -90,7 +131,7 @@ surface is `site/preview/styles.css`, below.
 | `--signal-tint` | #F5E7E4 | signal panel background (analyst readout) |
 | `--signal-line` | #D9A9A3 | signal borders |
 
-### Night Desk tokens (pla-watch-base.html)
+### Night Desk tokens (legacy rollback/reference: pla-watch-base.html)
 | Token | Value | Role |
 |---|---|---|
 | `--color-bg` | #0E1520 | ink-navy page ground |
@@ -108,7 +149,7 @@ surface is `site/preview/styles.css`, below.
 The crimson differs by surface on purpose (#A31626 on paper, #B3132B/#D8354C
 on navy) — same family, tuned for contrast. Do not unify them numerically.
 
-### Live record-site tokens (`site/preview/styles.css`)
+### Earlier record-site tokens (snapshot; superseded by coastal tokens above)
 | Token | Value | Role |
 |---|---|---|
 | `--bg` | #F3F2EC | warm page ground |
@@ -130,7 +171,7 @@ on navy) — same family, tuned for contrast. Do not unify them numerically.
 Legacy names (`--paper`, `--graphite`, `--ocean`, `--text-muted` …) remain as
 aliases onto these tokens — one place a colour is decided, two names for it.
 
-### Meaning rules
+### Prior meaning rules (superseded for active UI on 2026-10-14)
 - **Crimson = the analysis layer.** On Night Desk: editorial emphasis, the
   historical series rule, and primary actions on dark. On the live Paper
   Ledger (since 2026-09-27): the label and rule that mark the
@@ -350,7 +391,7 @@ One canonical mark, several derivatives, documented in full in
 
 - Semantic landmarks (`header/nav/main/footer`), one h1 per page, ordered
   headings; sections labeled via aria where headings are visual-only.
-- `:focus-visible` outlines: 2px signal (light) / signal-bright (dark) —
+- `:focus-visible` outlines: 2px `--focus` (light) / `--focus-band` (dark) —
   already implemented; never remove.
 - Keyboard: all interactive elements reachable; disclosure controls real
   `<button>`/`<details>`; no click-only divs.

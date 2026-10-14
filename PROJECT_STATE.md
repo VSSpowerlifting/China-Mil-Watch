@@ -2,8 +2,9 @@
 
 **Brief editorial journal (14 October 2026, owner-review candidate):**
 `codex/ipr-editorial-design-system-20261014` builds on verified main
-`3799e78a833715741b2a4b3e9abe4a376f8a1407` (PR #567 merged; dependency CI
-`38593731223` passed). All 18 Briefs and future native/source-linked articles
+`889ef3ed67e2984d8fbf6acce80f29e0fbc95a90` after reconciliation of the approved
+coastal palette and normal daily update. PR #567 is the navigation prerequisite
+(merge `3799e78a83`, dependency CI `38593731223` passed). All 18 Briefs and future native/source-linked articles
 share a clean paper folio, sea-glass editorial/source objects, section rhythm,
 responsive reading navigation and print/forced-color fallbacks. Historical
 inline presentation is consolidated into the shared stylesheet; native and
@@ -16,6 +17,41 @@ Laos presentation remains authoritative. Implementation/limits/release scope:
 receipts: `docs/evidence/ipr-journal/README.md`. The reviewed candidate requires
 owner visual review and successful exact-head CI before any landing decision;
 no merge or deployment is authorized by this task.
+
+**Coastal visual identity (14 October 2026, owner-review candidate):**
+`codex/coastal-visual-identity` starts at exact latest main
+`216dfbb8babc6a0d4d711494c7787a29f84e201e` (#561 merged). Active IPR CSS and edition
+SVG now use jade for human analysis and slate-blue for machine output, with
+surface-specific text and non-colour cues. Navy, turquoise, ivory, original
+photographs/flags and warning/positive semantics are retained. Evidence, contrast,
+comparison captures and verification: `docs/evidence/coastal-identity-2026-10-14/README.md`.
+PR #566 is ready for review. Pre-merge cleanup retains 33 representative images
+(7.3 MB, down 88.8% from 65.4 MB) with full-capture reproduction and receipts.
+The two intro checks pass three repetitions each on base and candidate;
+separate scheduling negative controls reproduce both timing paths on both.
+No intro regression is demonstrated or behaviour changed. The existing desktop
+print credit/finder overlap is 9px on both revisions; the URL itself wraps.
+Focused integration (110 tests), contrast and validator rechecks are recorded in
+the evidence index. Original full-run 21 macOS store errors and two intro timing
+findings remain disclosed; no safeguards are weakened. No canonical Brief,
+approval, media admission, database, collector, stylesheet, typography/layout or
+tracked output changes in cleanup. Initial exact-head Linux CI passed
+(6,255 tests, nine skips; output validator and preservation checks), followed
+by a public-Laos integration test and documentation refresh requiring renewed
+CI. No merge or deployment authorized.
+
+**Brief reading architecture (#561, Laos release #565 and unification #567 merged 14 October 2026):**
+The source components are integrated in main. PR #565 separately approved the
+exact five-section, paragraph-10 finding presentation for Laos No. 18 and
+committed its structured public article output. This replaces the previous
+draft/private-only state. The independent exact-content approval is bound to
+the presentation fingerprint; the original canonical manuscript is unchanged. Canonical Laos editorial fingerprint remains
+`3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57`.
+Contract: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`; original receipts:
+`docs/evidence/briefs-editorial-v2/README.md`. Earlier coastal screenshots
+compared the public fallback with the private candidate before PR #565 merged;
+they are historical design evidence, not a substitute for final merged-main
+verification of the approved structured article.
 
 **Current operational snapshot and handoff. Desk statuses checked 2026-09-28
 against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
