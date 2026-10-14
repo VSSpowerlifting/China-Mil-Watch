@@ -9,7 +9,7 @@ collector or database change. Laos's v2 manifest is still draft/private-only.
 
 | Previous paint | Active consumers / meaning | Replacement | Contrast / exception |
 |---|---|---|---|
-| `--crimson`, `--crimson-ink` | shared analysis labels, trail tags/panels, record custody, Brief signal and v2 finding | `--editorial-ink` #23665B; solid rules | 5.32–6.47 on light grounds |
+| `--crimson`, `--crimson-ink` | analysis labels, trails, record custody, plus Brief signal/finding in the original capture | `--editorial-ink` #23665B on analysis surfaces; PR #567 subsequently established turquoise for Brief Signal/finding | Jade 5.32–6.47 on light grounds |
 | `--crimson-tint`, `--crimson-rule` | analysis source-trail tag | sea glass via `--editorial-tint`; ink via `--editorial-rule` | tag text 5.64; border >3 |
 | `--crimson-text`, `--crimson-mark` | unused lifted legacy declarations | removed; `--editorial-on-dark` #92D5CC | 8.54 on navy |
 | crimson edge in `relief.css`, `home.css` | navy human analysis plane | `--editorial-on-dark` | decorative edge, not a status |
@@ -113,6 +113,12 @@ The exact original rasters also remain recoverable from starting commit
 This cleanup reduces the current tree/PR diff, not historical Git object storage;
 branch history is not rewritten. Scripts and receipts provide durable reproduction
 rather than claiming that uncommitted files are bundled in the current tree.
+
+PR #567 then unified Briefs navigation and standardized the Signal and central-
+finding accents on turquoise (`--accent`, `--accent-ink`). Original native/finding
+component crops in this index predate that approved Briefs decision and are
+historical palette comparisons, not proof of the new merged presentation.
+A final integrated screenshot and CI pass must cover the current public layout.
 
 At the original screenshot-capture base, public Laos used the fallback and its
 v2 structure appeared only in a private candidate. PR #565 subsequently
