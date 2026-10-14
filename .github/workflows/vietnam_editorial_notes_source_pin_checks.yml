@@ -1,0 +1,125 @@
+name: Vietnam Sunday Notes — Real-State, No-Model Source Check
+
+# A draft PR may safely run this: only unapproved independent synopses enter
+# temporary memory/disk; no model, SMTP, artifacts, source-body copies or writes.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'research/vietnam_briefs_candidates/editorial_notes_*.json'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vietnam-notes-source-pin-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  verify-current-originals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout candidate merge tree read-only
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install existing verification dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Select exactly one changed, canonical weekly note file
+        id: note
+        shell: bash
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          [[ "$PR_BASE_SHA" =~ ^[0-9a-f]{40}$ ]] || exit 2
+          git cat-file -e "$PR_BASE_SHA^{commit}"
+          mapfile -d '' paths < <(git diff --name-only -z "$PR_BASE_SHA" HEAD -- 'research/vietnam_briefs_candidates/editorial_notes_*.json')
+          [[ "${#paths[@]}" -eq 1 ]] || {
+            echo "::error::Exactly one changed reporting-Saturday Vietnam notes file is required"
+            exit 2
+          }
+          notes="${paths[0]}"
+          [[ "$notes" =~ ^research/vietnam_briefs_candidates/editorial_notes_([0-9]{4}-[0-9]{2}-[0-9]{2})\.json$ ]] || exit 2
+          saturday="${BASH_REMATCH[1]}"
+          [[ -f "$notes" && ! -L "$notes" ]] || exit 2
+          [[ -z "$(git status --porcelain)" ]] || exit 2
+          existing="research/briefs_editorial_evidence/$saturday.json"
+          if [[ ! -f "$existing" || -L "$existing" ]]; then
+            echo "::error::Expected existing regional Sunday packet is missing or invalid"
+            exit 2
+          fi
+          echo "notes=$notes" >> "$GITHUB_OUTPUT"
+          echo "week=$saturday" >> "$GITHUB_OUTPUT"
+          echo "existing=$existing" >> "$GITHUB_OUTPUT"
+          echo "Checking original-version pins for reporting Saturday $saturday; no content or IDs printed."
+
+      - name: Audit the complete current MPS shadow state and refresh private packet
+        id: vietnam
+        uses: ./.github/actions/vietnam-editorial-evidence
+        with:
+          week-ending: ${{ steps.note.outputs.week }}
+          notes: ${{ steps.note.outputs.notes }}
+          existing-packet: ${{ steps.note.outputs.existing }}
+          missing-notes-policy: refuse
+          require-vietnam: 'true'
+
+      - name: Ensure every authored note survived exact-source revalidation
+        shell: bash
+        env:
+          NOTES_PATH: ${{ steps.note.outputs.notes }}
+          PRIVATE_PACKET: ${{ steps.vietnam.outputs.packet }}
+          EXPECTED_WEEK: ${{ steps.note.outputs.week }}
+          ACTUAL_MPS_SHA: ${{ steps.vietnam.outputs.source-commit }}
+          VIETNAM_COUNT: ${{ steps.vietnam.outputs.vietnam-count }}
+          EXISTING_PACKET: ${{ steps.note.outputs.existing }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          notes=json.loads(Path(os.environ["NOTES_PATH"]).read_text(encoding="utf-8"))
+          packet=json.loads(Path(os.environ["PRIVATE_PACKET"]).read_text(encoding="utf-8"))
+          original=json.loads(Path(os.environ["EXISTING_PACKET"]).read_text(encoding="utf-8"))
+          assert notes["schema"]=="vietnam-editorial-notes/1"
+          assert packet["week_ending"]==os.environ["EXPECTED_WEEK"]
+          authored=notes["entries"]
+          assert len(authored)>0 and len(authored)<=5
+          expected={"VN-MPS-"+x["source_identity"].split(":",1)[1]:x for x in authored}
+          assert len(expected)==len(authored)
+          actual={x["id"]:x for x in packet["items"] if x["desk"]=="vietnam"}
+          assert set(actual)==set(expected), "Some authored MPS notes were omitted or changed"
+          assert len(actual)==int(os.environ["VIETNAM_COUNT"])
+          old_other=[x for x in original["items"] if x["desk"]!="vietnam"]
+          new_other=[x for x in packet["items"] if x["desk"]!="vietnam"]
+          assert new_other==old_other, "Japan/Indonesia publisher research was modified"
+          assert re.fullmatch(r"[0-9a-f]{40}", os.environ["ACTUAL_MPS_SHA"])
+          for ident,row in actual.items():
+              source=expected[ident]
+              assert row["state_commit"]==os.environ["ACTUAL_MPS_SHA"]
+              assert row["source_content_sha256"]==source["content_sha256"]
+              assert row["source_url"]==source["source_url"]
+              assert row["published_date"]==source["published_date"]
+              assert row["hash_rule"]=="mps-vi-content-v1"
+              assert row["status"]=="unapproved-source-linked-editorial-candidate"
+              assert row["copy_scope"]=="private-model-drafting-only-no-source-body"
+              assert all(k not in row for k in ("article_body","text_original","human_approval","image"))
+          print("Current-state Vietnam candidate count:",len(actual))
+          print("Other-desk research preserved:",len(new_other))
+          print("Source-version match only; no model, mail, rights or editorial approval.")
+          PY
+
+      - name: Prove no tracked repository changes
+        run: |
+          set -euo pipefail
+          git diff --exit-code
+          test -z "$(git status --porcelain)"

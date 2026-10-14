@@ -1,0 +1,56 @@
+{
+  "schema": "ipr-briefs-v2-qa-summary/1",
+  "candidate_route": "/after/briefs/what-is-being-built-in-laos.html",
+  "baseline_route": "/before/briefs/what-is-being-built-in-laos.html",
+  "responsive_widths": [
+    375,
+    768,
+    1280
+  ],
+  "before_after_responsive_pages": 6,
+  "http_statuses": [
+    200
+  ],
+  "overflow_at_tested_widths": 0,
+  "manuscript_exact_match_before_and_after": true,
+  "paragraph_count": 11,
+  "publisher_reference_count": 7,
+  "toc_fragments_resolve_before_and_after": true,
+  "one_h1_per_page": true,
+  "first_tab_focus_visible": true,
+  "keyboard_can_reach_mobile_toc": true,
+  "alternate_modes": [
+    "forced-colors",
+    "no_js",
+    "print",
+    "reduced-motion"
+  ],
+  "compatibility_native_issues_15_17": 3,
+  "compatibility_historical_issue_pages_1_14": 14,
+  "compatibility_historical_issues": 14,
+  "issues": [],
+  "screenshots": "shots/",
+  "evidence_bytes": 9302331,
+  "evidence_files": 33,
+  "final_route": "/ready/briefs/what-is-being-built-in-laos.html",
+  "final_html_sha256": "a86251ce41ea48bcfca26a5ca0f1e64faa9020cf2722f7a0c154355fa899a542",
+  "final_css_sha256": {
+    "fonts.css": "4291a9d4718adcbdc487acd7b30d648cf5f957fe76af3199e2b88ca9aa219f8b",
+    "styles.css": "8ccef7f2f09a5e1c2b4ab2d81cda0a90e9b0cb8ce2ed4c6c2af072bfd8f6c5d7",
+    "surfaces.css": "23ef9b498fe7e4c69b735c6bbaa8d56457d369d5c1942ec0501b13fabad018ad",
+    "briefs.css": "e352cff57496464aa3cdb71711e396da76adb7a970770fb3ba1f86163a0c93ed"
+  },
+  "heading_focus_after_navigation": true,
+  "keyboard": {
+    "js_and_no_js": true,
+    "all_eight_links_reachable_and_focused": true,
+    "all_eight_destinations_labeled_visible_and_focused": true,
+    "fragment_target_receives_visible_2px_focus": true
+  },
+  "prior_keyboard_focus_finding": "On /final/, fragment navigation left focus on BODY; corrected on /final-focus/ and confirmed on /ready/.",
+  "forced_colors_target_focus": "PASS: no-JS Tab/Enter focused the labeled aside with a visible 2px outline",
+  "prior_print_cascade_finding": "On /review/, print H2 computed at 38px due cascade order; resolved on /ready/ with computed 24px print H2, 30px mobile and 36px desktop.",
+  "fixture_label_present_375_1280": true,
+  "fixture_fonts_loaded": true,
+  "fixture_trace_targets_resolve": true
+}

@@ -1,0 +1,60 @@
+{
+  "base_sha": "97485edea28ec9a7152f77b562adc37b84623ccd",
+  "manuscript_fingerprint": "3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57",
+  "canonical_laos_file_sha256": "f6df89548e65736222cf031e8a31b0888630c97b8a02685ad2dbb07c4b4f27d5",
+  "presentation_digest": "e86480c3478d43744c9e2f82b691113e1c7f721135c1f9751ac5699d79284cf2",
+  "presentation_status": "draft",
+  "presentation_approval": null,
+  "tests": {
+    "final_contract": {
+      "count": 33,
+      "result": "PASS",
+      "log": "/tmp/ipr-briefs-v2-b7ad/final-contract-tests.log"
+    },
+    "integrated_compatibility": {
+      "count": 192,
+      "result": "PASS",
+      "log": "/tmp/ipr-briefs-v2-b7ad/final-integrated-tests.log",
+      "note": "Final additional figure case included in final contract run"
+    },
+    "full_offline": {
+      "result": "PASS",
+      "log": "/tmp/ipr-briefs-v2-b7ad/full-suite.log",
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/ipr-briefs-v2-b7ad/docx-deps TMPDIR=/private/tmp /Users/benjaminyang/pla-watch/.venv/bin/python -m unittest discover -s tests -t .",
+      "count": 6237,
+      "skipped": 1,
+      "seconds": 1711.028,
+      "note": "Full run began during implementation. Final 33 contract tests and final browser QA verify the completed source; exact-head GitHub CI is a separate gate."
+    }
+  },
+  "validators": {
+    "tracked_output": {
+      "result": "PASS",
+      "warnings": 10
+    },
+    "isolated_generated_overlay": {
+      "result": "PASS",
+      "warnings": 7,
+      "note": "Three location-dependent missing-LinkedIn checks omitted outside repository"
+    }
+  },
+  "protected_paths_unchanged": [
+    "pla_watch.db",
+    "output",
+    "briefs/what-is-being-built-in-laos.json",
+    "site/assets/editorial",
+    "site/assets/catalogue",
+    "scripts/sunday_briefs_auto_writer.py"
+  ],
+  "ordinary_native_invariants": {
+    "maritime-cooperation-2026.html": "unchanged content, authors, metadata, source associations, media, captions, hrefs; draft withheld",
+    "what-is-being-built-in-laos.html": "unchanged content, authors, metadata, source associations, media, captions, hrefs; draft withheld",
+    "xiangshan-security-frames-defense-ties.html": "unchanged content, authors, metadata, source associations, media, captions, hrefs; draft withheld",
+    "trident-resolve-regional-scale-specific-chinese-tasks.html": "unchanged content, authors, metadata, source associations, media, captions, hrefs; draft withheld"
+  },
+  "diff_check": "PASS",
+  "graphify_update": "AST-only refresh completed; ignored output not committed",
+  "no_merge_deployment_or_publication": true,
+  "measured_source_commit": "faea6f334238a83306385f6904702a207dbbe03b",
+  "post_full_suite_protected_path_check": "PASS; identical to task base on every protected path"
+}

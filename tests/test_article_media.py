@@ -324,8 +324,31 @@ class ArticleMediaPagesTests(unittest.TestCase):
         for node in treated:
             scope = node.find_parent(["article", "figure", "li"]) or node
             self.assertIn(notice, scope.get_text())
-        # No other card or lead carries a treatment or the DoW notice.
-        self.assertEqual(cat.get_text().count(notice), len(treated))
+        # The treatment belongs only to the originally approved No.17 card,
+        # but the source's DoW notice is now also required by No.14's newly
+        # admitted U.S. Navy photograph. Audit notice-bearing cards against
+        # their own recorded source conditions; never infer notice count from
+        # the unrelated visual treatment.
+        from core.catalogue_media import load_admissions
+        from core.source_terms import required_notice
+        records = load_admissions(repo_root=ROOT)
+        # The originating DVIDS image of No.14 is served from Commons, so
+        # required_notice(record) cannot infer DVIDS from that hostname.
+        # Its explicitly retained originating-publisher notice still counts.
+        expected = {record["issue"] for record in records.values()
+                    if record.get("status") == "admitted" and
+                    (record.get("notice") or required_notice(record))}
+        carrying = set()
+        for card in cat.select("article.brief-card"):
+            issue = card.select_one(".issue-no")
+            if issue is None:
+                continue
+            number = int(issue.get_text(strip=True).replace("No. ", ""))
+            if notice in card.get_text():
+                carrying.add(number)
+                self.assertEqual(card.get("data-media"), "photograph")
+        self.assertEqual(carrying, expected)
+        self.assertEqual(cat.get_text().count(notice), len(expected))
 
     def test_native_script_in_a_photograph_credit_declares_its_language(self):
         # No. 8's credit names the Joint Staff in Japanese. Only that name is

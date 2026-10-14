@@ -5,7 +5,7 @@ The Briefs catalogue's one media decision (Phase 3B).
 the original Editorial plate. These tests hold it to the Phase 0 rulings
 (B2 no 81.cn, B3/B4 labels, B5 No. 12, B6 no share-alike) and to the Phase 3A
 ledger: a plate is the default; Nos. 8 and 9 are the only photographs;
-Nos. 1 and 10 are held; No. 12 is refused; an article cover never grants anything.
+No. 10 remains held; No. 12 is denied; No. 1 uses a separately rights-checked, owner-approved replacement, not the disqualified 2012 photo.
 """
 from __future__ import annotations
 
@@ -28,13 +28,15 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {8, 9, 17, 18}
+PHOTO_ISSUES = {1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14, 15, 16, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
-SOURCE_HOSTS = {8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
+SOURCE_HOSTS = {1: "https://commons.wikimedia.org/", 2: "https://commons.wikimedia.org/", 3: "https://www.dvidshub.net/", 4: "https://www.dvidshub.net/", 5: "https://commons.wikimedia.org/", 6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/", 11: "https://commons.wikimedia.org/",
+                13: "https://commons.wikimedia.org/",
+                14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/", 16: "https://www.dvidshub.net/",
                 17: "https://www.dvidshub.net/image/",
                 18: "https://commons.wikimedia.org/"}
-HELD_ISSUES = {1, 10}
+HELD_ISSUES = {10}
 
 
 def _row(issue, date, kind="issue", **entry):
@@ -250,13 +252,33 @@ class CommittedRecordTests(unittest.TestCase):
         plates = sum(a["kind"] == cm.KIND_PLATE for a in self.audit)
         self.assertEqual(plates, len(self.rows) - len(PHOTO_ISSUES))
 
-    def test_numbers_one_and_ten_are_held_and_number_twelve_is_denied(self):
+    def test_remaining_number_ten_hold_and_number_twelve_denial(self):
         by_issue = {a["issue"]: a for a in self.audit}
         for issue in HELD_ISSUES:
             with self.subTest(issue=issue):
                 self.assertEqual((by_issue[issue]["kind"], by_issue[issue]["reason"]),
                                  ("plate", "held"))
         self.assertEqual((by_issue[12]["kind"], by_issue[12]["reason"]), ("plate", "denied"))
+
+    def test_wave11_no01_replaces_bad_2012_officers_image_only_with_wei_source(self):
+        one = next(e for e in self.record["entries"] if e["issue"] == 1)
+        self.assertEqual(one["status"], "admitted")
+        self.assertIn("wei-fenghe-mattis", one["served"])
+        self.assertIn("Wei Fenghe", one["caption"])
+        self.assertIn("June 2018", one["caption"])
+        self.assertIn("Li Shangfu is not pictured", one["caption"])
+        self.assertIn("not depict the May 2026 verdict", one["caption"])
+        self.assertIn("Sgt. Amber I. Smith", one["creator"])
+        self.assertIn("does not imply or constitute DoW endorsement", one["notice"])
+        self.assertNotIn("2012", one["source_page"])
+        manifest = self.manifest[one["source_manifest_id"]]
+        self.assertEqual(
+            manifest["source_fingerprint"]["sha1"],
+            "a07e6f412425ca46c7b1a16a1474f57500e5d3fc")
+        self.assertIn("not DVIDS #4517865", manifest["license_basis"])
+        row = next(r for r in self.audit if r["issue"] == 1)
+        self.assertEqual(row["kind"], "photograph")
+        self.assertFalse(list(MEDIA.glob("no-01-*2012*")))
 
     def test_number_ten_is_held_for_authorship_and_serves_nothing(self):
         record = next(e for e in self.record["entries"] if e["issue"] == 10)
@@ -267,6 +289,135 @@ class CommittedRecordTests(unittest.TestCase):
         for key in ("alt", "caption", "served", "served_sha256"):
             self.assertNotIn(key, record)
         self.assertFalse(list(MEDIA.glob("no-10-*")))
+
+    def test_wave2_photographs_are_explicitly_historical_and_source_distinct(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        six, fourteen = by_issue[6], by_issue[14]
+        self.assertNotEqual(six["source_page"], fourteen["source_page"])
+        eight = by_issue[8]
+        self.assertNotEqual(six["source_page"], eight["source_page"])
+        self.assertNotEqual(self.manifest[six["source_manifest_id"]]["sha256"], self.manifest[eight["source_manifest_id"]].get("sha256"))
+        self.assertIn("2022", six["caption"])
+        self.assertIn("2026", six["caption"])
+        self.assertIn("2016", fourteen["caption"])
+        self.assertIn("2026", fourteen["caption"])
+        self.assertIn("not", fourteen["caption"].lower())
+        self.assertIn("not", six["caption"].lower())
+        from core.source_terms import required_notice
+        self.assertEqual(fourteen["notice"], required_notice({"source_label": "DVIDS"}))
+        self.assertEqual(self.audit[[a["issue"] for a in self.audit].index(6)]["kind"], "photograph")
+        self.assertEqual(self.audit[[a["issue"] for a in self.audit].index(14)]["kind"], "photograph")
+
+    def test_wave3_2015_nasa_and_2019_uscg_are_explicit_historical_context(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        ccg, shoal, previous = by_issue[7], by_issue[13], by_issue[9]
+        self.assertNotEqual(shoal["source_page"], previous["source_page"])
+        self.assertNotEqual(self.manifest[shoal["source_manifest_id"]]["sha256"],
+                            self.manifest[previous["source_manifest_id"]].get("sha256"))
+        self.assertIn("2015", shoal["caption"])
+        self.assertIn("2026", shoal["caption"])
+        self.assertIn("2019", ccg["caption"])
+        self.assertIn("2026", ccg["caption"])
+        self.assertIn("South China Sea", ccg["caption"])
+        self.assertIn("east of Taiwan", ccg["caption"])
+        from core.source_terms import required_notice
+        self.assertEqual(ccg["notice"], required_notice(ccg))
+        self.assertEqual(shoal.get("notice", ""), "")
+        by_audit = {a["issue"]: a for a in self.audit}
+        self.assertTrue(all(by_audit[i]["kind"] == "photograph" for i in (7, 13)))
+
+    def test_wave4_same_hull_not_same_exercise_with_origin_notice(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        fifteen = by_issue[15]
+        from core.source_terms import required_notice
+        self.assertEqual(fifteen["notice"], required_notice(fifteen))
+        self.assertIn("RSS Steadfast (70)", fifteen["caption"])
+        self.assertIn("22 June 2026", fifteen["caption"])
+        self.assertIn("September", fifteen["caption"])
+        self.assertIn("does not depict", fifteen["caption"])
+        self.assertEqual(fifteen["source_label"], "DVIDS")
+        self.assertIn("1000px", self.manifest[fifteen["source_manifest_id"]]["license_basis"])
+        by_audit = {a["issue"]: a for a in self.audit}
+        self.assertEqual(by_audit[15]["kind"], "photograph")
+
+    def test_wave5_no16_is_not_claiming_xiangshan_scene(self):
+        by_issue = {entry["issue"]: entry for entry in self.record["entries"]}
+        entry = by_issue[16]
+        from core.source_terms import required_notice
+        self.assertIn("Chan Chun Sing", entry["caption"])
+        self.assertIn("January 2026", entry["caption"])
+        self.assertIn("U.S.", entry["caption"])
+        self.assertIn("not the September 2026 Xiangshan Forum", entry["caption"])
+        self.assertIn("Dong Jun", entry["caption"])
+        self.assertEqual(entry["notice"], required_notice(entry))
+        self.assertEqual(entry["source_label"], "DVIDS")
+        self.assertIn("1000w", self.manifest[entry["source_manifest_id"]]["license_basis"])
+        by_audit = {item["issue"]: item for item in self.audit}
+        self.assertEqual(by_audit[16]["kind"], "photograph")
+
+    def test_wave6_shipyard_photo_does_not_claim_airwing_qualification(self):
+        e = next(e for e in self.record["entries"] if e["issue"] == 2)
+        manifest = self.manifest[e["source_manifest_id"]]
+        self.assertIn("Jiangnan Shipyard", e["caption"])
+        self.assertIn("April 2022", e["caption"])
+        self.assertIn("not a photograph", e["caption"])
+        self.assertIn("KJ-600", e["caption"])
+        self.assertIn("Rocket Force", e["caption"])
+        self.assertIn("CC0 1.0", e["date_note"])
+        self.assertIn("Raysonho", e["creator"])
+        self.assertIn("Meeepmep", e["creator"])
+        self.assertIn("d932f61c8c317ea93f87a6f0d3742e3d4480aabc",
+                      manifest["source_fingerprint"]["sha1"])
+        audits = {a["issue"]: a for a in self.audit}
+        self.assertEqual(audits[2]["kind"], "photograph")
+
+    def test_wave7_no11_is_separate_trilateral_2023_photo_not_joint_sea_2026(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        row = by_issue[11]
+        self.assertIn("March 2023", row["caption"])
+        self.assertIn("Iran", row["caption"])
+        self.assertIn("not the July 2026 Joint Sea", row["caption"])
+        self.assertIn("Y-20B", row["caption"])
+        self.assertIn("Ranginkaman", row["creator"])
+        self.assertIn("CC BY 4.0", row["license"])
+        self.assertIn("2024", self.manifest[row["source_manifest_id"]]["license_basis"])
+        self.assertEqual(self.manifest[row["source_manifest_id"]]["source_fingerprint"]["sha1"],
+                         "324f2d3bfb165161e988cec274a2df2e7acd160c")
+        self.assertEqual(next(a for a in self.audit if a["issue"] == 11)["kind"], "photograph")
+
+    def test_wave8_institutional_photographs_are_not_may2026_events(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        three, four = by_issue[3], by_issue[4]
+        from core.source_terms import required_notice
+        self.assertIn("2015", three["caption"])
+        self.assertIn("PLA and U.S. Army", three["caption"])
+        self.assertIn("not a photograph", three["caption"])
+        self.assertIn("May 2026", three["caption"])
+        self.assertIn("Li Zuocheng", four["caption"])
+        self.assertIn("2019", four["caption"])
+        self.assertIn("not the May 2026", four["caption"])
+        self.assertIn("electronic-warfare incident", four["caption"])
+        self.assertEqual(three["notice"], required_notice(three))
+        self.assertEqual(four["notice"], required_notice(four))
+        self.assertNotEqual(three["source_page"], four["source_page"])
+        self.assertEqual(next(a for a in self.audit if a["issue"] == 3)["kind"], "photograph")
+        self.assertEqual(next(a for a in self.audit if a["issue"] == 4)["kind"], "photograph")
+
+    def test_wave9_real_chinese_coast_guard_photo_is_2018_enforcement_only(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        five, seven = by_issue[5], by_issue[7]
+        self.assertNotEqual(five["source_page"], seven["source_page"])
+        self.assertIn("2018", five["caption"])
+        self.assertIn("Coast Guard patrol vessel 2301", five["caption"])
+        self.assertIn("not the June 2026 patrol east of Taiwan", five["caption"])
+        self.assertIn("loitering-munition", five["caption"])
+        self.assertIn("Rocket Force", five["caption"])
+        self.assertEqual(five["license"], "Public domain")
+        from core.source_terms import required_notice
+        self.assertEqual(five["notice"], required_notice({"source_label": "DVIDS"}))
+        self.assertIn("180621-G-G0217-1005",
+                      self.manifest[five["source_manifest_id"]]["license_basis"])
+        self.assertEqual(next(a for a in self.audit if a["issue"] == 5)["kind"], "photograph")
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:

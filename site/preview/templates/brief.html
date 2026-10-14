@@ -2,6 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_article_nav.html" import issue_nav %}
 {% from "_article_media.html" import article_figure, cover_figure %}
+{% from "_brief_reading.html" import reading_article %}
 {#- One Indo-Pacific Record Brief, at briefs/<slug>.html.
 
     The existing article anatomy — edition head, signal, development, coverage,
@@ -35,6 +36,7 @@
 <section class="band brief-hero{% if brief.photo or (brief.article_media and brief.article_media.kind in ('plate', 'photograph')) %} brief-hero--photo{% endif %}" aria-labelledby="brief-title">
   <div class="wrap brief-hero-inner">
     {% if brief.is_review %}<p class="brief-fixture" role="note">Editorial review candidate · unapproved, unnumbered and unpublished.</p>{% endif %}
+    {% if brief.presentation_review %}<p class="brief-fixture" role="note">Private presentation review · proposed headings and emphasis await owner approval. Manuscript text, source associations and credits are unchanged.</p>{% endif %}
     {% if brief.synthetic %}
     <p class="brief-fixture" role="note"><strong>Synthetic test fixture.</strong> Not a
       published brief: its number, title, records and image are invented to test
@@ -70,12 +72,18 @@
 
 {% block content %}
 {{ breadcrumb([('Analysis', '../analysis.html'), (brief.title, none)]) }}
-<div class="brief-layout">
+<div class="brief-layout{% if brief.presentation %} brief-layout--structured{% endif %}">
   <details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
   <nav class="brief-toc" aria-label="In this brief">
     <p class="brief-toc-label">In this brief</p>
     <ol>
-      {% if brief.source_linked %}<li><a href="#s-article">Article</a></li><li><a href="#s-publishers">Publisher references</a></li>{% else %}
+      {% if brief.source_linked %}
+      {% if brief.presentation %}
+      {% if brief.presentation.central_finding is defined %}<li><a href="#reading-finding">Central finding</a></li>{% endif %}
+      {% for section in brief.presentation.sections %}<li><a href="#{{ section.id }}">{{ section.heading }}</a></li>{% endfor %}
+      {% if brief.presentation.evidence is defined %}<li><a href="#reading-evidence">Evidence and uncertainty</a></li>{% endif %}
+      {% else %}<li><a href="#s-article">Article</a></li>{% endif %}
+      <li><a href="#s-publishers">Publisher references</a></li>{% else %}
       <li><a href="#s-development">The development</a></li>
       {% for s in brief.sections_before %}<li><a href="#{{ s.id }}">{{ s.heading }}</a></li>{% endfor %}
       {% for s in brief.sections_after %}<li><a href="#{{ s.id }}">{{ s.heading }}</a></li>{% endfor %}
@@ -91,10 +99,14 @@
 
   <article class="brief-main">
     {% if brief.source_linked %}
+    {% if brief.presentation %}
+    {{ reading_article(brief) }}
+    {% else %}
     <section class="brief-section" id="s-article" aria-label="Article text">
       {% for paragraph in brief.body_paragraphs %}<p data-manuscript-paragraph="{{ loop.index }}">{% for run in paragraph %}{% if run.source is defined %}<a href="{{ brief.publisher_urls[run.source] }}" rel="noopener noreferrer" data-source="{{ run.source }}">{{ run.text }}</a>{% else %}{{ run.text }}{% endif %}{% endfor %}</p>{% endfor %}
     </section>
-    <section class="brief-section brief-trail" id="s-publishers" aria-labelledby="h-publishers">
+    {% endif %}
+    <section class="brief-section brief-trail" id="s-publishers"{% if brief.presentation %} tabindex="-1"{% endif %} aria-labelledby="h-publishers">
       <h2 id="h-publishers">Publisher references</h2>
       <p class="section-note">Original editorial analysis with links to publisher-hosted sources. These references do not add records to IPR's collected corpus or establish live desk coverage. Official accounts and independent reporting are distinguished below.</p>
       <ol class="brief-trail-list">
@@ -274,7 +286,7 @@
     </section>
     {% endif %}
 
-    <section class="brief-section" id="s-cite" aria-labelledby="h-cite">
+    <section class="brief-section" id="s-cite"{% if brief.presentation %} tabindex="-1"{% endif %} aria-labelledby="h-cite">
       <h2 id="h-cite">Cite this brief</h2>
       <div class="ed-cite brief-cite">
         <p class="cite-text" id="cite-{{ brief.slug }}">{{ brief.citation }}</p>

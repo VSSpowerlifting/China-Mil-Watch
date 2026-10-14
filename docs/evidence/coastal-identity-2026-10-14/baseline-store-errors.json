@@ -1,0 +1,30 @@
+{
+  "base": "216dfbb8babc6a0d4d711494c7787a29f84e201e",
+  "environment": "macOS primary Python3.9; TMPDIR=/tmp; isolated existing python-docx dependency target",
+  "code": "unsafe_store_root",
+  "errors": [
+    "test_cannot_reference_missing_manifest (tests.test_evidence_store.StoreTests)",
+    "test_commit_and_recover (tests.test_evidence_store.StoreTests)",
+    "test_conflicting_payload_same_run_and_stage_rejected (tests.test_evidence_store.StoreTests)",
+    "test_corrupt_snapshot_blocks_pointer (tests.test_evidence_store.StoreTests)",
+    "test_corrupt_snapshot_blocks_recovery (tests.test_evidence_store.StoreTests)",
+    "test_current_absent_until_explicit_commit (tests.test_evidence_store.StoreTests)",
+    "test_existing_restore_target_not_overwritten (tests.test_evidence_store.StoreTests)",
+    "test_manifest_tampering_rejected (tests.test_evidence_store.StoreTests)",
+    "test_no_private_body_in_custody_report (tests.test_evidence_store.StoreTests)",
+    "test_no_publication_implicit_in_manifest (tests.test_evidence_store.StoreTests)",
+    "test_orphan_upload_never_active (tests.test_evidence_store.StoreTests)",
+    "test_parent_must_match_manifest (tests.test_evidence_store.StoreTests)",
+    "test_racing_same_run_stage_conflict_is_serialized (tests.test_evidence_store.StoreTests)",
+    "test_recover_older_generation (tests.test_evidence_store.StoreTests)",
+    "test_ref_tampering_rejected (tests.test_evidence_store.StoreTests)",
+    "test_retry_is_idempotent (tests.test_evidence_store.StoreTests)",
+    "test_second_writer_with_stale_parent_fails (tests.test_evidence_store.StoreTests)",
+    "test_symlink_manifest_rejected (tests.test_evidence_store.StoreTests)",
+    "test_symlink_store_rejected (tests.test_evidence_store.StoreTests)",
+    "test_two_stages_for_same_run_allowed (tests.test_evidence_store.StoreTests)",
+    "test_unapproved_storage_path_rejected (tests.test_evidence_store.StoreTests)"
+  ],
+  "count": 21,
+  "safeguards_changed": false
+}

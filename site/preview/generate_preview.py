@@ -2371,7 +2371,7 @@ def build(out_dir: Path, title: str, db_path: Path,
           daily_run_date: str = None, briefs_dir: Path = None,
           allow_synthetic_briefs: bool = False, gallery: bool = False,
           review_brief: Path = None, timelines_dir: Path = None,
-          review_timeline: Path = None,
+          review_timeline: Path = None, review_presentation: Path = None,
           review_korea: bool = False,
           korea_review_packet: Path = None) -> dict:
     """
@@ -2432,7 +2432,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                 or resolved == REPO_ROOT or REPO_ROOT in resolved.parents
                 or resolved in REPO_ROOT.parents
                 or bool((site_origin or "").strip()) or allow_test_origin
-                or review_brief is not None or review_timeline is not None
+                or review_brief is not None or review_timeline is not None or review_presentation is not None
                 or allow_synthetic_briefs or gallery):
             raise ValueError("private Korea preview requires a new external directory, "
                              "no origin, no public/synthetic/other review mode")
@@ -2449,11 +2449,14 @@ def build(out_dir: Path, title: str, db_path: Path,
         korea_candidates = load_candidates()
         korea_prechecked_rows = approve(korea_candidates, korea_review_packet)
     out_dir = requested_out.resolve()
-    if (review_brief or review_timeline) and site_origin:
+    if (review_brief or review_timeline or review_presentation) and site_origin:
         raise ValueError("a draft review is private: no site origin, feed or sitemap")
     if review_timeline and (out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents or out_dir in REPO_ROOT.parents):
         raise ValueError("timeline review requires a disposable destination outside the repository")
-    if review_brief and review_timeline:
+    if review_presentation and (out_dir.exists() or out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents
+                                or out_dir in REPO_ROOT.parents):
+        raise ValueError("presentation review requires a new destination outside the repository")
+    if sum(bool(v) for v in (review_brief, review_timeline, review_presentation)) > 1:
         raise ValueError("review one editorial artifact at a time")
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
@@ -2555,6 +2558,30 @@ def build(out_dir: Path, title: str, db_path: Path,
         collection = Collection(rows=tuple(rows), briefs=collection.briefs + (entry,),
                                 withheld=collection.withheld,
                                 sidecars=dict(collection.sidecars, **{path.stem: draft}))
+    from core.brief_presentation import load_presentation, presentation_view, presentation_html_errors
+    presentation_slug = None
+    if review_presentation:
+        presentation_path = Path(review_presentation).resolve()
+        presentation_slug = presentation_path.stem
+        if (presentation_path.parent != (REPO_ROOT / "briefs/presentation").resolve()
+                or presentation_path.suffix != ".json"):
+            raise ValueError("review a canonical presentation for a Brief")
+        if presentation_slug not in collection.sidecars:
+            source = briefs_dir / (presentation_slug + ".json")
+            draft = json.loads(source.read_text(encoding="utf-8"))
+            from core.brief_contract import validate_brief
+            problems = validate_brief(draft, load_registry())
+            if draft.get("editorial_status") != "draft" or problems:
+                raise ValueError("presentation manuscript review: " + "; ".join(problems or ["not a draft"]))
+            entry = brief_entry(presentation_slug, draft, briefs_dir / BRIEFS_MEDIA)
+            entry["is_review"] = True
+            rows = order_rows(list(collection.rows) + [{"entry": entry, "kind": "brief",
+                                                        "provenance": "Unapproved review candidate"}])
+            collection = Collection(rows=tuple(rows), briefs=collection.briefs + (entry,),
+                                    withheld=collection.withheld,
+                                    sidecars=dict(collection.sidecars, **{presentation_slug: draft}))
+        load_presentation(presentation_path, collection.sidecars[presentation_slug],
+                          slug=presentation_slug, review=True)
     timeline_options = {"source_dir": Path(timelines_dir)} if timelines_dir is not None else {}
     timelines, timelines_withheld = load_timelines(
         db_path, {e["slug"]: e for e in collection.briefs},
@@ -2598,7 +2625,7 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     ctx = {
         "title": title,
-        "review_mode": bool(review_brief or review_timeline),
+        "review_mode": bool(review_brief or review_timeline or review_presentation),
         "catalogue_media": catalogue_media,
         "timelines": timelines,
         "timeline_records": timeline_records,
@@ -2871,6 +2898,14 @@ def build(out_dir: Path, title: str, db_path: Path,
                 # Granted covers still need ../ from briefs/<slug>.html.
                 root="../" if cover or not brief["source_linked"] else None,
                 cover=cover)
+            brief["presentation"] = None
+            if brief["source_linked"]:
+                manifest = load_presentation(briefs_dir / "presentation" / (slug + ".json"),
+                                             sidecar, slug=slug,
+                                             review=slug == presentation_slug)
+                brief["presentation"] = presentation_view(manifest, sidecar,
+                                                           media=brief["article_media"])
+            brief["presentation_review"] = slug == presentation_slug
             brief["adjacent"] = adjacent_items(collection, slug)
             # A cited record this site preserves links to its record page; one
             # it does not hold links only to the source.
@@ -2882,10 +2917,14 @@ def build(out_dir: Path, title: str, db_path: Path,
             # the live site and must not print one.
             brief["citation"] = brief_citation(
                 brief, origin="" if brief["synthetic"] or brief["is_review"] else LIVE_BASE)
-            (out_dir / brief["route"]).write_text(
-                brief_tmpl.render(page="analysis.html", nested=True,
-                                  brief=brief, **ctx),
-                encoding="utf-8")
+            html = brief_tmpl.render(page="analysis.html", nested=True, brief=brief, **ctx)
+            if brief["source_linked"]:
+                from core.brief_source_linked import manuscript_html_errors
+                errors = manuscript_html_errors(sidecar, html)
+                errors += presentation_html_errors(manifest, html)
+                if errors:
+                    raise ValueError("rendered manuscript: " + "; ".join(errors))
+            (out_dir / brief["route"]).write_text(html, encoding="utf-8")
             written.append(brief["route"])
         (out_dir / "briefs.css").write_text(
             (Path(__file__).parent / "briefs.css").read_text(encoding="utf-8"),

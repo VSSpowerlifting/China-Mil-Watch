@@ -1,0 +1,319 @@
+{
+  "revision": "216dfbb8babc6a0d4d711494c7787a29f84e201e",
+  "browser": "Chromium/SwiftShader via existing IntroCase",
+  "intro_sha256": "1f89076ea3bd2eb34503af164b837a2d4cff72e37bc9bdb917f81991fa70d9b9",
+  "test_sha256": "180c940527ece3c6336a0c346a4d28f546b6b31dd8fff619e5cf87cd273c5141",
+  "observations": [
+    {
+      "mode": "real-time",
+      "test": "test_first_visit_plays_then_restores_the_page",
+      "repetition": 1,
+      "events": [
+        {
+          "kind": "domcontentloaded",
+          "t": 81.30000001192093
+        },
+        {
+          "kind": "attached",
+          "t": 99.69999998807907
+        },
+        {
+          "kind": "fcp",
+          "t": 88
+        },
+        {
+          "kind": "is-out",
+          "t": 1856.699999988079
+        },
+        {
+          "kind": "removed",
+          "t": 2575.800000011921
+        },
+        {
+          "kind": "contextlost",
+          "t": 2579.400000035763
+        }
+      ],
+      "script": [
+        {
+          "start": 15.699999988079071,
+          "end": 20.5
+        }
+      ],
+      "passed": true,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "mode": "real-time",
+      "test": "test_a_lost_context_ends_it_at_once",
+      "repetition": 1,
+      "events": [
+        {
+          "kind": "attached",
+          "t": 10.399999976158142
+        },
+        {
+          "kind": "domcontentloaded",
+          "t": 11.600000023841858
+        },
+        {
+          "kind": "fcp",
+          "t": 144
+        },
+        {
+          "kind": "loss-request",
+          "t": 241.5
+        },
+        {
+          "kind": "removed",
+          "t": 243.39999997615814
+        },
+        {
+          "kind": "contextlost",
+          "t": 243.39999997615814
+        }
+      ],
+      "script": [
+        {
+          "start": 2.399999976158142,
+          "end": 6.100000023841858
+        }
+      ],
+      "passed": true,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "mode": "real-time",
+      "test": "test_first_visit_plays_then_restores_the_page",
+      "repetition": 2,
+      "events": [
+        {
+          "kind": "attached",
+          "t": 10.5
+        },
+        {
+          "kind": "domcontentloaded",
+          "t": 11.899999976158142
+        },
+        {
+          "kind": "fcp",
+          "t": 144
+        },
+        {
+          "kind": "is-out",
+          "t": 1772.699999988079
+        },
+        {
+          "kind": "removed",
+          "t": 2485.5
+        },
+        {
+          "kind": "contextlost",
+          "t": 2488.399999976158
+        }
+      ],
+      "script": [
+        {
+          "start": 2.399999976158142,
+          "end": 5.800000011920929
+        }
+      ],
+      "passed": true,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "mode": "real-time",
+      "test": "test_a_lost_context_ends_it_at_once",
+      "repetition": 2,
+      "events": [
+        {
+          "kind": "domcontentloaded",
+          "t": 34
+        },
+        {
+          "kind": "attached",
+          "t": 39.299999952316284
+        },
+        {
+          "kind": "fcp",
+          "t": 40
+        },
+        {
+          "kind": "loss-request",
+          "t": 217.39999997615814
+        },
+        {
+          "kind": "removed",
+          "t": 219
+        },
+        {
+          "kind": "contextlost",
+          "t": 219
+        }
+      ],
+      "script": [
+        {
+          "start": 2.399999976158142,
+          "end": 6.399999976158142
+        }
+      ],
+      "passed": true,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "mode": "real-time",
+      "test": "test_first_visit_plays_then_restores_the_page",
+      "repetition": 3,
+      "events": [
+        {
+          "kind": "attached",
+          "t": 10.899999976158142
+        },
+        {
+          "kind": "domcontentloaded",
+          "t": 12
+        },
+        {
+          "kind": "fcp",
+          "t": 144
+        },
+        {
+          "kind": "is-out",
+          "t": 1761.699999988079
+        },
+        {
+          "kind": "removed",
+          "t": 2476.300000011921
+        },
+        {
+          "kind": "contextlost",
+          "t": 2479.100000023842
+        }
+      ],
+      "script": [
+        {
+          "start": 2.699999988079071,
+          "end": 6.199999988079071
+        }
+      ],
+      "passed": true,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "mode": "real-time",
+      "test": "test_a_lost_context_ends_it_at_once",
+      "repetition": 3,
+      "events": [
+        {
+          "kind": "attached",
+          "t": 10.699999988079071
+        },
+        {
+          "kind": "domcontentloaded",
+          "t": 11.899999976158142
+        },
+        {
+          "kind": "fcp",
+          "t": 144
+        },
+        {
+          "kind": "loss-request",
+          "t": 213.19999998807907
+        },
+        {
+          "kind": "removed",
+          "t": 214.79999995231628
+        },
+        {
+          "kind": "contextlost",
+          "t": 214.79999995231628
+        }
+      ],
+      "script": [
+        {
+          "start": 2.799999952316284,
+          "end": 5.799999952316284
+        }
+      ],
+      "passed": true,
+      "failures": 0,
+      "errors": 0
+    },
+    {
+      "mode": "delayed-script",
+      "test": "test_first_visit_plays_then_restores_the_page",
+      "repetition": 1,
+      "events": [
+        {
+          "kind": "domcontentloaded",
+          "t": 10.800000011920929
+        },
+        {
+          "kind": "fcp",
+          "t": 44
+        }
+      ],
+      "script": [
+        {
+          "start": 4.100000023841858,
+          "end": 2127.600000023842
+        }
+      ],
+      "passed": false,
+      "failures": 0,
+      "errors": 1,
+      "detail": "  - waiting for locator(\"div.ipr-intro\")"
+    },
+    {
+      "mode": "delayed-loss",
+      "test": "test_a_lost_context_ends_it_at_once",
+      "repetition": 1,
+      "events": [
+        {
+          "kind": "domcontentloaded",
+          "t": 10.5
+        },
+        {
+          "kind": "attached",
+          "t": 23.19999998807907
+        },
+        {
+          "kind": "fcp",
+          "t": 160
+        },
+        {
+          "kind": "is-out",
+          "t": 1799.9000000357628
+        },
+        {
+          "kind": "loss-request",
+          "t": 2066
+        },
+        {
+          "kind": "removed",
+          "t": 2085.100000023842
+        },
+        {
+          "kind": "contextlost",
+          "t": 2085.100000023842
+        }
+      ],
+      "script": [
+        {
+          "start": 3.100000023841858,
+          "end": 6.699999988079071
+        }
+      ],
+      "passed": false,
+      "failures": 1,
+      "errors": 0,
+      "detail": "AssertionError: True is not false : ended by the timeline, not the loss"
+    }
+  ],
+  "negative_controls": "Deliberately delayed scheduling; expected failures, not production behaviour changes or verification passes"
+}

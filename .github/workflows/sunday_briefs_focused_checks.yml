@@ -8,6 +8,9 @@ on:
       - .github/workflows/sunday_briefs_focused_checks.yml
       - scripts/sunday_briefs_auto_writer.py
       - scripts/sunday_editorial_handoff.py
+      - scripts/sunday_research_editor_delivery_gate.py
+      - tests/test_sunday_research_editor_delivery_gate.py
+      - tests/test_sunday_week42_three_desk_delivery.py
       - scripts/weekly_briefs_sunday_window.py
       - core/brief_editorial_evidence.py
       - scripts/validate_editorial_return.py
@@ -37,7 +40,7 @@ jobs:
       - name: Install declared offline test dependencies
         run: pip install -r requirements.txt
       - name: Verify one synthesized manuscript, typed sources, Saturday window, return validation and no SMTP
-        run: python -m unittest tests.test_briefs_editorial_evidence tests.test_weekly_briefs_sunday_window tests.test_sunday_owner_preview tests.test_vietnam_sunday_live_state_feed tests.test_vietnam_sunday_live_count_gate -v
+        run: python -m unittest tests.test_briefs_editorial_evidence tests.test_weekly_briefs_sunday_window tests.test_sunday_owner_preview tests.test_vietnam_sunday_live_state_feed tests.test_vietnam_sunday_live_count_gate tests.test_sunday_research_editor_delivery_gate tests.test_sunday_week42_three_desk_delivery -v
       - name: Preserve tracked corpus and prevent any draft artifact leak
         shell: bash
         run: |

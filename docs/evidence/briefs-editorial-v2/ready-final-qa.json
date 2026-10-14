@@ -1,0 +1,398 @@
+{
+  "route": "http://127.0.0.1:8877/ready/briefs/what-is-being-built-in-laos.html",
+  "viewports": {
+    "375": {
+      "status": "complete",
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "h1": 1,
+      "paragraphs": 26,
+      "images": [
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/identity/selected-ipr/ipr-navy-160.png",
+          "loaded": true,
+          "alt": ""
+        },
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/editorial/derivatives/laos-vientiane-museum-plane-800.webp",
+          "loaded": true,
+          "alt": "A preserved olive-green propeller aircraft displayed under a roof at the Lao People's Army Historical Museum in Vientiane, Laos."
+        },
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/identity/selected-ipr/ipr-navy-160.png",
+          "loaded": false,
+          "alt": ""
+        }
+      ],
+      "credits": [
+        "Photo: Zongalez \u00b7 CC BY 4.0 \u00b7 via Wikimedia Commons. Cropped and resized by IPR. Visual context, not evidence."
+      ],
+      "h2": [
+        "30px",
+        "30px",
+        "30px",
+        "30px",
+        "30px"
+      ],
+      "margins": [
+        "0px",
+        "48px",
+        "48px",
+        "48px",
+        "48px"
+      ],
+      "titles": [
+        "Central finding",
+        "Introduction",
+        "Vietnam\u2019s Support for Laos\u2019s Digital Identity",
+        "China\u2019s Aviation Training and Border Exchanges",
+        "What the Projects Reveal\u2014and What They Don\u2019t",
+        "What to Watch Next",
+        "Publisher references",
+        "Cite this brief"
+      ],
+      "http": 200
+    },
+    "768": {
+      "status": "complete",
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "h1": 1,
+      "paragraphs": 26,
+      "images": [
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/identity/selected-ipr/ipr-navy-160.png",
+          "loaded": true,
+          "alt": ""
+        },
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/editorial/derivatives/laos-vientiane-museum-plane-800.webp",
+          "loaded": true,
+          "alt": "A preserved olive-green propeller aircraft displayed under a roof at the Lao People's Army Historical Museum in Vientiane, Laos."
+        },
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/identity/selected-ipr/ipr-navy-160.png",
+          "loaded": false,
+          "alt": ""
+        }
+      ],
+      "credits": [
+        "Photo: Zongalez \u00b7 CC BY 4.0 \u00b7 via Wikimedia Commons. Cropped and resized by IPR. Visual context, not evidence."
+      ],
+      "h2": [
+        "30px",
+        "30px",
+        "30px",
+        "30px",
+        "30px"
+      ],
+      "margins": [
+        "0px",
+        "48px",
+        "48px",
+        "48px",
+        "48px"
+      ],
+      "titles": [
+        "Central finding",
+        "Introduction",
+        "Vietnam\u2019s Support for Laos\u2019s Digital Identity",
+        "China\u2019s Aviation Training and Border Exchanges",
+        "What the Projects Reveal\u2014and What They Don\u2019t",
+        "What to Watch Next",
+        "Publisher references",
+        "Cite this brief"
+      ],
+      "http": 200
+    },
+    "1280": {
+      "status": "complete",
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "h1": 1,
+      "paragraphs": 26,
+      "images": [
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/identity/selected-ipr/ipr-navy-160.png",
+          "loaded": true,
+          "alt": ""
+        },
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/editorial/derivatives/laos-vientiane-museum-plane-800.webp",
+          "loaded": true,
+          "alt": "A preserved olive-green propeller aircraft displayed under a roof at the Lao People's Army Historical Museum in Vientiane, Laos."
+        },
+        {
+          "src": "http://127.0.0.1:8877/ready/assets/identity/selected-ipr/ipr-navy-160.png",
+          "loaded": false,
+          "alt": ""
+        }
+      ],
+      "credits": [
+        "Photo: Zongalez \u00b7 CC BY 4.0 \u00b7 via Wikimedia Commons. Cropped and resized by IPR. Visual context, not evidence."
+      ],
+      "h2": [
+        "36px",
+        "36px",
+        "36px",
+        "36px",
+        "36px"
+      ],
+      "margins": [
+        "0px",
+        "64px",
+        "64px",
+        "64px",
+        "64px"
+      ],
+      "titles": [
+        "Central finding",
+        "Introduction",
+        "Vietnam\u2019s Support for Laos\u2019s Digital Identity",
+        "China\u2019s Aviation Training and Border Exchanges",
+        "What the Projects Reveal\u2014and What They Don\u2019t",
+        "What to Watch Next",
+        "Publisher references",
+        "Cite this brief"
+      ],
+      "http": 200
+    }
+  },
+  "modes": {},
+  "issues": [],
+  "screenshots": {
+    "full_375": {
+      "file": "shots/after-375-full.webp",
+      "bytes": 692290,
+      "dimensions": [
+        375,
+        14178
+      ]
+    },
+    "reading_375": {
+      "file": "shots/after-375-reading.webp",
+      "bytes": 41966,
+      "dimensions": [
+        375,
+        900
+      ]
+    },
+    "no_js_375": {
+      "file": "shots/after-no-js-375.webp",
+      "bytes": 691894,
+      "dimensions": [
+        375,
+        14138
+      ]
+    },
+    "full_768": {
+      "file": "shots/after-768-full.webp",
+      "bytes": 760756,
+      "dimensions": [
+        768,
+        9676
+      ]
+    },
+    "full_1280": {
+      "file": "shots/after-1280-full.webp",
+      "bytes": 794580,
+      "dimensions": [
+        1280,
+        9104
+      ]
+    },
+    "reading_1280": {
+      "file": "shots/after-1280-reading.webp",
+      "bytes": 74186,
+      "dimensions": [
+        1280,
+        837
+      ]
+    },
+    "reduced_motion": {
+      "file": "shots/after-reduced-motion.webp",
+      "bytes": 794580,
+      "dimensions": [
+        1280,
+        9104
+      ]
+    },
+    "forced_colors": {
+      "file": "shots/after-forced-colors.webp",
+      "bytes": 808144,
+      "dimensions": [
+        1280,
+        9039
+      ]
+    },
+    "print_full": {
+      "file": "shots/after-print.webp",
+      "bytes": 609160,
+      "dimensions": [
+        1280,
+        6988
+      ]
+    },
+    "print_reading": {
+      "file": "shots/after-print-reading.webp",
+      "bytes": 95842,
+      "dimensions": [
+        1280,
+        900
+      ]
+    }
+  },
+  "print": {
+    "matchesPrint": true,
+    "h2": "24px",
+    "sectionMargins": [
+      "0px",
+      "32px",
+      "32px",
+      "32px",
+      "32px"
+    ],
+    "laterH2": "24px",
+    "scrollWidth": 1280,
+    "clientWidth": 1280,
+    "printText": "Central finding\n\nThe available record establishes more about the capabilities being developed than about who will ultimately control their use.\n\nFrom paragraph ",
+    "pdf": {
+      "file": "shots/after-print.pdf",
+      "bytes": 1409997
+    }
+  },
+  "html_sha256": "a86251ce41ea48bcfca26a5ca0f1e64faa9020cf2722f7a0c154355fa899a542",
+  "html_bytes": 28765,
+  "css": [
+    {
+      "url": "http://127.0.0.1:8877/ready/fonts.css",
+      "sha256": "4291a9d4718adcbdc487acd7b30d648cf5f957fe76af3199e2b88ca9aa219f8b",
+      "bytes": 1855,
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8877/ready/styles.css",
+      "sha256": "8ccef7f2f09a5e1c2b4ab2d81cda0a90e9b0cb8ce2ed4c6c2af072bfd8f6c5d7",
+      "bytes": 30549,
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8877/ready/surfaces.css",
+      "sha256": "23ef9b498fe7e4c69b735c6bbaa8d56457d369d5c1942ec0501b13fabad018ad",
+      "bytes": 5630,
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8877/ready/briefs.css",
+      "sha256": "e352cff57496464aa3cdb71711e396da76adb7a970770fb3ba1f86163a0c93ed",
+      "bytes": 15679,
+      "status": 200
+    }
+  ],
+  "no_js": {
+    "details_present": true,
+    "summary": "Section navigation",
+    "toc_links": 8,
+    "details_open_initially": false,
+    "all_eight_links_keyboard_checked": true
+  },
+  "keyboard_all_8": [
+    {
+      "href": "#reading-finding",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-reading-finding",
+      "headingId": "h-reading-finding"
+    },
+    {
+      "href": "#reading-introduction",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-reading-introduction",
+      "headingId": "h-reading-introduction"
+    },
+    {
+      "href": "#reading-identity",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-reading-identity",
+      "headingId": "h-reading-identity"
+    },
+    {
+      "href": "#reading-aviation",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-reading-aviation",
+      "headingId": "h-reading-aviation"
+    },
+    {
+      "href": "#reading-implications",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-reading-implications",
+      "headingId": "h-reading-implications"
+    },
+    {
+      "href": "#reading-next",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-reading-next",
+      "headingId": "h-reading-next"
+    },
+    {
+      "href": "#s-publishers",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-publishers",
+      "headingId": "h-publishers"
+    },
+    {
+      "href": "#s-cite",
+      "active": true,
+      "visible": true,
+      "ariaLabelledby": "h-cite",
+      "headingId": "h-cite"
+    }
+  ],
+  "resolved_history": {
+    "fragment_focus": "Prior /final/ finding that fragment navigation left focus on BODY was corrected; all eight /ready/ links focus the labeled target.",
+    "css_cascade": "Prior /review/ print H2 computed at 38px due cascade order; /ready/ computes 24px print, 30px at 375/768 and 36px at 1280; section spacing computes 48px at 375/768 and 64px at 1280."
+  },
+  "image_and_credit_check": {
+    "all_images_loaded_after_scrolling_to_document_end": true,
+    "cover_credit_full_text": "Photo: Zongalez \u00b7 CC BY 4.0 \u00b7 via Wikimedia Commons. Cropped and resized by IPR. Visual context, not evidence.",
+    "screenshots_visually_inspected": [
+      "shots/after-375-full.webp",
+      "shots/after-768-full.webp",
+      "shots/after-1280-full.webp",
+      "shots/after-375-reading.webp",
+      "shots/after-1280-reading.webp",
+      "shots/after-no-js-375.webp",
+      "shots/after-print-reading.webp"
+    ]
+  },
+  "desktop_and_mobile_rules": {
+    "mobile_375": {
+      "h2": "30px",
+      "section_spacing": "48px"
+    },
+    "tablet_768": {
+      "h2": "30px",
+      "section_spacing": "48px"
+    },
+    "desktop_1280": {
+      "h2": "36px",
+      "section_spacing": "64px"
+    },
+    "print": {
+      "h2": "24px",
+      "section_spacing": "32px"
+    }
+  },
+  "keyboard_all_8_checked": {
+    "js_click_navigation": true,
+    "all_targets_visible_and_focused": true,
+    "all_targets_aria_labelledby_matches_heading_id": true,
+    "no_js_tab_reaches_all_links_after_opening_summary": true
+  }
+}

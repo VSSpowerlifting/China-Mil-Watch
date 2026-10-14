@@ -1,0 +1,476 @@
+{
+  "route": "http://127.0.0.1:8877/final-focus/briefs/what-is-being-built-in-laos.html",
+  "html_sha256": "a86251ce41ea48bcfca26a5ca0f1e64faa9020cf2722f7a0c154355fa899a542",
+  "html_bytes": 28765,
+  "keyboard": {
+    "normal": {
+      "js_enabled": true,
+      "count": 8,
+      "all_passed": true,
+      "results": [
+        {
+          "href": "#reading-finding",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-finding",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "ASIDE",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-finding",
+            "heading": "Central finding",
+            "activeElementId": "reading-finding",
+            "activeElementTag": "ASIDE",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Central finding"
+        },
+        {
+          "href": "#reading-introduction",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-introduction",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-introduction",
+            "heading": "Introduction",
+            "activeElementId": "reading-introduction",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Introduction"
+        },
+        {
+          "href": "#reading-identity",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-identity",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-identity",
+            "heading": "Vietnam’s Support for Laos’s Digital Identity",
+            "activeElementId": "reading-identity",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Vietnam’s Support for Laos’s Digital Identity"
+        },
+        {
+          "href": "#reading-aviation",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-aviation",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-aviation",
+            "heading": "China’s Aviation Training and Border Exchanges",
+            "activeElementId": "reading-aviation",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "China’s Aviation Training and Border Exchanges"
+        },
+        {
+          "href": "#reading-implications",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-implications",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-implications",
+            "heading": "What the Projects Reveal—and What They Don’t",
+            "activeElementId": "reading-implications",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "What the Projects Reveal—and What They Don’t"
+        },
+        {
+          "href": "#reading-next",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-next",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-next",
+            "heading": "What to Watch Next",
+            "activeElementId": "reading-next",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "What to Watch Next"
+        },
+        {
+          "href": "#s-publishers",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#s-publishers",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-publishers",
+            "heading": "Publisher references",
+            "activeElementId": "s-publishers",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Publisher references"
+        },
+        {
+          "href": "#s-cite",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#s-cite",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-cite",
+            "heading": "Cite this brief",
+            "activeElementId": "s-cite",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Cite this brief"
+        }
+      ]
+    },
+    "no_js": {
+      "js_enabled": false,
+      "count": 8,
+      "all_passed": true,
+      "results": [
+        {
+          "href": "#reading-finding",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-finding",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "ASIDE",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-finding",
+            "heading": "Central finding",
+            "activeElementId": "reading-finding",
+            "activeElementTag": "ASIDE",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Central finding"
+        },
+        {
+          "href": "#reading-introduction",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-introduction",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-introduction",
+            "heading": "Introduction",
+            "activeElementId": "reading-introduction",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Introduction"
+        },
+        {
+          "href": "#reading-identity",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-identity",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-identity",
+            "heading": "Vietnam’s Support for Laos’s Digital Identity",
+            "activeElementId": "reading-identity",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Vietnam’s Support for Laos’s Digital Identity"
+        },
+        {
+          "href": "#reading-aviation",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-aviation",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-aviation",
+            "heading": "China’s Aviation Training and Border Exchanges",
+            "activeElementId": "reading-aviation",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "China’s Aviation Training and Border Exchanges"
+        },
+        {
+          "href": "#reading-implications",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-implications",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-implications",
+            "heading": "What the Projects Reveal—and What They Don’t",
+            "activeElementId": "reading-implications",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "What the Projects Reveal—and What They Don’t"
+        },
+        {
+          "href": "#reading-next",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#reading-next",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-reading-next",
+            "heading": "What to Watch Next",
+            "activeElementId": "reading-next",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "What to Watch Next"
+        },
+        {
+          "href": "#s-publishers",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#s-publishers",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-publishers",
+            "heading": "Publisher references",
+            "activeElementId": "s-publishers",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Publisher references"
+        },
+        {
+          "href": "#s-cite",
+          "summary_reached": true,
+          "details_opened": true,
+          "anchor_focus": {
+            "href": "#s-cite",
+            "outlineStyle": "solid",
+            "outlineWidth": "2px"
+          },
+          "target": {
+            "targetExists": true,
+            "targetTag": "SECTION",
+            "targetRole": null,
+            "targetTabIndex": -1,
+            "ariaLabelledby": "h-cite",
+            "heading": "Cite this brief",
+            "activeElementId": "s-cite",
+            "activeElementTag": "SECTION",
+            "activeIsTarget": true,
+            "visible": true,
+            "outlineStyle": "solid",
+            "outlineWidth": "2px",
+            "outlineColor": "rgb(23, 108, 108)",
+            "outlineOffset": "8px"
+          },
+          "passed": "Cite this brief"
+        }
+      ]
+    }
+  },
+  "screenshot": "shots/after-keyboard-target-focus.webp",
+  "css": [
+    {
+      "url": "http://127.0.0.1:8877/final-focus/fonts.css",
+      "sha256": "4291a9d4718adcbdc487acd7b30d648cf5f957fe76af3199e2b88ca9aa219f8b",
+      "bytes": 1855
+    },
+    {
+      "url": "http://127.0.0.1:8877/final-focus/styles.css",
+      "sha256": "8ccef7f2f09a5e1c2b4ab2d81cda0a90e9b0cb8ce2ed4c6c2af072bfd8f6c5d7",
+      "bytes": 30549
+    },
+    {
+      "url": "http://127.0.0.1:8877/final-focus/surfaces.css",
+      "sha256": "23ef9b498fe7e4c69b735c6bbaa8d56457d369d5c1942ec0501b13fabad018ad",
+      "bytes": 5630
+    },
+    {
+      "url": "http://127.0.0.1:8877/final-focus/briefs.css",
+      "sha256": "91b74977350567bd69b52bcf33b11851e8d8167b33b66a1b7184f379868f50cf",
+      "bytes": 15610
+    }
+  ]
+}

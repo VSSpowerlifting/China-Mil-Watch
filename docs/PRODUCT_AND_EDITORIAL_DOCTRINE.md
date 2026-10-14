@@ -151,7 +151,10 @@ watching next) → source trail (English title + verbatim 中文 headline + outl
 + date + URL; flagged items marked) → disclaimer → author block → prev/next.
 Evidence (trail, quotes, stats) and analysis (prose, judgments) must remain
 visually and semantically distinct: evidence is neutral/ink; analytical
-emphasis is the crimson family.
+emphasis uses the jade editorial family (owner-directed coastal ruling,
+2026-10-14). Machine output uses slate-blue with explicit labels and distinct
+markers; source evidence remains neutral. This supersedes the earlier crimson
+and rust representation without changing the evidence-versus-inference rule.
 
 ### Signals (Paper Ledger)
 A hybrid, in this order: (A) pattern dashboard from the monitoring DB
