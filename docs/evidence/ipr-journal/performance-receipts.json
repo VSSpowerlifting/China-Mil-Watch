@@ -8,9 +8,9 @@
     },
     "shell.js": {
       "before_bytes": 372,
-      "after_bytes": 621,
+      "after_bytes": 386,
       "before_gzip": 264,
-      "after_gzip": 357
+      "after_gzip": 252
     }
   },
   "pages": [
@@ -52,7 +52,7 @@
       },
       "after": {
         "html_css_bytes": 84420,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -124,7 +124,7 @@
       },
       "after": {
         "html_css_bytes": 86655,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -196,7 +196,7 @@
       },
       "after": {
         "html_css_bytes": 84531,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -267,7 +267,7 @@
       },
       "after": {
         "html_css_bytes": 90303,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -338,7 +338,7 @@
       },
       "after": {
         "html_css_bytes": 90647,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -410,7 +410,7 @@
       },
       "after": {
         "html_css_bytes": 89898,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -482,7 +482,7 @@
       },
       "after": {
         "html_css_bytes": 85425,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -554,7 +554,7 @@
       },
       "after": {
         "html_css_bytes": 88998,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -626,7 +626,7 @@
       },
       "after": {
         "html_css_bytes": 87524,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -698,7 +698,7 @@
       },
       "after": {
         "html_css_bytes": 87548,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -770,7 +770,7 @@
       },
       "after": {
         "html_css_bytes": 93774,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -842,7 +842,7 @@
       },
       "after": {
         "html_css_bytes": 94800,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -914,7 +914,7 @@
       },
       "after": {
         "html_css_bytes": 93324,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -985,7 +985,7 @@
       },
       "after": {
         "html_css_bytes": 87407,
-        "js_bytes": 621,
+        "js_bytes": 386,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -1059,7 +1059,7 @@
       },
       "after": {
         "html_css_bytes": 90580,
-        "js_bytes": 5571,
+        "js_bytes": 5336,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -1134,7 +1134,7 @@
       },
       "after": {
         "html_css_bytes": 90747,
-        "js_bytes": 5571,
+        "js_bytes": 5336,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -1209,7 +1209,7 @@
       },
       "after": {
         "html_css_bytes": 92128,
-        "js_bytes": 5571,
+        "js_bytes": 5336,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -1287,7 +1287,7 @@
       },
       "after": {
         "html_css_bytes": 89069,
-        "js_bytes": 5571,
+        "js_bytes": 5336,
         "css": [
           "briefs.css",
           "fonts.css",
@@ -1326,6 +1326,10 @@
     }
   ],
   "maximum_html_css": 94800,
-  "maximum_js": 5571,
-  "external_dependencies": []
+  "maximum_js": 5336,
+  "external_dependencies": [],
+  "hub_javascript": {
+    "index.html": 11954,
+    "archive.html": 9861
+  }
 }

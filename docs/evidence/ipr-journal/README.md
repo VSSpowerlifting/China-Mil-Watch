@@ -23,9 +23,9 @@ Design/architecture/release scope:
   [contrast receipt](contrast-receipts.json). This measures computed foreground /
   underlying surface colors; the faint decoration was separately inspected.
 - **Delivery stays within budget.** Maximum article HTML plus recursively
-  linked CSS: 94,800 bytes; maximum executable JS: 5,571 bytes. No external
+  linked CSS: 94,800 bytes; maximum executable JS: 5,336 bytes. No external
   dependency. Article CSS gzip increases 920 bytes; disclosure JS gzip increases
-  93 bytes. No new fonts or documentary assets:
+  -12 bytes. No new fonts or documentary assets:
   [performance receipt](performance-receipts.json).
 - **Output validator:** passes with ten existing governed warnings. Scope guard
   permits exactly the shared CSS/JS and eighteen article pages changed here;

@@ -120,10 +120,10 @@ status, a source exception or a desk promotion.
 Detailed receipts and real browser comparisons are in
 [`evidence/ipr-journal`](evidence/ipr-journal/README.md).
 Shared article CSS grows from 16,454 to 21,964 bytes (gzip 4,089 → 5,009).
-Disclosure JS grows from 372 to 621 bytes (gzip 264 → 357). Historical HTML
+Disclosure JS grows from 372 to 386 bytes (gzip 264 → 252). Historical HTML
 loses its duplicated inline stylesheet. The largest of the eighteen article
 HTML plus recursive linked CSS deliveries is 94,800 bytes; maximum executable
-JS is 5,571 bytes. Both remain inside the existing 120KB / 10KB gates. There
+JS is 5,336 bytes. Both remain inside the existing 120KB / 10KB gates. There
 are no external dependencies or new font/media assets. Finding pages reuse the
 existing 3,031-byte contour SVG, an additional local request when uncached. These are delivery
 measurements, not a claim of faster loading.
