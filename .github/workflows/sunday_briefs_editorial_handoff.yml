@@ -247,6 +247,30 @@ jobs:
           print("Neither source rights nor official silence nor publication approved.")
           PY
 
+      # Source-use approval for PRIVATE MODEL DRAFTING is not consent to email
+      # a new desk's synopses to the editor. Keep longstanding non-Vietnam
+      # Sunday deliveries intact; model-only Vietnam notes require a separate
+      # exact-week owner-authorized editor-send variable before any model call.
+      - name: Guard separate owner permission for Vietnam editor distribution
+        env:
+          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+          IPR_VN_EMAIL_REVIEWED_WEEK: ${{ vars.IPR_SUNDAY_VIETNAM_EDITOR_SEND_REVIEWED_WEEK }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ -n "$PRIVATE_WEEK_PACKET" && -f "$PRIVATE_WEEK_PACKET" ]] || {
+            echo "::error::Current-week research packet missing before editor-send gate"
+            exit 2
+          }
+          args=(--week-ending "$IPR_SUNDAY_WEEK_END"
+                --as-of "$IPR_SUNDAY_AS_OF"
+                --packet "$PRIVATE_WEEK_PACKET"
+                --approved-week "$IPR_VN_EMAIL_REVIEWED_WEEK")
+          if [[ "$IPR_SUNDAY_SHOULD_SEND" == "true" ]]; then
+            args+=(--send-email)
+          fi
+          python -m scripts.sunday_research_editor_delivery_gate "${args[@]}"
+
       # Confirm the ACTUAL scratch packet reaching the unified model still
       # contains Japan. For the Oct10 pilot require the exact three pinned
       # Japan MOD research IDs; for later weeks label omitted Japan explicitly.
