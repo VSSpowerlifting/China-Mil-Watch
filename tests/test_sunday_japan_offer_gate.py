@@ -87,10 +87,15 @@ class SundayJapanOfferIntegrity(unittest.TestCase):
         report = inspect_offer(
             week_ending="2026-10-17", as_of="2026-10-17",
             directory=ROOT / "research/briefs_editorial_evidence")
-        self.assertEqual(report["japan_research_offered"], 0)
+        # The official Week 42 roster now offers the separately reviewed
+        # Japan Joint Staff note alongside the unchanged Indonesia synopsis.
+        self.assertEqual(report["japan_research_offered"], 1)
         self.assertEqual(report["vietnam_research_offered"], 0)
         self.assertEqual(report["indonesia_research_offered"], 1)
-        self.assertEqual(report["all_offered_source_ids"], ["ID-W42-01"])
+        self.assertEqual(report["all_offered_source_ids"],
+                         ["ID-W42-01", "JP-W42-07"])
+        self.assertEqual(report["japan_research_state"],
+                         "japan_candidates_available_unapproved")
         self.assertFalse(report["source_use_or_editorial_approved"])
         self.assertFalse(report["email_sent"])
 
@@ -151,7 +156,8 @@ class SundayJapanOfferIntegrity(unittest.TestCase):
         self.assertLess(gate, model)
         section = contents[gate:contents.index(
             "- name: Create read-only full Saturday-ending week source scaffold", gate)]
-        self.assertIn("steps.vietnam_current.outputs.packet", section)
+        # The validated editor-scope packet reaches the Japan offer gate.
+        self.assertIn("steps.editor_scope.outputs.packet", section)
         self.assertIn("python -m scripts.sunday_japan_offer_gate", section)
         for forbidden in ("IPR_SMTP_APP_PASSWORD", "ANTHROPIC_API_KEY",
                           "upload-artifact", "git push", "send_packet"):

@@ -1,0 +1,64 @@
+{
+  "base": "216dfbb8babc6a0d4d711494c7787a29f84e201e",
+  "full_local": {
+    "tests": 6254,
+    "failures": 1,
+    "errors": 22,
+    "skipped": 1,
+    "seconds": 2215.018,
+    "passed": false
+  },
+  "baseline_targeted": {
+    "tests": 44,
+    "errors": 21,
+    "intro_failures": 0
+  },
+  "focused_integration": {
+    "tests": 110,
+    "passed": true
+  },
+  "final_palette": {
+    "tests": 27,
+    "passed": true
+  },
+  "captures": 48,
+  "parity_comparisons": 24,
+  "rendered_text_consumers": 64,
+  "contrast_failures": 0,
+  "tracked_validator_warnings": 10,
+  "isolated_validator_warnings": 10,
+  "qa": "Lead and read-only helper; corrected dark homepage cue, no remaining concrete visual defect",
+  "publication": "No merge/deployment; Laos v2 remains draft/private",
+  "candidate_intro_isolated": {
+    "tests": 23,
+    "passed": true,
+    "does_not_supersede_full_run": true
+  },
+  "pre_merge_cleanup": {
+    "start_head": "a2629323ca6d972495073a7cd8e1e6d8608fad46",
+    "images_before": 112,
+    "bytes_before": 65380052,
+    "images_retained": 33,
+    "bytes_retained": 7322214,
+    "realtime_intro_each_revision": {
+      "checks": 6,
+      "passed": 6
+    },
+    "negative_controls": "same two expected timing failure paths on base and candidate; separate diagnostic results",
+    "print_credit": "no horizontal overflow; baseline and candidate share 9px finder overlap at1280",
+    "intro_and_store_safeguards_changed": false,
+    "site_styling_changed": false,
+    "focused_tests": {
+      "tests": 110,
+      "passed": true
+    },
+    "rendered_contrast": {
+      "consumers": 64,
+      "failures": 0
+    },
+    "validator_warnings": {
+      "tracked": 10,
+      "isolated": 10
+    }
+  }
+}
