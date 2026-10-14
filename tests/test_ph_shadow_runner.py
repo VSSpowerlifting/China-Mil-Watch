@@ -199,8 +199,7 @@ class TestIsolation(StateCase):
             "workflows: write", "pages: write", "id-token: write",
             "secrets.", "GITHUB_TOKEN", "curl ", "wget ",
             "scripts.pipeline", "smtp"):
-            with self.subTest(forbidden=forbidden):
-                self.assertNotIn(forbidden, executable)
+            self.assertNotIn(forbidden, executable)
         if "gh api " in executable:
             self.assertIn("gh api --paginate --slurp -X GET", executable)
             self.assertNotRegex(
