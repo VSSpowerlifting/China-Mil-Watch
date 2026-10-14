@@ -28,12 +28,12 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {6, 7, 8, 9, 13, 14, 17, 18}
+PHOTO_ISSUES = {6, 7, 8, 9, 13, 14, 15, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
 SOURCE_HOSTS = {6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
                 13: "https://commons.wikimedia.org/",
-                14: "https://commons.wikimedia.org/",
+                14: "https://commons.wikimedia.org/", 15: "https://www.dvidshub.net/",
                 17: "https://www.dvidshub.net/image/",
                 18: "https://commons.wikimedia.org/"}
 HELD_ISSUES = {1, 10}
@@ -305,6 +305,20 @@ class CommittedRecordTests(unittest.TestCase):
         self.assertEqual(shoal.get("notice", ""), "")
         by_audit = {a["issue"]: a for a in self.audit}
         self.assertTrue(all(by_audit[i]["kind"] == "photograph" for i in (7, 13)))
+
+    def test_wave4_same_hull_not_same_exercise_with_origin_notice(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        fifteen = by_issue[15]
+        from core.source_terms import required_notice
+        self.assertEqual(fifteen["notice"], required_notice(fifteen))
+        self.assertIn("RSS Steadfast (70)", fifteen["caption"])
+        self.assertIn("22 June 2026", fifteen["caption"])
+        self.assertIn("September", fifteen["caption"])
+        self.assertIn("does not depict", fifteen["caption"])
+        self.assertEqual(fifteen["source_label"], "DVIDS")
+        self.assertIn("1000px", self.manifest[fifteen["source_manifest_id"]]["license_basis"])
+        by_audit = {a["issue"]: a for a in self.audit}
+        self.assertEqual(by_audit[15]["kind"], "photograph")
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:
