@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% set has_source_linked = collection.briefs|selectattr('source_linked')|list|length %}
 {% from "_plate.html" import edition_plate %}
 {% from "_terrain.html" import terrain %}
 {% from "_relief.html" import region_plate with context %}
@@ -37,8 +38,8 @@
     <div class="briefs-masthead">
       <p class="briefs-kicker">Analysis</p>
       <h1 id="briefs-title" class="page-name">{{ collection_name }}</h1>
-      <p class="briefs-lede">Human-controlled analysis built from preserved records.
-        Each Brief cites the records it rests on and names its editor.</p>
+      <p class="briefs-lede">{% if has_source_linked %}Human-controlled analysis with explicit sources and named editors. Briefs distinguish preserved corpus records from source-linked editorial references.{% else %}Human-controlled analysis built from preserved records.
+        Each Brief cites the records it rests on and names its editor.{% endif %}</p>
       <p class="briefs-browse"><a href="#briefs-published">Browse all Briefs</a>{% if briefs_feed_route %} · <a href="{{ briefs_feed_route }}">Subscribe to the feed</a>{% endif %}</p>
     </div>
     {% if lead %}
@@ -57,7 +58,7 @@
       {% set lead_media = catalogue_media.get(lead.slug) if catalogue_media else none %}
       {% if lead_row.kind == 'brief' and lead_media and lead_media.is_photograph %}
       {% set lp = lead_media.photo %}
-      <figure class="briefs-lead-photo">
+      <figure class="briefs-lead-photo"{% if lp.cover_treatment %} data-treatment="{{ lp.cover_treatment }}"{% endif %}>
         <a href="{{ lead.url }}"><img src="{{ lp.served }}" width="{{ lp.width }}" height="{{ lp.height }}" alt="{{ lp.alt }}"></a>
         <figcaption>{{ photo_credit(lp) }}</figcaption>
       </figure>
@@ -69,7 +70,7 @@
       {% if plate %}
       <figure class="plate plate-paper briefs-lead-plate">
         {{ edition_plate(plate, 'plate-analysis-lead', lead.series_name or predecessor_series) }}
-        <figcaption>One mark per record in this Brief's source trail. The tall rust marks are model-flagged: a software triage flag, not the editor's judgment.</figcaption>
+        <figcaption>One mark per record in this Brief's source trail. The tall marks are model-flagged: a software triage flag, not the editor's judgment.</figcaption>
       </figure>
       {% endif %}
     </article>
@@ -100,7 +101,7 @@
   {% set m = catalogue_media.get(e.slug) %}
     <li>
       <article class="rl-brief brief-card" data-media="{{ m.kind if m else 'plate' }}">
-        <div class="brief-media" data-catalogue-media>
+        <div class="brief-media" data-catalogue-media{% if m and m.is_photograph and m.photo.cover_treatment %} data-treatment="{{ m.photo.cover_treatment }}"{% endif %}>
           <div class="rl-print">
           {%- if m and m.is_photograph %}<img src="{{ m.photo.served }}" width="{{ m.photo.width }}" height="{{ m.photo.height }}" alt="{{ m.photo.alt }}" loading="lazy" decoding="async">
           {%- else %}{{ region_plate(m.plate_desks if m else ['china']) }}{% if e.issue is not none %}<span class="brief-ghost" aria-hidden="true">{{ '%02d' % e.issue }}</span>{% endif %}{% endif -%}
@@ -178,7 +179,7 @@
     <thead><tr><th scope="col">Collection</th><th scope="col">Status</th><th scope="col" class="num">Briefs</th></tr></thead>
     <tbody>
       <tr>
-        <td data-label="Collection">{{ collection_name }}<br><span class="meta">{% if collection.rows %}{{ collection.rows|length }} published{% if editions %}, of which {{ editions|length }} {{ 'was' if editions|length == 1 else 'were' }} first published as {{ predecessor_series }}{% if _hist %} ({{ _hist|length }} under the predecessor masthead {{ predecessor_name }}){% endif %}{% endif %}{% else %}No Brief has been published yet{% endif %}</span></td>
+        <td data-label="Collection">{{ collection_name }}<br><span class="meta">{% if collection.rows %}{% if review_mode and has_source_linked %}{{ collection.rows|rejectattr('entry.is_review')|list|length }} published · {{ collection.rows|selectattr('entry.is_review')|list|length }} unapproved review candidate{% else %}{{ collection.rows|length }} published{% endif %}{% if editions %}, of which {{ editions|length }} {{ 'was' if editions|length == 1 else 'were' }} first published as {{ predecessor_series }}{% if _hist %} ({{ _hist|length }} under the predecessor masthead {{ predecessor_name }}){% endif %}{% endif %}{% else %}No Brief has been published yet{% endif %}</span></td>
         <td data-label="Status">{% if collection.rows %}Published{% else %}In development{% endif %}</td>
         <td data-label="Briefs" class="num">{{ collection.rows|length }}</td>
       </tr>
@@ -218,6 +219,7 @@
   <p class="meta">A desk that does not collect publishes no analysis. There is nothing to read, and a
   placeholder would be an editorial claim nobody made. Each desk's collection status is on
   <a href="desks.html">Desks</a>.</p>
+  {% if has_source_linked %}<p class="meta">Source-linked editorial references belong to the Briefs collection. They do not add corpus records or change a desk's collection status.</p>{% endif %}
   </section>
 </div>
 {% endblock %}

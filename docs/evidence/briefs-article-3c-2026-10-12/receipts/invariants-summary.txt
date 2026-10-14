@@ -1,0 +1,71 @@
+# Invariants — tools/invariants.py, base render vs after render, all 17 opened Briefs
+Fields extracted per page: title, meta (canonical/og/twitter/description), links, h1, headings (order), ids,
+article_paragraphs, lang_spans, imgs, citation, provenance, byline, model_flagged_count, hrefs, external_hrefs, figcaptions.
+Expected deltas were written before editing (reproduced at the end).
+
+route                                            changed fields
+briefs/maritime-cooperation-2026.html            hrefs
+briefs/trident-resolve-regional-scale-specific-chinese-tasks.html hrefs
+briefs/xiangshan-security-frames-defense-ties.html hrefs
+the-pla-watch/posts/2026-05-09.html              hrefs
+the-pla-watch/posts/2026-05-16.html              hrefs, figcaptions
+the-pla-watch/posts/2026-05-23.html              hrefs, figcaptions
+the-pla-watch/posts/2026-05-30.html              hrefs
+the-pla-watch/posts/2026-06-06.html              hrefs, figcaptions
+the-pla-watch/posts/2026-06-13.html              hrefs, figcaptions
+the-pla-watch/posts/2026-06-20.html              hrefs, figcaptions
+the-pla-watch/posts/2026-06-27.html              hrefs, external_hrefs, figcaptions
+the-pla-watch/posts/2026-07-04.html              hrefs, figcaptions
+the-pla-watch/posts/2026-07-11.html              hrefs
+the-pla-watch/posts/2026-07-18.html              hrefs, figcaptions
+the-pla-watch/posts/2026-08-01.html              hrefs
+the-pla-watch/posts/2026-08-08.html              hrefs, figcaptions
+the-pla-watch/posts/2026-08-15.html              hrefs
+
+fields unchanged on all 17: title, meta, links, h1, headings, ids, article_paragraphs, lang_spans, imgs, citation, provenance, byline, model_flagged_count
+fields changed (routes): hrefs=17, external_hrefs=1, figcaptions=9
+
+## Why 'hrefs' differs on all 17 (the field is a list of (href, link text) pairs)
+- Historical (14): every prev/next target href is unchanged. The link text changed: 'Previous Brief' / 'Next Brief'
+  labels, 'No. N · date' meta, and titles with the 'The PLA Watch: ' series prefix stripped for display.
+- Native (3): the new previous/next nav adds links (No. 15 -> No. 14 historical route and No. 16; No. 16 -> 15, 17; No. 17 -> 16).
+- No. 8 (2026-06-27) external_hrefs: the CC BY 4.0 licence URL is now linked in the photograph credit (from the manifest's license_url).
+## Why 'figcaptions' differs on 9
+- Signal Veils (Nos. 2, 3, 5, 6, 7, 11, 13): a leading 'Signal Veil' kind label; the preserved legacy caption remains a contiguous substring.
+- Photographs (Nos. 8, 9): full manifest credit and licence, 'via Wikimedia Commons', change note, 'Visual context, not evidence.'
+- Nos. 1, 10, 12, 15: figure markup byte-identical (held/preserved). 'Downloaded from PLA Daily' appears on no route before or after.
+Full per-route detail: invariants-delta.json.
+
+---- expected-deltas.md (pre-edit) ----
+# Phase 3C expected invariant deltas (written before editing)
+
+## Media (hero figure)
+- NONE (no figure, text-led): No. 4 (05-30), No. 14 (08-15), No. 16, No. 17. No delta.
+- PRESERVED byte-identical figure markup: No. 1 (05-09 cover, 3B held), No. 10 (07-11 jin-class, 3B held),
+  No. 12 (08-01 src veil, provenance unresolved), No. 15 native photograph (Phase 0 §1.2).
+- CHANGED:
+  - Nos. 2,3,5,6,7,11,13 (81.cn Signal Veils): figure gains data-article-media="signal-veil";
+    figcaption gains leading kind label "Signal Veil"; legacy text
+    "Image: <a>{source_id}</a> · {subject} · Context, not evidence." unchanged as contiguous substring.
+  - No. 8 (06-27, liaoning-j15-recovery) and No. 9 (07-04, scarborough-shoal-iss): figure gains
+    data-article-media="photograph"; caption becomes
+    "Photograph · {subject} · {full manifest credit, licence linked when license_url (No. 8 only),
+    'via Wikimedia Commons' linked to source_page}. Toned, cropped and resized by IPR. Visual context, not evidence."
+    The abbreviated source_id no longer appears.
+- "Downloaded from PLA Daily" appears on no route before or after.
+
+## Other historical deltas (all 14 historical routes)
+- Trail rows: "Model-flagged" wrapped in <span class="evidence evidence--model"> (text unchanged).
+- Prev/next nav: adds "Previous Brief"/"Next Brief" labels and prefix-stripped titles; hrefs unchanged.
+- Inline <style> rules for the above.
+- No change: headings order, anchor IDs, article text, source links, citations, canonical/og metadata,
+  author info, snapshot note, title/dek.
+
+## Native deltas (Nos. 15-17)
+- Prev/next nav added after citation (No. 15 prev -> No. 14 historical, next -> No. 16; No. 17 next none).
+- No hero / caption change.
+
+## briefs.css
+- Additive only; legacy selectors kept (old historical HTML stays styled).
+
+Anything else in the invariant diff = stop and investigate.

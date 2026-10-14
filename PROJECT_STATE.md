@@ -1,5 +1,40 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Coastal visual identity (14 October 2026, owner-review candidate):**
+`codex/coastal-visual-identity` starts at exact latest main
+`216dfbb8babc6a0d4d711494c7787a29f84e201e` (#561 merged). Active IPR CSS and edition
+SVG now use jade for human analysis and slate-blue for machine output, with
+surface-specific text and non-colour cues. Navy, turquoise, ivory, original
+photographs/flags and warning/positive semantics are retained. Evidence, contrast,
+comparison captures and verification: `docs/evidence/coastal-identity-2026-10-14/README.md`.
+PR #566 is ready for review. Pre-merge cleanup retains 33 representative images
+(7.3 MB, down 88.8% from 65.4 MB) with full-capture reproduction and receipts.
+The two intro checks pass three repetitions each on base and candidate;
+separate scheduling negative controls reproduce both timing paths on both.
+No intro regression is demonstrated or behaviour changed. The existing desktop
+print credit/finder overlap is 9px on both revisions; the URL itself wraps.
+Focused integration (110 tests), contrast and validator rechecks are recorded in
+the evidence index. Original full-run 21 macOS store errors and two intro timing
+findings remain disclosed; no safeguards are weakened. No canonical Brief,
+approval, media admission, database, collector, stylesheet, typography/layout or
+tracked output changes in cleanup. Initial exact-head Linux CI passed
+(6,255 tests, nine skips; output validator and preservation checks), followed
+by a public-Laos integration test and documentation refresh requiring renewed
+CI. No merge or deployment authorized.
+
+**Brief reading architecture (#561, Laos release #565 and unification #567 merged 14 October 2026):**
+The source components are integrated in main. PR #565 separately approved the
+exact five-section, paragraph-10 finding presentation for Laos No. 18 and
+committed its structured public article output. This replaces the previous
+draft/private-only state. The independent exact-content approval is bound to
+the presentation fingerprint; the original canonical manuscript is unchanged. Canonical Laos editorial fingerprint remains
+`3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57`.
+Contract: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`; original receipts:
+`docs/evidence/briefs-editorial-v2/README.md`. Earlier coastal screenshots
+compared the public fallback with the private candidate before PR #565 merged;
+they are historical design evidence, not a substitute for final merged-main
+verification of the approved structured article.
+
 **Current operational snapshot and handoff. Desk statuses checked 2026-09-28
 against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
 Production and corpus figures below carry their own measurement dates. The
@@ -13,6 +48,24 @@ The image-only-release repair is in
 recovery is prepared for review (three inserts, eight duplicates; no analysis
 or rendering), with evidence in
 `docs/SINGAPORE_SEPT22_RECOVERY_2026-10-07.md`.**
+
+**Laos Brief — No. 18, published 13 October 2026:**
+[What Is Being Built in Laos?](https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html)
+is live. PR #485 merged as `e1f9b003d2`; canonical approval commit `59562fbac1`,
+production-output commit `407dfd80d1`, tested head `a94c9ad34f`. Final CI
+`38443344036` passed 6,119 tests (nine documented skips), real Chromium,
+validator ten governed warnings and DB/output preservation; local full suite
+passed 6,119 tests (one skip). Output-only deploy `38449191412` succeeded.
+All five public article/Analysis/home/feed/sitemap routes returned 200 with
+exact committed bytes; live desktop/mobile JS/no-JS checks passed. Publication
+confirmed **14:46:41 EDT** on October 13. The unchanged approved fingerprint is
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`;
+all 11 paragraphs, seven links, Ben byline and Dylan Lead Research Analyst
+credit are preserved. Reporting ends October 10; source-verification/limited-use
+qualifications remain explicit. No corpus, historical sidecar, MEPCOM or desk
+promotion changes. Complete diagnosis, repaired assertions, source/rights
+matrix, CI/merge/deploy and live route hashes:
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`. No remaining Laos release blocker.
 
 Brief release approval was received 2026-10-05; its candidate,
 authorization recovery and QA evidence are in
@@ -1057,7 +1110,7 @@ hung from the desks heading by hairlines. It is not merged or deployed, and
 independent review is required. Open PRs #314/#323 overlap `home.html` and
 `generate_preview.py`. The sequence after merge, each phase in its own session:
 - Phase 2b Archive (in review, below)
-- Phase 3 Briefs: 3A provenance merged; 3B catalogue in review (below); 3C article presentation
+- Phase 3 Briefs: 3A provenance merged; 3B catalogue merged (#418); 3C article presentation in review (below)
 - Phase 4 Desks
 
 **Phase 2b Archive in review (2026-10-11):** branch
@@ -1074,8 +1127,8 @@ Indo-Pacific desks get no marker. `browse.js` is byte-identical (9,847 B).
 Evidence: `docs/evidence/archive-refinement-2b-2026-10-11/`. Not merged or
 deployed; independent review required.
 
-**Phase 3B Briefs catalogue in review (2026-10-12, revised after review of
-PR #418):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
+**Phase 3B Briefs catalogue merged (2026-10-12, PR #418 as `18b57684e6`,
+revised after review):** branch `claude/briefs-catalogue-phase-3b-61563a`, merged with main
 `1102462e4f` (after the Indonesia Siaran Pers link directory, #445/#446; the catalogue build,
 parity and browser checks were re-run at `f315e0a3fa`, and the later main commits, the dedup workbench
 and Vietnam review state, change no build input, so they were not repeated; the full local suite pair was last measured at
@@ -1093,10 +1146,14 @@ suite is green on this branch apart from the 25 local-environment errors that
 clean main shows too (`python-docx` absent locally; `test_evidence_store` and
 the macOS temp root). Contract:
 `docs/engineering/BRIEFS_CATALOGUE_PHASE3B_2026-10-12.md`; evidence and the
-17-card audit: `docs/evidence/briefs-catalogue-3b-2026-10-12/`. Not merged or
-deployed; independent review required. Phase 3C (article presentation) is
-separate.
+17-card audit: `docs/evidence/briefs-catalogue-3b-2026-10-12/`. Merged to main
+as `18b57684e6`.
 
+**Briefs Phase 3C article presentation and No. 17 photography — source integrated, publication pending (2026-10-13):** The article presentation from PR #457 and the No. 17 photograph implementation from PR #489 are both in `main` through merged integration PR #492, commit `22627423c83e7a20ca9b035c9410a3b4d512a8eb`. The combined full `PR offline checks` run #38349385797 passed. PR #489 was closed as superseded after confirming its cover-gate and manifest code was already present in the integration merge; it was not merged a second time.
+
+All 17 opened Briefs use the shared article-media adapter and previous/next navigation. Seven Signal Veils retain their original captions and are labelled as treated source photographs; Nos. 8 and 9 retain their independently admitted Commons photographs and full credits; Nos. 1, 10, 12 and 15 retain their protected figure markup. Nos. 4, 14 and 16 still use labelled original editorial plates as fallbacks. No. 17 now has the owner-approved DVIDS 9957254 photograph with treatment B (CSS-only navy gradient), consistent provenance on the catalogue card and article, source-specific non-endorsement notice, and fail-closed paired-surface/slug gates. G3 authorises editorial and news publication of that one image only; marketing or promotional use needs separate review. Both DVIDS dates remain recorded. No other image admission changed; No. 15 remains protected. Joint Staff rights checks for Nos. 2 and 6 remain the next candidate reviews. Contract: `docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`; cover policy: `docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`; evidence: `docs/evidence/briefs-article-3c-2026-10-12/` and `docs/evidence/brief-cover-no17-2026-10-12/`.
+
+**Publication is still pending.** The source merge did not regenerate tracked `output/` or deploy `gh-pages`; the live No. 17 card/article still lack the new photograph and the opened historical pages still have the pre-Phase-3C presentation. PR #493 proposes a dedicated manual-only release gate. It rerenders the historical pages and current IPR site from existing records, validates the output and database immutability, restores unrelated generated country pages to the exact committed baseline, and allows only the explicitly reviewed Brief routes and No. 17 assets into the release. The default is preview-only; publication requires a full owner-reviewed `main` SHA and an explicit `publish=true` dispatch after inspecting the preview artifact. Do not use the output-only deploy workflow against the stale output tree.
 ## 8. Prohibited shortcuts and human-review gates
 
 * Never invent Chinese text, translations, titles, outlets, dates, units, ranks

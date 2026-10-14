@@ -4,6 +4,288 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-14 — Owner-directed coastal visual identity
+
+The owner explicitly approved replacing active editorial crimson/pink and
+machine rust with a navy/turquoise/jade/slate-blue/ivory system, including the
+current shell of historical articles. This supersedes the earlier red/rust
+colour representation in the September layer rulings and October frontend
+direction; those historical decisions are retained below. Source evidence,
+machine output, human analysis and warning semantics persist through labels,
+solid/dotted rules and distinct markers. Original evidence, national flags and
+photographs retain their colours. No new manuscript, image, collector, route or
+presentation approval is authorized by this colour ruling.
+
+Final tokens and rationale are in DESIGN_SYSTEM §3. The slate-blue paper tone
+was tuned from #456D7A to #446C79 to meet AA on the existing inset ground.
+Implementation is based on exact main `216dfbb8babc6a0d4d711494c7787a29f84e201e`,
+after #561 merged. Laos's v2 manifest is still draft, tested only in private
+preview. Commit, push and one owner-review PR are authorized; merge, deployment
+and tracked output regeneration are not. Evidence:
+`docs/evidence/coastal-identity-2026-10-14/README.md`.
+
+## 2026-10-13 — Brief reading architecture prepared for owner review
+
+The owner's Editorial Architecture v2 task authorizes implementation, isolated
+QA, commit/push and one review PR, with no merge, deployment or editorial approval
+amendment. The candidate keeps manuscript and presentation records separate.
+New source-linked authoring requires an explicitly selected outline and a
+separate exact-content presentation receipt before numbering; existing numbered
+publications retain their fallback. No automated heading/excerpt authoring or
+inherited manuscript sign-off. Laos's manifest remains draft and is visible only
+in the private presentation preview. Its approved manuscript, seven references,
+joint byline and admitted photograph are unchanged. This entry records an
+implementation-review boundary, **not approval of the proposed headings,
+emphasis, evidence classification or public release**. Contract and evidence:
+`docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md` and
+`docs/evidence/briefs-editorial-v2/README.md`.
+
+## 2026-10-13 — Laos Brief No. 18 published and independently verified
+
+The existing fingerprint-bound owner policy/editorial approvals were carried
+through the normal locked No. 18 assignment and exact-head full verification.
+PR #485 merged with its head guard as `e1f9b003d2`; output-only deployment
+`38449191412` succeeded. All five required public routes matched committed
+output exactly at 14:46:41 EDT. No manuscript, reference, author or contributor
+field changed; fingerprint remains
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+The known source-access/rights qualifications are retained, not converted into
+primary-inspection or broad reproduction claims. No collector or paid writer
+was invoked. Detailed receipts are in `docs/LAOS_BRIEF_RELEASE_2026-10-12.md`.
+
+## 2026-10-13 — Laos final production release explicitly authorized
+
+The owner's “Codex — Laos Brief Final Production Release” request in the
+current release chat authorizes canonical locked approval/numbering, complete
+production regeneration, source/output commits, exact-head full QA, PR #485
+merge, `deploy_output_only.yml` on main and actual public-route verification.
+It also authorizes updating and closing issue #481 after all acceptance criteria
+pass. Existing policy and human editorial approvals bind fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`;
+no further manuscript edit, source licence, desk promotion, collection run,
+paid writer or Dylan delivery is authorized. The locked command assigned
+No. 18 on October 13 after verifying Nos. 1–17. Publication remains pending
+final CI/merge/deployment/live checks; receipts belong in the release dossier.
+
+## 2026-10-13 — Laos owner final editorial review confirmed
+
+The owner expressly answered “yes” to whether they personally reviewed and accepted the documented seven-source limitations, claims, limited-use assessment, revised manuscript and page presentation. The approval is documented in [PR #485](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138538619) and bound to fingerprint `ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500` in the canonical editorial review. The known source-verification and reuse limitations remain unchanged. This does not replace the canonical numbered-approval process or final production validation and deployment.
+
+## 2026-10-13 — Narrow §5b source-linked Laos Brief exception expressly approved
+
+In this conversation the owner explicitly said **yes** when asked to approve the
+specific §5b evidence/anatomy exception for the revised “What Is Being Built
+in Laos?” candidate. The exact ruling and approved policy language are
+memorialized in [PR #485 comment](https://github.com/VSSpowerlifting/China-Mil-Watch/pull/485#issuecomment-6138481576).
+The ruling binds only revised candidate fingerprint
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`
+and is stored in the draft's `policy_ruling`; its revised DOCX SHA-256 is
+`43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`.
+
+**Accepted exception:** For this precisely reviewed manuscript, the
+`source-linked-editorial-v1` variant may use publisher-linked evidence and
+the intact eleven-paragraph narrative within the *existing* numbered Briefs
+collection. Publisher references disclose issuer, date, source language,
+verification route and independence; paragraph claims map to those sources.
+They are **not** production archive records, create no desk coverage and cannot
+be confused with normally collected, record-backed research. All other
+record-backed §5b rules, edition identities, release numbering and production
+admission requirements remain unchanged. Future manuscripts require
+independent fingerprint-specific owner decisions; see
+`docs/PRODUCT_AND_EDITORIAL_DOCTRINE.md`, §5b.
+
+**Remaining independent hold:** The owner's yes **did not claim** that they
+personally completed the seven-reference original-language/source/translation/
+rights, claim, chronology, authorship, fidelity and rendered-page review.
+The `editorial_review` field is still `null`; source-linked readiness must
+fail closed until an actual reviewer/date/reference and all seven checks are
+properly recorded against this fingerprint. No issue number, final release
+approval, merge, output regeneration or deployment was authorized by this
+policy ruling alone.
+
+## 2026-10-13 — Laos Brief paragraph 1 clarification authorized; release still held
+
+Following a specific editorial recommendation in this conversation, the owner
+approved replacing the opening-paragraph sentence
+
+> These events were not coordinated, and the evidence does not suggest otherwise.
+
+with
+
+> The available sources do not establish any coordination among these events.
+
+This narrows an unproved categorical assertion to the actual limit of the
+reviewed evidence. **The authorization is for this exact language change only**;
+it does not constitute human source/translation/limited-use signoff, acceptance
+of Reuters' syndication as a substitute for primary review, approval of the
+source-linked §5b evidence/anatomy supplement, release numbering or deployment.
+
+Original publication-candidate DOCX SHA-256:
+`54ede4791a46511a332040ab0871dd3fd6b7d3a4479c8aa68a9218810c789b26`.
+The revised two-page DOCX, edited without changing its other paragraphs or
+seven hyperlink associations, has SHA-256:
+`43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1`.
+The superseded candidate fingerprint was
+`c9c226211309e03dfbceb8c46b6786925731d4725335a24aca85078a4b8c3dc0`;
+the revised candidate fingerprint is
+`ec3da971c0c9ab0ec21e2688b971d419c4a5650a690e49bad380c56763a0e500`.
+Any future actual human review and owner §5b policy ruling must bind to the
+**revised** exact fingerprint, and the document still must pass new exact-head
+CI and rendered fidelity review before final release consideration.
+
+## 2026-10-12 — Laos release engineering authorized; policy decision remains separate
+
+The owner’s “Laos Brief Production Release” request in Codex chat
+`01a13335-2a6f-7c91-878e-b4fd6cee9e6c` (request SHA-256
+`7fd70a06c1bcdce894890d8995fcbee0026c78658a8d7eb6b26fc72627191715`) authorizes
+narrow engineering, eligible PR merge, output regeneration and deployment of
+“What Is Being Built in Laos?” if substantive gates pass. Canonical DOCX:
+`54ede4791a46511a332040ab0871dd3fd6b7d3a4479c8aa68a9218810c789b26`.
+This supersedes #481’s older implementation-only scope; it does not establish
+human source review, grant third-party reproduction rights or silently change
+§5b’s production-backed evidence/anatomy rule. The current source-linked
+variant is a gated engineering proposal within the same Brief collection.
+The exact supplemental rule and source/rights limitations are documented in
+`docs/LAOS_BRIEF_RELEASE_2026-10-12.md`; the actual owner ruling and exact-version
+human attestations remain required before it can be approved or numbered.
+No new issue, desk admission, collector activation or deployment is approved
+by this implementation receipt alone.
+
+## 2026-10-13 — Phase 3C source integration; publication pending
+
+Merged integration PR #492 put Phase 3C's article presentation and the No. 17 DVIDS cover implementation into `main` at `22627423c83e7a20ca9b035c9410a3b4d512a8eb`. The combined full `PR offline checks` run #38349385797 passed. PR #489 was closed as superseded after its implementation was verified in the integration merge; it was not merged separately.
+
+This was a source integration, **not a publication**. Tracked `output/` and `gh-pages` remain at the pre-Phase-3C article presentation, and the No. 17 cover is not live. PR #493 proposes a manual, exact-main-SHA release workflow with preview-only default. It renders the historical Briefs and current IPR site, validates the result and database immutability, restores out-of-scope generated pages to their committed baseline, and permits only the explicit Briefs/No. 17 output allow-list into a publish. The preview artifact is not the live site. Do not use the output-only deploy workflow until reviewed generated output has been committed.
+
+## 2026-10-13 — Brief cover photography: standing policy
+
+Owner direction for native Brief covers from No. 17 on. The rules are in
+`docs/BRIEF_PHOTOGRAPHY_CONTRACT.md`.
+
+- **Photography first.** Each Brief gets one authentic, verifiably reusable
+  photograph, chosen and approved individually. The same photograph serves
+  the catalogue card and the opened article, with separate crops, unless the
+  owner records an exception. Treatment B (a restrained CSS gradient) is the
+  default. The gradient may be adjusted or omitted for legibility or fidelity.
+- **Full provenance.** Attribution, source link, image identity, hashes and
+  any publisher notice are kept on every surface. Each cover records whether
+  it shows the event or context. AI imagery is never presented as documentary.
+- **Rights are not a treatment.** Duotone, transparency, a gradient or Signal
+  Veil processing never substitutes for image rights. A publisher's required
+  notice is enforced per source (`core/source_terms.py`), separately from
+  copyright status and from IPR's own use approval.
+- **No automatic admission.** Existing 81.cn Signal Veils, Joint Staff
+  material, restricted MINDEF images and historical held photographs each
+  need their own decision. The protected imagery for Nos. 1, 10, 12 and 15
+  and the catalogue admissions for Nos. 8 and 9 are unchanged.
+- **Fail closed, together.** A paired cover is shown on both of its surfaces
+  or on neither. A catalogue-only approval never grants the article.
+- **No. 17 record wording.** The shared caption and date note were shortened
+  for the card. They state the same facts, and both DVIDS dates remain.
+
+## 2026-10-12 — No. 17 photograph cover: treatment B and G3
+
+Owner decisions on the No. 17 cover proof of concept. Where this entry
+conflicts with the Phase 3C entries below, this entry governs, for No. 17 only.
+
+- **Treatment B selected.** No. 17's catalogue card and article hero show DVIDS
+  9957254 (VIRIN 260921-A-XH946-9505, Sgt. 1st Class Timothy Hughes, 18th
+  Theater Medical Command, U.S. Army) with the restrained navy-to-transparent
+  gradient, applied in CSS only. The image files stay untoned. One manifest
+  record (`trident-resolve-basarnas-drone`) and one catalogue admission serve
+  both surfaces with separate crops and identical provenance. No. 17 no longer
+  opens on the editorial plate. The unaltered photograph (A) and the duotone
+  (C) are comparison evidence only and are not shipped.
+- **G3 approved for editorial and news use only.** This individually verified
+  public-domain photograph may appear in IPR's editorial and news publication,
+  subject to the DVIDS published restrictions. It must carry the photographer
+  credit, the source link, the recorded hash and the U.S. Department of War
+  non-endorsement notice. Use to market, advertise or promote IPR is a
+  different use and needs its own review. This does not say that every
+  commercial use is prohibited, and it grants nothing to any other DVIDS image.
+- **The date discrepancy is preserved.** The DVIDS caption gives 21 September
+  2026, and the DVIDS date-taken field gives 20 September 2026. Both are stated
+  and no exact capture date is asserted.
+- **Not approved:** a card-only photograph for No. 15 (it needs a new editorial
+  decision), and any bulk admission. Nos. 2 and 6 come next, each with its own
+  Joint Staff rights check.
+
+## 2026-10-12 — Phase 3C review revision
+
+Made within the PR review brief on the Phase 3C PR. Where this entry conflicts
+with the Phase 3C entry below, this entry governs.
+
+- **Editorial plates on every image-less Brief; owner sign-off open.** Nos. 4
+  and 14 (China Desk) and Nos. 16 and 17 (their own desks) open on the
+  labelled editorial plate: the catalogue's regional relief, original IPR
+  artwork, `aria-hidden`, captioned "Editorial plate · Original IPR artwork.
+  No source photograph. Decorative, not evidence." A plate never replaces a
+  photograph, Signal Veil or held image. This meets Phase 0 requirement 7 in
+  implementation only. **Gate:** the requirement stays conditional until the
+  owner signs off the plate's look in this log. No photograph is admitted, and
+  the media-rights rulings are not broadened.
+- **No. 8's native credit name is recorded in the manifest.** The editorial
+  manifest entry `liaoning-j15-recovery` gains `credit_native` ("統合幕僚監部")
+  and `credit_native_lang` ("ja"), from the Commons file page's author field
+  (checked 2026-10-12). The credit text is unchanged. Only that name is wrapped
+  in `lang`, and only when it occurs exactly once in the credit; a language is
+  never guessed from the script. This is a manifest data change for owner
+  review. It is not a rights decision and does not read catalogue admissions.
+- **One read-only cross-series bridge.** The newest earlier issue (No. 14)
+  links "Next Brief" to the published Brief that follows it in the
+  approval-gated collection (today No. 15). If the collection fails to load,
+  the link is omitted with a warning, never guessed. No other historical href
+  changes. This supersedes "No. 14 → No. 15 is not linked" below.
+- **Test normalisation is temporary.** The historical shell test turns the
+  current render back into the checked-in pre-3C pages only through counted,
+  context-built replacements, and a guard test proves that media, alt, source
+  and citation changes still fail. After the owner's governed rerender
+  (`scripts/rerender_pla_watch.py --no-covers`), the comparison is strict byte
+  equality with no normalisation.
+
+## 2026-10-12 — Expressive frontend Phase 3C (Brief article presentation) implementation decisions
+
+Made within the Phase 3C brief; presentation only, not visual sign-off.
+Contract: `docs/engineering/BRIEFS_ARTICLE_PHASE3C_2026-10-12.md`.
+Evidence: `docs/evidence/briefs-article-3c-2026-10-12/`.
+
+- **A presentation adapter, not an admission.** `core/article_media.py` only
+  says how an opened article shows the image its own resolvers already chose
+  (`pw_env` veils, the legacy cover, `brief_collection.brief_photo`). It never
+  reads `core/catalogue_media.py` or its admissions, which govern the catalogue
+  only, and it creates no photograph admission or source–image association.
+- **Kinds are named in text.** "Photograph" (curated, with the manifest's
+  credit, licence link where recorded, source link, "Toned, cropped and resized
+  by IPR." and "Visual context, not evidence."), "Signal Veil" (the pre-3C
+  caption word for word), "Editorial plate" (original IPR artwork, empty alt,
+  "Decorative, not evidence."), or no figure.
+- **A Signal Veil's stored `credit` is never read.** For a source veil it is a
+  collector's note, not an attribution. The caption is built from the source
+  id, source page and subject only.
+- **Held images stay as they were.** No. 1 (legacy cover; identifiable people,
+  filename alt), No. 10 (`jin-class-type-094-ssbn`; authorship and alt text not
+  established), No. 12 (`src-2026-08-01`, B5) and No. 15's native photograph
+  keep their pre-3C figure markup byte for byte. An unknown veil kind falls back
+  to the same preserved branch. Clearing any of them is a separate decision.
+- **No. 12.** The stored "Downloaded from PLA Daily / 81.cn" note is never
+  rendered as a credit. It was absent before 3C and stays absent; a test
+  asserts it.
+- **Navigation order.** Native Briefs follow the collection: "Previous Brief"
+  is the next older item and "Next Brief" the next newer one, across series.
+  Earlier issues keep their date-sorted sidecar targets from
+  `rerender_pla_watch.py`; only labels and titles change. The "The PLA Watch: "
+  prefix is stripped for display only. No. 14 → No. 15 is not linked, because
+  that would make historical pages depend on the native collection; the choice
+  is left to the owner.
+- **Inline rules on historical pages.** `output/briefs.css` is written only by
+  `site/render.py`, so historical pages carry an inline copy of the kind-label
+  and nav rules and are styled whichever render is published first. The
+  plate art (`assets/geo/region.svg`) arrives only with `site/render.py`, so
+  both renders must be published in the same commit.
+- **No new JavaScript.** No interaction or accessibility problem required it.
+  `scripts/pw_env.py`, `base.html`, `pla-watch-base.html`, `styles.css`,
+  and sidecars are unchanged (the manifest change is recorded above).
+
 ## 2026-10-12 — Expressive frontend Phase 3B (Briefs catalogue) implementation decisions
 
 Made within the Phase 3B brief; presentation only, not visual sign-off.

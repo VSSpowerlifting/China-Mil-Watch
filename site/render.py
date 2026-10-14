@@ -182,7 +182,7 @@ class MissingSiteOrigin(RuntimeError):
 def render_site(mode: str = None, output_dir=None, db_path=None,
                 environ=None, snapshot=None, site_origin=None,
                 allow_test_origin=False, daily_run_date=None, review_brief=None,
-                review_timeline=None) -> dict:
+                review_timeline=None, review_presentation=None) -> dict:
     """
     Build the site for `mode`. Returns a small report.
 
@@ -197,7 +197,9 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
     unusable value stops the build instead of falling back.
     """
     resolved = resolve_site_mode(mode, environ)
-    private_review = bool(review_brief or review_timeline)
+    private_review = bool(review_brief or review_timeline or review_presentation)
+    if sum(bool(v) for v in (review_brief, review_timeline, review_presentation)) > 1:
+        raise ValueError("choose one private editorial review at a time")
     if private_review and resolved == LEGACY:
         raise ValueError("draft review requires the production Indo-Pacific Record renderer")
     if review_timeline and site_origin:
@@ -227,6 +229,9 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
         raise ValueError("a draft review needs --out outside output/; it cannot be published")
     if review_timeline and (target == ROOT or ROOT in target.parents or target in ROOT.parents):
         raise ValueError("timeline review requires a disposable destination outside the repository")
+    if review_presentation and (target.exists() or target == ROOT or ROOT in target.parents
+                                or target in ROOT.parents):
+        raise ValueError("presentation review requires a new destination outside the repository")
 
     import importlib.util
     spec = importlib.util.spec_from_file_location(
@@ -303,6 +308,8 @@ def render_site(mode: str = None, output_dir=None, db_path=None,
         review_options = {"review_brief": Path(review_brief)} if review_brief else {}
         if review_timeline:
             review_options["review_timeline"] = Path(review_timeline)
+        if review_presentation:
+            review_options["review_presentation"] = Path(review_presentation)
         return gp.build(destination, INDO_PACIFIC_RECORD_TITLE,
                         selected_db,
                         snapshot=effective_snapshot,
@@ -458,6 +465,7 @@ def main(argv=None) -> int:
     p.add_argument("--db", default=None, help="database to read (read-only)")
     p.add_argument("--review-brief", help="private unnumbered draft review; requires --out outside output/")
     p.add_argument("--review-timeline", help="private unpublished timeline review; requires --out outside the repository")
+    p.add_argument("--review-presentation", help="private reading-structure review; requires --out outside output/")
     p.add_argument("--site-origin", default=None,
                    help="absolute origin the site will be published under. "
                         "Required for %s; may also come from %s."
@@ -470,7 +478,8 @@ def main(argv=None) -> int:
         report = render_site(args.mode, args.out, args.db,
                              site_origin=args.site_origin,
                              allow_test_origin=args.allow_test_origin,
-                             review_brief=args.review_brief, review_timeline=args.review_timeline)
+                             review_brief=args.review_brief, review_timeline=args.review_timeline,
+                             review_presentation=args.review_presentation)
     except (UnsupportedSiteMode, MissingSiteOrigin, InvalidDailyRunDate, ValueError) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2

@@ -9,6 +9,10 @@ on:
       - "tests/test_country_research_release_contract.py"
       - "scripts/guard_country_research_output_scope.py"
       - "tests/test_country_research_output_scope.py"
+      - "scripts/stage_country_research_output.py"
+      - "tests/test_stage_country_research_output.py"
+      - "scripts/guard_japan_official_reference_release.py"
+      - "tests/test_guard_japan_official_reference_release.py"
   workflow_dispatch:
     inputs:
       approved_main_sha:
@@ -36,15 +40,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - name: Verify explicit release invariants
-        run: python -m unittest tests.test_country_research_release_contract -v
+      - name: Verify explicit release invariants and staging boundaries
+        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release -v
       - name: Install existing render dependencies (no publisher calls)
         run: pip install -r requirements.txt
       - name: Exercise actual static release build without committing or deploying
         run: |
           set -euo pipefail
           sha256sum pla_watch.db > /tmp/ipr-release-ci-db.sha
-          python site/render.py
+          python site/render.py --out "$RUNNER_TEMP/country-render"
+          python -m scripts.stage_country_research_output --from-dir "$RUNNER_TEMP/country-render" --to-dir output
+          python -m scripts.guard_japan_official_reference_release
           python scripts/validate_output.py
           python -m scripts.guard_country_research_output_scope
           test -f output/philippines.html
@@ -102,10 +108,15 @@ jobs:
           python scripts/verify_db_current.py
           sha256sum -c "$RUNNER_TEMP/country-release-db.sha"
 
-      - name: Build site using committed original corpus only
+      - name: Build isolated site and stage only reviewed country presentation
         run: |
           set -euo pipefail
-          python site/render.py
+          # Never replace the committed output tree with an unreviewed full-site build.
+          # The full build stays in scratch; only seven explicitly reviewed files
+          # are copied into output before the whole-tree validation/scope guard.
+          python site/render.py --out "$RUNNER_TEMP/country-render"
+          python -m scripts.stage_country_research_output --from-dir "$RUNNER_TEMP/country-render" --to-dir output
+          python -m scripts.guard_japan_official_reference_release
           python scripts/validate_output.py
 
       - name: Country-desk public scope and metadata hold gate
@@ -176,7 +187,7 @@ jobs:
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
 
-      - name: Fail closed on unrelated full-site generated drift
+      - name: Fail closed on unrelated staged or pre-existing generated drift
         run: |
           set -euo pipefail
           # Publishing this workflow deploys the entire ./output tree, so even

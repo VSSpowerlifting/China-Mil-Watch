@@ -1,0 +1,47 @@
+{
+  "after-no-js-375": {
+    "status": 200,
+    "scrollWidth": 375,
+    "clientWidth": 375,
+    "reduced_motion": false,
+    "forced_colors": false,
+    "js_enabled": false
+  },
+  "after-reduced-motion": {
+    "status": 200,
+    "scrollWidth": 1280,
+    "clientWidth": 1280,
+    "reduced_motion": true,
+    "forced_colors": false,
+    "js_enabled": true
+  },
+  "after-forced-colors": {
+    "status": 200,
+    "scrollWidth": 1280,
+    "clientWidth": 1280,
+    "reduced_motion": false,
+    "forced_colors": true,
+    "js_enabled": true
+  },
+  "after-print": {
+    "status": 200,
+    "print": true,
+    "scrollWidth": 1280,
+    "clientWidth": 1280,
+    "pdf_bytes": 1410235
+  },
+  "forced-colors-keyboard-focus": {
+    "status": 200,
+    "keyboard_focused_href": "#reading-finding",
+    "hash": "#reading-finding",
+    "target": "reading-finding",
+    "targetTag": "ASIDE",
+    "active": true,
+    "tabIndex": -1,
+    "ariaLabelledby": "h-reading-finding",
+    "outlineStyle": "solid",
+    "outlineWidth": "2px",
+    "outlineColor": "rgba(5, 0, 73, 0.8)",
+    "forced": true
+  }
+}

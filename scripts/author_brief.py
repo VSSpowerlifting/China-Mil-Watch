@@ -55,6 +55,9 @@ def existing_issues(exclude=None) -> list:
 
 def readiness_problems(sidecar, issues, db):
     problems = validate_readiness(sidecar, load_registry(), collection=issues)
+    from core.brief_source_linked import is_source_linked
+    if is_source_linked(sidecar):
+        return problems
     with read_only(Path(db)) as conn:
         records = get_articles_for_desks(sidecar["week_start"], sidecar["week_ending"],
                                          sidecar["desks"], conn=conn)
@@ -227,10 +230,34 @@ def cmd_check(args) -> int:
 def cmd_ready(args):
     path = Path(args.path).resolve()
     sidecar = json.loads(path.read_text(encoding="utf-8"))
-    if _report(path, readiness_problems(sidecar, existing_issues(path), args.db)):
+    problems = readiness_problems(sidecar, existing_issues(path), args.db)
+    problems += presentation_problems(path, sidecar)
+    if _report(path, problems):
         return 1
     print("%s passes release readiness. Editorial approval and rendered review remain separate." % path)
     return 0
+
+
+def presentation_problems(path, sidecar, *, release=False):
+    """New source-linked approvals require an explicit reviewed reading layout.
+
+    Existing numbered publications retain the legacy fallback and approvals.
+    A single section is permitted, but must be deliberately supplied/reviewed.
+    """
+    from core.brief_source_linked import is_source_linked
+    if not is_source_linked(sidecar) or sidecar.get("editorial_status") == "approved":
+        return []
+    from core.brief_presentation import load_presentation
+    from scripts.brief_presentation import check_media
+    try:
+        manifest = load_presentation(path.parent / "presentation" / (path.stem + ".json"),
+                                     sidecar, slug=path.stem, review=True)
+        check_media(manifest, sidecar, path.stem, root=path.parent.parent)
+        if release and manifest["status"] != "approved":
+            return ["presentation needs separate exact-content owner approval before numbering"]
+    except (ValueError, OSError) as exc:
+        return [str(exc)]
+    return []
 
 
 def cmd_approve(args):
@@ -251,6 +278,8 @@ def cmd_approve(args):
             print("Already approved as No. %s; unchanged." % sidecar["issue_number"])
             return 0
         if _report(path, readiness_problems(sidecar, issues, args.db)):
+            return 1
+        if _report(path, presentation_problems(path, sidecar, release=True)):
             return 1
         result = approve(sidecar, collection=issues, registry=load_registry(),
                          approved_by=args.approved_by, approved_on=args.approved_on)

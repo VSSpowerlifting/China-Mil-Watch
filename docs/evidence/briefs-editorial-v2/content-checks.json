@@ -1,0 +1,109 @@
+{
+  "expected_paragraphs": 11,
+  "manuscript_sha256": "43ec5cc44ba724401235d976c73af6485566026d24114146878e0152cce3d0c1",
+  "expected_publisher_references": 7,
+  "phases": {
+    "before": {
+      "paragraphs_exact_match": true,
+      "actual_paragraph_count": 11,
+      "toc_count": 3,
+      "toc_targets_resolve": true,
+      "publisher_reference_count": 7,
+      "excerpt_trace_names": [],
+      "one_h1": true,
+      "headings": [
+        [
+          1,
+          "What Is Being Built in Laos?"
+        ],
+        [
+          2,
+          "Publisher references"
+        ],
+        [
+          2,
+          "Cite this brief"
+        ],
+        [
+          2,
+          "The record"
+        ],
+        [
+          2,
+          "Analysis"
+        ],
+        [
+          2,
+          "About"
+        ]
+      ],
+      "noindex": false,
+      "canonical": true
+    },
+    "final": {
+      "paragraphs_exact_match": true,
+      "actual_paragraph_count": 11,
+      "toc_count": 8,
+      "toc_targets_resolve": true,
+      "publisher_reference_count": 7,
+      "excerpt_trace_names": [
+        "Vietnamese Government News",
+        "China Ministry of National Defense",
+        "Reuters"
+      ],
+      "one_h1": true,
+      "headings": [
+        [
+          1,
+          "What Is Being Built in Laos?"
+        ],
+        [
+          2,
+          "Central finding"
+        ],
+        [
+          2,
+          "Introduction"
+        ],
+        [
+          2,
+          "Vietnam’s Support for Laos’s Digital Identity"
+        ],
+        [
+          2,
+          "China’s Aviation Training and Border Exchanges"
+        ],
+        [
+          2,
+          "What the Projects Reveal—and What They Don’t"
+        ],
+        [
+          2,
+          "What to Watch Next"
+        ],
+        [
+          2,
+          "Publisher references"
+        ],
+        [
+          2,
+          "Cite this brief"
+        ],
+        [
+          2,
+          "The record"
+        ],
+        [
+          2,
+          "Analysis"
+        ],
+        [
+          2,
+          "About"
+        ]
+      ],
+      "noindex": true,
+      "canonical": false
+    }
+  }
+}

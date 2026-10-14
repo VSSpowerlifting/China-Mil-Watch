@@ -1,0 +1,37 @@
+name: Sunday Editorial Delivery Observer — Read-Only Contract Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/audit_sunday_editor_delivery.py"
+      - "tests/test_sunday_editor_delivery_audit.py"
+      - ".github/workflows/sunday_editor_delivery_audit.yml"
+      - ".github/workflows/sunday_editor_delivery_observer_checks.yml"
+      - "docs/SUNDAY_EDITOR_DELIVERY_DIAGNOSIS.md"
+
+permissions:
+  contents: read
+
+jobs:
+  no-send-observer-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout source without saved credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Exercise calendar/schedule/false-success contracts offline
+        run: python -m unittest tests.test_sunday_editor_delivery_audit -v
+      - name: Assert no database/output writes or sidecar residue
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

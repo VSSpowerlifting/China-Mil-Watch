@@ -270,6 +270,18 @@ def _validate_briefs(output_dir, errors):
             errors.append("%s is missing for approved No. %s" % (route, sidecar["issue_number"]))
             continue
         text = page.read_text(encoding="utf-8")
+        from core.brief_source_linked import is_source_linked, manuscript_html_errors
+        if is_source_linked(sidecar):
+            errors.extend("%s: %s" % (route, problem)
+                          for problem in manuscript_html_errors(sidecar, text))
+            from core.brief_presentation import load_presentation, presentation_html_errors
+            try:
+                manifest = load_presentation(REPO_ROOT / "briefs/presentation" / (slug + ".json"),
+                                             sidecar, slug=slug)
+                errors.extend("%s: %s" % (route, problem)
+                              for problem in presentation_html_errors(manifest, text))
+            except (ValueError, OSError) as exc:
+                errors.append("%s: %s" % (route, exc))
         from html import escape
         if escape(sidecar["title"]) not in text or "No. %s" % sidecar["issue_number"] not in text:
             errors.append("%s title/number disagrees with its approved source" % route)

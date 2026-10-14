@@ -56,6 +56,46 @@ class JapanPublicLinkOnlyDirectory(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, s)
 
+    def test_exact_seven_mod_original_pdf_links_are_not_archive_admissions(self):
+        expected = (
+            "https://www.mod.go.jp/j/press/news/2026/08/27b.pdf",
+            "https://www.mod.go.jp/j/press/news/2026/08/28a.pdf",
+            "https://www.mod.go.jp/j/press/news/2026/08/28b.pdf",
+            "https://www.mod.go.jp/j/press/news/2026/08/28f.pdf",
+            "https://www.mod.go.jp/j/press/news/2026/09/17a.pdf",
+            "https://www.mod.go.jp/j/press/news/2026/09/29d.pdf",
+            "https://www.mod.go.jp/j/press/news/2026/10/05b.pdf",
+        )
+        pdf_links = re.findall(
+            r'href="(https://www[.]mod[.]go[.]jp/j/press/news/2026/(?:08|09|10)/[0-9]{2}[a-z][.]pdf)"',
+            self.section,
+        )
+        self.assertEqual(pdf_links, list(expected))
+        self.assertEqual(len(set(pdf_links)), 7)
+        self.assertIn('aria-label="Seven official Japan Ministry of Defense PDF links"',
+                      self.section)
+        for qualifier in (
+            "37",
+            "Five are text-bearing shadow source originals",
+            "no extractable PDF text layer",
+            "not machine-extracted records",
+            "oversized October 2 original remains intentionally excluded",
+            "not production IPR records",
+            "Six photographs and their rights are not retained or cleared",
+            "conflicting with the later October 5 original",
+            "no official erratum verified",
+            "not proof the activity occurred",
+            "not reproduced here",
+            "archived-text extraction parity",
+            "current PDF byte identity",
+            "no production or model use is authorized",
+        ):
+            self.assertIn(qualifier, self.section)
+        self.assertIn("https://www.mod.go.jp/j/info/contents.html", self.section)
+        for forbidden in ("state/shadow.db", "text_original", "body_original",
+                          "archive.html?desk=japan", "data-reference-list"):
+            self.assertNotIn(forbidden, self.section)
+
     def test_japan_css_only_addition_other_desks_not_modified(self):
         self.assertIn(
             "'vietnam', 'philippines', 'korea', 'indonesia', 'japan'",

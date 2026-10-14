@@ -62,6 +62,7 @@ import hashlib
 import html as _html
 import json
 import os
+import re
 import shutil
 import sys
 from collections import Counter, defaultdict
@@ -87,6 +88,12 @@ TRACKED_DB = REPO_ROOT / "pla_watch.db"
 # The relief assets the homepage references (home.html, via _relief.html),
 # delivered by name. relief.css travels with the stylesheets.
 RELIEF_PRODUCTION_ASSETS = ("assets/geo/emblems.svg", "assets/geo/strait.svg")
+# Phase 4A: the public Desks chart uses the licensed country flags as paper
+# tabs. Publish only the eight mapped/declared desk flags plus the MIT notice,
+# never a whole asset folder or gallery-only sprite.
+DESKS_PUBLIC_FLAG_ASSETS = tuple("assets/flags/%s.svg" % iso
+                                 for iso in ("cn", "id", "jp", "kr", "ph", "sg", "us", "vn")) + (
+                                     "assets/flags/LICENSE",)
 # The Archive's desk markers (archive.css masks), one outline per country
 # desk. Named one by one; the folder's receipt stays out of a production tree.
 ARCHIVE_MARK_ASSETS = tuple("assets/desk-marks/%s.svg" % s
@@ -129,7 +136,10 @@ from core.edition_identity import (                                  # noqa: E40
 from core.brief_collection import (                                  # noqa: E402
     FEED_ROUTE as BRIEFS_FEED_ROUTE, MEDIA_DIRNAME as BRIEFS_MEDIA,
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
-    build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose)
+    build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose,
+    adjacent_items)
+from core.article_media import native_article_media                  # noqa: E402
+from core.brief_photography import article_cover                    # noqa: E402
 from core.brief_contract import validate_readiness
 from core.catalogue_media import (                                   # noqa: E402
     load_admissions as load_catalogue_admissions,
@@ -2361,7 +2371,7 @@ def build(out_dir: Path, title: str, db_path: Path,
           daily_run_date: str = None, briefs_dir: Path = None,
           allow_synthetic_briefs: bool = False, gallery: bool = False,
           review_brief: Path = None, timelines_dir: Path = None,
-          review_timeline: Path = None,
+          review_timeline: Path = None, review_presentation: Path = None,
           review_korea: bool = False,
           korea_review_packet: Path = None) -> dict:
     """
@@ -2422,7 +2432,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                 or resolved == REPO_ROOT or REPO_ROOT in resolved.parents
                 or resolved in REPO_ROOT.parents
                 or bool((site_origin or "").strip()) or allow_test_origin
-                or review_brief is not None or review_timeline is not None
+                or review_brief is not None or review_timeline is not None or review_presentation is not None
                 or allow_synthetic_briefs or gallery):
             raise ValueError("private Korea preview requires a new external directory, "
                              "no origin, no public/synthetic/other review mode")
@@ -2439,11 +2449,14 @@ def build(out_dir: Path, title: str, db_path: Path,
         korea_candidates = load_candidates()
         korea_prechecked_rows = approve(korea_candidates, korea_review_packet)
     out_dir = requested_out.resolve()
-    if (review_brief or review_timeline) and site_origin:
+    if (review_brief or review_timeline or review_presentation) and site_origin:
         raise ValueError("a draft review is private: no site origin, feed or sitemap")
     if review_timeline and (out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents or out_dir in REPO_ROOT.parents):
         raise ValueError("timeline review requires a disposable destination outside the repository")
-    if review_brief and review_timeline:
+    if review_presentation and (out_dir.exists() or out_dir == REPO_ROOT or REPO_ROOT in out_dir.parents
+                                or out_dir in REPO_ROOT.parents):
+        raise ValueError("presentation review requires a new destination outside the repository")
+    if sum(bool(v) for v in (review_brief, review_timeline, review_presentation)) > 1:
         raise ValueError("review one editorial artifact at a time")
     if out_dir == PRODUCTION_OUT or PRODUCTION_OUT in out_dir.parents:
         raise SystemExit(
@@ -2532,7 +2545,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         draft = json.loads(path.read_text(encoding="utf-8"))
         if draft.get("editorial_status") != "draft":
             raise ValueError("--review-brief is for an unapproved draft only")
-        problems = validate_readiness(draft, load_registry())
+        from core.brief_source_linked import is_source_linked
+        from core.brief_contract import validate_brief
+        problems = (validate_brief(draft, load_registry()) if is_source_linked(draft)
+                    else validate_readiness(draft, load_registry()))
         if problems:
             raise ValueError("draft review: " + "; ".join(problems))
         entry = brief_entry(path.stem, draft, briefs_dir / BRIEFS_MEDIA)
@@ -2542,6 +2558,30 @@ def build(out_dir: Path, title: str, db_path: Path,
         collection = Collection(rows=tuple(rows), briefs=collection.briefs + (entry,),
                                 withheld=collection.withheld,
                                 sidecars=dict(collection.sidecars, **{path.stem: draft}))
+    from core.brief_presentation import load_presentation, presentation_view, presentation_html_errors
+    presentation_slug = None
+    if review_presentation:
+        presentation_path = Path(review_presentation).resolve()
+        presentation_slug = presentation_path.stem
+        if (presentation_path.parent != (REPO_ROOT / "briefs/presentation").resolve()
+                or presentation_path.suffix != ".json"):
+            raise ValueError("review a canonical presentation for a Brief")
+        if presentation_slug not in collection.sidecars:
+            source = briefs_dir / (presentation_slug + ".json")
+            draft = json.loads(source.read_text(encoding="utf-8"))
+            from core.brief_contract import validate_brief
+            problems = validate_brief(draft, load_registry())
+            if draft.get("editorial_status") != "draft" or problems:
+                raise ValueError("presentation manuscript review: " + "; ".join(problems or ["not a draft"]))
+            entry = brief_entry(presentation_slug, draft, briefs_dir / BRIEFS_MEDIA)
+            entry["is_review"] = True
+            rows = order_rows(list(collection.rows) + [{"entry": entry, "kind": "brief",
+                                                        "provenance": "Unapproved review candidate"}])
+            collection = Collection(rows=tuple(rows), briefs=collection.briefs + (entry,),
+                                    withheld=collection.withheld,
+                                    sidecars=dict(collection.sidecars, **{presentation_slug: draft}))
+        load_presentation(presentation_path, collection.sidecars[presentation_slug],
+                          slug=presentation_slug, review=True)
     timeline_options = {"source_dir": Path(timelines_dir)} if timelines_dir is not None else {}
     timelines, timelines_withheld = load_timelines(
         db_path, {e["slug"]: e for e in collection.briefs},
@@ -2585,7 +2625,7 @@ def build(out_dir: Path, title: str, db_path: Path,
 
     ctx = {
         "title": title,
-        "review_mode": bool(review_brief or review_timeline),
+        "review_mode": bool(review_brief or review_timeline or review_presentation),
         "catalogue_media": catalogue_media,
         "timelines": timelines,
         "timeline_records": timeline_records,
@@ -2726,9 +2766,15 @@ def build(out_dir: Path, title: str, db_path: Path,
     }
     written = []
     for target, template in pages.items():
-        (out_dir / target).write_text(
-            env.get_template(template).render(page=target, **ctx),
-            encoding="utf-8")
+        page_html = env.get_template(template).render(page=target, **ctx)
+        if target == "desks.html":
+            # Desks embeds the canonical 1:50m map inline. Its accessible
+            # directory keeps every status/limit, so trim only indentation
+            # at the start of lines whose next token is an HTML/SVG tag.
+            # The newline remains intact: text spacing and all SVG path
+            # coordinates are preserved, and other pages are untouched.
+            page_html = re.sub(r"(?m)^[ \t]+(?=<)", "", page_html)
+        (out_dir / target).write_text(page_html, encoding="utf-8")
         written.append(target)
 
     if timelines:
@@ -2793,6 +2839,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             for asset in sorted((REPO_ROOT / "site/assets" / folder).iterdir()):
                 if (not asset.is_file() or asset.name.endswith(".receipt.json")
                         or "assets/%s/%s" % (folder, asset.name) in RELIEF_PRODUCTION_ASSETS
+                        or "assets/%s/%s" % (folder, asset.name) in DESKS_PUBLIC_FLAG_ASSETS
                         or "assets/%s/%s" % (folder, asset.name) in CATALOGUE_STATIC_ASSETS):
                     continue
                 route = "assets/%s/%s" % (folder, asset.name)
@@ -2834,6 +2881,32 @@ def build(out_dir: Path, title: str, db_path: Path,
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_bytes(image["file"].read_bytes())
                     written.append(route)
+            # A cover photograph is granted only by `core.brief_cover`, and
+            # only where the brief has no photograph of its own. A paired cover
+            # also needs its catalogue card to pass (`core.brief_photography`).
+            # Its files are copied exactly as recorded, never re-encoded.
+            cover = None if brief["photo"] else article_cover(
+                entry, REPO_ROOT, admissions=catalogue_admissions)
+            for image in (cover or {}).get("files", ()):
+                target = out_dir / image["route"]
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(image["file"].read_bytes())
+                written.append(image["route"])
+            brief["article_media"] = native_article_media(
+                brief["photo"], sidecar["desks"],
+                # A source-linked Brief without a granted image stays text-led.
+                # Granted covers still need ../ from briefs/<slug>.html.
+                root="../" if cover or not brief["source_linked"] else None,
+                cover=cover)
+            brief["presentation"] = None
+            if brief["source_linked"]:
+                manifest = load_presentation(briefs_dir / "presentation" / (slug + ".json"),
+                                             sidecar, slug=slug,
+                                             review=slug == presentation_slug)
+                brief["presentation"] = presentation_view(manifest, sidecar,
+                                                           media=brief["article_media"])
+            brief["presentation_review"] = slug == presentation_slug
+            brief["adjacent"] = adjacent_items(collection, slug)
             # A cited record this site preserves links to its record page; one
             # it does not hold links only to the source.
             for group in brief["trail_groups"]:
@@ -2844,10 +2917,14 @@ def build(out_dir: Path, title: str, db_path: Path,
             # the live site and must not print one.
             brief["citation"] = brief_citation(
                 brief, origin="" if brief["synthetic"] or brief["is_review"] else LIVE_BASE)
-            (out_dir / brief["route"]).write_text(
-                brief_tmpl.render(page="analysis.html", nested=True,
-                                  brief=brief, **ctx),
-                encoding="utf-8")
+            html = brief_tmpl.render(page="analysis.html", nested=True, brief=brief, **ctx)
+            if brief["source_linked"]:
+                from core.brief_source_linked import manuscript_html_errors
+                errors = manuscript_html_errors(sidecar, html)
+                errors += presentation_html_errors(manifest, html)
+                if errors:
+                    raise ValueError("rendered manuscript: " + "; ".join(errors))
+            (out_dir / brief["route"]).write_text(html, encoding="utf-8")
             written.append(brief["route"])
         (out_dir / "briefs.css").write_text(
             (Path(__file__).parent / "briefs.css").read_text(encoding="utf-8"),
@@ -3011,9 +3088,9 @@ def build(out_dir: Path, title: str, db_path: Path,
     for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
-    # The relief sprites home.html references, named one by one: no folder,
-    # flag set, glyph sprite or region plate reaches a production tree.
-    for route in RELIEF_PRODUCTION_ASSETS:
+    # Explicit named assets only: homepage relief sprites and Phase 4A Desks
+    # flag tabs (including the MIT notice). No unrelated glyphs or gallery art.
+    for route in RELIEF_PRODUCTION_ASSETS + DESKS_PUBLIC_FLAG_ASSETS:
         target = out_dir / route
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((REPO_ROOT / "site" / route).read_bytes())

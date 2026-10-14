@@ -76,7 +76,8 @@ shell; historical publication identity survives in provenance and citations,
 not a competing masthead. The consolidation is implemented as a review candidate;
 evidence is `docs/BRIEFS_CONSOLIDATION_2026-10-09.md`, alongside the frontend
 review in `docs/FRONTEND_PRODUCTION_2026-10-09.md`. Keep
-one crimson signal family reserved for analytical meaning.
+the jade editorial family for human analysis and slate-blue for machine output
+(owner-directed coastal supersession, 2026-10-14; DESIGN_SYSTEM §3).
 No SaaS/dashboard/terminal aesthetics; no box shadows; mono never in prose;
 motion is reveal-based, reduced-motion-safe, transform/opacity only.
 

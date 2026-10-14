@@ -1,0 +1,48 @@
+name: IPR Sunday Editorial — Read-Only Delivery Diagnosis
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  audit-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Read current main without persisting credentials
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Diagnose Sunday workflow metadata, not editor mail
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -uo pipefail
+          status=0
+          python -m scripts.audit_sunday_editor_delivery \
+            --live --repo "$REPO" \
+            --marker-file .github/state/last_daily_run_date.txt \
+            > "$RUNNER_TEMP/sunday-delivery-audit.json" || status=$?
+          cat "$RUNNER_TEMP/sunday-delivery-audit.json"
+          {
+            echo "### Sunday editorial workflow diagnosis"
+            echo ""
+            echo "This is GitHub schedule metadata only. A successful Actions run is NOT a confirmed Gmail Sent receipt."
+            echo ""
+            echo "\`\`\`json"
+            cat "$RUNNER_TEMP/sunday-delivery-audit.json"
+            echo "\`\`\`"
+            echo ""
+            echo "No draft/model call, mail, repository write, source import or publication is authorized by this audit."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"

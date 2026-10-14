@@ -1,6 +1,7 @@
 """Offline tests replay exact official captures; never connect to a source."""
 import hashlib
 import io
+import requests
 import json
 import socket
 import sqlite3
@@ -49,6 +50,7 @@ class Response:
 class Session:
     def __init__(self, mutations=None):
         self.calls, self.mutations = [], mutations or {}
+        self.timeouts = []
 
     def request(self, method, url, data, headers, **kwargs):
         assert self.trust_env is False
@@ -56,6 +58,7 @@ class Session:
         assert headers["Accept-Encoding"] == "identity"
         assert kwargs["allow_redirects"] is False
         self.calls.append((method, url, data))
+        self.timeouts.append((url, kwargs["timeout"]))
         if url in self.mutations:
             value = self.mutations[url]
             if isinstance(value, Exception):
@@ -265,6 +268,80 @@ class Korea(Case):
 
 
 class Access(Case):
+    def test_korea_robots_timeout_is_extended_for_only_one_request(self):
+        korean, korean_session = adapter("korea")
+        self.assertEqual(korean.discover(CollectionWindow(TARGET, 0)).status, st.OK)
+        self.assertEqual(korean_session.timeouts[0],
+                         ("https://www.korea.kr/robots.txt", 45))
+        self.assertTrue(all(timeout == 30 for _, timeout in korean_session.timeouts[1:]))
+        indonesia, indonesia_session = adapter("indonesia")
+        self.assertEqual(indonesia.discover(CollectionWindow(TARGET, 0)).status, st.OK)
+        self.assertTrue(all(timeout == 30 for _, timeout in indonesia_session.timeouts))
+
+    def test_korea_robots_first_timeout_retries_once_then_discovers(self):
+        robots = "https://www.korea.kr/robots.txt"
+        korean, session = adapter("korea")
+        original_request = session.request
+        first = [True]
+
+        def once(method, url, data, headers, **kwargs):
+            if first[0] and url == robots:
+                first[0] = False
+                session.calls.append((method, url, data))
+                session.timeouts.append((url, kwargs["timeout"]))
+                raise requests.Timeout("transient synthetic robots timeout")
+            return original_request(method, url, data, headers, **kwargs)
+
+        session.request = once
+        outcome = korean.discover(CollectionWindow(TARGET, 0))
+        self.assertEqual(outcome.status, st.OK)
+        self.assertEqual(korean.robots_status, "read")
+        self.assertEqual(korean.robots_timeout_retries, 1)
+        self.assertEqual([url for _, url, _ in session.calls].count(robots), 2)
+        self.assertEqual(session.timeouts[:2], [(robots, 45), (robots, 45)])
+        self.assertEqual([x["requested_url"] for x in korean.evidence].count(robots), 1)
+        self.assertEqual(session.calls[-1][1], KR_LISTING)
+
+    def test_korea_robots_timeout_twice_fails_closed_with_no_listing(self):
+        robots = "https://www.korea.kr/robots.txt"
+        korean, session = adapter("korea", {robots: requests.Timeout("synthetic")})
+        outcome = korean.discover(CollectionWindow(TARGET, 0))
+        self.assertEqual(outcome.status, st.TIMEOUT)
+        self.assertEqual(outcome.references, [])
+        self.assertIsNone(korean.robots_status)
+        self.assertEqual(korean.robots_timeout_retries, 1)
+        self.assertIn("after one bounded retry", outcome.error_detail)
+        self.assertEqual(session.calls, [("GET", robots, None)] * 2)
+        self.assertEqual(session.timeouts, [(robots, 45)] * 2)
+        self.assertEqual(korean.evidence, [])
+
+    def test_korea_robots_permission_denial_is_never_retried(self):
+        robots = "https://www.korea.kr/robots.txt"
+        korean, session = adapter(
+            "korea", {robots: Response(robots, b"forbidden", 403, "text/plain")})
+        result = korean.discover(CollectionWindow(TARGET, 0))
+        self.assertEqual(result.status, st.AUTH_FAILURE)
+        self.assertEqual(korean.robots_timeout_retries, 0)
+        self.assertEqual(session.calls, [("GET", robots, None)])
+        self.assertEqual([e["requested_url"] for e in korean.evidence], [robots])
+
+    def test_korea_listing_timeout_is_never_retried(self):
+        korean, session = adapter(
+            "korea", {KR_LISTING: requests.Timeout("synthetic listing timeout")})
+        outcome = korean.discover(CollectionWindow(TARGET, 0))
+        self.assertEqual(outcome.status, st.TIMEOUT)
+        self.assertEqual(korean.robots_timeout_retries, 0)
+        self.assertEqual([url for _, url, _ in session.calls].count(KR_LISTING), 1)
+        self.assertEqual(len(session.calls), 2)
+
+    def test_indonesia_robots_timeout_remains_single_attempt(self):
+        robots = "https://www.kemhan.go.id/robots.txt"
+        ind, session = adapter("indonesia", {robots: requests.Timeout("synthetic")})
+        outcome = ind.discover(CollectionWindow(TARGET, 0))
+        self.assertEqual(outcome.status, st.TIMEOUT)
+        self.assertEqual(session.calls, [("GET", robots, None)])
+        self.assertEqual(session.timeouts, [(robots, 30)])
+
     def test_policy_refusal_causes_no_listing_request(self):
         url = "https://www.kemhan.go.id/robots.txt"
         a, session = adapter("indonesia", {url: Response(url, b"User-agent: *\nDisallow: /", ctype="text/plain")})
@@ -450,6 +527,42 @@ class Runner(Case):
         self.assertNotIn("--force", raw)
         self.assertNotIn("actions-gh-pages", raw)
         self.assertEqual(reviewer.BRANCHES, {desk: spec[2] for desk, spec in runner.DESKS.items()})
+
+    def test_korea_attempt_artifacts_exclude_original_capture_and_shadow_db(self):
+        raw = (ROOT / ".github/workflows/indonesia_korea_shadow.yml").read_text()
+
+        def step(name):
+            return raw.split("      - name: " + name + "\n", 1)[1].split(
+                "      - name:", 1)[0]
+
+        korea = step("Preserve Korea attempt metadata only")
+        self.assertIn("if: ${{ always() && env.SHADOW_DESK == 'korea' }}", korea)
+        self.assertIn("name: candidate-shadow-korea-${{ github.run_id }}-${{ github.run_attempt }}", korea)
+        paths = korea.split("          path: |\n", 1)[1].split(
+            "          if-no-files-found:", 1)[0]
+        self.assertEqual([line.strip() for line in paths.strip().splitlines()], [
+            "${{ runner.temp }}/candidate-state/state/ledger/*.json",
+            "${{ runner.temp }}/candidate-state/state/clock.json",
+            "${{ runner.temp }}/candidate-run.log",
+        ])
+        # No bare state-directory glob may package archived HWPX, capture
+        # bodies, media, Korean full text or the SQLite source database.
+        self.assertNotIn("/candidate-state/state/\n", korea)
+        self.assertNotIn("/candidate-state/state/captures", korea)
+        self.assertNotIn("/candidate-state/state/shadow.db", korea)
+        self.assertIn("retention-days: 90", korea)
+
+        indonesia = step("Preserve Indonesia complete attempt evidence")
+        self.assertIn("if: ${{ always() && env.SHADOW_DESK == 'indonesia' }}", indonesia)
+        self.assertIn("name: candidate-shadow-indonesia-${{ github.run_id }}-${{ github.run_attempt }}", indonesia)
+        self.assertIn("${{ runner.temp }}/candidate-state/state/", indonesia)
+        self.assertIn("${{ runner.temp }}/candidate-run.log", indonesia)
+
+        unselected = step("Preserve unselected attempt log only")
+        self.assertIn("env.SHADOW_DESK != 'korea' && env.SHADOW_DESK != 'indonesia'", unselected)
+        self.assertIn("name: candidate-shadow-unselected-${{ github.run_id }}-${{ github.run_attempt }}", unselected)
+        self.assertIn("path: ${{ runner.temp }}/candidate-run.log", unselected)
+        self.assertNotIn("candidate-state/state/", unselected)
 
     def test_workflow_shell_blocks_parse(self):
         import re

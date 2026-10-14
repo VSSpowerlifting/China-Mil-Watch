@@ -60,6 +60,7 @@ from typing import Iterable, Mapping
 from urllib.parse import urlsplit
 
 from core.brief_external_evidence import validate_external_evidence
+from core.brief_source_linked import is_source_linked, validate_source_linked
 
 from core.edition_identity import (
     COLLECTION_NAME, SERIES_NAME, IdentityError, is_brief,
@@ -281,15 +282,20 @@ def validate_brief(sidecar: Mapping, registry, *,
                         % ", ".join(EDITORIAL_STATUSES))
     approved = status == STATUS_APPROVED
 
-    # Optional, individually attributed research credit. It never changes
-    # the author byline, citation, corpus status or publication approval.
+    # Legacy contributor credits keep the original narrow schema and limits.
+    # A source-linked Brief alone may recognize an explicit co-author credit,
+    # including a longer bio and an email. All evidence/release gates remain.
     credit = sidecar.get("research_contributor")
     if credit is not None:
         fields = {"name", "title", "bio", "linkedin"}
-        if not isinstance(credit, Mapping) or set(credit) != fields:
+        coauthor_fields = fields | {"email", "credit_role"}
+        coauthor = (is_source_linked(sidecar) and isinstance(credit, Mapping)
+                    and credit.get("credit_role") == "co-author"
+                    and set(credit) == coauthor_fields)
+        if not isinstance(credit, Mapping) or (set(credit) != fields and not coauthor):
             problems.append("research_contributor needs name, title, bio and linkedin")
         else:
-            for field, limit in (("name", 120), ("title", 120), ("bio", 360)):
+            for field, limit in (("name", 120), ("title", 120), ("bio", 700 if coauthor else 360)):
                 value = credit[field]
                 if (not isinstance(value, str) or not value.strip()
                         or value != value.strip() or len(value) > limit):
@@ -300,10 +306,21 @@ def validate_brief(sidecar: Mapping, registry, *,
                         r"https://(?:www\.)?linkedin\.com/in/[A-Za-z0-9._-]+/?",
                         link)):
                 problems.append("research_contributor.linkedin must be a LinkedIn HTTPS profile")
+            if coauthor:
+                email = credit["email"]
+                if (not isinstance(email, str) or len(email) > 254
+                        or not re.fullmatch(r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", email)):
+                    problems.append("research_contributor.email must be a valid email address")
 
     if _text(sidecar.get("title")).lower().startswith(SERIES_NAME.lower()):
         problems.append("the title begins %r; no new issue is published as %s"
                         % (SERIES_NAME, SERIES_NAME))
+
+    if sidecar.get("evidence_type") not in (None, "source-linked-editorial-v1"):
+        return problems + ["unknown evidence_type"]
+    if is_source_linked(sidecar):
+        return (problems + validate_source_linked(sidecar, release=approved)
+                + _validate_numbering(sidecar, collection, unreconciled))
 
     # Desks, and the default of two.
     desks = sidecar.get("desks")
@@ -439,6 +456,13 @@ def validate_brief(sidecar: Mapping, registry, *,
         problems.append("term_to_know_term is set but term_to_know_lang is "
                         "not; a term's language is recorded, not assumed")
 
+    problems.extend(_validate_numbering(sidecar, collection, unreconciled))
+    return problems
+
+
+def _validate_numbering(sidecar, collection, unreconciled):
+    problems = []
+    approved = sidecar.get("editorial_status") == STATUS_APPROVED
     # Numbering: none in a draft, one with its approval once approved.
     if not approved and sidecar.get("issue_number") is not None:
         problems.append("a draft carries no issue number; numbers are "
@@ -461,6 +485,8 @@ def validate_brief(sidecar: Mapping, registry, *,
                 problems.append("issue number %d is already assigned to an "
                                 "existing issue" % number)
         approval = sidecar.get("approval") or {}
+        if not isinstance(approval, Mapping):
+            approval = {}
         if (not _text(approval.get("approved_by"))
                 or _iso_date(approval.get("approved_on")) is None):
             problems.append("an approved brief records approval.approved_by "
@@ -471,6 +497,8 @@ def validate_brief(sidecar: Mapping, registry, *,
 def validate_readiness(sidecar, registry, *, collection=()) -> list:
     """Release content checks, without assigning a number or asserting approval."""
     problems = validate_brief(sidecar, registry, collection=collection)
+    if is_source_linked(sidecar):
+        return list(dict.fromkeys(problems + validate_source_linked(sidecar, release=True)))
     for field in REQUIRED_SECTIONS:
         if not isinstance(sidecar.get(field), str) or not sidecar[field].strip():
             problems.append("release readiness: %s is empty; finish the prose" % field)

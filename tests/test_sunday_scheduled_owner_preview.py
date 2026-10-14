@@ -68,7 +68,9 @@ class ScheduledOwnerPreviewContracts(unittest.TestCase):
         src = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("vars.IPR_SUNDAY_OWNER_PREVIEW_ENABLED == 'true'", src)
         self.assertIn("SUNDAY_OWNER_PREVIEW: ${{ github.event_name == 'schedule'", src)
-        self.assertEqual(src.count("env.SUNDAY_OWNER_PREVIEW == 'true' ||"), 2)
+        # Preview intent must reach preflight, the Vietnam email-scope gate,
+        # and final handoff. Three checks are intentional, not duplicate sends.
+        self.assertEqual(src.count("env.SUNDAY_OWNER_PREVIEW == 'true' ||"), 3)
         self.assertIn("scheduled_owner_preview=os.environ[", src)
         self.assertIn('IPR_EDITOR_SEND_REQUESTED: ${{ env.SUNDAY_SEND == \'true\' }}', src)
         self.assertIn('if os.environ["IPR_EDITOR_SEND_REQUESTED"] == "true":', src)

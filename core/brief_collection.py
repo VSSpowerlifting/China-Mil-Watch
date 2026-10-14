@@ -125,6 +125,37 @@ def brief_route(slug: str) -> str:
     return "%s/%s.html" % (ROUTE_DIR, slug)
 
 
+def credited_author_names(sidecar: Mapping, lead_name: str) -> tuple:
+    """Keep distinct authors for metadata while displaying a readable joint byline."""
+    contributor = sidecar.get("research_contributor")
+    if (isinstance(contributor, dict) and contributor.get("credit_role") == "co-author"
+            and isinstance(contributor.get("name"), str)
+            and contributor["name"].strip()
+            and contributor["name"].strip() != lead_name):
+        return (lead_name, contributor["name"].strip())
+    return (lead_name,)
+
+
+def credited_author_name(sidecar: Mapping, lead_name: str) -> str:
+    return " and ".join(credited_author_names(sidecar, lead_name))
+
+
+#: The former series' masthead, as it opens an earlier issue's stored title.
+#: The stored title keeps it (citations quote it); headings and navigation
+#: show the title without it, since the masthead is stated in provenance.
+SERIES_TITLE_PREFIXES = ("The PLA Watch: ", "The PLA Watch — ",
+                         "The PLA Watch – ")
+
+
+def display_title(title) -> str:
+    """A stored title without the former series' masthead prefix."""
+    text = str(title or "")
+    for prefix in SERIES_TITLE_PREFIXES:
+        if text.startswith(prefix):
+            return text[len(prefix):]
+    return text
+
+
 def paragraphs(text) -> list:
     """Blank-line separated paragraphs of plain prose. Nothing is markup."""
     return [p.strip() for p in re.split(r"\n\s*\n", str(text or ""))
@@ -267,8 +298,10 @@ def brief_entry(slug: str, sidecar: Mapping, media_dir=None) -> dict:
                    "source_page": veil["source_page"]} if veil else None),
         "synthetic": bool(sidecar.get("synthetic")),
         "desks": list(sidecar["desks"]),
+        "source_linked": sidecar.get("evidence_type") == "source-linked-editorial-v1",
         "approved_on": (sidecar.get("approval") or {}).get("approved_on"),
-        "author_name": identity["author_name"],
+        "author_name": credited_author_name(sidecar, identity["author_name"]),
+        "author_names": list(credited_author_names(sidecar, identity["author_name"])),
         "publication": identity["publication"],
         "publication_home_label": identity["publication_home_label"],
         "series_name": identity["series_name"],
@@ -298,6 +331,8 @@ def provenance(entry: Mapping) -> str:
             entry.get("publication"))
     if entry.get("is_retrospective"):
         text += " · " + entry["retrospective_label"]
+    if entry.get("source_linked"):
+        text += " · Source-linked editorial analysis"
     return text
 
 
@@ -399,6 +434,55 @@ def load_collection(editions: list, registry, *,
     return Collection(rows=tuple(rows), briefs=tuple(briefs),
                       withheld=tuple(withheld),
                       sidecars={slug: sc for slug, sc in published})
+
+
+def adjacent_items(collection: Collection, slug: str) -> dict:
+    """
+    The items either side of a brief in the collection order, for its
+    previous/next navigation: `previous` is the next older item and `next`
+    the next newer one, whichever series each first appeared in; None at an
+    end. Each `href` is relative to `briefs/`: a brief links its sibling page,
+    an earlier issue its rendered page under `the-pla-watch/posts/` (or its
+    live address when no page was rendered locally).
+    """
+    rows = collection.rows
+    at = next((i for i, r in enumerate(rows)
+               if r["kind"] == "brief" and r["entry"]["slug"] == slug), None)
+    if at is None:
+        return {"previous": None, "next": None}
+
+    def link(row):
+        e = row["entry"]
+        if row["kind"] == "brief":
+            href = "%s.html" % e["slug"]
+        elif e.get("rendered_locally"):
+            href = "../the-pla-watch/posts/%s.html" % e["slug"]
+        else:
+            href = e["url"]
+        return {"href": href, "number": e.get("issue"), "date": e.get("date"),
+                "title": display_title(e.get("title"))}
+
+    return {"previous": link(rows[at + 1]) if at + 1 < len(rows) else None,
+            "next": link(rows[at - 1]) if at > 0 else None}
+
+
+def brief_after_issue(collection: Collection, issue_slug: str):
+    """
+    The published brief that comes next after an earlier issue in the
+    collection order, for that issue's "Next" link; None when the next newer
+    item is not a brief, or there is none. Read only: the collection already
+    holds approved briefs alone (`load_briefs` withholds every draft). The
+    `href` is relative to `the-pla-watch/posts/`, where issue pages live.
+    """
+    rows = collection.rows
+    at = next((i for i, r in enumerate(rows)
+               if r["kind"] == "issue" and r["entry"]["slug"] == issue_slug), None)
+    if not at or rows[at - 1]["kind"] != "brief":
+        return None
+    e = rows[at - 1]["entry"]
+    return {"href": "../../%s/%s.html" % (ROUTE_DIR, e["slug"]),
+            "number": e.get("issue"), "date": e.get("date"),
+            "title": display_title(e.get("title"))}
 
 
 # ── Signal Veil ───────────────────────────────────────────────────────────────
@@ -622,6 +706,10 @@ def brief_view(slug: str, sidecar: Mapping, *, desk_names: Mapping,
             "entries": [t for t in trail.values() if t["desk"] == d],
         } for d in sidecar["desks"]],
         "trail_count": len(trail),
+        "source_linked": sidecar.get("evidence_type") == "source-linked-editorial-v1",
+        "body_paragraphs": sidecar.get("body_paragraphs") or [],
+        "publisher_references": sidecar.get("publisher_references") or [],
+        "publisher_urls": {s["id"]: s["url"] for s in sidecar.get("publisher_references") or []},
         # Additional *publisher-linked* references: never count these as
         # archived corpus rows, production desk coverage or source-trail IDs.
         "external_evidence": [{
@@ -636,7 +724,8 @@ def brief_view(slug: str, sidecar: Mapping, *, desk_names: Mapping,
             "original_summary": e["original_summary"],
             "reviewed_on": e["human_review"]["reviewed_on"],
         } for e in sidecar.get("external_evidence") or []],
-        "author_name": identity["author_name"],
+        "author_name": credited_author_name(sidecar, identity["author_name"]),
+        "author_card_name": identity["author_name"],
         "author_title": identity["author_title"],
         "author_bio": identity["author_bio"],
         "author_links": links,
@@ -692,8 +781,9 @@ def build_briefs_feed(briefs: Iterable[Mapping], *, origin: str) -> str:
             "    <id>%s</id>" % url,
             "    <updated>%s</updated>" % stamp,
             "    <published>%s</published>" % stamp,
-            "    <author><name>%s</name></author>" % xml_escape(b["author_name"]),
         ]
+        for author_name in b.get("author_names") or [b["author_name"]]:
+            lines.append("    <author><name>%s</name></author>" % xml_escape(author_name))
         if (b.get("dek") or "").strip():
             lines.append("    <summary>%s</summary>"
                          % xml_escape(b["dek"].strip()))

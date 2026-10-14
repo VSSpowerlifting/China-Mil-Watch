@@ -144,6 +144,19 @@ class TestRosterMatchesConfiguration(DeskCase):
         self.assertEqual(us.enabled_source_count, 0)
         self.assertIn("not collecting", us.status_label.lower())
 
+    def test_us_desk_limit_uses_owner_approved_neutral_evidence_standard(self):
+        us = load_registry().get("us-indopacific")
+        self.assertIsNotNone(us)
+        expected = (
+            "U.S. institutional statements are evaluated under the same "
+            "source-verification and editorial standards as every other desk; "
+            "they are not treated as independent confirmation of their own claims."
+        )
+        self.assertTrue(us.limits[-1].endswith(expected), us.limits[-1])
+        self.assertNotIn("our side", " ".join(us.limits).lower())
+        self.assertEqual(us.status, "access_blocked")
+        self.assertEqual(us.enabled_source_count, 0)
+
     def test_singapore_is_live_and_promoted(self):
         """
         Promoted 2026-09-21 (DECISION_LOG owner sign-off). The desk is now
@@ -288,12 +301,12 @@ class IndonesiaPublicStatusWithoutCorpus(DeskCase):
         self.assertNotIn("text_original", html)
         self.assertNotIn("body_original", html)
         self.assertNotIn("state/shadow.db", html)
-        # Twelve factual first-party link pointers are not the approved-citation
+        # Fifteen factual first-party link pointers are not the approved-citation
         # register. They must never carry full articles or corpus admission.
         from core.indonesia_official_index import load
         from bs4 import BeautifulSoup
         links = BeautifulSoup(html, "html.parser").select(
-            'ol[aria-label="Twelve external ministry news links"] a')
+            'ol[aria-label="Fifteen external ministry news links"] a')
         self.assertEqual([a["href"] for a in links],
                          [x["source_url"] for x in load()])
         self.assertIn("publisher references, not independently", html)
@@ -476,21 +489,28 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
         self.assertNotIn("desk--live", block)
         self.assertIn("Hanoi", block)
 
-    def test_only_a_side_hung_tablet_plate_is_narrowed(self):
-        """At tablet width plates hang into the bands above and below the map;
-        a plate hung sideways instead sits on the map and must be narrowed.
-        The class follows the geography file, not a slug."""
+    def test_tablet_directory_uses_all_desk_plates_at_full_width(self):
+        """Phase 4A uses a responsive register rather than side-hung cards.
+
+        Geography still records Vietnam's side-oriented tablet leader, but
+        no mapped plate receives the legacy narrow-width class at 760–1100px.
+        Keeping that class would trigger support.css's old 25% width rule
+        and make the entry unreadable inside the new register.
+        """
         import json
         places = json.loads((MANIFESTS / "geography.json")
                             .read_text(encoding="utf-8"))["desks"]
         side = {slug for slug, place in places.items()
                 if place["card"]["mid"]["hang"] in ("left", "right")}
+        self.assertEqual(side, {"vietnam"})
         html = self.page("desks.html")
         narrowed = {slug for cls, slug in re.findall(
             r'<section class="([^"]*\bdeskmap-plate\b[^"]*)"[^>]*data-desk="([^"]+)"', html)
             if "is-mid-side" in cls.split()}
-        self.assertEqual(narrowed, side)
-        self.assertEqual(narrowed, {"vietnam"})
+        self.assertFalse(narrowed)
+        css = (REPO_ROOT / "site/preview/desk-map.css").read_text(encoding="utf-8")
+        self.assertIn(".deskmap-register{grid-template-columns:repeat(2", css)
+        self.assertIn(".deskmap-plate{position:relative", css)
 
 
 class TestPhilippinesShadowIsNotPublicCoverage(DeskCase):

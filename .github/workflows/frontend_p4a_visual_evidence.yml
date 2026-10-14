@@ -1,0 +1,61 @@
+name: Frontend P4A — Desks visual evidence
+
+# Read-only, pull-request-only visual receipts. Never render into tracked
+# output/, publish pages, collect sources, access secrets or mutate the DB.
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - '.github/workflows/frontend_p4a_visual_evidence.yml'
+      - 'scripts/capture_desks_phase4a_review.py'
+      - 'tests/test_desks_phase4_browser.py'
+      - 'site/preview/templates/desks.html'
+      - 'site/preview/desk-map.css'
+      - 'site/preview/templates/_relief.html'
+      - 'desks/geography.json'
+      - 'site/assets/flags/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-p4a-visual-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  visual-review:
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out PR review merge without credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing dependencies
+        run: pip install -r requirements.txt
+      - name: Install and launch Chromium
+        run: |
+          python -m playwright install --with-deps chromium
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True)
+              browser.close()
+          PY
+      - name: Capture screenshots and check actual desk geometry
+        run: python scripts/capture_desks_phase4a_review.py
+      - name: Upload screenshots and measurement report (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipr-p4a-desks-visual-review
+          path: phase4a-visual-receipt/
+          if-no-files-found: warn
+          retention-days: 7

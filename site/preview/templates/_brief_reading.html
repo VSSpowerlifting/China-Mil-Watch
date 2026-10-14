@@ -1,0 +1,41 @@
+{# Exact manuscript runs and independently reviewed reading structure. #}
+{% from "_article_media.html" import cover_figure %}
+{% macro paragraph(p, urls) -%}
+<p data-manuscript-paragraph="{{ p.index }}">{% for run in p.runs %}{% if run.source is defined %}<a href="{{ urls[run.source] }}" rel="noopener noreferrer" data-source="{{ run.source }}">{{ run.text }}</a>{% else %}{{ run.text }}{% endif %}{% endfor %}</p>
+{%- endmacro %}
+{% macro excerpt(item, brief) -%}
+<blockquote><p>{{ item.quote }}</p></blockquote>
+<p class="brief-excerpt-trace">From paragraph {{ item.paragraph }} · {% for source in item.sources %}<a href="#publisher-{{ source }}">{% for reference in brief.publisher_references if reference.id == source %}{{ reference.publisher }}{% endfor %}</a>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+{%- endmacro %}
+{% macro reading_article(brief) -%}
+{% set p = brief.presentation %}
+{% if p.central_finding is defined %}
+<aside class="brief-reading-finding" id="reading-finding" tabindex="-1" aria-labelledby="h-reading-finding">
+  <h2 id="h-reading-finding">Central finding</h2>
+  {{ excerpt(p.central_finding, brief) }}
+</aside>
+{% endif %}
+<section id="s-article" class="brief-structured" aria-label="Article text">
+  {% for section in p.sections %}
+  <section class="brief-section brief-reading-section" id="{{ section.id }}" tabindex="-1" aria-labelledby="h-{{ section.id }}">
+    <h2 id="h-{{ section.id }}">{{ section.heading }}</h2>
+    {% for item in section.paragraphs %}
+    {{ paragraph(item, brief.publisher_urls) }}
+    {% if item.figure %}<div class="brief-reading-figure">{{ cover_figure(item.figure) }}</div>{% endif %}
+    {% endfor %}
+  </section>
+  {% endfor %}
+</section>
+{% if p.evidence is defined %}
+<section class="brief-reading-evidence" id="reading-evidence" tabindex="-1" aria-labelledby="h-reading-evidence">
+  <h2 id="h-reading-evidence">Evidence and uncertainty</h2>
+  <p class="brief-reading-note">Selected manuscript excerpts. Official accounts retain their attribution and qualifications in the article.</p>
+  <div>
+    <section aria-labelledby="h-reading-establishes"><h3 id="h-reading-establishes">What the evidence establishes</h3>
+    {% for item in p.evidence.establishes %}{{ excerpt(item, brief) }}{% endfor %}</section>
+    <section aria-labelledby="h-reading-uncertain"><h3 id="h-reading-uncertain">What remains uncertain</h3>
+    {% for item in p.evidence.uncertain %}{{ excerpt(item, brief) }}{% endfor %}</section>
+  </div>
+</section>
+{% endif %}
+{%- endmacro %}

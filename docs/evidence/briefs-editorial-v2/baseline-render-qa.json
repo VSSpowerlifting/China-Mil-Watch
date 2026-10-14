@@ -1,0 +1,23 @@
+{
+  "route": "http://127.0.0.1:8877/before/briefs/what-is-being-built-in-laos.html",
+  "viewports": {
+    "375": {
+      "status": 200,
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "canonical": "https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html"
+    },
+    "768": {
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "canonical": "https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html"
+    },
+    "1280": {
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "canonical": "https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html"
+    }
+  }
+}
