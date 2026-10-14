@@ -84,7 +84,11 @@ class JapanJointStaffStagedPacketTest(unittest.TestCase):
             ROOT / "research" / "briefs_editorial_evidence" /
             (saturday + ".json")).read_text(encoding="utf-8"))
         japan = json.loads((DIR / (saturday + ".json")).read_text(encoding="utf-8"))
-        combined = dict(indonesia, items=indonesia["items"] + japan["items"])
+        # The scheduled packet may now contain the separately reviewed Japan
+        # note; keep this rehearsal about two distinct source identities.
+        indonesia_only = [item for item in indonesia["items"]
+                          if item["desk"] == "indonesia"]
+        combined = dict(indonesia, items=indonesia_only + japan["items"])
         self.assertEqual(
             {item["id"] for item in combined["items"]},
             {"ID-W42-01", "JP-W42-07"})
