@@ -119,6 +119,10 @@ class OperationalCanaryTests(unittest.TestCase):
                     "<h2>Kemhan press releases (Siaran Pers)</h2>"
                     '<ol aria-label="Two external ministry press release links">' +
                     press_links + "</ol>"
+                    "<p>Both public-link groups point outward to seventeen "
+                    "first-party pages (fifteen Berita and two Siaran Pers)</p>"
+                    "<p>Fifteen Berita and two Siaran Pers first-party links "
+                    "are available for navigation</p>"
                 ) if good else "<h1>Wrong site</h1>" + links
             page.write_text(document(approved), encoding="utf-8")
             self.assertEqual(check_public_page(page), 17)
@@ -132,6 +136,30 @@ class OperationalCanaryTests(unittest.TestCase):
                                                   "https://spoof.example/press")
             page.write_text(bad_press, encoding="utf-8")
             with self.assertRaises(HealthError):
+                check_public_page(page)
+            # The Oct 13 public page had all 17 correct links, but two
+            # reader-facing counts wrongly described only 13 Berita. Future
+            # public release checks must catch stale/misleading prose too.
+            for old, wrong in (
+                ("seventeen first-party pages", "fifteen first-party pages"),
+                ("fifteen Berita and two Siaran Pers",
+                 "thirteen Berita and two Siaran Pers"),
+                ("Fifteen Berita and two Siaran Pers first-party links",
+                 "Thirteen Berita and two Siaran Pers first-party links"),
+            ):
+                with self.subTest(stale_count=old):
+                    actual = document(approved)
+                    corrupted = actual.replace(old, wrong, 1)
+                    self.assertNotEqual(corrupted, actual)
+                    page.write_text(corrupted, encoding="utf-8")
+                    with self.assertRaisesRegex(HealthError, "prose counts"):
+                        check_public_page(page)
+            # A duplicated truthful sentence also falsely inflates the
+            # bibliography's on-page claims. Require exactly one of each.
+            actual = document(approved)
+            duplicate = "Fifteen Berita and two Siaran Pers first-party links are available for navigation"
+            page.write_text(actual + "<p>" + duplicate + "</p>", encoding="utf-8")
+            with self.assertRaisesRegex(HealthError, "prose counts"):
                 check_public_page(page)
             # URL-only checks used to miss wrong date/title/number metadata.
             for before, after in (
