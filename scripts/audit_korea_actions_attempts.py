@@ -53,7 +53,7 @@ def scan(pages, artifacts, ledgers, *, as_of_utc):
                 "foreign, duplicate or malformed Korea ledger")
         by_id[run_id] = ledger
 
-    holds, mapped, per_date = [], set(), {}
+    holds, mapped, per_date, followups = [], set(), {}, []
     counts = {"workflow_runs_examined": 0, "korea_attempts": 0,
               "indonesia_attempts": 0, "unattributed_attempts": 0,
               "korea_failed_or_cancelled": 0, "korea_rerun_attempts": 0,
@@ -97,27 +97,46 @@ def scan(pages, artifacts, ledgers, *, as_of_utc):
             continue
         counts["korea_attempts"] += 1
         key = "%d-%d" % (run_id, attempt)
+        reasons = []
         if attempt != 1:
             counts["korea_rerun_attempts"] += 1
             holds.append("korea_rerun_needs_attempt_history_review")
+            reasons.append("rerun_requires_review")
         if action.get("status") != "completed" or action.get("conclusion") != "success":
             counts["korea_failed_or_cancelled"] += 1
             holds.append("korea_failed_cancelled_or_unfinished_workflow")
+            reasons.append("github_action_not_successful")
         if key not in by_id:
             counts["korea_missing_ledgers"] += 1
             holds.append("korea_action_attempt_without_pinned_ledger")
+            reasons.append("no_matched_state_ledger")
         else:
             mapped.add(key)
             ledger = by_id[key]
             if ledger.get("health") != "ok" or ledger.get("result") not in RESULTS:
                 holds.append("korea_ledger_not_a_successful_original_capture")
+                reasons.append("matched_state_ledger_not_healthy")
             if action.get("event") == "schedule":
                 logical = scheduled_slot_date(created, CRON)
                 if (ledger.get("target_date") != logical.isoformat() or
                         ledger.get("target_date_source") != "schedule-slot"):
                     holds.append("korea_schedule_slot_and_ledger_disagree")
+                    reasons.append("scheduled_state_date_mismatch")
             elif ledger.get("target_date_source") == "schedule-slot":
                 holds.append("manual_korea_run_masquerades_as_schedule")
+                reasons.append("manual_event_with_scheduled_ledger")
+        if reasons:
+            followups.append({
+                "run_attempt_id": key,
+                "scheduled_target_date": (
+                    scheduled_slot_date(created, CRON).isoformat()
+                    if action["event"] == "schedule" else None),
+                "event": action["event"],
+                "reasons": reasons,
+                "publisher_timeout_verified_by_this_census": False,
+                "retrieval_retried": False,
+                "human_review_or_desk_approval": False,
+            })
         if action.get("event") == "schedule":
             logical = scheduled_slot_date(created, CRON)
             if START < logical <= now.date():
@@ -163,6 +182,7 @@ def scan(pages, artifacts, ledgers, *, as_of_utc):
         "pending_dates": pending, "missing_dates": missing,
         "duplicate_dates": duplicates,
         "pinned_ledger_unmapped_count": len(missing_ledgers),
+        "attempts_needing_followup": followups,
         "holds": holds,
         "verdict": ("HOLD" if holds else "PENDING_SCHEDULED_GRACE"
                     if pending else "CONSISTENT_UNAUTHENTICATED_CENSUS_ONLY"),
