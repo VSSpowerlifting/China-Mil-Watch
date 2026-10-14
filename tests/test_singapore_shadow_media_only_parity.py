@@ -19,7 +19,7 @@ from core.collection import status as st
 from scraper.sources import sg_mindef as sg
 from scripts import shadow_collect as shadow
 from tests.test_singapore_image_only_release import (
-    INFOGRAPHIC, FakeSession, adapter as recovery_adapter, captured,
+    INFOGRAPHIC, SHADOW_SHA, FakeSession, adapter as recovery_adapter, captured,
     release_page, para, url,
 )
 
@@ -81,6 +81,26 @@ class TestSingaporeRealCapturedMediaOnlyShadow(unittest.TestCase):
         self.assertNotIn("Infographic: Ex Trident 2026" + " IMAGE", json.dumps(stored))
         self.assertNotIn("image_alt_text", stored)
         self.assertNotIn("image_bytes", stored)
+
+    def test_original_prose_from_real_captures_keeps_its_existing_shadow_hash(self):
+        # Three preserved actual MINDEF HTML pages predate the correction.
+        # They must extract exactly as before, rather than adopting any
+        # media-only shortcut, normalization or fabricated prose.
+        self.run_shadow()
+        with sqlite3.connect(str(self.state / "shadow.db")) as conn:
+            for slug, expected_prefix in SHADOW_SHA.items():
+                with self.subTest(slug=slug):
+                    text, content_hash = conn.execute(
+                        "SELECT text_original, content_sha256 FROM shadow_records"
+                        " WHERE url=?", (url(slug),)
+                    ).fetchone()
+                    self.assertTrue(text)
+                    self.assertEqual(
+                        hashlib.sha256(text.encode("utf-8")).hexdigest(),
+                        content_hash)
+                    self.assertTrue(
+                        content_hash.startswith(expected_prefix),
+                        "Original prose changed when shadow media classification changed")
 
     def test_image_only_record_is_idempotent_and_no_new_body_is_invented(self):
         first = self.run_shadow(run_id="one")
