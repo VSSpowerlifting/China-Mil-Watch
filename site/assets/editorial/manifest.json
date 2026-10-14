@@ -537,5 +537,49 @@
     "creator_native_lang": "",
     "notice": "",
     "depicts": "context"
+  },
+  {
+    "id": "rss-steadfast-pearl-harbor-2026",
+    "file": "rss-steadfast-pearl-harbor-2026.jpg",
+    "width": 999,
+    "height": 665,
+    "sha256": "fd25b683f4ffc62ba4165801cb5202f5f2ff790882b6c1571d464e05288a6a40",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/2606/9771570/1000w_q95.jpg",
+    "origin_reference": "https://www.dvidshub.net/image/9771570/republic-singapore-navy-formidable-class-guided-missile-frigate-rss-steadfast-70-arrives-pearl-harbor-rimpac-2026",
+    "source_fingerprint": {
+      "sha256": "fd25b683f4ffc62ba4165801cb5202f5f2ff790882b6c1571d464e05288a6a40",
+      "sha1": "72cb2d9bd042d5b48ff5e73dc51eeaa88e2a6917"
+    },
+    "license_basis": "US Navy official-duty public domain, DVIDS photo No.9771570, VIRIN 260622-N-SY758-1005; publisher 1000px preview, NOT original full-resolution image.",
+    "note": "Same RSS Steadfast vessel as September 2026 Maritime Cooperation, but June RIMPAC at Pearl Harbor. No Singapore MINDEF or PLA photograph rehosting.",
+    "focal": "53% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/rss-steadfast-pearl-harbor-2026-1600.jpg",
+        "width": 999,
+        "height": 665,
+        "sha256": "60738ff434c0c87fa6083db9a7f357a7af265efde512088fa21be2e7a32c6db0"
+      }
+    ],
+    "alt": "Grey frigate RSS Steadfast (70) viewed side-on in Pearl Harbor, Hawaii, with mountains and trees behind it.",
+    "caption": "Republic of Singapore Navy frigate RSS Steadfast (70) arriving in Hawaii for RIMPAC, 22 June 2026. The same ship subsequently participated in Singapore–China Exercise Maritime Cooperation that September; this photograph does not depict that bilateral exercise.",
+    "date_note": "Photographed 22 June 2026 at Pearl Harbor, Hawaii, three months before the bilateral exercise.",
+    "creator": "Mass Communication Specialist 1st Class Brandon Roberson, U.S. Navy",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://www.dvidshub.net/image/9771570/republic-singapore-navy-formidable-class-guided-missile-frigate-rss-steadfast-70-arrives-pearl-harbor-rimpac-2026",
+    "source_label": "DVIDS",
+    "credit": "Mass Communication Specialist 1st Class Brandon Roberson, U.S. Navy · Public domain · via DVIDS",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
   }
 ]
