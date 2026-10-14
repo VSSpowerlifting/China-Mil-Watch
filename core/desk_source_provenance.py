@@ -794,14 +794,80 @@ def _jsonable(value):
     return value
 
 
+# Explicit publishable projection. Do not serialize the entire dataclass: it
+# includes shadow declaration paths, unmatched health slugs, conflict diagnostics,
+# run IDs and private source-binding pointers for maintainers.
+_PUBLIC_DESK_FIELDS = (
+    "slug", "name", "route", "scope", "status", "status_label",
+    "status_explanation", "public", "has_production_records", "limits",
+    "blockers", "resolved", "observed_volume", "observed_volume_subject",
+    "volume_caveat", "qualification",
+)
+_PUBLIC_SOURCE_FIELDS = (
+    # Provenance.note can include private production operator notes; the
+    # shadow-manifest rights_statement also contains internal fixture/issue
+    # diagnostics. Neither is approved for direct public JSON serialization.
+    # Public limits and pre-approved reference links remain on their own
+    # independently reviewed surfaces.
+    "name", "evidence_class", "publisher_url", "declared_format",
+    "language_tags", "access_method", "authority_tier",
+)
+_PUBLIC_REFERENCE_FIELDS = (
+    "kind", "family_name", "publisher", "issuer", "editorial_status",
+    "snapshot_date", "index_url",
+)
+_PUBLIC_LINK_FIELDS = (
+    "url", "title_original", "published_date", "language", "press_number",
+    "document_distribution_date",
+)
+
+
 def atlas_to_dict(atlas: ProvenanceAtlas) -> dict:
-    data = _jsonable(atlas)
-    data["schema"] = ATLAS_SCHEMA
-    return data
+    """Only owner-reviewed public desk fields. No internal diagnostics or
+    shadow/production operational identifiers; never infer a source's status.
+
+    This intentionally uses *allowlists*, not a recursive dataclass dump.
+    Adding a future internal dataclass field cannot publish it by accident.
+    A non-public desk is excluded even if accidentally passed by a caller.
+    """
+    desks = []
+    for d in atlas.desks:
+        if not d.public:
+            continue
+        row = {key: _jsonable(getattr(d, key)) for key in _PUBLIC_DESK_FIELDS}
+        row["sources"] = [
+            {key: _jsonable(getattr(s, key)) for key in _PUBLIC_SOURCE_FIELDS}
+            for s in d.sources
+        ]
+        row["references"] = []
+        for group in d.references:
+            item = {key: _jsonable(getattr(group, key))
+                    for key in _PUBLIC_REFERENCE_FIELDS}
+            item["entries"] = [
+                {key: _jsonable(getattr(link, key)) for key in _PUBLIC_LINK_FIELDS}
+                for link in group.entries
+            ]
+            row["references"].append(item)
+        desks.append(row)
+    return {"schema": ATLAS_SCHEMA, "as_of": atlas.as_of, "desks": desks}
 
 
 def atlas_to_json(atlas: ProvenanceAtlas) -> str:
+    """Public Source Atlas JSON; a build timestamp is not a health metric."""
     return json.dumps(atlas_to_dict(atlas), ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+
+
+def atlas_to_internal_dict(atlas: ProvenanceAtlas) -> dict:
+    """Engineering diagnostics only. Never pass into rendered output/routes."""
+    data = _jsonable(atlas)
+    data["schema"] = "ipr-desk-source-provenance-internal/1"
+    return data
+
+
+def atlas_to_internal_json(atlas: ProvenanceAtlas) -> str:
+    """Internal review export, deliberately not exposed by the gather CLI."""
+    return json.dumps(atlas_to_internal_dict(atlas),
+                      ensure_ascii=False, indent=2, sort_keys=True) + "\n"
 
 
 def _cell(text) -> str:

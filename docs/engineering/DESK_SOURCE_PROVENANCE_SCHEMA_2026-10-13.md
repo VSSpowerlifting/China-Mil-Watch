@@ -107,17 +107,53 @@ bound to two desks, a family named twice, a slug bound twice, an undeclared lane
 slug-filtered lane on a family without a slug, an empty or untrimmed name, and an empty
 basis.
 
-## Output (`ipr-desk-source-provenance/1`)
+## Public output (`ipr-desk-source-provenance/1`)
 
-`atlas_to_json` emits sorted keys, two-space indent, UTF-8 (no ASCII escaping) and a trailing
-newline; identical inputs give byte-identical output. The top level carries `schema`,
-`as_of`, `health_supplied`, `desks`, `undisplayed_shadow_declarations`,
-`unmatched_health_slugs` and `conflicts`. Each desk carries the registry fields above,
-`sources` (one `SourceProvenance` per family, production first in manifest order),
-`references` (one `ReferenceGroup` per bound lane) and its own `conflicts`.
+`atlas_to_dict` / `atlas_to_json` and the gather CLI's `--json` use a
+**positive allowlist**. Identical inputs generate byte-identical sorted UTF-8 JSON
+with a trailing newline. The public top level contains only `schema`, `as_of`
+and `desks` (public desks only). `as_of` is the build date, **not** a successful
+collection timestamp or evidence freshness guarantee.
 
-`render_matrix` produces the Markdown evidence matrix. It shows how many sources carry run
-health but never the health values, which change every run.
+Each public desk preserves the registry's name, route, scope, status,
+`status_explanation`, limits, research blockers, resolved notes, observed-volume
+qualifications and qualification text. Sources preserve their reviewed evidence
+class, publisher name and URL, declared format, language and access method.
+Raw source notes and shadow-manifest rights statements are **not** exposed:
+production notes are operator-only, and some shadow-manifest rights contain
+fixture/issue diagnostics. The public rights qualification comes from approved
+registry limits and independently published family notes on desk pages.
+Approved bibliography/index/reviewed-link entries preserve
+public original titles, official outbound URLs, dates, language and press numbers.
+They remain **links, never production records**.
+
+The public serializer deliberately **does not emit**:
+- `undisplayed_shadow_declarations`, `unmatched_health_slugs`, `conflicts`
+  or private/non-public desk rows;
+- raw `shadow/.../manifest.json` paths, source slug/config IDs, basis pointers,
+  reference loader/lane IDs, attempt/run IDs, production operator notes,
+  shadow manifest rights statements or shadow-enabled flags;
+- production-source run health, counts or per-source latest-run timestamps.
+  That material needs an independent published health contract and approval.
+
+This design ensures any new internal dataclass field is absent from public JSON
+until expressly added to the allowlist and reviewed; it never inherits the
+entire internal dataclass by accident.
+
+## Internal output (`ipr-desk-source-provenance-internal/1`)
+
+`atlas_to_internal_dict` / `atlas_to_internal_json` intentionally export the
+**full engineering diagnostic model**: `health_supplied`, all desks,
+`undisplayed_shadow_declarations`, `unmatched_health_slugs`, `conflicts`,
+validated manifest paths, source slugs, shadow-enabled flags and production
+run metadata. They must **never** be used by a site template, `output/`
+renderer, or public download route. The gather CLI's `--json` is always the
+public projection; no internal-JSON export flag is exposed there.
+
+`render_matrix` remains an **internal engineering review document**, with source
+slug and declaration diagnostics. It shows how many sources carry run health but
+never the health values, which change every run. The matrix must not become a
+public artifact without a separate reviewed projection.
 
 ## Commands
 
