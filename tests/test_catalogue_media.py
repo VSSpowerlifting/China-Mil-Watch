@@ -343,7 +343,7 @@ class CommittedRecordTests(unittest.TestCase):
         self.assertIn("not a photograph", e["caption"])
         self.assertIn("KJ-600", e["caption"])
         self.assertIn("Rocket Force", e["caption"])
-        self.assertIn("CC0 1.0", e["credit"])
+        self.assertIn("CC0 1.0", e["date_note"])
         self.assertIn("Raysonho", e["creator"])
         self.assertIn("Meeepmep", e["creator"])
         self.assertIn("d932f61c8c317ea93f87a6f0d3742e3d4480aabc",
