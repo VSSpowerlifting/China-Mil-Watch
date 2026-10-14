@@ -332,8 +332,12 @@ class ArticleMediaPagesTests(unittest.TestCase):
         from core.catalogue_media import load_admissions
         from core.source_terms import required_notice
         records = load_admissions(repo_root=REPO_ROOT)
+        # The originating DVIDS image of No.14 is served from Commons, so
+        # required_notice(record) cannot infer DVIDS from that hostname.
+        # Its explicitly retained originating-publisher notice still counts.
         expected = {record["issue"] for record in records.values()
-                    if record.get("status") == "admitted" and required_notice(record)}
+                    if record.get("status") == "admitted" and
+                    (record.get("notice") or required_notice(record))}
         carrying = set()
         for card in cat.select("article.brief-card"):
             issue = card.select_one(".issue-no")
