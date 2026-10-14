@@ -43,6 +43,35 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+
+def css_source_parity(root: Path) -> list:
+    """Attest each generated stylesheet is byte-identical to its source.
+
+    The production renderer copies these files verbatim. A review-only output
+    inventory must not greenlight a stale, truncated or accidentally modified
+    CSS artifact. This check does not edit either directory.
+    """
+    root = Path(root)
+    checks = []
+    for output_rel in sorted(COSMETIC_CSS):
+        source_rel = "site/preview/" + Path(output_rel).name
+        source = root / source_rel
+        generated = root / output_rel
+        safe_files = (source.is_file() and not source.is_symlink()
+                      and generated.is_file() and not generated.is_symlink())
+        source_hash = sha256(source) if source.is_file() and not source.is_symlink() else None
+        generated_hash = (sha256(generated) if generated.is_file()
+                          and not generated.is_symlink() else None)
+        checks.append({
+            "source": source_rel,
+            "generated": output_rel,
+            "source_sha256": source_hash,
+            "generated_sha256": generated_hash,
+            "identical": bool(safe_files and source_hash == generated_hash),
+        })
+    return checks
+
+
 def inventory(root: Path, expected_db_sha: str) -> dict:
     root = Path(root).resolve()
     if not SHA_PATTERN.fullmatch(expected_db_sha):
@@ -78,8 +107,11 @@ def inventory(root: Path, expected_db_sha: str) -> dict:
             "sha256": sha256(target) if target.is_file() and not target.is_symlink() else None,
             "bytes": target.stat().st_size if target.is_file() and not target.is_symlink() else None,
         })
+    css_parity = css_source_parity(root)
     return {
         "schema": "ipr-sitewide-render-preview-v1",
+        "css_source_parity": css_parity,
+        "css_source_mismatches": [x["generated"] for x in css_parity if not x["identical"]],
         "reviewed_commit": subprocess.check_output(
             ["git", "rev-parse", "HEAD"], cwd=root, text=True).strip(),
         "db_sha256_unchanged": expected_db_sha,
@@ -109,8 +141,11 @@ def main(argv=None) -> int:
         report["css_to_review"], report["html_to_review"],
         len(report["blocked"]), len(report["outside_output"])))
     print("Review receipt:", destination)
-    if report["blocked"] or report["outside_output"]:
-        print("BLOCKED: a cosmetic-only release cannot include these paths.")
+    print("CSS source parity: %d exact / %d mismatched" % (
+        len(report["css_source_parity"]) - len(report["css_source_mismatches"]),
+        len(report["css_source_mismatches"])))
+    if report["blocked"] or report["outside_output"] or report["css_source_mismatches"]:
+        print("BLOCKED: noncosmetic, outside-output or CSS source-parity violation.")
         return 2
     if report["total_changed"] == 0:
         print("NO CHANGE: review would be empty; check source and output baseline.")
