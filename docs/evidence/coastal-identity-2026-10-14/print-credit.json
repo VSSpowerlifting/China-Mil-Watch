@@ -1,0 +1,170 @@
+[
+  {
+    "phase": "before",
+    "width": 375,
+    "creditTop": 438.890625,
+    "creditBottom": 528.890625,
+    "creditHeight": 90,
+    "finderTop": 532.890625,
+    "overlapPixels": 0,
+    "lowerLineHitTests": [
+      {
+        "x": 37.5,
+        "y": 520.890625,
+        "top": ""
+      },
+      {
+        "x": 187.5,
+        "y": 520.890625,
+        "top": ""
+      },
+      {
+        "x": 337.5,
+        "y": 520.890625,
+        "top": "wrap photo-credit"
+      }
+    ],
+    "creditWidth": 375,
+    "creditRight": 375,
+    "clientWidth": 375,
+    "scrollWidth": 375,
+    "pageWidth": 375,
+    "pageScrollWidth": 375,
+    "overflowWrap": "break-word",
+    "whiteSpace": "normal",
+    "pseudoContent": "\" <https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg>\"",
+    "pseudoOverflowWrap": "anywhere",
+    "pseudoWhiteSpace": "normal",
+    "pseudoDisplay": "inline",
+    "anchorDisplay": "inline",
+    "href": "https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg",
+    "text": "Illustrative context \u00b7 U.S. Navy / Nathan Burke \u00b7 23 November 2015 \u00b7 Public domain Image source",
+    "credit_overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 375,
+    "creditTop": 438.890625,
+    "creditBottom": 528.890625,
+    "creditHeight": 90,
+    "finderTop": 532.890625,
+    "overlapPixels": 0,
+    "lowerLineHitTests": [
+      {
+        "x": 37.5,
+        "y": 520.890625,
+        "top": ""
+      },
+      {
+        "x": 187.5,
+        "y": 520.890625,
+        "top": ""
+      },
+      {
+        "x": 337.5,
+        "y": 520.890625,
+        "top": "wrap photo-credit"
+      }
+    ],
+    "creditWidth": 375,
+    "creditRight": 375,
+    "clientWidth": 375,
+    "scrollWidth": 375,
+    "pageWidth": 375,
+    "pageScrollWidth": 375,
+    "overflowWrap": "break-word",
+    "whiteSpace": "normal",
+    "pseudoContent": "\" <https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg>\"",
+    "pseudoOverflowWrap": "anywhere",
+    "pseudoWhiteSpace": "normal",
+    "pseudoDisplay": "inline",
+    "anchorDisplay": "inline",
+    "href": "https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg",
+    "text": "Illustrative context \u00b7 U.S. Navy / Nathan Burke \u00b7 23 November 2015 \u00b7 Public domain Image source",
+    "credit_overflow": false
+  },
+  {
+    "phase": "before",
+    "width": 1280,
+    "creditTop": 439.796875,
+    "creditBottom": 474.984375,
+    "creditHeight": 35.1875,
+    "finderTop": 465.984375,
+    "overlapPixels": 9,
+    "lowerLineHitTests": [
+      {
+        "x": 128,
+        "y": 466.984375,
+        "top": "wrap home-finder rl-finder"
+      },
+      {
+        "x": 640,
+        "y": 466.984375,
+        "top": "wrap home-finder rl-finder"
+      },
+      {
+        "x": 1152,
+        "y": 466.984375,
+        "top": "wrap home-finder rl-finder"
+      }
+    ],
+    "creditWidth": 1280,
+    "creditRight": 1280,
+    "clientWidth": 1280,
+    "scrollWidth": 1280,
+    "pageWidth": 1280,
+    "pageScrollWidth": 1280,
+    "overflowWrap": "break-word",
+    "whiteSpace": "normal",
+    "pseudoContent": "\" <https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg>\"",
+    "pseudoOverflowWrap": "anywhere",
+    "pseudoWhiteSpace": "normal",
+    "pseudoDisplay": "inline",
+    "anchorDisplay": "inline",
+    "href": "https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg",
+    "text": "Illustrative context \u00b7 U.S. Navy / Nathan Burke \u00b7 23 November 2015 \u00b7 Public domain Image source",
+    "credit_overflow": false
+  },
+  {
+    "phase": "after",
+    "width": 1280,
+    "creditTop": 439.796875,
+    "creditBottom": 474.984375,
+    "creditHeight": 35.1875,
+    "finderTop": 465.984375,
+    "overlapPixels": 9,
+    "lowerLineHitTests": [
+      {
+        "x": 128,
+        "y": 466.984375,
+        "top": "wrap home-finder rl-finder"
+      },
+      {
+        "x": 640,
+        "y": 466.984375,
+        "top": "wrap home-finder rl-finder"
+      },
+      {
+        "x": 1152,
+        "y": 466.984375,
+        "top": "wrap home-finder rl-finder"
+      }
+    ],
+    "creditWidth": 1280,
+    "creditRight": 1280,
+    "clientWidth": 1280,
+    "scrollWidth": 1280,
+    "pageWidth": 1280,
+    "pageScrollWidth": 1280,
+    "overflowWrap": "break-word",
+    "whiteSpace": "normal",
+    "pseudoContent": "\" <https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg>\"",
+    "pseudoOverflowWrap": "anywhere",
+    "pseudoWhiteSpace": "normal",
+    "pseudoDisplay": "inline",
+    "anchorDisplay": "inline",
+    "href": "https://commons.wikimedia.org/wiki/File:Ronald_Reagan_Carrier_Strike_Group_and_Japan_Maritime_Self-Defense_Force,_November_23,_2015.jpg",
+    "text": "Illustrative context \u00b7 U.S. Navy / Nathan Burke \u00b7 23 November 2015 \u00b7 Public domain Image source",
+    "credit_overflow": false
+  }
+]

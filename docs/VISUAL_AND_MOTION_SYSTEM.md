@@ -3,6 +3,16 @@
 Durable specification for motion and the flagship visual components.
 Tokens/typography: docs/DESIGN_SYSTEM.md. Tickets: docs/ROADMAP.md.
 
+## Coastal colour representation (2026-10-14)
+
+The owner-directed coastal migration supersedes crimson/rust paint in the
+active edition plate and analysis planes described in §3.2. Shared semantic
+CSS variables now paint the editorial top rule in pale jade and tall model
+flags in pale slate-blue; short ordinary ticks remain neutral. Tick heights,
+labels, imagery, motion and all sidecar data stay unchanged. The original colour
+descriptions below preserve earlier rulings, not an instruction to restore red.
+See DESIGN_SYSTEM §3 and `evidence/coastal-identity-2026-10-14/README.md`.
+
 ## 1. Motion doctrine
 
 Motion communicates hierarchy, state change, connection, and progression —

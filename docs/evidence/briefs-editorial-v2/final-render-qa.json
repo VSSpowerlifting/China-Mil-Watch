@@ -1,0 +1,54 @@
+{
+  "route": "http://127.0.0.1:8877/final-focus/briefs/what-is-being-built-in-laos.html",
+  "html_sha256": "a86251ce41ea48bcfca26a5ca0f1e64faa9020cf2722f7a0c154355fa899a542",
+  "html_bytes": 28765,
+  "viewports": {
+    "375": {
+      "status": 200,
+      "scrollWidth": 375,
+      "clientWidth": 375,
+      "paragraphCount": 11,
+      "canonical": false,
+      "noindex": true
+    },
+    "768": {
+      "status": 200,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "paragraphCount": 11,
+      "canonical": false,
+      "noindex": true
+    },
+    "1280": {
+      "status": 200,
+      "scrollWidth": 1280,
+      "clientWidth": 1280,
+      "paragraphCount": 11,
+      "canonical": false,
+      "noindex": true
+    }
+  },
+  "css": [
+    {
+      "url": "http://127.0.0.1:8877/final-focus/fonts.css",
+      "sha256": "4291a9d4718adcbdc487acd7b30d648cf5f957fe76af3199e2b88ca9aa219f8b",
+      "bytes": 1855
+    },
+    {
+      "url": "http://127.0.0.1:8877/final-focus/styles.css",
+      "sha256": "8ccef7f2f09a5e1c2b4ab2d81cda0a90e9b0cb8ce2ed4c6c2af072bfd8f6c5d7",
+      "bytes": 30549
+    },
+    {
+      "url": "http://127.0.0.1:8877/final-focus/surfaces.css",
+      "sha256": "23ef9b498fe7e4c69b735c6bbaa8d56457d369d5c1942ec0501b13fabad018ad",
+      "bytes": 5630
+    },
+    {
+      "url": "http://127.0.0.1:8877/final-focus/briefs.css",
+      "sha256": "91b74977350567bd69b52bcf33b11851e8d8167b33b66a1b7184f379868f50cf",
+      "bytes": 15610
+    }
+  ],
+  "keyboard_receipt": "focus-final-qa.json"
+}

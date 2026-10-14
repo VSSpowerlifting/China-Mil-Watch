@@ -1,8 +1,8 @@
 /* REVIEWED OCTOBER PALETTE, MEASURED
    The text/ground matrix and real photographed glyphs are verified separately.
    TWO FOCUS RINGS: paper controls use --focus; dark surfaces use --focus-band.
-   ACCENT DISCIPLINE: turquoise is structural, rust labels machine output and
-   crimson labels human-controlled analysis. Historical weekly tokens are kept.
+   ACCENT DISCIPLINE: turquoise is structural, slate-blue labels machine output and
+   jade labels human-controlled analysis. Source evidence stays neutral.
 */
 :root {
 
@@ -18,7 +18,7 @@
   --rule-hard:     #1D2D31;
   --rule-strong:   #9E9584;
   --link:          #176C6C;
-  --visited:       #4A4470;
+  --visited:       #365F68;
   --accent:        #176C6C;
   --accent-ink:    #105456;
   --accent-tint:   #E1EEEA;
@@ -51,17 +51,15 @@
   --parchment:         var(--band-ink);
   --dark-muted:        var(--band-muted);
 
-  --signal:       #9C4B36;
-  --signal-tint:    #F5E9E3;
-  --signal-rule:    #D8B3A6;
-  --crimson:        #B3132B;
-  --crimson-ink:    #9E1830;
-  --crimson-tint:   #F6E6E6;
-  --crimson-rule:   #E3BDBD;
-  --crimson-text:   #F07A8A;
-  --crimson-mark:   #E05A6D;
+  --editorial-ink:     #23665B;
+  --editorial-on-dark: #92D5CC;
+  --editorial-tint:    var(--accent-tint);
+  --editorial-rule:    var(--editorial-ink);
+  --machine-ink:       #446C79;
+  --machine-on-dark:   #AACFD0;
+  --machine-tint:      #E7EEF0;
+  --machine-rule:      var(--machine-ink);
 
-  --signal-band:    #D4845F;
   --warning-rule:   #D9BE9C;
   --accent-rule:    #BFD2DB;
   --band-dek:       #D6D2C8;
@@ -252,28 +250,28 @@ h1.page-name {font-family:var(--display);font-weight:400;text-transform:none;let
 .evidence::before { content: ""; width: 1rem; height: 2px; background: var(--rule-strong); flex: none; }
 .evidence--record { color: var(--ink-2); }
 .evidence--record::before { background: var(--ink); }
-.evidence--model { color: var(--signal); }
-.evidence--model::before { background: var(--signal); }
+.evidence--model { color: var(--machine-ink); }
+.evidence--model::before { background: none; border-top: 2px dotted var(--machine-ink); }
 .evidence--claim { color: var(--accent-ink); }
 .evidence--claim::before { background: var(--accent); }
-.evidence--analysis { color: var(--crimson-ink); }
-.evidence--analysis::before { background: var(--crimson); }
+.evidence--analysis { color: var(--editorial-ink); }
+.evidence--analysis::before { background: var(--editorial-ink); }
 .state {
   display: inline-block; font-size: .78125rem; font-weight: 500; line-height: 1.35;
   padding: .08rem .45rem; border: 1px solid var(--rule); border-radius: var(--radius);
   color: var(--ink-2); background: var(--surface); white-space: nowrap;
 }
-.state--analyzed { color: var(--signal); border-color: var(--signal-rule); background: var(--signal-tint); }
+.state--analyzed { color: var(--machine-ink); border-color: var(--machine-rule); background: var(--machine-tint); }
 .state--analysis_incomplete { color: var(--warning); border-color: var(--warning-rule); }
 .state--awaiting_screening { border-style: dashed; }
 .trail-tag {
   display: inline-block; font-size: .78125rem; font-weight: 600; line-height: 1.35;
   padding: .08rem .45rem; border-radius: var(--radius);
-  color: var(--crimson-ink); background: var(--crimson-tint); border: 1px solid var(--crimson-rule);
+  color: var(--editorial-ink); background: var(--editorial-tint); border: 1px solid var(--editorial-rule);
   text-decoration: none; white-space: nowrap;
 }
-a.trail-tag:hover { text-decoration: underline; color: var(--crimson-ink); }
-a.trail-tag:visited { color: var(--crimson-ink); }
+a.trail-tag:hover { text-decoration: underline; color: var(--editorial-ink); }
+a.trail-tag:visited { color: var(--editorial-ink); }
 .desk-state {
   display: inline-flex; align-items: center; gap: .4rem;
   font-size: .8125rem; font-weight: 600; line-height: 1.3; color: var(--ink-2);
@@ -486,8 +484,12 @@ footer.site{background:var(--footer-ground);padding:45px 0 35px;border:0}
 .footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}.brand--footer{margin-bottom:22px}.footer-grid p{font:13px/1.7 var(--sans);color:var(--ink-2)}
 .footer-col h2{font:600 13px/1.5 var(--sans);border:0;margin:0 0 12px;padding:0}.footer-col ul{list-style:none;padding:0;margin:0}.footer-col a{display:inline-block;padding-block:10px;min-height:40px;font-size:13px}.footer-standing{font:12px/1.8 var(--sans);margin-top:30px;max-width:80ch}
 .page-head h1{font-family:var(--display);font-weight:400;text-transform:none;letter-spacing:-.02em}
-.band{background:var(--band);color:var(--band-ink)}.band a{color:var(--band-ink)}.band a:focus-visible,.band summary:focus-visible{outline-color:var(--focus-band)}
-.trail-panel{border-top:2px solid var(--crimson);padding:16px 0;margin-block:24px}.trail-panel h2{font:600 14px var(--sans);color:var(--crimson-ink);margin:0 0 12px;border:0;padding:0}.trail-panel ul{list-style:none;padding:0}.trail-panel .meta{display:block;font:12px/1.8 var(--sans)}
+.band{background:var(--band);color:var(--band-ink)}.band a{color:var(--band-ink)}:is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--model { color: var(--machine-on-dark); }
+:is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--model::before { border-color: var(--machine-on-dark); }
+:is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--analysis { color: var(--editorial-on-dark); }
+:is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--analysis::before { background: var(--editorial-on-dark); }
+.band a:focus-visible,.band summary:focus-visible{outline-color:var(--focus-band)}
+.trail-panel{border-top:2px solid var(--editorial-ink);padding:16px 0;margin-block:24px}.trail-panel h2{font:600 14px var(--sans);color:var(--editorial-ink);margin:0 0 12px;border:0;padding:0}.trail-panel ul{list-style:none;padding:0}.trail-panel .meta{display:block;font:12px/1.8 var(--sans)}
 .row-side{display:flex;flex-direction:column;gap:4px}.row-side>*{display:block}.row-side .row-trail{margin-top:4px}
 .evidence{font-family:var(--sans);text-transform:none;letter-spacing:0}.state,.meta{font-family:var(--sans);letter-spacing:0}
 @media(max-width:1100px){.nav-desktop{gap:22px}}
@@ -508,6 +510,12 @@ footer.site{background:var(--footer-ground);padding:45px 0 35px;border:0}
   .publication-freshness > summary { display: none; }
   body, .band, footer.site { background: #fff !important; color: #000 !important; }
   .band * { color: #000 !important; }
+  .pacific-opening, .brief-hero { background: #fff !important; color: #000 !important; }
+  .pacific-opening::before { display: none; }
+  .pacific-opening :is(h1, p, a), .btn.btn { color: #000 !important; }
+  .btn.btn { transition: none; }
+  .evidence--model::before, :is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--model::before { border-color: #000; }
+  .evidence--analysis::before, :is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--analysis::before { background: #000; }
   .wrap { width: 100%; padding: 0; }
   .brand--footer, .footer-col { display: none; }
   .footer-grid { display: block; }

@@ -286,7 +286,10 @@
     },
     "derivative_builder": "scripts/build_brief_cover.py",
     "cover_treatment": "gradient",
-    "surfaces": ["article", "catalogue"],
+    "surfaces": [
+      "article",
+      "catalogue"
+    ],
     "depicts": "event",
     "focal": "58% 60%",
     "derivatives": [
@@ -312,5 +315,579 @@
     "built_with": {
       "pillow": "11.3.0"
     }
+  },
+  {
+    "id": "laos-vientiane-museum-plane",
+    "file": "laos-vientiane-museum-plane.jpg",
+    "width": 2992,
+    "height": 2992,
+    "alt": "A preserved olive-green propeller aircraft displayed under a roof at the Lao People's Army Historical Museum in Vientiane, Laos.",
+    "caption": "A preserved aircraft at the Lao People's Army Historical Museum in Vientiane, photographed 15 July 2025. This historical context photograph does not depict Ban Keun Airport or any 2026 event described in the Brief.",
+    "date_note": "Photographed 15 July 2025 (not during the reporting week).",
+    "credit": "Zongalez · CC BY 4.0 · via Wikimedia Commons",
+    "creator": "Zongalez",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Plane_at_the_Lao_People%27s_Army_Historical_Museum_at_Vientiane,_Laos_09.jpg",
+    "source_label": "Wikimedia Commons",
+    "cover_treatment": "photograph",
+    "depicts": "context",
+    "sha256": "dfafcea08529ac3a890645aa5cce6bbea830e768a9cbbf924a0cc4ef300bbd09",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/8/8f/Plane_at_the_Lao_People%27s_Army_Historical_Museum_at_Vientiane%2C_Laos_09.jpg",
+    "license_basis": "Wikimedia Commons: own work of uploader Zongalez, CC BY 4.0; verified source description, author, 2025 date and reuse conditions on 2026-10-13.",
+    "note": "Visual context for the Laos Brief only. The aircraft is a museum exhibit; it is not a K-8, not an image of Ban Keun, and not 2026 event evidence.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": [],
+      "briefs": [
+        "what-is-being-built-in-laos"
+      ]
+    },
+    "derivative_builder": "scripts/build_brief_cover.py",
+    "surfaces": [
+      "article",
+      "catalogue"
+    ],
+    "focal": "50% 52%",
+    "derivatives": [
+      {
+        "file": "derivatives/laos-vientiane-museum-plane-1600.jpg",
+        "width": 1600,
+        "height": 1600,
+        "sha256": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14"
+      },
+      {
+        "file": "derivatives/laos-vientiane-museum-plane-800.webp",
+        "width": 800,
+        "height": 800,
+        "sha256": "2c273b5925d6eb291a14128a25e537f8e69c0ccd9dc00704d7fa9323c8f459f6"
+      },
+      {
+        "file": "derivatives/laos-vientiane-museum-plane-1600.webp",
+        "width": 1600,
+        "height": 1600,
+        "sha256": "85a18f136e892f8f3f2f43be9c2ba81de4ed257e3278946f513ba604c678adc6"
+      }
+    ],
+    "built_with": {
+      "pillow": "11.3.0"
+    }
+  },
+  {
+    "id": "rimpac-china-indonesia-2016",
+    "file": "rimpac-china-indonesia-2016.jpg",
+    "width": 2846,
+    "height": 1897,
+    "alt": "Chinese and Indonesian Navy warships among four vessels in formation at RIMPAC in the Pacific Ocean in July 2016.",
+    "caption": "Chinese and Indonesian naval vessels sail in a four-ship formation at RIMPAC 2016. Historical photograph from July 2016, not the 2026 China–Indonesia exercise east of Taiwan.",
+    "date_note": "Photographed 13 July 2016, ten years before this Brief's reporting week.",
+    "creator": "U.S. Navy / Petty Officer 1st Class Jason Noble",
+    "license": "Public domain",
+    "license_url": "",
+    "credit": "U.S. Navy / Petty Officer 1st Class Jason Noble · Public domain · via Wikimedia Commons",
+    "source_page": "https://commons.wikimedia.org/wiki/File:RIMPAC_CTF_175_maneuvering_drills_160713-N-OL837-175.jpg",
+    "source_label": "Wikimedia Commons",
+    "depicts": "context",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "sha256": "e56edf6e871af6ecfcc33a4540a5d1fbefe47e0092c72561866a5c7770fb56e6",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/2/29/RIMPAC_CTF_175_maneuvering_drills_160713-N-OL837-175.jpg",
+    "license_basis": "Verified Commons original SHA-1 a940d524243faa619a04a86007858dbe27a482d4; issuing authority in linked source; image license checked 2026-10-13",
+    "origin_reference": "https://www.dvidshub.net/image/2736121/rimpac-ctf-175-maneuvering-drills",
+    "note": "2016 China–Indonesia multinational naval context, not a depiction of the August 2026 events; includes a French ship as well.",
+    "focal": "50% 50%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/rimpac-china-indonesia-2016-1600.jpg",
+        "width": 1600,
+        "height": 1066,
+        "sha256": "94b5ce104372199aa1971f4099ef554fda6c55e896e3d4c11bda281ed1f526b8"
+      }
+    ]
+  },
+  {
+    "id": "liaoning-j15-may2022",
+    "file": "liaoning-j15-may2022.jpg",
+    "width": 3898,
+    "height": 2476,
+    "alt": "A Chinese J-15 fighter taking off beside the bow of the aircraft carrier Liaoning at sea in 2022.",
+    "caption": "A J-15 launches near the carrier Liaoning in Japanese Ministry of Defense imagery published May 2022. Historical carrier context, not the June 2026 operation described in this Brief.",
+    "date_note": "Publisher image released 4 May 2022; the accompanying report describes observations on 3 May 2022. Not photographed during the 2026 reporting week.",
+    "creator": "Japan Ministry of Defense, Joint Staff",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "credit": "Japan Ministry of Defense, Joint Staff · CC BY 4.0 · via Wikimedia Commons",
+    "source_page": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_taking_off_from_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+    "source_label": "Wikimedia Commons",
+    "depicts": "context",
+    "notice": "",
+    "sha256": "4b3cbc5a6efb1d05496f4cc7fd10bfa0478dae3c83370346fb93a1ecd08501ac",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b7/A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_taking_off_from_Chinese_aircraft_carrier_PLANS_Liaoning_%28CV-16%29_20220504.jpg",
+    "license_basis": "Exact Commons original SHA-1 abb48c8d4996558b97d3308e700a90318de69c14; Japanese MOD Joint Staff original, CC BY 4.0; verified 2026-10-13",
+    "origin_reference": "https://www.mod.go.jp/js/Press/press2022/press_pdf/p20220504_01.pdf",
+    "note": "Distinct 2022 carrier-based J-15 takeoff view, NOT the landing-approach photograph already used on Brief No.8. Context only.",
+    "focal": "50% 50%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/liaoning-j15-may2022-1600.jpg",
+        "width": 1600,
+        "height": 1016,
+        "sha256": "2a5d51283a96d18f660d5ffa00a65d632924d26e50d3334a60ee3c27a72fa388"
+      }
+    ]
+  },
+  {
+    "id": "ccg-shadowing-uscg-stratton-2019",
+    "file": "ccg-shadowing-uscg-stratton-2019.jpg",
+    "width": 1000,
+    "height": 717,
+    "sha256": "7403262fc510ca1b2f0bbfd9bb562681e657c6e81630c70d93f1cae0043903fe",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/1909/5771576/1000w_q95.jpg",
+    "source_fingerprint": {
+      "sha256": "7403262fc510ca1b2f0bbfd9bb562681e657c6e81630c70d93f1cae0043903fe",
+      "sha1": "c05c8c57993b3562536727d54c7cd6b6ffa5e428"
+    },
+    "origin_reference": "https://www.dvidshub.net/image/5771576/coast-guard-cutter-stratton-crew-conducts-operations-south-china-sea",
+    "origin_note": "DVIDS image 5771576, USCG 190916-G-LS819-1002. Source file is the publisher's 1000px JPEG derivative, not the 3996px camera original.",
+    "focal": "50% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/ccg-shadowing-uscg-stratton-2019-1600.jpg",
+        "width": 1000,
+        "height": 717,
+        "sha256": "74ab5505f609e7f8cffba43f6f57788429b38dc5009e7e142d62ecf7d9f9aa2f"
+      }
+    ],
+    "alt": "A U.S. Coast Guard small boat moves across the South China Sea with a China Coast Guard vessel visible on the horizon.",
+    "caption": "A China Coast Guard ship appears on the horizon as a U.S. Coast Guard crew operates in the South China Sea in September 2019. Historical Chinese coast guard context, not a photograph of June 2026 activity east of Taiwan.",
+    "date_note": "Photographed 16 September 2019, in a different sea and year from this Brief's reporting week.",
+    "creator": "Petty Officer 1st Class Nate Littlejohn, U.S. Coast Guard",
+    "license": "Public domain",
+    "license_url": "",
+    "credit": "Petty Officer 1st Class Nate Littlejohn, U.S. Coast Guard · Public domain · via DVIDS",
+    "source_page": "https://www.dvidshub.net/image/5771576/coast-guard-cutter-stratton-crew-conducts-operations-south-china-sea",
+    "source_label": "DVIDS",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "scarborough-shoal-nasa-iss77330",
+    "file": "scarborough-shoal-nasa-iss77330.jpg",
+    "width": 4928,
+    "height": 3280,
+    "sha256": "10cd441481589b04461408748c614f20fd8c11c2af6b5428717c45ab273ea6be",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/c/c7/ISS045-E-77330_-_View_of_Scarborough_Shoal.jpg",
+    "source_fingerprint": {
+      "sha256": "10cd441481589b04461408748c614f20fd8c11c2af6b5428717c45ab273ea6be",
+      "sha1": "79002962e0cfe12ebe4e065500220b6c8c49c812"
+    },
+    "origin_reference": "https://commons.wikimedia.org/wiki/File:ISS045-E-77330_-_View_of_Scarborough_Shoal.jpg",
+    "origin_note": "NASA frame ISS045-E-77330. Distinct original from already published No.9 frame ISS045-E-77332, though same orbital pass.",
+    "focal": "50% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/scarborough-shoal-nasa-iss77330-1600.jpg",
+        "width": 1600,
+        "height": 1065,
+        "sha256": "f4665ab6d1630923f0842aac1c47d2734974ce333913d19c1ad419d28c71fae6"
+      }
+    ],
+    "alt": "Scarborough Shoal seen as a turquoise reef within dark ocean water from the International Space Station in 2015.",
+    "caption": "Scarborough Shoal photographed from the International Space Station on 24 October 2015 (NASA frame ISS045-E-77330). Historical geographic context, not a depiction of PLA operations or disclosures in August 2026.",
+    "date_note": "Photographed 24 October 2015; adjacent-but-distinct orbital frame from No. 9's existing NASA image.",
+    "creator": "NASA Johnson Space Center / ISS Expedition 45",
+    "license": "Public domain",
+    "license_url": "",
+    "credit": "NASA Johnson Space Center / ISS Expedition 45 · Public domain · via Wikimedia Commons",
+    "source_page": "https://commons.wikimedia.org/wiki/File:ISS045-E-77330_-_View_of_Scarborough_Shoal.jpg",
+    "source_label": "Wikimedia Commons",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "notice": "",
+    "depicts": "context"
+  },
+  {
+    "id": "rss-steadfast-pearl-harbor-2026",
+    "file": "rss-steadfast-pearl-harbor-2026.jpg",
+    "width": 999,
+    "height": 665,
+    "sha256": "fd25b683f4ffc62ba4165801cb5202f5f2ff790882b6c1571d464e05288a6a40",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/2606/9771570/1000w_q95.jpg",
+    "origin_reference": "https://www.dvidshub.net/image/9771570/republic-singapore-navy-formidable-class-guided-missile-frigate-rss-steadfast-70-arrives-pearl-harbor-rimpac-2026",
+    "source_fingerprint": {
+      "sha256": "fd25b683f4ffc62ba4165801cb5202f5f2ff790882b6c1571d464e05288a6a40",
+      "sha1": "72cb2d9bd042d5b48ff5e73dc51eeaa88e2a6917"
+    },
+    "license_basis": "US Navy official-duty public domain, DVIDS photo No.9771570, VIRIN 260622-N-SY758-1005; publisher 1000px preview, NOT original full-resolution image.",
+    "note": "Same RSS Steadfast vessel as September 2026 Maritime Cooperation, but June RIMPAC at Pearl Harbor. No Singapore MINDEF or PLA photograph rehosting.",
+    "focal": "53% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/rss-steadfast-pearl-harbor-2026-1600.jpg",
+        "width": 999,
+        "height": 665,
+        "sha256": "60738ff434c0c87fa6083db9a7f357a7af265efde512088fa21be2e7a32c6db0"
+      }
+    ],
+    "alt": "Grey frigate RSS Steadfast (70) viewed side-on in Pearl Harbor, Hawaii, with mountains and trees behind it.",
+    "caption": "Republic of Singapore Navy frigate RSS Steadfast (70) arriving in Hawaii for RIMPAC, 22 June 2026. The same ship subsequently participated in Singapore–China Exercise Maritime Cooperation that September; this photograph does not depict that bilateral exercise.",
+    "date_note": "Photographed 22 June 2026 at Pearl Harbor, Hawaii, three months before the bilateral exercise.",
+    "creator": "Mass Communication Specialist 1st Class Brandon Roberson, U.S. Navy",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://www.dvidshub.net/image/9771570/republic-singapore-navy-formidable-class-guided-missile-frigate-rss-steadfast-70-arrives-pearl-harbor-rimpac-2026",
+    "source_label": "DVIDS",
+    "credit": "Mass Communication Specialist 1st Class Brandon Roberson, U.S. Navy · Public domain · via DVIDS",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "chan-paparo-mindef-jan2026",
+    "file": "chan-paparo-mindef-jan2026.jpg",
+    "width": 1000,
+    "height": 665,
+    "sha256": "a63c4c42c813dcdb474881af4bd381a8465f879861dac644cd329890b204f2e5",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/2601/9490647/1000w_q95.jpg",
+    "source_fingerprint": {
+      "sha256": "a63c4c42c813dcdb474881af4bd381a8465f879861dac644cd329890b204f2e5",
+      "sha1": "d8d54f5fd55f0ad2d6631712a5e03fc62b60f788"
+    },
+    "origin_reference": "https://www.dvidshub.net/image/9490647/usindopacom-commander-reinforces-us-singapore-defense-partnership-during-singapore-visit",
+    "focal": "48% 48%",
+    "license_basis": "DVIDS No.9490647 (VIRIN 260121-A-GJ727-1132), official U.S. Army photographer public-domain photo; source is 1000w DVIDS preview, not original 4078x2713 file.",
+    "note": "No.16 visualizes Chan Chun Sing as central speaker only; the event pictured is a DIFFERENT US-Singapore defense meeting, NOT Chan–Dong or Xiangshan.",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/chan-paparo-mindef-jan2026-1600.jpg",
+        "width": 1000,
+        "height": 665,
+        "sha256": "748dbf767a88ec6b7d50070f76f5f59a4cafc8f750af61d5deeb41581e5d24d1"
+      }
+    ],
+    "alt": "Singapore Defence Minister Chan Chun Sing and U.S. Indo-Pacific Command commander Adm. Samuel Paparo meet at Singapore's Ministry of Defence in January 2026.",
+    "caption": "Singapore Defence Minister Chan Chun Sing meets U.S. Indo-Pacific Command commander Adm. Samuel Paparo in Singapore, January 2026. This is an earlier U.S.–Singapore meeting, not the September 2026 Xiangshan Forum or Chan's meeting with Chinese Defence Minister Dong Jun.",
+    "date_note": "DVIDS date-taken field: 21 January 2026; descriptive caption: 22 January 2026.",
+    "credit": "Staff Sgt. Angel Heraldez, U.S. Army · Public domain · via DVIDS",
+    "creator": "Staff Sgt. Angel Heraldez, U.S. Army",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_label": "DVIDS",
+    "source_page": "https://www.dvidshub.net/image/9490647/usindopacom-commander-reinforces-us-singapore-defense-partnership-during-singapore-visit",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "jiangnan-shipyard-fujian-context-2022",
+    "file": "jiangnan-shipyard-fujian-context-2022.jpg",
+    "width": 1085,
+    "height": 708,
+    "sha256": "5b9242afb32f6ab6569f47a20f3aa6b926d8d73bccc861fe53d297a3a6219a9e",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/JiangnanShipyardChangxingIsland_%28cropped%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "source_fingerprint": {
+      "sha1": "d932f61c8c317ea93f87a6f0d3742e3d4480aabc",
+      "sha256": "5b9242afb32f6ab6569f47a20f3aa6b926d8d73bccc861fe53d297a3a6219a9e"
+    },
+    "origin_reference": "https://commons.wikimedia.org/wiki/File:JiangnanShipyardChangxingIsland.jpg",
+    "license_basis": "Original author Raysonho's own-work CC0 1.0 dedication; Commons cropped derivative by Meeepmep; metadata 4 April 2022, Commons SHA-1 pinned.",
+    "note": "Shipyard industrial-site context for later Fujian carrier, NOT KJ-600 launch or military-training evidence. Exact ship hull visibility needs owner crop review.",
+    "focal": "50% 50%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/jiangnan-shipyard-fujian-context-2022-1600.jpg",
+        "width": 1085,
+        "height": 708,
+        "sha256": "e0f4f879d795c6428d8303a67e52ff71375e4a85a1e7f4503d30ae27f84a7c0a"
+      }
+    ],
+    "alt": "Shipbuilding facilities on Shanghai's Changxing Island, photographed in April 2022.",
+    "caption": "Jiangnan Shipyard on Shanghai's Changxing Island, photographed April 2022, during the period when the carrier later named Fujian was being built there. Shipbuilding context, not a photograph of the May 2026 KJ-600 carrier qualification or Rocket Force training.",
+    "date_note": "Photographed 4 April 2022; original creator dedicated image under CC0 1.0. Commons crop June 2024.",
+    "creator": "Raysonho (photo); Meeepmep (Commons crop)",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "credit": "Raysonho (photo); Meeepmep (Commons crop) · Public domain · via Wikimedia Commons",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://commons.wikimedia.org/wiki/File:JiangnanShipyardChangxingIsland_(cropped).jpg",
+    "source_label": "Wikimedia Commons",
+    "notice": "",
+    "depicts": "context"
+  },
+  {
+    "id": "china-russia-iran-maritime-belt-2023",
+    "file": "china-russia-iran-maritime-belt-2023.jpg",
+    "width": 1280,
+    "height": 853,
+    "sha256": "dd825b1f6b3e254293a4cec784b3777a14a6a31d65184d1c37c5ab8677dcab01",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/6/68/Arrival_of_Chinese_and_Russian_ships_for_maritime_security_exercise_%2809%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "source_fingerprint": {
+      "sha1": "324f2d3bfb165161e988cec274a2df2e7acd160c",
+      "sha256": "dd825b1f6b3e254293a4cec784b3777a14a6a31d65184d1c37c5ab8677dcab01"
+    },
+    "origin_reference": "https://www.mehrnews.com/photo/5734282/",
+    "license_basis": "Mehr News Agency CC BY 4.0 publisher footer; Commons source reviewer POS78 confirmed on 5 May 2024.",
+    "note": "2023 trilateral Iran-China-Russia naval arrival, NOT 2026 Joint Sea or Y-20B. Exact individual hull identities in frame not independently proved.",
+    "focal": "50% 50%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/china-russia-iran-maritime-belt-2023-1600.jpg",
+        "width": 1280,
+        "height": 853,
+        "sha256": "9e07141cabd1551fbdb04ec2651fbe8b065ca43b2bf859f1abb329880453c96e"
+      }
+    ],
+    "alt": "Military ships arriving in the maritime exercise area during Maritime Security Belt 2023.",
+    "caption": "Chinese and Russian naval vessels were photographed arriving for Maritime Security Belt 2023, a trilateral maritime exercise involving Iran. Historical March 2023 maritime-cooperation context; not the July 2026 Joint Sea exercise, naval patrol or Y-20B flight in this Brief.",
+    "date_note": "Photographed 15 March 2023 in a different exercise involving Iran, China and Russia.",
+    "creator": "Mohsen Ranginkaman",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "credit": "Mohsen Ranginkaman · CC BY 4.0 · via Wikimedia Commons",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "source_page": "https://commons.wikimedia.org/wiki/File:Arrival_of_Chinese_and_Russian_ships_for_maritime_security_exercise_(09).jpg",
+    "source_label": "Wikimedia Commons",
+    "notice": "",
+    "depicts": "context"
+  },
+  {
+    "id": "pla-disaster-exchange-hainan-2015",
+    "file": "pla-disaster-exchange-hainan-2015.jpg",
+    "width": 1000,
+    "height": 664,
+    "sha256": "39c458e179c44d244c190874be3fcfbba84860a2acdf8b4dacae1730882d7b6b",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/1501/1745480/1000w_q95.jpg",
+    "origin_reference": "https://www.dvidshub.net/image/1745480/us-army-soldiers-work-with-pla-soldiers",
+    "source_fingerprint": {
+      "sha1": "b13a640c0ace9d92ab6cc87e7ce4ee908e20dc3b",
+      "sha256": "39c458e179c44d244c190874be3fcfbba84860a2acdf8b4dacae1730882d7b6b"
+    },
+    "license_basis": "U.S. Army/Navy official-duty public domain per original DVIDS photo; publisher 1000w JPEG preview, not 3216x2136 full image. DVIDS non-endorsement notice observed.",
+    "note": "Public-domain U.S. Army image of Chinese PLA in 2015 hands-on training; NOT a picture of 2026 PLA implementation or reform.",
+    "focal": "46% 52%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/pla-disaster-exchange-hainan-2015-1600.jpg",
+        "width": 1000,
+        "height": 664,
+        "sha256": "a9fc64293684c4bb92204d36a05414d3e543af82b38b3fa1f06f85a1b2197668"
+      }
+    ],
+    "alt": "Chinese PLA personnel and U.S. Army soldiers construct a simulated disaster-response camp in Hainan, China, in 2015.",
+    "caption": "PLA and U.S. Army personnel set up an evacuation camp during a 2015 disaster-response field exercise in Hainan. Historical hands-on military training, not a photograph or assessment of May 2026 PLA institutional reforms.",
+    "date_note": "Photographed 18 January 2015, not during the May 2026 reporting week.",
+    "creator": "Maj. Lindsey Elder, U.S. Army Pacific",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_label": "DVIDS",
+    "source_page": "https://www.dvidshub.net/image/1745480/us-army-soldiers-work-with-pla-soldiers",
+    "credit": "Maj. Lindsey Elder, U.S. Army Pacific · Public domain · via DVIDS",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "li-zuocheng-cmc-beijing-2019",
+    "file": "li-zuocheng-cmc-beijing-2019.jpg",
+    "width": 1000,
+    "height": 666,
+    "sha256": "9e1b38f56b696e07e4020f1ec0832255b9b38e0a123ed43c038d82cce6e22c23",
+    "original_url": "https://d1ldvf68ux039x.cloudfront.net/thumbs/photos/1901/5031280/1000w_q95.jpg",
+    "origin_reference": "https://www.dvidshub.net/image/5031280/cno-meets-with-chief-staff-joint-staff-department-under-chinas-central-military-commission-gen-li-zuocheng",
+    "source_fingerprint": {
+      "sha1": "b0b2f1824ca2094b044ace9b102bca0e8da6ef06",
+      "sha256": "9e1b38f56b696e07e4020f1ec0832255b9b38e0a123ed43c038d82cce6e22c23"
+    },
+    "license_basis": "U.S. Army/Navy official-duty public domain per original DVIDS photo; publisher 1000w JPEG preview, not 4000x2662 full image. DVIDS non-endorsement notice observed.",
+    "note": "Authentic named Chinese CMC Joint Staff chief in a 2019 U.S.-China meeting, NOT the 2026 oversight directive or claimed electronic jamming.",
+    "focal": "60% 49%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/li-zuocheng-cmc-beijing-2019-1600.jpg",
+        "width": 1000,
+        "height": 666,
+        "sha256": "cf0514483c1628a4a4d39db9e7e59afd77943c17dbab5ba79123a7b397724b54"
+      }
+    ],
+    "alt": "General Li Zuocheng of China's Central Military Commission sits with Chinese military officers at a Beijing meeting in January 2019.",
+    "caption": "Gen. Li Zuocheng, then chief of staff of China's CMC Joint Staff Department, at a Beijing meeting with U.S. naval leaders in January 2019. Historical CMC leadership context, not the May 2026 senior-officer directive or electronic-warfare incident.",
+    "date_note": "Photographed 15 January 2019, seven years before this Brief's reporting period.",
+    "creator": "Chief Petty Officer Elliott Fabrizio, U.S. Navy",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_label": "DVIDS",
+    "source_page": "https://www.dvidshub.net/image/5031280/cno-meets-with-chief-staff-joint-staff-department-under-chinas-central-military-commission-gen-li-zuocheng",
+    "credit": "Chief Petty Officer Elliott Fabrizio, U.S. Navy · Public domain · via DVIDS",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "chinese-coast-guard-2301-2018",
+    "file": "chinese-coast-guard-2301-2018.jpg",
+    "width": 5184,
+    "height": 3456,
+    "sha256": "267a5d378c87d4ce14a5564ec04f476ed0bba99964594639a5c90531e5cbb5d5",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/b/b9/USCGC_Alex_Haley_transfers_detained_fishing_vessel_to_China_Coast_Guard_2301_in_Sea_of_Japan_%285-6%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+    "source_fingerprint": {
+      "sha1": "316a3ef5565de45f5ab53a2dcb64cef28ffecc16",
+      "sha256": "267a5d378c87d4ce14a5564ec04f476ed0bba99964594639a5c90531e5cbb5d5"
+    },
+    "origin_reference": "https://www.dvidshub.net/image/4504032/uscgc-alex-haley-transfers-detained-fishing-vessel-prc-coast-guard-sea-japan",
+    "license_basis": "Official-duty USCG photograph DVIDS #4504032 (VIRIN 180621-G-G0217-1005), public domain. Publisher DVIDS non-endorsement notice retained despite Commons-hosted source.",
+    "note": "Actual Chinese CCG patrol boat 2301 during 2018 Sea of Japan fisheries-enforcement handover. NOT 2026 East Taiwan patrol, loitering munitions or Rocket Force.",
+    "focal": "49% 52%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/chinese-coast-guard-2301-2018-1600.jpg",
+        "width": 1600,
+        "height": 1067,
+        "sha256": "e6ed9ce7a0158319982fa3b70f2010573ed77741ec7cbd7070da1462d4de2ae1"
+      }
+    ],
+    "alt": "China Coast Guard patrol vessel 2301 alongside the U.S. Coast Guard cutter Alex Haley during a 2018 fisheries-enforcement handover in the Sea of Japan.",
+    "caption": "Chinese Coast Guard patrol vessel 2301 during a 2018 fisheries-law-enforcement handover with the U.S. Coast Guard in the Sea of Japan. Historical maritime-enforcement context, not the June 2026 patrol east of Taiwan, loitering-munition discussion or Rocket Force training reported in this Brief.",
+    "date_note": "Photographed 21 June 2018 (EXIF 20 June 20:00 UTC), eight years before this Brief.",
+    "creator": "Petty Officer 1st Class William Colclough, U.S. Coast Guard",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://commons.wikimedia.org/wiki/File:USCGC_Alex_Haley_transfers_detained_fishing_vessel_to_China_Coast_Guard_2301_in_Sea_of_Japan_(5-6).jpg",
+    "source_label": "Wikimedia Commons",
+    "credit": "Petty Officer 1st Class William Colclough, U.S. Coast Guard · Public domain · via Wikimedia Commons",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
+  },
+  {
+    "id": "wei-fenghe-mattis-official-usarmy-2018",
+    "file": "wei-fenghe-mattis-official-usarmy-2018.jpg",
+    "width": 5880,
+    "height": 3925,
+    "sha256": "31f65b10bd45ae2ba70e09019f8f8164367ec1ddc7f03fb111b988ac35c07a51",
+    "original_url": "https://commons.wikimedia.org/wiki/File:2018-06-27_Beijing_Ministry_of_National_Defense.jpg",
+    "source_fingerprint": {
+      "sha1": "a07e6f412425ca46c7b1a16a1474f57500e5d3fc",
+      "sha256": "31f65b10bd45ae2ba70e09019f8f8164367ec1ddc7f03fb111b988ac35c07a51"
+    },
+    "origin_reference": "https://www.flickr.com/photos/secdef/42160945785/",
+    "license_basis": "Wikimedia Commons attributes photograph and EXIF to official-duty U.S. Army Sgt. Amber I. Smith; US government public-domain designation, and Flickr CC BY 2.0 publisher upload separately Commons-reviewed. Original is not DVIDS #4517865.",
+    "note": "Actual named subject Wei Fenghe at June 2018 Mattis meeting; NOT Li Shangfu or 2026 verdict. Supersedes a disqualified separate 2012 source for catalogue only.",
+    "focal": "50% 47%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/wei-fenghe-mattis-official-usarmy-2018-1600.jpg",
+        "width": 1600,
+        "height": 1068,
+        "sha256": "cd535be12ca4906b02ea2984ca81ddf463ae9cca7c42eb086d3fc17a9aeba238"
+      }
+    ],
+    "alt": "Then-Chinese defense minister Wei Fenghe meets U.S. defense secretary James Mattis in Beijing in June 2018.",
+    "caption": "Then-Chinese defense minister Wei Fenghe meets U.S. defense secretary James Mattis in Beijing, June 2018. This historical meeting does not depict the May 2026 verdict involving Wei Fenghe and Li Shangfu; Li Shangfu is not pictured.",
+    "date_note": "June 2018. Wikimedia camera date June 27; supplied prose caption describes June 28. This image is not from 2026.",
+    "creator": "Sgt. Amber I. Smith, U.S. Army",
+    "creator_native": "",
+    "creator_native_lang": "",
+    "license": "Public domain",
+    "license_url": "",
+    "source_page": "https://commons.wikimedia.org/wiki/File:2018-06-27_Beijing_Ministry_of_National_Defense.jpg",
+    "source_label": "Wikimedia Commons",
+    "credit": "Sgt. Amber I. Smith, U.S. Army · Public domain · via Wikimedia Commons",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "depicts": "context"
   }
 ]

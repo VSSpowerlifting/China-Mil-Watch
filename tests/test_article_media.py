@@ -53,7 +53,7 @@ EXPECTED = {
     15: am.PRESERVED,    # a native brief's own photograph (Phase 0 §1.2)
     16: am.PLATE,
     17: am.PHOTOGRAPH,   # trident-resolve-basarnas-drone, a brief cover (PoC)
-    18: am.NONE,         # exact owner-reviewed source-linked narrative, text-led
+    18: am.PHOTOGRAPH,   # source-linked editorial analysis, museum aircraft context (not Ban Keun)
 }
 
 #: Han, kana and CJK punctuation: script that needs a declared language.
@@ -152,7 +152,7 @@ class ArticleMediaPagesTests(unittest.TestCase):
                 desks = self.collection.sidecars[entry["slug"]]["desks"]
                 cover = None if entry.get("photo") else article_cover(entry, ROOT)
                 media = am.native_article_media(entry.get("photo"), desks,
-                                                root=None if entry["source_linked"] else "../",
+                                                root="../" if cover or not entry["source_linked"] else None,
                                                 cover=cover)
                 self.assertEqual(media["kind"], EXPECTED[number])
                 photo = hero(soup).select("figure.brief-opening-photo")
@@ -176,6 +176,22 @@ class ArticleMediaPagesTests(unittest.TestCase):
                     self.assertEqual(uses, ["../assets/geo/region.svg#region"] + [
                         "../assets/geo/region.svg#region-%s" % d
                         for d in desks if d in am.PLATE_DESKS])
+
+    def test_no18_photo_sources_resolve_from_nested_article_route(self):
+        # The cover lives in root-level assets, but its HTML is in briefs/.
+        # A missing ../ silently makes the published article image 404.
+        figure = hero(self.native[18][2]).select_one("figure.brief-cover")
+        self.assertIsNotNone(figure)
+        srcs = [figure.select_one("img")["src"]]
+        srcs += [part.strip().split()[0]
+                 for part in figure.select_one("source")["srcset"].split(",")]
+        self.assertEqual(len(srcs), 3)
+        for src in srcs:
+            with self.subTest(src=src):
+                self.assertTrue(src.startswith("../assets/editorial/derivatives/"), src)
+                candidate = (self.tmp / "briefs" / src).resolve()
+                self.assertTrue(candidate.is_relative_to(self.tmp.resolve()))
+                self.assertTrue(candidate.is_file(), str(candidate))
 
     def test_every_plate_is_labelled_decorative_original_artwork(self):
         pages = ([(n, soup) for n, (_, _, _, soup) in self.historical.items()]
@@ -308,8 +324,31 @@ class ArticleMediaPagesTests(unittest.TestCase):
         for node in treated:
             scope = node.find_parent(["article", "figure", "li"]) or node
             self.assertIn(notice, scope.get_text())
-        # No other card or lead carries a treatment or the DoW notice.
-        self.assertEqual(cat.get_text().count(notice), len(treated))
+        # The treatment belongs only to the originally approved No.17 card,
+        # but the source's DoW notice is now also required by No.14's newly
+        # admitted U.S. Navy photograph. Audit notice-bearing cards against
+        # their own recorded source conditions; never infer notice count from
+        # the unrelated visual treatment.
+        from core.catalogue_media import load_admissions
+        from core.source_terms import required_notice
+        records = load_admissions(repo_root=ROOT)
+        # The originating DVIDS image of No.14 is served from Commons, so
+        # required_notice(record) cannot infer DVIDS from that hostname.
+        # Its explicitly retained originating-publisher notice still counts.
+        expected = {record["issue"] for record in records.values()
+                    if record.get("status") == "admitted" and
+                    (record.get("notice") or required_notice(record))}
+        carrying = set()
+        for card in cat.select("article.brief-card"):
+            issue = card.select_one(".issue-no")
+            if issue is None:
+                continue
+            number = int(issue.get_text(strip=True).replace("No. ", ""))
+            if notice in card.get_text():
+                carrying.add(number)
+                self.assertEqual(card.get("data-media"), "photograph")
+        self.assertEqual(carrying, expected)
+        self.assertEqual(cat.get_text().count(notice), len(expected))
 
     def test_native_script_in_a_photograph_credit_declares_its_language(self):
         # No. 8's credit names the Joint Staff in Japanese. Only that name is

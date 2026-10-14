@@ -5,7 +5,7 @@
 :is(.rl-finder,.rl-card,.rl-analysis,.rl-brief,.rl-plate,.rl-scope){position:relative;border-radius:var(--radius);box-shadow:var(--lift-1);background:var(--surface);border:1px solid var(--rule)}
 .rl-finder{box-shadow:var(--lift-3)}
 .rl-card{border-top:2px solid var(--accent)}
-.rl-analysis{background:var(--band);color:var(--band-ink);border:0;border-top:3px solid var(--crimson)}
+.rl-analysis{background:var(--band);color:var(--band-ink);border:0;border-top:3px solid var(--editorial-on-dark)}
 :is(.rl-card,.rl-brief,.rl-plate)::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;box-shadow:var(--lift-2);opacity:0;transition:opacity 180ms var(--ease-out)}
 :is(.rl-card,.rl-brief,.rl-plate):focus-within::after{opacity:1}
 .rl-print{display:block;overflow:hidden;aspect-ratio:3/2;background:#18343f}

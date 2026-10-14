@@ -4,6 +4,42 @@ Newest first. Record decisions that constrain future work. Entries below
 2026-08-27 were written under the predecessor name, China Mil Watch, and are
 preserved as written.
 
+## 2026-10-14 — Owner-directed coastal visual identity
+
+The owner explicitly approved replacing active editorial crimson/pink and
+machine rust with a navy/turquoise/jade/slate-blue/ivory system, including the
+current shell of historical articles. This supersedes the earlier red/rust
+colour representation in the September layer rulings and October frontend
+direction; those historical decisions are retained below. Source evidence,
+machine output, human analysis and warning semantics persist through labels,
+solid/dotted rules and distinct markers. Original evidence, national flags and
+photographs retain their colours. No new manuscript, image, collector, route or
+presentation approval is authorized by this colour ruling.
+
+Final tokens and rationale are in DESIGN_SYSTEM §3. The slate-blue paper tone
+was tuned from #456D7A to #446C79 to meet AA on the existing inset ground.
+Implementation is based on exact main `216dfbb8babc6a0d4d711494c7787a29f84e201e`,
+after #561 merged. Laos's v2 manifest is still draft, tested only in private
+preview. Commit, push and one owner-review PR are authorized; merge, deployment
+and tracked output regeneration are not. Evidence:
+`docs/evidence/coastal-identity-2026-10-14/README.md`.
+
+## 2026-10-13 — Brief reading architecture prepared for owner review
+
+The owner's Editorial Architecture v2 task authorizes implementation, isolated
+QA, commit/push and one review PR, with no merge, deployment or editorial approval
+amendment. The candidate keeps manuscript and presentation records separate.
+New source-linked authoring requires an explicitly selected outline and a
+separate exact-content presentation receipt before numbering; existing numbered
+publications retain their fallback. No automated heading/excerpt authoring or
+inherited manuscript sign-off. Laos's manifest remains draft and is visible only
+in the private presentation preview. Its approved manuscript, seven references,
+joint byline and admitted photograph are unchanged. This entry records an
+implementation-review boundary, **not approval of the proposed headings,
+emphasis, evidence classification or public release**. Contract and evidence:
+`docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md` and
+`docs/evidence/briefs-editorial-v2/README.md`.
+
 ## 2026-10-13 — Laos Brief No. 18 published and independently verified
 
 The existing fingerprint-bound owner policy/editorial approvals were carried

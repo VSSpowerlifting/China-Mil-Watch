@@ -1,0 +1,19 @@
+{
+  "route": "http://127.0.0.1:8877/final-focus/briefs/what-is-being-built-in-laos.html",
+  "modes": {
+    "normal": {
+      "all_eight_toc_links_pass": true,
+      "target_focusable_and_active": true,
+      "all_targets_labeled_and_visible": true,
+      "visible_2px_anchor_focus": true
+    },
+    "no_js": {
+      "all_eight_toc_links_pass": true,
+      "target_focusable_and_active": true,
+      "all_targets_labeled_and_visible": true,
+      "visible_2px_anchor_focus": true
+    }
+  },
+  "historical_finding": "Pre-fix /final/ left focus on BODY after fragment navigation; final-focus/ now focuses each labeled section or aside.",
+  "detail_receipt": "focus-final-qa.json"
+}
