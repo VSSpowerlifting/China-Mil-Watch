@@ -1,0 +1,53 @@
+[
+  {
+    "component": "home-dark-focus",
+    "width": 375,
+    "captured": true
+  },
+  {
+    "component": "home-editorial",
+    "width": 375,
+    "captured": true
+  },
+  {
+    "component": "native-signal",
+    "width": 375,
+    "captured": true
+  },
+  {
+    "component": "v2-finding",
+    "width": 375,
+    "captured": true
+  },
+  {
+    "component": "record-custody",
+    "width": 375,
+    "captured": false,
+    "reason": "Existing compact layout hides this component"
+  },
+  {
+    "component": "home-dark-focus",
+    "width": 1280,
+    "captured": true
+  },
+  {
+    "component": "home-editorial",
+    "width": 1280,
+    "captured": true
+  },
+  {
+    "component": "native-signal",
+    "width": 1280,
+    "captured": true
+  },
+  {
+    "component": "v2-finding",
+    "width": 1280,
+    "captured": true
+  },
+  {
+    "component": "record-custody",
+    "width": 1280,
+    "captured": true
+  }
+]

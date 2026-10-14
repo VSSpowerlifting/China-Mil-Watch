@@ -1,0 +1,194 @@
+[
+  {
+    "route": "home",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "analysis",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "laos",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "historical",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "native",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "record",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "laos-v2-private",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "evidence-fixture",
+    "width": 375,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "home",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "analysis",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "laos",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "historical",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "native",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "record",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "laos-v2-private",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "evidence-fixture",
+    "width": 768,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "home",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "analysis",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "laos",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "historical",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "native",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "record",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "laos-v2-private",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  },
+  {
+    "route": "evidence-fixture",
+    "width": 1280,
+    "text": true,
+    "links": true,
+    "images": true,
+    "geometry": true
+  }
+]

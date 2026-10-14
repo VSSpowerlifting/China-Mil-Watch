@@ -1,0 +1,37 @@
+{
+  "base": "216dfbb8babc6a0d4d711494c7787a29f84e201e",
+  "full_local": {
+    "tests": 6254,
+    "failures": 1,
+    "errors": 22,
+    "skipped": 1,
+    "seconds": 2215.018,
+    "passed": false
+  },
+  "baseline_targeted": {
+    "tests": 44,
+    "errors": 21,
+    "intro_failures": 0
+  },
+  "focused_integration": {
+    "tests": 110,
+    "passed": true
+  },
+  "final_palette": {
+    "tests": 27,
+    "passed": true
+  },
+  "captures": 48,
+  "parity_comparisons": 24,
+  "rendered_text_consumers": 64,
+  "contrast_failures": 0,
+  "tracked_validator_warnings": 10,
+  "isolated_validator_warnings": 10,
+  "qa": "Lead and read-only helper; corrected dark homepage cue, no remaining concrete visual defect",
+  "publication": "No merge/deployment; Laos v2 remains draft/private",
+  "candidate_intro_isolated": {
+    "tests": 23,
+    "passed": true,
+    "does_not_supersede_full_run": true
+  }
+}

@@ -1,21 +1,28 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Brief reading architecture (13 October 2026, owner-review candidate):**
-`codex/briefs-editorial-architecture-v2` is based on main
-`97485edea28ec9a7152f77b562adc37b84623ccd` (merged Laos coauthor and context-photo
-work included). A separately validated `brief-presentation-v1` manifest adds
-explicit paragraph sections, navigation, exact-excerpt emphasis and optional
-existing-admission figure placement. The Laos manifest is **draft/private-only**;
-its five headings and paragraph-10 finding placement await owner review. No
-canonical Brief, approval, media admission, output, DB or Sunday delivery changes.
-Independent-review correction: public loading now withholds recognized drafts
-before editorial validation; private review and approved manifests remain strict.
-Current Laos editorial fingerprint remains
+**Coastal visual identity (14 October 2026, owner-review candidate):**
+`codex/coastal-visual-identity` starts at exact latest main
+`216dfbb8babc6a0d4d711494c7787a29f84e201e` (#561 merged). Active IPR CSS and edition
+SVG now use jade for human analysis and slate-blue for machine output, with
+surface-specific text and non-colour cues. Navy, turquoise, ivory, original
+photographs/flags and warning/positive semantics are retained. Evidence, contrast,
+comparison captures and verification: `docs/evidence/coastal-identity-2026-10-14/README.md`.
+Focused integration (110 tests), final palette (27), 48 route/viewport captures
+and both validators (ten warnings) pass. Full local run: 6,254 tests, 21 storage
+root errors reproduced on exact main plus two unresolved intro timing findings;
+CI remains a gate. No canonical Brief, approval, media admission, database,
+collector or tracked output changes. Next action: owner visual review of the focused PR; no merge
+or deployment authorized.
+
+**Brief reading architecture (#561 merged 14 October 2026):**
+The source components are integrated in main; Laos's presentation manifest
+remains draft/private-only. Public loading continues to withhold it. Its five
+headings and paragraph-10 finding placement still require separate exact
+presentation approval. Canonical Laos editorial fingerprint remains
 `3ff586938e7680a014a7b6b6c60449327c9d07dcb12b2f6845fc0d3749a44c57`.
-Authoring/approval boundary: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`.
-Visual and validation receipts: `docs/evidence/briefs-editorial-v2/README.md`.
-Next action: owner reviews the scoped PR and private reading candidate; separate
-exact presentation approval is required before any public layout activation.
+Contract: `docs/BRIEFS_EDITORIAL_ARCHITECTURE_V2.md`; original receipts:
+`docs/evidence/briefs-editorial-v2/README.md`. Coastal QA includes both the
+public fallback and isolated v2 candidate without altering the manifest.
 
 **Current operational snapshot and handoff. Desk statuses checked 2026-09-28
 against `desks/registry.json` and the owner rulings in `DECISION_LOG.md`.
