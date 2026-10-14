@@ -83,9 +83,11 @@ diagnostics (10/10); this is a visual review judgment, not editorial sign-off.
 - `graphify update .` completed its AST-only refresh; ignored graph artifacts
   are not part of the PR. No model-based semantic extraction was run.
 
-Full offline-suite result and final preservation receipts are recorded in
-`verification.json`. No CI, merge, deployment or live-public-route result is
-implied by local preview evidence.
+Full local offline suite: **6,237 tests PASS, one skip** (1,711.028 seconds).
+It began during implementation; final contract and browser checks cover the
+completed source. Post-suite protected-path comparison passed. These results
+and the measured source commit are in `verification.json`; exact-head CI is a
+separate PR gate. No merge, deployment or live-public-route result is implied.
 
 ## Reproduce
 

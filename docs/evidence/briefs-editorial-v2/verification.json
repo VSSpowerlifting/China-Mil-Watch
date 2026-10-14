@@ -18,9 +18,13 @@
       "note": "Final additional figure case included in final contract run"
     },
     "full_offline": {
-      "result": "RUNNING",
+      "result": "PASS",
       "log": "/tmp/ipr-briefs-v2-b7ad/full-suite.log",
-      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/ipr-briefs-v2-b7ad/docx-deps TMPDIR=/private/tmp /Users/benjaminyang/pla-watch/.venv/bin/python -m unittest discover -s tests -t ."
+      "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/ipr-briefs-v2-b7ad/docx-deps TMPDIR=/private/tmp /Users/benjaminyang/pla-watch/.venv/bin/python -m unittest discover -s tests -t .",
+      "count": 6237,
+      "skipped": 1,
+      "seconds": 1711.028,
+      "note": "Full run began during implementation. Final 33 contract tests and final browser QA verify the completed source; exact-head GitHub CI is a separate gate."
     }
   },
   "validators": {
@@ -50,5 +54,7 @@
   },
   "diff_check": "PASS",
   "graphify_update": "AST-only refresh completed; ignored output not committed",
-  "no_merge_deployment_or_publication": true
+  "no_merge_deployment_or_publication": true,
+  "measured_source_commit": "faea6f334238a83306385f6904702a207dbbe03b",
+  "post_full_suite_protected_path_check": "PASS; identical to task base on every protected path"
 }
