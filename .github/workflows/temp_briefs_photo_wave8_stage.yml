@@ -1,0 +1,80 @@
+name: Temporary Wave 8 PLA institutional historical photo staging
+on:
+  push:
+    branches: [editorial/briefs-photo-wave8-20261013]
+    paths:
+      - .github/workflows/temp_briefs_photo_wave8_stage.yml
+      - scripts/stage_briefs_photo_wave8.py
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 32
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install unchanged requirements and pinned Pillow
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install Pillow==11.3.0
+      - name: Verify US Army/Navy sourced previews and admission/rights contracts
+        run: |
+          python scripts/stage_briefs_photo_wave8.py
+          python scripts/build_catalogue_media.py --check
+          python -m unittest tests.test_catalogue_media -v
+      - name: Render preview 18 issue cards, fourteen historical photos
+        run: |
+          set -euo pipefail
+          python site/render.py --out "$RUNNER_TEMP/wave8-preview"
+          python - "$RUNNER_TEMP/wave8-preview" <<'PY'
+          import sys
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          root=Path(sys.argv[1])
+          doc=BeautifulSoup((root/"analysis.html").read_text(),"html.parser")
+          cards=doc.select("article.brief-card")
+          photos=[a for a in cards if a.get("data-media")=="photograph"]
+          assert len(cards)==18,len(cards)
+          assert len(photos)==14,len(photos)
+          for issue,stem,required in [
+              (3,"pla-disaster-exchange-hainan-2015",["2015","May 2026","Lindsey Elder","not a photograph"]),
+              (4,"li-zuocheng-cmc-beijing-2019",["2019","May 2026","Li Zuocheng","Elliott Fabrizio"])
+          ]:
+              card=next(c for c in cards if c.select_one(".issue-no") and
+                  c.select_one(".issue-no").get_text(strip=True)==f"No. {issue}")
+              im=card.select_one("img")
+              assert im and stem in im["src"],(issue,im)
+              assert (root/im["src"]).is_file()
+              contents=card.get_text(" ",strip=True)
+              for x in required:
+                  assert x in contents,(issue,x)
+              assert "does not imply or constitute DoW endorsement" in contents
+          assert "Benjamin Yang and Dylan Tanzi" in (root/"briefs/what-is-being-built-in-laos.html").read_text()
+          print("18 catalogue cards, 14 rights-admitted historical photos; honest dates and disclaimers.")
+          PY
+      - name: Stage exactly eleven photographic and output files to review branch
+        run: |
+          set -euo pipefail
+          OUT="$RUNNER_TEMP/wave8-preview"
+          cp "$OUT/analysis.html" output/analysis.html
+          for issue in 03 04; do
+            if [ "$issue" = 03 ]; then stem=pla-disaster-exchange-hainan-2015; else stem=li-zuocheng-cmc-beijing-2019; fi
+            cp "$OUT/assets/catalogue/media/no-$issue-$stem.jpg" "output/assets/catalogue/media/no-$issue-$stem.jpg"
+            git add "output/assets/catalogue/media/no-$issue-$stem.jpg"
+            git add "site/assets/catalogue/media/no-$issue-$stem.jpg"
+            git add "site/assets/editorial/$stem.jpg"
+            git add "site/assets/editorial/derivatives/$stem-1600.jpg"
+          done
+          git add -- site/assets/editorial/manifest.json site/assets/catalogue/admissions.json output/analysis.html
+          git diff --cached --name-only
+          test "$(git diff --cached --name-only | wc -l)" -eq 11
+          git diff --exit-code -- pla_watch.db
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+41898282@users.noreply.github.com"
+          git commit -m "Briefs: stage genuine 2015 PLA training and 2019 CMC official photos No3/4"
+          git push origin HEAD:editorial/briefs-photo-wave8-20261013
