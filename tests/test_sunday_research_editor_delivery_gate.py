@@ -42,7 +42,8 @@ class ResearchEmailPermissionTests(unittest.TestCase):
         result = check(week_ending=WEEK, as_of=WEEK,
                        packet=self.write(), send_email=False)
         self.assertGreater(result["vietnam_private_model_sources"], 0)
-        self.assertTrue(result["vietnam_editor_send_authorized"])
+        # Private model permission must not be reported as email consent.
+        self.assertFalse(result["vietnam_editor_send_authorized"])
         self.assertFalse(result["email_sent"])
         self.assertFalse(result["publication_or_source_approval"])
 
