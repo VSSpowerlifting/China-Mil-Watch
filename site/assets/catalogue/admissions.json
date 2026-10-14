@@ -306,6 +306,34 @@
       "source_page": "https://www.dvidshub.net/image/9490647/usindopacom-commander-reinforces-us-singapore-defense-partnership-during-singapore-visit",
       "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
       "depicts": "context"
+    },
+    {
+      "issue": 2,
+      "week_ending": "2026-05-16",
+      "status": "admitted",
+      "source_file": "site/assets/editorial/derivatives/jiangnan-shipyard-fujian-context-2022-1600.jpg",
+      "source_manifest_id": "jiangnan-shipyard-fujian-context-2022",
+      "focal": "50% 50%",
+      "served": "assets/catalogue/media/no-02-jiangnan-shipyard-fujian-context-2022.jpg",
+      "width": 720,
+      "height": 480,
+      "source_sha256": "e0f4f879d795c6428d8303a67e52ff71375e4a85a1e7f4503d30ae27f84a7c0a",
+      "served_sha256": "3017cdd0831e3452dc1a6cd59a0614694f2932f9ad83e2aed0478559106602db",
+      "change_note": "Cropped and resized by IPR.",
+      "review_note": "Research candidate only: clear CC0 original, relevant industrial backdrop; owner must inspect how legibly the site/ship shows at 720x480.",
+      "alt": "Shipbuilding facilities on Shanghai's Changxing Island, photographed in April 2022.",
+      "caption": "Jiangnan Shipyard on Shanghai's Changxing Island, photographed April 2022, during the period when the carrier later named Fujian was being built there. Shipbuilding context, not a photograph of the May 2026 KJ-600 carrier qualification or Rocket Force training.",
+      "date_note": "Photographed 4 April 2022; original creator dedicated image under CC0 1.0. Commons crop June 2024.",
+      "creator": "Raysonho (photo); Meeepmep (Commons crop)",
+      "creator_native": "",
+      "creator_native_lang": "",
+      "credit": "Raysonho (photo); Meeepmep (Commons crop) · Public domain · via Wikimedia Commons",
+      "license": "Public domain",
+      "license_url": "",
+      "source_page": "https://commons.wikimedia.org/wiki/File:JiangnanShipyardChangxingIsland_(cropped).jpg",
+      "source_label": "Wikimedia Commons",
+      "notice": "",
+      "depicts": "context"
     }
   ]
 }
