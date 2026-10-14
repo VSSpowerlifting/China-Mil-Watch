@@ -542,6 +542,9 @@ class TestPartialFailuresNeverQualifyAsHealthy(unittest.TestCase):
         self.assertGreater(partial["inserted"], 0)
         self.assertEqual(partial["extraction_failures"], 1)
         self.assertEqual(partial["fetch_failures"], 0)
+        self.assertEqual(partial["failure_log"], [{
+            "url": bad_url, "stage": "extract", "status": st.EXTRACTION_FAILURE
+        }])
         self.assertEqual(partial["result"], st.EXTRACTION_FAILURE)
         self.assertEqual(partial["health"], "fail")
         self.assertIn("1 of", partial["error_detail"])
@@ -575,6 +578,9 @@ class TestPartialFailuresNeverQualifyAsHealthy(unittest.TestCase):
         self.assertGreater(partial["duplicates"], 0)
         self.assertEqual(partial["retrieved"], partial["selected"])
         self.assertEqual(partial["extraction_failures"], 1)
+        self.assertEqual(partial["failure_log"], [{
+            "url": bad_url, "stage": "extract", "status": st.EXTRACTION_FAILURE
+        }])
         self.assertEqual(partial["result"], st.EXTRACTION_FAILURE)
         self.assertEqual(partial["health"], "fail")
         self.assertIsNone(partial["shadow_day"])
@@ -596,6 +602,9 @@ class TestPartialFailuresNeverQualifyAsHealthy(unittest.TestCase):
         self.assertGreater(partial["duplicates"], 0)
         self.assertEqual(partial["fetch_failures"], 1)
         self.assertEqual(partial["extraction_failures"], 0)
+        self.assertEqual(partial["failure_log"], [{
+            "url": bad_url, "stage": "fetch", "status": st.FETCH_FAILURE
+        }])
         self.assertEqual(partial["result"], st.FETCH_FAILURE)
         self.assertEqual(partial["health"], "fail")
         self.assertIsNone(partial["shadow_day"])
@@ -607,6 +616,7 @@ class TestPartialFailuresNeverQualifyAsHealthy(unittest.TestCase):
         self.assertEqual(complete["health"], "ok")
         self.assertEqual(complete["fetch_failures"], 0)
         self.assertEqual(complete["extraction_failures"], 0)
+        self.assertEqual(complete["failure_log"], [])
 
 
 class TestSitemapParsing(unittest.TestCase):
