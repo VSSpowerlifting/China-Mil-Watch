@@ -355,14 +355,17 @@ class UnifiedWriterTests(unittest.TestCase):
 
 
 class IndonesiaSundayWeek42Tests(unittest.TestCase):
-    """One genuine Week 42 Sunday source, but no Indonesian production records."""
+    """Pinned Week 42 Indonesia original, independent of other desk additions."""
 
     WEEK = "2026-10-17"
 
     def candidate(self):
         rows = load_editorial_evidence(self.WEEK, self.WEEK)
-        self.assertEqual(len(rows), 1)
-        return rows[0]
+        self.assertEqual({row["id"] for row in rows},
+                         {"ID-W42-01", "JP-W42-07"})
+        matches = [row for row in rows if row["id"] == "ID-W42-01"]
+        self.assertEqual(len(matches), 1)
+        return matches[0]
 
     def test_current_week_original_identity_and_nonproduction_status(self):
         row = self.candidate()
@@ -378,7 +381,7 @@ class IndonesiaSundayWeek42Tests(unittest.TestCase):
         self.assertEqual(row["copy_scope"], "private-model-drafting-only-no-source-body")
         self.assertNotIn("text_original", row)
         self.assertNotIn("production_record_id", row)
-        self.assertEqual(load_editorial_evidence(self.WEEK, "2026-10-16"), [row])
+        self.assertIn(row, load_editorial_evidence(self.WEEK, "2026-10-16"))
         self.assertIn('id="ID-W42-01"', evidence_prompt([row]))
 
     def test_indonesia_only_one_exact_publisher_version_can_enter_sunday(self):
@@ -441,7 +444,16 @@ class IndonesiaSundayWeek42Tests(unittest.TestCase):
             d = Path(tmp)
             sidecar_path, out = d / "sidecar.json", d / "manuscript.txt"
             sidecar_path.write_text(json.dumps(sidecar), encoding="utf-8")
-            packet_path = ROOT / "research/briefs_editorial_evidence" / (self.WEEK + ".json")
+            # Test Indonesia's source-use and Dylan return in isolation.
+            # The actual scheduled dual-source packet is exercised by the
+            # Japan + Indonesia no-send integration regression.
+            packet_path = d / (self.WEEK + ".json")
+            packet_path.write_text(json.dumps({
+                "schema": "ipr-private-drafting-evidence/1",
+                "week_ending": self.WEEK,
+                "status": "unapproved-source-linked-editorial-candidate",
+                "items": [row],
+            }), encoding="utf-8")
             with patch("scripts.sunday_briefs_auto_writer.compose", return_value=m) as model, \
                  patch("scripts.sunday_editorial_handoff.send_packet") as mail:
                 main(["--sidecar", str(sidecar_path), "--out", str(out),

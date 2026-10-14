@@ -102,5 +102,22 @@ class RenderPreviewGitIntegration(unittest.TestCase):
         self.assertIn("output/styles.css", result["blocked"])
 
 
+
+class SitewideWorkflowExpressions(unittest.TestCase):
+    def test_workflow_expressions_are_not_backslash_escaped(self):
+        workflow = (Path(__file__).resolve().parents[1] /
+                    ".github/workflows/ipr_sitewide_render_preview.yml").read_text()
+        self.assertNotIn(r"\${{", workflow,
+                         "GitHub Actions expressions must not have a literal backslash")
+        for expression in (
+            "${{ inputs.reviewed_main_sha }}",
+            "${{ github.run_id }}",
+            "${{ runner.temp }}",
+        ):
+            with self.subTest(expression=expression):
+                self.assertIn(expression, workflow)
+
+
+
 if __name__ == "__main__":
     unittest.main()
