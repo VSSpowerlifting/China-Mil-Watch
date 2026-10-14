@@ -151,7 +151,9 @@ class SundayJapanOfferIntegrity(unittest.TestCase):
         self.assertLess(gate, model)
         section = contents[gate:contents.index(
             "- name: Create read-only full Saturday-ending week source scaffold", gate)]
-        self.assertIn("steps.vietnam_current.outputs.packet", section)
+        # The editor-safe step now controls the packet supplied downstream;
+        # Vietnam model-only rows remain in the untouched private source file.
+        self.assertIn("steps.editor_scope.outputs.packet", section)
         self.assertIn("python -m scripts.sunday_japan_offer_gate", section)
         for forbidden in ("IPR_SMTP_APP_PASSWORD", "ANTHROPIC_API_KEY",
                           "upload-artifact", "git push", "send_packet"):
