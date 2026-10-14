@@ -67,9 +67,9 @@
 @media print{.brief-reading-finding{border-color:#000;margin-bottom:24px}.brief-reading-section{margin-top:32px}.brief-reading-section>h2,.brief-reading-evidence>h2{font-size:18pt}.brief-reading-section>h2,.brief-reading-evidence h2,.brief-reading-evidence h3{break-after:avoid}.brief-reading-finding blockquote p,.brief-reading-evidence blockquote p,.brief-reading-section>p{font-size:11pt;line-height:1.6}.brief-reading-finding,.brief-reading-figure{break-inside:avoid}.brief-reading-evidence>div{display:block}.brief-reading-evidence>div>section+section{border-left:0;padding:16px 0 0}}
 @media(forced-colors:active){.brief-reading-finding{border-color:CanvasText}.brief-reading-finding>h2,.brief-excerpt-trace,.brief-reading-note{color:CanvasText}}
 
-/* Existing native Briefs (Nos. 15–17) already have editor-approved section
-   titles and anchors. Give them the same navigable reading rhythm as No. 18
-   without changing manuscripts, section labels, URLs, or review receipts. */
+/* Earlier Briefs (Nos. 1–14) and native issues 15–17 already have
+   editor-approved section titles and anchors. Share No. 18's navigation
+   rhythm without changing manuscripts, labels, URLs, or review receipts. */
 .brief-layout:not(.brief-layout--structured) .brief-main>.brief-section[id]{scroll-margin-top:112px}
 .brief-layout:not(.brief-layout--structured) .brief-main>.brief-section[id]>h2{text-wrap:balance}
 .brief-layout:not(.brief-layout--structured) .brief-main>.brief-section[id]:target{outline:2px solid var(--accent);outline-offset:8px}
