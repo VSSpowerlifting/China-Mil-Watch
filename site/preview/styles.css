@@ -510,6 +510,10 @@ footer.site{background:var(--footer-ground);padding:45px 0 35px;border:0}
   .publication-freshness > summary { display: none; }
   body, .band, footer.site { background: #fff !important; color: #000 !important; }
   .band * { color: #000 !important; }
+  .pacific-opening, .brief-hero { background: #fff !important; color: #000 !important; }
+  .pacific-opening::before { display: none; }
+  .pacific-opening :is(h1, p, a), .btn.btn { color: #000 !important; }
+  .btn.btn { transition: none; }
   .evidence--model::before, :is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--model::before { border-color: #000; }
   .evidence--analysis::before, :is(.band, .rl-analysis, .home-coast-band, .home-selected) .evidence--analysis::before { background: #000; }
   .wrap { width: 100%; padding: 0; }

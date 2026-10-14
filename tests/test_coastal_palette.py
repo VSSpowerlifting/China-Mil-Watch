@@ -110,6 +110,7 @@ class BrowserRoles(unittest.TestCase):
                 '<p id="dark-machine" class="evidence evidence--model">Machine output</p>'
                 '<p id="dark-human" class="evidence evidence--analysis">Human analysis</p></section>'
                 '<section class="home-coast-band"><p id="home-human" class="evidence evidence--analysis">Human-controlled analysis</p></section>'
+                '<header class="brief-hero"><h1>Brief title</h1></header><section class="pacific-opening"><h1>Home title</h1><a class="btn" href="#paper">Print action</a></section>'
                 '<ul class="custody"><li class="is-machine"><b>Machine reading</b></li>'
                 '<li class="is-analysis"><b>Analysis</b></li></ul></main>')
             def rgb(value):
@@ -139,6 +140,9 @@ class BrowserRoles(unittest.TestCase):
                 self.assertIn('Human analysis',page.inner_text('body'))
                 self.assertIn('Machine output',page.inner_text('body'))
                 if mode=='print':
+                    for selector in ('.brief-hero', '.pacific-opening'):
+                        self.assertEqual(rgb(page.locator(selector).evaluate('(el)=>getComputedStyle(el).backgroundColor')),'#ffffff')
+                    self.assertEqual(rgb(page.locator('.btn').evaluate('(el)=>getComputedStyle(el).color')),'#000000')
                     marker=page.locator('#dark-machine').evaluate('(el)=>getComputedStyle(el,"::before").borderTopColor')
                     self.assertEqual(rgb(marker),'#000000')
                     marker=page.locator('#home-human').evaluate('(el)=>getComputedStyle(el,"::before").backgroundColor')
