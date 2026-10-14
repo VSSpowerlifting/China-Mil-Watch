@@ -117,7 +117,8 @@ class ResearchEmailPermissionTests(unittest.TestCase):
                        packet=self.write(data), send_email=True)
         self.assertEqual(result["vietnam_private_model_sources"], 0)
         self.assertEqual(result["editor_packet_source_count"], 3)
-        self.assertTrue(result["vietnam_editor_send_authorized"])
+        # No Vietnam evidence is being sent; that does not confer Vietnam consent.
+        self.assertFalse(result["vietnam_editor_send_authorized"])
 
     def test_malformed_or_wrong_week_packet_does_not_bypass_gate(self):
         actual = self.write()
