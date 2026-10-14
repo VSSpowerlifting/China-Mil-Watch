@@ -45,7 +45,7 @@ jobs:
       - name: Render both historical Briefs and the current IPR site; never publish
         run: |
           set -euo pipefail
-          python -m scripts.run_briefs_render_release --scope strict 2>&1 | tee "$RUNNER_TEMP/briefs-render-report.txt"
+          python -m scripts.run_briefs_render_release --scope strict --verify-current 2>&1 | tee "$RUNNER_TEMP/briefs-render-report.txt"
       - name: Upload reviewed-route preview and scope report
         uses: actions/upload-artifact@v4
         with:
