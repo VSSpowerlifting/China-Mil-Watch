@@ -506,6 +506,109 @@ class TestFetchFailureIsNotExtractionFailure(ShadowRunCase):
         self.assertEqual(e["result"], st.EXTRACTION_FAILURE)
 
 
+class TestPartialFailuresNeverQualifyAsHealthy(unittest.TestCase):
+    """A green scheduled run must account for EVERY selected MINDEF source.
+
+    The October 13, 2026 real shadow receipt had 33 duplicate originals
+    and one failed extraction, yet was incorrectly marked healthy. These
+    offline cases rehearse this mixed outcome without changing production.
+    """
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="sg-shadow-partial-"))
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.state = self.tmp / "state"
+        # This fixture item is not one of the source-governed holds.
+        self.bad_url = items()[1]["url"]
+
+    def go(self, session, run_id):
+        return runner.run(
+            self.state, date(2026, 8, 31), 365, 40, run_id, "offline",
+            adapter=adapter(session))
+
+    def test_new_records_do_not_hide_one_unparseable_source(self):
+        bad_url = self.bad_url
+
+        class Unparseable(FakeSession):
+            def get(self, url, timeout=None, headers=None):
+                if url == bad_url:
+                    self.calls.append(url)
+                    return FakeResponse(
+                        "<html><h1>Release title</h1><p>short</p></html>",
+                        200, url=url)
+                return super().get(url, timeout=timeout, headers=headers)
+
+        partial = self.go(Unparseable(), "partial-new")
+        self.assertGreater(partial["inserted"], 0)
+        self.assertEqual(partial["extraction_failures"], 1)
+        self.assertEqual(partial["fetch_failures"], 0)
+        self.assertEqual(partial["result"], st.EXTRACTION_FAILURE)
+        self.assertEqual(partial["health"], "fail")
+        self.assertIn("1 of", partial["error_detail"])
+        self.assertIsNone(partial["shadow_day"])
+        self.assertFalse((self.state / "clock.json").exists())
+        self.assertEqual(len(list((self.state / "ledger").glob("*.json"))), 1)
+        # The next complete run can recover without rewriting the failed
+        # receipt or pretending that the earlier run was a clean slot.
+        complete = self.go(FakeSession(), "complete-next")
+        self.assertEqual(complete["health"], "ok")
+        self.assertGreater(complete["duplicates"], 0)
+        self.assertGreater(complete["inserted"], 0)
+        self.assertEqual(complete["shadow_day"], 0)
+
+    def test_duplicates_do_not_hide_one_unparseable_source(self):
+        first = self.go(FakeSession(), "complete-first")
+        self.assertEqual(first["result"], st.OK)
+        bad_url = self.bad_url
+
+        class Unparseable(FakeSession):
+            def get(self, url, timeout=None, headers=None):
+                if url == bad_url:
+                    self.calls.append(url)
+                    return FakeResponse(
+                        "<html><h1>Release title</h1><p>short</p></html>",
+                        200, url=url)
+                return super().get(url, timeout=timeout, headers=headers)
+
+        partial = self.go(Unparseable(), "partial-duplicate")
+        self.assertEqual(partial["inserted"], 0)
+        self.assertGreater(partial["duplicates"], 0)
+        self.assertEqual(partial["retrieved"], partial["selected"])
+        self.assertEqual(partial["extraction_failures"], 1)
+        self.assertEqual(partial["result"], st.EXTRACTION_FAILURE)
+        self.assertEqual(partial["health"], "fail")
+        self.assertIsNone(partial["shadow_day"])
+        clock = json.loads((self.state / "clock.json").read_text())
+        self.assertEqual(clock["day_zero_run_id"], "complete-first")
+
+    def test_duplicate_documents_do_not_hide_one_failed_fetch(self):
+        self.go(FakeSession(), "complete-first")
+        bad_url = self.bad_url
+
+        class Missing(FakeSession):
+            def get(self, url, timeout=None, headers=None):
+                if url == bad_url:
+                    self.calls.append(url)
+                    return FakeResponse("", 404, url=url)
+                return super().get(url, timeout=timeout, headers=headers)
+
+        partial = self.go(Missing(), "partial-fetch")
+        self.assertGreater(partial["duplicates"], 0)
+        self.assertEqual(partial["fetch_failures"], 1)
+        self.assertEqual(partial["extraction_failures"], 0)
+        self.assertEqual(partial["result"], st.FETCH_FAILURE)
+        self.assertEqual(partial["health"], "fail")
+        self.assertIsNone(partial["shadow_day"])
+
+    def test_complete_duplicate_only_run_remains_a_real_success(self):
+        self.go(FakeSession(), "first")
+        complete = self.go(FakeSession(), "all-duplicates")
+        self.assertEqual(complete["result"], st.OK_ALL_DUPLICATES)
+        self.assertEqual(complete["health"], "ok")
+        self.assertEqual(complete["fetch_failures"], 0)
+        self.assertEqual(complete["extraction_failures"], 0)
+
+
 class TestSitemapParsing(unittest.TestCase):
 
     def test_the_real_sitemap_parses_to_release_urls_only(self):
