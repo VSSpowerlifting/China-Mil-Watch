@@ -23,7 +23,12 @@ SLUG = "what-is-being-built-in-laos"
 class BriefPresentationTests(unittest.TestCase):
     def setUp(self):
         self.article = json.loads(ARTICLE_PATH.read_text(encoding="utf-8"))
-        self.manifest = json.loads((ROOT / "briefs/presentation" / (SLUG + ".json")).read_text(encoding="utf-8"))
+        # Release fixtures must not change meaning when the real manifest is approved.
+        self.published_manifest = json.loads(
+            (ROOT / "briefs/presentation" / (SLUG + ".json")).read_text(encoding="utf-8"))
+        self.manifest = copy.deepcopy(self.published_manifest)
+        self.manifest["status"] = "draft"
+        self.manifest["approval"] = None
 
     def approved(self, manifest=None):
         result = copy.deepcopy(manifest or self.manifest)
@@ -51,6 +56,17 @@ class BriefPresentationTests(unittest.TestCase):
             self.assertEqual(load_presentation(path, self.article, slug=SLUG, review=True), self.manifest)
             with self.assertRaisesRegex(ValueError, "missing"):
                 load_presentation(Path(directory) / "missing.json", self.article, slug=SLUG, review=True)
+
+    def test_actual_approved_laos_presentation_is_public_and_bound_to_its_exact_digest(self):
+        approved = self.published_manifest
+        self.assertEqual(approved["status"], "approved")
+        self.assertEqual(approved["approval"]["reviewed_on"], "2026-10-14")
+        self.assertEqual(approved["approval"]["fingerprint"], presentation_fingerprint(approved))
+        self.assertEqual(validate_presentation(approved, self.article, slug=SLUG), [])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / (SLUG + ".json")
+            path.write_text(json.dumps(approved), encoding="utf-8")
+            self.assertEqual(load_presentation(path, self.article, slug=SLUG), approved)
 
     def test_only_approved_presentation_loads_for_public_use(self):
         manifest = self.approved()
