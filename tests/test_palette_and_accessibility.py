@@ -78,10 +78,11 @@ LIGHT_GROUNDS = ("bg", "surface", "surface-inset", "accent-tint")
 
 #: Every token that carries text on a light ground.
 LIGHT_TEXT = ("ink", "ink-2", "muted", "link", "visited", "accent",
-              "accent-ink", "positive", "warning")
+              "accent-ink", "positive", "warning", "editorial-ink", "machine-ink")
 
 #: Every token that carries text on the dark band.
-BAND_TEXT = ("band-ink", "band-muted", "accent-tint", "focus-band")
+BAND_TEXT = ("band-ink", "band-muted", "accent-tint", "focus-band",
+             "editorial-on-dark", "machine-on-dark")
 
 
 class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
@@ -175,40 +176,14 @@ class TestContrastIsMeasuredNotAssumed(unittest.TestCase):
                     "the band focus ring is applied outside its dark surface / skip: %s"
                     % flat)
 
-    def test_the_crimson_family_stays_off_the_light_accent_scheme(self):
-        """
-        Crimson is the analysis layer: on paper it marks and labels what a
-        person wrote (2026-09-27; it was confined to dark chrome before), and
-        it never joins the structural accent or fills a data mark. --crimson
-        is a text tone on light and a fill on dark; the two lifted tones are
-        the dark-surface text.
-        """
-        self.assertGreaterEqual(
-            contrast(self.colour("crimson"), self.colour("bg")), AA_BODY)
-        self.assertLess(
-            contrast(self.colour("crimson"), self.colour("band")), AA_LARGE,
-            "--crimson must not be dark-surface text")
-        self.assertGreaterEqual(
-            contrast(self.colour("crimson-text"), self.colour("band")),
-            AA_BODY)
-        self.assertGreaterEqual(
-            contrast(self.colour("crimson-mark"), self.colour("band")),
-            AA_LARGE)
-
-    def test_rust_is_its_own_tone_and_not_the_attention_tone(self):
-        """
-        --signal means a model produced what it marks. --warning means a desk
-        is blocked. Collapsing them into one token — which an alias would do —
-        makes rust say two things at once, and the rust rule exists precisely
-        to stop that. It still has to clear AA on every ground it is used on.
-        """
-        self.assertNotEqual(self.colour("signal"), self.colour("warning"),
-                            "rust and the attention tone collapsed into one")
-        for ground in LIGHT_GROUNDS:
-            with self.subTest(ground=ground):
-                self.assertGreaterEqual(
-                    contrast(self.colour("signal"), self.colour(ground)),
-                    AA_BODY)
+    def test_editorial_and_machine_have_separate_light_and_dark_tones(self):
+        for role in ('editorial', 'machine'):
+            self.assertLess(contrast(self.colour(role + '-ink'), self.colour('band')), AA_LARGE)
+            self.assertGreaterEqual(contrast(self.colour(role + '-on-dark'), self.colour('band')), AA_BODY)
+        self.assertNotEqual(self.colour('machine-ink'), self.colour('warning'))
+        self.assertNotEqual(self.colour('editorial-ink'), self.colour('positive'))
+        self.assertNotEqual(self.colour('editorial-ink'), self.colour('machine-ink'))
+        self.assertGreaterEqual(contrast(self.colour('machine-ink'), self.colour('machine-tint')), AA_BODY)
 
     def test_the_palette_header_states_what_was_measured(self):
         """

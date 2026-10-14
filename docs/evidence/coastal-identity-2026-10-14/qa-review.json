@@ -1,0 +1,22 @@
+{
+  "reviewers": [
+    "lead",
+    "read-only visual QA helper"
+  ],
+  "normal_captures": 48,
+  "parity_comparisons": 24,
+  "viewports": [
+    375,
+    768,
+    1280
+  ],
+  "fixed_findings": [
+    "Dark homepage editorial cue missed by band-only scope",
+    "Pale markers and dark hero grounds in print; remapped to black/white without altering normal-screen paint"
+  ],
+  "final_visual_findings": [],
+  "focus": "Paper skip link and actual navy control visible at375/1280",
+  "print": "Final homepage/native samples inspected; photographs retained; no claim of complete pagination audit",
+  "forced_colors": "Sampled literal labels and cues remain readable",
+  "v2": "Existing draft/private only"
+}

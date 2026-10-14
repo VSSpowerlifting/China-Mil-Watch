@@ -65,7 +65,7 @@ OFFICIAL_NAMES_WITH_BRITISH_SPELLING = (
 # of National Defence", or a model summarising an article as carrying no "order
 # of battle" detail, is record data — not the prototype adopting that
 # vocabulary. Excluding it is not endorsing it: the page labels it, marks it
-# rust, and states it is unreviewed.
+# slate-blue, and states it is unreviewed.
 #
 # The exclusion removes EXACT STORED VALUES, never their containers. An earlier
 # implementation stripped whole `<title>`, `<h1>`, `.interpretation` and
@@ -1278,16 +1278,16 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
 
     # ── Accent discipline ───────────────────────────────────────────────
 
-    def test_rust_is_reserved_for_machine_generated_material(self):
+    def test_slate_blue_is_reserved_for_machine_generated_material(self):
         """
-        --signal may only style model output. If it leaks onto callouts or
+        --machine-ink may only style model output. If it leaks onto callouts or
         decoration, the reader loses the one colour that means 'a model wrote
         this'.
         """
         css = self.css_for()
-        users = re.findall(r'([^{}]+)\{[^{}]*var\(--signal\)[^{}]*\}', css)
+        users = re.findall(r'([^{}]+)\{[^{}]*var\(--machine-ink\)[^{}]*\}', css)
         selectors = " ".join(users)
-        self.assertIn("--signal", css)
+        self.assertIn("--machine-ink", css)
         for banned in (".notice", ".working-title-flag", ".status--fail"):
             with self.subTest(banned=banned):
                 self.assertNotIn(banned, selectors)
@@ -2234,11 +2234,11 @@ class TestRecordPages(PreviewCase):
                 self.assertRegex(
                     html, r'<p class="cite-text" id="%s">[^<]+</p>' % anchor)
 
-    def test_rust_marks_only_machine_generated_material(self):
+    def test_slate_blue_marks_only_machine_generated_material(self):
         css = self.css_for("record/1.html")
-        # The rust family moved with the palette; what may not move is the
+        # The slate-blue family moved with the palette; what may not move is the
         # discipline. One token, reserved for machine output.
-        self.assertIn("--signal:       #9C4B36", css)
+        self.assertIn("--machine-ink:       #446C79", css)
         html = self.record(self.first_in_state("not_selected"))
         # A record with no machine output must carry no machine-output marker.
         self.assertNotIn("evidence--model", html)
@@ -2729,7 +2729,7 @@ class TestRecordSemantics(PreviewCase):
             with self.subTest(id=rec["id"]):
                 self.assertIn("Machine assessment", self.record(rec["id"]))
 
-    def test_machine_assessment_stays_rust_marked(self):
+    def test_machine_assessment_stays_slate_blue_marked(self):
         rec = next(r for r in self.data["corpus"] if r["state"] == "analyzed")
         block = self.record(rec["id"]).split("Machine assessment", 1)[0]
         self.assertTrue(block.rstrip().endswith('evidence--model">'))
@@ -3859,11 +3859,11 @@ class TestVolumeByWeek(PreviewCase):
             with self.subTest(week=annotated["start"]):
                 self.assertIn(annotated["annotation"], self.html)
 
-    def test_the_volume_block_never_uses_rust(self):
+    def test_the_volume_block_never_uses_slate_blue(self):
         css = self.css_for()
         block = css.split("Volume by publication week", 1)[1]
         block = block.split("@media (prefers-reduced-motion", 1)[0]
-        self.assertNotIn("var(--signal)", block)
+        self.assertNotIn("var(--machine-ink)", block)
         self.assertIn("var(--ocean)", block)
 
     def test_no_chart_library_canvas_or_svg_plate(self):
@@ -4758,8 +4758,8 @@ class TestCorpusGuide(PreviewCase):
             with self.subTest(token=token):
                 self.assertNotIn(token, self.html)
 
-    def test_rust_never_reaches_the_guide(self):
-        """Rust means a model produced this. Nothing on the guide is model
+    def test_slate_blue_never_reaches_the_guide(self):
+        """Slate-blue means a model produced this. Nothing on the guide is model
         output, so no marker may appear on it."""
         self.assertNotIn("evidence--model", self.html)
         self.assertNotIn("interpretation", self.html)
@@ -5442,10 +5442,10 @@ class TestSnapshotScopedCitations(PreviewCase):
             with self.subTest(page=name):
                 self.assertNotIn('class="citation"', html)
 
-    def test_rust_never_marks_a_citation(self):
-        """Rust means a model produced this. A citation is authored."""
+    def test_slate_blue_never_marks_a_citation(self):
+        """Slate-blue means a model produced this. A citation is authored."""
         css = self.css_for()
-        users = re.findall(r'([^{}]+)\{[^{}]*var\(--signal\)[^{}]*\}', css)
+        users = re.findall(r'([^{}]+)\{[^{}]*var\(--machine-ink\)[^{}]*\}', css)
         for selector in " ".join(users).split(","):
             with self.subTest(selector=selector.strip()[:40]):
                 self.assertNotIn("cite", selector)
@@ -5511,16 +5511,16 @@ class TestEditionCitationsAreIntegrated(PreviewCase):
                 self.assertNotIn(token, code)
         self.assertIn("<summary>Citation text for the", self.html)
 
-    def test_the_disclosure_carries_no_box_and_no_rust(self):
+    def test_the_disclosure_carries_no_box_and_no_slate_blue(self):
         css = self.css_for()
         block = re.search(r"\.ed-cite\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(block)
         self.assertNotIn("border", block.group(1))
         self.assertNotIn("background", block.group(1))
         summary = re.search(r"\.ed-cite > summary\s*\{([^{}]*)\}", css)
-        self.assertNotIn("--signal", summary.group(1))
+        self.assertNotIn("--machine-ink", summary.group(1))
         self.assertIn("min-height: 44px", summary.group(1))
-        users = re.findall(r'([^{}]+)\{[^{}]*var\(--signal\)[^{}]*\}', css)
+        users = re.findall(r'([^{}]+)\{[^{}]*var\(--machine-ink\)[^{}]*\}', css)
         self.assertNotIn("ed-cite", " ".join(users))
 
 
