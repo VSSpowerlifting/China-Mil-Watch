@@ -2,13 +2,14 @@ name: Desks Phase 4B — guarded Source Atlas release
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, feat/desks-source-atlas-20261013]
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - '.github/workflows/desks_p4b_render_only_release.yml'
       - 'scripts/stage_desks_p4b_output.py'
       - 'scripts/guard_desks_p4b_output_scope.py'
       - 'tests/test_desks_p4b_release_contract.py'
+      - 'scripts/capture_desks_p4b_atlas_review.py'
   workflow_dispatch:
     inputs:
       approved_main_sha:
@@ -92,6 +93,36 @@ jobs:
             output/desks.html
             output/desk-atlas.css
             output/assets/glyphs/sources.svg
+          retention-days: 7
+
+  visual-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Check out PR combined review head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing render and browser dependencies
+        run: pip install -r requirements.txt
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Capture actual eight-panel Source Atlas and browser receipts
+        run: python scripts/capture_desks_p4b_atlas_review.py
+      - name: Upload real Atlas screenshots and measurements (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipr-p4b-source-atlas-visual-review
+          path: phase4b-atlas-visual-receipt/
+          if-no-files-found: warn
           retention-days: 7
 
   release:
