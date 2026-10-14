@@ -163,6 +163,14 @@ Japan/U.S. desk source/output differences and historical source-image copies;
 those generated spillovers were returned to HEAD through the existing scope
 restoration helper, from the verified initially clean tree.
 
+The PR render-contract job uses `--scope strict --verify-current`: it requires
+the committed Brief output to match the governed replay after unrelated spill
+is restored. Any scoped difference fails. Manual preview/publication does not
+use that flag; the existing strict release command still refuses an empty
+publication delta. This distinction supports review of already-regenerated
+pages without weakening a publication gate. Two invariant tests cover both
+modes and the PR-only workflow boundary.
+
 No database, canonical JSON, approval, feed, sitemap, image, catalogue, public
 desk, collection automation or deployment workflow changes belong to this
 release. Before later owner-authorized landing/publication, recheck approved

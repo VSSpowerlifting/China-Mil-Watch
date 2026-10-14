@@ -121,6 +121,9 @@ path traverses the `/var` symlink. Using canonical `TMPDIR=/private/tmp` makes
 those 21 tests pass without changing the custody guard. The initial full run
 was interrupted after diagnosis and is not counted as green; the complete
 suite is restarted with the canonical temporary path.
+The new PR-only current-output replay mode and unchanged manual-publication
+boundary pass a separate 70-test workflow/contract stage. CI requires an
+idempotent committed render; manual release still refuses empty deltas.
 
 The full offline command is `.venv/bin/python -m unittest discover -s tests -t . -v`.
 The review PR records its final full result and the authoritative successful
