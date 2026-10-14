@@ -7,6 +7,8 @@ on:
       - .github/workflows/singapore_shadow_integrity_contracts.yml
       - scripts/shadow_collect.py
       - tests/test_singapore_shadow.py
+      - tests/test_singapore_shadow_media_only_parity.py
+      - tests/test_singapore_image_only_release.py
       - scraper/sources/sg_mindef.py
 
 permissions:
@@ -27,7 +29,7 @@ jobs:
       - name: Install declared offline dependencies
         run: pip install -r requirements.txt
       - name: Require complete source accounting, failure-clock integrity and unchanged production collection
-        run: python -m unittest tests.test_singapore_shadow tests.test_singapore_scheduled_production -v
+        run: python -m unittest tests.test_singapore_shadow tests.test_singapore_shadow_media_only_parity tests.test_singapore_image_only_release tests.test_singapore_scheduled_production -v
       - name: Ensure no production or tracked shadow state was written
         shell: bash
         run: |
