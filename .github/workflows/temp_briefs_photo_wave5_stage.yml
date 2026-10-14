@@ -1,0 +1,71 @@
+name: Temporary Wave 5 Chan ministerial-context photographic staging
+on:
+  push:
+    branches: [editorial/briefs-photo-wave5-20261013]
+    paths:
+      - .github/workflows/temp_briefs_photo_wave5_stage.yml
+permissions:
+  contents: write
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pinned Pillow and unchanged publication requirements
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip install Pillow==11.3.0
+      - name: Verify public DVIDS JPEG, original photo provenance and licence notice
+        run: |
+          python scripts/stage_briefs_photo_wave5.py
+          python scripts/build_catalogue_media.py --check
+          python -m unittest tests.test_catalogue_media -v
+      - name: Render isolated 18-card catalogue and check no false Xiangshan representation
+        run: |
+          set -euo pipefail
+          python site/render.py --out "$RUNNER_TEMP/wave5-render"
+          python - "$RUNNER_TEMP/wave5-render" <<'PY'
+          import sys
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          root=Path(sys.argv[1])
+          dom=BeautifulSoup((root/"analysis.html").read_text(),"html.parser")
+          cards=dom.select("article.brief-card")
+          photos=[x for x in cards if x.get("data-media")=="photograph"]
+          assert len(cards)==18,len(cards)
+          assert len(photos)==10,len(photos)
+          no16=next(x for x in cards if x.select_one(".issue-no") and
+                    x.select_one(".issue-no").get_text(strip=True)=="No. 16")
+          img=no16.select_one("img")
+          assert img and "chan-paparo-mindef-jan2026" in img["src"]
+          assert (root/img["src"]).is_file()
+          cap=no16.get_text(" ",strip=True)
+          for term in ("Chan Chun Sing","January 2026","Dong Jun","not the September 2026 Xiangshan Forum",
+                       "does not imply or constitute DoW endorsement"):
+              assert term in cap,term
+          assert "Benjamin Yang and Dylan Tanzi" in (root/"briefs/what-is-being-built-in-laos.html").read_text()
+          print("Isolated render: 18 Briefs, ten photos, honest No16 caption/notice; No18 coauthors intact.")
+          PY
+      - name: Stage exactly seven source and output files with no publication
+        run: |
+          set -euo pipefail
+          cp "$RUNNER_TEMP/wave5-render/analysis.html" output/analysis.html
+          cp "$RUNNER_TEMP/wave5-render/assets/catalogue/media/no-16-chan-paparo-mindef-jan2026.jpg" output/assets/catalogue/media/no-16-chan-paparo-mindef-jan2026.jpg
+          git add -- site/assets/editorial/manifest.json site/assets/catalogue/admissions.json
+          git add -- site/assets/editorial/chan-paparo-mindef-jan2026.jpg
+          git add -- site/assets/editorial/derivatives/chan-paparo-mindef-jan2026-1600.jpg
+          git add -- site/assets/catalogue/media/no-16-chan-paparo-mindef-jan2026.jpg
+          git add -- output/analysis.html output/assets/catalogue/media/no-16-chan-paparo-mindef-jan2026.jpg
+          git diff --cached --name-only
+          test "$(git diff --cached --name-only | wc -l)" -eq 7
+          git diff --exit-code -- pla_watch.db
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+41898282@users.noreply.github.com"
+          git commit -m "Briefs: stage source-verified Chan portrait context for No16 without Xiangshan claim"
+          git push origin HEAD:editorial/briefs-photo-wave5-20261013
