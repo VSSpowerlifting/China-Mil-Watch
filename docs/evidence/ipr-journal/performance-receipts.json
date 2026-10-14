@@ -1,0 +1,1331 @@
+{
+  "assets": {
+    "briefs.css": {
+      "before_bytes": 16454,
+      "after_bytes": 21964,
+      "before_gzip": 4089,
+      "after_gzip": 5009
+    },
+    "shell.js": {
+      "before_bytes": 372,
+      "after_bytes": 621,
+      "before_gzip": 264,
+      "after_gzip": 357
+    }
+  },
+  "pages": [
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "before": {
+        "html_css_bytes": 82434,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 656519,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-05-10-auto-image-optimized.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 84420,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 659550,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-05-10-auto-image-optimized.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "before": {
+        "html_css_bytes": 84669,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 371482,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-05-16-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 86655,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 374513,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-05-16-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "before": {
+        "html_css_bytes": 82545,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 389968,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-05-23-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 84531,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 392999,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-05-23-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "before": {
+        "html_css_bytes": 88317,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 275435,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 90303,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 278466,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "before": {
+        "html_css_bytes": 88661,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 366724,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-06-06-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 90647,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 369755,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-06-06-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "before": {
+        "html_css_bytes": 87912,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 364512,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-06-13-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 89898,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 367543,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-06-13-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "before": {
+        "html_css_bytes": 83439,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 347519,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-06-20-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 85425,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 350550,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-06-20-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "before": {
+        "html_css_bytes": 87012,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 403223,
+        "assets": [
+          "assets/editorial/derivatives/liaoning-j15-recovery-duo-navy.jpg",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 88998,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 406254,
+        "assets": [
+          "assets/editorial/derivatives/liaoning-j15-recovery-duo-navy.jpg",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "before": {
+        "html_css_bytes": 85538,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 388292,
+        "assets": [
+          "assets/editorial/derivatives/scarborough-shoal-iss-duo-navy.jpg",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 87524,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 391323,
+        "assets": [
+          "assets/editorial/derivatives/scarborough-shoal-iss-duo-navy.jpg",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "before": {
+        "html_css_bytes": 85562,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 340826,
+        "assets": [
+          "assets/editorial/derivatives/jin-class-type-094-ssbn-duo-navy.jpg",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 87548,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 343857,
+        "assets": [
+          "assets/editorial/derivatives/jin-class-type-094-ssbn-duo-navy.jpg",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "before": {
+        "html_css_bytes": 91788,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 317947,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-07-18-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 93774,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 320978,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-07-18-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "before": {
+        "html_css_bytes": 92814,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 326819,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-08-01-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 94800,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 329850,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-08-01-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "before": {
+        "html_css_bytes": 91338,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 365044,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-08-08-veil.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 93324,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 368075,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "the-pla-watch/media/2026-08-08-veil.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "before": {
+        "html_css_bytes": 85421,
+        "js_bytes": 372,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 275435,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 87407,
+        "js_bytes": 621,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 278466,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "before": {
+        "html_css_bytes": 85096,
+        "js_bytes": 5322,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 1243926,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png",
+          "briefs/media/maritime-cooperation-2026-1200.webp",
+          "briefs/media/maritime-cooperation-2026-600.webp",
+          "briefs/media/maritime-cooperation-2026-source-image.jpg"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 90580,
+        "js_bytes": 5571,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 1246957,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png",
+          "briefs/media/maritime-cooperation-2026-1200.webp",
+          "briefs/media/maritime-cooperation-2026-600.webp",
+          "briefs/media/maritime-cooperation-2026-source-image.jpg"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "before": {
+        "html_css_bytes": 85263,
+        "js_bytes": 5322,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 275435,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 90747,
+        "js_bytes": 5571,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 278466,
+        "assets": [
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "before": {
+        "html_css_bytes": 86644,
+        "js_bytes": 5322,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 973176,
+        "assets": [
+          "assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
+          "assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp",
+          "assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 92128,
+        "js_bytes": 5571,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 976207,
+        "assets": [
+          "assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
+          "assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp",
+          "assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "before": {
+        "html_css_bytes": 83599,
+        "js_bytes": 5322,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 1556842,
+        "assets": [
+          "assets/editorial/derivatives/laos-vientiane-museum-plane-1600.jpg",
+          "assets/editorial/derivatives/laos-vientiane-museum-plane-1600.webp",
+          "assets/editorial/derivatives/laos-vientiane-museum-plane-800.webp",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      },
+      "after": {
+        "html_css_bytes": 89069,
+        "js_bytes": 5571,
+        "css": [
+          "briefs.css",
+          "fonts.css",
+          "styles.css",
+          "surfaces.css"
+        ],
+        "js": [
+          "citation.js",
+          "shell.js"
+        ],
+        "external": [],
+        "asset_bytes": 1559873,
+        "assets": [
+          "assets/editorial/derivatives/laos-vientiane-museum-plane-1600.jpg",
+          "assets/editorial/derivatives/laos-vientiane-museum-plane-1600.webp",
+          "assets/editorial/derivatives/laos-vientiane-museum-plane-800.webp",
+          "assets/fonts/instrument-serif-0.woff2",
+          "assets/fonts/instrument-serif-1.woff2",
+          "assets/fonts/inter-0.woff2",
+          "assets/fonts/inter-1.woff2",
+          "assets/fonts/source-serif-4-0.woff2",
+          "assets/fonts/source-serif-4-1.woff2",
+          "assets/fonts/source-serif-4-2.woff2",
+          "assets/identity/selected-ipr/ipr-accent-180.png",
+          "assets/identity/selected-ipr/ipr-accent-32.png",
+          "assets/identity/selected-ipr/ipr-navy-160.png",
+          "assets/identity/selected-ipr/ipr-navy-320.png",
+          "assets/material/chart-paper.png",
+          "assets/material/chart-shelf.svg",
+          "assets/material/coast-profile.svg",
+          "assets/material/contours-paper.svg",
+          "assets/material/navy-paper.png"
+        ],
+        "external_assets": []
+      }
+    }
+  ],
+  "maximum_html_css": 94800,
+  "maximum_js": 5571,
+  "external_dependencies": []
+}

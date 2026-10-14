@@ -1,0 +1,893 @@
+{
+  "base": "3c4b79ffbb121ee9681ad7ef7333c61474fcb30b",
+  "main": "0ff01ac9ef6d49dec88d89e62ee9c6a70107fcba",
+  "gh_pages_at_start": "5b11822585eb8c367d19ed60a607a98dbfe1b9e6",
+  "protected": [
+    {
+      "path": "pla_watch.db",
+      "baseline": "43d808baf73dcc7539f65cc272c06a1d10178509588d8078f938b7ac9ac93cf3",
+      "actual": "43d808baf73dcc7539f65cc272c06a1d10178509588d8078f938b7ac9ac93cf3",
+      "unchanged": true
+    },
+    {
+      "path": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.json",
+      "baseline": "5bdffde8b7a2915c48cdf48777052d31d9f444cf202c1de791bb02d7649e96f0",
+      "actual": "5bdffde8b7a2915c48cdf48777052d31d9f444cf202c1de791bb02d7649e96f0",
+      "unchanged": true
+    },
+    {
+      "path": "briefs/xiangshan-security-frames-defense-ties.json",
+      "baseline": "8413fea99a7306c6222721ab403b095c87ef931017e0bfb828284fb212329755",
+      "actual": "8413fea99a7306c6222721ab403b095c87ef931017e0bfb828284fb212329755",
+      "unchanged": true
+    },
+    {
+      "path": "briefs/what-is-being-built-in-laos.json",
+      "baseline": "f6df89548e65736222cf031e8a31b0888630c97b8a02685ad2dbb07c4b4f27d5",
+      "actual": "f6df89548e65736222cf031e8a31b0888630c97b8a02685ad2dbb07c4b4f27d5",
+      "unchanged": true
+    },
+    {
+      "path": "briefs/maritime-cooperation-2026.json",
+      "baseline": "3a758a46c65e718b502b2bfa8374375846bff9f30ba86acc6d6a8db40f79acd4",
+      "actual": "3a758a46c65e718b502b2bfa8374375846bff9f30ba86acc6d6a8db40f79acd4",
+      "unchanged": true
+    },
+    {
+      "path": "briefs/presentation/what-is-being-built-in-laos.json",
+      "baseline": "d62e44e0cf1d4996289c4accd2f086cd5801def32c515b8b95c1f9b8c2357318",
+      "actual": "d62e44e0cf1d4996289c4accd2f086cd5801def32c515b8b95c1f9b8c2357318",
+      "unchanged": true
+    },
+    {
+      "path": "briefs/media/maritime-cooperation-2026-source-image.json",
+      "baseline": "bded8c4e32a0375b427584e159fb7d0357713e84b5da0d9e366055215663db58",
+      "actual": "bded8c4e32a0375b427584e159fb7d0357713e84b5da0d9e366055215663db58",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-23.json",
+      "baseline": "8d1097ba8bd059960a3f5bd7c4ce9c1f847bea633b8bdcb179434c65a018f481",
+      "actual": "8d1097ba8bd059960a3f5bd7c4ce9c1f847bea633b8bdcb179434c65a018f481",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-08-01.json",
+      "baseline": "27ea7efd14b391864675e9a59437aa9369a08398f4752c40bb16aa4ca6046fe2",
+      "actual": "27ea7efd14b391864675e9a59437aa9369a08398f4752c40bb16aa4ca6046fe2",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-07-04.json",
+      "baseline": "602736a535d4b12b8269e9e560d1f7f432c02cf40aebee5567419677a29fdf23",
+      "actual": "602736a535d4b12b8269e9e560d1f7f432c02cf40aebee5567419677a29fdf23",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-13.json",
+      "baseline": "b5994720579711464dec51281060ccda2ab2c377940afc562561d9d7b2cbe2e8",
+      "actual": "b5994720579711464dec51281060ccda2ab2c377940afc562561d9d7b2cbe2e8",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-07-18.json",
+      "baseline": "960abd5ffc8a3e929af56afbef0a3e3251f95ff2db9aa893e0c9d1b5ed834b92",
+      "actual": "960abd5ffc8a3e929af56afbef0a3e3251f95ff2db9aa893e0c9d1b5ed834b92",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-09.json",
+      "baseline": "dfc4ea1dba216dbf24ffc65688484035f22a0e3b63818814d4678607328c7e2a",
+      "actual": "dfc4ea1dba216dbf24ffc65688484035f22a0e3b63818814d4678607328c7e2a",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-20.json",
+      "baseline": "67fc9ce93cbc2f9fbb5c9570363d7934d5037d3c1e126e09c7aa43d2f68facd0",
+      "actual": "67fc9ce93cbc2f9fbb5c9570363d7934d5037d3c1e126e09c7aa43d2f68facd0",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-30.json",
+      "baseline": "915e106c06e6164ef0aa07e1b60a7ba835c57268c0722ab67ccd4067822faec1",
+      "actual": "915e106c06e6164ef0aa07e1b60a7ba835c57268c0722ab67ccd4067822faec1",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-08-08.json",
+      "baseline": "5e8b37192f03eaeccd8edcdc4eae55071d75b676e8d28f5965ba510531369172",
+      "actual": "5e8b37192f03eaeccd8edcdc4eae55071d75b676e8d28f5965ba510531369172",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-07-11.json",
+      "baseline": "a1331531f22a849653e75d52b723f509f91dba8f817977897a833f6d028831dd",
+      "actual": "a1331531f22a849653e75d52b723f509f91dba8f817977897a833f6d028831dd",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-05-16.json",
+      "baseline": "49dd979a72f64a2197e4648d4dba12fb56a9a80e3b2fc60d5c983299d35dfb9b",
+      "actual": "49dd979a72f64a2197e4648d4dba12fb56a9a80e3b2fc60d5c983299d35dfb9b",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-06.json",
+      "baseline": "ae96bb0136ee5a886415f6c3775f850a0692776a76729c442da2ebc028465cad",
+      "actual": "ae96bb0136ee5a886415f6c3775f850a0692776a76729c442da2ebc028465cad",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-08-15.json",
+      "baseline": "abc90a088b7549c5d9a519f8b14387dab6fe61f4dd54a89255f8e0dceb00c22f",
+      "actual": "abc90a088b7549c5d9a519f8b14387dab6fe61f4dd54a89255f8e0dceb00c22f",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/posts/2026-06-27.json",
+      "baseline": "c073d5f53cdba3d24c72f34cb4ececbbd6062895388ab6fe058b1925ae12772b",
+      "actual": "c073d5f53cdba3d24c72f34cb4ececbbd6062895388ab6fe058b1925ae12772b",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/reading-profile.svg",
+      "baseline": "17a9df7baf3c9f759694a334c2555b27864822275cce97cb00da1d89d1b4055e",
+      "actual": "17a9df7baf3c9f759694a334c2555b27864822275cce97cb00da1d89d1b4055e",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/PROFILE_RECEIPT.json",
+      "baseline": "3cda19bdc8f8e868639df15673cf0bab8e53e7d832bf1b6d09585d1050d6da83",
+      "actual": "3cda19bdc8f8e868639df15673cf0bab8e53e7d832bf1b6d09585d1050d6da83",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/coast-profile.svg",
+      "baseline": "a7c94c95c1667a75e9bdb63555128b12b71e37e60f3910544243e4976417c58e",
+      "actual": "a7c94c95c1667a75e9bdb63555128b12b71e37e60f3910544243e4976417c58e",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/chart-shelf.svg",
+      "baseline": "adb199c75d25c7222aa432d223116a8a52b25664d67f408320077aa828859fa0",
+      "actual": "adb199c75d25c7222aa432d223116a8a52b25664d67f408320077aa828859fa0",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/ASSET_RECEIPT.json",
+      "baseline": "cc8d4541ed1026d24bde11d02a669c06b80376d2a28db052ff2a3c4d8f609130",
+      "actual": "cc8d4541ed1026d24bde11d02a669c06b80376d2a28db052ff2a3c4d8f609130",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/NAVY_RECEIPT.json",
+      "baseline": "86a063ff2cc5a74041811084393a252fc3942fe189367978c25c4894f16f9630",
+      "actual": "86a063ff2cc5a74041811084393a252fc3942fe189367978c25c4894f16f9630",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/contours-paper.svg",
+      "baseline": "d1ba66e45ddf74c9efaa7597ea8881358c2898c3f4076908909986f8de9bd568",
+      "actual": "d1ba66e45ddf74c9efaa7597ea8881358c2898c3f4076908909986f8de9bd568",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/chart-paper.png",
+      "baseline": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
+      "actual": "7011fdf20fe6955e1886d326f27c62d48f08af03f09a68b85562c70b69052daf",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/navy-paper.png",
+      "baseline": "6ad2d6aae126462f5917033bb7714a1af38802e4ef085cac352e4e81f3e065d4",
+      "actual": "6ad2d6aae126462f5917033bb7714a1af38802e4ef085cac352e4e81f3e065d4",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/material/contours-hero.svg",
+      "baseline": "9709749816d91d6b86cb8e70135dbb7d7c4c0d4150d4c31c3b437202e206e98c",
+      "actual": "9709749816d91d6b86cb8e70135dbb7d7c4c0d4150d4c31c3b437202e206e98c",
+      "unchanged": true
+    }
+  ],
+  "article_semantics": [
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "fields": {
+        ".brief-main": true,
+        ".brief-byline": true,
+        ".brief-hero figcaption": true,
+        "h1": true,
+        ".historical-provenance": true,
+        ".brief-meta": true
+      }
+    }
+  ],
+  "retained_media_fonts_feeds_sitemap": [
+    {
+      "path": "output/assets/editorial/chengdu-j20.jpg",
+      "baseline": "b5aafffb3963ad52f51b239d4f3866c58b6952502a664a4bdc9c9ecc0ad771a4",
+      "actual": "b5aafffb3963ad52f51b239d4f3866c58b6952502a664a4bdc9c9ecc0ad771a4",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/chengdu-j20-duo-paper.jpg",
+      "baseline": "d3007c9895a07c7cf5de4ae12993da43aa0bba31577932aed9ecc87c8de2fcc3",
+      "actual": "d3007c9895a07c7cf5de4ae12993da43aa0bba31577932aed9ecc87c8de2fcc3",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/jin-class-type-094-ssbn-duo-navy.jpg",
+      "baseline": "b48bc94d5075d798d5ac98bda1cad8ad3e5e14e10e4e231bf5e72c419820cd75",
+      "actual": "b48bc94d5075d798d5ac98bda1cad8ad3e5e14e10e4e231bf5e72c419820cd75",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/jin-class-type-094-ssbn-duo-paper.jpg",
+      "baseline": "a3d545ac2fc73ee2dad01001082742f15d205d97c08aa33d6a40508225263699",
+      "actual": "a3d545ac2fc73ee2dad01001082742f15d205d97c08aa33d6a40508225263699",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/laos-vientiane-museum-plane-1600.jpg",
+      "baseline": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14",
+      "actual": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/laos-vientiane-museum-plane-1600.webp",
+      "baseline": "85a18f136e892f8f3f2f43be9c2ba81de4ed257e3278946f513ba604c678adc6",
+      "actual": "85a18f136e892f8f3f2f43be9c2ba81de4ed257e3278946f513ba604c678adc6",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/laos-vientiane-museum-plane-800.webp",
+      "baseline": "2c273b5925d6eb291a14128a25e537f8e69c0ccd9dc00704d7fa9323c8f459f6",
+      "actual": "2c273b5925d6eb291a14128a25e537f8e69c0ccd9dc00704d7fa9323c8f459f6",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/liaoning-j15-recovery-duo-navy.jpg",
+      "baseline": "d117026d5e8e5a69d99ece9e2cc619f1136365d62cd662b5f2be4670f35c7f5f",
+      "actual": "d117026d5e8e5a69d99ece9e2cc619f1136365d62cd662b5f2be4670f35c7f5f",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/plan-destroyer-xian-dither-ink.png",
+      "baseline": "87568a28243df5eb40a0efca656d6766df26106e342c08acaff2ddb9f411b91f",
+      "actual": "87568a28243df5eb40a0efca656d6766df26106e342c08acaff2ddb9f411b91f",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/scarborough-shoal-iss-duo-navy.jpg",
+      "baseline": "f3d2ad4ecb715e7d57d13cc01f83dd7c5e78835a7aaa426f3924b5fe902fe244",
+      "actual": "f3d2ad4ecb715e7d57d13cc01f83dd7c5e78835a7aaa426f3924b5fe902fe244",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
+      "baseline": "9f7d4969b9aeb68c54e351217a16b3a72b0cde5c862c4db5adc8188159afd3e4",
+      "actual": "9f7d4969b9aeb68c54e351217a16b3a72b0cde5c862c4db5adc8188159afd3e4",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp",
+      "baseline": "eaa5e16b2ff6ea7c0ce0c7fc122d3097f720b00cdadb42e8df798c70c1c0025f",
+      "actual": "eaa5e16b2ff6ea7c0ce0c7fc122d3097f720b00cdadb42e8df798c70c1c0025f",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp",
+      "baseline": "76d3359dd571940fd439f42b3c62eedb5c0bcaf2a6967b60bb7479cc2b524d24",
+      "actual": "76d3359dd571940fd439f42b3c62eedb5c0bcaf2a6967b60bb7479cc2b524d24",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/veil-ocean.jpg",
+      "baseline": "19232d6e3d6cb85f97128bf562c4837bee11364223c9e2af2b48f48b181b1da3",
+      "actual": "19232d6e3d6cb85f97128bf562c4837bee11364223c9e2af2b48f48b181b1da3",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/veil-ocean.json",
+      "baseline": "b969aa1f0718b23ce9f9046045eb081fad464cb0a6850eb8ceeae16924356d18",
+      "actual": "b969aa1f0718b23ce9f9046045eb081fad464cb0a6850eb8ceeae16924356d18",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/derivatives/veil-ocean.webp",
+      "baseline": "5c5dae8e3aa4543b68985d5abf2417a51458e483140abe5c20164a41fd515c5a",
+      "actual": "5c5dae8e3aa4543b68985d5abf2417a51458e483140abe5c20164a41fd515c5a",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/jin-class-type-094-ssbn.jpg",
+      "baseline": "9bb9328ae0bf0eef95bbb2d62a4fee9a2ea27352c12170bab974aed4a769ce4d",
+      "actual": "9bb9328ae0bf0eef95bbb2d62a4fee9a2ea27352c12170bab974aed4a769ce4d",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/liaoning-j15-recovery.jpg",
+      "baseline": "a79ff8f51632f79379aa1cb672cb71eab7489fec858c7841339fdcaa3e627827",
+      "actual": "a79ff8f51632f79379aa1cb672cb71eab7489fec858c7841339fdcaa3e627827",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/plan-destroyer-xian.jpg",
+      "baseline": "ed33a5b0ce7da5473019a23a52ac506d8303d5d3bc76591fe3445c8034ad6cde",
+      "actual": "ed33a5b0ce7da5473019a23a52ac506d8303d5d3bc76591fe3445c8034ad6cde",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/reagan-jmsdf-2015.jpg",
+      "baseline": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+      "actual": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+      "unchanged": true
+    },
+    {
+      "path": "output/assets/editorial/scarborough-shoal-iss.jpg",
+      "baseline": "c693b9f1504988f6326dbc474ec584435b4475f58d65f81e37624cafa47c61cb",
+      "actual": "c693b9f1504988f6326dbc474ec584435b4475f58d65f81e37624cafa47c61cb",
+      "unchanged": true
+    },
+    {
+      "path": "output/briefs/feed.xml",
+      "baseline": "eb8a8ea2e6592c310ec5935b30675cb5b3a4d1af590be69b00667bdae1c33a6c",
+      "actual": "eb8a8ea2e6592c310ec5935b30675cb5b3a4d1af590be69b00667bdae1c33a6c",
+      "unchanged": true
+    },
+    {
+      "path": "output/sitemap.xml",
+      "baseline": "f297ea875e3f9b875737daea029e854fe162ba08cf5d1821acbf93e4f4bf7c9e",
+      "actual": "f297ea875e3f9b875737daea029e854fe162ba08cf5d1821acbf93e4f4bf7c9e",
+      "unchanged": true
+    },
+    {
+      "path": "output/the-pla-watch/feed.xml",
+      "baseline": "292aa49640724c671af5895e13eb710504e2eb16fd4f2d2ff08e9698c90d0b2c",
+      "actual": "292aa49640724c671af5895e13eb710504e2eb16fd4f2d2ff08e9698c90d0b2c",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/ccg-shadowing-uscg-stratton-2019.jpg",
+      "baseline": "7403262fc510ca1b2f0bbfd9bb562681e657c6e81630c70d93f1cae0043903fe",
+      "actual": "7403262fc510ca1b2f0bbfd9bb562681e657c6e81630c70d93f1cae0043903fe",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/chan-paparo-mindef-jan2026.jpg",
+      "baseline": "a63c4c42c813dcdb474881af4bd381a8465f879861dac644cd329890b204f2e5",
+      "actual": "a63c4c42c813dcdb474881af4bd381a8465f879861dac644cd329890b204f2e5",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/chengdu-j20.jpg",
+      "baseline": "b5aafffb3963ad52f51b239d4f3866c58b6952502a664a4bdc9c9ecc0ad771a4",
+      "actual": "b5aafffb3963ad52f51b239d4f3866c58b6952502a664a4bdc9c9ecc0ad771a4",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/china-russia-iran-maritime-belt-2023.jpg",
+      "baseline": "dd825b1f6b3e254293a4cec784b3777a14a6a31d65184d1c37c5ab8677dcab01",
+      "actual": "dd825b1f6b3e254293a4cec784b3777a14a6a31d65184d1c37c5ab8677dcab01",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/chinese-coast-guard-2301-2018.jpg",
+      "baseline": "267a5d378c87d4ce14a5564ec04f476ed0bba99964594639a5c90531e5cbb5d5",
+      "actual": "267a5d378c87d4ce14a5564ec04f476ed0bba99964594639a5c90531e5cbb5d5",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/ccg-shadowing-uscg-stratton-2019-1600.jpg",
+      "baseline": "74ab5505f609e7f8cffba43f6f57788429b38dc5009e7e142d62ecf7d9f9aa2f",
+      "actual": "74ab5505f609e7f8cffba43f6f57788429b38dc5009e7e142d62ecf7d9f9aa2f",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/chan-paparo-mindef-jan2026-1600.jpg",
+      "baseline": "748dbf767a88ec6b7d50070f76f5f59a4cafc8f750af61d5deeb41581e5d24d1",
+      "actual": "748dbf767a88ec6b7d50070f76f5f59a4cafc8f750af61d5deeb41581e5d24d1",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/chengdu-j20-duo-paper.jpg",
+      "baseline": "d3007c9895a07c7cf5de4ae12993da43aa0bba31577932aed9ecc87c8de2fcc3",
+      "actual": "d3007c9895a07c7cf5de4ae12993da43aa0bba31577932aed9ecc87c8de2fcc3",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/china-russia-iran-maritime-belt-2023-1600.jpg",
+      "baseline": "9e07141cabd1551fbdb04ec2651fbe8b065ca43b2bf859f1abb329880453c96e",
+      "actual": "9e07141cabd1551fbdb04ec2651fbe8b065ca43b2bf859f1abb329880453c96e",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/chinese-coast-guard-2301-2018-1600.jpg",
+      "baseline": "e6ed9ce7a0158319982fa3b70f2010573ed77741ec7cbd7070da1462d4de2ae1",
+      "actual": "e6ed9ce7a0158319982fa3b70f2010573ed77741ec7cbd7070da1462d4de2ae1",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/jiangnan-shipyard-fujian-context-2022-1600.jpg",
+      "baseline": "e0f4f879d795c6428d8303a67e52ff71375e4a85a1e7f4503d30ae27f84a7c0a",
+      "actual": "e0f4f879d795c6428d8303a67e52ff71375e4a85a1e7f4503d30ae27f84a7c0a",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/jin-class-type-094-ssbn-duo-navy.jpg",
+      "baseline": "b48bc94d5075d798d5ac98bda1cad8ad3e5e14e10e4e231bf5e72c419820cd75",
+      "actual": "b48bc94d5075d798d5ac98bda1cad8ad3e5e14e10e4e231bf5e72c419820cd75",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/jin-class-type-094-ssbn-duo-paper.jpg",
+      "baseline": "a3d545ac2fc73ee2dad01001082742f15d205d97c08aa33d6a40508225263699",
+      "actual": "a3d545ac2fc73ee2dad01001082742f15d205d97c08aa33d6a40508225263699",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/laos-vientiane-museum-plane-1600.jpg",
+      "baseline": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14",
+      "actual": "aaecf6a09d98f45359bbb7909a9859eef0e5443c952166e0795f7c23f434df14",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/laos-vientiane-museum-plane-1600.webp",
+      "baseline": "85a18f136e892f8f3f2f43be9c2ba81de4ed257e3278946f513ba604c678adc6",
+      "actual": "85a18f136e892f8f3f2f43be9c2ba81de4ed257e3278946f513ba604c678adc6",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/laos-vientiane-museum-plane-800.webp",
+      "baseline": "2c273b5925d6eb291a14128a25e537f8e69c0ccd9dc00704d7fa9323c8f459f6",
+      "actual": "2c273b5925d6eb291a14128a25e537f8e69c0ccd9dc00704d7fa9323c8f459f6",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/li-zuocheng-cmc-beijing-2019-1600.jpg",
+      "baseline": "cf0514483c1628a4a4d39db9e7e59afd77943c17dbab5ba79123a7b397724b54",
+      "actual": "cf0514483c1628a4a4d39db9e7e59afd77943c17dbab5ba79123a7b397724b54",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/liaoning-j15-may2022-1600.jpg",
+      "baseline": "2a5d51283a96d18f660d5ffa00a65d632924d26e50d3334a60ee3c27a72fa388",
+      "actual": "2a5d51283a96d18f660d5ffa00a65d632924d26e50d3334a60ee3c27a72fa388",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/liaoning-j15-recovery-duo-navy.jpg",
+      "baseline": "d117026d5e8e5a69d99ece9e2cc619f1136365d62cd662b5f2be4670f35c7f5f",
+      "actual": "d117026d5e8e5a69d99ece9e2cc619f1136365d62cd662b5f2be4670f35c7f5f",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/pla-disaster-exchange-hainan-2015-1600.jpg",
+      "baseline": "a9fc64293684c4bb92204d36a05414d3e543af82b38b3fa1f06f85a1b2197668",
+      "actual": "a9fc64293684c4bb92204d36a05414d3e543af82b38b3fa1f06f85a1b2197668",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/plan-destroyer-xian-dither-ink.png",
+      "baseline": "87568a28243df5eb40a0efca656d6766df26106e342c08acaff2ddb9f411b91f",
+      "actual": "87568a28243df5eb40a0efca656d6766df26106e342c08acaff2ddb9f411b91f",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/rimpac-china-indonesia-2016-1600.jpg",
+      "baseline": "94b5ce104372199aa1971f4099ef554fda6c55e896e3d4c11bda281ed1f526b8",
+      "actual": "94b5ce104372199aa1971f4099ef554fda6c55e896e3d4c11bda281ed1f526b8",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/rss-steadfast-pearl-harbor-2026-1600.jpg",
+      "baseline": "60738ff434c0c87fa6083db9a7f357a7af265efde512088fa21be2e7a32c6db0",
+      "actual": "60738ff434c0c87fa6083db9a7f357a7af265efde512088fa21be2e7a32c6db0",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/scarborough-shoal-iss-duo-navy.jpg",
+      "baseline": "f3d2ad4ecb715e7d57d13cc01f83dd7c5e78835a7aaa426f3924b5fe902fe244",
+      "actual": "f3d2ad4ecb715e7d57d13cc01f83dd7c5e78835a7aaa426f3924b5fe902fe244",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/scarborough-shoal-nasa-iss77330-1600.jpg",
+      "baseline": "f4665ab6d1630923f0842aac1c47d2734974ce333913d19c1ad419d28c71fae6",
+      "actual": "f4665ab6d1630923f0842aac1c47d2734974ce333913d19c1ad419d28c71fae6",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.jpg",
+      "baseline": "9f7d4969b9aeb68c54e351217a16b3a72b0cde5c862c4db5adc8188159afd3e4",
+      "actual": "9f7d4969b9aeb68c54e351217a16b3a72b0cde5c862c4db5adc8188159afd3e4",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/trident-resolve-basarnas-drone-1600.webp",
+      "baseline": "eaa5e16b2ff6ea7c0ce0c7fc122d3097f720b00cdadb42e8df798c70c1c0025f",
+      "actual": "eaa5e16b2ff6ea7c0ce0c7fc122d3097f720b00cdadb42e8df798c70c1c0025f",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/trident-resolve-basarnas-drone-800.webp",
+      "baseline": "76d3359dd571940fd439f42b3c62eedb5c0bcaf2a6967b60bb7479cc2b524d24",
+      "actual": "76d3359dd571940fd439f42b3c62eedb5c0bcaf2a6967b60bb7479cc2b524d24",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/veil-ocean.jpg",
+      "baseline": "19232d6e3d6cb85f97128bf562c4837bee11364223c9e2af2b48f48b181b1da3",
+      "actual": "19232d6e3d6cb85f97128bf562c4837bee11364223c9e2af2b48f48b181b1da3",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/veil-ocean.json",
+      "baseline": "b969aa1f0718b23ce9f9046045eb081fad464cb0a6850eb8ceeae16924356d18",
+      "actual": "b969aa1f0718b23ce9f9046045eb081fad464cb0a6850eb8ceeae16924356d18",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/veil-ocean.webp",
+      "baseline": "5c5dae8e3aa4543b68985d5abf2417a51458e483140abe5c20164a41fd515c5a",
+      "actual": "5c5dae8e3aa4543b68985d5abf2417a51458e483140abe5c20164a41fd515c5a",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/derivatives/wei-fenghe-mattis-official-usarmy-2018-1600.jpg",
+      "baseline": "cd535be12ca4906b02ea2984ca81ddf463ae9cca7c42eb086d3fc17a9aeba238",
+      "actual": "cd535be12ca4906b02ea2984ca81ddf463ae9cca7c42eb086d3fc17a9aeba238",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/jiangnan-shipyard-fujian-context-2022.jpg",
+      "baseline": "5b9242afb32f6ab6569f47a20f3aa6b926d8d73bccc861fe53d297a3a6219a9e",
+      "actual": "5b9242afb32f6ab6569f47a20f3aa6b926d8d73bccc861fe53d297a3a6219a9e",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/jin-class-type-094-ssbn.jpg",
+      "baseline": "9bb9328ae0bf0eef95bbb2d62a4fee9a2ea27352c12170bab974aed4a769ce4d",
+      "actual": "9bb9328ae0bf0eef95bbb2d62a4fee9a2ea27352c12170bab974aed4a769ce4d",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/laos-vientiane-museum-plane.jpg",
+      "baseline": "dfafcea08529ac3a890645aa5cce6bbea830e768a9cbbf924a0cc4ef300bbd09",
+      "actual": "dfafcea08529ac3a890645aa5cce6bbea830e768a9cbbf924a0cc4ef300bbd09",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/li-zuocheng-cmc-beijing-2019.jpg",
+      "baseline": "9e1b38f56b696e07e4020f1ec0832255b9b38e0a123ed43c038d82cce6e22c23",
+      "actual": "9e1b38f56b696e07e4020f1ec0832255b9b38e0a123ed43c038d82cce6e22c23",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/liaoning-j15-may2022.jpg",
+      "baseline": "4b3cbc5a6efb1d05496f4cc7fd10bfa0478dae3c83370346fb93a1ecd08501ac",
+      "actual": "4b3cbc5a6efb1d05496f4cc7fd10bfa0478dae3c83370346fb93a1ecd08501ac",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/liaoning-j15-recovery.jpg",
+      "baseline": "a79ff8f51632f79379aa1cb672cb71eab7489fec858c7841339fdcaa3e627827",
+      "actual": "a79ff8f51632f79379aa1cb672cb71eab7489fec858c7841339fdcaa3e627827",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/manifest.json",
+      "baseline": "fd6cbca0fdde90de4750b347964c3c54851d0fe95392009151c0179ea0e325b0",
+      "actual": "fd6cbca0fdde90de4750b347964c3c54851d0fe95392009151c0179ea0e325b0",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/pla-disaster-exchange-hainan-2015.jpg",
+      "baseline": "39c458e179c44d244c190874be3fcfbba84860a2acdf8b4dacae1730882d7b6b",
+      "actual": "39c458e179c44d244c190874be3fcfbba84860a2acdf8b4dacae1730882d7b6b",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/plan-destroyer-xian.jpg",
+      "baseline": "ed33a5b0ce7da5473019a23a52ac506d8303d5d3bc76591fe3445c8034ad6cde",
+      "actual": "ed33a5b0ce7da5473019a23a52ac506d8303d5d3bc76591fe3445c8034ad6cde",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/reagan-jmsdf-2015.jpg",
+      "baseline": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+      "actual": "2098aac8a9d9d9fd35dfbb9b9bcb89fbb12b5102879db0283ed4919b6dfeac18",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/rimpac-china-indonesia-2016.jpg",
+      "baseline": "e56edf6e871af6ecfcc33a4540a5d1fbefe47e0092c72561866a5c7770fb56e6",
+      "actual": "e56edf6e871af6ecfcc33a4540a5d1fbefe47e0092c72561866a5c7770fb56e6",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/rss-steadfast-pearl-harbor-2026.jpg",
+      "baseline": "fd25b683f4ffc62ba4165801cb5202f5f2ff790882b6c1571d464e05288a6a40",
+      "actual": "fd25b683f4ffc62ba4165801cb5202f5f2ff790882b6c1571d464e05288a6a40",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/scarborough-shoal-iss.jpg",
+      "baseline": "c693b9f1504988f6326dbc474ec584435b4475f58d65f81e37624cafa47c61cb",
+      "actual": "c693b9f1504988f6326dbc474ec584435b4475f58d65f81e37624cafa47c61cb",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/scarborough-shoal-nasa-iss77330.jpg",
+      "baseline": "10cd441481589b04461408748c614f20fd8c11c2af6b5428717c45ab273ea6be",
+      "actual": "10cd441481589b04461408748c614f20fd8c11c2af6b5428717c45ab273ea6be",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/trident-resolve-basarnas-drone.jpg",
+      "baseline": "6e54dcd6a7e261d60359680ffc9a0fa8029399ae111421f79c7481c608a0b118",
+      "actual": "6e54dcd6a7e261d60359680ffc9a0fa8029399ae111421f79c7481c608a0b118",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/editorial/wei-fenghe-mattis-official-usarmy-2018.jpg",
+      "baseline": "31f65b10bd45ae2ba70e09019f8f8164367ec1ddc7f03fb111b988ac35c07a51",
+      "actual": "31f65b10bd45ae2ba70e09019f8f8164367ec1ddc7f03fb111b988ac35c07a51",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/DELIVERY.json",
+      "baseline": "0b8ce804d24d733d3c69d14bc9852abfc6197312bdf9ee86ff2de622b559088c",
+      "actual": "0b8ce804d24d733d3c69d14bc9852abfc6197312bdf9ee86ff2de622b559088c",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/instrument-serif-0.woff2",
+      "baseline": "811785decaf56e311781916cc72e3cf91829584a1293d0069dab156ef9478a43",
+      "actual": "811785decaf56e311781916cc72e3cf91829584a1293d0069dab156ef9478a43",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/instrument-serif-1.woff2",
+      "baseline": "e03c909ab35121cf46b8f74c25c85cfdff13f7807d46804f219cd72aa761c625",
+      "actual": "e03c909ab35121cf46b8f74c25c85cfdff13f7807d46804f219cd72aa761c625",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/instrument-serif-OFL.txt",
+      "baseline": "129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521",
+      "actual": "129ed7618959716959f2941fdd5b49e0ad6e6c1d78726761786a00253d865521",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/inter-0.woff2",
+      "baseline": "0be16a04e44b97626052f756b813d793ac11a16e0338112a05f58aa16744c174",
+      "actual": "0be16a04e44b97626052f756b813d793ac11a16e0338112a05f58aa16744c174",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/inter-1.woff2",
+      "baseline": "290aba95a6ff4898d6a2ec8fad4eee93a63da3f9c970f0656a4d69c707db0d68",
+      "actual": "290aba95a6ff4898d6a2ec8fad4eee93a63da3f9c970f0656a4d69c707db0d68",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/inter-OFL.txt",
+      "baseline": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57",
+      "actual": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/source-serif-4-0.woff2",
+      "baseline": "65ca5bcb1bab31ec0ab3480900c766719feee718c0fdaf4f17bf2ecc75bc1d79",
+      "actual": "65ca5bcb1bab31ec0ab3480900c766719feee718c0fdaf4f17bf2ecc75bc1d79",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/source-serif-4-1.woff2",
+      "baseline": "f6d630edced82e888e50734eebe6d9db0c0ddc82594ff7354ea9ab63561b20ee",
+      "actual": "f6d630edced82e888e50734eebe6d9db0c0ddc82594ff7354ea9ab63561b20ee",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/source-serif-4-2.woff2",
+      "baseline": "0a882e0c33154c91aea9a8317265d1efb1c56f5449134bdcfd5db5fbba683085",
+      "actual": "0a882e0c33154c91aea9a8317265d1efb1c56f5449134bdcfd5db5fbba683085",
+      "unchanged": true
+    },
+    {
+      "path": "site/assets/fonts/source-serif-4-OFL.txt",
+      "baseline": "5f94c3fd3a23131a417ab5a0c8452de57e70c3cfb9f604d88241f7065ebf9fd9",
+      "actual": "5f94c3fd3a23131a417ab5a0c8452de57e70c3cfb9f604d88241f7065ebf9fd9",
+      "unchanged": true
+    }
+  ]
+}
