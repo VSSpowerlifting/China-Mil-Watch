@@ -28,10 +28,11 @@ from core.desk_registry import load_registry                  # noqa: E402
 ADMISSIONS = REPO_ROOT / "site/assets/catalogue/admissions.json"
 MANIFEST = REPO_ROOT / "site/assets/editorial/manifest.json"
 MEDIA = REPO_ROOT / "site/assets/catalogue/media"
-PHOTO_ISSUES = {6, 8, 9, 14, 17, 18}
+PHOTO_ISSUES = {6, 7, 8, 9, 13, 14, 17, 18}
 #: Where each admitted card's source page may be. No. 17 is the paired DVIDS
 #: cover (treatment B, owner-selected 2026-10-12); the others are Commons files.
-SOURCE_HOSTS = {6: "https://commons.wikimedia.org/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
+SOURCE_HOSTS = {6: "https://commons.wikimedia.org/", 7: "https://www.dvidshub.net/", 8: "https://commons.wikimedia.org/", 9: "https://commons.wikimedia.org/",
+                13: "https://commons.wikimedia.org/",
                 14: "https://commons.wikimedia.org/",
                 17: "https://www.dvidshub.net/image/",
                 18: "https://commons.wikimedia.org/"}
@@ -286,6 +287,24 @@ class CommittedRecordTests(unittest.TestCase):
         self.assertEqual(fourteen["notice"], required_notice({"source_label": "DVIDS"}))
         self.assertEqual(self.audit[[a["issue"] for a in self.audit].index(6)]["kind"], "photograph")
         self.assertEqual(self.audit[[a["issue"] for a in self.audit].index(14)]["kind"], "photograph")
+
+    def test_wave3_2015_nasa_and_2019_uscg_are_explicit_historical_context(self):
+        by_issue = {e["issue"]: e for e in self.record["entries"]}
+        ccg, shoal, previous = by_issue[7], by_issue[13], by_issue[9]
+        self.assertNotEqual(shoal["source_page"], previous["source_page"])
+        self.assertNotEqual(self.manifest[shoal["source_manifest_id"]]["sha256"],
+                            self.manifest[previous["source_manifest_id"]].get("sha256"))
+        self.assertIn("2015", shoal["caption"])
+        self.assertIn("2026", shoal["caption"])
+        self.assertIn("2019", ccg["caption"])
+        self.assertIn("2026", ccg["caption"])
+        self.assertIn("South China Sea", ccg["caption"])
+        self.assertIn("east of Taiwan", ccg["caption"])
+        from core.source_terms import required_notice
+        self.assertEqual(ccg["notice"], required_notice(ccg))
+        self.assertEqual(shoal.get("notice", ""), "")
+        by_audit = {a["issue"]: a for a in self.audit}
+        self.assertTrue(all(by_audit[i]["kind"] == "photograph" for i in (7, 13)))
 
     def test_every_plate_names_its_reason(self):
         for a in self.audit:
