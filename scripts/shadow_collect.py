@@ -118,6 +118,9 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         "inserted": 0, "duplicates": 0, "filtered": 0,
         "fetch_failures": 0, "extraction_failures": 0,
         "access_failures": 0,
+        # Bounded source URL + stage diagnostics, never response content.
+        # The actual selected source count remains the authoritative total.
+        "failure_log": [],
         "content_hashes": [],
         "state_sha256_before": before_hash,
         "state_sha256_after": None,
@@ -159,17 +162,28 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         capture = adapter.fetch(ref)
         if capture.status == st.AUTH_FAILURE:
             entry["access_failures"] += 1
+            if len(entry["failure_log"]) < 10:
+                entry["failure_log"].append({
+                    "url": ref.url, "stage": "fetch", "status": st.AUTH_FAILURE})
             continue
         if not capture.ok:
             # A document that could not be retrieved is not a document that
             # failed to parse. Conflating them would hide a source going dark
             # behind a number that reads like a parser bug.
             entry["fetch_failures"] += 1
+            if len(entry["failure_log"]) < 10:
+                entry["failure_log"].append({
+                    "url": ref.url, "stage": "fetch", "status": capture.status})
             continue
         entry["retrieved"] += 1
         result = adapter.extract(capture)
         if result.status != st.OK or not result.documents:
             entry["extraction_failures"] += 1
+            if len(entry["failure_log"]) < 10:
+                entry["failure_log"].append({
+                    "url": ref.url, "stage": "extract",
+                    "status": result.status if result.status != st.OK
+                              else st.EXTRACTION_FAILURE})
             continue
         for doc in result.documents:
             row = conn.execute("SELECT 1 FROM shadow_records WHERE url = ?",
