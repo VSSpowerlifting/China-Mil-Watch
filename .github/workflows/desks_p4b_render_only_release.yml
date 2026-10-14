@@ -3,7 +3,7 @@ name: Desks Phase 4B — guarded Source Atlas release
 on:
   pull_request:
     branches: [main, feat/desks-source-atlas-20261013]
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
     paths:
       - '.github/workflows/desks_p4b_render_only_release.yml'
       - 'scripts/stage_desks_p4b_output.py'
@@ -33,6 +33,7 @@ on:
 # In the release job it ALSO acquires the existing Pages-deploy lock so a
 # simultaneous output-only deploy cannot overwrite the sparse overlay.
 # PR contract checks receive a distinct per-PR concurrency group.
+# The 'edited' event reruns screenshots when a stacked PR changes base.
 concurrency:
   group: ${{ github.event_name == 'workflow_dispatch' && 'daily-update' || format('desks-p4b-pr-{0}', github.event.pull_request.number) }}
   cancel-in-progress: false
