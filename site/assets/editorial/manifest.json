@@ -375,5 +375,81 @@
     "built_with": {
       "pillow": "11.3.0"
     }
+  },
+  {
+    "id": "rimpac-china-indonesia-2016",
+    "file": "rimpac-china-indonesia-2016.jpg",
+    "width": 2846,
+    "height": 1897,
+    "alt": "Chinese and Indonesian Navy warships among four vessels in formation at RIMPAC in the Pacific Ocean in July 2016.",
+    "caption": "Chinese and Indonesian naval vessels sail in a four-ship formation at RIMPAC 2016. Historical photograph from July 2016, not the 2026 China–Indonesia exercise east of Taiwan.",
+    "date_note": "Photographed 13 July 2016, ten years before this Brief's reporting week.",
+    "creator": "U.S. Navy / Petty Officer 1st Class Jason Noble",
+    "license": "Public domain",
+    "license_url": "",
+    "credit": "U.S. Navy / Petty Officer 1st Class Jason Noble · Public domain · via Wikimedia Commons",
+    "source_page": "https://commons.wikimedia.org/wiki/File:RIMPAC_CTF_175_maneuvering_drills_160713-N-OL837-175.jpg",
+    "source_label": "Wikimedia Commons",
+    "depicts": "context",
+    "notice": "The appearance of U.S. Department of War (DoW) visual information does not imply or constitute DoW endorsement.",
+    "sha256": "e56edf6e871af6ecfcc33a4540a5d1fbefe47e0092c72561866a5c7770fb56e6",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/2/29/RIMPAC_CTF_175_maneuvering_drills_160713-N-OL837-175.jpg",
+    "license_basis": "Verified Commons original SHA-1 a940d524243faa619a04a86007858dbe27a482d4; issuing authority in linked source; image license checked 2026-10-13",
+    "origin_reference": "https://www.dvidshub.net/image/2736121/rimpac-ctf-175-maneuvering-drills",
+    "note": "2016 China–Indonesia multinational naval context, not a depiction of the August 2026 events; includes a French ship as well.",
+    "focal": "50% 50%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/rimpac-china-indonesia-2016-1600.jpg",
+        "width": 1600,
+        "height": 1066,
+        "sha256": "94b5ce104372199aa1971f4099ef554fda6c55e896e3d4c11bda281ed1f526b8"
+      }
+    ]
+  },
+  {
+    "id": "liaoning-j15-may2022",
+    "file": "liaoning-j15-may2022.jpg",
+    "width": 2072,
+    "height": 1240,
+    "alt": "The aircraft carrier Liaoning photographed from the side at sea, with a J-15 fighter approaching to land.",
+    "caption": "The Liaoning carrier and a J-15 during Japanese Ministry of Defense observation in May 2022. Historical carrier context, not the June 2026 operation described in this Brief.",
+    "date_note": "Photographed 4 May 2022, not during the June 2026 reporting week.",
+    "creator": "Japan Ministry of Defense, Joint Staff",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "credit": "Japan Ministry of Defense, Joint Staff · CC BY 4.0 · via Wikimedia Commons",
+    "source_page": "https://commons.wikimedia.org/wiki/File:A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_(CV-16)_20220504.jpg",
+    "source_label": "Wikimedia Commons",
+    "depicts": "context",
+    "notice": "",
+    "sha256": "c900f21489f85f9f6d58476afcf0520aa71c9089edc66bb5365971bf3c300185",
+    "original_url": "https://upload.wikimedia.org/wikipedia/commons/d/d1/A_PLAN_Shenyang_J-15_carrier-based_fighter_aircraft_is_preparing_to_land_on_Chinese_aircraft_carrier_PLANS_Liaoning_%28CV-16%29_20220504.jpg",
+    "license_basis": "Verified Commons original SHA-1 36ed8a492fda1f2b38f40926ae0d049fa68dbfa4; issuing authority in linked source; image license checked 2026-10-13",
+    "origin_reference": "https://www.mod.go.jp/js/Press/press2022/press_pdf/p20220504_01.pdf",
+    "note": "Liaoning-specific historical context; independently different from issue No. 8's existing J-15 photograph.",
+    "focal": "50% 50%",
+    "match": {
+      "article_urls": [],
+      "categories": [],
+      "threads": [],
+      "editions": [],
+      "routes": []
+    },
+    "derivatives": [
+      {
+        "file": "derivatives/liaoning-j15-may2022-1600.jpg",
+        "width": 1600,
+        "height": 958,
+        "sha256": "26619cd3440c122efde819a5ad94e1239b97f84dc5d692604775ad2b77bc4cec"
+      }
+    ]
   }
 ]
