@@ -94,7 +94,6 @@
 .home-selected h3 a,.home-selected-original{color:var(--band-ink)}
 .home-selected>.meta{color:var(--band-muted)}
 .home-selected a{color:var(--focus-band)}
-.home-selected .evidence--model{color:var(--signal-band,#e6ad91)}
 .home-selected a:focus-visible{outline-color:var(--focus-band)}
 .home-coast-band{isolation:isolate;background:var(--band) url('assets/material/navy-paper.png');border-radius:10% 0 0 0;padding-top:110px}
 .home-coast-band::before{content:'';position:absolute;inset:0 0 auto;height:96px;background:url('assets/material/chart-shelf.svg') no-repeat center 50%/max(1440px,100%) auto;pointer-events:none}
@@ -136,7 +135,7 @@
    offset under-plate (no shadow), so each reads as a sheet laid on the band. */
 .home-coast-inner{gap:64px}
 .home-coast-inner>:is(.home-latest-analysis,.home-analysis-second){position:relative;align-self:stretch;padding:38px 40px 36px;background:linear-gradient(#ffffff0e,#ffffff0e),var(--band) url('assets/material/navy-paper.png');border:1px solid #ffffff26}
-.home-latest-analysis.rl-analysis{border-top:3px solid var(--crimson)}
+.home-latest-analysis.rl-analysis{border-top:3px solid var(--editorial-on-dark)}
 .home-coast-inner>.home-analysis-second{align-self:center;border-top:3px solid #ffffff4d}
 .home-coast-inner>:is(.home-latest-analysis,.home-analysis-second)::before{content:'';position:absolute;inset:10px -10px -10px 10px;z-index:-1;background:#081a20;border:1px solid #ffffff14;pointer-events:none}
 .home-analysis-geo{display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:22px;align-items:end;margin:32px 0 0;padding-top:24px;border-top:1px solid #ffffff25}
