@@ -27,6 +27,8 @@ def inspect_offer(*, week_ending, as_of, directory):
     rows = load_editorial_evidence(week_ending, as_of, directory=directory)
     japan_ids = frozenset(x["id"] for x in rows if x["desk"] == "japan")
     vietnam_ids = frozenset(x["id"] for x in rows if x["desk"] == "vietnam")
+    indonesia_ids = frozenset(x["id"] for x in rows if x["desk"] == "indonesia")
+    philippines_ids = frozenset(x["id"] for x in rows if x["desk"] == "philippines")
     if week_ending == FIRST_SATURDAY:
         if japan_ids != FIRST_JAPAN_IDS:
             raise JapanOfferRefused(
@@ -42,6 +44,8 @@ def inspect_offer(*, week_ending, as_of, directory):
         "week_ending": week_ending,
         "japan_research_offered": len(japan_ids),
         "vietnam_research_offered": len(vietnam_ids),
+        "indonesia_research_offered": len(indonesia_ids),
+        "philippines_research_offered": len(philippines_ids),
         "japan_research_state": (
             "exact_first_pilot_three_candidate_roster_not_approved"
             if week_ending == FIRST_SATURDAY else
@@ -49,7 +53,7 @@ def inspect_offer(*, week_ending, as_of, directory):
             if not japan_ids else
             "japan_candidates_available_unapproved"
         ),
-        "all_offered_source_ids": sorted(japan_ids | vietnam_ids),
+        "all_offered_source_ids": sorted(japan_ids | vietnam_ids | indonesia_ids | philippines_ids),
         "model_was_called": False,
         "archived_japan_original_pdf_fidelity_reviewed": False,
         "source_use_or_editorial_approved": False,

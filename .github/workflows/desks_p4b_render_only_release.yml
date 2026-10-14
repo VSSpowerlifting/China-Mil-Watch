@@ -1,0 +1,238 @@
+name: Desks Phase 4B — guarded Source Atlas release
+
+on:
+  pull_request:
+    branches: [main, feat/desks-source-atlas-20261013]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+    paths:
+      - '.github/workflows/desks_p4b_render_only_release.yml'
+      - 'scripts/stage_desks_p4b_output.py'
+      - 'scripts/guard_desks_p4b_output_scope.py'
+      - 'tests/test_desks_p4b_release_contract.py'
+      - 'scripts/capture_desks_p4b_atlas_review.py'
+  workflow_dispatch:
+    inputs:
+      approved_main_sha:
+        description: "Exact 40-character main commit approved for Phase 4B Desks publication"
+        required: true
+        type: string
+      visual_approved:
+        description: "Owner has reviewed and explicitly approved the Phase 4B Atlas panel screenshots"
+        required: true
+        default: false
+        type: boolean
+      publish:
+        description: "Commit reviewed Source Atlas files and deploy GitHub Pages (otherwise preview)"
+        required: true
+        default: false
+        type: boolean
+
+# Phase 4B must be merged to main before rehearsal; pull-request CI must merge against the current
+# main source rather than the pre-Phase-4B base captured by a draft preview.
+# A manual release holds the daily publishing lock for its entire lifetime.
+# In the release job it ALSO acquires the existing Pages-deploy lock so a
+# simultaneous output-only deploy cannot overwrite the sparse overlay.
+# PR contract checks receive a distinct per-PR concurrency group.
+# The 'edited' event reruns screenshots when a stacked PR changes base.
+concurrency:
+  group: ${{ github.event_name == 'workflow_dispatch' && 'daily-update' || format('desks-p4b-pr-{0}', github.event.pull_request.number) }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test exact release paths and provenance (draft-safe)
+        run: python -m unittest tests.test_desks_p4b_release_contract -v
+
+  rehearsal:
+    needs: contract
+    # The build depends on the Phase 4B source and reviewed Atlas assets
+    # joining main first. A draft PR only verifies contracts, not render readiness.
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing build dependencies
+        run: pip install -r requirements.txt
+      - name: Rehearse isolated Desks build and stage with no publication
+        run: |
+          set -euo pipefail
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
+          db_before="$(sha256sum pla_watch.db | cut -d' ' -f1)"
+          python site/render.py --out "$RUNNER_TEMP/desks-render"
+          python -m scripts.stage_desks_p4b_output --from-dir "$RUNNER_TEMP/desks-render" --to-dir output
+          python scripts/validate_output.py
+          python -m scripts.guard_desks_p4b_output_scope
+          test "$db_before" = "$(sha256sum pla_watch.db | cut -d' ' -f1)"
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
+          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' || true)"
+      - name: Preview rendered Desks routes and flags
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: desks-p4b-staged-preview
+          path: |
+            output/desks.html
+            output/desk-atlas.css
+            output/assets/glyphs/sources.svg
+          retention-days: 7
+
+  visual-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - name: Check out PR combined review head
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing render and browser dependencies
+        run: pip install -r requirements.txt
+      - name: Install Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: Capture actual eight-panel Source Atlas and browser receipts
+        run: python scripts/capture_desks_p4b_atlas_review.py
+      - name: Upload real Atlas screenshots and measurements (including failures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipr-p4b-source-atlas-visual-review
+          path: phase4b-atlas-visual-receipt/
+          if-no-files-found: warn
+          retention-days: 7
+
+  release:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ inputs.publish && 'pages-deploy' || format('desks-p4b-preview-{0}', github.run_id) }}
+      cancel-in-progress: false
+    steps:
+      - name: Require explicit owner Atlas visual approval for publication
+        env:
+          PUBLISH: ${{ inputs.publish }}
+          VISUAL_APPROVED: ${{ inputs.visual_approved }}
+        run: |
+          set -euo pipefail
+          if [[ "$PUBLISH" == "true" && "$VISUAL_APPROVED" != "true" ]]; then
+            echo "::error::Phase 4B visual approval not recorded; preview only"
+            exit 1
+          fi
+      - name: Check out exact current main with write access
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Fail closed if owner-reviewed SHA is stale
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Provide full main SHA"; exit 1; }
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA" || {
+            echo "::error::Main changed after owner review"; exit 1;
+          }
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
+          sha256sum pla_watch.db > "$RUNNER_TEMP/desks-db.sha"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing render dependencies
+        run: pip install -r requirements.txt
+      - name: Verify release contract and build in isolation
+        run: |
+          set -euo pipefail
+          python -m unittest tests.test_desks_p4b_release_contract -v
+          python site/render.py --out "$RUNNER_TEMP/desks-render"
+          python -m scripts.stage_desks_p4b_output --from-dir "$RUNNER_TEMP/desks-render" --to-dir output
+          python scripts/validate_output.py
+          python -m scripts.guard_desks_p4b_output_scope
+          sha256sum -c "$RUNNER_TEMP/desks-db.sha"
+          test ! -e pla_watch.db-wal && test ! -e pla_watch.db-shm
+          test -z "$(git status --porcelain --untracked-files=all | grep -vE '^([AMDRC ][AMDRC ]|[?][?]) output/' || true)"
+      - name: Upload reviewed Desks-only render preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: desks-p4b-staged-preview
+          path: |
+            output/desks.html
+            output/desk-atlas.css
+            output/assets/glyphs/sources.svg
+          retention-days: 7
+      - name: Commit only three reviewed Atlas files on explicit publish
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          git add -A -- output/desks.html output/desk-atlas.css output/assets/glyphs/sources.svg
+          # A Pages action may fail after main's approved output commit. A
+          # second exact-SHA approved run may redeploy the same byte-identical
+          # three files without inventing a no-op commit.
+          python -m scripts.guard_desks_p4b_output_scope --allow-unchanged
+          test -z "$(git diff --name-only)"
+          sha256sum -c "$RUNNER_TEMP/desks-db.sha"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo "::error::Main moved during render; preview again at the new SHA"; exit 1;
+          }
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Site: publish reviewed Phase 4B Source Atlas only"
+            git push origin HEAD:main
+          else
+            echo "Reviewed Desks output already committed. Redeploying exact overlay."
+          fi
+      - name: Assemble exactly the reviewed Pages overlay
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          python -m scripts.stage_desks_p4b_output --from-dir output --to-dir "$RUNNER_TEMP/desks-pages-patch"
+          test "$(find "$RUNNER_TEMP/desks-pages-patch" -type f | wc -l)" -eq 3
+          sha256sum -c "$RUNNER_TEMP/desks-db.sha"
+      - name: Overlay only reviewed Desks files on existing GitHub Pages
+        if: inputs.publish
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # The deployed gh-pages branch can contain reviewed content not
+          # yet synchronized to main's output/ (e.g. Indonesia desk receipts).
+          # Never overwrite it by republishing all of output/. Overlay only
+          # our exact three files, preserving every unrelated public page.
+          publish_dir: ${{ runner.temp }}/desks-pages-patch
+          keep_files: true
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Deploy reviewed Desks P4B: ${{ github.run_id }}'

@@ -144,6 +144,19 @@ class TestRosterMatchesConfiguration(DeskCase):
         self.assertEqual(us.enabled_source_count, 0)
         self.assertIn("not collecting", us.status_label.lower())
 
+    def test_us_desk_limit_uses_owner_approved_neutral_evidence_standard(self):
+        us = load_registry().get("us-indopacific")
+        self.assertIsNotNone(us)
+        expected = (
+            "U.S. institutional statements are evaluated under the same "
+            "source-verification and editorial standards as every other desk; "
+            "they are not treated as independent confirmation of their own claims."
+        )
+        self.assertTrue(us.limits[-1].endswith(expected), us.limits[-1])
+        self.assertNotIn("our side", " ".join(us.limits).lower())
+        self.assertEqual(us.status, "access_blocked")
+        self.assertEqual(us.enabled_source_count, 0)
+
     def test_singapore_is_live_and_promoted(self):
         """
         Promoted 2026-09-21 (DECISION_LOG owner sign-off). The desk is now

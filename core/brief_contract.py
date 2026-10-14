@@ -282,15 +282,20 @@ def validate_brief(sidecar: Mapping, registry, *,
                         % ", ".join(EDITORIAL_STATUSES))
     approved = status == STATUS_APPROVED
 
-    # Optional, individually attributed research credit. It never changes
-    # the author byline, citation, corpus status or publication approval.
+    # Legacy contributor credits keep the original narrow schema and limits.
+    # A source-linked Brief alone may recognize an explicit co-author credit,
+    # including a longer bio and an email. All evidence/release gates remain.
     credit = sidecar.get("research_contributor")
     if credit is not None:
         fields = {"name", "title", "bio", "linkedin"}
-        if not isinstance(credit, Mapping) or set(credit) != fields:
+        coauthor_fields = fields | {"email", "credit_role"}
+        coauthor = (is_source_linked(sidecar) and isinstance(credit, Mapping)
+                    and credit.get("credit_role") == "co-author"
+                    and set(credit) == coauthor_fields)
+        if not isinstance(credit, Mapping) or (set(credit) != fields and not coauthor):
             problems.append("research_contributor needs name, title, bio and linkedin")
         else:
-            for field, limit in (("name", 120), ("title", 120), ("bio", 360)):
+            for field, limit in (("name", 120), ("title", 120), ("bio", 700 if coauthor else 360)):
                 value = credit[field]
                 if (not isinstance(value, str) or not value.strip()
                         or value != value.strip() or len(value) > limit):
@@ -301,6 +306,11 @@ def validate_brief(sidecar: Mapping, registry, *,
                         r"https://(?:www\.)?linkedin\.com/in/[A-Za-z0-9._-]+/?",
                         link)):
                 problems.append("research_contributor.linkedin must be a LinkedIn HTTPS profile")
+            if coauthor:
+                email = credit["email"]
+                if (not isinstance(email, str) or len(email) > 254
+                        or not re.fullmatch(r"[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+", email)):
+                    problems.append("research_contributor.email must be a valid email address")
 
     if _text(sidecar.get("title")).lower().startswith(SERIES_NAME.lower()):
         problems.append("the title begins %r; no new issue is published as %s"

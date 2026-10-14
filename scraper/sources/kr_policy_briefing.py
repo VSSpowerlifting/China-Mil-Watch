@@ -7,6 +7,7 @@ iframe shells and metadata summaries are never used as release bodies.
 import hashlib
 import io
 import re
+import sys
 import zipfile
 from datetime import date
 from urllib.parse import parse_qs, urljoin, urlsplit
@@ -73,13 +74,42 @@ def hwpx_text(payload):
 
 class KoreaPolicyAdapter(ListingShadowAdapter):
     host, listing = HOST, LISTING
-    # October 12's sole 30s timeout was at robots fetch, before listing.
-    # Allow 45s for that *one* prerequisite only, not article/HWPX fetches.
+    # The Oct 12 2026 scheduled run timed out before robots completed.
+    # Allow one extra, identically scoped robots GET after a transient timeout.
+    # HTTP denial, disallowed policy, redirects, bad bodies, listing, article
+    # and original HWPX fetches NEVER retry. Parent transport enforces delay
+    # between requests and captures only complete successful responses.
     ROBOTS_TIMEOUT = 45
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.documents = {}
+        self.robots_timeout_retries = 0
+
+    def _request(self, url, form=None, robots=False, binary=False):
+        if not robots:
+            return super()._request(url, form=form, robots=robots, binary=binary)
+        try:
+            return super()._request(url, form=form, robots=True, binary=False)
+        except Refused as exc:
+            if exc.status != st.TIMEOUT or self.robots_timeout_retries >= 1:
+                raise
+            self.robots_timeout_retries += 1
+            # No document requests can occur without a fresh, valid robots
+            # response; the parent records last_request and enforces delay.
+            print("Korea robots GET timed out; one bounded retry after crawl delay",
+                  file=sys.stderr)
+            try:
+                return super()._request(url, form=form, robots=True, binary=False)
+            except Refused as last:
+                if last.status == st.TIMEOUT:
+                    raise Refused(st.TIMEOUT,
+                                  "robots request timed out after one bounded retry") from last
+                raise
+
+    def discover(self, window):
+        self.robots_timeout_retries = 0
+        return super().discover(window)
 
     def first_request(self, window):
         from datetime import timedelta
