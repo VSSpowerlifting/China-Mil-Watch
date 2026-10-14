@@ -118,6 +118,9 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         "inserted": 0, "duplicates": 0, "filtered": 0,
         "fetch_failures": 0, "extraction_failures": 0,
         "access_failures": 0,
+        # Bounded source URL + stage diagnostics, never response content.
+        # The actual selected source count remains the authoritative total.
+        "failure_log": [],
         "content_hashes": [],
         "state_sha256_before": before_hash,
         "state_sha256_after": None,
@@ -159,17 +162,28 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         capture = adapter.fetch(ref)
         if capture.status == st.AUTH_FAILURE:
             entry["access_failures"] += 1
+            if len(entry["failure_log"]) < 10:
+                entry["failure_log"].append({
+                    "url": ref.url, "stage": "fetch", "status": st.AUTH_FAILURE})
             continue
         if not capture.ok:
             # A document that could not be retrieved is not a document that
             # failed to parse. Conflating them would hide a source going dark
             # behind a number that reads like a parser bug.
             entry["fetch_failures"] += 1
+            if len(entry["failure_log"]) < 10:
+                entry["failure_log"].append({
+                    "url": ref.url, "stage": "fetch", "status": capture.status})
             continue
         entry["retrieved"] += 1
         result = adapter.extract(capture)
         if result.status != st.OK or not result.documents:
             entry["extraction_failures"] += 1
+            if len(entry["failure_log"]) < 10:
+                entry["failure_log"].append({
+                    "url": ref.url, "stage": "extract",
+                    "status": result.status if result.status != st.OK
+                              else st.EXTRACTION_FAILURE})
             continue
         for doc in result.documents:
             row = conn.execute("SELECT 1 FROM shadow_records WHERE url = ?",
@@ -202,15 +216,20 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         entry.update(result=st.AUTH_FAILURE, health="fail",
                      error_detail="%d item(s) returned HTTP 403"
                                   % entry["access_failures"])
-    elif entry["fetch_failures"] and not entry["inserted"] \
-            and not entry["duplicates"]:
+    elif entry["fetch_failures"]:
+        # A successful duplicate or insertion must not conceal another
+        # selected document's fetch failure. Do not qualify an incomplete
+        # scheduled slot as healthy; the ledger still preserves both counts.
         entry.update(result=st.FETCH_FAILURE, health="fail",
-                     error_detail="%d selected item(s) could not be retrieved"
-                                  % entry["fetch_failures"])
-    elif entry["extraction_failures"] and not entry["inserted"] \
-            and not entry["duplicates"]:
+                     error_detail="%d of %d selected item(s) could not be retrieved"
+                                  % (entry["fetch_failures"], entry["selected"]))
+    elif entry["extraction_failures"]:
+        # E.g. 2026-10-13: 33 duplicate originals plus one unparsed release
+        # were incorrectly classified OK_ALL_DUPLICATES, health=ok. Partial
+        # extraction is neither a complete duplicate day nor source silence.
         entry.update(result=st.EXTRACTION_FAILURE, health="fail",
-                     error_detail="every selected item failed extraction")
+                     error_detail="%d of %d retrieved item(s) failed extraction"
+                                  % (entry["extraction_failures"], entry["retrieved"]))
     elif entry["inserted"]:
         entry.update(result=st.OK, health="ok")
     elif entry["duplicates"]:
