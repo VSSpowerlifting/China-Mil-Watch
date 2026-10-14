@@ -405,13 +405,15 @@ class ArticleMediaPagesTests(unittest.TestCase):
         self.assertIn("No. 17", prev18.get_text())
         self.assertIsNone(self.native[18][2].select_one("nav.brief-issue-nav a[rel=next]"))
 
-    def test_historical_pages_carry_their_own_nav_and_media_rules(self):
-        # A rerendered issue can be published before briefs.css changes.
+    def test_historical_pages_load_the_shared_nav_and_media_rules(self):
+        # The coordinated journal release ships every historical page together
+        # with its shared stylesheet; no competing inline copy is required.
         for number, (side, ctx, page, soup) in self.historical.items():
             with self.subTest(issue=number):
-                style = soup.select_one("style").get_text()
-                self.assertIn(".brief-issue-nav{", style)
-                self.assertIn(".article-media-kind{", style)
+                sheet = soup.select_one('link[rel="stylesheet"][href="../../briefs.css"]')
+                self.assertIsNotNone(sheet)
+                self.assertIsNone(soup.select_one("style"))
+                self.assertIsNotNone(soup.select_one('.brief-issue-nav'))
         css = (ROOT / "site/preview/briefs.css").read_text()
         self.assertIn(".brief-issue-nav{", css)
         self.assertIn(".article-media-kind{", css)
