@@ -4,6 +4,7 @@ on:
     branches: [editorial/briefs-photo-wave6-20261013]
     paths:
       - .github/workflows/temp_briefs_photo_wave6_stage.yml
+      - scripts/stage_briefs_photo_wave6.py
 permissions:
   contents: write
 jobs:
