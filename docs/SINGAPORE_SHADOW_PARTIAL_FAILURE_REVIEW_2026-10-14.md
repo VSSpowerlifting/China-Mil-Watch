@@ -23,6 +23,19 @@ The workflow was green, but **34 selected originals were not all duplicates**: o
 
 This is a **receipt and qualification defect**, not proof that the source is newly broken. Earlier [Singapore image-only release findings](SINGAPORE_IMAGE_ONLY_RELEASES_2026-09-29.md) documented a structurally image-only original that production can record with text unavailable while the shadow `extract()` path still refuses it. That is a plausible explanation for the repeated shadow failure, **not a source-specific attribution proven by this ledger**. The historical ledger contains no per-item failed URL; we do not assume its identity. **Future receipts after this fix** contain up to ten failed, already-governed official URLs with their fetch/extract stage and typed failure status, but never page bodies, extracted text, headers, or publisher response bytes. Total failure counts remain authoritative if more than ten fail.
 
+## Retrospective spot audit: sixteen incomplete but green dates
+
+I additionally read the **actual** individual `shadow/singapore-mindef` ledger files for every logical collection date from **2026-09-28 through 2026-10-13 inclusive** (16 separate dates, not merely 16 successful Actions reports). All sixteen ledger JSONs record:
+
+- `health=ok` even though `extraction_failures=1`;
+- `fetch_failures=0` and `access_failures=0`;
+- `retrieved=selected`, with exactly one failed *extraction*, never an unattempted article fetch;
+- `result=ok` on dates containing insertions, or `result=ok_all_duplicates` on all-duplicate dates.
+
+The latest Oct 13 receipt above is one instance of a **persistent misclassification pattern**, not an isolated green run. The 16-source-day sample is dated Sept 28, 29, 30 and Oct 1–13; no missing date was inferred as a successful run. This examination is a ledger-content spot audit, **not** an independent check of each site's original response or every associated GitHub Actions attempt. In particular, **one failure each day does not prove the same URL failed sixteen times**; the old receipts did not identify failed originals. We must not assume the failure was only a previously documented image-only page.
+
+These sixteen dates cannot be counted as **fully complete collection days** for any future desk-reliability or Day-30 decision merely because the stored status is green. Retain them as originally recorded, mark the evidence deficit in the review decision, and build a clean, newly observed continuity period after a source-specific remediation. No clock rebase, source-branch rewrite, or retroactive failure result is performed by this PR.
+
 ## Correction and operational effects
 
 - Any `access_failures`, `fetch_failures` or `extraction_failures` now takes precedence over new insertions and duplicates when deciding final result/health. Existing `auth_failure`, `fetch_failure`, `extraction_failure` status vocabulary remains unchanged.
