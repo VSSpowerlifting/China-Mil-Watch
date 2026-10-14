@@ -1,7 +1,7 @@
 """Audit output scope for the Briefs presentation release.
 
-This allow-list covers Phase 3C's historical article shells, native Brief pages,
-the catalogue, and the individually approved No. 17 cover assets only. A Pages
+This allow-list covers the reviewed historical/native Brief shells, the
+catalogue, No. 17 cover assets and the shared journal stylesheet/disclosure defaults. A Pages
 deploy ships the entire output tree, so every changed, staged, untracked, and
 ignored output path is checked before a release may commit or deploy.
 """
@@ -14,6 +14,8 @@ from pathlib import Path
 REVIEWED_OUTPUT_PATHS = frozenset({
     "output/analysis.html",
     "output/briefs.css",
+    "output/shell.js",
+    "output/briefs/what-is-being-built-in-laos.html",
     "output/briefs-catalog.css",
     "output/briefs/maritime-cooperation-2026.html",
     "output/briefs/xiangshan-security-frames-defense-ties.html",

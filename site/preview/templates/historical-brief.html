@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_brief_navigation.html" import reading_navigation %}
 {% from "_article_media.html" import article_figure %}
 {% from "_article_nav.html" import issue_nav %}
 {# Earlier Briefs: current site identity, unchanged historical evidence.
@@ -10,40 +11,7 @@
 {% block og_type %}article{% endblock %}
 {% block head_scripts %}
 <link rel="stylesheet" href="{{ root }}briefs.css">
-<style>
-.historical-provenance{color:var(--band-muted);font-size:.875rem;max-width:68ch;margin-top:1rem}
-.historical-provenance a{color:var(--focus-band)}
-.historical-snapshot{display:flex;flex-wrap:wrap;gap:1rem 2rem;margin:1rem 0}
-.historical-snapshot dt{font-size:.875rem;color:var(--muted)}
-.historical-snapshot dd{font-size:1.25rem;color:var(--ink);margin:0}
-.historical-section p{white-space:pre-line}
-.historical-author{margin:2rem 0;padding:1rem 0;border-top:1px solid var(--rule)}
-.historical-author summary{min-height:44px;cursor:pointer}
-.historical-source-list{list-style:none;padding:0}
-.historical-source-list li{padding:1rem 0;border-top:1px solid var(--rule);overflow-wrap:anywhere}
-.historical-source-list .source-card-original{display:block;margin:.35rem 0;color:var(--ink-2)}
-.brief-section .historical-source-meta{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
-.brief-citation{overflow-wrap:anywhere;font:15px/1.8 var(--sans)}
-.historical-media img{width:100%;height:auto}
-.historical-media figcaption{font-size:.875rem;color:var(--muted)}
-.historical-veil{grid-area:photo;margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
-.historical-veil img{display:block;width:100%;height:clamp(190px,27vw,360px);object-fit:cover}
-.historical-veil figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--muted);overflow-wrap:anywhere}
-.historical-veil a{color:inherit;text-underline-offset:.2em}
-.historical-author-links{display:flex;gap:.5rem 1.25rem;flex-wrap:wrap}
-.historical-author-links a{display:inline-flex;align-items:center;min-height:44px}
-/* Phase 3C. A rerendered issue can be published before the briefs.css that
-   carries these rules, so it holds its own copy of them. */
-.article-media-kind{font-weight:600;color:var(--band-ink)}
-.article-plate{grid-area:photo;margin:1.25rem 0 0;border:1px solid var(--band-rule)}.article-plate-art{display:block;width:100%;height:clamp(190px,27vw,360px);background:#18343f}.article-plate figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--band-muted);background:var(--band);overflow-wrap:anywhere}
-@media(forced-colors:active){.article-plate-art{display:none}.article-plate figcaption{color:CanvasText;background:Canvas}}
-@media print{.article-plate{display:none}}
-.historical-source-meta .evidence{font-size:inherit}
-.brief-issue-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 32px;margin:48px 0 16px;padding-top:16px;border-top:1px solid var(--rule)}.brief-issue-nav a{display:flex;flex-direction:column;gap:2px;min-height:44px;padding-block:8px;color:var(--ink);text-decoration:none}.brief-issue-nav-next{grid-column:2;align-items:flex-end;text-align:right}.brief-issue-nav-label{font:600 13px/1.6 var(--sans);color:var(--accent-ink)}.brief-issue-nav-meta{font:13px/1.6 var(--sans);color:var(--muted)}.brief-issue-nav-title{font:400 22px/1.25 var(--display);text-decoration-line:underline;text-decoration-thickness:1px;text-underline-offset:.2em;text-wrap:pretty}.brief-issue-nav a:hover .brief-issue-nav-title{text-decoration-thickness:2px}
-@media(max-width:600px){.brief-issue-nav{grid-template-columns:minmax(0,1fr)}.brief-issue-nav-next{grid-column:1;align-items:flex-start;text-align:left}}
-@media(forced-colors:active){.brief-issue-nav a,.brief-issue-nav-label,.brief-issue-nav-meta{color:LinkText}}
-@media print{.brief-issue-nav{display:none}.historical-author>div{display:block!important}.historical-source-list a::after{content:" (" attr(href) ")";font-size:.75rem;overflow-wrap:anywhere}}
-</style>
+
 {% endblock %}
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
 {% block hero %}
@@ -76,15 +44,14 @@
 {% macro paragraphs(text) %}{% for para in (text or '').split('\n\n') %}{% if para.strip() %}<p>{{ para.strip()|inline_markup }}</p>{% endif %}{% endfor %}{% endmacro %}
 {% block content %}
 <div class="brief-layout">
-  <details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
-    <nav class="brief-toc" aria-label="In this brief"><ol>
+  {% call reading_navigation() %}
       <li><a href="#s-snapshot">Coverage snapshot</a></li>
       {% for key, anchor, heading in sections %}<li><a href="#{{ anchor }}">{{ heading }}</a></li>{% endfor %}
       {% if edition.term_to_know_term %}<li><a href="#s-term">Term to know</a></li>{% endif %}
       {% if edition.what_im_watching_next %}<li><a href="#s-watching">What I'm watching next</a></li>{% endif %}
       <li><a href="#s-sources">Source trail</a></li><li><a href="#pw-cite">Citation</a></li>
-    </ol></nav>
-  </details>
+
+  {% endcall %}
   <article class="brief-main">
     {% if edition.signal %}<aside class="brief-signal" aria-label="This week's signal"><p class="brief-signal-label">This week's signal</p><p>{{ edition.signal }}</p></aside>{% endif %}
     <section class="brief-section" id="s-snapshot" aria-labelledby="h-snapshot">
@@ -104,8 +71,8 @@
     </section>
     {% endfor %}
     {% if edition.term_to_know_term %}<section class="brief-section historical-section" id="s-term" aria-labelledby="h-term"><h2 id="h-term">Term to Know</h2><p class="term-word">{{ edition.term_to_know_term }}</p>{{ paragraphs(edition.term_to_know_explanation) }}</section>{% endif %}
-    {% if edition.what_im_watching_next %}<section class="brief-section historical-section" id="s-watching" aria-labelledby="h-watching"><h2 id="h-watching">What I'm Watching Next</h2>{{ paragraphs(edition.what_im_watching_next) }}</section>{% endif %}
-    <section class="brief-section" id="s-sources" aria-labelledby="h-sources">
+    {% if edition.what_im_watching_next %}<section class="brief-section historical-section brief-follow-up" id="s-watching" aria-labelledby="h-watching"><h2 id="h-watching">What I'm Watching Next</h2>{{ paragraphs(edition.what_im_watching_next) }}</section>{% endif %}
+    <section class="brief-section brief-trail" id="s-sources" aria-labelledby="h-sources">
       <h2 id="h-sources">Source Trail</h2>
       <p>{{ edition.articles|length }} selected record{{ 's' if edition.articles|length != 1 }} used in this analysis. Original sources remain authoritative.</p>
       <ol class="historical-source-list">
@@ -128,7 +95,7 @@
 {% endif %}
       <p>This is the historical author information for this issue. <a href="{{ root }}about.html">About Indo-Pacific Record today</a>.</p>
     </div></details>
-    <section class="brief-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>
+    <section class="brief-section brief-citation-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>
       <p class="brief-citation" id="pw-cite">{% if edition.author_name %}{{ edition.author_name }}, {% endif %}“{{ edition.title }},” <em>{{ edition.series_name }}</em>{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %}, {{ edition.publication }}, {{ edition.week_ending|reader_date }}. {{ edition.page_url }}</p>
     </section>
 {% if adjacent is defined %}{{ issue_nav(adjacent.previous, adjacent.next, 'Adjacent historical issues', 'historical-issue-nav') }}{% endif %}

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_brief_navigation.html" import reading_navigation %}
 {% from "_atlas.html" import breadcrumb %}
 {% from "_article_nav.html" import issue_nav %}
 {% from "_article_media.html" import article_figure, cover_figure %}
@@ -73,10 +74,7 @@
 {% block content %}
 {{ breadcrumb([('Analysis', '../analysis.html'), (brief.title, none)]) }}
 <div class="brief-layout{% if brief.presentation %} brief-layout--structured{% endif %}">
-  <details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
-  <nav class="brief-toc" aria-label="In this brief">
-    <p class="brief-toc-label">In this brief</p>
-    <ol>
+  {% call reading_navigation() %}
       {% if brief.source_linked %}
       {% if brief.presentation %}
       {% if brief.presentation.central_finding is defined %}<li><a href="#reading-finding">Central finding</a></li>{% endif %}
@@ -94,8 +92,8 @@
       <li><a href="#s-sources">Source trail</a></li>
       {% if brief.external_evidence %}<li><a href="#s-external">Reviewed external sources</a></li>{% endif %}
       {% endif %}<li><a href="#s-cite">Cite this brief</a></li>
-    </ol>
-  </nav></details>
+
+  {% endcall %}
 
   <article class="brief-main">
     {% if brief.source_linked %}
@@ -158,15 +156,15 @@
     {% endif %}
 
     {% if brief.watching %}
-    <section class="brief-section" id="{{ brief.watching.id }}" aria-labelledby="h-{{ brief.watching.id }}">
+    <section class="brief-section brief-follow-up" id="{{ brief.watching.id }}" aria-labelledby="h-{{ brief.watching.id }}">
       <h2 id="h-{{ brief.watching.id }}">{{ brief.watching.heading }}</h2>
       {% for p in brief.watching.paragraphs %}<p>{{ p|brief_prose }}</p>{% endfor %}
     </section>
     {% endif %}
 
+    {% if brief.claims %}
     <details class="brief-evidence">
       <summary>Compare the official accounts</summary>
-    {% if brief.claims %}
     <section class="brief-section" id="s-compare" aria-labelledby="h-compare">
       <h2 id="h-compare">Across desks</h2>
       <p class="section-note">Each comparison cites a record from every desk it compares. A
@@ -181,12 +179,11 @@
       </div>
       {% endfor %}
     </section>
-    {% endif %}
-
     </details>
+    {% endif %}
+    {% if brief.coverage %}
     <details class="brief-evidence">
       <summary>Collection coverage and screening</summary>
-    {% if brief.coverage %}
     <section class="brief-section" id="s-coverage" aria-labelledby="h-coverage">
       <h2 id="h-coverage">Coverage by desk</h2>
       <p class="section-note">Counted per desk and never added together: desks differ in
@@ -215,9 +212,8 @@
         ({{ brief.single_desk_exception.approved_by }}, {{ brief.single_desk_exception.approved_on }}).</p>
       {% endif %}
     </section>
-    {% endif %}
-
     </details>
+    {% endif %}
 
     <section class="brief-section brief-trail" id="s-sources" aria-labelledby="h-sources">
       <h2 id="h-sources">Source trail <span class="brief-count">{{ brief.trail_count }} record{{ 's' if brief.trail_count != 1 }}</span></h2>
@@ -286,7 +282,7 @@
     </section>
     {% endif %}
 
-    <section class="brief-section" id="s-cite"{% if brief.presentation %} tabindex="-1"{% endif %} aria-labelledby="h-cite">
+    <section class="brief-section brief-citation-section" id="s-cite"{% if brief.presentation %} tabindex="-1"{% endif %} aria-labelledby="h-cite">
       <h2 id="h-cite">Cite this brief</h2>
       <div class="ed-cite brief-cite">
         <p class="cite-text" id="cite-{{ brief.slug }}">{{ brief.citation }}</p>

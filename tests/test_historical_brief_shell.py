@@ -26,99 +26,13 @@ from scripts.rerender_pla_watch import _build_post_context, _flatten_term
 ROOT = Path(__file__).resolve().parent.parent
 POSTS = ROOT / "output/the-pla-watch/posts"
 
-# Temporary, until the owner's governed rerender of the earlier issues
-# (`scripts/rerender_pla_watch.py --no-covers`). Until then the checked-in
-# pages carry the pre-3C form. The checked-in page is never edited: the
-# current render alone is turned back into the exact pre-3C form, one counted
-# replacement per known Phase 3C change, and every other byte must match.
-# Each replacement is rebuilt from the issue's own context, so a changed image
-# source, alt text, caption source, citation or held figure still fails.
-# Once the rerendered pages carry PHASE_3C_MARKER the comparison is strict
-# byte equality with no transform at all.
-PHASE_3C_MARKER = "brief-issue-nav-label"
-_TEMPLATE = (ROOT / "site/preview/templates/historical-brief.html").read_text()
-_3C_STYLE = _TEMPLATE[_TEMPLATE.index("/* Phase 3C."):
-                      _TEMPLATE.index("@media print{.brief-issue-nav{display:none}")
-                      + len("@media print{.brief-issue-nav{display:none}")]
-_PRE_3C_NAV_STYLE = (".historical-issue-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin:2rem 0}\n"
-                     ".historical-issue-nav a{min-height:44px;display:inline-flex;align-items:center}\n")
-_NAV_ANCHOR = ".brief-citation{overflow-wrap:anywhere;font:15px/1.8 var(--sans)}\n"
-_NAV = re.compile(r'    <nav class="brief-issue-nav historical-issue-nav" aria-label="Adjacent historical issues">\n.*?</nav>\n', re.S)
+# Historical pages and their stylesheet now ship together in the governed
+# rerender. Compare exact bytes: no former source-only normalization remains.
 _MODEL_FLAG = '<span class="evidence evidence--model">Model-flagged</span>'
 
 
-def _plate_block(desks=("china",)):
-    art = "../../" + PLATE_ART
-    uses = "".join(f'<use href="{art}#region-{d}"/>' for d in desks)
-    return ('    <figure class="article-plate" data-article-media="plate">\n'
-            f'      <svg class="article-plate-art" viewBox="{PLATE_VIEWBOX}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><use href="{art}#region"/>{uses}</svg>\n'
-            f'      <figcaption><span class="article-media-kind">Editorial plate</span> · {PLATE_NOTE} {PLATE_CONTEXT}</figcaption>\n'
-            '    </figure>\n')
-
-
-def _once(page, old, new):
-    if page.count(old) != 1:
-        raise AssertionError(f"expected exactly one Phase 3C change: {old[:60]!r}")
-    return page.replace(old, new, 1)
-
-
-def _as_published_before_3c(page, ctx, bridge_href=None):
-    """The current render in its exact pre-3C form (see PHASE_3C_MARKER)."""
-    head, end, body = page.partition("</style>")
-    head = _once(head, _3C_STYLE, "@media print{")
-    head = _once(head, _NAV_ANCHOR, _NAV_ANCHOR + _PRE_3C_NAV_STYLE)
-    kind = re.findall(r'data-article-media="([a-z-]+)"', body)
-    if kind == ["plate"]:
-        body = _once(body, " brief-hero--photo", "")
-        body = _once(body, _plate_block(), "")
-    elif kind == ["signal-veil"]:
-        body = _once(body, ' data-article-media="signal-veil"', "")
-        body = _once(body, '<span class="article-media-kind">Signal Veil</span> · ', "")
-    elif kind == ["photograph"]:
-        veil = ctx["pw_veil"]
-        body = _once(body, ' data-article-media="photograph"', "")
-        new = re.findall(r'      <figcaption><span class="article-media-kind">Photograph</span>.*</figcaption>\n', body)
-        if len(new) != 1:
-            raise AssertionError("expected one Photograph caption")
-        subject = f" · {escape(veil['subject'])}" if veil.get("subject") else ""
-        body = _once(body, new[0], f'      <figcaption>Image: <a href="{escape(veil["source_page"])}" rel="noopener nofollow">{escape(veil["source_id"])}</a>{subject} · Context, not evidence.</figcaption>\n')
-    elif kind:
-        raise AssertionError(f"unexpected article media {kind}")
-    body = body.replace(_MODEL_FLAG, "Model-flagged")
-    nav = _NAV.findall(body)
-    if len(nav) != 1:
-        raise AssertionError("expected one issue navigation")
-    hrefs = re.findall(r'href="([^"]+)"', nav[0])
-    prev, nxt = ctx.get("prev_post"), ctx.get("next_post")
-    expected = ([prev["date"] + ".html"] if prev else []) + (
-        [nxt["date"] + ".html"] if nxt else [bridge_href] if bridge_href else [])
-    if hrefs != expected:
-        raise AssertionError(f"issue navigation {hrefs} != {expected}")
-    links = ""
-    if prev:
-        links += f'<a href="{prev["date"]}.html">← No. {prev["issue_number"]} · {format_date(prev["week_ending"])}</a>'
-    if nxt:  # the cross-series bridge did not exist before Phase 3C
-        links += f'<a href="{nxt["date"]}.html">No. {nxt["issue_number"]} · {format_date(nxt["week_ending"])} →</a>'
-    body = _once(body, nav[0], '    <nav class="historical-issue-nav" aria-label="Adjacent historical issues">\n'
-                 + links + "    </nav>\n")
-    return head + end + body
-
-
-def _without_output_refresh_hooks(page):
-    # Source-only candidates may add these two inert presentation hooks and
-    # the owned stylesheet before an authorized output refresh.
-    return page.replace(' data-surface="historical" data-route="analysis.html"', '').replace(
-        '<link rel="stylesheet" href="../../surfaces.css">\n', '')
-
-
 def _published_and_current(ctx, rendered, bridge_href=None):
-    """(checked-in page, current render in comparable form) for one issue."""
-    published = (POSTS / (ctx["date"] + ".html")).read_text(encoding="utf-8")
-    published = _without_output_refresh_hooks(published)
-    candidate = _without_output_refresh_hooks(rendered)
-    if PHASE_3C_MARKER not in published:
-        candidate = _as_published_before_3c(candidate, ctx, bridge_href)
-    return published, candidate
+    return (POSTS / (ctx["date"] + ".html")).read_text(encoding="utf-8"), rendered
 
 
 class HistoricalBriefShellTests(unittest.TestCase):
@@ -328,7 +242,7 @@ class HistoricalBriefShellTests(unittest.TestCase):
         self.assertIsNotNone(soup.select_one(
             ".brief-hero-inner > figure.historical-veil"))
         self.assertIn(".historical-veil{grid-area:photo",
-                      soup.select_one("style").get_text())
+                      (ROOT / "site/preview/briefs.css").read_text())
         self.assertEqual(soup.select_one("figure.historical-veil img")["src"],
                          context["pw_veil"]["duo"])
 
@@ -352,10 +266,6 @@ class HistoricalBriefShellTests(unittest.TestCase):
         )
 
     def test_checked_in_pages_equal_current_sidecar_render(self):
-        marked = [PHASE_3C_MARKER in (POSTS / (ctx["date"] + ".html")).read_text()
-                  for ctx, _, _ in self.posts]
-        # The governed rerender refreshes every issue at once, never a subset.
-        self.assertIn(sum(marked), (0, len(self.posts)))
         for ctx, rendered, _ in self.posts:
             with self.subTest(issue=ctx["issue_number"]):
                 published, candidate = _published_and_current(
@@ -380,10 +290,14 @@ class HistoricalBriefShellTests(unittest.TestCase):
         for kind in ("photograph", "signal-veil"):
             ctx, page = by_kind[kind]
             self.assertFalse(self._guard_fails(ctx, page))
-            for field, value in (("duo", "../../assets/editorial/other.jpg"),
-                                 ("alt", "A different description"),
-                                 ("source_page", "https://example.org/other"),
-                                 ("source_id", "Another outlet")):
+            fields = [("duo", "../../assets/editorial/other.jpg"),
+                      ("alt", "A different description"),
+                      ("source_page", "https://example.org/other")]
+            # Curated photograph credit resolves from its admitted manifest;
+            # source_id is displayed only on a cited-source Signal Veil.
+            if kind == "signal-veil":
+                fields.append(("source_id", "Another outlet"))
+            for field, value in fields:
                 with self.subTest(kind=kind, field=field):
                     changed = copy.deepcopy(ctx)
                     changed["pw_veil"][field] = value
