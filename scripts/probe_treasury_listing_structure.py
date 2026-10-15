@@ -33,7 +33,33 @@ def main():
             if getattr(node,"name",None):
                 parents.append({"tag":node.name, "classes":(node.get("class") or [])[:5]})
         rows.append({"path":href[:130],"ancestors":parents})
+    # Cardinality-only ancestry explains safe pairing of each time with its link.
+    structural=[]
+    links=[a for a in soup.select("a[href]")
+           if re.fullmatch(r"/news/press-releases/sb[0-9]{4,6}/?",a.get("href",""))]
+    for a in links[:3]:
+        chain=[]
+        node=a
+        for _ in range(6):
+            node=node.parent
+            if not getattr(node,"name",None):break
+            chain.append({"tag":node.name,"class":(node.get("class") or [])[:3],
+                "time_count":len(node.select("time")),
+                "release_link_count":len([q for q in node.select("a[href]")
+                    if re.fullmatch(r"/news/press-releases/sb[0-9]{4,6}/?",q.get("href",""))])})
+        structural.append({"release_path":a.get("href"),"chain":chain})
+    time_ancestry=[]
+    for t in soup.select("time")[:3]:
+        chain=[];node=t
+        for _ in range(5):
+            node=node.parent
+            if not getattr(node,"name",None):break
+            chain.append({"tag":node.name,"class":(node.get("class") or [])[:4],
+                "release_link_count":len([q for q in node.select("a[href]")
+                    if re.fullmatch(r"/news/press-releases/sb[0-9]{4,6}/?",q.get("href",""))])})
+        time_ancestry.append(chain)
     print(json.dumps({"source":"home.treasury.gov", "bytes_read":len(body),
+       "card_ancestry":structural,"time_ancestry":time_ancestry,
        "release_links_seen":len(rows),"sample":rows[:8],
        "views_row":len(soup.select(".views-row")),
        "articles":len(soup.select("article")),
