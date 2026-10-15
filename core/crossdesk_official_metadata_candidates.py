@@ -29,11 +29,13 @@ KEMHAN_HELD = (
 )
 FAMILIES = {
     "ph_afp_articles": {
-        "desk": "philippines", "issuer": "ph_afp", "republisher": None,
+        "desk": "philippines", "issuer": "ph_afp", "publisher": "ph_afp",
+        "republisher": None,
         "host": "www.afp.mil.ph", "identity_prefix": "afp:"
     },
     "id_kemhan_news": {
-        "desk": "indonesia", "issuer": None, "republisher": "id_kemhan",
+        "desk": "indonesia", "issuer": None, "publisher": "id_kemhan",
+        "republisher": None,
         "host": "www.kemhan.go.id", "identity_prefix": "kemhan:"
     },
 }
@@ -173,6 +175,7 @@ def build(report, family):
             "canonical_official_url": url,
             "publisher_posted_date": day,
             "official_issuer": spec["issuer"],
+            "official_publisher": spec["publisher"],
             "official_republisher": spec["republisher"],
             "source_git_commit": sha,
             "first_seen_run": raw["first_seen_run"],
