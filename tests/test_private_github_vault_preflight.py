@@ -12,7 +12,7 @@ SRC = "VSSpowerlifting/China-Mil-Watch"
 DEST = "VSSpowerlifting/ipr-source-evidence-private"
 
 
-def fake_api(*, destination=None, source=None, branches=None):
+def fake_api(*, destination=None, source=None, branches=None, tree=None):
     origin = source if source is not None else {
         "full_name": SRC, "private": False, "visibility": "public",
     }
@@ -25,6 +25,9 @@ def fake_api(*, destination=None, source=None, branches=None):
         "repos/" + SRC: origin,
         "repos/" + DEST: target,
         "repos/" + DEST + "/branches?per_page=100": [] if branches is None else branches,
+        "repos/" + DEST + "/git/trees/main?recursive=1": (
+            {"truncated": False, "tree": [{"path": "README.md", "type": "blob",
+             "sha": vault.BOOTSTRAP_README_BLOB_SHA}]} if tree is None else tree),
     }
     return values.__getitem__
 
@@ -69,6 +72,40 @@ class VaultPreflightTests(unittest.TestCase):
                     vault.VaultPreflightError, "vault_not_private"):
                 vault.evaluate(SRC, DEST, api=fake_api(destination=target))
 
+    def test_verified_live_readme_only_bootstrap_is_still_a_hold_on_transfer(self):
+        dest = dict(fake_api()("repos/" + DEST), default_branch="main")
+        report = vault.evaluate(SRC, DEST, api=fake_api(
+            destination=dest, branches=[{"name": "main"}]))
+        self.assertEqual(report["bootstrap_state"], "verified_readme_only")
+        self.assertEqual(report["destination_initial_branches"], 1)
+        self.assertFalse(report["ready_to_transfer"])
+        self.assertFalse(report["main_branch_protection_verified"])
+        self.assertFalse(report["cross_repo_workflow_credential_verified"])
+        self.assertFalse(report["source_bodies_transferred"])
+
+    def test_initialized_vault_refuses_unknown_or_modified_bootstrap(self):
+        dest = dict(fake_api()("repos/" + DEST), default_branch="main")
+        valid = {"path": "README.md", "type": "blob",
+                 "sha": vault.BOOTSTRAP_README_BLOB_SHA}
+        cases = (
+            ({"truncated": True, "tree": [valid]}, "vault_bootstrap_tree_invalid"),
+            ({"truncated": False, "tree": [valid, valid]}, "vault_bootstrap_tree_not_readme_only"),
+            ({"truncated": False, "tree": [{"path": "README.md", "type": "blob", "sha": "0"*40}]}, "vault_bootstrap_readme_unverified"),
+            ({"truncated": False, "tree": [{"path": "state/shadow.db", "type": "blob", "sha": "0"*40}]}, "vault_bootstrap_readme_unverified"),
+            ({"truncated": False, "tree": []}, "vault_bootstrap_tree_not_readme_only"),
+            ([], "vault_bootstrap_tree_invalid"),
+        )
+        for tree, reason in cases:
+            with self.subTest(reason=reason, tree=repr(tree)[:65]):
+                with self.assertRaisesRegex(vault.VaultPreflightError, reason):
+                    vault.evaluate(SRC, DEST, api=fake_api(
+                        destination=dest, branches=[{"name": "main"}], tree=tree))
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_bootstrap_default_branch_invalid"):
+            vault.evaluate(SRC, DEST, api=fake_api(branches=[{"name": "main"}]))
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_not_bootstrap_only"):
+            vault.evaluate(SRC, DEST, api=fake_api(
+                destination=dest, branches=[{"name": "main"}, {"name": "archive/korea"}]))
+
     def test_refuses_nonempty_wrong_identity_fork_archived_disabled_or_no_admin(self):
         base = fake_api()("repos/" + DEST)
         for mutation, code in (
@@ -81,8 +118,8 @@ class VaultPreflightTests(unittest.TestCase):
             with self.subTest(mutation=mutation), self.assertRaisesRegex(
                     vault.VaultPreflightError, code):
                 vault.evaluate(SRC, DEST, api=fake_api(destination=dict(base, **mutation)))
-        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_not_empty"):
-            vault.evaluate(SRC, DEST, api=fake_api(branches=[{"name": "main"}]))
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_not_bootstrap_only"):
+            vault.evaluate(SRC, DEST, api=fake_api(branches=[{"name": "unexpected"}]))
 
     def test_missing_or_wrong_source_identity_is_hold(self):
         for value, reason in (
