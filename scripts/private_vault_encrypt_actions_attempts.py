@@ -197,6 +197,7 @@ def _manifest(run, inventory_sha, files):
             "archive_member": "artifacts/artifact-%d.zip" % x["id"],
         } for x in files],
         "individual_zip_contents_verified": False,
+        "downloaded_zip_origin_authenticated": False,
         "source_rights_approved": False,
         "independent_backup_medium_verified": False,
         "production_cutover_authorized": False,
@@ -272,6 +273,7 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
             "ciphertext_bytes": target.stat().st_size,
             "source_inventory_sha256": inv_sha,
             "plaintext_tar_written_to_disk": False,
+            "downloaded_zip_origin_authenticated": False,
             "independent_backup_medium_verified": False,
             "source_rights_approved": False,
             "production_cutover_authorized": False,
@@ -325,6 +327,7 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                       and manifest.get("run_id") == run_id
                       and manifest.get("source_inventory_sha256") == expected_inventory_sha
                       and manifest.get("individual_zip_contents_verified") is False
+                      and manifest.get("downloaded_zip_origin_authenticated") is False
                       and manifest.get("source_rights_approved") is False
                       and manifest.get("production_cutover_authorized") is False,
                       "sidecar_manifest_mismatch")
@@ -389,6 +392,7 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
         "encrypted_sha256": expected_cipher_sha,
         "all_opaque_zip_sha256_verified": True,
         "individual_zip_contents_verified": False,
+        "downloaded_zip_origin_authenticated": False,
         "plaintext_tar_written_to_disk": False,
         "independent_backup_medium_verified": False,
         "production_cutover_authorized": False,
