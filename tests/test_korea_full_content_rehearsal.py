@@ -215,5 +215,127 @@ class KoreaContentPilot(unittest.TestCase):
         self.rejects("stage_source_digest_invalid")
 
 
+
+
+class KoreaContentFilesystemAndIntegration(unittest.TestCase):
+    """Use the repository's realistic fictional HWPX + Git branch fixture."""
+
+    def setUp(self):
+        import tempfile
+        from pathlib import Path
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.folder = Path(self.temp.name) / "secure"
+        self.folder.mkdir(mode=0o700)
+
+    def write_secret(self, name, obj):
+        import json
+        path = self.folder / name
+        path.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+        path.chmod(0o600)
+        return path
+
+    def test_private_input_and_output_reject_world_readable_or_existing_paths(self):
+        from scripts.rehearse_korea_full_content import (
+            private_file, private_destination,
+        )
+        path = self.write_secret("private.json", {"test": 1})
+        self.assertEqual({"test": 1}, private_file(str(path)))
+        path.chmod(0o644)
+        with self.assertRaisesRegex(ContentHold, "private_input_must_be_owner_only"):
+            private_file(str(path))
+        target = self.folder / "never-overwrite.html"
+        self.assertEqual(target, private_destination(str(target)))
+        target.write_text("existing private review")
+        with self.assertRaisesRegex(ContentHold, "private_preview_must_be_a_new"):
+            private_destination(str(target))
+        self.assertEqual("existing private review", target.read_text())
+
+    def test_private_inputs_cannot_be_symlinks(self):
+        from scripts.rehearse_korea_full_content import private_file
+        secret = self.write_secret("target.json", {"test": 1})
+        alias = self.folder / "symlink.json"
+        alias.symlink_to(secret)
+        with self.assertRaisesRegex(ContentHold, "private_input_must_be_owner_only"):
+            private_file(str(alias))
+
+    def test_private_rehearsal_from_realistic_hwp_capture(self):
+        import json
+        import stat
+        from scripts import stage_korea_production_candidates as stage
+        from scripts.rehearse_korea_full_content import rehearse
+        from tests.test_korea_production_candidate_bridge import (
+            KoreaProductionCandidateBridgeTests,
+        )
+        # The existing production-bridge fixture replays real ZIP/XML HWPX
+        # extraction, full shadow Git ancestry, original hash continuity,
+        # and the exact stage.build() code used by the future operator.
+        bridge = KoreaProductionCandidateBridgeTests(
+            "test_five_realistically_shaped_synthetic_rows_stay_unpublished")
+        bridge.setUp()
+        self.addCleanup(bridge.doCleanups)
+        staged = stage.build(str(bridge.source))
+        stage_row = staged["records"][0]
+        identity = stage_row["source_identity"]
+        original = next(r for r in stage._rows(bridge.source)
+                        if r["source_identity"] == identity)
+        paragraphs = [
+            line for line in original["text_original"].replace("\r\n", "\n").split("\n")
+            if line.strip()
+        ]
+        rights = {
+            "schema": RIGHTS_SCHEMA,
+            "source_identity": identity,
+            "candidate_version_sha256": stage_row["candidate_version_sha256"],
+            "publisher_html_sha256": stage_row["publisher_html_sha256"],
+            "notice_sha256": "b" * 64,
+            "publisher_policy_url": POLICY_URL,
+            "notice_marker": "KOGL_TYPE_1",
+            "notice_scope": "publisher_text_only",
+            "notice_observed_at_utc": "2026-10-15T22:00:00Z",
+            "media_reuse_allowed": False,
+            "hwpx_file_redistribution_allowed": False,
+            "independently_approved": False,
+        }
+        draft = {
+            "schema": DRAFT_SCHEMA,
+            "source_identity": identity,
+            "candidate_version_sha256": stage_row["candidate_version_sha256"],
+            "original_text_sha256": stage_row["original_text_sha256"],
+            "generated_at_utc": "2026-10-15T22:01:00Z",
+            "model_id": "fictional-unit-test-only",
+            "content_label": "unreviewed_machine_draft",
+            "translation_paragraphs": [
+                {"source_index": i,
+                 "source_paragraph_sha256": sha(p),
+                 "text_en": "A wholly invented test rendering.",
+                 "language": "en", "status": "machine_unreviewed"}
+                for i, p in enumerate(paragraphs, 1)
+            ],
+            "source_notes": [{
+                "kind": "attributed_official_source_observation",
+                "text_en": "The fictional release exists for a technical test.",
+                "source_indices": [1],
+                "status": "machine_unreviewed",
+            }],
+        }
+        rights_path = self.write_secret("rights.json", rights)
+        draft_path = self.write_secret("draft.json", draft)
+        preview = self.folder / "korea-private.html"
+        receipt = rehearse(str(bridge.source), identity,
+                          str(rights_path), str(draft_path), str(preview))
+        self.assertEqual("PRIVATE_REVIEW_ONLY", receipt["status"])
+        self.assertEqual(0, receipt["public_files_written"])
+        self.assertEqual(0, receipt["production_records_written"])
+        self.assertTrue(preview.is_file())
+        self.assertEqual(stat.S_IMODE(preview.stat().st_mode), 0o600)
+        rendered = preview.read_text(encoding="utf-8")
+        self.assertIn("DO NOT PUBLISH", rendered)
+        self.assertIn("noindex,nofollow,noarchive", rendered)
+        self.assertIn(original["text_original"].split("\n")[0], rendered)
+        with self.assertRaisesRegex(ContentHold, "private_preview_must_be_a_new"):
+            rehearse(str(bridge.source), identity, str(rights_path),
+                     str(draft_path), str(preview))
+
 if __name__ == "__main__":
     unittest.main()
