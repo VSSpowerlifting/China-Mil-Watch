@@ -10,7 +10,7 @@
 {% block head_scripts %}
 <link rel="stylesheet" href="relief.css">
 <link rel="stylesheet" href="briefs-catalog.css">
-<link rel="stylesheet" href="continuity.css">
+{% if continuity|length > 1 %}<link rel="stylesheet" href="continuity.css">{% endif %}
 <script src="reveal.js"></script>
 {% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="{{ briefs_feed_route }}">{% endif %}{% endblock %}
 {% block main_class %} class="leads-with-hero"{% endblock %}
