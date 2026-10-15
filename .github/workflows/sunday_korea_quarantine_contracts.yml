@@ -1,0 +1,37 @@
+name: Sunday Korea Held-Source Quarantine — Offline Contract
+
+on:
+  pull_request:
+    paths:
+      - scripts/sunday_korea_quarantine_gate.py
+      - tests/test_sunday_korea_quarantine_gate.py
+      - .github/workflows/sunday_briefs_editorial_handoff.yml
+      - .github/workflows/sunday_korea_quarantine_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  no-korea-model-or-editor-input:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Recheck actual Week-42 non-Korea packet and hostile Korea substitutions
+        run: python -m unittest tests.test_sunday_korea_quarantine_gate -v
+      - name: Guarantee site and production state unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No Anthropic call, Korea HWPX, publisher fetch, private repo, API secrets,
+# editor SMTP, actual Sunday dispatch, source/body artifact or deployment.
