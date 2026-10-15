@@ -346,7 +346,7 @@ class TestCandidateBuild(unittest.TestCase):
     def test_us_official_metadata_is_live_while_pacom_remains_blocked(self):
         """Congressionally sourced links are distinct from PACOM originals."""
         html = (self.out / "us-indopacific.html").read_text(encoding="utf-8")
-        self.assertIn("Official congressional metadata feed live — PACOM collection blocked", html)
+        self.assertIn("Official congressional and Treasury metadata feeds live — PACOM collection blocked", html)
         self.assertIn("Collected official congressional metadata links", html)
         self.assertIn("Direct PACOM command collection", html)
         self.assertIn("Admitted U.S. source-body articles", html)
