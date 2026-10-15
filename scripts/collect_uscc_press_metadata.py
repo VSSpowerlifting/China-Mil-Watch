@@ -94,9 +94,13 @@ def extract(html, *, as_of):
         if c is None:
             continue
         url,slug=c
-        stamp=find_listing_date(anchor)
-        if stamp is None:
+        # Page navigation/sidebars are not listing entries; only a bounded
+        # official listing card may provide an authoritative date.
+        if not (anchor.find_parent(class_="views-row") or
+                anchor.find_parent("article")):
             continue
+        stamp=find_listing_date(anchor)
+        need(stamp is not None, "dated_official_listing_card_missing")
         need(stamp <= as_of and "2025-01-01" <= stamp, "untrusted_source_date")
         ident="uscc-press:"+slug
         row={"source_identity":ident,"canonical_official_url":url,
