@@ -1,0 +1,70 @@
+name: China retired-source integrity — after daily pipeline
+
+# Once the owner-approved 4,400-record release commit exists on main, every
+# completed daily pipeline must preserve its retirement ledger and the entire
+# published static tree. Read-only even if the daily workflow failed.
+on:
+  workflow_run:
+    workflows: ["Daily PLA Watch Update"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-retirement-postdaily-audit
+  cancel-in-progress: false
+
+jobs:
+  postdaily-audit:
+    if: github.repository == 'VSSpowerlifting/China-Mil-Watch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Read current public main without repository write credentials
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Skip before the first actually merged production cull
+        id: activation
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git log -1 --format=%s \
+            --grep='Archive: retire 4400 China records with permanent URL tombstones' |
+            grep -Fxq 'Archive: retire 4400 China records with permanent URL tombstones'; then
+            echo 'active=yes' >> "$GITHUB_OUTPUT"
+          else
+            echo 'active=no' >> "$GITHUB_OUTPUT"
+            echo 'Pre-launch: no full active corpus retirement commit is in main.'
+          fi
+      - name: Read back Pages and validate exact active database, tombstones and site
+        if: steps.activation.outputs.active == 'yes'
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          DB_BEFORE="$(sha256sum pla_watch.db | cut -d' ' -f1)"
+          git fetch --no-tags origin \
+            refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          mkdir -p "$RUNNER_TEMP/china-postdaily-pages"
+          git archive refs/remotes/origin/gh-pages |
+            tar -xf - -C "$RUNNER_TEMP/china-postdaily-pages"
+          python -m scripts.verify_china_retirement_pages_readback \
+            --expected-output output \
+            --pages-tree "$RUNNER_TEMP/china-postdaily-pages" \
+            --db pla_watch.db --expected-tombstones 4400
+          python scripts/validate_output.py
+          test "$DB_BEFORE" = "$(sha256sum pla_watch.db | cut -d ' ' -f1)"
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test "$(git rev-parse HEAD)" = "$(git ls-remote origin refs/heads/main | cut -f1)" || {
+            echo '::error::main advanced during audit; rerun against new main'; exit 1;
+          }
+          echo 'PASS: retired China URLs and IDs stayed excluded after daily pipeline; every Pages file matches main.'
