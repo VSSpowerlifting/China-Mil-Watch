@@ -2980,6 +2980,11 @@ def build(out_dir: Path, title: str, db_path: Path,
         from core.uscc_official_metadata import load_public_links as load_uscc_live_links
         uscc_links = (load_uscc_live_links(db_path)
                       if desk.slug == "us-indopacific" else [])
+        # Executive-branch Treasury links are a distinct admitted source family.
+        # No headline, article body, media or topic inference enters this view.
+        from core.us_treasury_official_metadata import load_public_links as load_treasury_live_links
+        treasury_links = (load_treasury_live_links(db_path)
+                          if desk.slug == "us-indopacific" else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -2992,6 +2997,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              indonesia_press_links=indonesia_press_links,
                              us_pacom_official_links=us_pacom_links,
                              uscc_official_links=uscc_links,
+                             us_treasury_official_links=treasury_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),

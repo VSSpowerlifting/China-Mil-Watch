@@ -16,8 +16,8 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}Official congressional metadata feed live — PACOM collection blocked{% elif published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
-    <p>{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from the U.S.-China Economic and Security Review Commission, a congressional commission. Direct U.S. Pacific Command collection remains access-blocked and DVIDS remains paused; original publisher headlines, article text, photographs and analysis are not automatically republished.{% elif published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original headline/date entries, nine additional historical links, and separately admitted new official-link metadata when available. Original document bodies and substantive analysis remain outside the production archive.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
+    <h2>{% if desk.slug == 'us-indopacific' and us_treasury_official_links | default([]) %}Official congressional and Treasury metadata feeds live — PACOM collection blocked{% elif desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}Official congressional metadata feed live — PACOM collection blocked{% elif published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
+    <p>{% if desk.slug == 'us-indopacific' and us_treasury_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from two distinct sources: the U.S.-China Economic and Security Review Commission (congressional) and U.S. Department of the Treasury (executive). Direct PACOM collection remains access-blocked and DVIDS paused; this is not full military-source coverage and no publisher bodies, headlines, translations or analysis are automatically republished.{% elif desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from the U.S.-China Economic and Security Review Commission, a congressional commission. Direct U.S. Pacific Command collection remains access-blocked and DVIDS remains paused; original publisher headlines, article text, photographs and analysis are not automatically republished.{% elif published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original headline/date entries, nine additional historical links, and separately admitted new official-link metadata when available. Original document bodies and substantive analysis remain outside the production archive.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
   </div>
 </div>
 
@@ -79,6 +79,36 @@
     the source website; changes or access errors may interrupt new collection.
     These metadata records are distinct from IPR's article corpus and do not
     increase its reported article count.</p>
+</section>
+{% endif %}
+
+{# Executive Treasury press metadata: different issuer from USCC or PACOM.
+   Read only from verified production SQLite metadata, not press article bodies. #}
+{% if desk.slug == 'us-indopacific' and us_treasury_official_links | default([]) %}
+<section class="desk-references us-treasury-source-links" aria-labelledby="us-treasury-official-links-heading">
+  <p class="eyebrow">Automatically collected · official executive-department link metadata</p>
+  <h2 id="us-treasury-official-links-heading">U.S. Department of the Treasury — official press releases</h2>
+  <p>These outbound references are collected from the U.S. Treasury's first-party press
+    listing and admitted as verified URL, publisher date and issuer metadata only.
+    Treasury is a federal executive department, not the U.S.-China Economic and
+    Security Review Commission or U.S. Pacific Command. The listing covers varied
+    Treasury subjects; inclusion does not establish Indo-Pacific relevance,
+    independently verify claims, or constitute IPR original analysis. Original
+    release text, headlines, documents and media are not rehosted.</p>
+  <ol class="desk-reference-list" aria-label="Collected Treasury government source metadata">
+    {% for ref in us_treasury_official_links %}
+    <li data-us-treasury-official-link="{{ ref.source_identity }}">
+      <h3><a href="{{ ref.source_url }}" target="_blank" rel="noopener noreferrer">{{ ref.neutral_label }}</a></h3>
+      <p class="meta">Issuer: U.S. Department of the Treasury
+        · Publisher date <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+        · First-party link metadata only</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">This is not a comprehensive historical archive. Observed listing
+    metadata are preserved in a separate production table; new collection may stop
+    if publisher access or page structure changes. These entries are not counted
+    as source-body articles in IPR's main archive.</p>
 </section>
 {% endif %}
 
@@ -583,6 +613,9 @@ it is not an analysis queue. <a href="corpus-guide.html#states">Read the four pr
 {% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}
 <dl class="stat-rows">
   <div class="stat-row"><dt>Collected official congressional metadata links</dt><dd>{{ uscc_official_links|length }}</dd></div>
+  {% if us_treasury_official_links | default([]) %}
+  <div class="stat-row"><dt>Collected official Treasury metadata links</dt><dd>{{ us_treasury_official_links|length }}</dd></div>
+  {% endif %}
   <div class="stat-row"><dt>Direct PACOM command collection</dt><dd>Access blocked</dd></div>
   <div class="stat-row"><dt>DVIDS media collection</dt><dd>Paused</dd></div>
   <div class="stat-row"><dt>Admitted U.S. source-body articles</dt><dd>None</dd></div>
