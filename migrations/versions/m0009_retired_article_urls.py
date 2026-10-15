@@ -1,4 +1,4 @@
-"""0008 — retain article URL identity after active-corpus retirement.
+"""0009 — retain article URL identity after active-corpus retirement.
 
 Creates an empty ledger, without writing or retiring any existing article.
 Populating it is a separate, reviewed, atomic database release. The original
@@ -7,7 +7,7 @@ retired from the active publication while its URL SHA-256 remains.
 """
 import sqlite3
 
-VERSION = "0008"
+VERSION = "0009"
 NAME = "retired_article_urls"
 
 DDL = """
