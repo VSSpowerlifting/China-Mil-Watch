@@ -16,10 +16,38 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{% if published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
-    <p>{% if published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
+    <h2>{% if desk.slug in ('philippines', 'indonesia') and regional_official_links | default([]) %}Verified official-link metadata admitted — original-text corpus remains in shadow{% elif published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
+    <p>{% if desk.slug in ('philippines', 'indonesia') and regional_official_links | default([]) %}This source family has independently admitted official publisher URL/date metadata in IPR's regional SQLite source index. Those records are separate from source-text articles, editorial citations and the legacy corpus. Original-text collection remains in shadow; coverage is limited to one official institutional family.{% elif published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
   </div>
 </div>
+
+{# Regional official-link index: only actual production SQLite admission,
+   never shadow captures, the reviewer dossier or static publisher directories. #}
+{% if desk.slug in ('philippines', 'indonesia') and regional_official_links | default([]) %}
+<section class="desk-references regional-official-live-links"
+         data-source-scope="official-link-only"
+         aria-labelledby="regional-official-live-links-title">
+  <p class="eyebrow">Automatically admitted · official link metadata only</p>
+  <h2 id="regional-official-live-links-title">Verified official publisher references</h2>
+  <p>These links come from a guarded production metadata index, not the
+  original-text archive. The publisher's statements are not independently
+  verified claims, and this is not comprehensive national defense coverage.</p>
+  <ol class="desk-reference-list" aria-label="Admitted official publisher references">
+    {% for ref in regional_official_links %}
+    <li data-regional-official-source-id="{{ ref.source_identity }}">
+      <h3><a href="{{ ref.canonical_official_url }}" target="_blank"
+             rel="noopener noreferrer">{{ ref.label }}</a></h3>
+      <p class="meta">Publisher: {{ 'Armed Forces of the Philippines' if desk.slug == 'philippines' else 'Indonesian Ministry of Defense — Berita' }}
+        · Official date <time datetime="{{ ref.publisher_posted_date }}">{{ ref.publisher_posted_date }}</time>
+        · Official-link metadata only</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">Original headlines, article bodies, photos, documents,
+  translations and automatic analysis are excluded. Held records cannot
+  appear in this index.</p>
+</section>
+{% endif %}
 
 {# US: first-party publisher URLs, never collected source originals. #}
 {% if desk.slug == 'us-indopacific' and us_pacom_official_links | default([]) %}
