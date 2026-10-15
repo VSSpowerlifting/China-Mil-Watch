@@ -133,7 +133,7 @@ def backup_restore(source_checkout, encrypted_output, recipient_fingerprint,
             fd = -1
             try:
                 git_proc = subprocess.Popen(
-                    ["git", "-C", str(source), "bundle", "create", "-", "--all"],
+                    ["git", "-C", str(source), "bundle", "create", "-", "HEAD"],
                     stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
                 enc_proc = subprocess.Popen(
                     ["gpg", "--homedir", str(gpg), "--batch", "--quiet",
