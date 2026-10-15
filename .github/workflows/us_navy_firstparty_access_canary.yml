@@ -1,0 +1,66 @@
+name: US First-Party Navy Source Access — Bounded Read-Only Canary
+
+# Two strictly fixed Navy hosts. This probe records access/robots outcomes
+# but NEVER commits source state, performs crawling, or advances a desk clock.
+on:
+  pull_request:
+    paths:
+      - "scripts/probe_us_navy_first_party_access.py"
+      - "tests/test_us_navy_first_party_access.py"
+      - ".github/workflows/us_navy_firstparty_access_canary.yml"
+      - "docs/engineering/US_NAVY_FIRSTPARTY_ACCESS_PROBE_2026-10-15.md"
+  workflow_dispatch:
+    inputs:
+      owner_authorized_readonly_probe:
+        description: Explicitly authorize this one bounded policy-first access probe.
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  source-free-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Synthetic robots, spoofed-host, redirect and permission checks
+        run: |
+          python -m unittest tests.test_us_navy_first_party_access -v
+      - name: No state, source or site mutation
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json .github/workflows/us_shadow.yml
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  one-off-navy-policy-probe:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.owner_authorized_readonly_probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Probe bounded official hosts, no crawl, no state changes
+        run: |
+          python scripts/probe_us_navy_first_party_access.py \
+            --owner-authorized-readonly-probe
+      - name: Assert nothing committed or created
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
