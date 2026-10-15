@@ -1,0 +1,7232 @@
+{
+  "chromium": "147.0.7727.15",
+  "baseline": "d5c3ca5169bf10eb7685897c234b06452c3592e5",
+  "checks": 189,
+  "receipts": [
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 15678,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 1794.40625,
+            "bottom": 1812.40625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 3778.0625,
+            "bottom": 3796.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 6989.8125,
+            "bottom": 7007.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 10155.265625,
+            "bottom": 10175.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 18600,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 1798.140625,
+            "bottom": 1816.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 6399.0625,
+            "bottom": 6417.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 10543.125,
+            "bottom": 10561.125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 13242.421875,
+            "bottom": 13262.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 17439,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2164.453125,
+            "bottom": 2182.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 6502.890625,
+            "bottom": 6520.890625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 10708.140625,
+            "bottom": 10726.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 13825.59375,
+            "bottom": 13845.59375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 21275,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2235.6875,
+            "bottom": 2253.6875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 6773.90625,
+            "bottom": 6791.90625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 10912.5625,
+            "bottom": 10930.5625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 14586.765625,
+            "bottom": 14606.765625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 21235,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2334.984375,
+            "bottom": 2352.984375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 7910.8125,
+            "bottom": 7928.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 11940.28125,
+            "bottom": 11958.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 14615.578125,
+            "bottom": 14635.578125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 20922,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2216.109375,
+            "bottom": 2234.109375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 6511.953125,
+            "bottom": 6529.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 11007.578125,
+            "bottom": 11025.578125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 14424.703125,
+            "bottom": 14444.703125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 15335,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2182.78125,
+            "bottom": 2200.78125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-routine",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 4946.96875,
+            "bottom": 4964.96875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 8638.09375,
+            "bottom": 8658.09375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 19116,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2238.671875,
+            "bottom": 2256.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 6334.734375,
+            "bottom": 6352.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 9864.75,
+            "bottom": 9882.75
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 12373.5625,
+            "bottom": 12393.5625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 17890,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2309.78125,
+            "bottom": 2327.78125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 5730.609375,
+            "bottom": 5748.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 8794.46875,
+            "bottom": 8812.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 11269.984375,
+            "bottom": 11289.984375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 17710,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2107.640625,
+            "bottom": 2125.640625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 5162.203125,
+            "bottom": 5180.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 8483.140625,
+            "bottom": 8501.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 11125.140625,
+            "bottom": 11145.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 23699,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2193.328125,
+            "bottom": 2211.328125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 8335.203125,
+            "bottom": 8353.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 12664.34375,
+            "bottom": 12682.34375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 16381.140625,
+            "bottom": 16401.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 25182,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2412.1875,
+            "bottom": 2430.1875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 8130.5,
+            "bottom": 8148.5
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 13292.0625,
+            "bottom": 13310.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 17408.421875,
+            "bottom": 17428.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 23953,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2353.3125,
+            "bottom": 2371.3125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 7995.734375,
+            "bottom": 8013.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 13014.8125,
+            "bottom": 13032.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 16631.71875,
+            "bottom": 16651.71875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 17796,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2125.15625,
+            "bottom": 2143.15625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 5845.65625,
+            "bottom": 5863.65625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 9623.453125,
+            "bottom": 9641.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 11151.953125,
+            "bottom": 11171.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12067,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2460.953125,
+            "bottom": 2478.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 4254.125,
+            "bottom": 4272.125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 5780.921875,
+            "bottom": 5798.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 7226.25,
+            "bottom": 7246.25
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 16239,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2825.4375,
+            "bottom": 2843.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 7431.765625,
+            "bottom": 7449.765625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 12155.015625,
+            "bottom": 12175.015625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 17342,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2782.4375,
+            "bottom": 2800.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 7683.03125,
+            "bottom": 7701.03125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 13495.78125,
+            "bottom": 13515.78125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 320,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 16271,
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2782.1875,
+            "bottom": 2800.1875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 8381.859375,
+            "bottom": 8399.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 10870.703125,
+            "bottom": 10890.703125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 13868,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1711.765625,
+            "bottom": 1729.765625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 3395.75,
+            "bottom": 3413.75
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 6141.34375,
+            "bottom": 6159.34375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 8774.046875,
+            "bottom": 8794.046875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 16239,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1647.75,
+            "bottom": 1665.75
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 5482.84375,
+            "bottom": 5500.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 8927.671875,
+            "bottom": 8945.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 11227.40625,
+            "bottom": 11247.40625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 15078,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1992.375,
+            "bottom": 2010.375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 5631.578125,
+            "bottom": 5649.578125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 9137.59375,
+            "bottom": 9155.59375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 11788.890625,
+            "bottom": 11808.890625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 18360,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2001.0625,
+            "bottom": 2019.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 5773.453125,
+            "bottom": 5791.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 9246.171875,
+            "bottom": 9264.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 12287.734375,
+            "bottom": 12307.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 18505,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2122.1875,
+            "bottom": 2140.1875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 6765.703125,
+            "bottom": 6783.703125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 10229.125,
+            "bottom": 10247.125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 12504.859375,
+            "bottom": 12524.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 18025,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1980.921875,
+            "bottom": 1998.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 5477.640625,
+            "bottom": 5495.640625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 9240.734375,
+            "bottom": 9258.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 12125.109375,
+            "bottom": 12145.109375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 13617,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1957.921875,
+            "bottom": 1975.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-routine",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 4322.546875,
+            "bottom": 4340.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 7480.921875,
+            "bottom": 7500.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 16650,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2043.640625,
+            "bottom": 2061.640625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 5473.765625,
+            "bottom": 5491.765625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 8471.03125,
+            "bottom": 8489.03125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 10580.28125,
+            "bottom": 10600.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 15754,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2074.203125,
+            "bottom": 2092.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 4962.28125,
+            "bottom": 4980.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 7526.6875,
+            "bottom": 7544.6875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 9635.9375,
+            "bottom": 9655.9375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 15807,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1938.859375,
+            "bottom": 1956.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 4527.265625,
+            "bottom": 4545.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 7382.046875,
+            "bottom": 7400.046875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 9724.375,
+            "bottom": 9744.375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 20663,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1998.859375,
+            "bottom": 2016.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 7141.828125,
+            "bottom": 7159.828125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 10671.84375,
+            "bottom": 10689.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 13922.484375,
+            "bottom": 13942.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 21832,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2147.171875,
+            "bottom": 2165.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 6933.171875,
+            "bottom": 6951.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 11229.015625,
+            "bottom": 11247.015625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 14646.140625,
+            "bottom": 14666.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 20701,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2122.1875,
+            "bottom": 2140.1875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 6865.59375,
+            "bottom": 6883.59375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 10985.65625,
+            "bottom": 11003.65625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 14003.21875,
+            "bottom": 14023.21875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 15748,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1884.9375,
+            "bottom": 1902.9375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 5006.09375,
+            "bottom": 5024.09375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 8217.84375,
+            "bottom": 8235.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 9579.859375,
+            "bottom": 9599.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10689,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2188.9375,
+            "bottom": 2206.9375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 3715.734375,
+            "bottom": 3733.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 5042.75,
+            "bottom": 5060.75
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 6298,
+            "bottom": 6318
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 14067,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2449.46875,
+            "bottom": 2467.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 6389.859375,
+            "bottom": 6407.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 10323.6875,
+            "bottom": 10343.6875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 15206,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2526.9375,
+            "bottom": 2544.9375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 6595.109375,
+            "bottom": 6613.109375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 11618.4375,
+            "bottom": 11638.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 375,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 14275,
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2567.140625,
+            "bottom": 2585.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 7259.875,
+            "bottom": 7277.875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 9327.640625,
+            "bottom": 9347.640625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10212,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1684.921875,
+            "bottom": 1712.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2735.234375,
+            "bottom": 2763.234375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4380.296875,
+            "bottom": 4408.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 5914.609375,
+            "bottom": 5942.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10962,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1449.46875,
+            "bottom": 1477.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3617.28125,
+            "bottom": 3645.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 5561.59375,
+            "bottom": 5589.59375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 6996.15625,
+            "bottom": 7024.15625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9606,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1663.265625,
+            "bottom": 1691.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3602.078125,
+            "bottom": 3630.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 5474.390625,
+            "bottom": 5502.390625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 6960.703125,
+            "bottom": 6988.703125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12151,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1732.28125,
+            "bottom": 1760.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3770.84375,
+            "bottom": 3798.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 5709.65625,
+            "bottom": 5737.65625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 7386.21875,
+            "bottom": 7414.21875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12164,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1773.734375,
+            "bottom": 1801.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4283.296875,
+            "bottom": 4311.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 6146.359375,
+            "bottom": 6174.359375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 7490.421875,
+            "bottom": 7518.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11954,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1680.359375,
+            "bottom": 1708.359375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3643.171875,
+            "bottom": 3671.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 5639.234375,
+            "bottom": 5667.234375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 7258.546875,
+            "bottom": 7286.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9754,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1727.203125,
+            "bottom": 1755.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-routine",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3124.765625,
+            "bottom": 3152.765625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 4984.734375,
+            "bottom": 5012.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11260,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1715.09375,
+            "bottom": 1743.09375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3578.15625,
+            "bottom": 3606.15625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 5208.46875,
+            "bottom": 5236.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 6452.78125,
+            "bottom": 6480.78125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10997,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1697.765625,
+            "bottom": 1725.765625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3352.078125,
+            "bottom": 3380.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4849.390625,
+            "bottom": 4877.390625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 6126.953125,
+            "bottom": 6154.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10855,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1606.375,
+            "bottom": 1634.375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3127.6875,
+            "bottom": 3155.6875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4782,
+            "bottom": 4810
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 6126.0625,
+            "bottom": 6154.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 13492,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1692.703125,
+            "bottom": 1720.703125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4468.265625,
+            "bottom": 4496.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 6397.828125,
+            "bottom": 6425.828125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 8150.140625,
+            "bottom": 8178.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 13605,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1786.078125,
+            "bottom": 1814.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4304.890625,
+            "bottom": 4332.890625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 6600.203125,
+            "bottom": 6628.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 8452.265625,
+            "bottom": 8480.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 13202,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1773.734375,
+            "bottom": 1801.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4349.796875,
+            "bottom": 4377.796875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 6602.609375,
+            "bottom": 6630.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 8288.421875,
+            "bottom": 8316.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10544,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1621.8125,
+            "bottom": 1649.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3342.625,
+            "bottom": 3370.625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 5153.9375,
+            "bottom": 5181.9375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 5984.5,
+            "bottom": 6012.5
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 7989,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1912.34375,
+            "bottom": 1940.34375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2838.90625,
+            "bottom": 2866.90625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3632.46875,
+            "bottom": 3660.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 4586.53125,
+            "bottom": 4614.53125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9642,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1887.015625,
+            "bottom": 1915.015625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4193.328125,
+            "bottom": 4221.328125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 6628.546875,
+            "bottom": 6656.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10336,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2233.09375,
+            "bottom": 2261.09375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4533.90625,
+            "bottom": 4561.90625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 7491.875,
+            "bottom": 7519.875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 768,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9713,
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2243.671875,
+            "bottom": 2271.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4669.0625,
+            "bottom": 4697.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 5799.5,
+            "bottom": 5827.5
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9203,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1252.9375,
+            "bottom": 1280.9375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2237.8125,
+            "bottom": 2265.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3817.4375,
+            "bottom": 3845.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 5352.8125,
+            "bottom": 5380.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10236,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1267.4375,
+            "bottom": 1295.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3369.8125,
+            "bottom": 3397.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 5315.1875,
+            "bottom": 5343.1875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 6717.5625,
+            "bottom": 6745.5625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 8966,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1500.453125,
+            "bottom": 1528.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3407.078125,
+            "bottom": 3435.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 5280.453125,
+            "bottom": 5308.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 6801.078125,
+            "bottom": 6829.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11294,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1513.390625,
+            "bottom": 1541.390625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3486.515625,
+            "bottom": 3514.515625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 5326.640625,
+            "bottom": 5354.640625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 7037.515625,
+            "bottom": 7065.515625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11470,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1623.828125,
+            "bottom": 1651.828125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4101.203125,
+            "bottom": 4129.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 5932.078125,
+            "bottom": 5960.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 7277.203125,
+            "bottom": 7305.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11130,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1527.890625,
+            "bottom": 1555.890625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3425.265625,
+            "bottom": 3453.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 5389.140625,
+            "bottom": 5417.140625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 6943.015625,
+            "bottom": 6971.015625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9055,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1473.015625,
+            "bottom": 1501.015625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-routine",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2838.390625,
+            "bottom": 2866.390625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 4733.203125,
+            "bottom": 4761.203125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10665,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1531.171875,
+            "bottom": 1559.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3395.296875,
+            "bottom": 3423.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 5059.921875,
+            "bottom": 5087.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 6338.546875,
+            "bottom": 6366.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10323,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1534.953125,
+            "bottom": 1562.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3190.328125,
+            "bottom": 3218.328125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4655.453125,
+            "bottom": 4683.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 5934.078125,
+            "bottom": 5962.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10171,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1465.953125,
+            "bottom": 1493.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2955.078125,
+            "bottom": 2983.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4543.953125,
+            "bottom": 4571.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 5889.078125,
+            "bottom": 5917.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12653,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1531.171875,
+            "bottom": 1559.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4174.796875,
+            "bottom": 4202.796875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 6105.421875,
+            "bottom": 6133.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 7792.296875,
+            "bottom": 7820.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12868,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1627.109375,
+            "bottom": 1655.109375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4080.484375,
+            "bottom": 4108.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 6343.609375,
+            "bottom": 6371.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 8196.734375,
+            "bottom": 8224.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12342,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1623.828125,
+            "bottom": 1651.828125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4034.703125,
+            "bottom": 4062.703125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 6222.078125,
+            "bottom": 6250.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 7908.953125,
+            "bottom": 7936.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9936,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1424.515625,
+            "bottom": 1452.515625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3146.390625,
+            "bottom": 3174.390625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4925.515625,
+            "bottom": 4953.515625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 5823.640625,
+            "bottom": 5851.640625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 7304,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1632.90625,
+            "bottom": 1660.90625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2527.28125,
+            "bottom": 2555.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3388.40625,
+            "bottom": 3416.40625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 4376.78125,
+            "bottom": 4404.78125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 8967,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1724.125,
+            "bottom": 1752.125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3998.25,
+            "bottom": 4026.25
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 6401.8125,
+            "bottom": 6429.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9253,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1722.09375,
+            "bottom": 1750.09375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3957.46875,
+            "bottom": 3985.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 6850.53125,
+            "bottom": 6878.53125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 1280,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9024,
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1870.421875,
+            "bottom": 1898.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4410.578125,
+            "bottom": 4438.578125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 5648.59375,
+            "bottom": 5676.59375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9359,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1317.546875,
+            "bottom": 1345.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 2329.734375,
+            "bottom": 2357.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3936.671875,
+            "bottom": 3964.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 5499.359375,
+            "bottom": 5527.359375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10388,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1327.84375,
+            "bottom": 1355.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3457.53125,
+            "bottom": 3485.53125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 5430.21875,
+            "bottom": 5458.21875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 6859.90625,
+            "bottom": 6887.90625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9122,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1564.6875,
+            "bottom": 1592.6875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3498.625,
+            "bottom": 3526.625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 5399.3125,
+            "bottom": 5427.3125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 6947.25,
+            "bottom": 6975.25
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11457,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1585.28125,
+            "bottom": 1613.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3585.71875,
+            "bottom": 3613.71875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 5453.15625,
+            "bottom": 5481.15625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 7191.34375,
+            "bottom": 7219.34375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11637,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1699.171875,
+            "bottom": 1727.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4203.859375,
+            "bottom": 4231.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 6062.046875,
+            "bottom": 6090.046875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 7434.484375,
+            "bottom": 7462.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 11290,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1595.578125,
+            "bottom": 1623.578125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3520.265625,
+            "bottom": 3548.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 5511.453125,
+            "bottom": 5539.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 7092.640625,
+            "bottom": 7120.640625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9194,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1533.796875,
+            "bottom": 1561.796875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-routine",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 2926.484375,
+            "bottom": 2954.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 4862.265625,
+            "bottom": 4890.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10825,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1599.234375,
+            "bottom": 1627.234375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3490.671875,
+            "bottom": 3518.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 5182.609375,
+            "bottom": 5210.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 6488.546875,
+            "bottom": 6516.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10479,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1599.1875,
+            "bottom": 1627.1875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3281.875,
+            "bottom": 3309.875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4774.3125,
+            "bottom": 4802.3125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 6080.25,
+            "bottom": 6108.25
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10327,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1530.1875,
+            "bottom": 1558.1875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3046.625,
+            "bottom": 3074.625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4662.8125,
+            "bottom": 4690.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 6035.25,
+            "bottom": 6063.25
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12813,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1599.234375,
+            "bottom": 1627.234375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4270.171875,
+            "bottom": 4298.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 6228.109375,
+            "bottom": 6256.109375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 7942.296875,
+            "bottom": 7970.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 13036,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1702.828125,
+            "bottom": 1730.828125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4183.515625,
+            "bottom": 4211.515625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 6473.953125,
+            "bottom": 6501.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 8354.390625,
+            "bottom": 8382.390625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 12509,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1699.171875,
+            "bottom": 1727.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4137.359375,
+            "bottom": 4165.359375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 6352.046875,
+            "bottom": 6380.046875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 8066.234375,
+            "bottom": 8094.234375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 10088,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1485.296875,
+            "bottom": 1513.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3234.484375,
+            "bottom": 3262.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 5040.921875,
+            "bottom": 5068.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 5966.359375,
+            "bottom": 5994.359375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 7456,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1693.3125,
+            "bottom": 1721.3125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 2615,
+            "bottom": 2643
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3503.4375,
+            "bottom": 3531.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 4519.125,
+            "bottom": 4547.125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9113,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1792.5625,
+            "bottom": 1820.5625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4094,
+            "bottom": 4122
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 6538.53125,
+            "bottom": 6566.53125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9399,
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1790.15625,
+            "bottom": 1818.15625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4052.84375,
+            "bottom": 4080.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 6986.875,
+            "bottom": 7014.875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 1440,
+      "mode": "geometry-and-clearance",
+      "geometry_unchanged": true,
+      "height": 9153,
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1922.734375,
+            "bottom": 1950.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4498.328125,
+            "bottom": 4526.328125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 5767.71875,
+            "bottom": 5795.71875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 375,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 1280,
+      "mode": "open-disclosures",
+      "geometry_unchanged": true,
+      "clear_of_text": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "mode": "print",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "mode": "forced-colors",
+      "accents_hidden": true
+    },
+    {
+      "route": "fixture-journal-long-cross-desk.html",
+      "width": 320,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2583.359375,
+            "bottom": 2601.359375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 5104.3125,
+            "bottom": 5122.3125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 5508.3125,
+            "bottom": 5526.3125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 6297,
+            "bottom": 6317
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-no-photograph.html",
+      "width": 320,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2333.03125,
+            "bottom": 2351.03125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2860.921875,
+            "bottom": 2878.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 3264.921875,
+            "bottom": 3282.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 4053.609375,
+            "bottom": 4073.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-photograph.html",
+      "width": 320,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2393.484375,
+            "bottom": 2411.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2921.375,
+            "bottom": 2939.375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 3325.375,
+            "bottom": 3343.375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 4114.0625,
+            "bottom": 4134.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-short.html",
+      "width": 320,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2065.890625,
+            "bottom": 2083.890625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2403.296875,
+            "bottom": 2421.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 3148,
+            "bottom": 3168
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-source-linked.html",
+      "width": 320,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 2549.28125,
+            "bottom": 2567.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 186,
+            "right": 298,
+            "top": 8148.953125,
+            "bottom": 8166.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 138,
+            "right": 298,
+            "top": 10637.796875,
+            "bottom": 10657.796875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-long-cross-desk.html",
+      "width": 375,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2254.890625,
+            "bottom": 2272.890625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 4342.984375,
+            "bottom": 4360.984375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 4713.6875,
+            "bottom": 4731.6875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 5445.484375,
+            "bottom": 5465.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-no-photograph.html",
+      "width": 375,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1978.8125,
+            "bottom": 1996.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2440.109375,
+            "bottom": 2458.109375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2810.8125,
+            "bottom": 2828.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 3542.609375,
+            "bottom": 3562.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-photograph.html",
+      "width": 375,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2100.671875,
+            "bottom": 2118.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2561.96875,
+            "bottom": 2579.96875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2932.671875,
+            "bottom": 2950.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 3664.46875,
+            "bottom": 3684.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-short.html",
+      "width": 375,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 1779.03125,
+            "bottom": 1797.03125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2116.4375,
+            "bottom": 2134.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 2837.546875,
+            "bottom": 2857.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-source-linked.html",
+      "width": 375,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 2308.78125,
+            "bottom": 2326.78125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 241,
+            "right": 353,
+            "top": 7001.515625,
+            "bottom": 7019.515625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 193,
+            "right": 353,
+            "top": 9069.28125,
+            "bottom": 9089.28125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-long-cross-desk.html",
+      "width": 768,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1906.296875,
+            "bottom": 1934.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3560.359375,
+            "bottom": 3588.359375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 3897.671875,
+            "bottom": 3925.671875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 4561.734375,
+            "bottom": 4589.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-no-photograph.html",
+      "width": 768,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1715.921875,
+            "bottom": 1743.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2110.484375,
+            "bottom": 2138.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2447.796875,
+            "bottom": 2475.796875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 3111.859375,
+            "bottom": 3139.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-photograph.html",
+      "width": 768,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2085.546875,
+            "bottom": 2113.546875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2480.109375,
+            "bottom": 2508.109375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 2817.421875,
+            "bottom": 2845.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 3481.484375,
+            "bottom": 3509.484375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-short.html",
+      "width": 768,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1519.53125,
+            "bottom": 1547.53125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1856.84375,
+            "bottom": 1884.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 2579.8125,
+            "bottom": 2607.8125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-source-linked.html",
+      "width": 768,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 1711.875,
+            "bottom": 1739.875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 545.59375,
+            "right": 729.59375,
+            "top": 4137.265625,
+            "bottom": 4165.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 489.59375,
+            "right": 729.59375,
+            "top": 5267.703125,
+            "bottom": 5295.703125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-long-cross-desk.html",
+      "width": 1280,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1810.5,
+            "bottom": 1838.5
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3532.125,
+            "bottom": 3560.125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 3937,
+            "bottom": 3965
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 4668.625,
+            "bottom": 4696.625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-no-photograph.html",
+      "width": 1280,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1577.875,
+            "bottom": 1605.875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2040,
+            "bottom": 2068
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2444.875,
+            "bottom": 2472.875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 3176.5,
+            "bottom": 3204.5
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-photograph.html",
+      "width": 1280,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1673.4375,
+            "bottom": 1701.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2135.5625,
+            "bottom": 2163.5625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 2540.4375,
+            "bottom": 2568.4375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 3272.0625,
+            "bottom": 3300.0625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-short.html",
+      "width": 1280,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1410.078125,
+            "bottom": 1438.078125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1814.953125,
+            "bottom": 1842.953125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 2639.265625,
+            "bottom": 2667.265625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-source-linked.html",
+      "width": 1280,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 1862.296875,
+            "bottom": 1890.296875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 706.40625,
+            "right": 890.40625,
+            "top": 4402.453125,
+            "bottom": 4430.453125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 650.40625,
+            "right": 890.40625,
+            "top": 5640.46875,
+            "bottom": 5668.46875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-long-cross-desk.html",
+      "width": 1440,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1888.921875,
+            "bottom": 1916.921875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 3637.859375,
+            "bottom": 3665.859375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4070.046875,
+            "bottom": 4098.046875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 4828.984375,
+            "bottom": 4856.984375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-no-photograph.html",
+      "width": 1440,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1627.171875,
+            "bottom": 1655.171875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 2116.609375,
+            "bottom": 2144.609375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 2548.796875,
+            "bottom": 2576.796875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 3307.734375,
+            "bottom": 3335.734375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-photograph.html",
+      "width": 1440,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1720.59375,
+            "bottom": 1748.59375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 2210.03125,
+            "bottom": 2238.03125
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-term",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 2642.21875,
+            "bottom": 2670.21875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 3401.15625,
+            "bottom": 3429.15625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-short.html",
+      "width": 1440,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "s-opening",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1459.375,
+            "bottom": 1487.375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-why",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1891.5625,
+            "bottom": 1919.5625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-sources",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 2756.84375,
+            "bottom": 2784.84375
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "route": "fixture-journal-source-linked.html",
+      "width": 1440,
+      "mode": "future-clearance",
+      "accents": [
+        {
+          "id": "reading-identity",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 1921.421875,
+            "bottom": 1949.421875
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "reading-implications",
+          "box": {
+            "left": 784,
+            "right": 968,
+            "top": 4497.015625,
+            "bottom": 4525.015625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        },
+        {
+          "id": "s-publishers",
+          "box": {
+            "left": 728,
+            "right": 968,
+            "top": 5766.40625,
+            "bottom": 5794.40625
+          },
+          "intersections": 0,
+          "pointer_events": "none",
+          "has_profile": true,
+          "inside_viewport": true
+        }
+      ],
+      "overflow": false
+    },
+    {
+      "mode": "citation-copy",
+      "route": "laos",
+      "exact_text_copied": true
+    },
+    {
+      "mode": "citation-copy",
+      "route": "trident",
+      "exact_text_copied": true
+    }
+  ],
+  "preservation": [
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "sha256": "1e74033fd484caeee7b3eaa1d1635146aaf971e0efe53ed60413691c5bee2d50",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "sha256": "a49d0825ee0777bf2da0da9b917f410c309331b60844689d2b34b196414582f7",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "sha256": "72c995e2fe7284437297b841ac113c6fd442dedbb208f7a3f596f5c15e0dd423",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "sha256": "4690016ba6db82d9632cbeb2cb59168ec67ec26efb429262ed925d27783ac90a",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "sha256": "0d1d2594be17eaae66aeb23eb2671f44698d94614a4da6758f2a4a9cd2b3a68b",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "sha256": "45278e98a2b25fc6478bcae4d1bd0b59e2afa349e1307bb5c5e3853a1289aef2",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "sha256": "eab5c6cc62b19b256349ca525c42f93cf6b75f3ab54123d6c1ec64d0c1d91c58",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "sha256": "ed72894959a3fe5c6ac53a584eb94fe2728e5284bb6e721ce497596b53c3d1da",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "sha256": "08f40f02caa5511b16aa96b70e551be00ec3c72ccad5cb26404694b9860d84fe",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "sha256": "ea5779619d2cff9178d34be13572cdcab45a29f41e09ad19cf436524d567d229",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "sha256": "4aca3ed55850ca08c009e66a2e251a7df480e21085a77b2533e49052952ce2a5",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "sha256": "02543ba79c1e2523e53405414a9fa389887177e2c78d38a0b73960c44b16f3ec",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "sha256": "d82b884943fc069e3f6fd2417caa07eae1c75b39bc545cbfd68dbb4310758b22",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "sha256": "32650d6cd03ffe7a93cc8bc6ff12ee580a4ff8e8291a9a8dc9d377ff28f7b5d9",
+      "unchanged": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "sha256": "70095a07a68ac03bcedce69e54217c6d5dcdb38633ff37e7f5f107b10878b9ae",
+      "unchanged": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "sha256": "1824d48b1a891b0d5876d34e2e49aaab0583c2ed445e9781fd302f23e408c1ab",
+      "unchanged": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "sha256": "98bce27bb1cbefb25c6159b2dd5eb25eb74998b1d3841df500cf16348d239c23",
+      "unchanged": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "sha256": "80c43c71d15797c0c8287f4a7c746069efc3ba226c783ed316d39f068ba9a9e7",
+      "unchanged": true
+    }
+  ],
+  "failures": []
+}

@@ -1,0 +1,12 @@
+{
+  "url": "https://indopacificrecord.org/briefs/what-is-being-built-in-laos.html",
+  "status": 200,
+  "html_sha256": "80c43c71d15797c0c8287f4a7c746069efc3ba226c783ed316d39f068ba9a9e7",
+  "baseline_html_sha256": "80c43c71d15797c0c8287f4a7c746069efc3ba226c783ed316d39f068ba9a9e7",
+  "css_status": 200,
+  "css_sha256": "baf9f973c69dadeccfdf6d729a4ffe285c7f054c256b41b90944cb955b26bc53",
+  "baseline_css_sha256": "baf9f973c69dadeccfdf6d729a4ffe285c7f054c256b41b90944cb955b26bc53",
+  "chromium": "147.0.7727.15",
+  "exact_html_match": true,
+  "exact_css_match": true
+}

@@ -1,0 +1,321 @@
+{
+  "measurements": [
+    {
+      "phase": "before",
+      "viewport": 320,
+      "main": 276,
+      "prose": 276,
+      "main_padding": "0px 0px 40px",
+      "nav": 276,
+      "gap": "32px",
+      "font": "18px",
+      "line_height": "32.4px",
+      "measure_ch": 28.957377049180327,
+      "main_border": "0px",
+      "main_background": "rgb(243, 242, 236)",
+      "wrap_background": "rgba(0, 0, 0, 0)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 16461,
+      "article_height": 13722.609375,
+      "prose_lines": 253,
+      "characters_per_line_max": 36,
+      "complete_line_mean": 27.301652892561982,
+      "overflow": false
+    },
+    {
+      "phase": "before",
+      "viewport": 375,
+      "main": 331,
+      "prose": 331,
+      "main_padding": "0px 0px 40px",
+      "nav": 331,
+      "gap": "32px",
+      "font": "18px",
+      "line_height": "32.4px",
+      "measure_ch": 34.72786885245902,
+      "main_border": "0px",
+      "main_background": "rgb(243, 242, 236)",
+      "wrap_background": "rgba(0, 0, 0, 0)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 14436,
+      "article_height": 11746.5,
+      "prose_lines": 208,
+      "characters_per_line_max": 42,
+      "complete_line_mean": 33.65482233502538,
+      "overflow": false
+    },
+    {
+      "phase": "before",
+      "viewport": 768,
+      "main": 691.1875,
+      "prose": 643.125,
+      "main_padding": "0px 23.04px 40px",
+      "nav": 691.1875,
+      "gap": "32px",
+      "font": "18px",
+      "line_height": "32.4px",
+      "measure_ch": 67.47540983606558,
+      "main_border": "1px",
+      "main_background": "rgb(243, 242, 236)",
+      "wrap_background": "rgba(0, 0, 0, 0)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 9875,
+      "article_height": 7304.5,
+      "prose_lines": 104,
+      "characters_per_line_max": 79,
+      "complete_line_mean": 70.11827956989248,
+      "overflow": false
+    },
+    {
+      "phase": "before",
+      "viewport": 1280,
+      "main": 704,
+      "prose": 630,
+      "main_padding": "0px 36px 40px",
+      "nav": 272,
+      "gap": "76.8px",
+      "font": "19px",
+      "line_height": "35.15px",
+      "measure_ch": 62.608695652173914,
+      "main_border": "1px",
+      "main_background": "rgb(243, 242, 236)",
+      "wrap_background": "rgba(0, 0, 0, 0)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 9786,
+      "article_height": 8145.359375,
+      "prose_lines": 112,
+      "characters_per_line_max": 74,
+      "complete_line_mean": 65.16831683168317,
+      "overflow": false
+    },
+    {
+      "phase": "before",
+      "viewport": 1440,
+      "main": 704,
+      "prose": 630,
+      "main_padding": "0px 36px 40px",
+      "nav": 272,
+      "gap": "86.4px",
+      "font": "19px",
+      "line_height": "35.15px",
+      "measure_ch": 62.608695652173914,
+      "main_border": "1px",
+      "main_background": "rgb(243, 242, 236)",
+      "wrap_background": "rgba(0, 0, 0, 0)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 9866,
+      "article_height": 8201.359375,
+      "prose_lines": 112,
+      "characters_per_line_max": 74,
+      "complete_line_mean": 65.16831683168317,
+      "overflow": false
+    },
+    {
+      "phase": "after",
+      "viewport": 320,
+      "main": 276,
+      "prose": 276,
+      "main_padding": "0px 0px 40px",
+      "nav": 276,
+      "gap": "32px",
+      "font": "18px",
+      "line_height": "32.4px",
+      "measure_ch": 28.957377049180327,
+      "main_border": "0px",
+      "main_background": "rgba(0, 0, 0, 0)",
+      "wrap_background": "rgb(243, 242, 236)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 16271,
+      "article_height": 13550.328125,
+      "prose_lines": 253,
+      "characters_per_line_max": 36,
+      "complete_line_mean": 27.301652892561982,
+      "overflow": false
+    },
+    {
+      "phase": "after",
+      "viewport": 375,
+      "main": 331,
+      "prose": 331,
+      "main_padding": "0px 0px 40px",
+      "nav": 331,
+      "gap": "32px",
+      "font": "18px",
+      "line_height": "32.4px",
+      "measure_ch": 34.72786885245902,
+      "main_border": "0px",
+      "main_background": "rgba(0, 0, 0, 0)",
+      "wrap_background": "rgb(243, 242, 236)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 14275,
+      "article_height": 11603.5,
+      "prose_lines": 208,
+      "characters_per_line_max": 42,
+      "complete_line_mean": 33.65482233502538,
+      "overflow": false
+    },
+    {
+      "phase": "after",
+      "viewport": 768,
+      "main": 691.1875,
+      "prose": 691.1875,
+      "main_padding": "0px 0px 40px",
+      "nav": 691.1875,
+      "gap": "32px",
+      "font": "18px",
+      "line_height": "32.4px",
+      "measure_ch": 72.51803278688524,
+      "main_border": "0px",
+      "main_background": "rgba(0, 0, 0, 0)",
+      "wrap_background": "rgb(243, 242, 236)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 9713,
+      "article_height": 7160.421875,
+      "prose_lines": 97,
+      "characters_per_line_max": 84,
+      "complete_line_mean": 75.12790697674419,
+      "overflow": false
+    },
+    {
+      "phase": "after",
+      "viewport": 1280,
+      "main": 784,
+      "prose": 743.765625,
+      "main_padding": "0px 0px 40px",
+      "nav": 232,
+      "gap": "51.2px",
+      "font": "19px",
+      "line_height": "33.25px",
+      "measure_ch": 73.91459627329192,
+      "main_border": "0px",
+      "main_background": "rgba(0, 0, 0, 0)",
+      "wrap_background": "rgb(243, 242, 236)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 9024,
+      "article_height": 7383.0625,
+      "prose_lines": 96,
+      "characters_per_line_max": 86,
+      "complete_line_mean": 76.47058823529412,
+      "overflow": false
+    },
+    {
+      "phase": "after",
+      "viewport": 1440,
+      "main": 784,
+      "prose": 743.765625,
+      "main_padding": "0px 0px 40px",
+      "nav": 232,
+      "gap": "56px",
+      "font": "19px",
+      "line_height": "33.25px",
+      "measure_ch": 73.91459627329192,
+      "main_border": "0px",
+      "main_background": "rgba(0, 0, 0, 0)",
+      "wrap_background": "rgb(243, 242, 236)",
+      "effective_background": "rgb(243, 242, 236)",
+      "wrap_border": "0px",
+      "text_contrast": 12.719899490596157,
+      "height": 9153,
+      "article_height": 7487.875,
+      "prose_lines": 96,
+      "characters_per_line_max": 86,
+      "complete_line_mean": 76.47058823529412,
+      "overflow": false
+    }
+  ],
+  "preserved": [
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "exact_html_equal": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "exact_html_equal": true
+    }
+  ],
+  "failures": [],
+  "screenshots": "Chromium 900px viewport height; DPR 1; self-hosted fonts loaded; reduced motion in both phases",
+  "depth_rule": "Fraction of structured prose height, excluding publisher references and closing matter"
+}

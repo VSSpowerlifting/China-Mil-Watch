@@ -47,8 +47,8 @@ class UnifiedBriefReadingTests(unittest.TestCase):
         css = source.decode("utf-8")
         self.assertIn(".brief-layout>.brief-reading-navigation{position:sticky;", css)
         self.assertIn(".brief-layout:not(.brief-layout--structured) .brief-main>.brief-section[id]:target", css)
-        self.assertIn(".brief-reading-finding{border-left:2px solid var(--accent);", css)
-        self.assertIn(".brief-signal{border-left:2px solid var(--accent);", css)
+        self.assertIn(".brief-reading-finding{border-top:2px solid var(--accent);", css)
+        self.assertIn(".brief-signal{border:0;", css)
         self.assertNotIn("var(--crimson)", css)
         self.assertNotIn("var(--crimson-ink)", css)
 
