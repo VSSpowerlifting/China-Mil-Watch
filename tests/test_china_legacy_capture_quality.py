@@ -18,12 +18,12 @@ def data():
         "records": [
             [1, "2026-07-06", 0, 1, "Missile test", ""],
             [2, "2026-07-08", 0, 0, "Joint Sea 2026", ""],
-            [3, "2026-09-17", 0, 0, "After repaired extractor", ""],
+            [3, "2026-07-05", 0, 0, "Older original collected after the fix", ""],
             [4, "2026-07-08", 1, 0, "Other desk", ""],
             [5, "2026-07-09", 0, 0, "Normal article", ""],
         ],
     }
-    def html(text):
+    def html(text, collected_at="2026-07-06 16:01:17"):
         return ('<div class="original-text"><p>' + text
                 + '</p></div><table><th scope="row">Original URL</th>'
                 '<td class="prov-value"><a href="https://www.globaltimes.cn/test">Source</a></td></table>')
@@ -31,6 +31,8 @@ def data():
         1: html(("Unrelated articles ... " * 11) + "actual article fragment."),
         2: html("A very short excerpt about something else."),
         5: html("An actual report consisting of substantive reporting. " * 15),
+        3: html("An actual later-captured report. " * 25,
+                collected_at="2026-09-19 12:00:00"),
     }
     return index, pages
 
@@ -42,6 +44,8 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         result = scan(index, pages)
         self.assertEqual((index, pages), frozen)
         self.assertEqual(result["legacy_records_scanned"], 3)
+        self.assertEqual(result["all_global_times_records_examined"], 4)
+        self.assertEqual(result["excluded_captured_after_repair"], 1)
         self.assertEqual(result["flagged_for_manual_quality_review"], 2)
         self.assertEqual({r["id"] for r in result["candidates"]}, {1, 2})
         self.assertTrue(any(r["published_brief_trail"] for r in result["candidates"]))
@@ -63,6 +67,12 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         index, pages = data()
         index["trail_ids"] = [999]
         with self.assertRaisesRegex(ValueError, "source trail"):
+            scan(index, pages)
+
+    def test_missing_collected_timestamp_is_not_guessed_from_publication(self):
+        index, pages = data()
+        pages[1] = pages[1].replace("Collected at", "Published at")
+        with self.assertRaisesRegex(ValueError, "collection timestamp"):
             scan(index, pages)
 
     def test_wrong_source_and_repeated_id_fail_closed(self):
