@@ -207,13 +207,13 @@ def qualify_standing_text(source, *, kind, proposed_sha256,
     need(type(item) is dict and set(item) == {
         "first_party_official_text", "third_party_text_present",
         "separate_terms_apply", "privacy_or_secrecy_exception",
-        "includes_embedded_media", "entire_source_text_version_sha256"
+        "released_artifact_embeds_media", "entire_source_text_version_sha256"
     }, "source_exception_inspection_unavailable")
     need(item["first_party_official_text"] is True
          and item["third_party_text_present"] is False
          and item["separate_terms_apply"] is False
          and item["privacy_or_secrecy_exception"] is False
-         and item["includes_embedded_media"] is False
+         and item["released_artifact_embeds_media"] is False
          and type(item["entire_source_text_version_sha256"]) is str
          and item["entire_source_text_version_sha256"] ==
              capture["entire_clean_original_text_sha256"],
