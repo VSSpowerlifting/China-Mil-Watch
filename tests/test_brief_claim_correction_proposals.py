@@ -1,11 +1,17 @@
 """Draft Brief correction review cannot mutate or approve published materials."""
 import copy
 import json
+from pathlib import Path
 import unittest
 
 from scripts.audit_brief_claim_correction_proposals import (
-    INDEX, ISSUES, PACKET, RECORDS, audit,
+    ISSUES, PACKET, RECORDS, audit,
 )
+
+# Frozen October 14 evidence (5,230 records, 5,144 China records).
+# Live output/corpus-index.json advances with daily collection and is not
+# the source of truth for exact 2026-10-14 historical audit assertions.
+INDEX = Path(__file__).resolve().parent / "fixtures/china-corpus-index-2026-10-14.json"
 
 
 def actual():

@@ -1,0 +1,38 @@
+name: Korea Authenticated Prospective Seven — Synthetic Contract
+
+# Pure offline tests of source-verified Actions + ledger prospective streak.
+# Real authenticated census remains separate and strictly manual/read-only.
+on:
+  pull_request:
+    paths:
+      - scripts/korea_authenticated_prospective_seven.py
+      - scripts/run_korea_authenticated_actions_census.py
+      - tests/test_korea_authenticated_prospective_seven.py
+      - .github/workflows/korea_authenticated_prospective_seven_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prospective-seven-no-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check seven-day Actions/ledger corroboration and historical failure
+        run: python -m unittest tests.test_korea_authenticated_prospective_seven tests.test_korea_authenticated_actions_census -v
+      - name: Assert no production changes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# Never download Korean originals, dispatch collection, read real tokens,
+# admit the desk, run AI, send email or publish a source.

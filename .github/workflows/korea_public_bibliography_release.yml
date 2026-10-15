@@ -1,13 +1,18 @@
-name: Korea Desk — five official-source links release
+name: Korea Desk — fourteen official-source links release
 
 # Explicit owner-authorized publication of government bibliography only.
-# Push triggers on this owner-reviewed release-contract update to publish
-# the approved Korea publisher-index navigation, never new source IDs.
+# Push on an owner-reviewed release-contract change publishes exactly five
+# original bibliographic entries and nine newly approved outbound MND URLs.
 # Never requests a Korean publisher, shadow Git, HWPX, model or new collector.
 on:
   pull_request:
     paths:
       - "research/korea_public_reference_ids.json"
+      - "research/korea_additional_public_official_links_2026-10-15.json"
+      - "research/korea/MND_14_PUBLIC_LINK_REVIEW_CANDIDATES_2026-10-15.json"
+      - "core/korea_additional_public_links.py"
+      - "scripts/preview_korea_fourteen_official_links.py"
+      - "tests/test_korea_additional_public_links.py"
       - "core/korea_public_bibliography.py"
       - "desks/registry.json"
       - "site/preview/generate_preview.py"
@@ -25,6 +30,7 @@ on:
     branches: [main]
     paths:
       - "research/korea_public_reference_ids.json"
+      - "research/korea_additional_public_official_links_2026-10-15.json"
       # An owner-reviewed merge of this release contract intentionally publishes
       # the already approved Korea bibliography/navigation changes on main.
       - ".github/workflows/korea_public_bibliography_release.yml"
@@ -50,7 +56,7 @@ jobs:
         run: sha256sum pla_watch.db > /tmp/ipr-korea-links-db.sha
       - name: Full source-link and original-review regression checks
         run: |
-          python -m unittest tests.test_korea_output_release_scope tests.test_korea_official_index tests.test_korea_public_bibliography tests.test_korea_internal_registry tests.test_korea_site_preview tests.test_korea_reference_gate tests.test_public_desk_references tests.test_desk_map tests.test_desk_rollout_contract tests.test_briefs_collection tests.test_extraction_interface -q
+          python -m unittest tests.test_korea_output_release_scope tests.test_korea_official_index tests.test_korea_public_bibliography tests.test_korea_additional_public_links tests.test_korea_internal_registry tests.test_korea_site_preview tests.test_korea_reference_gate tests.test_public_desk_references tests.test_desk_map tests.test_desk_rollout_contract tests.test_briefs_collection tests.test_extraction_interface -q
       - name: Render real public site, no collectors or media reuse
         shell: bash
         run: |
@@ -60,8 +66,10 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           from core.korea_public_bibliography import load_public_korea_links
+          from core.korea_additional_public_links import load_additional_korea_official_links
           rows = load_public_korea_links()
-          assert len(rows) == 5
+          additional = load_additional_korea_official_links()
+          assert len(rows) == 5 and len(additional) == 9
           import json
           korea = next(x for x in json.loads(Path("desks/registry.json").read_text())["desks"]
                        if x["slug"] == "korea")
@@ -70,14 +78,19 @@ jobs:
           base = Path("output")
           html = (base/"korea.html").read_text(encoding="utf-8")
           assert html.count('data-korea-public-link=') == 5
+          assert html.count('data-korea-additional-link=') == 9
+          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=') == 14
           assert '<nav class="korea-publisher-shortcuts"' in html
           assert html.index('korea-publisher-shortcuts-title') < html.index('data-korea-public-link=')
           assert html.count("Open official publisher index") == 2
-          for unreviewed_id in ("156784787", "156784873", "156784618", "156784625"):
+          for unreviewed_id in ("156784618", "156784625"):
               assert unreviewed_id not in html
           assert "not IPR archived records" in html
           assert "https://www.korea.kr/guide/copyRight.do" in html
           assert "2026-10-04" in html and "2026-10-06" in html
+          for row in additional:
+              assert row["source_url"] in html
+          assert "unresolved excavation-year discrepancy" in html
           assert "noindex, nofollow" not in html
           for forbidden in ("text_original", "body_original", "download.do?fileId=",
                             "data-review-status=", "english_description"):
@@ -87,7 +100,7 @@ jobs:
           assert 'href="korea.html"' in (base/"desks.html").read_text(encoding="utf-8")
           assert "https://indopacificrecord.org/korea.html" in (
               base/"sitemap.xml").read_text(encoding="utf-8")
-          print("Public metadata-only Korea route: exactly five official links, no source media or body.")
+          print("Public metadata-only Korea route: five original entries plus nine URL-only references; no source media or body.")
           PY
           sha256sum -c /tmp/ipr-korea-links-db.sha
           test ! -e pla_watch.db-wal
@@ -131,11 +144,14 @@ jobs:
           set -euo pipefail
           python site/render.py
           python scripts/validate_output.py
-          python -m unittest tests.test_korea_output_release_scope tests.test_korea_public_bibliography tests.test_korea_internal_registry -q
+          python -m unittest tests.test_korea_output_release_scope tests.test_korea_public_bibliography tests.test_korea_additional_public_links tests.test_korea_internal_registry -q
           python - <<'PY'
           from pathlib import Path
           from core.korea_public_bibliography import load_public_korea_links
           assert len(load_public_korea_links()) == 5
+          from core.korea_additional_public_links import load_additional_korea_official_links
+          additional = load_additional_korea_official_links()
+          assert len(additional) == 9
           import json
           k = next(x for x in json.loads(Path("desks/registry.json").read_text())["desks"]
                    if x["slug"] == "korea")
@@ -144,6 +160,11 @@ jobs:
           p = Path("output")
           html = (p/"korea.html").read_text(encoding="utf-8")
           assert html.count('data-korea-public-link=') == 5
+          assert html.count('data-korea-additional-link=') == 9
+          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=') == 14
+          for row in additional:
+              assert row["source_url"] in html
+          assert "unresolved excavation-year discrepancy" in html
           assert "not IPR archived records" in html
           # Outbound publisher navigation only: two distinct Korean issuers,
           # never a sixth archived record or DAPA collection approval.
@@ -158,7 +179,7 @@ jobs:
               from urllib.parse import parse_qs, urlsplit
               assert parse_qs(urlsplit(url).query).get("repCode") == [rep_code]
               assert ('href="' + escape(url, quote=True) + '"') in html
-          for unreviewed_id in ("156784618", "156784625", "156784787", "156784873"):
+          for unreviewed_id in ("156784618", "156784625"):
               assert unreviewed_id not in html
           assert "Shadow evaluation — not in corpus" in (
               p/"desks.html").read_text(encoding="utf-8")
@@ -228,4 +249,4 @@ jobs:
           cname: indopacificrecord.org
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
-          commit_message: 'Korea five-source directory: ${{ github.run_id }}'
+          commit_message: 'Korea fourteen-link directory: ${{ github.run_id }}'

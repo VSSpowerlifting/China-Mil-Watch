@@ -7,6 +7,7 @@ on:
     paths:
       - "scripts/prepare_indonesia_reference_review_queue.py"
       - "tests/test_prepare_indonesia_reference_review_queue.py"
+      - "tests/test_indonesia_31_pinned_docket_contract.py"
       - ".github/workflows/indonesia_pinned_reference_review_queue.yml"
   workflow_dispatch:
     inputs:
@@ -37,7 +38,7 @@ jobs:
           sha256sum pla_watch.db > "$RUNNER_TEMP/id-review-db.sha"
           find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/id-review-output.sha"
       - name: Synthetic metadata and anti-body tests
-        run: python -m unittest tests.test_prepare_indonesia_reference_review_queue -v
+        run: python -m unittest tests.test_prepare_indonesia_reference_review_queue tests.test_indonesia_31_pinned_docket_contract -v
       - name: Pin immutable existing Indonesia Git state
         shell: bash
         env:
@@ -47,12 +48,16 @@ jobs:
           mkdir -p "$RUNNER_TEMP/indonesia-state"
           git -C "$RUNNER_TEMP/indonesia-state" init -q
           git -C "$RUNNER_TEMP/indonesia-state" remote add origin "$SOURCE_REMOTE"
-          git -C "$RUNNER_TEMP/indonesia-state" fetch -q --no-tags --depth=1 origin \
+          git -C "$RUNNER_TEMP/indonesia-state" fetch -q --no-tags origin \
             refs/heads/shadow/indonesia-kemhan:refs/heads/shadow/indonesia-kemhan
           sha="$(git -C "$RUNNER_TEMP/indonesia-state" rev-parse refs/heads/shadow/indonesia-kemhan)"
           test "${#sha}" -eq 40
-          test "$(git -C "$RUNNER_TEMP/indonesia-state" ls-tree --name-only "$sha")" = state
-          echo "INDONESIA_STATE_SHA=$sha" >> "$GITHUB_ENV"
+          # Exact 31-original historical source state, not mutable future HEAD.
+          pin=0595c6677be24f8f0f33aecb28eec0050e36e8f9
+          git -C "$RUNNER_TEMP/indonesia-state" cat-file -e "$pin^{commit}"
+          git -C "$RUNNER_TEMP/indonesia-state" merge-base --is-ancestor "$pin" "$sha"
+          test "$(git -C "$RUNNER_TEMP/indonesia-state" ls-tree --name-only "$pin")" = state
+          echo "INDONESIA_STATE_SHA=$pin" >> "$GITHUB_ENV"
       - name: Read all preserved originals in-memory and emit metadata-only queue
         run: |
           set -euo pipefail
@@ -68,7 +73,8 @@ jobs:
           d = Path(os.environ["RUNNER_TEMP"]) / "indonesia-review-queue"
           data = json.loads((d / "review_queue.json").read_text(encoding="utf-8"))
           counts = data["counts"]
-          assert data["stored_originals"] >= 24, "pinned source record count decreased"
+          assert data["state_commit"] == "0595c6677be24f8f0f33aecb28eec0050e36e8f9"
+          assert data["stored_originals"] == 31, "exact October 14 source count changed"
           assert counts["official_link_already_public_not_reviewed"] == public_link_count
           assert counts["hold_publisher_geography_inconsistent"] == 1
           assert counts["new_source_review_candidate"] == data["stored_originals"] - public_link_count - 1
