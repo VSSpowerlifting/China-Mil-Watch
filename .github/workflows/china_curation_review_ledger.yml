@@ -41,7 +41,7 @@ jobs:
           test ! -e pla_watch.db-shm
       - name: Focused custody and review state tests
         run: python -m unittest -v tests.test_china_curation_review_ledger
-      - name: Validate actual seven-record unsigned docket
+      - name: Validate actual unsigned China review docket
         run: |
           python scripts/validate_china_curation_review.py \
             --index output/corpus-index.json \
