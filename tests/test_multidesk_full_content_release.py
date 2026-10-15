@@ -99,6 +99,44 @@ def valid(bundle, artifacts, signed=None):
         rights_verifier=lambda _source, _work: True)
 
 
+def standing_evidence(source, original_bytes):
+    original_sha = m.sha(original_bytes)
+    def replay(src):
+        return {
+            "source_git_commit": src["source_git_commit"],
+            "source_capture_sha256": src["source_capture_sha256"],
+            "entire_clean_original_text_sha256": original_sha,
+            "original_custody_authenticated": True,
+            "source_text_complete": True,
+        }
+    def policy(p):
+        return {
+            "policy_id": p["policy_id"],
+            "official_policy_url": p["policy_url"],
+            "observed_at_utc": "2026-10-15T22:00:00Z",
+            "publisher_policy_sha256": "c" * 64,
+            "text_reproduction_permitted": True,
+            "derivatives_permitted": True,
+            "third_party_exclusions_preserved": True,
+            "policy_changed_or_withdrawn": False,
+        }
+    def scoped(src, policy):
+        return {
+            "first_party_official_text": True,
+            "third_party_text_present": False,
+            "separate_terms_apply": False,
+            "privacy_or_secrecy_exception": False,
+            "released_artifact_embeds_media": False,
+            "entire_source_text_version_sha256": original_sha,
+        }
+    return {
+        "now_utc": "2026-10-15T23:00:00Z",
+        "source_replay": replay, "policy_replay": policy,
+        "exception_replay": scoped,
+        "item_license_replay": lambda *_: True,
+    }
+
+
 class FullContentReleaseContracts(unittest.TestCase):
     def test_full_content_queue_emits_all_specialist_tasks_with_hold(self):
         b, a = fixture(tuple(sorted(m.KINDS)))
@@ -121,6 +159,83 @@ class FullContentReleaseContracts(unittest.TestCase):
         with self.assertRaisesRegex(m.FullContentHold,
                                     "necessary_human_work_review_missing"):
             valid(b, a, signed=[])
+
+    def test_standing_licensed_original_releases_without_fresh_rights_or_fidelity_signoff(self):
+        bundle, artifacts = fixture(("original_text",))
+        w = bundle["works"][0]
+        w["rights_basis"] = "standing_source_family_license"
+        license_evidence = standing_evidence(bundle["source"], artifacts["original_text"])
+        out = m.verify_bundle(bundle, artifacts, [],
+            role_secrets={}, authorized_reviewers={},
+            source_verifier=lambda _: True,
+            standing_verifiers=license_evidence)
+        self.assertEqual(out["standing_license_qualified_kinds"], ["original_text"])
+        self.assertFalse(out["downstream_publication_performed"])
+        with tempfile.TemporaryDirectory() as root:
+            stage = Path(root) / "stage"
+            r = m.stage_approved_bundle(bundle, artifacts, [],
+                role_secrets={}, authorized_reviewers={},
+                source_verifier=lambda _: True,
+                standing_verifiers=license_evidence,
+                target_dir=stage)
+            self.assertTrue(list(stage.glob("japan/*/original_text.txt")))
+            self.assertFalse(r["downstream_publication_performed"])
+
+    def test_standing_translation_keeps_bilingual_editor_roles_but_drops_rights_role(self):
+        bundle, artifacts = fixture(("translation_en",))
+        w=bundle["works"][0]
+        w["rights_basis"]="standing_source_family_license"
+        w["attribution_text"]="Unofficial IPR translation from " + bundle["source"]["official_url"]
+        signed=[x for x in approvals(bundle) if x["role"] in ("bilingual","editor")]
+        roles={r: REVIEWERS[r] for r in ("bilingual","editor")}
+        out=m.verify_bundle(bundle,artifacts,signed,
+            role_secrets={r:KEYS[r] for r in roles},
+            authorized_reviewers=roles,source_verifier=lambda _:True,
+            standing_verifiers=standing_evidence(bundle["source"],CONTENT["original_text"]))
+        self.assertEqual(out["standing_license_qualified_kinds"],["translation_en"])
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "necessary_human_work_review_missing"):
+            m.verify_bundle(bundle,artifacts,[],
+                role_secrets={r:KEYS[r] for r in roles},
+                authorized_reviewers=roles,source_verifier=lambda _:True,
+                standing_verifiers=standing_evidence(bundle["source"],CONTENT["original_text"]))
+
+    def test_standing_license_not_usable_for_pdf_document(self):
+        bundle, artifacts=fixture(("original_pdf",))
+        bundle["works"][0]["rights_basis"]="standing_source_family_license"
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "standing_text_rights_cannot_cover_pdf_or_analysis"):
+            m.verify_bundle(bundle,artifacts,[],
+                role_secrets={},authorized_reviewers={},
+                source_verifier=lambda _:True,
+                standing_verifiers=standing_evidence(bundle["source"],CONTENT["original_text"]))
+
+    def test_standing_policy_modified_proof_stops_bundle_without_write(self):
+        bundle, artifacts=fixture(("original_text",))
+        bundle["works"][0]["rights_basis"]="standing_source_family_license"
+        proof=standing_evidence(bundle["source"],artifacts["original_text"])
+        def changed(policy):
+            p=proof["policy_replay"](policy)
+            p["policy_changed_or_withdrawn"]=True
+            return p
+        proof["policy_replay"]=changed
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "standing_source_license_not_qualified"):
+            m.verify_bundle(bundle,artifacts,[],
+                role_secrets={},authorized_reviewers={},
+                source_verifier=lambda _:True,
+                standing_verifiers=proof)
+
+    def test_standing_license_requires_policy_digest_parity(self):
+        bundle, artifacts=fixture(("original_text",))
+        bundle["works"][0]["rights_basis"]="standing_source_family_license"
+        bundle["works"][0]["rights_evidence_sha256"]="e"*64
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "standing_source_policy_version_drift"):
+            m.verify_bundle(bundle,artifacts,[],
+                role_secrets={},authorized_reviewers={},
+                source_verifier=lambda _:True,
+                standing_verifiers=standing_evidence(bundle["source"],artifacts["original_text"]))
 
     def test_permitted_original_text_with_independent_verifiers(self):
         bundle, artifacts = fixture()
