@@ -1,4 +1,4 @@
-"""Read-only access canary for bounded first-party U.S. naval source listings.
+"""Read-only access canary for bounded first-party U.S. institutional listings.
 
 No feed collection, archive, metadata admission, Pages write or retries.
 Refuse redirects, unusable robots policies and cross-origin content. This is
@@ -18,6 +18,7 @@ AGENT = "IndoPacificRecordResearchBot/1.0 (+https://indopacificrecord.org/about.
 SOURCES = (
     ("seventh_fleet", "www.c7f.navy.mil", "/Media/News/"),
     ("pacific_fleet", "www.cpf.navy.mil", "/Newsroom/News/"),
+    ("us_china_commission", "www.uscc.gov", "/press-releases"),
 )
 TIMEOUT = 12
 MAX_ROBOTS_BYTES = 128_000
@@ -35,7 +36,7 @@ class AccessHold(ValueError):
 def validate_targets(sources=SOURCES):
     if sources != SOURCES:
         raise AccessHold("source_hosts_or_paths_changed")
-    if any(not host.endswith(".navy.mil") or not path.startswith("/")
+    if any(host not in ("www.c7f.navy.mil", "www.cpf.navy.mil", "www.uscc.gov") or not path.startswith("/")
            or "?" in path or ".." in path
            for _, host, path in sources):
         raise AccessHold("untrusted_source_route")
