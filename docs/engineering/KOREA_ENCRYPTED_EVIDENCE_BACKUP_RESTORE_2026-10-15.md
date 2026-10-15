@@ -15,11 +15,11 @@ Before an authorized operator executes this utility on real Korean materials:
 1. Obtain **explicit, source-specific retention and backup permission for the complete HWPX files, embedded media and HTTP responses**. Historic KOGL Type 1 page-level text-only notices are **not** permission to redistribute or retain every embedded item. This software cannot make the rights decision.
 2. Pin the exact clean Korea shadow Git checkout, retaining original state commit 0595f0fd29b769cbab5dd57c2ef57af174237a67, the October 6 founding clock and the failed October 12 scheduled slot. Never rewrite old Git history merely to perform a backup.
 3. Provision a real, owner-approved public-key encryption recipient, verified 40-character hexadecimal GPG fingerprint and a GNUPGHOME directory restricted to 0700, with a separately controlled key-recovery plan. Never commit private encryption keys or credentials.
-4. Choose a **new absolute encrypted output path**, in a 0700 owner-only directory outside any public/private repo checkout, and run only on a trusted **encrypted local machine**.
+4. Choose a **new absolute encrypted output path**, in a 0700 owner-only directory outside any public/private repo checkout, and run only on a trusted **encrypted local machine**. A separate existing, owner-only 0700 directory on deliberately encrypted scratch storage is **required**; the utility no longer falls back to system /tmp.
 
 Example command after all external approvals:
 
-    python -m scripts.backup_korea_encrypted_custody --source-checkout /absolute/secured/korea-shadow --encrypted-out /absolute/owner-only/korea-state.bundle.gpg --recipient-fingerprint YOUR_VERIFIED_40_HEX_FINGERPRINT --gpg-home /absolute/owner-only/gnupg --owner-approved-restricted-retention
+    python -m scripts.backup_korea_encrypted_custody --source-checkout /absolute/secured/korea-shadow --encrypted-out /absolute/owner-only/korea-state.bundle.gpg --recipient-fingerprint YOUR_VERIFIED_40_HEX_FINGERPRINT --gpg-home /absolute/owner-only/gnupg --scratch-parent /absolute/encrypted-owner-only/restore-scratch --owner-approved-restricted-retention
 
 The operator acknowledgment switch does not authenticate a human or prove legal permissions. A genuinely independent owner must verify the permitted scope.
 
