@@ -152,7 +152,10 @@ def preview(index, ledger):
 
     def article(ident, review):
         r = rows[ident]
-        return _row(r, review, sources[r[2]]["label"], states[r[3]]["label"])
+        source = sources[r[2]]
+        state = states[r[3]]
+        return _row(r, review, source.get("label", source["code"]),
+                    state.get("label", state["code"]))
 
     proposed = "".join(article(i, reviews[i]) for i in docket_ids)
     entire = "".join(article(i, None) for i in all_ids)
