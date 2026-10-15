@@ -51,14 +51,15 @@ that review, not its completion.
 The original historical quality scan inspected **120** Global Times records
 collected before the September 16 extractor repair, flagging **111** for
 one or more suspicious-text cues. The other **nine** were deliberately held
-out as *unflagged controls*. We manually compared their preserved body snippets
-with their publisher article pages as a separate editorial **research**
-check. They are not an automated accuracy estimate or owner signoffs.
+out as *unflagged controls*. We investigated their preserved bodies against available source material
+as a separate editorial **research** check. The exact publisher original
+for #792 could not be retrieved, so that case explicitly remains a source
+fidelity **unknown**, even though the capture appears substantive. They are not an automated accuracy estimate or owner signoffs.
 
 | Control record | First scanner result | Publisher/body spot check | Preliminary custody outcome |
 |---|---|---|---|
 | #170 | Unflagged | Publisher [original](https://www.globaltimes.cn/page/202605/1360610.shtml) contains MND/PLA naval aviation material; captured body is two unrelated truncated teasers | Contaminated-text hold |
-| #792 | Unflagged | Preserved article discusses the Dutch De Ruyter helicopter in the Paracels with substantial source detail, consistent with the attributed publisher/PLA narrative; claims disputed by the Netherlands | Appears substantive; independently review before promotion |
+| #792 | Unflagged | Preserved article coherently discusses the Dutch De Ruyter helicopter incident; independent reporting corroborates the dispute but **direct publisher text could not be retrieved** | **Unverified publisher-text fidelity; hold** |
 | #793 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202605/1362170.shtml) carries the MND spokesperson's Air Force One honor guard comments; preserved page contains unrelated snippets | Contaminated-text hold |
 | #1246 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202606/1363127.shtml) reports Foreign Ministry Lin Jian's comments on Japan–Philippines maritime negotiations; captured body holds other-article teasers | Contaminated-text hold |
 | #1630 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202606/1364038.shtml) details DF-17 footage and reports military-commentator inferences; stored body materially tracks the story | Appears substantive; do not treat inferred specifications as confirmed |
@@ -68,7 +69,7 @@ check. They are not an automated accuracy estimate or owner signoffs.
 | #3181 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202608/1368067.shtml) provides the Chinese/Indonesian frigate exercise narrative; its stored body has the same unrelated CCG/Liaoning snippet cluster as #3180 | Contaminated-text hold |
 
 **Outcome:** seven of nine originally unflagged controls revealed apparent body
-contamination, and two contained relevant substantive text. This is a
+contamination, one contained a source-matched substantive body (#1630), while one (#792) had plausible substantive text whose exact publisher original remains unverified. This is a
 case-level observation, **not** a general classifier precision or recall
 estimate. It also demonstrates that a text extractor can be corrupted in
 multiple ways: missing bodies, a single unrelated teaser, or a repeated
