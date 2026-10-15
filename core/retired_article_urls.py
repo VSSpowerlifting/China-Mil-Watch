@@ -58,6 +58,11 @@ def verify_no_active_retired_urls(conn: sqlite3.Connection) -> int:
     """Return ledger size or fail on any accidentally resurrected active URL."""
     if not has_retired_table(conn):
         raise ValueError("retired URL ledger missing; migration 0008 required")
+    if conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='trigger' "
+            "AND name='guard_retired_article_id_reuse'"
+    ).fetchone() is None:
+        raise ValueError("retired article ID protection trigger missing")
     hashes = {row[0] for row in conn.execute(
         "SELECT url_sha256 FROM retired_article_urls"
     )}
