@@ -76,6 +76,19 @@ class ChinaCurationAuditTest(unittest.TestCase):
         self.assertFalse(control[0]["editorially_approved"])
         self.assertEqual(result["protected_china_trail_records"], 1)
 
+    def test_screened_out_strategic_headline_requires_targeted_review(self):
+        source = fixture()
+        source["records"].append(
+            [24, "2026-07-18", 0, 1, "",
+             "中华人民共和国外交部关于黄岩岛问题的声明"])
+        result = audit(source, target=3)
+        item = next(r for r in result["rows"] if r["id"] == 24)
+        self.assertIn("south_china_sea", item["title_review_cues"])
+        self.assertEqual(result["screened_out_title_cue_records"], 1)
+        self.assertFalse(item["editorially_approved"])
+        self.assertEqual(
+            item["review_status"], "screened_out_title_cue_review")
+
     def test_protected_records_are_not_lost_to_target_limit(self):
         source = fixture()
         source["trail_ids"] = [1, 2, 3]
