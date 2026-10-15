@@ -91,6 +91,15 @@ class ChinaCurationAuditTest(unittest.TestCase):
         self.assertEqual(
             item["review_status"], "screened_out_title_cue_review")
 
+    def test_east_china_sea_cue_does_not_match_middle_east_gulf(self):
+        source = fixture()
+        source["records"].append(
+            [25, "2026-09-12", 0, 1, "",
+             "中方愿为实现中东海湾地区和平安宁发挥作用"])
+        result = audit(source, target=1)
+        record = next(row for row in result["rows"] if row["id"] == 25)
+        self.assertNotIn("east_china_sea", record["title_review_cues"])
+
     def test_protected_records_are_not_lost_to_target_limit(self):
         source = fixture()
         source["trail_ids"] = [1, 2, 3]
