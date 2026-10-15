@@ -13,6 +13,7 @@ on:
       - "tests/test_public_editorial_research.py"
       - "tests/test_public_editorial_render_gate.py"
       - "site/preview/templates/desk.html"
+      - "site/preview/templates/desks.html"
       - "site/preview/generate_preview.py"
       - "scripts/guard_country_research_output_scope.py"
       - "tests/test_country_research_output_scope.py"
