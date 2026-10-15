@@ -98,6 +98,24 @@ def check(p, review, reviewer_key=REVIEWER_KEY, owner_key=OWNER_KEY):
 
 
 class KoreaSignedVersionReviewTests(unittest.TestCase):
+    def test_untrusted_packet_rejects_boolean_or_text_counters(self):
+        # bool is an int subclass in Python; True must not stand for one row.
+        for key, invalid in (
+            ("candidate_count", True),
+            ("source_original_count", True),
+            ("approved_count", False),
+            ("public_body_count", False),
+            ("candidate_count", "1"),
+            ("source_original_count", "1"),
+        ):
+            with self.subTest(field=key, value=invalid):
+                p = packet()
+                p[key] = invalid
+                with self.assertRaisesRegex(
+                    gate.AdmissionHold, "untrusted_or_activated_candidate_packet"
+                ):
+                    gate.blank(p, SOURCE)
+
     def test_blank_template_has_no_implicit_permissions(self):
         p = packet()
         doc = gate.blank(p, SOURCE)
