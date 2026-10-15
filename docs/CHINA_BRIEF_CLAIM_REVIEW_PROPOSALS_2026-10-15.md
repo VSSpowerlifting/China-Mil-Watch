@@ -63,9 +63,35 @@ The editor still needs to check source custody and the crew-exchange
 sentence, but this avoids falsely labeling a correctly dated Brief as
 incorrect because its archive URL is damaged.
 
+## No. 13: earlier Y-20B WS-20 operational chronology
+
+The [August 8 issue](https://indopacificrecord.org/the-pla-watch/posts/2026-08-08.html)
+states in its `why_it_matters` that the **Y-20B's first confirmed
+operational use with domestic WS-20 engines** is a new achievement and
+the engine's operational use had not previously been officially confirmed.
+
+This appears to overstate chronology. The [20 April Global Times
+report](https://www.globaltimes.cn/page/202604/1359334.shtml) already
+reported the WS-20-powered Y-20B's **first overseas service mission**
+carrying home Chinese soldiers' remains from South Korea. [April 22
+Xinhua-attributed reporting](https://www.globaltimes.cn/page/202604/1359495.shtml)
+further documented that mission. The source cited by No. 13,
+[6 August Global Times](https://www.globaltimes.cn/page/202608/1367662.shtml),
+concerns CCTV's discussion of **transport/refueling adaptation** and
+potential additional roles, not an August first deployment.
+
+**Research qualification:** an official repatriation/airlift mission is
+an **operational service use** but is not demonstrated combat employment,
+mass fielding or proof that hypothetical bomber/AEW/EW adaptations are
+already in service. The Aug. 8 wording requires a source-and-chronology
+editorial check, [issue #630](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/630).
+The historical first-claim string is exact-matched to the published
+issue in the validator. **No replacement is proposed or authorized yet**;
+the packet uses `claim_check_only_not_a_proposed_edit`.
+
 ## CI and custody guarantees
 
-The review data has **two** issue-linked cases and pins their exact source
+The review data has **three** issue-linked cases and pins their exact source
 record IDs, original source-stated date and title, original publisher URL
 and the issue/field/excerpt where review is required. The no-write
 validator `scripts/audit_brief_claim_correction_proposals.py` independently
@@ -82,7 +108,7 @@ JSON. It verifies:
 - Future collected source records do not auto-extend a correction review;
 - Every approval/review flag remains `false`; an automated packet never
   claims that editor or owner has authorized publication;
-- The No. 10 check never supplies replacement text.
+- The No. 10 and No. 13 claim checks never supply replacement text.
 
 ```sh
 python3 -m unittest -v tests.test_brief_claim_correction_proposals
