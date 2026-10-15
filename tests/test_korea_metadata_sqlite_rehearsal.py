@@ -1,5 +1,6 @@
 """Synthetic dual-signed Korea metadata import, never production or originals."""
 import copy
+import hashlib
 import json
 import sqlite3
 import tempfile
@@ -57,7 +58,20 @@ class KoreaMetadataSQLiteRehearsalTests(unittest.TestCase):
             ):
                 self.assertNotIn(prohibited, columns)
             self.assertEqual(rows[0][0], SOURCE)
-            self.assertEqual(rows[0][3], stage.URL + "156799901")
+            self.assertEqual(rows[0][5], stage.URL + "156799901")
+            self.assertEqual(rows[0][2], self.p["source_db_sha256"])
+            self.assertEqual(
+                rows[0][3], self.p["records"][0]["candidate_version_sha256"])
+            self.assertEqual(
+                rows[0][4],
+                hashlib.sha256(stage.canonical(signed(self.p))).hexdigest())
+            self.assertEqual(
+                rows[0][12], self.p["records"][0]["original_title_sha256"])
+            for expected_column in (
+                "source_db_sha256", "signed_review_sha256",
+                "original_title_sha256",
+            ):
+                self.assertIn(expected_column, columns)
             self.assertEqual(rows[0][-1],
                              "metadata_only_rehearsal_not_production")
             self.assertEqual(con.execute("PRAGMA quick_check").fetchone()[0],
@@ -66,6 +80,8 @@ class KoreaMetadataSQLiteRehearsalTests(unittest.TestCase):
         self.assertNotIn(b"completely fabricated original", data)
         self.assertNotIn(b"completely fabricated title", data)
         self.assertNotIn(b"-----BEGIN PRIVATE KEY-----", data)
+        self.assertNotIn(b"Synthetic Independent Reviewer", data)
+        self.assertNotIn(b"Synthetic Project Owner", data)
 
     def test_signed_hold_stages_an_empty_reviewed_database(self):
         receipt = self.go(seals=[signed(self.p, disposition=review.HOLD)])
