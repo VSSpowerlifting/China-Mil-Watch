@@ -45,3 +45,19 @@ The CLI uses only **GET** requests via `gh api`, does not open source captures, 
 | Stop public full-state writes/artifacts, public projection + release | Later C6 approval | Verified fail-closed private persistence, human rights approvals, full tests, rollback |
 
 **Non-goals of the current PR:** no new repository created, no source transfer or provider access attempted, no secret/provisioning mutation, no publisher requests, no model/email/publication, no Git history rewrite, no website/collector modification. Full offline CI required before merging any supporting code. Provider selection does not change the legal/retention status of a single ministry original.
+
+
+## After an approved restricted transfer: independent read-only Git object parity
+
+A genuine archive migration is **not** in scope for this PR. After separately approved owner-controlled copy and backup, inspect source and vault clones locally with the new read-only tool. For example, the frozen October 14 Korea source branch currently has commit `0595f0fd29b769cbab5dd57c2ef57af174237a67`. Only after confirming it is still the intended freeze point:
+
+```sh
+python3 -m scripts.verify_private_github_ref_parity \
+  --source-repo /secure/original-source-checkout \
+  --vault-repo /secure/private-vault-checkout \
+  --source-ref shadow/korea-policy-briefing \
+  --vault-ref archive/korea-policy-briefing \
+  --source-commit 0595f0fd29b769cbab5dd57c2ef57af174237a67
+```
+
+The tool invokes `git rev-parse`, `git fsck --connectivity-only` and full reachable Git object-ID set equality on the specified **local** repositories. It has **no** `git fetch`, `clone`, `push`, GitHub API or network path, cannot reconcile a moving source ref by itself, and outputs only fixed failure codes, commit IDs and object counts. A successful result proves matching reachable native Git objects for one frozen ref. It **does not** prove Git LFS original binary bytes (Git stores a pointer), independent backup restoration, a failed attempt preserved only in an Actions ZIP, GitHub API visibility of a remote, another source/ref, retention rights or permission to publish. These are separately required before any cutover. A synthetic/fixture Git parity check in PR CI is not evidence that the private remote has been created or populated.
