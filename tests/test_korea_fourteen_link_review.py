@@ -118,7 +118,18 @@ class KoreaFourteenLinkReviewTests(unittest.TestCase):
         workflow = (root / ".github/workflows/korea_public_bibliography_release.yml").read_text()
         self.assertIn("assert len(load_public_korea_links()) == 5", workflow)
         self.assertIn('k["status"] == "shadow"', workflow)
-        self.assertNotIn("MND_14_PUBLIC_LINK_REVIEW_CANDIDATES", workflow)
+        # A changed held-review manifest must re-run PR checks, but must
+        # NOT independently trigger the live Pages push release.
+        pull_trigger, push_and_jobs = workflow.split("  push:", 1)
+        push_trigger = push_and_jobs.split("permissions:", 1)[0]
+        self.assertIn(
+            '"research/korea/MND_14_PUBLIC_LINK_REVIEW_CANDIDATES_2026-10-15.json"',
+            pull_trigger)
+        self.assertNotIn("MND_14_PUBLIC_LINK_REVIEW_CANDIDATES",
+                         push_trigger)
+        self.assertIn(
+            '"research/korea_additional_public_official_links_2026-10-15.json"',
+            push_trigger)
         source = (root / "scripts/preview_korea_fourteen_official_links.py").read_text()
         for forbidden in ("git push", "smtplib", "anthropic", "urllib.request",
                           "requests.get", "site.render", "pla_watch.db"):
