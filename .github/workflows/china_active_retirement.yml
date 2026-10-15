@@ -1,0 +1,40 @@
+name: China active corpus retirement — scratch-only contracts
+
+on:
+  pull_request:
+    paths:
+      - "scripts/plan_china_active_retirement.py"
+      - "tests/test_china_active_retirement.py"
+      - "docs/CHINA_ACTIVE_CORPUS_RETIREMENT_2026-10-15.md"
+      - ".github/workflows/china_active_retirement.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  scratch-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Fingerprint tracked SQLite and publication artifacts
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Exercise transactional scratch deletion and negative cases
+        run: python -m unittest -v tests.test_china_active_retirement
+      - name: Fail closed if any production files changed
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
