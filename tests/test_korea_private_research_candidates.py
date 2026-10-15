@@ -40,7 +40,8 @@ class KoreaStagedResearchTests(unittest.TestCase):
         originals = self.packet["items"]
         for i, row in enumerate(originals):
             for key in ("source_url", "title_original", "source_content_sha256",
-                        "hwpx_capture_sha256", "published_date",
+                        "hwpx_capture_sha256", "publisher_html_capture_sha256",
+                        "text_license_marking", "published_date",
                         "document_distribution_date", "claim_kind", "hash_rule",
                         "issuer", "publisher", "status", "copy_scope"):
                 with self.subTest(i=i, key=key):
