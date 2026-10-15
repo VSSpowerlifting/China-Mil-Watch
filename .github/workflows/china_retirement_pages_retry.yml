@@ -86,6 +86,19 @@ jobs:
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
           commit_message: 'Pages-only retry verified China retirement: ${{ github.run_id }}'
+      - name: Verify retried Pages Git tree equals the already-retired main output
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin \
+            refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          mkdir -p "$RUNNER_TEMP/china-pages-retry-readback"
+          git archive refs/remotes/origin/gh-pages | \
+            tar -xf - -C "$RUNNER_TEMP/china-pages-retry-readback"
+          python -m scripts.verify_china_retirement_pages_readback \
+            --expected-output output \
+            --pages-tree "$RUNNER_TEMP/china-pages-retry-readback" \
+            --db pla_watch.db --expected-tombstones 4400
+          git diff --exit-code HEAD -- pla_watch.db output/
 
 # A new or updated database requires a NEW reviewed full-site release.
 # This workflow never rewrites or refreshes the tracked SQLite database.
