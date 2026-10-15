@@ -2969,6 +2969,14 @@ def build(out_dir: Path, title: str, db_path: Path,
         from core.us_pacom_official_links import load_us_pacom_official_links
         us_pacom_links = (load_us_pacom_official_links()
                           if desk.slug == "us-indopacific" else [])
+        # The public official-link feed is backed ONLY by already admitted
+        # production SQLite rows, never by private shadow, signed-review claims
+        # or the frozen publisher navigation directories. Missing table means
+        # not launched; malformed present table fails the full build closed.
+        from core.regional_official_link_render import load_admitted_links
+        regional_official_links = (
+            load_admitted_links(db_path, desk.slug)
+            if desk.slug in ("philippines", "indonesia") else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -2979,6 +2987,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              public_reference_languages=languages,
                              indonesia_official_links=indonesia_official_links,
                              indonesia_press_links=indonesia_press_links,
+                             regional_official_links=regional_official_links,
                              us_pacom_official_links=us_pacom_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
