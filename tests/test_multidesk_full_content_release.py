@@ -249,9 +249,16 @@ class FullContentReleaseContracts(unittest.TestCase):
                 a["reviewer"] = "Test Reviewer bilingual"
                 a["signature_hmac_sha256"] = m.sign_for_test_or_offline_reviewer(
                     m.signature_payload(a), KEYS[a["role"]])
+        # Deliberately permit one identity in both role rosters to prove that
+        # the *additional* two-person review check still prevents self-editing.
+        roster = reviewers_for(bundle)
+        roster["editor"].append("Test Reviewer bilingual")
         with self.assertRaisesRegex(m.FullContentHold,
                                     "independent_language_or_fact_check_missing"):
-            valid(bundle, artifacts, signed)
+            m.verify_bundle(bundle, artifacts, signed,
+                            role_secrets=KEYS, authorized_reviewers=roster,
+                            source_verifier=lambda _: True,
+                            rights_verifier=lambda *_: True)
 
     def test_analysis_needs_separate_fact_checker_editor(self):
         bundle, artifacts = fixture(("analysis_en",))
