@@ -105,6 +105,29 @@ class EncryptedVaultBackupTests(unittest.TestCase):
         self.assertFalse(result["production_cutover_authorized"])
         self.assertEqual(list(self.scratch.iterdir()), [])
 
+    def test_recovery_preserves_notes_and_custom_archive_refs(self):
+        # A bare clone of a bundle silently discards custom namespaces.
+        # This fixture proves their preservation rather than a false HOLD.
+        run("git", "-C", str(self.work), "notes", "add", "-m",
+            "Fictional provenance note")
+        run("git", "-C", str(self.bare), "fetch", str(self.work),
+            "+refs/notes/*:refs/notes/*")
+        run("git", "-C", str(self.bare), "update-ref",
+            "refs/archives/fictional-custody", self.refs["refs/heads/main"])
+        refs = backup._inventory(self.bare)
+        pins = [name + "=" + oid for name, oid in sorted(refs.items())]
+        self.assertIn("refs/notes/commits", refs)
+        self.assertIn("refs/archives/fictional-custody", refs)
+        receipt = backup.create_backup(self.bare, self.output, self.fpr,
+                                       pins, gpg_home=self.gpg_home)
+        result = backup.verify_restore(
+            self.output, receipt["encrypted_sha256"], pins,
+            receipt["reachable_git_objects"], scratch_dir=self.scratch,
+            gpg_home=self.gpg_home,
+        )
+        self.assertEqual(result["verified_ref_count"], 4)
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
     def test_copied_ciphertext_restores_without_original_repository(self):
         info = self.create()
         duplicate = self.root / "separate-cipher-copy.gpg"
