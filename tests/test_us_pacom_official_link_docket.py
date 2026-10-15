@@ -84,6 +84,16 @@ class OfficialPACOMDocketTests(unittest.TestCase):
             with self.subTest(key=key, value=value), self.assertRaises(us.DocketHold):
                 us.validate(altered)
 
+    def test_historical_dvids_day_zero_is_not_silently_erased(self):
+        historical = (us.ROOT / "shadow/us_indopacom/README.md").read_text(
+            encoding="utf-8")
+        self.assertIn("September 19, 2026", historical)
+        self.assertIn("40 eligible records", historical)
+        self.assertIn("manual-only", historical)
+        self.assertIn("18 consecutive", historical)
+        self.assertNotIn("no state branch exists", historical)
+        self.assertNotIn("Day zero has not been reached", historical)
+
     def test_index_fixture_unchanged_and_cli_read_only(self):
         with contextlib.redirect_stdout(io.StringIO()) as output:
             rc = us.main()
