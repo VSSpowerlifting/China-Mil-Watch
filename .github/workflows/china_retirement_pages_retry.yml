@@ -19,7 +19,7 @@ permissions:
 
 jobs:
   verify-and-redeploy:
-    if: github.repository == 'VSSpowerlifting/China-Mil-Watch' && github.ref == 'refs/heads/main'
+    if: github.repository == 'VSSpowerlifting/IndoPacificRecord' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
