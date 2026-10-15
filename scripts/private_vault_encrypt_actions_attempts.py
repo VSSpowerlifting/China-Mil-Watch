@@ -83,6 +83,13 @@ def _read_inventory(path, run_id):
               and 1 <= item["name_attempt"] <= attempt_count
               and item.get("expired") is False, "artifact_identity_or_expiry_invalid")
         unique.add(item["id"])
+        # The #638 additive metadata receipt gives us GitHub's upload-time
+        # SHA-256 for the ZIP, not merely a filename claiming an artifact ID.
+        check(type(item.get("provider_sha256")) is str and
+              SHA256.fullmatch(item["provider_sha256"]) and
+              type(item.get("bytes")) is int and
+              0 < item["bytes"] <= MAX_ITEM_BYTES,
+              "artifact_provider_digest_or_size_missing")
     # For reruns, jobs must be genuinely documented per attempt, rather
     # than trusting a green top-level result and two plausible filenames.
     if attempt_count > 1:
@@ -134,13 +141,18 @@ def _stage(directory, items):
               "staged_artifact_not_a_regular_file")
         stat = path.stat()
         check(0 < stat.st_size <= MAX_ITEM_BYTES, "staged_artifact_size_invalid")
+        check(stat.st_size == item["bytes"], "staged_zip_provider_size_mismatch")
         # ZIPs are handled as opaque bytes: verify container structure only,
         # without unzipping third-party original content.
         check(zipfile.is_zipfile(path), "staged_file_not_zip")
+        provider_sha = digest(path)
+        check(provider_sha == item["provider_sha256"],
+              "staged_zip_provider_digest_mismatch")
         total += stat.st_size
         check(total <= MAX_TOTAL_BYTES, "staged_archive_exceeds_limit")
         files.append({"id": item["id"], "attempt": item["name_attempt"],
-                      "bytes": stat.st_size, "sha256": digest(path),
+                      "bytes": stat.st_size, "sha256": provider_sha,
+                      "github_provider_sha256": item["provider_sha256"],
                       "path": path, "stat": (stat.st_dev, stat.st_ino,
                       stat.st_size, stat.st_mtime_ns)})
     return files
@@ -194,6 +206,7 @@ def _manifest(run, inventory_sha, files):
         "captured_artifacts": [{
             "id": x["id"], "attempt": x["attempt"],
             "bytes": x["bytes"], "sha256": x["sha256"],
+            "github_provider_sha256": x["github_provider_sha256"],
             "archive_member": "artifacts/artifact-%d.zip" % x["id"],
         } for x in files],
         "individual_zip_contents_verified": False,
@@ -274,6 +287,7 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
             "source_inventory_sha256": inv_sha,
             "plaintext_tar_written_to_disk": False,
             "downloaded_zip_origin_authenticated": False,
+            "provider_digest_parity_verified_against_input_census": True,
             "independent_backup_medium_verified": False,
             "source_rights_approved": False,
             "production_cutover_authorized": False,
@@ -356,6 +370,7 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                           0 < item["bytes"] <= MAX_ITEM_BYTES and
                           type(item.get("sha256")) is str and
                           SHA256.fullmatch(item["sha256"]) and
+                          item.get("github_provider_sha256") == item["sha256"] and
                           item.get("archive_member") ==
                           "artifacts/artifact-%d.zip" % item["id"],
                           "sidecar_item_malformed")
@@ -410,6 +425,7 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
         "run_id": run_id, "artifact_count_verified": len(items),
         "encrypted_sha256": expected_cipher_sha,
         "all_opaque_zip_sha256_verified": True,
+        "provider_sha256_parity_preserved_in_manifest": True,
         "individual_zip_contents_verified": False,
         "downloaded_zip_origin_authenticated": False,
         "plaintext_tar_written_to_disk": False,
