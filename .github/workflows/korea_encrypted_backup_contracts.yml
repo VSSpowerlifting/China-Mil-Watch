@@ -1,0 +1,44 @@
+name: Korea Encrypted Evidence Backup — Synthetic Restoration Contracts
+
+on:
+  pull_request:
+    paths:
+      - scripts/backup_korea_encrypted_custody.py
+      - tests/test_korea_encrypted_custody_backup.py
+      - scripts/verify_korea_private_custody_equivalence.py
+      - tests/test_korea_private_custody_equivalence.py
+      - .github/workflows/korea_encrypted_backup_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fictional-gpg-backup-and-restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Require GPG and Git with no additional downloaded dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          gpg --version | head -n 1
+          git --version
+      - name: Encrypt and independently restore fictional Git state
+        run: python -m unittest tests.test_korea_encrypted_custody_backup -v
+      - name: Prove repository and production evidence unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# Never runs on real Korea source data. No archive, GPG key, HWPX, secret,
+# original text, model, SMTP, reader artifact, shadow mutation or deployment.
