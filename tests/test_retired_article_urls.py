@@ -111,8 +111,16 @@ class TestRetiredUrlReconciliation(ReconcileCase):
     def test_local_stale_article_not_resurrected(self):
         migrate(self.origin)
         old = "http://www.81.cn/x/retired-original.html"
-        with sqlite3.connect(str(self.origin)) as con:
+        con = sqlite3.connect(str(self.origin))
+        try:
             retire(con, old, 4001)
+            con.commit()
+        finally:
+            # sqlite3's context manager commits but DOES NOT close its WAL
+            # connection. Reconcile reads a copy of the committed DB file;
+            # keeping the writing connection open would leave this fixture's
+            # tombstone in a journal sidecar outside that exact-file copy.
+            con.close()
         add_run(self.local, 11)
         add_article(self.local, 4001, 11, "retired-original")
         out, report, problems = self.run_reconcile()
@@ -126,8 +134,12 @@ class TestRetiredUrlReconciliation(ReconcileCase):
     def test_independent_local_retirement_cannot_be_silently_dropped(self):
         migrate(self.origin)
         migrate(self.local)
-        with sqlite3.connect(str(self.local)) as con:
+        con = sqlite3.connect(str(self.local))
+        try:
             retire(con, "http://www.81.cn/x/local-retired.html", 4311)
+            con.commit()
+        finally:
+            con.close()
         with self.assertRaisesRegex(SystemExit, "retirement ledger"):
             self.run_reconcile()
 
