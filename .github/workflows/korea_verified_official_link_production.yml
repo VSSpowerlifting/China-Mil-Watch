@@ -22,8 +22,14 @@ on:
 permissions:
   contents: read
 
+# A shared daily-update group has one in-progress AND one pending slot.
+# A simultaneous USCC/Treasury push replaces the pending Korea launch and
+# can cancel it before any job starts, even with cancel-in-progress: false.
+# Serialize only Korea runs here. Keep the existing exact-source/main-HEAD,
+# optimistic non-fast-forward push and Pages SHA guards to prevent lost writes
+# when a different desk is updating the production DB at the same time.
 concurrency:
-  group: daily-update
+  group: korea-verified-official-link-production
   cancel-in-progress: false
 
 jobs:
