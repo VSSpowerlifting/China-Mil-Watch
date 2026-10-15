@@ -157,8 +157,8 @@ class KoreaStandingLinkAdmissionTests(unittest.TestCase):
         sys.path.insert(0, str(ROOT / "site/preview"))
         import generate_preview as gp
         copied_db = Path(self.temp.name) / "production-copy.sqlite"
-        with sqlite3.connect("file:%s?mode=ro&immutable=1" % (ROOT / "pla_watch.db"),
-                             uri=True) as src, sqlite3.connect(copied_db) as out:
+        from scripts.reconcile_db import read_only
+        with read_only(ROOT / "pla_watch.db") as src, sqlite3.connect(copied_db) as out:
             src.backup(out)
         with sqlite3.connect(copied_db) as con:
             schema.up(con)
