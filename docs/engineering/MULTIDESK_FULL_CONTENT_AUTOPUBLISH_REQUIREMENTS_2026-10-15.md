@@ -83,7 +83,11 @@ that are mapped to their exact host and country.
    preview, makes attribution and unofficial translations explicit, and
    refuses accidental direct writes to the repository. This is a real staged
    output mechanism, not a live Pages release.
-5. **No source can authorize another source:** a Singapore original cannot
+5. **Automatic review handoff:** `unsigned_review_queue(bundle, artifacts)`
+   creates per-source-version tasks for every required reviewer role, using
+   source and content hashes, bounded instructions, and explicit HOLD status.
+   It contains no source bodies, signed permission or public-release claim.
+6. **No source can authorize another source:** a Singapore original cannot
    inherit the Japan MOD text grant, and a Korea document/photo cannot inherit
    a KOGL text-only notice.
 
