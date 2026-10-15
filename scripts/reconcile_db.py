@@ -55,7 +55,8 @@ import subprocess
 import sys
 import tempfile
 
-from core.retired_article_urls import is_retired, has_retired_table, verify_no_active_retired_urls
+from core.retired_article_urls import (is_retired, has_retired_table,
+    next_available_article_id, verify_no_active_retired_urls)
 
 logger = logging.getLogger("reconcile_db")
 
@@ -557,7 +558,7 @@ def reconcile(base_path, origin_path, local_path, out_path):
                 "source attribution cannot be merged automatically."
             )
 
-    next_id = con.execute("SELECT IFNULL(MAX(id),0) FROM articles").fetchone()[0] + 1
+    next_id = next_available_article_id(con)
 
     art_map = {}
     retired_reinsertions_skipped = 0
