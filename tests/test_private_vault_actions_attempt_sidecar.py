@@ -237,6 +237,22 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
             box.create(self.manifest, RUN, symlink, self.encrypted, self.fpr,
                        gpg_home=self.home)
 
+    def test_refuse_original_zip_staging_inside_git_checkout(self):
+        (self.root / ".git").mkdir()
+        with self.assertRaisesRegex(box.Hold, "artifact_staging_inside_git_checkout"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
+    def test_refuse_ciphertext_target_inside_git_checkout(self):
+        tracked = self.root / "fake-repo"
+        tracked.mkdir()
+        (tracked / ".git").mkdir()
+        destination = tracked / "encrypted-unsafe.tar.gpg"
+        with self.assertRaisesRegex(box.Hold, "encrypted_target_inside_git_checkout"):
+            box.create(self.manifest, RUN, self.zips, destination,
+                       self.fpr, gpg_home=self.home)
+        self.assertFalse(destination.exists())
+
     def test_no_fake_permission_or_private_archive_claim(self):
         receipt = self.create()
         self.assertFalse(receipt["source_rights_approved"])
