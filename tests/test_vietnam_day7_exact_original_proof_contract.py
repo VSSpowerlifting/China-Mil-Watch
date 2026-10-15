@@ -54,6 +54,21 @@ class Day7RealOriginalProofContract(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, self.workflow)
 
+    def test_late_utc_finish_is_not_a_missing_scheduled_logical_slot(self):
+        for evidence in (
+            '"missing_collecting_days"] == ["2026-10-12"]',
+            '"target_date_source"] == "schedule-slot"',
+            '"run_id": "38328331888-1"',
+            '"target_date": "2026-10-12"',
+            '"finished_utc_date": "2026-10-13"',
+            '"eight_scheduled_logical_dates_present_per_source": True',
+            '"missing_scheduled_logical_dates": []',
+            '"legacy_utc_completion_day_gap": ["2026-10-12"]',
+            '"thirty_consecutive_collecting_days_qualified": False',
+        ):
+            with self.subTest(evidence=evidence):
+                self.assertIn(evidence, self.workflow)
+
     def test_no_originals_ever_uploaded_and_private_output_removed(self):
         self.assertIn('path: ${{ runner.temp }}/vn-day7-machine-summary.json', self.workflow)
         self.assertIn('rm -rf "$root"', self.workflow)
