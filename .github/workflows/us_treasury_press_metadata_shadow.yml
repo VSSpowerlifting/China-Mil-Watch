@@ -1,0 +1,157 @@
+name: Treasury Official Press Metadata — First-Party Daily Shadow
+
+# Official URL/date/issuer only. Separate from congressional USCC and PACOM.
+on:
+  pull_request:
+    paths:
+      - scripts/collect_us_treasury_press_metadata.py
+      - tests/test_us_treasury_press_metadata.py
+      - .github/workflows/us_treasury_press_metadata_shadow.yml
+      - docs/engineering/US_TREASURY_OFFICIAL_METADATA_2026-10-15.md
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/us_treasury_press_metadata_shadow.yml
+  schedule:
+    - cron: '10 12 * * *'
+  workflow_dispatch:
+    inputs:
+      owner_authorized_source_collection:
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  real-source-readonly-pr-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Denied-access, source identity, single-date tests
+        run: python -m unittest tests.test_us_treasury_press_metadata -v
+      - name: Read one genuine permitted source listing, ephemeral only
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/treasury-prod-before.sha"
+          python -m scripts.collect_us_treasury_press_metadata \
+            --owner-authorized-readonly-collection \
+            --private-output "$RUNNER_TEMP/us-treasury-observation.json"
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.collect_us_treasury_press_metadata import SCHEMA, HOST
+          import json, os
+          packet=json.loads((Path(os.environ["RUNNER_TEMP"])/"us-treasury-observation.json").read_text())
+          assert packet["schema"]==SCHEMA and packet["source_host"]==HOST
+          assert packet["visible_dated_rows"]>0
+          assert packet["visible_dated_rows"]==len(packet["rows"])
+          assert all(set(row)=={
+           "source_identity","canonical_official_url","publisher_posted_date",
+           "official_issuer","official_publisher","publisher_listing_url"
+          } for row in packet["rows"])
+          assert packet["original_titles_copied"] is False
+          assert packet["bodies_copied"] is False
+          assert packet["production_records_written"]==0
+          print("Real Treasury official dated URL/issuer rows:",len(packet["rows"]))
+          PY
+          sha256sum -c "$RUNNER_TEMP/treasury-prod-before.sha"
+          git diff --exit-code -- pla_watch.db output/ desks/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  daily-observed-shadow:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' &&
+       inputs.owner_authorized_source_collection)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    concurrency:
+      group: us-treasury-press-shadow
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r repo/requirements.txt
+      - name: Verify and collect one bounded official source listing
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          test -z "$(git status --porcelain --untracked-files=all)"
+          python -m unittest tests.test_us_treasury_press_metadata -q
+          python -m scripts.collect_us_treasury_press_metadata \
+            --owner-authorized-readonly-collection \
+            --private-output "$RUNNER_TEMP/treasury-today.json"
+          test -s "$RUNNER_TEMP/treasury-today.json"
+          git diff --exit-code -- pla_watch.db output/ desks/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          date -u +%F > "$RUNNER_TEMP/treasury-utc-day"
+      - name: Append genuine daily UTC metadata observation in Git history
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --quiet "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/treasury-state"
+          cd "$RUNNER_TEMP/treasury-state"
+          if git show-ref --verify --quiet refs/remotes/origin/shadow/us-treasury-press; then
+            git checkout --quiet -b shadow/us-treasury-press --track origin/shadow/us-treasury-press
+          else
+            git checkout --quiet --orphan shadow/us-treasury-press
+            git rm --quiet -r -f . || true
+            printf '%s\n' '# Official Treasury dated-link shadow observations' \
+              'Publisher: U.S. Department of the Treasury, NOT USCC, US PACOM or DVIDS.' \
+              'Contains only URL/date/issuer metadata; no articles, headlines, media or analysis.' \
+              'Observations do not authorize production/public release.' > README.md
+            git add -- README.md
+          fi
+          day="$(cat "$RUNNER_TEMP/treasury-utc-day")"
+          mkdir -p observations
+          receipt="observations/$day.json"
+          if [ -f "$receipt" ]; then
+            cmp -s "$RUNNER_TEMP/treasury-today.json" "$receipt" || {
+              echo "::error::Conflicting same-day observation; no overwrite"; exit 1;
+            }
+            echo 'Identical observed day already preserved.'
+          else
+            cp "$RUNNER_TEMP/treasury-today.json" "$receipt"
+            chmod 0644 "$receipt"
+            git add -- "$receipt"
+          fi
+          unexpected="$(git diff --cached --name-only | grep -vE '^(README.md|observations/[0-9]{4}-[0-9]{2}-[0-9]{2}\.json)$' || true)"
+          test -z "$unexpected" || { echo "::error::Unexpected source state"; exit 1; }
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "Treasury: genuine official metadata observation $day"
+            git push origin HEAD:refs/heads/shadow/us-treasury-press
+          fi
+      - name: Prove source checkout unchanged
+        run: |
+          set -euo pipefail
+          cd repo
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

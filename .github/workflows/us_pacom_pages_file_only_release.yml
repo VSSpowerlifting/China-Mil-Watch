@@ -1,0 +1,175 @@
+name: US PACOM — Nine Official Links, File-Only Pages Release
+
+# Frozen source-only directory. Never use this workflow to collect PACOM or
+# DVIDS bodies. Only output/us-indopacific.html and gh-pages:us-indopacific.html
+# may be committed: no deploy_output_only full-tree push.
+on:
+  pull_request:
+    paths:
+      - "research/us_pacom_official_link_review_2026-10-15.json"
+      - "core/us_pacom_official_links.py"
+      - "site/preview/generate_preview.py"
+      - "site/preview/templates/desk.html"
+      - "tests/test_us_pacom_public_index.py"
+      - "tests/test_us_pacom_official_link_docket.py"
+      - ".github/workflows/us_pacom_pages_file_only_release.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/us_pacom_official_link_review_2026-10-15.json"
+      - "core/us_pacom_official_links.py"
+      - ".github/workflows/us_pacom_pages_file_only_release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  us-pacom-render-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Validate publisher links and render actual desk
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/us-db.sha"
+          python -m unittest tests.test_us_pacom_official_link_docket tests.test_us_pacom_public_index -v
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.us_pacom_official_links import load_us_pacom_official_links
+          html=Path("output/us-indopacific.html").read_text(encoding="utf-8")
+          soup=BeautifulSoup(html,"html.parser")
+          entries=soup.select("li[data-us-pacom-link] a")
+          expected=load_us_pacom_official_links()
+          assert len(entries)==len(expected)==9
+          assert [a["href"] for a in entries] == [x["source_url"] for x in expected]
+          assert "access_blocked" in html
+          assert "not IPR-collected" in html
+          assert all(x not in html for x in ("text_original","title_original","body_original","state/shadow.db"))
+          assert all(a.get("target")=="_blank" and "noopener" in a.get("rel",[]) for a in entries)
+          PY
+          sha256sum -c "$RUNNER_TEMP/us-db.sha"
+          git diff --exit-code -- pla_watch.db
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  us-pacom-pages-file-only-release:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin current main and production database
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git rev-parse HEAD > "$RUNNER_TEMP/us-main-head"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/us-db.sha"
+      - run: python -m pip install -r requirements.txt
+      - name: Recheck evidence and build bounded page
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/verify_db_current.py
+          python -m unittest tests.test_us_pacom_official_link_docket tests.test_us_pacom_public_index -q
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.us_pacom_official_links import load_us_pacom_official_links
+          reg=json.loads(Path("desks/registry.json").read_text(encoding="utf-8"))
+          desk=next(d for d in reg["desks"] if d["slug"]=="us-indopacific")
+          assert desk["status"]=="access_blocked"
+          assert desk["manifest"] is None and desk["has_production_records"] is False
+          html=Path("output/us-indopacific.html").read_text(encoding="utf-8")
+          soup=BeautifulSoup(html,"html.parser")
+          links=soup.select("li[data-us-pacom-link] a")
+          source=load_us_pacom_official_links()
+          assert len(links)==len(source)==9
+          assert [x["href"] for x in links] == [y["source_url"] for y in source]
+          assert "No U.S. production" in html
+          assert all(x not in html for x in ("text_original","body_original","title_original","state/shadow.db"))
+          PY
+          sha256sum -c "$RUNNER_TEMP/us-db.sha"
+          git diff --exit-code -- pla_watch.db
+          sha256sum output/us-indopacific.html > "$RUNNER_TEMP/us-page.sha"
+      - name: Update ONLY U.S. Desk page on main after race check
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/us-page.sha"
+          git add -- output/us-indopacific.html
+          staged="$(git diff --cached --name-only)"
+          test -z "$staged" || test "$staged" = "output/us-indopacific.html" || {
+            echo "::error::Unexpected main file staged"; exit 1;
+          }
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/us-main-head")" || {
+            echo "::error::main moved, refuse stale render"; exit 1;
+          }
+          if [ -n "$staged" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "US PACOM: publish nine outbound government links only"
+            git push origin HEAD:main
+          fi
+      - name: Check out CURRENT Pages branch separately
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          fetch-depth: 0
+          path: us-existing-pages
+          persist-credentials: true
+      - name: Publish ONLY U.S. Desk HTML on Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/us-page.sha"
+          cd us-existing-pages
+          test -z "$(git status --porcelain --untracked-files=all)"
+          old="$(git rev-parse HEAD)"
+          cp ../output/us-indopacific.html us-indopacific.html
+          cmp -s ../output/us-indopacific.html us-indopacific.html
+          git add -- us-indopacific.html
+          staged="$(git diff --cached --name-only)"
+          test -z "$staged" || test "$staged" = "us-indopacific.html" || {
+            echo "::error::Unexpected Pages file staged"; exit 1;
+          }
+          if [ -n "$staged" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "US PACOM: publish fixed outbound first-party directory"
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$old" || {
+            echo "::error::gh-pages moved, refuse stale overwrite"; exit 1;
+          }
+          if [ -n "$staged" ]; then git push origin HEAD:gh-pages; fi
+          test -z "$(git status --porcelain --untracked-files=all)"

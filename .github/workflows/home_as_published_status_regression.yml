@@ -1,0 +1,40 @@
+name: Homepage As-Published Status Regression
+
+on:
+  pull_request:
+    paths:
+      - tests/test_preview_prototype.py
+      - .github/workflows/home_as_published_status_regression.yml
+
+permissions:
+  contents: read
+
+jobs:
+  homepage-status-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Preserve exact production state
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/homepage-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Install existing offline preview requirements
+        run: python -m pip install -r requirements.txt
+      - name: Verify rendered As published IDs, processing states and analyzed selection
+        run: |
+          python -m unittest -v \
+            tests.test_preview_prototype.TestTrancheOneIdentityAndStructure.test_home_as_published_records_match_focus_and_show_actual_state
+      - name: Preserve database and all published output
+        if: ${{ !cancelled() }}
+        run: |
+          sha256sum -c "$RUNNER_TEMP/homepage-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

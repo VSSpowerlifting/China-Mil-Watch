@@ -8,6 +8,9 @@ on:
       - "config/desk_capability_execution_plan.json"
       - "scripts/validate_desk_capability_plan.py"
       - "tests/test_desk_capability_execution_plan.py"
+      - "tests/test_permanent_desk_fasttrack_policy.py"
+      - "docs/DESK_STRENGTH_CRITERIA.md"
+      - "docs/PERMANENT_DESK_ACCELERATED_ACTIVATION_2026-10-15.md"
       - "docs/engineering/DESK_CAPABILITY_EXECUTION_FRAMEWORK_2026-10-10.md"
       - ".github/workflows/desk_capability_planning_contracts.yml"
 
@@ -30,7 +33,7 @@ jobs:
       - name: Plan DAG and real-source binding integrity
         run: python -m scripts.validate_desk_capability_plan --json
       - name: Assert negative contract cases
-        run: python -m unittest tests.test_desk_capability_execution_plan -v
+        run: python -m unittest tests.test_desk_capability_execution_plan tests.test_permanent_desk_fasttrack_policy -v
       - name: Assert source/state/production unchanged
         run: |
           set -euo pipefail

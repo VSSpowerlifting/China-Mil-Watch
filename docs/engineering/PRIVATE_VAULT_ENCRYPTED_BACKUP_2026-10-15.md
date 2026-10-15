@@ -47,6 +47,8 @@ Run a source-specific capture SHA-256 and SQLite `integrity_check`/foreign-key c
 python3 -m unittest tests.test_private_vault_encrypted_bundle -v
 ```
 
+A GPG export timeout is a **HOLD**: both the Git producer and GPG child are reaped, any partial ciphertext is removed, and no backup is published. The failure-path test simulates a stalled GPG child using fictional Git data, with no original records or credentials.
+
 The Python 3.9 test generates a **temporary throwaway fictional GPG encryption key**, creates a two-branch fictional bare Git repository containing a success capture and a separate failed-attempt-only binary, encrypts an actual streaming Git bundle, copies the ciphertext, decrypts and restores into an isolated bare Git repo, validates both branches, native objects and ciphertext SHA, and ensures missing keys, unexpected refs, changed source, tampering and overwrites **refuse safely**. The transient key is deleted after the test. No real source original, secret, private vault branch, external service, model or GitHub state is used. Focused CI has no public source download or upload path.
 
 ## Actual recovery and cutover holds

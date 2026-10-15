@@ -1,0 +1,46 @@
+{
+  "schema": "ipr-permanent-editorial-desk-research/1",
+  "entries": [
+    {
+      "desk": "vietnam",
+      "ipr_page": "briefs/what-is-being-built-in-laos.html",
+      "ipr_title": "What Is Being Built in Laos?",
+      "published_on": "2026-10-13",
+      "approved_by": "Benjamin Yang",
+      "approved_on": "2026-10-13",
+      "approval_commit": "504e8a95cb53e6fe500695aaa051f9dca82d8fe1",
+      "source_links": [
+        {
+          "source_slug": "vn_government_news_editorial",
+          "publisher_url": "https://baochinhphu.vn/viet-nam-ban-giao-he-thong-quan-ly-dan-cu-va-can-cuoc-cong-dan-tai-lao-102261008162136081.htm",
+          "title_original": "Việt Nam bàn giao hệ thống quản lý dân cư và căn cước công dân tại Lào",
+          "publisher_date": "2026-10-08",
+          "issuer": "Government of Vietnam",
+          "source_identity": "https://baochinhphu.vn/viet-nam-ban-giao-he-thong-quan-ly-dan-cu-va-can-cuoc-cong-dan-tai-lao-102261008162136081.htm",
+          "source_state_commit": null,
+          "capture_sha256": null
+        },
+        {
+          "source_slug": "vn_government_news_editorial",
+          "publisher_url": "https://baochinhphu.vn/viet-nam-lao-trao-doi-11-van-kien-hop-tac-quan-trong-10226100816173603.htm",
+          "title_original": "Việt Nam, Lào trao đổi 11 văn kiện hợp tác quan trọng",
+          "publisher_date": "2026-10-08",
+          "issuer": "Government of Vietnam",
+          "source_identity": "https://baochinhphu.vn/viet-nam-lao-trao-doi-11-van-kien-hop-tac-quan-trong-10226100816173603.htm",
+          "source_state_commit": null,
+          "capture_sha256": null
+        },
+        {
+          "source_slug": "vn_mps_foreign_affairs_vi",
+          "publisher_url": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381",
+          "title_original": "Hợp tác an ninh tiếp tục là trụ cột trong quan hệ Việt Nam – Lào",
+          "publisher_date": "2026-10-09",
+          "issuer": "Vietnam Ministry of Public Security",
+          "source_identity": "https://bocongan.gov.vn/bai-viet/hop-tac-an-ninh-tiep-tuc-la-tru-cot-trong-quan-he-viet-nam-lao-1791535381",
+          "source_state_commit": null,
+          "capture_sha256": null
+        }
+      ]
+    }
+  ]
+}

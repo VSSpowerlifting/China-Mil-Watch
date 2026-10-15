@@ -1,0 +1,37 @@
+name: US PACOM official URL research — offline frozen docket
+
+on:
+  pull_request:
+    paths:
+      - "research/us_pacom_official_link_review_2026-10-15.json"
+      - "scripts/review_us_pacom_official_link_docket.py"
+      - "tests/test_us_pacom_official_link_docket.py"
+      - ".github/workflows/us_pacom_link_docket_contracts.yml"
+      - "docs/engineering/US_PACOM_FIRST_PARTY_LINK_RESEARCH_2026-10-15.md"
+      - "shadow/us_indopacom/README.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-us-reference-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Run nine-source read-only PACOM URL docket and adversarial tests
+        run: |
+          python -m unittest tests.test_us_pacom_official_link_docket -v
+          python -m scripts.review_us_pacom_official_link_docket
+      - name: Prove no production output or shadow state changes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json .github/workflows/us_shadow.yml
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
