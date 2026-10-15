@@ -23,7 +23,7 @@
 
 {# Early-access, external-only navigation: no captured material, no source-use approval,
    and no shadow-to-production promotion. All URLs come from the reviewed registry.
-   The per-article public_source_links list is a separate human-approved surface. #}
+   Individually approved article references are managed by a separate gate. #}
 {% if desk.slug in ('philippines', 'vietnam') and desk.status == 'shadow' and desk.research %}
 <section class="desk-references" id="official-publisher-access"
          aria-labelledby="official-publisher-access-title">
