@@ -23,7 +23,7 @@
 {% block og_type %}article{% endblock %}
 {% block head_scripts %}
 <link rel="stylesheet" href="../briefs.css">
-<link rel="stylesheet" href="../continuity.css">
+{% if brief.continuity|length > 1 %}<link rel="stylesheet" href="../continuity.css">{% endif %}
 {% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="../{{ briefs_feed_route }}">{% endif %}
 {% endblock %}
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
