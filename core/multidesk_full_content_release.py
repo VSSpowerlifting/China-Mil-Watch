@@ -423,3 +423,53 @@ def stage_approved_bundle(bundle, artifacts, approvals, *,
         raise
     return {**plan, "staging_directory": str(dest),
             "downstream_publication_performed": False}
+
+
+REVIEW_INSTRUCTIONS = {
+    "rights": "Examine the exact page/document license or grant, third-party material, translation/derivative permission, attribution and current scope; record independent evidence.",
+    "source_fidelity": "Compare exact archived source-text bytes with the original-language publisher version and identify truncation, missing content or transcription changes.",
+    "document_integrity": "Verify complete original PDF, embedded images/graphs/third-party content, documentary completeness and rights to redistribute the entire binary.",
+    "bilingual": "Compare the entire English translation to the version-pinned original; check numbers, entities, negations, event versus publication dates, modality and ambiguity.",
+    "fact_checker": "Compare each substantive claim and citation to the underlying versioned evidence; distinguish official claims from independent facts, verify qualifications and absence of invented conclusions.",
+    "editor": "Approve the exact reviewed translation or independently written IPR analysis, its attribution, caveats, corrections/limitations and readiness for public distribution.",
+}
+
+
+def unsigned_review_queue(bundle, artifacts):
+    """Prepare bounded reviewer work, not reviewer approval or a rights grant.
+
+    Safe for a collection workflow to call with local private artifacts: the
+    result holds only identity, hashes, role instructions and explicit HOLD
+    status; it does NOT contain original text, PDF bytes, model outputs, any
+    signer secret or a publication token.
+    """
+    digest = _validate_bundle(bundle, artifacts)
+    s = bundle["source"]
+    entries = []
+    for w in bundle["works"]:
+        for role in sorted(REQUIRED_ROLES[w["kind"]]):
+            entries.append({
+                "kind": w["kind"], "role": role,
+                "source_identity": s["source_identity"],
+                "source_git_commit": s["source_git_commit"],
+                "source_capture_sha256": s["source_capture_sha256"],
+                "work_sha256": w["content_sha256"],
+                "rights_scope": w["rights_scope"],
+                "rights_evidence_sha256": w["rights_evidence_sha256"],
+                "instruction": REVIEW_INSTRUCTIONS[role],
+                "decision": "hold",
+                "human_signoff_attached": False,
+            })
+    return {
+        "schema": "ipr-unsigned-full-content-review-queue/1",
+        "desk": s["desk"],
+        "source_family": s["source_family"],
+        "source_identity": s["source_identity"],
+        "bundle_sha256": digest,
+        "review_tasks": entries,
+        "source_authentication_complete": False,
+        "rights_independently_approved": False,
+        "translation_or_analysis_approved": False,
+        "public_release_authorized": False,
+        "contains_original_source_bodies": False,
+    }
