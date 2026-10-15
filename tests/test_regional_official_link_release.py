@@ -219,7 +219,9 @@ class ReleaseContracts(unittest.TestCase):
 
     def test_semantic_exception_cannot_be_reclassified(self):
         policy,packet,_=data("id_kemhan_news",with_hold=True)
-        packet["records"][-1]["semantic_exception_hold"]=None
+        held = next(r for r in packet["records"]
+                    if r["semantic_exception_hold"] is not None)
+        held["semantic_exception_hold"] = None
         packet["metadata_manifest_sha256"]=link.digest(packet["records"])
         spec=next(x for x in policy["source_families"]
                   if x["source_family"]=="id_kemhan_news")
