@@ -1,5 +1,4 @@
-/* Records finder. The index loads on first request, and only if it is
- * this page's snapshot. State lives in the URL. */
+
 (function () {
   "use strict";
   var $ = function (id) { return document.getElementById(id); },
@@ -18,7 +17,6 @@
       COUNT = parseInt(root.getAttribute("data-snapshot-records"), 10),
       FOCUS_COUNT = parseInt(root.getAttribute("data-focus-records"), 10);
 
-  /* Every row, never a sample. */
   function valid(d) {
     if (!d || !d.snapshot || !A(d.records)) return false;
     if (d.snapshot.date !== WANT || d.snapshot.records !== COUNT ||
@@ -84,7 +82,7 @@
     if ((v = get("language")) &&
         (data.languages[s.language] || {}).code !== v) return false;
     if ((v = get("status")) && data.states[r[3]].code !== v) return false;
-    /* Inclusive, on the source-stated date. */
+
     if ((v = get("from")) && r[1] < v) return false;
     if ((v = get("to")) && r[1] > v) return false;
     return !(get("trail") && !trail[r[0]]);
@@ -99,7 +97,6 @@
   }
   function n(x) { return x.toLocaleString("en-US"); }
 
-  /* _records.html record_row, field for field. */
   function card(r) {
     var s = data.sources[r[2]], lang = data.languages[s.language],
         who = data.institutions[s.institution],
@@ -186,7 +183,6 @@
     reset.hidden = !filtered();
   }
 
-  /* An unusable index, never "0 results". */
   function unavailable() {
     wait.hidden = root.hidden = prev.hidden = next.hidden = true;
     out.classList.remove("is-updating");
@@ -196,7 +192,7 @@
   function load() {
     if (!pending) {
       wait.hidden = false;
-      /* Public snapshot facts only. */
+
       pending = fetch("corpus-index.json?s=" + encodeURIComponent(WANT) + "-" +
                       COUNT, {credentials: "omit"})
         .then(function (r) { if (!r.ok) throw Error(r.status); return r.json(); })
@@ -240,7 +236,7 @@
     go(true, true);
     F.q.focus();
   };
-  /* Focus the range line: a disabled button would drop focus. */
+
   function turn(d) { page += d; go(true); range.focus(); }
   prev.onclick = function () { if (page > 1) turn(-1); };
   next.onclick = function () { turn(1); };
