@@ -71,8 +71,19 @@ class KoreaOfficialIndexContracts(unittest.TestCase):
                 self.assertIn(
                     'data-korea-additional-link="korea-policy:' + approved_id + '"',
                     page)
+            # A subsequently captured, hash-verified official link may be
+            # admitted under the separate standing metadata-only policy;
+            # a merely unreviewed fixed-directory entry may not appear.
+            from core.korea_official_live_links import load_live_korea_official_links
+            from core.korea_public_bibliography import load_public_korea_links
+            from core.korea_additional_public_links import load_additional_korea_official_links
+            fixed = {x["source_identity"] for x in (
+                load_public_korea_links() + load_additional_korea_official_links())}
+            auto_ids = {x["source_identity"].partition(":")[2] for x in
+                        load_live_korea_official_links(ROOT / "pla_watch.db", exclude=fixed)}
             for unapproved_id in ("156784618", "156784625"):
-                self.assertNotIn(unapproved_id, page)
+                if unapproved_id not in auto_ids:
+                    self.assertNotIn(unapproved_id, page)
             for forbidden in ("body_original", "download.do?fileId=",
                               "english_description", "data-review-status="):
                 self.assertNotIn(forbidden, page)

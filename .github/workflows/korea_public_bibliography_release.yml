@@ -79,12 +79,18 @@ jobs:
           html = (base/"korea.html").read_text(encoding="utf-8")
           assert html.count('data-korea-public-link=') == 5
           assert html.count('data-korea-additional-link=') == 9
-          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=') == 14
+          from core.korea_official_live_links import load_live_korea_official_links
+          fixed = {x["source_identity"] for x in load_public_korea_links() + additional}
+          auto = load_live_korea_official_links("pla_watch.db", exclude=fixed)
+          assert html.count('data-korea-auto-official-link=') == len(auto)
+          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=') == 14 + len(auto)
           assert '<nav class="korea-publisher-shortcuts"' in html
           assert html.index('korea-publisher-shortcuts-title') < html.index('data-korea-public-link=')
           assert html.count("Open official publisher index") == 2
+          auto_ids = {x["source_identity"].partition(":")[2] for x in auto}
           for unreviewed_id in ("156784618", "156784625"):
-              assert unreviewed_id not in html
+              if unreviewed_id not in auto_ids:
+                  assert unreviewed_id not in html
           assert "not IPR archived records" in html
           assert "https://www.korea.kr/guide/copyRight.do" in html
           assert "2026-10-04" in html and "2026-10-06" in html
@@ -107,8 +113,10 @@ jobs:
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
 
+  # Superseded by the metadata-only Korea file publisher. Never run this
+  # historical broad-tree peaceiris release after automatic admission starts.
   release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
@@ -161,7 +169,11 @@ jobs:
           html = (p/"korea.html").read_text(encoding="utf-8")
           assert html.count('data-korea-public-link=') == 5
           assert html.count('data-korea-additional-link=') == 9
-          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=') == 14
+          from core.korea_official_live_links import load_live_korea_official_links
+          fixed = {x["source_identity"] for x in load_public_korea_links() + additional}
+          auto = load_live_korea_official_links("pla_watch.db", exclude=fixed)
+          assert html.count('data-korea-auto-official-link=') == len(auto)
+          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=') == 14 + len(auto)
           for row in additional:
               assert row["source_url"] in html
           assert "unresolved excavation-year discrepancy" in html
@@ -179,8 +191,10 @@ jobs:
               from urllib.parse import parse_qs, urlsplit
               assert parse_qs(urlsplit(url).query).get("repCode") == [rep_code]
               assert ('href="' + escape(url, quote=True) + '"') in html
+          auto_ids = {x["source_identity"].partition(":")[2] for x in auto}
           for unreviewed_id in ("156784618", "156784625"):
-              assert unreviewed_id not in html
+              if unreviewed_id not in auto_ids:
+                  assert unreviewed_id not in html
           assert "Shadow evaluation — not in corpus" in (
               p/"desks.html").read_text(encoding="utf-8")
           assert "noindex, nofollow" not in html

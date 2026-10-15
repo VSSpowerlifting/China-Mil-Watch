@@ -1,0 +1,32 @@
+name: Korea metadata publisher — independent concurrency contract
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/korea_verified_official_link_production.yml
+      - tests/test_korea_release_concurrency.py
+      - .github/workflows/korea_release_concurrency_contract.yml
+
+permissions:
+  contents: read
+
+jobs:
+  preserve-independent-korea-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Require independent Korea queue and guarded cross-desk commits
+        run: python -m unittest -v tests.test_korea_release_concurrency
+      - name: Confirm no content or database mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

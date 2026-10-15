@@ -1,0 +1,35 @@
+name: US Government Source Family Discovery — Bounded Read-Only
+on:
+  pull_request:
+    paths:
+      - scripts/probe_us_other_firstparty_access.py
+      - tests/test_us_other_firstparty_access.py
+      - .github/workflows/us_other_firstparty_access_canary.yml
+      - docs/engineering/US_ADDITIONAL_FIRSTPARTY_DISCOVERY_2026-10-15.md
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run-bounded-discovery:
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Validate immutable targets and denied-access isolation
+        run: python -m unittest tests.test_us_other_firstparty_access -v
+      - name: Real GitHub-runner read-only official-site access test
+        run: python -m scripts.probe_us_other_firstparty_access
+      - name: Confirm no public or shadow state written
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

@@ -2410,6 +2410,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     korea_release_state = load_registry().get("korea")
     korea_public_rows = []
     korea_additional_rows = []
+    korea_auto_official_rows = []
     if korea_release_state is not None:
         if (korea_release_state.status != "shadow"
                 or korea_release_state.manifest_path is not None
@@ -2424,6 +2425,11 @@ def build(out_dir: Path, title: str, db_path: Path,
             korea_additional_rows = load_additional_korea_official_links()
             if len(korea_additional_rows) != 9:
                 raise ValueError("Korea additional official URLs require nine exact owner-approved identities")
+            from core.korea_official_live_links import load_live_korea_official_links
+            frozen_ids = {r["source_identity"] for r in (
+                korea_public_rows + korea_additional_rows)}
+            korea_auto_official_rows = load_live_korea_official_links(
+                db_path, exclude=frozen_ids)
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -2966,6 +2972,19 @@ def build(out_dir: Path, title: str, db_path: Path,
                                     if desk.slug == "indonesia" else [])
         indonesia_press_links = (load_indonesia_press_index()
                                  if desk.slug == "indonesia" else [])
+        from core.us_pacom_official_links import load_us_pacom_official_links
+        us_pacom_links = (load_us_pacom_official_links()
+                          if desk.slug == "us-indopacific" else [])
+        # Only actually admitted congressional commission metadata are shown.
+        # PACOM's static index and blocked collector remain distinct.
+        from core.uscc_official_metadata import load_public_links as load_uscc_live_links
+        uscc_links = (load_uscc_live_links(db_path)
+                      if desk.slug == "us-indopacific" else [])
+        # Executive-branch Treasury links are a distinct admitted source family.
+        # No headline, article body, media or topic inference enters this view.
+        from core.us_treasury_official_metadata import load_public_links as load_treasury_live_links
+        treasury_links = (load_treasury_live_links(db_path)
+                          if desk.slug == "us-indopacific" else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -2976,8 +2995,12 @@ def build(out_dir: Path, title: str, db_path: Path,
                              public_reference_languages=languages,
                              indonesia_official_links=indonesia_official_links,
                              indonesia_press_links=indonesia_press_links,
+                             us_pacom_official_links=us_pacom_links,
+                             uscc_official_links=uscc_links,
+                             us_treasury_official_links=treasury_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
+                             korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")

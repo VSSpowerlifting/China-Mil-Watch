@@ -1,0 +1,90 @@
+{
+  "schema": "ipr-us-pacom-official-link-research-snapshot/1",
+  "prepared_on": "2026-10-15",
+  "desk": "us-indopacific",
+  "source_institution": "us_pacom",
+  "source_host": "www.pacom.mil",
+  "research_state": "indexed_official_pages_only__not_publication",
+  "collector_state": "access_blocked",
+  "source_access_note": "Direct project-runner PACOM robots.txt access remains unresolved; indexed official page records do not authorize crawling.",
+  "dvids_independent_source": "DVIDS is a separate paused Tier B media-service feed, not command-issued coverage.",
+  "published_to_ipr": false,
+  "source_original_downloaded_for_this_snapshot": false,
+  "original_body_or_media_stored": false,
+  "automatic_discovery_or_publication_approved": false,
+  "count": 9,
+  "records": [
+    {
+      "source_identity": "us-pacom:4519249",
+      "official_url": "https://www.pacom.mil/Media/Press-Releases-and-Readouts/Press-Releases-and-Readout-view/Article/4519249/department-of-war-restores-us-pacific-command-designation/",
+      "publisher_posted_date": "2026-06-16",
+      "hosted_section": "press_release",
+      "reference_topic": "institutional_designation",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4522099",
+      "official_url": "https://www.pacom.mil/Media/Press-Releases-and-Readouts/Article/4522099/us-and-philippines-deepen-defense-cooperation-at-execom-summit/",
+      "publisher_posted_date": "2026-06-25",
+      "hosted_section": "press_release",
+      "reference_topic": "philippines_defense_coordination",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4566845",
+      "official_url": "https://www.pacom.mil/Media/Press-Releases-and-Readouts/Press-Releases-and-Readout-view/Article/4566845/philippines-us-mark-75th-anniversary-of-the-mutual-defense-treaty-reaffirm-alli/",
+      "publisher_posted_date": "2026-08-08",
+      "hosted_section": "press_release",
+      "reference_topic": "philippines_mutual_defense",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4586166",
+      "official_url": "https://www.pacom.mil/Media/Press-Releases-and-Readouts/Press-Releases-and-Readout-view/Article/4586166/mutual-defense-treaty-75th-anniversary/",
+      "publisher_posted_date": "2026-08-30",
+      "hosted_section": "press_release",
+      "reference_topic": "philippines_mutual_defense",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4589860",
+      "official_url": "https://www.pacom.mil/Media/News/News-Articles/Article/4589860/28th-indo-pacific-chiefs-of-defense-conference-focuses-on-strengthening-regiona/",
+      "publisher_posted_date": "2026-09-02",
+      "hosted_section": "news_article",
+      "reference_topic": "chiefs_of_defense_conference",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4591082",
+      "official_url": "https://www.pacom.mil/Media/News/News-Articles/Article/4591082/readout-of-adm-samuel-j-paparos-meetings-on-the-sidelines-of-the-indo-pacific-c/",
+      "publisher_posted_date": "2026-09-03",
+      "hosted_section": "news_article",
+      "reference_topic": "chiefs_of_defense_meetings",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4591776",
+      "official_url": "https://www.pacom.mil/Media/News/News-Articles/Article/4591776/freedom-edge-2026-opening-ceremony-marks-start-of-trilateral-exercise/",
+      "publisher_posted_date": "2026-09-07",
+      "hosted_section": "news_article",
+      "reference_topic": "trilateral_exercise",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4596632",
+      "official_url": "https://www.pacom.mil/Media/Press-Releases-and-Readouts/Press-Releases-and-Readout-view/Article/4596632/freedom-edge-26-concludes-advancing-trilateral-readiness-across-the-indo-pacific/",
+      "publisher_posted_date": "2026-09-11",
+      "hosted_section": "press_release",
+      "reference_topic": "trilateral_exercise",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    },
+    {
+      "source_identity": "us-pacom:4599539",
+      "official_url": "https://www.pacom.mil/Media/News/News-Articles/Article/4599539/us-pacific-command-statement-on-dprk-missile-launch/",
+      "publisher_posted_date": "2026-09-11",
+      "hosted_section": "news_article",
+      "reference_topic": "dprk_missile_statement",
+      "verification_basis": "official_site_search_index_excerpt_only"
+    }
+  ]
+}

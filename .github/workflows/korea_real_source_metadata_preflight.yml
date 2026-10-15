@@ -1,0 +1,105 @@
+name: Korea — Real Preserved Source to Metadata and Site (No Publish)
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/korea_real_source_metadata_preflight.yml
+      - core/korea_official_metadata_admission.py
+      - core/korea_official_live_links.py
+      - scripts/admit_korea_official_source_metadata.py
+      - migrations/versions/m0008_korea_official_source_metadata.py
+      - config/korea_official_link_automatic_admission.json
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  real-source-scratch-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin tracked production and Pages inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db output/korea.html > "$RUNNER_TEMP/korea-real-source-input.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Install existing original-HWPX and renderer dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Fetch full MND shadow history into transient read-only runner storage
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --no-tags --single-branch --branch shadow/korea-policy-briefing \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/korea-source-proof"
+          git -C "$RUNNER_TEMP/korea-source-proof" rev-parse HEAD \
+            > "$RUNNER_TEMP/source-before.sha"
+          test -z "$(git -C "$RUNNER_TEMP/korea-source-proof" status --porcelain)"
+      - name: Reverify actual preserved original and import only metadata to disposable SQLite
+        shell: bash
+        env:
+          STATE_DIR: ${{ runner.temp }}/korea-source-proof
+          SCRATCH_DIR: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          import sqlite3
+          from scripts import stage_korea_production_candidates as stage
+          from core import korea_official_metadata_admission as admission
+          from core.korea_official_live_links import load_live_korea_official_links
+          from migrations.versions import m0008_korea_official_source_metadata as migration
+          from core.korea_public_bibliography import load_public_korea_links
+          from core.korea_additional_public_links import load_additional_korea_official_links
+
+          # Reparse genuinely archived HWPX bytes and compare every captured
+          # title/text/page/document hash. Never print Korean originals.
+          packet = stage.build(os.environ["STATE_DIR"])
+          policy = admission.read_policy()
+          db_path = Path(os.environ["SCRATCH_DIR"]) / "korea-source-preflight.sqlite"
+          with sqlite3.connect(db_path) as con:
+              migration.up(con)
+              receipt = admission.admit(
+                  con, packet, policy, as_of_utc="2026-10-15T20:00:00Z")
+              con.commit()
+              assert con.execute("PRAGMA quick_check").fetchone()[0] == "ok"
+          pre_existing = {r["source_identity"] for r in (
+              load_public_korea_links() + load_additional_korea_official_links())}
+          new = load_live_korea_official_links(db_path, exclude=pre_existing)
+          assert receipt["source_bodies_copied"] is False
+          assert receipt["titles_or_media_copied"] is False
+          assert receipt["new_official_links_admitted"] >= len(new)
+          assert all(r["source_identity"] not in pre_existing for r in new)
+          print("REAL preserved source verified; originals:", packet["source_original_count"],
+                "metadata-only admissions:", receipt["new_official_links_admitted"],
+                "additional public URLs:", len(new),
+                "held disputes:", receipt["explicit_exception_held"])
+          PY
+      - name: Prove preserved Git checkout and public production stayed unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C "$RUNNER_TEMP/korea-source-proof" rev-parse HEAD)" = \
+            "$(cat "$RUNNER_TEMP/source-before.sha")"
+          test -z "$(git -C "$RUNNER_TEMP/korea-source-proof" status --porcelain)"
+          sha256sum -c "$RUNNER_TEMP/korea-real-source-input.sha"
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# Read-only real-source verification; NO production write, Pages push,
+# original-document upload, model/AI inference, SMTP, or shadow state change.
