@@ -3,7 +3,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from scripts.guard_public_editorial_research import RenderHold, verify_render
+from scripts.guard_public_editorial_research import RenderHold, verify_render, validate_editorial_manuscripts
+from core.public_editorial_research import load_catalog
+from datetime import date
+import copy
 from tests.test_public_editorial_research import fixture
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -65,6 +68,28 @@ class RenderedPermanentResearchContracts(unittest.TestCase):
             f.write('<a href="archive.html?desk=indonesia">Unapproved corpus</a>')
         with self.assertRaises(RenderHold):
             verify_render(self.root, [self.row])
+
+    def test_real_vietnam_no18_editorial_approval_and_all_originals_are_pinned(self):
+        genuine = load_catalog(today=date(2026, 10, 15))
+        self.assertEqual(validate_editorial_manuscripts(genuine), 1)
+        self.assertEqual(len(genuine[0]["source_links"]), 3)
+
+    def test_forged_editor_or_original_title_cannot_pass_source_approval_gate(self):
+        approved = load_catalog(today=date(2026, 10, 15))
+        for key, value in (("approved_by", "Fabricated Editor"),
+                           ("approved_on", "2026-10-14")):
+            altered = copy.deepcopy(approved)
+            altered[0][key] = value
+            with self.subTest(key=key), self.assertRaises(RenderHold):
+                validate_editorial_manuscripts(altered)
+        changed = copy.deepcopy(approved)
+        changed[0]["source_links"][0]["title_original"] = "Unverified original"
+        with self.assertRaises(RenderHold):
+            validate_editorial_manuscripts(changed)
+        changed = copy.deepcopy(approved)
+        changed[0]["source_links"][0]["publisher_date"] = "2026-10-09"
+        with self.assertRaises(RenderHold):
+            validate_editorial_manuscripts(changed)
 
     def test_empty_manifest_does_not_invent_a_published_article(self):
         result = verify_render(self.root, [])
