@@ -6,10 +6,13 @@
   --brief-object:#e7eeea;
   --brief-source-paper:#edf0e9;
   --brief-object-rule:#b4c8c2;
-  --brief-section-space:clamp(48px,5vw,72px);
-  --brief-inset:clamp(20px,3vw,36px);
+  --brief-section-space:clamp(48px,6vw,88px);
+  --brief-inset:clamp(20px,3vw,32px);
 }
 .brief-page{padding-top:0}
+/* One uninterrupted ivory environment. Terrain remains outside the wrap;
+   opaque reading ground has no card edges and never carries contours. */
+main#main.brief-page>.wrap{background:var(--brief-paper);border:0}
 .brief-hero{background:var(--band);color:var(--band-ink);border-bottom:1px solid var(--band-rule)}
 .brief-hero-inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-template-areas:'heading photo' 'context photo';gap:16px 56px;padding-block:56px 48px;align-items:start}
 .brief-heading{grid-area:heading}
@@ -35,20 +38,23 @@
 .brief-photo-credit-detail>summary{min-height:44px;padding-block:10px;cursor:pointer}
 .brief-photo-credit-detail p{font:13px/1.7 var(--sans)}
 .brief-page>.wrap>.atlas-breadcrumb{font:14px/1.7 var(--sans);margin-block:28px 56px}
-.brief-layout{display:grid;grid-template-columns:minmax(0,44rem) minmax(12rem,17rem);justify-content:center;gap:clamp(32px,6vw,96px);padding-bottom:65px;align-items:start}
-.brief-main{grid-column:1;grid-row:1;min-width:0;padding:0 var(--brief-inset) 40px;background:var(--brief-paper);border-inline:1px solid var(--rule-soft)}
-.brief-reading-navigation{grid-column:2;grid-row:1;align-self:start;padding:12px 20px 20px;border:1px solid var(--brief-object-rule);border-top:2px solid var(--accent);background:var(--brief-object);font:14px/1.7 var(--sans);overflow-wrap:anywhere}
-.brief-reading-navigation>summary{min-height:44px;padding-block:10px;cursor:pointer;font-weight:600;color:var(--accent-ink)}
+.brief-layout{display:grid;grid-template-columns:minmax(0,49rem) minmax(12rem,14.5rem);justify-content:center;gap:clamp(40px,4vw,56px);padding-bottom:65px;align-items:start}
+.brief-main{grid-column:1;grid-row:1;min-width:0;padding:0 0 40px;background:transparent}
+.brief-reading-navigation{grid-column:2;grid-row:1;align-self:start;padding:0;border:0;border-top:1px solid var(--brief-object-rule);background:transparent;font:14px/1.7 var(--sans);overflow-wrap:anywhere}
+.brief-reading-navigation>summary{min-height:44px;padding-block:10px;cursor:pointer;font-weight:500;color:var(--ink-2)}
 .brief-toc-label{display:none}
-.brief-toc ol{list-style:none;padding:0;margin:12px 0 0;border-top:1px solid var(--brief-object-rule)}
+.brief-toc ol{list-style:none;padding:0;margin:0;border-top:1px solid var(--brief-object-rule)}
 .brief-toc a{display:flex;align-items:center;min-height:44px;padding:10px 0;font:14px/1.6 var(--sans);color:var(--ink-2);text-decoration-thickness:1px;text-underline-offset:.25em}
 .brief-toc a:hover{color:var(--accent-ink)}
-.brief-signal{border-left:2px solid var(--accent);padding:var(--brief-inset);background:var(--brief-object);margin:0 calc(-1 * var(--brief-inset)) var(--brief-section-space);border-block:1px solid var(--brief-object-rule)}
+.brief-signal{border:0;padding:var(--brief-inset);background:var(--brief-object);margin:0 0 var(--brief-section-space);border-block:1px solid var(--brief-object-rule)}
 .brief-signal-label{font:600 13px/1.6 var(--sans);color:var(--accent-ink);margin:0 0 12px}
 .brief-signal>p:last-child{font:400 23px/1.5 var(--serif);margin:0}
 .brief-section{margin-top:var(--brief-section-space);scroll-margin-top:112px}
-.brief-section>h2{border:0;border-top:1px solid var(--rule);padding:24px 0 0;margin:0 0 24px;font:400 38px/1.15 var(--display);text-wrap:pretty;overflow-wrap:anywhere}
-.brief-section>p,.brief-term>p,.brief-claim>p{font:400 19px/1.85 var(--serif);margin:0 0 20px;max-width:68ch}
+.brief-section>h2{border:0;padding:0;margin:0 0 28px;font:400 clamp(34px,3vw,42px)/1.13 var(--display);max-width:28ch;text-wrap:balance;overflow-wrap:anywhere}
+.brief-section>p,.brief-term>p,.brief-claim>p{font:400 1.1875rem/1.75 var(--serif);margin:0 0 24px;max-width:74ch}
+/* The short rule marks a new argument, not a new evidence assertion. */
+.brief-section:not(.brief-trail):not(.brief-citation-section):not(.brief-follow-up)>h2::before{content:"";display:block;width:40px;height:1px;background:var(--accent);margin-bottom:20px}
+.brief-trail>h2,.brief-citation-section>h2{font:500 22px/1.4 var(--sans);max-width:none}
 .brief-section>.brief-cites{font:13px/1.8 var(--sans);padding-top:12px;border-top:1px solid var(--rule);color:var(--ink-2);margin-bottom:24px}
 .brief-cites-label{font-weight:600;margin-right:10px}
 .brief-cites a{display:inline-block;min-height:40px;padding-block:8px}
@@ -81,7 +87,7 @@
 .brief-edition{margin-bottom:12px}
 .brief-dek{font-size:19px;line-height:1.55}
 .brief-layout{display:flex;flex-direction:column;gap:32px}
-.brief-reading-navigation{width:100%;padding:8px 20px}
+.brief-reading-navigation{width:100%;padding:0}
 .brief-main{width:100%}
 .brief-page>.wrap>.atlas-breadcrumb{margin-block:24px}}
 @media(max-width:600px){.brief-hero-inner{padding-top:24px}
@@ -115,13 +121,13 @@
 .brief-hero{position:relative;isolation:isolate;background:var(--band) url('assets/material/navy-paper.png');padding-bottom:48px}
 .brief-hero::before{content:'';position:absolute;inset:auto 0 0;height:100px;z-index:-1;background:url('assets/material/chart-shelf.svg') no-repeat center 54%/max(1200px,100%) auto;opacity:.3;pointer-events:none;mask-image:linear-gradient(transparent,black)}
 .brief-hero::after{content:'';position:absolute;inset:auto 0 -1px;height:18px;background:var(--brief-paper);border-top:1px solid var(--brief-object-rule);pointer-events:none}
-.brief-reading-navigation{background-image:linear-gradient(#e7eeeadf,#e7eeeadf),url('assets/material/chart-paper.png')}
+
 .brief-hero .historical-veil figcaption{color:var(--band-muted);background:var(--band)}
 .brief-hero .historical-veil figcaption a{color:var(--focus-band)}
-.brief-trail,.brief-citation-section{padding:var(--brief-inset);margin-inline:calc(-1 * var(--brief-inset));border-block:1px solid var(--brief-object-rule);background:var(--brief-source-paper)}
+.brief-trail,.brief-citation-section{padding:32px 0 0;margin-inline:0;border-top:1px solid var(--brief-object-rule);background:transparent}
 .brief-trail>h2,.brief-citation-section>h2{border-top:0;padding-top:0}
-.brief-citation-section{background:var(--brief-object)}
-.brief-follow-up>h2{border-top:2px solid var(--accent)}
+.brief-citation-section{padding:24px var(--brief-inset);background:var(--brief-object)}
+.brief-follow-up{border-top:1px solid var(--accent);padding-top:32px}
 .brief-main :is(p,a,h2,h3,dd){overflow-wrap:anywhere}
 .brief-main>p:last-child{font:14px/1.7 var(--sans);margin-top:32px}
 @media(max-width:600px){.brief-hero{padding-bottom:32px}
@@ -180,17 +186,17 @@
 .brief-reading-section:first-child{margin-top:0}
 .brief-layout--structured #s-publishers,.brief-layout--structured #s-cite{scroll-margin-top:112px}
 .brief-layout--structured [tabindex="-1"]:focus-visible{outline:2px solid var(--accent);outline-offset:8px}
-.brief-reading-section>h2{font-size:36px;line-height:1.2;margin-bottom:24px;text-wrap:pretty}
+.brief-reading-section>h2{margin-bottom:28px}
 .brief-reading-section>p{margin-bottom:24px}
-.brief-reading-finding{border-left:2px solid var(--accent);border-block:1px solid var(--brief-object-rule);position:relative;isolation:isolate;background:var(--brief-object);padding:var(--brief-inset);margin:0 calc(-1 * var(--brief-inset)) var(--brief-section-space);scroll-margin-top:112px}
+.brief-reading-finding{border-top:2px solid var(--accent);border-bottom:1px solid var(--brief-object-rule);background:transparent;padding:24px 0 28px;margin:0 0 var(--brief-section-space);scroll-margin-top:112px}
 .brief-reading-finding>h2{border:0;font:600 14px/1.6 var(--sans);color:var(--accent-ink);margin:0 0 20px;border-bottom:1px solid var(--brief-object-rule);padding-bottom:14px}
 .brief-reading-finding blockquote,.brief-reading-evidence blockquote{padding:0;border:0;margin:0}
-.brief-reading-finding blockquote p{font:400 24px/1.6 var(--serif);margin:0 0 16px;max-width:48ch}
+.brief-reading-finding blockquote p{font:400 clamp(26px,2.4vw,32px)/1.35 var(--display);margin:0 0 20px;max-width:42ch}
 .brief-excerpt-trace,.brief-reading-note{font:13px/1.8 var(--sans);color:var(--ink-2);margin:0}
 .brief-excerpt-trace{border-top:1px solid var(--brief-object-rule);padding-top:8px}
-.brief-reading-finding::before{content:"";position:absolute;inset:0 0 auto auto;width:100px;height:70px;background:url("assets/material/contours-paper.svg") no-repeat right top/320px auto;opacity:.8;z-index:-1;pointer-events:none}
+
 .brief-excerpt-trace a{display:inline-block;padding-block:8px}
-.brief-reading-evidence{margin-top:var(--brief-section-space);padding:var(--brief-inset);margin-inline:calc(-1 * var(--brief-inset));border-block:1px solid var(--brief-object-rule);background:var(--brief-source-paper);scroll-margin-top:112px}
+.brief-reading-evidence{margin-top:var(--brief-section-space);padding:var(--brief-inset);margin-inline:0;border-block:1px solid var(--brief-object-rule);background:var(--brief-source-paper);scroll-margin-top:112px}
 .brief-reading-evidence>h2{font:400 32px/1.2 var(--display);margin:0 0 16px}
 .brief-reading-evidence>div{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:24px}
 .brief-reading-evidence h3{font:600 15px/1.6 var(--sans);margin:0 0 16px}
@@ -200,12 +206,12 @@
 .brief-reading-figure .brief-cover{margin:0;max-width:100%}
 .brief-structured a{overflow-wrap:anywhere}
 @media(min-width:901px){.brief-layout>.brief-reading-navigation{position:sticky;top:112px;max-height:calc(100vh - 128px);overflow:auto}
-.brief-layout .brief-toc a{padding-block:12px}}
+.brief-layout .brief-toc a{padding-block:8px}}
 @media(max-width:900px){.brief-reading-section{margin-top:48px}
 .brief-reading-section>h2{font-size:30px}
 .brief-reading-section>p{font-size:18px;line-height:1.8}
 .brief-reading-finding{margin-bottom:48px}
-.brief-reading-finding blockquote p{font-size:21px}
+.brief-reading-finding blockquote p{font-size:26px}
 .brief-reading-evidence>div{grid-template-columns:1fr;gap:24px}
 .brief-reading-evidence>div>section+section{border-left:0;border-top:1px solid var(--rule);padding:24px 0 0}}
 @media print{.brief-reading-finding{border-color:#000;margin-bottom:24px}
@@ -261,12 +267,15 @@
 @media(max-width:600px){.brief-reading-finding,.brief-reading-evidence{margin-inline:0}
 .brief-reading-section:first-child>h2{padding-top:0;border-top:0}}
 @media print{
+  main#main.brief-page>.wrap{background:white}
   .brief-main{border:0;padding:0;background:white}
   .brief-signal,.brief-reading-finding,.brief-reading-evidence,.brief-trail,.brief-citation-section{background:white!important;border-color:black;margin-inline:0;padding:12pt 0}
   .brief-reading-finding::before{display:none}
   .brief-signal,.brief-reading-finding{break-inside:avoid}
   .brief-section>h2{break-after:avoid;padding-top:12pt}
+  .brief-section>h2::before{display:none!important}
   .brief-section>p,.brief-term>p,.brief-claim>p{font-size:11pt;line-height:1.6}
+  .brief-reading-finding blockquote p{font-family:var(--serif);max-width:none}
   .brief-main a{color:black!important}
   .brief-record-title::after{content:" (" attr(href) ")";font:9pt/1.5 var(--sans)}
 }
