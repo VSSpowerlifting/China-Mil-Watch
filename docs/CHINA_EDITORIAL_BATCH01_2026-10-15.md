@@ -49,6 +49,26 @@ missile test, potentially distinct publisher claims; #4346/#4348 and
 #3454/#3465 are near-identical text/outlet candidates. All links survive
 even if a representative is selected later.
 
+## Priority source-trail integrity finding: The PLA Watch No. 10
+
+[Issue #623](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/623)
+is a *higher-priority* governed source-integrity investigation than normal
+browse curation. The July 11 **The PLA Watch No. 10** published source trail
+cites **#2265**'s actual Global Times URL for a Joint Sea-2026 ship visit.
+But its preserved text is a 321-character collection of unrelated headlines
+referring to Joint Sea-2025 and 2022, and its derived **machine summary**
+misstates the warship visits as part of *Joint Sea-2025*, then rationalizes
+the 2025/2026 contradiction. The original publisher reports Joint Sea-2026.
+
+The *human-authored Brief itself* describes Joint Sea-2026 and appears to
+cite other relevant dated sources. **Do not infer that the Brief is
+substantively wrong** from this flawed record page alone. An editor must
+trace its crew-exchange sentence against the original report and other
+corroboration, then decide whether a machine-record warning and/or published
+Brief correction is needed. Do **not** silently replace old source text,
+rewrite a cited Brief or break its permanent source trail. Both correction
+types need independent editorial review and separate release authorization.
+
 ## Generated read-only research packet
 
 Input is `research/china/editorial-batch-01-2026-10-15.json` tied to
