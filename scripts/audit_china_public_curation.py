@@ -36,7 +36,7 @@ TITLE_REVIEW_CUES = {
         r"核武|火箭军|战略导弹|弹道导弹|洲际导弹|"
         r"strategic missile|ballistic missile|nuclear weapon", re.I),
     "military_contacts": re.compile(
-        r"美军|美舰|中美军事|PLA.*US|US.*PLA|U\\.S\\. military", re.I),
+        r"美军|美舰|中美军事|PLA.*US|US.*PLA|U\.S\. military", re.I),
 }
 
 
@@ -51,8 +51,9 @@ def audit(index, target=600):
 
     Every published Brief trail record is guaranteed a review slot, even if its
     machine-processing state would otherwise keep it out of this sampling pool.
-    All other candidates are sampled from the analyzed China subset across
-    source/month strata. Neither machine labels nor sampling confer approval.
+    Other candidates include a screened-out false-negative control and an
+    analyzed-China sample across source/month strata. Headline warnings are
+    separate review cues, not editorial acceptance or machine reranking.
     """
     if not isinstance(target, int) or isinstance(target, bool) or target < 1:
         raise ValueError("target must be a positive integer")
