@@ -81,7 +81,9 @@ class ChinaCurationAuditTest(unittest.TestCase):
         source["records"].append(
             [24, "2026-07-18", 0, 1, "",
              "中华人民共和国外交部关于黄岩岛问题的声明"])
-        result = audit(source, target=3)
+        # Saturate the review slots with the protected trail record, so the
+        # strategic headline must be visible as a separate review cue.
+        result = audit(source, target=1)
         item = next(r for r in result["rows"] if r["id"] == 24)
         self.assertIn("south_china_sea", item["title_review_cues"])
         self.assertEqual(result["screened_out_title_cue_records"], 1)
