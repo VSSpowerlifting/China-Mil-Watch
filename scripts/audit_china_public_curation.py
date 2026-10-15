@@ -9,6 +9,7 @@ import argparse
 from collections import Counter, defaultdict
 import hashlib
 import json
+import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -20,6 +21,29 @@ def _stable_key(row):
     # Reproducible within the snapshot, with no random seed or freshness bias.
     digest = hashlib.sha256(str(row["id"]).encode("ascii")).hexdigest()
     return (digest, row["id"])
+
+
+# Headline cues are REVIEW WARNINGS, not selection or significance decisions.
+# Original-language review must determine relevance and whether the publisher
+# merely republished a statement from another institution.
+TITLE_REVIEW_CUES = {
+    "taiwan": re.compile(r"台湾|台海|Taiwan", re.I),
+    "south_china_sea": re.compile(
+        r"(?<!中)南海|黄岩岛|仁爱礁|South China Sea|Scarborough", re.I),
+    "east_china_sea": re.compile(
+        r"钓鱼岛|东海|Senkaku|East China Sea", re.I),
+    "strategic_weapons": re.compile(
+        r"核武|火箭军|战略导弹|弹道导弹|洲际导弹|"
+        r"strategic missile|ballistic missile|nuclear weapon", re.I),
+    "military_contacts": re.compile(
+        r"美军|美舰|中美军事|PLA.*US|US.*PLA|U\\.S\\. military", re.I),
+}
+
+
+def title_review_cues(title_original, title_english):
+    text = "%s %s" % (title_original or "", title_english or "")
+    return [name for name, pattern in TITLE_REVIEW_CUES.items()
+            if pattern.search(text)]
 
 
 def audit(index, target=600):
@@ -67,6 +91,7 @@ def audit(index, target=600):
             "title_en": title_en,
             "title_orig": title_orig,
             "in_published_trail": rid in trail_ids,
+            "title_review_cues": title_review_cues(title_orig, title_en),
         })
     if not trail_ids.issubset(seen_ids):
         raise ValueError("a protected Brief trail ID has no stored record")
@@ -117,6 +142,8 @@ def audit(index, target=600):
             status = "stratified_review_sample"
         elif row["state"] == "analyzed":
             status = "analyzed_not_sampled"
+        elif row["state"] == "not_selected" and row["title_review_cues"]:
+            status = "screened_out_title_cue_review"
         elif row["state"] == "not_selected":
             status = "screened_not_selected_requires_review"
         else:
@@ -141,6 +168,9 @@ def audit(index, target=600):
             r["state"] for r in china).items())),
         "protected_china_trail_records": len(protected),
         "screening_negative_control_records": len(control_ids),
+        "screened_out_title_cue_records": sum(
+            1 for r in china if r["state"] == "not_selected"
+            and r["title_review_cues"]),
         "review_sample_count": len(sample_ids),
         "review_sample_by_source": dict(sorted(Counter(
             r["source"] for r in china if r["id"] in sample_ids).items())),
