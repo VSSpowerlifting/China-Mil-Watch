@@ -1,0 +1,61 @@
+# Japan Coast Guard — three Day 0 publisher originals (October 13 independent source pass)
+
+**Purpose:** advance the source-specific original-article review needed for Japan Coast Guard daily shadow qualification. **Disposition: original publisher date/meaning checked, shadow-text/PDF rights hold remains.** This note is not owner signoff, a Day 7 checkpoint, a production admission or an editorial use authorization.
+
+## Immutable evidence being evaluated
+
+- Existing authorized JCG **October 8 Day 0** Actions run: [37828199188](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/37828199188), attempt 1.
+- Exact isolated state commit: `81558026117067cbcf54bd7a7859a2d9db168a0c` on `shadow/japan-jcg`. The state branch contains one ledger, three archived English HTML originals, `result=ok`, `health=ok` and no first-day fetch or extraction failures.
+- Three recorded original HTTP response identities in the archived ledger, retrieved October 8:
+  - `article9455.html`: SHA-256 of fetched HTML `b51272b6f72c712931c700950447a26e7d0e7cf23d45a2890f326401c2c4345b`.
+  - `article9453.html`: SHA-256 `e302d3f5d268f86cd34597b9d8d1b904f615f6a8e5b56ca1e8dda9159fc1cbdc`.
+  - `article9436.html`: SHA-256 `530685232d6b37f59f6f15d935087aa06c494643bfa5ede962a07b2438c59766`.
+- **Review method:** on October 13, separately followed the three references from the official [JCG English press index](https://www.kaiho.mlit.go.jp/e/topics_archive/index.html) and read their currently rendered publisher HTML originals. Observations below identify independently visible publisher content, not a replay of the precise October 8 captured bytes. Historic hashes are transcribed from the immutable Day 0 ledger, **not recomputed** in this review.
+
+## Individually inspected publisher originals
+
+| Canonical published original | Publisher's displayed date / index date | Independent original-language content assessment | Attached original limitations |
+| --- | --- | --- | --- |
+| [article9455](https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html) — *Capacity Building Support for the Philippine Coast Guard (PCG)* | **October 6, 2026** / **October 6** | First-person JCG release describes MCT and Coast Guard Research Center officers supporting **investigation of maritime environmental incidents**: initial preservation, sampling, forensic procedures, evidence collection and analysis. It is a JCG account of assistance, **not** certification of Philippine case outcomes. | Its separately linked **665 KB PDF** and seven source photos were not subjected to independent content equivalence or republication rights review here. |
+| [article9453](https://www.kaiho.mlit.go.jp/e/topics_archive/article9453.html) — *Capacity Building Support for the Philippine Coast Guard (PCG)* | **October 6, 2026** / **October 6** | Same visible headline but a **different release**: MCT reviewed and advised PCG instructors and instructor candidates on **arrest techniques**, instructional methods and cooperation. The official HTML contains distinct prose and a separate **407 KB PDF**. Preserve independent canonical URL/source identity; deduplicating by title would falsely merge it with article9455. | Linked PDF and six source image links were **not** independently compared with the extracted HTML text or cleared for republication. |
+| [article9436](https://www.kaiho.mlit.go.jp/e/topics_archive/article9436.html) — *Capacity Building Support for the Indonesia Coast Guard Agency (BAKAMLA) (Overview)* | **September 29, 2026** / **September 29** | JCG reports its MCT gave BAKAMLA personnel training via JICA in oil-discharge investigation, evidence documentation, scene response and presentation of investigation records. Attribution is to JCG; the stated training is not an independently verified Indonesian enforcement outcome. | Linked **269 KB PDF** and six visible publisher photos remain outside verified full-document/rights scope. |
+
+### What the page-versus-index check establishes
+
+1. **All three official URLs still resolve to English JCG originals.** The public source index displays dates matching each release's visible page date. The different PCG activities show why a repeated headline must not be treated as one document.
+2. The archived Day 0 ledger reports three successful publisher-HTML captures on October 8, with individual URL and capture hash identities. The **historic original bytes and archived `text_original` were not pulled into this public memo**, so this review does **not** attest one-to-one byte/text parity with the frozen state or certify the whole page's embedded materials.
+3. The previously observed publisher template's stale `datetime=2021-3-1` attribute **must not silently override** the visible/index 2026 publication date. A named reviewer should compare archived DOM date, visible heading and index row for each capture and document the resolution before formal Day 0 signoff.
+4. The three linked PDFs are separate document versions; existing source audits found substantive text differences/unmatched terms between some JCG HTML and PDFs. **Do not claim full original-document coverage or ingest PDF/media under the HTML license** until each actual PDF version and third-party image attribution are reviewed.
+5. The JCG English press index's newest visible item at this inspection was dated **October 9**. That observation does not prove the agency issued no newer documents on other official JCG routes or after this inspection.
+
+## Independent linked-PDF original review — all six pages, October 13
+
+After the publisher-HTML review above, the **actual official PDF linked from each release** was opened through the JCG page itself. **Both rendered pages of each of the three PDFs were visually inspected**. This closes the earlier question of whether the linked documents are accessible and what the prominent unmatched PDF text represents; it does **not** certify pixel/byte custody or approve redistribution of images.
+
+| Source HTML | Official linked PDF (both pages read) | Additional facts present in PDF but missing from or less specific than the HTML synopsis | Editorial disposition |
+| --- | --- | --- | --- |
+| [9455](https://www.kaiho.mlit.go.jp/e/topics_archive/article9455.html) | [EN_sousa260823_29.pdf](https://www.kaiho.mlit.go.jp/e/topics_archive/upload/EN_sousa260823_29.pdf), **2 pages** | The PDF specifies **August 23–29, 2026**, **Manila**, **two MCT officers plus three Coast Guard Research Center officers**, and **eight PCG criminal-investigation instructor candidates plus ten forensic-science officers**. Page 2 consists of **eight source photographs** and their captions. | These are **mission activity dates, not the October 6 publisher publication date**. The HTML synopsis omits material quantified participants/logistics and the image-caption layer. A HTML-only capture must not claim full-PDF parity. |
+| [9453](https://www.kaiho.mlit.go.jp/e/topics_archive/article9453.html) | [EN_seiatsu260809_13.pdf](https://www.kaiho.mlit.go.jp/e/topics_archive/upload/EN_seiatsu260809_13.pdf), **2 pages** | The PDF specifies **August 9–13, 2026**, **Manila**, **three MCT members**, **four PCG instructors and ten instructor candidates** (14 participants), and a separate six-photo training sequence with captions. | Clearly a **different August mission** from 9455 despite identical October 6 displayed headline. The HTML synopsis does not include the PDF's mission period/staff/participant breakdown. |
+| [9436](https://www.kaiho.mlit.go.jp/e/topics_archive/article9436.html) | [2609Indonesia_En.pdf](https://www.kaiho.mlit.go.jp/e/topics_archive/upload/2609Indonesia_En.pdf), **2 pages** | The PDF specifies **September 12–19, 2026**, **Batam**, **three MCT members** and **15 BAKAMLA personnel**. Page 2 provides six training photographs/captions. | The mission occurred **before** the September 29 press-publication date. HTML body is an adequate link-first summary of the training theme, but is not a complete original-source reproduction. |
+
+**Source-level outcome:** The prior audit finding of extra PDF text is **substantiated**: the PDF additions are chiefly structured mission schedules, locations, personnel numbers and caption/image material, **not** unexplained evidence of a second separate intervention in the same notice. The text paragraphs conveying each activity's central subject are consistent in meaning with the corresponding HTML release. This is a visual human-readable **scope comparison of currently served publisher originals**, not automatic equality and not a source-body merge. The publisher-supplied photos, symbols and all graphics stay excluded from IPR copying and public storage.
+
+**Existing technical behavior, now regression-protected:** `JCGEnglishAdapter.parse_article` already preserves official publisher PDF references in `extra.attachment_urls` and explicitly sets `attachments_collected=false` and `body_scope=published_html_text_only`. The new no-network test `test_real_day_zero_pdf_attachment_identities_remain_link_only` asserts those three actual PDF URLs can be preserved as **external metadata, not extracted text or downloaded media**, with distinct source identities despite the repeated PCG headline. No new HTML/PDF body merge or source-collector request is needed for this.
+
+**Practical product choice pending editorial/rights signoff:** preserve the **HTML original** as the clearly bounded English article source, keep separate outbound PDF links and a metadata-only completeness warning, rather than silently appending non-HTML content to the archived text. Editorial notes referencing mission dates or participant counts must cite the **specific PDF original**, not an assumed fact from HTML. The frozen October 8 stored `text_original` still requires a pinned byte/text comparison against that historic capture, and rights review remains per material/version.
+
+## Owner-reviewed daily activation route and consequences
+
+The guarded collector already exists in `.github/workflows/jcg_guarded_daily_shadow.yml`, scheduled for **19:13 UTC**, and requires the exact GitHub Actions repository variable `JCG_SHADOW_DAILY_ENABLED=true`. The active branch presently still has **only one qualifying Day 0 ledger**; elapsed calendar days since October 8 are not collection days.
+
+A named source reviewer must complete the outstanding frozen HTML text/date comparison and original-use scope review, then the owner may explicitly accept **shadow-only** JCG daily data collection and enable the repository variable under *Settings → Secrets and variables → Actions → Variables*. The existing scheduler can preserve new immutable ledgers thereafter; there is no need to build a new collector. The next real run must be checked for `health=ok`, exact logical target date and preservation of the original shadow clock. Skipped dates must remain gaps and cannot be backdated as successful scheduled runs.
+
+The specific requirements for public full-text admission, the Day 7/14/30 checks, thirty successful consecutive collection days, relevant source/rights reviews and owner approval remain separate. No AI-model source-body use, production insertion, state-branch rewrite, GitHub Pages publication or newsletter delivery is approved by this note.
+
+## Next minimal review actions
+
+- Generate an independent, pinned **read-only** formal record comparison using `scripts/review_desk_shadow.py --desk japan_jcg --state-commit 81558026117067cbcf54bd7a7859a2d9db168a0c --as-of 2026-10-08` through the existing reviewer workflow; examine the exact archived English paragraphs/date versus the publisher originals above.
+- Resolve and record the HTML/PDF **version-scope differences** and the three page-level reuse assessments; preserve images separately as excluded until reviewed.
+- Obtain explicit, attributable human Day 0 source-review disposition and owner shadow-only daily authorization. **Only then** set `JCG_SHADOW_DAILY_ENABLED=true`, observe an actual daily ledger and proceed to honest Day 7/14/30 reviews.
+
+This document changes research review evidence only. **No source text, screenshots, PDF bytes, photos, source-body hashes from newly downloaded material or publisher request automation is introduced.**
