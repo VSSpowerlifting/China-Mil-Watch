@@ -23,7 +23,7 @@ ISSUES = ROOT / "output" / "the-pla-watch" / "posts"
 FIELDS = ["id", "date", "source", "state", "title_en", "title_orig"]
 CATEGORIES = {
     "claim_level_review", "machine_summary_conflict",
-    "already_caveated_in_issue",
+    "already_caveated_in_issue", "published_claim_source_mismatch",
 }
 
 
@@ -195,6 +195,10 @@ def audit(index, docket, pages, issues):
         if c["editorial_attention"] == "machine_summary_conflict":
             if not original["machine_summary_mentions_2025_joint_sea"]:
                 raise ValueError("specific machine summary conflict no longer present")
+        if c["editorial_attention"] == "published_claim_source_mismatch":
+            if (ident != 2881 or c["issue_number"] != 12
+                    or "Atlas drone swarm" not in (issue.get("opening_note") or "")):
+                raise ValueError("known Atlas/KVD002 issue claim no longer matches published issue")
         results.append({
             "id": ident, "title": rec[5] or rec[4],
             "issue_number": c["issue_number"], "issue_date": c["issue_date"],
