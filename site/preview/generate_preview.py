@@ -2985,6 +2985,12 @@ def build(out_dir: Path, title: str, db_path: Path,
         from core.us_treasury_official_metadata import load_public_links as load_treasury_live_links
         treasury_links = (load_treasury_live_links(db_path)
                           if desk.slug == "us-indopacific" else [])
+        # BIS belongs to Commerce, not Treasury, USCC, PACOM or DVIDS.
+        # Only the separately authenticated scheduled-run metadata table can
+        # appear here; unauthenticated scratch receipts remain inaccessible.
+        from core.us_bis_authenticated_metadata import load_public_links as load_bis_live_links
+        bis_links = (load_bis_live_links(db_path)
+                     if desk.slug == "us-indopacific" else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -2998,6 +3004,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              us_pacom_official_links=us_pacom_links,
                              uscc_official_links=uscc_links,
                              us_treasury_official_links=treasury_links,
+                             us_bis_authenticated_links=bis_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
