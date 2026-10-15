@@ -46,6 +46,24 @@ All packet status fields explicitly say: `publication_authorized=false`, `model_
 
 The offline tests challenge original HWPX/text hashes, source dates, fake user rights, extra body fields, duped IDs, source substitution, malformed JSON, source version mismatches and false Sunday/model flags.
 
+## Owner-only local no-send preview (implemented, no model)
+
+Run the strictly offline source-validation first:
+```bash
+python -m scripts.check_korea_private_research_candidates --week-ending 2026-10-17 --as-of 2026-10-17
+```
+
+For an actual **private editorial reading preview**, choose an absolute **new** local file path outside the repository, acknowledge the private-only scope, and run:
+```bash
+python -m scripts.render_korea_private_research \
+  --week-ending 2026-10-17 --as-of 2026-10-17 \
+  --out /tmp/ipr-korea-owner-only-review.md --explicit-local-only
+```
+
+This produces one mode-0600 local Markdown reading document with **only the three authored, attributed short synopses**, government source URLs, preserved SHA-version identities and explicit caveats; no HWPX content, extracted Korean article bodies, images or copied quotations. It refuses a path already existing, any relative path, any path in the repository, and direct output symlinks. Its stdout contains file path/count/false-status flags only. The focused GitHub workflow tests it against the three real staged sources using a runner-private temporary file, immediately deletes the file, and **never uploads it or sends it to any model or editor**.
+
+This is a **read-only editorial preview**, not a model rehearsal, signed original-language review, published Brief or text-licensing decision.
+
 ## Remaining promotion gates before any actual private Sunday research use
 
 1. Receive a limited written/recorded, version-bound reviewer attestation for the actual 14 originals or targeted three (date/reviewer scope and source pin; no public posting of a reviewer's private personal details).
