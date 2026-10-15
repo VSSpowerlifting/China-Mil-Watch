@@ -45,9 +45,11 @@ jobs:
         with:
           python-version: '3.9'
       - name: Verify explicit release invariants and staging boundaries
-        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release tests.test_published_desk_editorials -v
+        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release -v
       - name: Install existing render dependencies (no publisher calls)
         run: pip install -r requirements.txt
+      - name: Verify previously approved desk editorial source binding
+        run: python -m unittest tests.test_published_desk_editorials -v
       - name: Exercise actual static release build without committing or deploying
         run: |
           set -euo pipefail
