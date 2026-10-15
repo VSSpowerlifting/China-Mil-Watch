@@ -180,7 +180,8 @@ class EncryptedVaultBackupTests(unittest.TestCase):
                 created.append(child)
                 return child
             child = real_popen(argv, *args, **kwargs)
-            git_children.append(child)
+            if argv[0] == "git" and "bundle" in argv and "create" in argv:
+                git_children.append(child)
             return child
 
         with mock.patch.object(backup.subprocess, "Popen", side_effect=launch):
@@ -204,7 +205,8 @@ class EncryptedVaultBackupTests(unittest.TestCase):
             if argv[0] == "gpg" and "--encrypt" in argv:
                 raise OSError("fictional GPG launch failure")
             child = real_popen(argv, *args, **kwargs)
-            git_children.append(child)
+            if argv[0] == "git" and "bundle" in argv and "create" in argv:
+                git_children.append(child)
             return child
 
         with mock.patch.object(backup.subprocess, "Popen", side_effect=launch):
