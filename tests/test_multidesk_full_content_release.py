@@ -147,7 +147,7 @@ class FullContentReleaseContracts(unittest.TestCase):
         bundle, artifacts = fixture()
         with self.assertRaisesRegex(m.FullContentHold,
                                     "publisher_or_editorial_rights_not_independently_verified"):
-            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS, authorized_reviewers=REVIEWERS,
+            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS, authorized_reviewers=reviewers_for(bundle),
                             source_verifier=lambda _: True,
                             rights_verifier=lambda *_: False)
 
