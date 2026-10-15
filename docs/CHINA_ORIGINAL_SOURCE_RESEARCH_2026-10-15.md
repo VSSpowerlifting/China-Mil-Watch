@@ -101,6 +101,17 @@ Signals are deliberately narrow, imperfect, and **nonbinding**:
 - Three or more ellipsis-style truncations may indicate unrelated homepage,
   navigation or recommended-article teasers; genuine quotes can qualify too.
 
+**Measured October 14 corpus baseline** (focused CI
+[38697717558](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38697717558)):
+158 Global Times records exist in the published index. **120** were actually
+collected before September 16, **38** on/after. Of the 120, **111** have one
+or more heuristic review cues: **80** multiple ellipses, **18**
+missing/unreadable text blocks, **18** very-short captures, and **13**
+short captures (categories overlap). This is a **review workload measure**,
+not an audited defect count. The scan now also returns the **unflagged
+control IDs** and small per-cue example-ID sets, allowing both flagged and
+unflagged samples to receive direct publisher comparison.
+
 The report returns per-record **review IDs only** plus counts. It cannot
 supply a restored article body, determine that text is truly corrupted,
 verify a publisher response, calculate reliable fault prevalence from
