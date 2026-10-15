@@ -1,0 +1,217 @@
+name: USCC — Verified Official Metadata to Live U.S. Desk
+
+# October 15 standing owner permission: official URL/date/issuer ONLY.
+# Separate from static PACOM, disabled DVIDS and original analysis.
+on:
+  pull_request:
+    paths:
+      - core/uscc_official_metadata.py
+      - scripts/admit_uscc_official_metadata.py
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+      - tests/test_uscc_public_production_links.py
+      - .github/workflows/uscc_verified_official_links_release.yml
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/uscc_verified_official_links_release.yml
+  workflow_run:
+    workflows:
+      - USCC Congressional Press Metadata — First-Party Daily Shadow
+    types: [completed]
+  schedule:
+    - cron: '17 22 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  isolated-render-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Rehearse original-source metadata admission without production mutation
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/uscc-db-before.sha"
+          cp pla_watch.db "$RUNNER_TEMP/uscc-rehearsal.sqlite"
+          git clone --quiet --single-branch --branch shadow/uscc-press             "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"             "$RUNNER_TEMP/uscc-preserved-metadata"
+          python -m unittest tests.test_uscc_official_metadata_admission tests.test_us_pacom_public_index -v
+          python -m scripts.admit_uscc_official_metadata             --source-checkout "$RUNNER_TEMP/uscc-preserved-metadata"             --production-db "$RUNNER_TEMP/uscc-rehearsal.sqlite"             --standing-official-links-approval
+          python site/render.py --db "$RUNNER_TEMP/uscc-rehearsal.sqlite"
+          python scripts/validate_output.py
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.uscc_official_metadata import load_public_links
+          db=Path(os.environ["RUNNER_TEMP"])/"uscc-rehearsal.sqlite"
+          page=Path("output/us-indopacific.html").read_text(encoding="utf-8")
+          soup=BeautifulSoup(page,"html.parser")
+          rows=load_public_links(db)
+          rendered=soup.select("li[data-uscc-official-link] a")
+          pacom=soup.select("li[data-us-pacom-link] a")
+          assert len(rows)>=10 and len(rendered)==len(rows)
+          assert [a["href"] for a in rendered]==[r["source_url"] for r in rows]
+          assert len(pacom)==9
+          assert "access_blocked" in page
+          assert "congressional" in page
+          assert all("noopener" in a.get("rel",[]) and a.get("target")=="_blank" for a in rendered)
+          assert "title_original" not in page and "text_original" not in page
+          PY
+          sha256sum -c "$RUNNER_TEMP/uscc-db-before.sha"
+          git diff --exit-code -- pla_watch.db
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  production-metadata-page-only:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main' &&
+        github.event.workflow_run.event != 'pull_request'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin clean production main and original database
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git rev-parse HEAD > "$RUNNER_TEMP/uscc-main-before.sha"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/uscc-prod-before.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - run: python -m pip install -r requirements.txt
+      - name: Verify source and offline contracts
+        run: |
+          python -m unittest tests.test_uscc_press_metadata tests.test_uscc_official_metadata_admission tests.test_us_pacom_public_index -v
+      - name: Clone exact preserved official-listing observation history
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --quiet --single-branch --branch shadow/uscc-press             "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"             "$RUNNER_TEMP/uscc-preserved-metadata"
+          git -C "$RUNNER_TEMP/uscc-preserved-metadata" rev-parse HEAD             > "$RUNNER_TEMP/uscc-source-before.sha"
+          test -z "$(git -C "$RUNNER_TEMP/uscc-preserved-metadata" status --porcelain)"
+      - name: Admit verified metadata to live SQLite and render locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.admit_uscc_official_metadata             --source-checkout "$RUNNER_TEMP/uscc-preserved-metadata"             --production-db "$GITHUB_WORKSPACE/pla_watch.db"             --standing-official-links-approval
+          python scripts/verify_db_current.py
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.uscc_official_metadata import load_public_links
+          from core.us_pacom_official_links import load_us_pacom_official_links
+          rows=load_public_links("pla_watch.db")
+          page=Path("output/us-indopacific.html").read_text(encoding="utf-8")
+          soup=BeautifulSoup(page,"html.parser")
+          links=soup.select("li[data-uscc-official-link] a")
+          assert len(rows)>0 and len(links)==len(rows)
+          assert [x["href"] for x in links]==[x["source_url"] for x in rows]
+          assert len(soup.select("li[data-us-pacom-link] a"))==len(load_us_pacom_official_links())==9
+          assert "access_blocked" in page
+          assert all(x not in page for x in ("title_original","body_original","text_original"))
+          print("Live USCC official metadata links:",len(rows))
+          PY
+          sha256sum output/us-indopacific.html > "$RUNNER_TEMP/uscc-page.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Refuse moving original-source branch or stale main
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          remote="https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          remote_source="$(git ls-remote "$remote" refs/heads/shadow/uscc-press | cut -f1)"
+          test "$remote_source" = "$(cat "$RUNNER_TEMP/uscc-source-before.sha")" || {
+            echo "::error::USCC observed source branch moved during admission"; exit 1;
+          }
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/uscc-main-before.sha")" || {
+            echo "::error::main moved; no stale production push"; exit 1;
+          }
+          sha256sum -c "$RUNNER_TEMP/uscc-page.sha"
+      - name: Commit ONLY production SQLite and U.S. Desk output
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- pla_watch.db output/us-indopacific.html
+          staged="$(git diff --cached --name-only)"
+          if printf '%s\n' "$staged" | grep -vE '^(pla_watch.db|output/us-indopacific.html|)$'; then
+            echo "::error::Extra staged production file"; exit 1;
+          fi
+          if [ -n "$staged" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "USCC: admit official metadata and update U.S. Desk only"
+            git push origin HEAD:main
+          fi
+      - name: Check out existing Pages only
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: uscc-existing-pages
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Publish ONLY U.S. Desk HTML to Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/uscc-page.sha"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo "::error::main moved since U.S. release was built"; exit 1;
+          }
+          cd uscc-existing-pages
+          test -z "$(git status --porcelain --untracked-files=all)"
+          pages_old="$(git rev-parse HEAD)"
+          cp ../output/us-indopacific.html us-indopacific.html
+          cmp ../output/us-indopacific.html us-indopacific.html
+          git add -- us-indopacific.html
+          staged="$(git diff --cached --name-only)"
+          test -z "$staged" || test "$staged" = "us-indopacific.html"
+          if [ -n "$staged" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "USCC: publish newly verified official links only"
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$pages_old" || {
+            echo "::error::Pages advanced; retry rather than overwrite"; exit 1;
+          }
+          if [ -n "$staged" ]; then git push origin HEAD:gh-pages; fi
