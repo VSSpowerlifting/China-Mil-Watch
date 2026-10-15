@@ -61,26 +61,25 @@ def canonical(raw):
     return "https://" + HOST + path.rstrip("/"), match["slug"]
 
 def find_listing_date(anchor):
-    current = anchor
-    for _ in range(8):
-        current = current.parent
-        if not isinstance(current,Tag):
-            break
-        text = current.get_text(" ",strip=True)
-        if len(text) > 2200:
-            continue
-        candidate = parse_day(text)
-        if not candidate:
-            continue
-        links = {
-            x for link in current.find_all("a",href=True)
-            if (x := canonical(link["href"])) is not None
-        }
-        # A single coherent listing card is necessary. Dates from the global
-        # page header, footer or adjacent stories are NOT accepted.
-        if len(links)==1 and canonical(anchor["href"]) in links:
-            return candidate
-    return None
+    # A date from a sibling card or global page header must never be joined
+    # to another release. The smallest recognized card is the proof boundary.
+    card = anchor.find_parent(class_="views-row") or anchor.find_parent("article")
+    if not isinstance(card, Tag):
+        return None
+    text = card.get_text(" ", strip=True)
+    if not text or len(text)>2200:
+        return None
+    verified = parse_day(text)
+    if verified is None:
+        return None
+    links = {
+        x for item in card.find_all("a", href=True)
+        if (x := canonical(item["href"])) is not None
+    }
+    if len(links) != 1 or canonical(anchor["href"]) not in links:
+        return None
+    return verified
+
 
 def extract(html, *, as_of):
     need(type(html) is bytes and len(html) <= MAX_BYTES
