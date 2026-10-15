@@ -79,7 +79,9 @@ class TestRetiredUrlIngestion(unittest.TestCase):
     def test_single_insert_skips_retired_and_accepts_new(self):
         self.assertIsNone(db.insert_article(self.article(self.retired), 1))
         self.assertEqual(self.counts(), 0)
-        self.assertIsInstance(db.insert_article(self.article(self.allowed), 1), int)
+        # The first new article must NOT reuse ID 1, and must be above the
+        # retired ID 23 even if no currently active article has a higher ID.
+        self.assertEqual(db.insert_article(self.article(self.allowed), 1), 24)
         self.assertEqual(self.counts(), 1)
 
     def test_atomic_batch_skips_retired_both_accepted_and_rejected(self):
@@ -89,9 +91,29 @@ class TestRetiredUrlIngestion(unittest.TestCase):
             [self.article(self.retired)], 5)
         self.assertEqual(len(inserted), 1)
         self.assertEqual(inserted[0][1]["url"], self.allowed)
+        self.assertEqual(inserted[0][0], 24)
         self.assertEqual(self.counts(), 1)
         with sqlite3.connect(str(self.path)) as con:
             self.assertEqual(verify_no_active_retired_urls(con), 1)
+
+    def test_sqlite_trigger_refuses_old_id_even_for_different_new_url(self):
+        with sqlite3.connect(str(self.path)) as con:
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "retired article ID"):
+                con.execute(
+                    "INSERT INTO articles(id, url, source_id) VALUES (23, ?, 1)",
+                    (self.allowed,))
+            self.assertEqual(verify_no_active_retired_urls(con), 1)
+
+    def test_active_and_retired_id_overlap_is_a_verification_error(self):
+        # Do not rely solely on the URL hash: a writer could otherwise
+        # produce a different article at a once-published numeric route.
+        with sqlite3.connect(str(self.path)) as con:
+            con.execute("DROP TRIGGER guard_retired_article_id_reuse")
+            con.execute(
+                "INSERT INTO articles(id, url, source_id) VALUES (23, ?, 1)",
+                (self.allowed,))
+            with self.assertRaisesRegex(ValueError, "article ID reused"):
+                verify_no_active_retired_urls(con)
 
     def test_corrupted_active_row_is_fatal_not_silently_allowed(self):
         with sqlite3.connect(str(self.path)) as con:
@@ -130,6 +152,19 @@ class TestRetiredUrlReconciliation(ReconcileCase):
         self.assertEqual(query(out, "SELECT id FROM articles WHERE url=?", (old,)), [])
         self.assertEqual(query(out, "SELECT COUNT(*) FROM retired_article_urls"),
                          [(1,)])
+
+    def test_reconciled_new_article_uses_id_above_retired_high_water(self):
+        migrate(self.origin)
+        with sqlite3.connect(str(self.origin)) as con:
+            retire(con, "http://www.81.cn/x/old-retired-high.html", 9200)
+        add_run(self.local, 11)
+        add_article(self.local, 4001, 11, "fresh-source")
+        out, report, problems = self.run_reconcile()
+        self.assertEqual(problems, [])
+        self.assertEqual(report["articles_inserted"], 1)
+        self.assertEqual(query(out,
+            "SELECT id FROM articles WHERE url=?",
+            ("http://www.81.cn/x/fresh-source.html",)), [(9201,)])
 
     def test_independent_local_retirement_cannot_be_silently_dropped(self):
         migrate(self.origin)
