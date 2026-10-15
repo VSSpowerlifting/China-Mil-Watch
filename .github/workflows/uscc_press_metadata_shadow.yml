@@ -1,0 +1,141 @@
+name: USCC Congressional Press Metadata — First-Party Daily Shadow
+
+# Official URL/date/issuer metadata only. Never stores press bodies or headlines.
+on:
+  pull_request:
+    paths:
+      - 'scripts/collect_uscc_press_metadata.py'
+      - 'tests/test_uscc_press_metadata.py'
+      - '.github/workflows/uscc_press_metadata_shadow.yml'
+      - 'docs/engineering/USCC_OFFICIAL_METADATA_COLLECTION_2026-10-15.md'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/uscc_press_metadata_shadow.yml'
+  schedule:
+    - cron: '20 11 * * *'
+  workflow_dispatch:
+    inputs:
+      owner_authorized_source_collection:
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  source-free-and-real-first-party-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Run negative source, robots, canonical date contracts
+        run: python -m unittest tests.test_uscc_press_metadata -v
+      - name: Retrieve one real bounded first-party listing into ephemeral temp
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/uscc-db.sha"
+          python scripts/collect_uscc_press_metadata.py --owner-authorized-readonly-collection --private-output "$RUNNER_TEMP/uscc-preview.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          x=json.loads((Path(os.environ['RUNNER_TEMP'])/'uscc-preview.json').read_text())
+          assert x['schema']=='ipr-uscc-firstparty-official-link-metadata/1'
+          assert x['visible_dated_rows']>0 and len(x['rows'])==x['visible_dated_rows']
+          assert x['production_records_written']==0
+          assert x['bodies_copied'] is False and x['original_titles_copied'] is False
+          assert all(set(y)=={'source_identity','canonical_official_url','publisher_posted_date','official_issuer','official_publisher','publisher_listing_url'} for y in x['rows'])
+          print('USCC first-party dated official links verified:',len(x['rows']))
+          PY
+          sha256sum -c "$RUNNER_TEMP/uscc-db.sha"
+          git diff --exit-code -- pla_watch.db output/ desks/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  daily-shadow-collection:
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event_name == 'push' ||
+      (github.event_name == 'workflow_dispatch' &&
+       inputs.owner_authorized_source_collection)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    concurrency:
+      group: uscc-press-metadata-shadow
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r repo/requirements.txt
+      - name: Collect bounded metadata-only official listing to temp
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          test -z "$(git status --porcelain --untracked-files=all)"
+          python -m unittest tests.test_uscc_press_metadata -q
+          python scripts/collect_uscc_press_metadata.py --owner-authorized-readonly-collection --private-output "$RUNNER_TEMP/uscc-new.json"
+          test -s "$RUNNER_TEMP/uscc-new.json"
+          git diff --exit-code -- pla_watch.db output/ desks/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          date -u +%F > "$RUNNER_TEMP/uscc-utc-day"
+      - name: Preserve each actual UTC listing observation as append-only Git state
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --quiet "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/uscc-state"
+          cd "$RUNNER_TEMP/uscc-state"
+          if git show-ref --verify --quiet refs/remotes/origin/shadow/uscc-press; then
+            git checkout --quiet -b shadow/uscc-press --track origin/shadow/uscc-press
+          else
+            git checkout --quiet --orphan shadow/uscc-press
+            git rm --quiet -r -f . || true
+            printf '%s\n' '# USCC bounded press listing metadata shadow history' 'This is a congressional commission source, not US Pacific Command.' 'Only genuine observed official URL/date/issuer metadata, no source bodies, titles, media or analysis.' 'No public IPR database admission or site publication follows automatically.' > README.md
+            git add -- README.md
+          fi
+          day="$(cat "$RUNNER_TEMP/uscc-utc-day")"
+          mkdir -p observations
+          receipt="observations/$day.json"
+          if [ -f "$receipt" ]; then
+            cmp -s "$RUNNER_TEMP/uscc-new.json" "$receipt" || { echo '::error::Different observation already exists for this day'; exit 1; }
+            echo 'Identical daily observation already preserved.'
+          else
+            cp "$RUNNER_TEMP/uscc-new.json" "$receipt"
+            chmod 0644 "$receipt"
+            git add -- "$receipt"
+          fi
+          git diff --cached --name-only | grep -vE '^README.md$|^observations/[0-9]{4}-[0-9]{2}-[0-9]{2}\.json$' && { echo '::error::Unexpected staged file'; exit 1; } || true
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "USCC: verified metadata-only observation $day"
+            git push origin HEAD:refs/heads/shadow/uscc-press
+          fi
+      - name: Confirm public working checkout remains unchanged
+        run: |
+          set -euo pipefail
+          cd repo
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
