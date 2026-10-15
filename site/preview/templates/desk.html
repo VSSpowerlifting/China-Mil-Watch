@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia', 'japan') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia', 'japan', 'us-indopacific') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
