@@ -52,6 +52,10 @@ def _carried_published_assets(target):
         elif not destination.exists():
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, destination)
+    # The original tracked output may not contain this hosting marker because
+    # the Pages action synthesizes it. Put it in the reviewed scratch tree so
+    # the exact remote byte-readback can prove the published contract.
+    (target / ".nojekyll").touch(exist_ok=True)
     # Existing export enumerates pre-cull rows. Recreate from scratch instead.
     (target / "data" / "articles.json").unlink(missing_ok=True)
     render.add_carried_pages_to_sitemap(target)
