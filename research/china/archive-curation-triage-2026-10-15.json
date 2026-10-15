@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "scope": "china",
+  "purpose": "internal_editorial_review",
+  "publication_enabled": false,
+  "baseline_snapshot": {
+    "date": "2026-10-14",
+    "records": 5230
+  },
+  "decisions": [
+    {
+      "id": 2849,
+      "source": "pla_daily",
+      "published_date": "2026-07-31",
+      "source_title": "中华人民共和国外交部关于菲律宾共和国在中国领土黄岩岛划设所谓“领海基线”的声明",
+      "review_stage": "triage",
+      "disposition": "retain_primary",
+      "rationale": "Formal Chinese Foreign Ministry statement on Scarborough Shoal maritime baselines; check the original issuing text, Chinese wording and outlet republication before admission.",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/2849.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null,
+      "representative_id": null
+    },
+    {
+      "id": 2391,
+      "source": "pla_daily",
+      "published_date": "2026-07-12",
+      "source_title": "中华人民共和国外交部关于有关国家炒作“南海仲裁案裁决”出台十年的声明",
+      "review_stage": "triage",
+      "disposition": "retain_primary",
+      "rationale": "Formal Chinese Foreign Ministry statement on the South China Sea arbitration anniversary; check issuing publisher, text fidelity, and prior material before admission.",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/2391.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null,
+      "representative_id": null
+    },
+    {
+      "id": 2180,
+      "source": "global_times_mil",
+      "published_date": "2026-07-06",
+      "source_title": "Chinese navy conducts test launch of strategic missile by submarine; not aimed at any specific country, target",
+      "review_stage": "triage",
+      "disposition": "hold_quality",
+      "rationale": "The stored article body contains many unrelated recommendation snippets; review the pre-repair capture and current verified source original without overwriting historical evidence.",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/2180.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null,
+      "representative_id": null
+    },
+    {
+      "id": 943,
+      "source": "china_mil_online",
+      "published_date": "2026-06-01",
+      "source_title": "China Coast Guard conducts routine law-enforcement patrols in the waters east of China's Taiwan Island",
+      "review_stage": "triage",
+      "disposition": "retain_context",
+      "rationale": "The stored body describes the patrol, but the corresponding Global Times title matches a contaminated capture; verify distinct source texts and publication attribution.",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/943.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null,
+      "representative_id": null
+    },
+    {
+      "id": 946,
+      "source": "global_times_mil",
+      "published_date": "2026-06-01",
+      "source_title": "China Coast Guard conducts routine law-enforcement patrols in the waters east of China's Taiwan island",
+      "review_stage": "triage",
+      "disposition": "hold_quality",
+      "rationale": "The stored body begins with an unrelated Japanese politics article teaser despite the coast-guard title; investigate historical extractor contamination.",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/946.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null,
+      "representative_id": null
+    },
+    {
+      "id": 2265,
+      "source": "global_times_mil",
+      "published_date": "2026-07-08",
+      "source_title": "'Chinese Aegis' Type 052D destroyer Kaifeng meets Russia's 'carrier killer' Varyag as crews exchange visits during Joint Sea-2026 naval exercise",
+      "review_stage": "triage",
+      "disposition": "hold_quality",
+      "rationale": "The captured body contains a short Joint Sea-2025 teaser under a Joint Sea-2026 title; compare source HTML and original event date before inclusion.",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/2265.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null,
+      "representative_id": null
+    },
+    {
+      "id": 2294,
+      "source": "china_mil_online",
+      "published_date": "2026-07-09",
+      "source_title": "'Chinese Aegis' Type 052D destroyer Kaifeng meets Russia's 'carrier killer' Varyag as crews exchange visits during Joint Sea-2026 naval exercise",
+      "review_stage": "triage",
+      "disposition": "retain_context",
+      "rationale": "The capture contains more substantial Joint Sea-2026 reporting than the same-title Global Times record, but human review must verify its source and precise event framing.",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/2294.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null,
+      "representative_id": null
+    }
+  ]
+}
