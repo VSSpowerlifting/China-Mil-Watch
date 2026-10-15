@@ -101,6 +101,18 @@ jobs:
               "vn_moit_energy_vi": ("5d25d68ee5bd3d1e8e5c7759db880a30d172491a", 2),
               "vn_moit_foundational_industry_vi": ("75035550a2f9db4f7a1cac57925141961b390d60", 1),
           }
+          # The formal engine's legacy collecting_days uses UTC finish
+          # dates. Oct 12's *scheduled logical* slot finished after midnight
+          # on Oct 13, so it must not be falsely described as a missed cron
+          # target. Keep BOTH evidence dimensions, without weakening the
+          # separate 30-day acceptance/reviewer rule.
+          expected_slots = [f"2026-10-{day:02d}" for day in range(7, 15)]
+          folder_for_slug = {
+              "vn_mps_foreign_affairs_vi": "mps",
+              "vn_moit_energy_vi": "energy",
+              "vn_moit_foundational_industry_vi": "foundational",
+          }
+          by_slug_late = {}
           for slug, (commit, count) in expected.items():
               src = sources[slug]
               assert src["state_commit"] == commit, "wrong historical source commit"
@@ -109,11 +121,36 @@ jobs:
               assert src["human_signoff_complete"] is False
               if slug.startswith("vn_moit_"):
                   assert src["anomaly_count"] >= 8, "MOIT robots warnings lost"
+              packet = Path(sys.argv[1]).parent / (folder_for_slug[slug] + "-packet")
+              manifest = json.loads((packet / "review_manifest.json").read_text(encoding="utf-8"))
+              assert manifest["missing_collecting_days"] == ["2026-10-12"], (
+                  "UTC-finish-day gap changed: review before claiming scheduled continuity")
+              runs = [json.loads(line) for line in (packet / "run_inventory.jsonl")
+                      .read_text(encoding="utf-8").splitlines() if line.strip()]
+              scheduled = [run for run in runs if run["target_date_source"] == "schedule-slot"]
+              assert sorted(run["target_date"] for run in scheduled) == expected_slots, (
+                  "missing, repeated, or extra scheduled logical date")
+              late = [{"run_id": run["run_id"],
+                       "target_date": run["target_date"],
+                       "finished_utc_date": run["finished_utc"][:10]}
+                      for run in scheduled
+                      if run["finished_utc"][:10] != run["target_date"]]
+              assert late == [{
+                  "run_id": "38328331888-1",
+                  "target_date": "2026-10-12",
+                  "finished_utc_date": "2026-10-13",
+              }], "scheduled execution-date shift changed"
+              by_slug_late[slug] = late
           summary = {
               "protocol": "ipr-vietnam-day7-three-source-originals-machine-only/1",
               "as_of": "2026-10-14",
               "all_three_packet_hashes_verified": True,
               "machine_day7_threshold_met": True,
+              "eight_scheduled_logical_dates_present_per_source": True,
+              "missing_scheduled_logical_dates": [],
+              "legacy_utc_completion_day_gap": ["2026-10-12"],
+              "late_scheduled_finishes_by_source": by_slug_late,
+              "thirty_consecutive_collecting_days_qualified": False,
               "source_checkpoints": [{
                   "source_slug": slug,
                   "state_commit": sources[slug]["state_commit"],
