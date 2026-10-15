@@ -20,7 +20,8 @@ FIELDS = ["id", "date", "source", "state", "title_en", "title_orig"]
 KINDS = {"issuer_publication", "publisher_original", "publisher_republication",
          "source_not_independently_checked"}
 COMPARISONS = {"apparent_substantive_match", "historical_text_contamination",
-               "near_identical_republication", "original_not_checked"}
+               "near_identical_republication", "original_not_checked",
+               "historical_body_absent"}
 NEXT_STEPS = {"candidate_original_review", "quality_hold", "syndication_review"}
 
 
@@ -78,19 +79,23 @@ def _text(s, field, size=8):
         raise ValueError(field + " needs specific nonempty evidence")
 
 
-def _original_record(html):
-    p = OriginalBodyParser()
-    p.feed(html)
-    if p.hits != 1 or p.depth:
-        raise ValueError("cannot locate one complete original-text block in record HTML")
-    body = " ".join(" ".join(p.parts).split())
+def _original_url(html):
     matched = re.search(
         r'<th scope="row">Original URL</th>\s*<td class="prov-value">\s*<a href="([^"]+)"',
         html,
     )
     if matched is None:
         raise ValueError("record provenance URL missing or template changed")
-    return body, unescape(matched.group(1))
+    return unescape(matched.group(1))
+
+
+def _original_record(html):
+    p = OriginalBodyParser()
+    p.feed(html)
+    if p.hits != 1 or p.depth:
+        raise ValueError("cannot locate one complete original-text block in record HTML")
+    body = " ".join(" ".join(p.parts).split())
+    return body, _original_url(html)
 
 
 def validate_packet(packet, index, pages):
@@ -161,19 +166,30 @@ def validate_packet(packet, index, pages):
                 raise ValueError("checked source cannot claim unknown comparison")
         _text(c["issuer_attribution"], "issuer attribution")
         _text(c["source_observation"], "specific source observation", 45)
-        if not isinstance(c["stored_body_anchor"], str) or len(c["stored_body_anchor"]) < 8:
+        missing_body = c["comparison"] == "historical_body_absent"
+        if missing_body:
+            if c["stored_body_anchor"] is not None:
+                raise ValueError("absent source-body evidence must have null anchor")
+        elif not isinstance(c["stored_body_anchor"], str) or len(c["stored_body_anchor"]) < 8:
             raise ValueError("missing specific original-body anchor")
         if c["human_original_review_required"] is not True or c["owner_approved"] is not False:
             raise ValueError("assistant notes cannot stand in for editor/owner approval")
-        if c["comparison"] == "historical_text_contamination" and c["next_step"] != "quality_hold":
-            raise ValueError("contaminated historical captures must remain held")
+        if c["comparison"] in ("historical_text_contamination", "historical_body_absent") and c["next_step"] != "quality_hold":
+            raise ValueError("unfaithful or absent historical captures must remain held")
         if i not in pages:
             raise ValueError("the stored original record page is missing")
-        body, stored_url = _original_record(pages[i])
+        if missing_body:
+            parsed = OriginalBodyParser()
+            parsed.feed(pages[i])
+            if parsed.hits or parsed.depth:
+                raise ValueError("original text now present; old absence must be re-reviewed")
+            stored_url = _original_url(pages[i])
+        else:
+            body, stored_url = _original_record(pages[i])
+            if c["stored_body_anchor"] not in body:
+                raise ValueError("stored body anchor changed; re-review the capture")
         if stored_url != c["captured_url"]:
             raise ValueError("stored source URL changed since research case was entered")
-        if c["stored_body_anchor"] not in body:
-            raise ValueError("stored body anchor changed; re-review the capture")
         outcomes[c["comparison"]] = outcomes.get(c["comparison"], 0) + 1
     return {
         "research_cases": len(seen),
