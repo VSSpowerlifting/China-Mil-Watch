@@ -39,6 +39,11 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn('assert row["entries"] == []', text)
         self.assertIn('d["has_production_records"] is False', text)
         self.assertIn('d["manifest"] is None', text)
+        self.assertIn('from core.public_editorial_research import load_catalog', text)
+        self.assertIn('if name in editorial_desks:', text)
+        self.assertIn('assert "IPR research published — official originals linked" in text', text)
+        self.assertIn('assert "not a production source-text archive" in text', text)
+        self.assertIn('assert "Shadow evaluation" in text', text)
         self.assertIn('assert "data-reference-list" not in text', text)
         self.assertIn('assert "8 declared" in desk_html', text)
 
