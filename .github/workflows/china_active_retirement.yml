@@ -134,14 +134,14 @@ jobs:
           new_ids={r[0] for r in new["records"]}
           gone=old_ids-new_ids
           assert len(gone)==4400
-          assert len(new_ids)==873
+          assert len(new_ids)==len(old_ids)-4400
           assert not new_ids-old_ids
           assert set(old["trail_ids"]).issubset(new_ids)
           assert set(old["focus_ids"]).issubset(new_ids)
           assert len(set(new["focus_ids"]))==len(set(old["focus_ids"]))
-          for ident in list(gone)[:20]:
+          for ident in gone:
               assert not (after/"record"/("%d.html"%ident)).exists()
-          for ident in list(old["trail_ids"])[:20]:
+          for ident in old["trail_ids"]:
               assert (after/"record"/("%d.html"%ident)).is_file()
           print("Reduced site identities:",len(new_ids),
                 "retired:",len(gone),
