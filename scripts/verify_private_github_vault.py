@@ -89,6 +89,12 @@ def evaluate(source, vault, *, api=_api):
         raise VaultPreflightError("vault_not_private")
     if dest.get("fork") is not False or dest.get("archived") is not False or dest.get("disabled") is not False:
         raise VaultPreflightError("vault_state_unsafe")
+    if dest.get("has_pages") is not False:
+        raise VaultPreflightError("vault_pages_not_disabled")
+    # GitHub's API on the real new private vault currently reports
+    # allow_forking=true. We report the hold rather than silently treating
+    # the private label as sufficient exfiltration/access protection.
+    forks_blocked = dest.get("allow_forking") is False
     permissions = dest.get("permissions")
     if type(permissions) is not dict or permissions.get("admin") is not True:
         raise VaultPreflightError("vault_owner_access_unverified")
@@ -130,6 +136,9 @@ def evaluate(source, vault, *, api=_api):
         "destination_initial_branches": len(branches),
         "bootstrap_state": bootstrap,
         "main_branch_protection_verified": False,
+        "pages_disabled_verified": True,
+        "private_forking_disabled_verified": forks_blocked,
+        "vault_access_hardening_complete": False,
         "operator_repo_admin_verified": True,
         "cross_repo_workflow_credential_verified": False,
         "independent_backup_and_restore_verified": False,
