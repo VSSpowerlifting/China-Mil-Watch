@@ -19,6 +19,7 @@ def fake_api(*, destination=None, source=None, branches=None, tree=None):
     target = destination if destination is not None else {
         "full_name": DEST, "private": True, "visibility": "private",
         "archived": False, "disabled": False, "fork": False,
+        "has_pages": False, "allow_forking": True,
         "permissions": {"admin": True, "push": True, "pull": True},
     }
     values = {
@@ -60,6 +61,19 @@ class VaultPreflightTests(unittest.TestCase):
         with self.assertRaisesRegex(vault.VaultPreflightError, "vault_owner_mismatch"):
             vault.evaluate(SRC, "otherowner/private-vault", api=fake_api())
 
+    def test_pages_must_be_disabled_and_forking_is_not_silently_cleared(self):
+        dest = fake_api()("repos/" + DEST)
+        self.assertFalse(vault.evaluate(SRC, DEST, api=fake_api())[
+            "private_forking_disabled_verified"])
+        locked = dict(dest, allow_forking=False)
+        self.assertTrue(vault.evaluate(SRC, DEST, api=fake_api(
+            destination=locked))["private_forking_disabled_verified"])
+        for value in (True, None):
+            with self.subTest(value=value), self.assertRaisesRegex(
+                    vault.VaultPreflightError, "vault_pages_not_disabled"):
+                vault.evaluate(SRC, DEST, api=fake_api(
+                    destination=dict(dest, has_pages=value)))
+
     def test_fails_closed_on_public_or_unknown_visibility(self):
         for setting in (
             {"private": False},
@@ -80,6 +94,9 @@ class VaultPreflightTests(unittest.TestCase):
         self.assertEqual(report["destination_initial_branches"], 1)
         self.assertFalse(report["ready_to_transfer"])
         self.assertFalse(report["main_branch_protection_verified"])
+        self.assertTrue(report["pages_disabled_verified"])
+        self.assertFalse(report["private_forking_disabled_verified"])
+        self.assertFalse(report["vault_access_hardening_complete"])
         self.assertFalse(report["cross_repo_workflow_credential_verified"])
         self.assertFalse(report["source_bodies_transferred"])
 
