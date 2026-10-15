@@ -8,7 +8,7 @@ This phase implements the precise atomic core of a future real deletion. It is b
 
 ## Transactional contract
 
-`scripts/stage_china_retirement_atomic.py` exposes `stage_atomic_retirement(conn, plan_data, retired_at)` for **a new disposable SQLite file outside the checkout**. It rejects the repository's tracked database, requires migration 0008's retired-URL ledger and ID trigger, and requires foreign-key enforcement.
+`scripts/stage_china_retirement_atomic.py` exposes `stage_atomic_retirement(conn, plan_data, retired_at)` for **a new disposable SQLite file outside the checkout**. It rejects the repository's tracked database, requires migration 0009's retired-URL ledger and ID trigger, and requires foreign-key enforcement.
 
 The operation checks the exact row IDs from the reviewer-approved plan, matches their SHA-256 selection fingerprint and baseline article count, rejects non-China sources and unsafe foreign-key dependencies, and enforces the 4,300–4,500 bound by default. The `rehearse_on_new_scratch_copy(source_db, scratch_db, plan_data, retired_at)` wrapper creates a new outside-repository SQLite copy through the existing read-only-copy mechanism, invokes the atomic transaction on that copy, and removes the output copy if the transaction fails. No source file or sidecar is modified.
 
