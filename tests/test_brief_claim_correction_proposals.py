@@ -122,7 +122,7 @@ class BriefClaimCorrectionReviewTest(unittest.TestCase):
             [max(row[0] for row in index["records"]) + 1,
              "2026-10-16", 0, 0, "", "新入库记录"])
         result = audit(index, packet, issues, pages)
-        self.assertEqual(result["case_count"], 2)
+        self.assertEqual(result["case_count"], 3)
         self.assertFalse(result["publication_enabled"])
         self.assertEqual(result["unmodified_published_source_record_count"], 5231)
 
@@ -144,7 +144,7 @@ class BriefClaimCorrectionReviewTest(unittest.TestCase):
     def test_draft_cannot_invent_a_new_citation_or_issue(self):
         args = list(actual())
         args[1]["cases"][0]["issue_number"] = 13
-        with self.assertRaisesRegex(ValueError, "reviewed issues"):
+        with self.assertRaisesRegex(ValueError, "published issue identity/date"):
             audit(*args)
         args = list(actual())
         args[1]["cases"][0]["case_id"] = "unknown correction"
