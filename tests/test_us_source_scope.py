@@ -146,9 +146,16 @@ class TestTheReadmeStatesTheDominantLimitation(unittest.TestCase):
     def test_the_readme_says_no_backfill_may_be_improvised(self):
         self.assertRegex(README.lower(), r"no backfill|backfill mechanism")
 
-    def test_the_readme_says_the_desk_is_not_launched(self):
-        self.assertIn("Not launched", README)
-        self.assertIn("Day zero has not been reached", README)
+    def test_the_readme_reports_one_historical_shadow_day_zero_but_no_live_desk(self):
+        # Sept 19 manual shadow Day 0 did occur and preserved 40 records.
+        # The production/public desk nevertheless remains access-blocked,
+        # and the scheduled DVIDS collection has since been paused.
+        self.assertIn("did launch once", README)
+        self.assertIn("September 19, 2026", README)
+        self.assertIn("scheduled collection is paused", README)
+        self.assertIn("access_blocked", README)
+        self.assertIn("not a public desk", README)
+        self.assertNotIn("Day zero has not been reached", README)
 
 
 class TestThePacomFindingIsNotReinterpreted(unittest.TestCase):
