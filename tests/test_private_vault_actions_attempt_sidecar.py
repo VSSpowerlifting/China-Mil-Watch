@@ -80,13 +80,17 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
                 ],
             }]
         }
-        self.write_inventory()
         for ident, text in (
             (ONE, "Fictional failed attempt: imaginary weather station"),
             (TWO, "Fictional successful rerun: imaginary survey boat"),
         ):
             with zipfile.ZipFile(self.zips / ("artifact-%d.zip" % ident), "w") as zipf:
                 zipf.writestr("ONLY-FICTIONAL-BODY.txt", text)
+        for item in self.record["runs"][0]["artifacts"]:
+            archive = self.zips / ("artifact-%d.zip" % item["id"])
+            item["provider_sha256"] = box.digest(archive)
+            item["bytes"] = archive.stat().st_size
+        self.write_inventory()
 
     def tearDown(self):
         self.temp.cleanup()
@@ -111,6 +115,8 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         self.assertNotIn(b"Fictional failed attempt", self.encrypted.read_bytes())
         verified = self.verify(receipt)
         self.assertTrue(verified["all_opaque_zip_sha256_verified"])
+        self.assertTrue(receipt["provider_digest_parity_verified_against_input_census"])
+        self.assertTrue(verified["provider_sha256_parity_preserved_in_manifest"])
         self.assertFalse(verified["individual_zip_contents_verified"])
         self.assertFalse(verified["downloaded_zip_origin_authenticated"])
         self.assertFalse(verified["independent_backup_medium_verified"])
@@ -144,6 +150,27 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         (self.zips / ("artifact-%d.zip" % ONE)).unlink()
         with self.assertRaisesRegex(box.Hold, "unexpected_or_missing_staged_artifact"):
             self.create()
+
+    def test_wrong_provider_digest_rejects_relabelled_zip(self):
+        self.record["runs"][0]["artifacts"][0]["provider_sha256"] = "f" * 64
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "staged_zip_provider_digest_mismatch"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
+    def test_missing_provider_digest_prevents_backup(self):
+        del self.record["runs"][0]["artifacts"][0]["provider_sha256"]
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "artifact_provider_digest_or_size_missing"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
+    def test_staged_zip_provider_byte_count_mismatch(self):
+        self.record["runs"][0]["artifacts"][0]["bytes"] += 1
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "staged_zip_provider_size_mismatch"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
 
     def test_changed_inventory_digest_is_rejected_on_restore(self):
         receipt = self.create()
