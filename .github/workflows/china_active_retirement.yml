@@ -1,0 +1,105 @@
+name: China active corpus retirement — scratch-only contracts
+
+on:
+  pull_request:
+    paths:
+      - "scripts/plan_china_active_retirement.py"
+      - "tests/test_china_active_retirement.py"
+      - "docs/CHINA_ACTIVE_CORPUS_RETIREMENT_2026-10-15.md"
+      - ".github/workflows/china_active_retirement.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  scratch-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Fingerprint tracked SQLite and publication artifacts
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Exercise transactional scratch deletion and negative cases
+        run: python -m unittest -v tests.test_china_active_retirement
+      - name: Fail closed if any production files changed
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  live-corpus-cohort-rehearsal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Fingerprint canonical tracked corpus
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/source-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Install site renderer dependencies
+        run: pip install -r requirements.txt
+      - name: Generate a temporary focus index without modifying public output
+        run: |
+          python site/render.py \
+            --out "$RUNNER_TEMP/china-retirement-focus-site" \
+            --site-origin https://indopacificrecord.org
+      - name: Calculate exact 4300–4500 candidate from generated focus and editorial dependencies
+        run: |
+          set -euo pipefail
+          python -m scripts.plan_china_active_retirement \
+            --index "$RUNNER_TEMP/china-retirement-focus-site/corpus-index.json" \
+            > "$RUNNER_TEMP/china-retirement-summary.json"
+          python - "$RUNNER_TEMP/china-retirement-summary.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1], encoding="utf-8"))
+          assert 4300 <= d["china_to_retire"] <= 4500
+          assert d["automated_china_focus"] == 600
+          assert d["other_desks_before"] > 0
+          assert d["total_after"] == d["total_before"] - d["china_to_retire"]
+          print(json.dumps({k:v for k,v in d.items()
+                            if k in ("total_before","china_before",
+                                     "other_desks_before","china_to_retire",
+                                     "china_after","total_after",
+                                     "published_trail_references",
+                                     "bound_brief_and_timeline_ids",
+                                     "supplemental_automated_context",
+                                     "retirement_id_sha256")},
+                           indent=2,sort_keys=True))
+          with open(__import__("os").environ["GITHUB_STEP_SUMMARY"],"a") as w:
+              w.write("## China: current corpus retirement rehearsal\\n\\n")
+              for field in ("total_before","china_before","other_desks_before",
+                            "china_to_retire","china_after","total_after",
+                            "published_trail_references",
+                            "bound_brief_and_timeline_ids",
+                            "supplemental_automated_context",
+                            "retirement_id_sha256"):
+                  w.write("- **%s:** %s\\n" % (field,d[field]))
+          PY
+      - name: Verify canonical DB and output were never modified
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/source-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
