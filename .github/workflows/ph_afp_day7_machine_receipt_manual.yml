@@ -43,7 +43,7 @@ jobs:
 
       - name: Verify immutable source audit and API-reconciliation regressions
         working-directory: repo
-        run: python -m unittest tests.test_ph_afp_seven_day tests.test_ph_afp_actions_provenance -v
+        run: python -m unittest tests.test_ph_afp_seven_day tests.test_ph_afp_actions_provenance tests.test_ph_afp_attempt_history -v
 
       - name: Read exact AFP shadow state and audit seven logical slots
         working-directory: repo
@@ -92,7 +92,21 @@ jobs:
             --start-date 2026-10-07 --as-of "$REVIEW_CUTOFF" \
             --actions-export "$RUNNER_TEMP/afp-runs-input.json" \
             > "$RUNNER_TEMP/afp-review/actions.json"
-          rm "$RUNNER_TEMP/afp-runs-input.json"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Verify every visible AFP run attempt and its historical jobs
+        working-directory: repo
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_CUTOFF: ${{ inputs.as_of }}
+        run: |
+          set -euo pipefail
+          python -m scripts.audit_ph_afp_attempt_history \
+            --runs-export "$RUNNER_TEMP/afp-runs-input.json" \
+            --actions-assessment "$RUNNER_TEMP/afp-review/actions.json" \
+            --cutoff "$REVIEW_CUTOFF" \
+            > "$RUNNER_TEMP/afp-review/attempts.json"
           test -z "$(git status --porcelain --untracked-files=all)"
 
       - name: Record machine-only verdict with explicit human and publication holds
@@ -106,6 +120,11 @@ jobs:
           folder = Path(os.environ['RUNNER_TEMP']) / 'afp-review'
           ledger = json.loads((folder/'ledger.json').read_text())
           actions = json.loads((folder/'actions.json').read_text())
+          attempts = json.loads((folder/'attempts.json').read_text())
+          assert attempts['protocol'] == 'ipr_ph_afp_bounded_attempt_jobs_v1'
+          assert attempts['seven_positive_first_attempt_jobs_verified'] is True
+          assert attempts['visible_attempts_completely_reconciled'] is True
+          assert attempts['deleted_or_missing_historical_runs_exhaustively_verified'] is False
           assert ledger['immutable_state_commit'] == actions['state_commit']
           for k in ('human_review_completed_or_verified','source_reuse_rights_approved','production_admission_authorized'):
               assert ledger[k] is False
@@ -114,7 +133,9 @@ jobs:
           status = 'positive_seven_slots_machine_only' if (
               ledger['all_seven_ledger_slots_supported'] and
               actions['all_seven_positive_runs_matched'] and
-              actions['no_unmatched_scheduled_runs_visible_in_review_window']
+              actions['no_unmatched_scheduled_runs_visible_in_review_window'] and
+              attempts['seven_positive_first_attempt_jobs_verified'] and
+              attempts['visible_attempts_completely_reconciled']
           ) else 'review_hold'
           receipt = {
               'protocol':'ipr_ph_afp_day7_machine_receipt_v1',
@@ -127,6 +148,10 @@ jobs:
               'unmatched_in_window_scheduled_runs':len(
                   actions['unmatched_scheduled_runs_in_review_window']),
               'all_failed_attempts_verified':False,
+              'visible_attempts_and_jobs_verified':True,
+              'visible_attempt_count':attempts['verified_visible_run_attempts'],
+              'visible_job_count':attempts['verified_visible_attempt_jobs'],
+              'deleted_runs_or_expired_artifacts_exhaustively_verified':False,
               'human_source_reviews_completed':False,
               'source_rights_approved':False,
               'production_admission_authorized':False,
@@ -138,6 +163,14 @@ jobs:
           print(json.dumps(receipt,sort_keys=True))
           PY
 
+      - name: Scrub temporary raw GitHub API exports before artifact upload
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/afp-runs-input.json" ]; then
+            rm "$RUNNER_TEMP/afp-runs-input.json"
+          fi
+
       - name: Retain only metadata-only private reviewer receipts
         if: always()
         uses: actions/upload-artifact@v4
@@ -147,6 +180,7 @@ jobs:
             ${{ runner.temp }}/afp-review/state-sha.txt
             ${{ runner.temp }}/afp-review/ledger.json
             ${{ runner.temp }}/afp-review/actions.json
+            ${{ runner.temp }}/afp-review/attempts.json
             ${{ runner.temp }}/afp-review/verdict.json
           if-no-files-found: warn
           retention-days: 30
