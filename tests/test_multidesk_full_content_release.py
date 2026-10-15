@@ -15,6 +15,7 @@ LICENSE = "https://www.mod.go.jp/j/info/contents.html"
 KEYS = {r: (r + "-offline-fixture-key-").encode().ljust(40, b"X")
         for r in ("rights", "source_fidelity", "document_integrity",
                   "bilingual", "editor", "fact_checker")}
+REVIEWERS = {r: ["Test Reviewer " + r] for r in KEYS}
 CONTENT = {
     "original_text": ("これは架空の政府資料です。 "*12).encode(),
     "original_pdf": (b"%PDF-1.7\n1 0 obj<</Type/Catalog>>endobj\n" +
@@ -88,7 +89,7 @@ def approvals(bundle):
 def valid(bundle, artifacts, signed=None):
     return m.verify_bundle(
         bundle, artifacts, approvals(bundle) if signed is None else signed,
-        role_secrets=KEYS,
+        role_secrets=KEYS, authorized_reviewers=REVIEWERS,
         source_verifier=lambda _source: True,
         rights_verifier=lambda _source, _work: True)
 
@@ -111,7 +112,7 @@ class FullContentReleaseContracts(unittest.TestCase):
         bundle, artifacts = fixture()
         with self.assertRaisesRegex(m.FullContentHold,
                                     "original_source_capture_not_authenticated"):
-            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS,
+            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS, authorized_reviewers=REVIEWERS,
                             source_verifier=lambda _: False,
                             rights_verifier=lambda *_: True)
 
@@ -119,7 +120,7 @@ class FullContentReleaseContracts(unittest.TestCase):
         bundle, artifacts = fixture()
         with self.assertRaisesRegex(m.FullContentHold,
                                     "publisher_or_editorial_rights_not_independently_verified"):
-            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS,
+            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS, authorized_reviewers=REVIEWERS,
                             source_verifier=lambda _: True,
                             rights_verifier=lambda *_: False)
 
@@ -138,6 +139,37 @@ class FullContentReleaseContracts(unittest.TestCase):
         with self.assertRaisesRegex(m.FullContentHold,
                                     "human_approval_source_version_mismatch"):
             valid(bundle, artifacts, signed)
+
+    def test_reviewer_identity_must_be_from_independent_roster(self):
+        bundle, artifacts = fixture()
+        signed = approvals(bundle)
+        signed[0]["reviewer"] = "Unauthorized Reviewer"
+        signed[0]["signature_hmac_sha256"] = m.sign_for_test_or_offline_reviewer(
+            m.signature_payload(signed[0]), KEYS[signed[0]["role"]])
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "signer_not_in_independent_reviewer_roster"):
+            valid(bundle, artifacts, signed)
+
+    def test_same_key_must_not_sign_rights_and_content_review(self):
+        bundle, artifacts = fixture()
+        repeated = dict(KEYS)
+        repeated["source_fidelity"] = KEYS["rights"]
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "reviewer_keys_not_role_separated"):
+            m.verify_bundle(bundle, artifacts, approvals(bundle),
+                            role_secrets=repeated,
+                            authorized_reviewers=REVIEWERS,
+                            source_verifier=lambda _: True,
+                            rights_verifier=lambda *_: True)
+
+    def test_unprovisioned_reviewer_roster_is_hold(self):
+        bundle, artifacts = fixture()
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "human_editorial_approval_material_missing"):
+            m.verify_bundle(bundle, artifacts, approvals(bundle),
+                            role_secrets=KEYS,
+                            source_verifier=lambda _: True,
+                            rights_verifier=lambda *_: True)
 
     def test_modified_approval_signature_is_hold(self):
         bundle, artifacts = fixture()
@@ -241,7 +273,7 @@ class FullContentReleaseContracts(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             target = Path(d) / "staged"
             out = m.stage_approved_bundle(b, a, signed,
-                role_secrets=KEYS,
+                role_secrets=KEYS, authorized_reviewers=REVIEWERS,
                 source_verifier=lambda _: True,
                 rights_verifier=lambda *_: True,
                 target_dir=target)
@@ -263,7 +295,7 @@ class FullContentReleaseContracts(unittest.TestCase):
             with self.assertRaisesRegex(m.FullContentHold,
                                         "staging_must_be_new_external_directory"):
                 m.stage_approved_bundle(b,a,approvals(b),
-                    role_secrets=KEYS,source_verifier=lambda _:True,
+                    role_secrets=KEYS, authorized_reviewers=REVIEWERS,source_verifier=lambda _:True,
                     rights_verifier=lambda *_:True,target_dir=path)
             self.assertEqual(before,sorted(p.name for p in path.iterdir()))
 
