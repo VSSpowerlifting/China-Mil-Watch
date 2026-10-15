@@ -1425,7 +1425,12 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         main = page.main
         self.assertIsNotNone(main)
         text = main.get_text(" ", strip=True)
-        self.assertIn("Official congressional metadata feed live", text)
+        status = page.select_one(".status-panel--access_blocked")
+        status_text = status.get_text(" ", strip=True)
+        self.assertIn("metadata", status_text.lower())
+        self.assertIn("PACOM collection blocked", status_text)
+        self.assertIn("U.S.-China Economic and Security Review Commission", text)
+        self.assertIn("U.S. Department of the Treasury", text)
         self.assertIn("PACOM collection blocked", text)
         self.assertIn("It is not a feed of US defense releases.", text)
         links = main.select("li[data-uscc-official-link] a")
