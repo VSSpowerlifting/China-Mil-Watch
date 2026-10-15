@@ -25,7 +25,8 @@ MAX_ITEMS = 3
 ITEM_FIELDS = frozenset((
     "source_id", "desk", "issuer", "publisher", "source_url",
     "published_date", "document_distribution_date", "title_original",
-    "source_content_sha256", "hwpx_capture_sha256", "hash_rule",
+    "source_content_sha256", "hwpx_capture_sha256", "publisher_html_capture_sha256",
+    "text_license_marking", "hash_rule",
     "summary", "caveats", "claim_kind", "status", "copy_scope",
 ))
 # Each captured source is independently version-pinned. This is *not* a
@@ -36,6 +37,8 @@ PINS = {
         "published_date": "2026-10-12",
         "document_distribution_date": "2026-10-12",
         "source_content_sha256": "ceee86fe0a9ab82689b8e43a5361d312b259df923ae631039e64cebed9494639",
+        "publisher_html_capture_sha256": "fffde3346ca3c8b0f9babac69ac51e1ca0743810661c69bcc5dddfdbd33d21de",
+        "text_license_marking": "KOGL Type 1 - text only - attribution required",
         "hwpx_capture_sha256": "2a197b95c0174964b31148167a5c1b9d29bb64ecf60ab4326504d98793f87d4a",
         "claim_kind": "reported_action",
     },
@@ -44,6 +47,8 @@ PINS = {
         "published_date": "2026-10-12",
         "document_distribution_date": "2026-10-09",
         "source_content_sha256": "a72d9371bb676a95639ff2ed7cdc352311effb249b3485cf125f462999aa4319",
+        "publisher_html_capture_sha256": "c320b308182082efb30f4267d55bf91885d37f0ac102c569c8cddc26c281eb3e",
+        "text_license_marking": "KOGL Type 1 - text only - attribution required",
         "hwpx_capture_sha256": "57ab003628355b5b29f6204ad59ee925b439849c58c9022355b924d7928db43e",
         "claim_kind": "reported_action",
     },
@@ -52,6 +57,8 @@ PINS = {
         "published_date": "2026-10-14",
         "document_distribution_date": "2026-10-14",
         "source_content_sha256": "e0455256a1fd66ea82fb87f8c61220e2c526378a3ca873dd3f72d5a7fb193e27",
+        "publisher_html_capture_sha256": "da64a9b05c0409da1f1615de0539800615a9b29bf903925a7c435ede1ed1af6f",
+        "text_license_marking": "KOGL Type 1 - text only - attribution required",
         "hwpx_capture_sha256": "3fdaba73bce1140a1ba0f94948d4ab9849a16703d4e52f8b8858f2639dfb7994",
         "claim_kind": "reported_action",
     },
