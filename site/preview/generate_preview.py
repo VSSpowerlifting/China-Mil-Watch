@@ -77,6 +77,7 @@ from config import SITE_ORIGIN                                    # noqa: E402
 
 from jinja2 import Environment, FileSystemLoader                    # noqa: E402
 from core.viewmodel import PublicView                               # noqa: E402
+from core.china_discovery import build_focus                        # noqa: E402
 from core.topography import topography_style                         # noqa: E402
 from scripts.reconcile_db import _read_only                         # noqa: E402
 from scripts.desk_map import layout as desk_map_layout              # noqa: E402
@@ -708,7 +709,7 @@ INDEX_FORBIDDEN_FIELDS = (
 )
 
 
-def corpus_index(corpus, sources, snapshot: dict, desks=None) -> dict:
+def corpus_index(corpus, sources, snapshot: dict, desks=None, focus=None) -> dict:
     """The compact external index behind the browser.
 
     Two economies, both structural rather than lossy:
@@ -796,6 +797,8 @@ def corpus_index(corpus, sources, snapshot: dict, desks=None) -> dict:
         # issues, shipped as ids only; the URLs themselves never enter the
         # index (INDEX_FORBIDDEN_FIELDS).
         "trail_ids": sorted(r["id"] for r in corpus if r.get("in_trails")),
+        "focus_ids": focus["ids"] if focus else sorted(r["id"] for r in corpus),
+        "focus_policy": (focus["policy"] if focus else "full_corpus_legacy"),
     }
 
 
@@ -2406,6 +2409,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # source IDs remain limited to a reviewed immutable five-record snapshot.
     korea_release_state = load_registry().get("korea")
     korea_public_rows = []
+    korea_additional_rows = []
     if korea_release_state is not None:
         if (korea_release_state.status != "shadow"
                 or korea_release_state.manifest_path is not None
@@ -2416,6 +2420,10 @@ def build(out_dir: Path, title: str, db_path: Path,
             korea_public_rows = load_public_korea_links()
             if len(korea_public_rows) != 5:
                 raise ValueError("Korea public bibliography requires the fixed five-source release")
+            from core.korea_additional_public_links import load_additional_korea_official_links
+            korea_additional_rows = load_additional_korea_official_links()
+            if len(korea_additional_rows) != 9:
+                raise ValueError("Korea additional official URLs require nine exact owner-approved identities")
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -2628,8 +2636,13 @@ def build(out_dir: Path, title: str, db_path: Path,
     editorial_research = load_editorial_catalog()
     editorial_published_desks = sorted({row["desk"] for row in editorial_research})
 
+    # Provisional, explicitly machine-organized discovery view. Preserved
+    # record routes, full corpus index and cited issue links remain unchanged.
+    focus = build_focus(data["corpus"])
+
     ctx = {
         "title": title,
+        "focus": focus,
         "review_mode": bool(review_brief or review_timeline or review_presentation),
         "catalogue_media": catalogue_media,
         "timelines": timelines,
@@ -2742,7 +2755,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                           default=1),
         # The Records page's server-rendered first page: the newest stored
         # records, in the corpus's own order, readable with no script at all.
-        "archive_first": data["corpus"][:ARCHIVE_FIRST_PAGE],
+        "archive_first": focus["rows"][:ARCHIVE_FIRST_PAGE],
         "archive_page_size": ARCHIVE_FIRST_PAGE,
         # Records listed in any published issue's source trail (exact URL).
         "trail_record_count": sum(1 for r in data["corpus"]
@@ -2964,6 +2977,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              indonesia_official_links=indonesia_official_links,
                              indonesia_press_links=indonesia_press_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
+                             korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
@@ -3049,7 +3063,8 @@ def build(out_dir: Path, title: str, db_path: Path,
     # assert_snapshot() has passed, so an index can never describe a corpus the
     # build refused to publish. Sorted keys and fixed separators keep it
     # byte-deterministic.
-    index = corpus_index(data["corpus"], data["sources"], snapshot, desks)
+    index = corpus_index(data["corpus"], data["sources"], snapshot, desks,
+                         focus=focus)
     (out_dir / "corpus-index.json").write_text(
         json.dumps(index, ensure_ascii=False, sort_keys=True,
                    separators=(",", ":")) + "\n",
@@ -3461,6 +3476,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             "korea_private_structural_preview_rows": (
                 len(preview_rows) if review_korea else 0),
             "korea_public_bibliography_entries": len(korea_public_rows),
+            "korea_additional_official_link_entries": len(korea_additional_rows),
             "legacy_redirects": redirects}
 
 

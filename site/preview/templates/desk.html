@@ -17,7 +17,7 @@
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
     <h2>{% if published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
-    <p>{% if published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{{ desk.status_explanation }}{% endif %}</p>
+    <p>{% if published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
   </div>
 </div>
 
@@ -59,14 +59,16 @@
    source body, media or machine-produced translation enters publication. #}
 {% if desk.slug == 'korea' and not korea_preview | default(false) %}
 <section class="korea-public-bibliography" aria-labelledby="korea-bibliography-title">
-  <p class="eyebrow">Official-source directory · limited five-reference pilot</p>
+  <p class="eyebrow">Official-source directory · fourteen external government links</p>
   <h2 id="korea-bibliography-title">Ministry of National Defense — official references</h2>
   <p>Five source references from one Korean Ministry of National Defense
   (국방부) release family, republished by Republic of Korea Policy Briefing
-  (대한민국 정책브리핑). Entries link to the government publisher;
-  they are <strong>not IPR archived records</strong> or independent
+  (대한민국 정책브리핑). These five entries preserve their original
+  Korean headlines and release dates. Nine additional exact official URLs
+  appear below without unreviewed headlines or analytical descriptions.
+  These are <strong>not IPR archived records</strong> or independent
   confirmation of a statement's claims. The selection is frozen to the
-  October 11, 2026 original-source snapshot, not automatically updated.</p>
+  October 14, 2026 original-source snapshot, not automatically updated.</p>
   <p class="meta">Original titles are presented in Korean without an
   IPR translation. Portal posting and original document distribution dates
   are distinct facts.</p>
@@ -99,7 +101,31 @@
     </li>
     {% endfor %}
   </ol>
-  <p class="meta">Source-title and factual bibliographic links only. The
+  <section class="korea-additional-official-links" aria-labelledby="korea-additional-links-heading">
+    <p class="eyebrow">Nine additional official-source links · no IPR translations</p>
+    <h3 id="korea-additional-links-heading">Further MND publisher references</h3>
+    <p>These nine source URLs have been matched against the frozen official
+    publisher article IDs and recorded response hashes. Their unreviewed
+    Korean headlines, event claims and document text are not reproduced.
+    This list does not establish continuous coverage, military-event
+    verification, or eligibility for IPR's analysis and archive.</p>
+    <ol class="korea-public-source-list" aria-label="Nine additional official Korean source links">
+      {% for ref in korea_additional_links %}
+      <li data-korea-additional-link="{{ ref.source_identity }}">
+        <h4><a href="{{ ref.source_url }}" rel="noopener noreferrer"
+               target="_blank">{{ ref.neutral_label }}</a></h4>
+        <p class="meta">Issuer: Republic of Korea Ministry of National Defense
+          (국방부) · Republication: Republic of Korea Policy Briefing
+          (대한민국 정책브리핑) · External government link only</p>
+        {% if ref.editorial_hold %}
+        <p class="meta"><strong>Editorial exception:</strong>
+          {{ ref.editorial_hold }}</p>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ol>
+  </section>
+  <p class="meta">Official links and sparse factual bibliographic data only. The
   source publisher marks qualifying text KOGL Type 1 (attribution), but
   original HWPX files and photographs, illustrations, videos and other
   third-party materials are not reproduced. Attribution:
