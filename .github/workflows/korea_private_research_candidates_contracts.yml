@@ -7,7 +7,9 @@ on:
     paths:
       - core/korea_private_research_candidates.py
       - scripts/check_korea_private_research_candidates.py
+      - scripts/render_korea_private_research.py
       - tests/test_korea_private_research_candidates.py
+      - tests/test_render_korea_private_research.py
       - research/korea/private_research_candidates/**
       - .github/workflows/korea_private_research_candidates_contracts.yml
   workflow_dispatch:
@@ -27,9 +29,18 @@ jobs:
         with:
           python-version: '3.9'
       - name: Recheck closed list, source versions, date and no-send gates
-        run: python -m unittest tests.test_korea_private_research_candidates -v
+        run: python -m unittest tests.test_korea_private_research_candidates tests.test_render_korea_private_research -v
       - name: Inspect safe metadata-only candidate receipt
         run: python -m scripts.check_korea_private_research_candidates --week-ending 2026-10-17 --as-of 2026-10-17
+      - name: Create only local no-send preview; never upload or log its content
+        shell: bash
+        run: |
+          set -euo pipefail
+          report="$RUNNER_TEMP/korea-private-review-$GITHUB_RUN_ID.md"
+          python -m scripts.render_korea_private_research --out "$report" --explicit-local-only
+          test -s "$report"
+          test "$(stat -c %a "$report")" = "600"
+          rm "$report"
       - name: Verify repository and production unmodified
         shell: bash
         run: |
