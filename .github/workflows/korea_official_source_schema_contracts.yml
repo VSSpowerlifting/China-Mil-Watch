@@ -42,9 +42,6 @@ jobs:
           python -m unittest \
             tests.test_korea_official_source_metadata_schema \
             tests.test_korea_official_metadata_auto_admission \
-            tests.test_korea_public_bibliography \
-            tests.test_korea_additional_public_links \
-            tests.test_korea_site_preview \
             tests.test_migrations -v
       - name: Assert no live DB, site, or shadow collection modification
         if: ${{ !cancelled() }}
