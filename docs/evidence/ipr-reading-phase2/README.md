@@ -18,6 +18,8 @@ headings. Owner acceptance remains outstanding.
 | 1280 × 900 | [Complete before](laos-before-1280-full.jpg) | [Complete after](laos-after-1280-full.jpg) |
 | 375 × 900 | [Complete before](laos-before-375-full.jpg) | [Complete after](laos-after-375-full.jpg) |
 
+The published baseline was also captured directly at all three widths: [1440](laos-live-baseline-1440-full.jpg), [1280](laos-live-baseline-1280-full.jpg), [375](laos-live-baseline-375-full.jpg). Its HTTP 200 article HTML and shared CSS exactly match the immutable comparison baseline by SHA-256: [live receipt](live-baseline-receipt.json). These corroborate the locally rendered baseline captures above; no production change was made.
+
 ## Equivalent reading locations
 
 Positions use the same semantic anchor and 112px top offset, or 25/50/75% of

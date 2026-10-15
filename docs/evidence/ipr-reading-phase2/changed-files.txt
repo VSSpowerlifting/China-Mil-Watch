@@ -87,3 +87,7 @@ docs/evidence/ipr-reading-phase2/trident-after-1440-full.jpg
 docs/evidence/ipr-reading-phase2/trident-after-375-full.jpg
 docs/evidence/ipr-reading-phase2/trident-signal.jpg
 docs/evidence/ipr-reading-phase2/trident-sources.jpg
+docs/evidence/ipr-reading-phase2/laos-live-baseline-1280-full.jpg
+docs/evidence/ipr-reading-phase2/laos-live-baseline-1440-full.jpg
+docs/evidence/ipr-reading-phase2/laos-live-baseline-375-full.jpg
+docs/evidence/ipr-reading-phase2/live-baseline-receipt.json

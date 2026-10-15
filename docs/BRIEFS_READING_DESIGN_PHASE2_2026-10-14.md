@@ -17,7 +17,9 @@ The baseline's 704px article included 36px padding on each side and two 1px
 borders: actual prose was only **630px**, at 19px/35.15px. Its 272px navigation
 panel and 76.8–86.4px gap made that constraint more conspicuous. The continuous
 article borders and filled navigation produced the document-panel impression.
-This is measured Chromium geometry, not a deduction from CSS alone.
+This is measured Chromium geometry, not a deduction from CSS alone. Direct
+live-baseline captures at 1440/1280/375 also verify that the published article
+HTML and shared CSS exactly match the immutable comparison baseline by SHA-256.
 
 Two actual full-page trials used the same baseline content at 1440 × 900:
 
