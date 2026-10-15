@@ -276,7 +276,10 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
 
     def test_filename_that_claims_zip_but_is_plaintext_is_refused(self):
         target = self.zips / ("artifact-%d.zip" % ONE)
-        target.write_bytes(b"NOT A ZIP, ONLY FIXTURE TEXT")
+        # Preserve the declared provider byte length so this isolates the
+        # invalid-ZIP guard rather than failing at the earlier size check.
+        length = target.stat().st_size
+        target.write_bytes((b"NOT-A-ZIP-" * (length // 10 + 1))[:length])
         with self.assertRaisesRegex(box.Hold, "staged_file_not_zip"):
             self.create()
         self.assertFalse(self.encrypted.exists())
