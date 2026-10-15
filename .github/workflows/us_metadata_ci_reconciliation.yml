@@ -1,0 +1,58 @@
+name: CI — reconcile U.S. metadata and SQLite journal tests
+
+on:
+  pull_request:
+    paths:
+      - tests/test_us_source_scope.py
+      - tests/test_local_db_reads.py
+      - tests/test_preview_prototype.py
+      - tests/test_site_mode_contract.py
+      - site/preview/templates/desks.html
+      - .github/workflows/us_metadata_ci_reconciliation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  exact-regression-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install existing offline dependencies
+        run: pip install -r requirements.txt
+      - name: Verify real DVIDS Day 0, current U.S. link lane, SQLite and page contracts
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db-before.sha"
+          python -m unittest -v \
+            tests.test_us_source_scope \
+            tests.test_local_db_reads.TestWalJournalBehaviorOnIsolatedClone \
+            tests.test_preview_prototype.TestTrancheOneIdentityAndStructure.test_us_desk_separates_live_uscc_metadata_from_blocked_pacom \
+            tests.test_site_mode_contract.TestCandidateBuild.test_us_link_metadata_does_not_promote_pacom_body_collector
+          python site/render.py --out "$RUNNER_TEMP/us-ci-site" --site-origin https://indopacificrecord.org
+          python - "$RUNNER_TEMP/us-ci-site/desks.html" <<'PY'
+          import sys
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          p = Path(sys.argv[1])
+          assert p.stat().st_size <= 120000, p.stat().st_size
+          soup = BeautifulSoup(p.read_text(encoding="utf-8"), "html.parser")
+          assert len(soup.select(".scope-register .scope-entry")) == 8
+          assert len(soup.select(".deskmap-context-entry")) == 7
+          assert all(x.select_one('a[href="#desk-scopes"]')
+                     for x in soup.select(".deskmap-context-entry"))
+          print("PASS: %d-byte Desks page, 8 full scopes, 7 summaries"
+                % p.stat().st_size)
+          PY
+          sha256sum -c "$RUNNER_TEMP/db-before.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
