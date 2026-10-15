@@ -1402,13 +1402,8 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertIn("Access blocked — not collecting", desks)
         self.assertIn("Records</dt><dd>None collected", desks)
 
-    def test_the_us_reference_desk_is_declared_but_never_promoted(self):
-        """
-        Every declared desk is now rendered, the reference desk included: a
-        desk a reader cannot open is worse than one labelled honestly. What it
-        may never carry is a status, a count or a source that reads like an
-        operating desk, and its own page has to say so in its own words.
-        """
+    def test_us_reference_desk_distinguishes_live_congressional_metadata_from_pacom_hold(self):
+        """USCC metadata is collected; direct PACOM source access remains blocked."""
         directory = self.page("desks.html")
         block = [b.split("</section>", 1)[0]
                  for b in directory.split('<section class="desk')[1:]
@@ -1419,14 +1414,12 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("desk--live", block)
 
         page = self.page("us-indopacific.html")
-        self.assertIn("Access blocked — not collecting", page)
+        self.assertIn("Official congressional and Treasury metadata feeds live — PACOM collection blocked", page)
         self.assertIn("It is not a feed of US defense releases.", page)
-        self.assertIn("Nothing has been configured, enabled or "
-                      "collected.", page)
-        from bs4 import BeautifulSoup
-        desk_content = BeautifulSoup(page, "html.parser").main.get_text(" ", strip=True)
-        self.assertNotRegex(
-            desk_content, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b")
+        self.assertIn("Collected official congressional metadata links", page)
+        self.assertIn("Direct PACOM command collection", page)
+        self.assertIn("Admitted U.S. source-body articles", page)
+        self.assertNotIn("Nothing has been configured, enabled or collected.", page)
 
     # ── Maintainer ──────────────────────────────────────────────────────
 

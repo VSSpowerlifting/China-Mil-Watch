@@ -16,8 +16,8 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{% if desk.slug == 'us-indopacific' and us_treasury_official_links | default([]) %}Official congressional and Treasury metadata feeds live — PACOM collection blocked{% elif desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}Official congressional metadata feed live — PACOM collection blocked{% elif published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
-    <p>{% if desk.slug == 'us-indopacific' and us_treasury_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from two distinct sources: the U.S.-China Economic and Security Review Commission (congressional) and U.S. Department of the Treasury (executive). Direct PACOM collection remains access-blocked and DVIDS paused; this is not full military-source coverage and no publisher bodies, headlines, translations or analysis are automatically republished.{% elif desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from the U.S.-China Economic and Security Review Commission, a congressional commission. Direct U.S. Pacific Command collection remains access-blocked and DVIDS remains paused; original publisher headlines, article text, photographs and analysis are not automatically republished.{% elif published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
+    <h2>{% if desk.slug == 'korea' and korea_auto_official_links | default([]) %}Verified MND official-link feed live — original-source archive remains restricted{% elif desk.slug == 'us-indopacific' and us_treasury_official_links | default([]) %}Official congressional and Treasury metadata feeds live — PACOM collection blocked{% elif desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}Official congressional metadata feed live — PACOM collection blocked{% elif published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
+    <p>{% if desk.slug == 'us-indopacific' and us_treasury_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from two distinct sources: the U.S.-China Economic and Security Review Commission (congressional) and U.S. Department of the Treasury (executive). Direct PACOM collection remains access-blocked and DVIDS paused; this is not full military-source coverage and no publisher bodies, headlines, translations or analysis are automatically republished.{% elif desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from the U.S.-China Economic and Security Review Commission, a congressional commission. Direct U.S. Pacific Command collection remains access-blocked and DVIDS remains paused; original publisher headlines, article text, photographs and analysis are not automatically republished.{% elif published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original headline/date entries, nine additional historical links, and separately admitted new official-link metadata when available. Original document bodies and substantive analysis remain outside the production archive.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
   </div>
 </div>
 
@@ -158,8 +158,9 @@
   Korean headlines and release dates. Nine additional exact official URLs
   appear below without unreviewed headlines or analytical descriptions.
   These are <strong>not IPR archived records</strong> or independent
-  confirmation of a statement's claims. The selection is frozen to the
-  October 14, 2026 original-source snapshot, not automatically updated.</p>
+  confirmation of a statement's claims. The fourteen historical links are
+  frozen to the October 14, 2026 original-source snapshot; newly collected
+  official-link metadata, when admitted, is listed separately below.</p>
   <p class="meta">Original titles are presented in Korean without an
   IPR translation. Portal posting and original document distribution dates
   are distinct facts.</p>
@@ -216,6 +217,31 @@
       {% endfor %}
     </ol>
   </section>
+  {% if korea_auto_official_links | default([]) %}
+  <section class="korea-automatically-admitted-official-links" aria-labelledby="korea-auto-official-title">
+    <p class="eyebrow">Continuously collected · official government links only</p>
+    <h3 id="korea-auto-official-title">New verified MND references</h3>
+    <p>These additional source references were collected from the official
+    Korea Policy Briefing republication of Ministry of National Defense releases
+    and admitted to IPR's production metadata database under the October 15,
+    2026 standing link-only publication policy. No human editor has verified
+    the underlying event claims, and this list does not contain original
+    headlines, translated text, document bodies, photographs or analysis.
+    Collection can be incomplete or interrupted.</p>
+    <ol class="korea-public-source-list" aria-label="Automatically admitted official Korean source links">
+    {% for ref in korea_auto_official_links %}
+      <li data-korea-auto-official-link="{{ ref.source_identity }}">
+        <h4><a href="{{ ref.source_url }}" rel="noopener noreferrer"
+              target="_blank">{{ ref.neutral_label }}</a></h4>
+        <p class="meta">Issuer: {{ ref.issuer_label }} (국방부)
+          · Republication: {{ ref.republisher_label }} (대한민국 정책브리핑)
+          · Portal posted: <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+          · Official government outbound link only</p>
+      </li>
+    {% endfor %}
+    </ol>
+  </section>
+  {% endif %}
   <p class="meta">Official links and sparse factual bibliographic data only. The
   source publisher marks qualifying text KOGL Type 1 (attribution), but
   original HWPX files and photographs, illustrations, videos and other
