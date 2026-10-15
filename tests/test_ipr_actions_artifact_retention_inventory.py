@@ -36,15 +36,29 @@ def artifact(ident=11498114543, run_id=RUN, attempt=1,
     }
 
 
+def job(ident, run_id=RUN, attempt=1, conclusion="success"):
+    return {"id": ident, "run_id": run_id, "run_attempt": attempt,
+            "name": "shadow", "status": "completed", "conclusion": conclusion}
+
+
 class FakeAPI:
-    def __init__(self, runs=None, artifacts=None):
+    def __init__(self, runs=None, artifacts=None, jobs=None):
         self.runs = [run()] if runs is None else runs
         self.arts = {RUN: [artifact(), artifact(
             11499686512, attempt=2, expiry="2027-01-05T17:15:50Z")]} if artifacts is None else artifacts
+        self.jobs = jobs if jobs is not None else {
+            (RUN, 1): [job(112911609417, attempt=1, conclusion="failure")],
+            (RUN, 2): [job(112916943525, attempt=2, conclusion="success")],
+        }
         self.routes = []
 
     def __call__(self, path):
         self.routes.append(path)
+        if "/attempts/" in path and "/jobs?" in path:
+            run_id = int(path.split("/actions/runs/")[1].split("/")[0])
+            attempt = int(path.split("/attempts/")[1].split("/")[0])
+            rows = self.jobs.get((run_id, attempt), [])
+            return {"total_count": len(rows), "jobs": rows}
         if "/actions/runs?" in path:
             if "page=2" in path:
                 return {"total_count": len(self.runs), "workflow_runs": []}
@@ -69,13 +83,37 @@ class RetentionInventoryTest(unittest.TestCase):
         r = report["runs"][0]
         self.assertEqual(r["latest_run_attempt"], 2)
         self.assertEqual([a["name_attempt"] for a in r["artifacts"]], [1, 2])
-        self.assertEqual(r["holds"], [])
+        self.assertEqual(r["holds"], ["historical_failed_or_unfinished_job"])
+        self.assertEqual(len(r["historical_attempt_jobs"]), 2)
+        self.assertTrue(r["historical_attempt_jobs"][0]["has_unsuccessful_job"])
+        self.assertFalse(r["historical_attempt_jobs"][1]["has_unsuccessful_job"])
+        self.assertEqual([x["jobs"][0]["job_id"]
+                          for x in r["historical_attempt_jobs"]],
+                         [112911609417, 112916943525])
         for field in ("actual_artifact_bytes_downloaded_or_hashed",
                       "deleted_or_preexisting_expired_run_history_exhaustive",
                       "failed_attempt_originals_independently_preserved",
                       "source_retention_rights_granted",
                       "production_cutover_authorized"):
             self.assertFalse(report[field])
+
+    def test_changed_or_missing_historical_jobs_cannot_claim_complete_custody(self):
+        no_jobs = FakeAPI(jobs={(RUN, 1): [], (RUN, 2): [
+            job(112916943525, attempt=2)]})
+        row = census.collect(no_jobs, DAY, DAY, NOW)["runs"][0]
+        self.assertIn("attempt_has_no_retained_job_evidence", row["holds"])
+        self.assertIn("historical_failed_or_unfinished_job", row["holds"])
+        wrong = FakeAPI(jobs={(RUN, 1): [
+            job(112911609417, run_id=123456789, attempt=1)],
+            (RUN, 2): [job(112916943525, attempt=2)]})
+        with self.assertRaisesRegex(census.CensusHold,
+                                    "attempt_job_identity_or_status_invalid"):
+            census.collect(wrong, DAY, DAY, NOW)
+
+    def test_successful_top_level_rerun_must_keep_failed_first_attempt(self):
+        value = census.collect(FakeAPI(), DAY, DAY, NOW)["runs"][0]
+        self.assertEqual(value["conclusion"], "success")
+        self.assertIn("historical_failed_or_unfinished_job", value["holds"])
 
     def test_failed_first_attempt_not_erased_by_second_attempt(self):
         fake = FakeAPI(artifacts={
