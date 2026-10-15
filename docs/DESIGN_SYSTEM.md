@@ -21,6 +21,18 @@ IPR shell and the coastal ruling in §3. Source/route CSS and verification are
 specified in `FRONTEND_PRODUCTION_2026-10-09.md`; this records implementation
 scope, not merge, deployment or timeline editorial approval.
 
+## Brief journal candidate — 14 October 2026
+
+The owner-supplied editorial-system task applies the current IPR shell to all
+historical/native/source-linked Briefs and future approved issues. Its scoped
+`--brief-*` paper/object/source tokens and shared `briefs.css` supersede the
+older inline historical article presentation for this review candidate.
+Findings and Signals use structural turquoise; original evidence, warning and
+machine-output meanings remain intact. No new heading, excerpt, photograph or
+approval is inferred. Implementation, future-schema limits and exact release
+scope are in [the Brief journal specification](BRIEFS_JOURNAL_DESIGN_SYSTEM_2026-10-14.md).
+This is a review candidate, not an owner-approved deployment.
+
 ## 1. North star
 
 **A living editorial intelligence publication** — the published desk of a

@@ -8,6 +8,23 @@ RUNNER = ROOT / "scripts/run_briefs_render_release.py"
 
 
 class BriefsRenderReleaseContract(unittest.TestCase):
+    def test_review_replay_requires_exact_committed_output_and_release_requires_change(self):
+        from scripts.run_briefs_render_release import _check_replay_delta
+        _check_replay_delta(set(), verify_current=True)
+        with self.assertRaisesRegex(SystemExit, "differs from its render"):
+            _check_replay_delta({"output/briefs.css"}, verify_current=True)
+        with self.assertRaisesRegex(SystemExit, "no changes to release"):
+            _check_replay_delta(set())
+        _check_replay_delta({"output/briefs.css"})
+
+    def test_current_replay_mode_is_pr_only_and_preserves_manual_publication_gate(self):
+        contract = self.workflow.split("  contract:", 1)[1].split("  preview:", 1)[0]
+        manual = self.workflow.split("  preview:", 1)[1]
+        self.assertIn("--scope strict --verify-current", contract)
+        self.assertNotIn("--verify-current", manual)
+        self.assertNotIn("git push", contract)
+        self.assertNotIn("peaceiris/actions-gh-pages", contract)
+
     @classmethod
     def setUpClass(cls):
         cls.workflow = WORKFLOW.read_text(encoding="utf-8")

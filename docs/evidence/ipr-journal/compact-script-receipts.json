@@ -1,0 +1,457 @@
+{
+  "script_sha256": "b590d7ff194d40a5414a7b234f9d1d91425136f87446c9e4fdddaed055c1d5e7",
+  "checks": 90,
+  "receipts": [
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 320,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 375,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 768,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 1280,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "width": 1440,
+      "default_and_resize": true
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "width": 1440,
+      "default_and_resize": true
+    }
+  ],
+  "escape": true
+}

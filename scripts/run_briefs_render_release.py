@@ -114,13 +114,28 @@ def _check_db_and_worktree(db_hash: str) -> None:
             + "; ".join(outside_output[:20]))
 
 
+def _check_replay_delta(changed, *, verify_current=False):
+    """Review replays must match HEAD; publication still requires a delta."""
+    if verify_current:
+        if changed:
+            raise SystemExit("BLOCKED: committed Brief output differs from its render")
+    elif not changed:
+        raise SystemExit("BLOCKED: no changes to release")
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--scope", choices=("report-only", "strict"), default="report-only",
         help="report-only produces a preview; strict refuses any unreviewed output path",
     )
+    parser.add_argument(
+        "--verify-current", action="store_true",
+        help="CI-only replay check: require committed Brief output to be current; never publish",
+    )
     args = parser.parse_args(argv)
+    if args.verify_current and args.scope != "strict":
+        parser.error("--verify-current requires --scope strict")
     db = ROOT / "pla_watch.db"
     if not db.is_file():
         raise SystemExit("BLOCKED: tracked pla_watch.db is missing")
@@ -175,10 +190,13 @@ def main(argv=None) -> int:
             print("  " + path)
         if args.scope == "strict":
             raise SystemExit("BLOCKED: strict release scope failed; do not commit or deploy")
+    elif args.verify_current:
+        _check_replay_delta(changed, verify_current=True)
+        print("Committed Brief output matches the governed render; verification only.")
     elif not changed:
         print("No generated output changes.")
         if args.scope == "strict":
-            raise SystemExit("BLOCKED: no changes to release")
+            _check_replay_delta(changed)
     else:
         print("Final output scope is within the explicit Briefs release allow-list.")
     if args.scope == "strict" and (

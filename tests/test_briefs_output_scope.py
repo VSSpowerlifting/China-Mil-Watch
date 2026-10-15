@@ -1,4 +1,4 @@
-"""Output-scope tests for the Phase 3C / No. 17 release."""
+"""The shared Brief release scope excludes other desks and publication data."""
 from pathlib import Path
 import subprocess
 import tempfile
@@ -13,6 +13,8 @@ from scripts.guard_briefs_render_scope import (
 class BriefsOutputScopeTests(unittest.TestCase):
     def test_exact_native_and_historical_routes_are_reviewed(self):
         self.assertTrue(is_reviewed_path("output/analysis.html"))
+        self.assertTrue(is_reviewed_path("output/briefs/what-is-being-built-in-laos.html"))
+        self.assertTrue(is_reviewed_path("output/shell.js"))
         self.assertTrue(is_reviewed_path("output/briefs/trident-resolve-regional-scale-specific-chinese-tasks.html"))
         self.assertTrue(is_reviewed_path("output/the-pla-watch/posts/2026-08-15.html"))
         self.assertTrue(is_reviewed_path("output/assets/catalogue/media/no-17-trident-resolve-basarnas-drone.jpg"))

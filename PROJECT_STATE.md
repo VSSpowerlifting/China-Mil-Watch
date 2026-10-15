@@ -1,5 +1,23 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Brief editorial journal (14 October 2026, owner-review candidate):**
+`codex/ipr-editorial-design-system-20261014` builds on verified main
+`889ef3ed67e2984d8fbf6acce80f29e0fbc95a90` after reconciliation of the approved
+coastal palette and normal daily update. PR #567 is the navigation prerequisite
+(merge `3799e78a83`, dependency CI `38593731223` passed). All 18 Briefs and future native/source-linked articles
+share a clean paper folio, sea-glass editorial/source objects, section rhythm,
+responsive reading navigation and print/forced-color fallbacks. Historical
+inline presentation is consolidated into the shared stylesheet; native and
+historical adapters share a navigation macro. Five isolated future fixtures
+exercise granted/no photography, long cross-desk, short and source-linked
+reading variants through actual contracts. No canonical manuscripts, approvals,
+media, DB, sources, feeds or desk status changes. The existing exact approved
+Laos presentation remains authoritative. Implementation/limits/release scope:
+`docs/BRIEFS_JOURNAL_DESIGN_SYSTEM_2026-10-14.md`; browser and preservation
+receipts: `docs/evidence/ipr-journal/README.md`. The reviewed candidate requires
+owner visual review and successful exact-head CI before any landing decision;
+no merge or deployment is authorized by this task.
+
 **Coastal visual identity (14 October 2026, owner-review candidate):**
 `codex/coastal-visual-identity` starts at exact latest main
 `216dfbb8babc6a0d4d711494c7787a29f84e201e` (#561 merged). Active IPR CSS and edition

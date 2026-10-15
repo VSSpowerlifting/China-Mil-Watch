@@ -1,0 +1,44 @@
+[
+  {
+    "selector": ".brief-section>p",
+    "ratio": 12.72,
+    "ink": "rgb(29, 45, 49)",
+    "bg": "rgb(243, 242, 236)"
+  },
+  {
+    "selector": ".brief-reading-finding blockquote p",
+    "ratio": 12.1,
+    "ink": "rgb(29, 45, 49)",
+    "bg": "rgb(231, 238, 234)"
+  },
+  {
+    "selector": ".brief-reading-finding>h2",
+    "ratio": 7.35,
+    "ink": "rgb(16, 84, 86)",
+    "bg": "rgb(231, 238, 234)"
+  },
+  {
+    "selector": ".brief-toc a",
+    "ratio": 6.8,
+    "ink": "rgb(64, 84, 86)",
+    "bg": "rgb(231, 238, 234)"
+  },
+  {
+    "selector": ".brief-record-meta",
+    "ratio": 6.96,
+    "ink": "rgb(64, 84, 86)",
+    "bg": "rgb(237, 240, 233)"
+  },
+  {
+    "selector": ".brief-excerpt-trace",
+    "ratio": 6.8,
+    "ink": "rgb(64, 84, 86)",
+    "bg": "rgb(231, 238, 234)"
+  },
+  {
+    "selector": ".brief-author p",
+    "ratio": 7.14,
+    "ink": "rgb(64, 84, 86)",
+    "bg": "rgb(243, 242, 236)"
+  }
+]

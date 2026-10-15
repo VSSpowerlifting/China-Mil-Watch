@@ -1,0 +1,6 @@
+{# All article adapters provide existing targets and labels through the caller. #}
+{% macro reading_navigation() -%}
+<details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
+  <nav class="brief-toc" aria-label="In this brief"><ol>{{ caller() }}</ol></nav>
+</details>
+{%- endmacro %}
