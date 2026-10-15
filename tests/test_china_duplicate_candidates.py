@@ -3,7 +3,8 @@ import copy
 import unittest
 
 from scripts.audit_china_duplicate_candidates import (
-    duplicate_candidates, normalized_title, text_quality_warning)
+    compare_stored_bodies, duplicate_candidates, normalized_title,
+    text_quality_warning)
 
 
 def fixture():
@@ -75,6 +76,22 @@ class ChinaDuplicateCandidatesTest(unittest.TestCase):
             duplicate_candidates(d)
         with self.assertRaises(ValueError):
             duplicate_candidates(fixture(), day_span=8)
+
+    def test_pair_text_overlap_never_authorizes_removal(self):
+        first = '<div class="original-text"><p>' + ("同一官方原始文本。" * 30) + '</p></div>'
+        same = '<div class="original-text"><p>' + ("同一官方原始文本。" * 30) + '</p></div>'
+        unrelated = ('<div class="original-text"><p>'
+                     + ("Completely unrelated page teaser content. " * 30)
+                     + '</p></div>')
+        high = compare_stored_bodies(first, same)
+        self.assertEqual(high["status"], "high_stored_text_overlap_review")
+        self.assertEqual(high["similarity"], 1)
+        self.assertNotIn("canonical_id", high)
+        low = compare_stored_bodies(first, unrelated)
+        self.assertEqual(low["status"], "divergent_stored_text_review")
+        self.assertEqual(low["similarity"], 0)
+        self.assertEqual(compare_stored_bodies(first, "<p>none</p>")["status"],
+                         "manual_review_missing_body")
 
     def test_stored_text_inspected_without_footer_contamination(self):
         messy = ('<div class="original-text"><p>Story ... other ... various ... '
