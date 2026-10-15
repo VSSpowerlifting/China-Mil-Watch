@@ -37,9 +37,11 @@ def main(argv=None):
         with sqlite3.connect(str(db)) as conn:
             apply_all(conn, sync_config=False)
             receipt = admission.admit(conn, verified, policy, as_of_utc=now)
-            conn.commit()
-            if conn.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
+            # Check before final commit so a corruption warning cannot return
+            # HOLD while already committing the newly admitted rows.
+            if conn.execute("PRAGMA quick_check").fetchone()[0] != "ok":
                 raise admission.MetadataHold("production_sqlite_integrity_failed")
+            conn.commit()
             # Git-tracked DB cannot retain untracked WAL sidecars.
             conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
             conn.execute("PRAGMA journal_mode=DELETE")
