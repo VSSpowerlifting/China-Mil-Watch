@@ -122,7 +122,7 @@ class TestAttestation(unittest.TestCase):
 
     def test_wrong_commit_digest_holds(self):
         git(self.path,"commit","--amend","-q","-m",
-            self.message.replace("b"*64,"f"*64))
+            self.message.replace(packet()["official_listing_sha256"],"f"*64))
         self.head=git(self.path,"rev-parse","HEAD")
         with self.assertRaises(BISAttestationHold):
             self.attest()
