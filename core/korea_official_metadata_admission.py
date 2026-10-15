@@ -134,6 +134,7 @@ def validate(packet, policy):
              and candidate.get("language_tag") == "ko"
              and candidate.get("approved_for_production") is False
              and candidate.get("approved_for_publication") is False
+             and candidate.get("approved_for_model_or_email") is False
              and candidate.get("original_text_included") is False
              and candidate.get("original_title_included") is False
              and candidate.get("original_media_included") is False,
@@ -192,11 +193,11 @@ def admit(conn: sqlite3.Connection, packet, policy, *, as_of_utc):
         for row in rows:
             old = conn.execute(
                 "SELECT canonical_official_url, publisher_posted_date, "
-                "candidate_version_sha256, public_scope "
+                "candidate_version_sha256, original_title_sha256, public_scope "
                 "FROM korea_official_source_records WHERE source_identity=?",
                 (row[0],)).fetchone()
             if old is not None:
-                need(tuple(old) == (row[1], row[2], row[5], "official_link_only"),
+                need(tuple(old) == (row[1], row[2], row[5], row[6], "official_link_only"),
                      "reviewed_source_version_or_status_changed")
                 unchanged += 1
                 continue
