@@ -55,6 +55,8 @@ def _fetch(opener, url, limit):
             if len(raw) > limit:
                 return None, "oversize_response"
             return (raw, "ok") if raw else (None, "empty_response")
+    except urllib.error.HTTPError as exc:
+        return None, "http_" + str(exc.code)
     except (urllib.error.URLError, TimeoutError, OSError, ValueError):
         return None, "transport_or_policy_unavailable"
 
