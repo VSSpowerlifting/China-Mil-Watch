@@ -203,6 +203,16 @@ class EncryptedVaultBackupTests(unittest.TestCase):
             backup.create_backup(self.bare, unsafe, self.fpr, self.pins,
                                  gpg_home=self.gpg_home)
 
+    def test_backup_target_inside_a_different_git_checkout_is_rejected(self):
+        # Unlike the bare source mirror, this is a separate Git worktree.
+        # Never let encrypted custody backups become accidentally committable.
+        unsafe = self.work / "accidental-public-git-backup.bundle.gpg"
+        with self.assertRaisesRegex(
+                backup.BackupHold, "backup_target_unsafe_or_exists"):
+            backup.create_backup(self.bare, unsafe, self.fpr, self.pins,
+                                 gpg_home=self.gpg_home)
+        self.assertFalse(unsafe.exists())
+
     def test_invalid_crypto_fingerprint_and_duplicate_ref_fail(self):
         with self.assertRaisesRegex(backup.BackupHold, "recipient_fingerprint_invalid"):
             backup.create_backup(self.bare, self.output, "not-a-key",
