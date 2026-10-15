@@ -1,0 +1,404 @@
+[
+ {
+  "final_url": "https://www.afp.mil.ph/robots.txt",
+  "headers": {
+   "Content-Type": "text/plain"
+  },
+  "http_status": 200,
+  "payload_bytes": 45,
+  "payload_retained": true,
+  "payload_sha256": "befa30284d46cf89ba3ab58ba65af7e987be472e9efcdd368c98cea0530e378b",
+  "requested_url": "https://www.afp.mil.ph/robots.txt",
+  "retrieved_at": "2026-10-15T12:01:58+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/robots.txt",
+  "headers": {
+   "Content-Type": "text/html; charset=utf-8",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 404,
+  "payload_bytes": 179,
+  "payload_retained": true,
+  "payload_sha256": "5547992afdadb59737c5c0feb1a35dff294cd27145bf290c031737ecf8a2577d",
+  "requested_url": "https://api.afp.mil.ph/robots.txt",
+  "retrieved_at": "2026-10-15T12:02:03+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page_size=100&page=1",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 105639,
+  "payload_retained": true,
+  "payload_sha256": "b4dc4f742403ab8e4f6f3ae3261ef4f1a8c65947a47623f659ffb75b515e0a50",
+  "requested_url": "https://api.afp.mil.ph/articles/?page_size=100&page=1",
+  "retrieved_at": "2026-10-15T12:02:05+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=2&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 108622,
+  "payload_retained": true,
+  "payload_sha256": "9855f5234124f228c7f873e815a8fd15b6b2bfdff68bfdd1096efbc11b09a20b",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=2&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:07+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=3&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 116545,
+  "payload_retained": true,
+  "payload_sha256": "99b09c3ce5600a54b1437bdb3492679ea88b4914f5e3c2410a6ceb97744b5e49",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=3&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:10+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=4&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 130227,
+  "payload_retained": true,
+  "payload_sha256": "c493141e4f00df3fc12c19f0754a762f11fcbbd3a01b7f389d5382d78a695daf",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=4&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:12+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=5&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 136206,
+  "payload_retained": true,
+  "payload_sha256": "0baa290b51552d265b868c6b8be5b9af0f4c5dbc28ea9750b4f7b5391b40bafc",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=5&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:14+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=6&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 157903,
+  "payload_retained": true,
+  "payload_sha256": "4bd85978747365596da6885572ced056829b72b6b85ccb290dc9276d4dfb7ba1",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=6&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:17+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=7&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 140311,
+  "payload_retained": true,
+  "payload_sha256": "f81939f6b518987f69d1d72222fe7f6530afa0dbb0128cca834a7b56035ceb7e",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=7&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:19+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=8&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 111358,
+  "payload_retained": true,
+  "payload_sha256": "19a19fae9fc8139cac6e39eff0fc359fad37ccdaac75d6e9d944339faf637247",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=8&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:22+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=9&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 126512,
+  "payload_retained": true,
+  "payload_sha256": "d043282740c620aad7842e931ce92b9baebdd80792b515320d5c2ab2f9a274f6",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=9&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:24+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=10&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 123068,
+  "payload_retained": true,
+  "payload_sha256": "1b93fdbe78fb218a8989e95f4c452862a2594befc1dc54b58442fa94ca86583f",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=10&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:27+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/?page=11&page_size=100",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 127059,
+  "payload_retained": true,
+  "payload_sha256": "6dc2adbbe7956bf6bbefe8483062be14426380ca5766583d45c4522d9dad94a3",
+  "requested_url": "https://api.afp.mil.ph/articles/?page=11&page_size=100",
+  "retrieved_at": "2026-10-15T12:02:29+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-chief-visits-cyber-command-assesses-operational-capabilities/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2177,
+  "payload_retained": false,
+  "payload_sha256": "92110538c68157559c05696312e5a6a601793ed4cc12713ebf0f0025fe461131",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-chief-visits-cyber-command-assesses-operational-capabilities/",
+  "retrieved_at": "2026-10-15T12:02:32+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-chief-highlights-information-operations-counter-disinformation-efforts-during-cmoc-visit/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 3176,
+  "payload_retained": false,
+  "payload_sha256": "d56a8a3601641994daabd2c2e1e5391cfd662a28d571c9630679731755f0cde7",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-chief-highlights-information-operations-counter-disinformation-efforts-during-cmoc-visit/",
+  "retrieved_at": "2026-10-15T12:02:34+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-celebrates-distinguished-service-marks-rescom-leadership-transition/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2804,
+  "payload_retained": false,
+  "payload_sha256": "6dbaec9e40e1369331af5ffff66aa47ed6f277f690c63e068c9914b8f4a45d3e",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-celebrates-distinguished-service-marks-rescom-leadership-transition/",
+  "retrieved_at": "2026-10-15T12:02:36+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-reinforces-stakeholder-engagement-in-advancing-defense-governance/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2874,
+  "payload_retained": false,
+  "payload_sha256": "2ce53ab84044bd70fa30573783433e6bd88e95fbd3a7645736d2dd9cc760a03f",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-reinforces-stakeholder-engagement-in-advancing-defense-governance/",
+  "retrieved_at": "2026-10-15T12:02:38+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-welcomes-new-chiefs-of-key-offices-in-leadership-transition/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 3035,
+  "payload_retained": false,
+  "payload_sha256": "23c7a45be24d2c9f55aae34325ced1570931e82e967480424a36ff2d4fa11fb5",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-welcomes-new-chiefs-of-key-offices-in-leadership-transition/",
+  "retrieved_at": "2026-10-15T12:02:41+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-chief-of-staff-visits-nolcom-commends-personnel-for-exemplary-performance/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2623,
+  "payload_retained": false,
+  "payload_sha256": "b7df8a199cfdfd458f83131339420bd21255c8f630762e6b9531419649a8f87a",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-chief-of-staff-visits-nolcom-commends-personnel-for-exemplary-performance/",
+  "retrieved_at": "2026-10-15T12:02:43+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-leadership-calls-for-efficient-modernized-pension-services-under-new-pgmc-chief/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2901,
+  "payload_retained": false,
+  "payload_sha256": "bac918371b823243443cda5017b3ed0cb394eef793d3f987b4593b2bc6f69b07",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-leadership-calls-for-efficient-modernized-pension-services-under-new-pgmc-chief/",
+  "retrieved_at": "2026-10-15T12:02:45+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/chief-of-staff-pushes-for-sustained-military-presence-enhanced-western-defense/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2983,
+  "payload_retained": false,
+  "payload_sha256": "8d77ad5525a0aac2359f6c9bb9d131f05653c875c57ed8b0ad63ad35389ea3eb",
+  "requested_url": "https://api.afp.mil.ph/articles/chief-of-staff-pushes-for-sustained-military-presence-enhanced-western-defense/",
+  "retrieved_at": "2026-10-15T12:02:47+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-chief-of-staff-visits-wounded-soldiers-reaffirms-commitment-to-personnel-and-security-efforts/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 3313,
+  "payload_retained": false,
+  "payload_sha256": "441104fb3d32633c52f1a68df2d9a3566d33edb6028d239d39c68f6144288389",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-chief-of-staff-visits-wounded-soldiers-reaffirms-commitment-to-personnel-and-security-efforts/",
+  "retrieved_at": "2026-10-15T12:02:50+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-welcomes-new-thai-defense-attache-honors-predecessor/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2460,
+  "payload_retained": false,
+  "payload_sha256": "63113d13beca1b7e4bf1748f24a9ef1b7b5e7b2559cfd8948fe87ca6fefdb3a4",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-welcomes-new-thai-defense-attache-honors-predecessor/",
+  "retrieved_at": "2026-10-15T12:02:52+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-chief-visits-amc-recognizes-role-in-sustaining-visayas-missions/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2485,
+  "payload_retained": false,
+  "payload_sha256": "6401f5edde89c932a15cc554b44135912e75653eb673d66bd42a762b2e1de4e9",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-chief-visits-amc-recognizes-role-in-sustaining-visayas-missions/",
+  "retrieved_at": "2026-10-15T12:02:54+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-chief-recognizes-naval-personnel-underscores-maritime-readiness/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2594,
+  "payload_retained": false,
+  "payload_sha256": "ac2793271510b701643a9b5bd220fb29fd70ec65dedf0c1eee0e7f1b53d5de83",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-chief-recognizes-naval-personnel-underscores-maritime-readiness/",
+  "retrieved_at": "2026-10-15T12:02:57+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-chief-calls-for-one-visayas-command-under-new-commander/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2868,
+  "payload_retained": false,
+  "payload_sha256": "4eba6ad8d3142823e19878fd02df6b53cabff6fa890fa5dcc4f98c15589f86fe",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-chief-calls-for-one-visayas-command-under-new-commander/",
+  "retrieved_at": "2026-10-15T12:02:59+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-marks-36-years-of-code-of-conduct-honors-excellence-in-service/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2791,
+  "payload_retained": false,
+  "payload_sha256": "98354f630a8a6cf12d803084da952d54f40ab8ea10cffd8763162a9fa61af4c0",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-marks-36-years-of-code-of-conduct-honors-excellence-in-service/",
+  "retrieved_at": "2026-10-15T12:03:01+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-pnp-pcg-conclude-interagency-exercise-pagsasanay-sanlakas-2026/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2916,
+  "payload_retained": false,
+  "payload_sha256": "c83bd2879965c164e1de3132544300bb167d275b3eaa1ef46b8b27246a672fd5",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-pnp-pcg-conclude-interagency-exercise-pagsasanay-sanlakas-2026/",
+  "retrieved_at": "2026-10-15T12:03:03+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-pnp-pcg-strengthen-interagency-response-through-field-training-exercise/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2603,
+  "payload_retained": false,
+  "payload_sha256": "79b5f6ec5b3a649c6eca1653b249730e16043072cef7994f7debde3ec3c23d20",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-pnp-pcg-strengthen-interagency-response-through-field-training-exercise/",
+  "retrieved_at": "2026-10-15T12:03:06+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/strengthening-airpower-readiness-csafp-joins-paf-in-air-defense-training/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 3142,
+  "payload_retained": false,
+  "payload_sha256": "8aaaf98e3b5adb036376e11c2bb313240ef24c38117850fca7abea33ef936776",
+  "requested_url": "https://api.afp.mil.ph/articles/strengthening-airpower-readiness-csafp-joins-paf-in-air-defense-training/",
+  "retrieved_at": "2026-10-15T12:03:08+00:00"
+ },
+ {
+  "final_url": "https://api.afp.mil.ph/articles/afp-pnp-pcg-sustain-joint-readiness-through-2026-inter-agency-exercise/",
+  "headers": {
+   "Content-Type": "application/json",
+   "X-Robots-Tag": "noindex, nofollow"
+  },
+  "http_status": 200,
+  "payload_bytes": 2804,
+  "payload_retained": false,
+  "payload_sha256": "4aa1a2cc997f1c19c03d8c17e81c7745027188a57d67ac2d7eb69dc799ba081e",
+  "requested_url": "https://api.afp.mil.ph/articles/afp-pnp-pcg-sustain-joint-readiness-through-2026-inter-agency-exercise/",
+  "retrieved_at": "2026-10-15T12:03:10+00:00"
+ }
+]
