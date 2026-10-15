@@ -61,6 +61,21 @@ class ChinaCurationAuditTest(unittest.TestCase):
         self.assertIn("pla_daily", first["review_sample_by_source"])
         self.assertIn("mod_china", first["review_sample_by_source"])
 
+    def test_rejected_records_receive_false_negative_control_review(self):
+        source = fixture()
+        for index in range(9, 24):
+            source["records"].append(
+                [index, "2026-07-%02d" % (index - 8), 0, 1, "", "复核"])
+        result = audit(source, target=6)
+        self.assertEqual(result["review_sample_count"], 6)
+        self.assertEqual(result["screening_negative_control_records"], 1)
+        control = [r for r in result["rows"]
+                   if r["review_status"] == "screening_negative_control"]
+        self.assertEqual(len(control), 1)
+        self.assertEqual(control[0]["state"], "not_selected")
+        self.assertFalse(control[0]["editorially_approved"])
+        self.assertEqual(result["protected_china_trail_records"], 1)
+
     def test_protected_records_are_not_lost_to_target_limit(self):
         source = fixture()
         source["trail_ids"] = [1, 2, 3]
