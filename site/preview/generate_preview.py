@@ -3128,9 +3128,15 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "continuity.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
+    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
+    # No empty navigation asset: ordinary collections with fewer than two
+    # published Briefs must not acquire a dead stylesheet dependency.
+    if len(collection.rows) > 1:
+        (out_dir / "continuity.css").write_bytes(
+            (Path(__file__).parent / "continuity.css").read_bytes())
+        written.append("continuity.css")
     # Explicit named assets only: homepage relief sprites and Phase 4A Desks
     # flag tabs (including the MIT notice). No unrelated glyphs or gallery art.
     for route in RELIEF_PRODUCTION_ASSETS + DESKS_PUBLIC_FLAG_ASSETS:
