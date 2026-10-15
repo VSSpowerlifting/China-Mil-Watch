@@ -129,6 +129,34 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         self.assertEqual(list(self.scratch.iterdir()), [])
         self.assertFalse(any(".part" in p.name for p in self.root.iterdir()))
 
+    def test_single_failed_attempt_can_be_backed_up_without_rerun_jobs(self):
+        # An original failed run may never have been re-run; its retained ZIP
+        # must still remain eligible for integrity-only encrypted custody.
+        run_row = self.record["runs"][0]
+        run_row["latest_run_attempt"] = 1
+        run_row["conclusion"] = "failure"
+        run_row["historical_attempt_jobs"] = []
+        run_row["artifacts"] = [run_row["artifacts"][0]]
+        (self.zips / ("artifact-%d.zip" % TWO)).unlink()
+        self.write_inventory()
+        receipt = self.create()
+        self.assertEqual(receipt["attempt_artifact_count"], 1)
+        verified = self.verify(receipt)
+        self.assertEqual(verified["artifact_count_verified"], 1)
+        self.assertFalse(verified["downloaded_zip_origin_authenticated"])
+        self.assertFalse(verified["production_cutover_authorized"])
+
+    def test_wrong_private_key_cannot_certify_recovery(self):
+        receipt = self.create()
+        wrong_home = self.root / "not-our-private-key"
+        wrong_home.mkdir(mode=0o700)
+        with self.assertRaises(box.Hold):
+            box.restore(self.encrypted, receipt["ciphertext_sha256"],
+                        receipt["source_inventory_sha256"], RUN,
+                        inventory=self.manifest, scratch_dir=self.scratch,
+                        gpg_home=wrong_home)
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
     def test_moving_or_modified_original_receipt_fails_closed(self):
         self.record["runs"][0]["artifacts"][0]["id"] = 98765432101
         self.write_inventory()
