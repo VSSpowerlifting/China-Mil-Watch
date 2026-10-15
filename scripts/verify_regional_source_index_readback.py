@@ -131,7 +131,8 @@ def validate_page(actual_html, expected):
     return len(seen)
 
 
-def verify(db_path, site_dir, *, pages_dir=None, require_records=False):
+def verify(db_path, site_dir, *, pages_dir=None, require_records=False,
+           required_desks=()):
     site_dir = Path(site_dir)
     need(site_dir.is_dir() and not site_dir.is_symlink(),
          "committed_site_directory_missing")
@@ -139,6 +140,10 @@ def verify(db_path, site_dir, *, pages_dir=None, require_records=False):
     if pages_dir is not None:
         need(pages_dir.is_dir() and not pages_dir.is_symlink(),
              "deployed_pages_checkout_missing")
+    required = set(ROUTES) if require_records else set()
+    need(all(desk in ROUTES for desk in required_desks),
+         "unknown_required_regional_source_desk")
+    required.update(required_desks)
     result = {
         "schema": SCHEMA,
         "metadata_only": True,
@@ -159,7 +164,7 @@ def verify(db_path, site_dir, *, pages_dir=None, require_records=False):
         except (OSError, UnicodeError):
             raise ReadbackHold("committed_page_unavailable_or_non_utf8") from None
         count = validate_page(html, expected)
-        if require_records:
+        if desk in required:
             need(count > 0, "claimed_live_desk_has_no_admitted_source_links")
         if pages_dir is not None:
             deployed = pages_dir / route
@@ -182,11 +187,15 @@ def main(argv=None):
     p.add_argument("--site-dir", required=True, type=Path)
     p.add_argument("--deployed-dir", type=Path)
     p.add_argument("--require-records", action="store_true",
-                   help="Refuse to call either desk live without an admitted row")
+                   help="Require nonempty verified links in BOTH regional desks")
+    p.add_argument("--require-desk", choices=sorted(ROUTES), action="append",
+                   default=[],
+                   help="Require admitted links for this desk; may be repeated")
     args = p.parse_args(argv)
     try:
         receipt = verify(args.db, args.site_dir, pages_dir=args.deployed_dir,
-                         require_records=args.require_records)
+                         require_records=args.require_records,
+                         required_desks=args.require_desk)
     except (ReadbackHold, OSError, ValueError) as exc:
         reason = (str(exc) if isinstance(exc, ReadbackHold)
                   else "regional_source_index_readback_failed")
