@@ -1,0 +1,106 @@
+name: AFP October 14 — pinned four-record review docket
+
+# Read-only metadata for original-source human review. No collector,
+# publication, source/body redistribution, production admission or email.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/ph_afp_oct14_review_docket.yml
+      - tests/test_ph_afp_oct14_review_docket_workflow.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ph-afp-oct14-review-docket
+  cancel-in-progress: false
+
+jobs:
+  contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Validate existing AFP packet, docket and workflow contracts
+        run: python -m unittest tests.test_ph_afp_review_docket tests.test_ph_afp_run_review tests.test_ph_afp_oct14_review_docket_workflow -q
+      - name: Assert worktree preservation
+        run: test -z "$(git status --porcelain --untracked-files=all)"
+
+  prepare:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Exercise offline human-review contracts
+        run: python -m unittest tests.test_ph_afp_review_docket tests.test_ph_afp_run_review tests.test_ph_afp_oct14_review_docket_workflow -q
+      - name: Pin existing AFP shadow to exact reviewed Oct 14 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          pin=4dd40b9655ec53fe4fae829eb12ba21032946b25
+          repo="$RUNNER_TEMP/afp-original-state"
+          git clone -q --single-branch --branch shadow/ph-afp \
+            "https://github.com/$GITHUB_REPOSITORY.git" "$repo"
+          git -C "$repo" cat-file -e "$pin^{commit}"
+          git -C "$repo" merge-base --is-ancestor "$pin" HEAD
+          test "$(git -C "$repo" ls-tree --name-only "$pin")" = state
+          git -C "$repo" checkout -q --detach "$pin"
+          test "$(git -C "$repo" rev-parse HEAD)" = "$pin"
+      - name: Produce unsigned four-record metadata-only docket
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.prepare_ph_afp_review_docket \
+            --state-repo "$RUNNER_TEMP/afp-original-state" \
+            --batch 4dd40b9655ec53fe4fae829eb12ba21032946b25:38562843186-1 \
+            --format json > "$RUNNER_TEMP/afp-oct14-unsigned-review.json"
+          python - "$RUNNER_TEMP/afp-oct14-unsigned-review.json" <<'PY'
+          import json, pathlib, sys
+          d = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          assert d["protocol"] == "ipr_ph_afp_metadata_review_docket_v1"
+          assert d["total_source_records"] == 4
+          assert d["body_unavailable_records"] == 0
+          for key in ("source_bodies_or_raw_api_responses_included", "human_review_completed",
+                      "source_reuse_approved", "production_eligible", "weekly_ai_writer_eligible"):
+              assert d[key] is False
+          assert d["automated_review_decisions"] == 0
+          assert len(d["batches"]) == 1
+          batch = d["batches"][0]
+          assert batch["target_date"] == "2026-10-14"
+          assert batch["run_id"] == "38562843186-1"
+          assert batch["historical_state_commit"] == "4dd40b9655ec53fe4fae829eb12ba21032946b25"
+          assert len(batch["records"]) == 4
+          assert len({r["source_identity"] for r in batch["records"]}) == 4
+          assert all(r["review_status"] == "not_started" and r["human_review_authenticated"] is False
+                     for r in batch["records"])
+          print("Four exact-pinned original-source review candidates; no approval or send.")
+          PY
+      - name: No production or shadow write
+        if: always()
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Upload metadata docket only
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afp-oct14-unsigned-review-${{ github.run_id }}
+          path: ${{ runner.temp }}/afp-oct14-unsigned-review.json
+          if-no-files-found: error
+          retention-days: 7
