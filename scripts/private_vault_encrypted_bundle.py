@@ -184,12 +184,25 @@ def create_backup(repo, output, recipient, refs, *, gpg_home=None):
             raise BackupHold("encrypted_export_unavailable") from None
         if source_status or crypto_status or not Path(partial).stat().st_size:
             raise BackupHold("encrypted_export_failed")
+        # Reject changes while Git was serializing the source history. A
+        # source mirror is frozen only if its refs and object census are still
+        # the exact same ones after the encryption stream closes.
+        if _inventory(repo) != expected or _object_count(repo) != objects:
+            raise BackupHold("source_changed_during_backup")
+        # Flush ciphertext bytes before publishing the final no-clobber name.
+        with open(partial, "rb") as saved:
+            os.fsync(saved.fileno())
         encrypted_sha = _sha256(partial)
         encrypted_bytes = Path(partial).stat().st_size
         # Atomic no-clobber; avoid os.replace, which could silently replace a
         # different backup written by another operator after our first check.
         try:
             os.link(partial, target)
+            directory_fd = os.open(str(target.parent), os.O_RDONLY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
         except OSError:
             raise BackupHold("backup_target_race_or_unsafe") from None
         return {
