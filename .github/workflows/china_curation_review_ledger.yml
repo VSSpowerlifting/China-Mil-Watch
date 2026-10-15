@@ -1,0 +1,58 @@
+name: China curation review ledger contracts
+
+# Focused, offline PR checks only. Not a publication, approval, scrape, or
+# replacement for the full PR offline checks.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/validate_china_curation_review.py
+      - tests/test_china_curation_review_ledger.py
+      - research/china/archive-curation-triage-2026-10-15.json
+      - docs/CHINA_CURATION_REVIEW_LEDGER_2026-10-15.md
+      - .github/workflows/china_curation_review_ledger.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-curation-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate-unsigned-ledger:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Baseline protected corpus and generated output
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/china-db-before.sha"
+          git status --porcelain --untracked-files=all -- pla_watch.db output/ > "$RUNNER_TEMP/china-output-before.txt"
+          test ! -s "$RUNNER_TEMP/china-output-before.txt"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Focused custody and review state tests
+        run: python -m unittest -v tests.test_china_curation_review_ledger
+      - name: Validate actual seven-record unsigned docket
+        run: |
+          python scripts/validate_china_curation_review.py \
+            --index output/corpus-index.json \
+            --ledger research/china/archive-curation-triage-2026-10-15.json
+      - name: Confirm no publication switch or custody changes
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/china-db-before.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
