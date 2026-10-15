@@ -152,12 +152,21 @@ jobs:
           reg = json.loads(Path("desks/registry.json").read_text(encoding="utf-8"))
           country = {x["slug"]: x for x in reg["desks"]}
           assert {"china", "singapore", "philippines", "vietnam", "indonesia"} <= country.keys()
+          # A permanently publishing IPR editorial desk is NOT an admitted
+          # source collector. Allow its approved research heading only when
+          # the same catalog is independently authenticated by the render gate.
+          from core.public_editorial_research import load_catalog
+          editorial_desks = {entry["desk"] for entry in load_catalog()}
           for name in ("philippines", "vietnam", "indonesia"):
               d = country[name]
               assert d["public"] is True and d["status"] == "shadow"
               assert d["manifest"] is None and d["has_production_records"] is False
               text = (base / (name + ".html")).read_text(encoding="utf-8")
-              assert "Shadow evaluation" in text
+              if name in editorial_desks:
+                  assert "IPR research published — official originals linked" in text
+                  assert "not a production source-text archive" in text
+              else:
+                  assert "Shadow evaluation" in text
               assert "Individually reviewed official-source references" in text
               assert "No individual source references have completed" in text
               assert "data-reference-list" not in text
