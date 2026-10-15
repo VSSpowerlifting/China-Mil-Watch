@@ -149,13 +149,23 @@ class TheMechanismIsWhatWeThinkItIs(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.tmp, True)
         self.db = self.tmp / "copy.db"
         shutil.copy(TRACKED, self.db)
+        # The production database may now use rollback journaling. This
+        # regression test is specifically about WAL sidecar behavior, so
+        # construct that mode explicitly on the THROWAWAY copy, not main.
+        # Never require the tracked DB to retain one journal format forever.
+        con = sqlite3.connect(str(self.db))
+        try:
+            self.assertEqual("wal", con.execute(
+                "PRAGMA journal_mode=WAL").fetchone()[0].lower())
+        finally:
+            con.close()
 
     def sides(self):
         return [s for s in SIDECARS if (self.tmp / (self.db.name + s)).exists()]
 
     def test_the_database_really_is_in_wal_mode(self):
         """Bytes 18 and 19 of the header are the write and read versions;
-        2 means WAL. If this ever stops being true the rest is moot."""
+        2 means WAL on the explicit scratch WAL-mode fixture."""
         with open(self.db, "rb") as fh:
             header = fh.read(20)
         self.assertEqual(2, header[18])
