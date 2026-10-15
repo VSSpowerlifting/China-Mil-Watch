@@ -1,0 +1,40 @@
+name: China scratch deletion — atomic tombstone contract
+
+on:
+  pull_request:
+    paths:
+      - "scripts/stage_china_retirement_atomic.py"
+      - "tests/test_china_retirement_atomic.py"
+      - "docs/CHINA_ATOMIC_RETIREMENT_SCRATCH_2026-10-15.md"
+      - ".github/workflows/china_retirement_atomic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  sqlite-atomic-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Fingerprint tracked database before running contracts
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/source-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Exercise transactional physical retirement on disposable SQLite
+        run: python -m unittest -v tests.test_china_retirement_atomic
+      - name: Verify that production DB/output never changed
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/source-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
