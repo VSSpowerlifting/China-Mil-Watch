@@ -1,0 +1,66 @@
+name: China editorial PLA Daily batch 02
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/prepare_china_editorial_batch.py
+      - tests/test_china_editorial_batch02.py
+      - research/china/editorial-batch-02-2026-10-15.json
+      - docs/CHINA_EDITORIAL_BATCH02_2026-10-15.md
+      - .github/workflows/china_editorial_batch02.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-editorial-batch02-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  private-source-packet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Freeze unchanged public corpus and database
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db-original.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- output/ pla_watch.db)"
+      - name: Test both original and second unsigned intake packets
+        run: python -m unittest -v tests.test_china_editorial_batch tests.test_china_editorial_batch02
+      - name: Generate actual 25-case pilot from preserved files
+        run: |
+          set -euo pipefail
+          python scripts/prepare_china_editorial_batch.py \
+            --index output/corpus-index.json \
+            --batch research/china/editorial-batch-02-2026-10-15.json \
+            --records-dir output/record \
+            --output-dir "$RUNNER_TEMP/private-china-batch02"
+          python - "$RUNNER_TEMP/private-china-batch02/summary.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1]))
+          assert data["batch_records"] == 25
+          assert data["source_counts"] == {"pla_daily": 25}
+          assert data["owner_approved"] is False
+          assert data["publication_enabled"] is False
+          assert not any(c["editorial_decision"] for c in data["entries"])
+          assert len(data["review_lane_counts"]) == 5
+          assert all(n == 5 for n in data["review_lane_counts"].values())
+          print("Batch 02: 25 unapproved PLA Daily originals, five editorial contrast lanes")
+          PY
+      - name: Verify no canonical change
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db-original.sha"
+          git diff --exit-code -- output/ pla_watch.db
+          test -z "$(git status --porcelain --untracked-files=all -- output/ pla_watch.db)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
