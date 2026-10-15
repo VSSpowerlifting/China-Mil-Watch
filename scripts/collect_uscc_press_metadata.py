@@ -72,13 +72,13 @@ def find_listing_date(anchor):
         candidate = parse_day(text)
         if not candidate:
             continue
-        links = [
-            link for link in current.find_all("a",href=True)
-            if canonical(link["href"]) is not None
-        ]
+        links = {
+            x for link in current.find_all("a",href=True)
+            if (x := canonical(link["href"])) is not None
+        }
         # A single coherent listing card is necessary. Dates from the global
         # page header, footer or adjacent stories are NOT accepted.
-        if len(links)==1 and links[0] is anchor:
+        if len(links)==1 and canonical(anchor["href"]) in links:
             return candidate
     return None
 
