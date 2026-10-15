@@ -161,6 +161,10 @@ class _TextOnly(HTMLParser):
         elif self.depth and tag not in self.VOID:
             self.depth += 1
 
+    def handle_startendtag(self, tag, attrs):
+        # HTML void/self-closing tags must not terminate the stored-text div.
+        pass
+
     def handle_endtag(self, tag):
         if self.depth:
             self.depth -= 1
