@@ -99,6 +99,23 @@ desks.
   CI and guarded preview/browser validation must pass at the **exact
   PR head** before merge/publish.
 
+## Browser-level release proof
+
+`tests/test_china_focus_browser.py` now performs a **real Chromium**
+render of the whole static site from an isolated, read-only database
+build, served from ephemeral localhost scratch. It tests 375px and
+1280px widths, both scope selections, the shareable `?scope=all`
+deep link, browser back navigation, ordinary original-language search,
+error-free script loading, actual public focus-ID/source-trail custody,
+and a genuine **JavaScript-disabled** path from the focus to
+`corpus.html`. Missing Chromium is a failed gate, not an assumed pass.
+
+Archive `browse.js` remains under the existing **10,000-byte JS
+budget**, including the newly added focus and full-corpus selection
+logic. Earlier pre-change build exceeded this cap; the implementation
+was trimmed to restore compliance. Every full test and browser check
+must pass on the latest code head before release.
+
 ## What this does not do
 
 It does not deliver the final genuinely **human-curated** 500–700
