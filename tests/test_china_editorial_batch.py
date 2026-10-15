@@ -40,6 +40,7 @@ def fixture():
         "purpose": "diagnostic_editorial_intake_not_selection",
         "publication_enabled": False, "owner_approved": False,
         "baseline_snapshot": copy.deepcopy(index["snapshot"]),
+        "protected_source_trail_ids": [1],
         "batch_id": "china-2026-10-15-01",
         "created_on": "2026-10-15", "entries": items,
     }
@@ -113,15 +114,15 @@ class ChinaReviewBatchTest(unittest.TestCase):
     def test_corpus_identity_and_brief_citations_are_not_optional(self):
         index, batch, pages = fixture()
         index["trail_ids"] = [999]
-        with self.assertRaisesRegex(ValueError, "source-trail ID"):
+        with self.assertRaisesRegex(ValueError, "protected historic Brief citations"):
             validate_batch(index, batch, pages)
         index, batch, pages = fixture()
         batch["entries"][0]["source_title"] = "unrelated record"
         with self.assertRaisesRegex(ValueError, "identity drift"):
             validate_batch(index, batch, pages)
         index, batch, pages = fixture()
-        index["snapshot"]["records"] = 27
-        with self.assertRaisesRegex(ValueError, "snapshot drift"):
+        index["snapshot"]["records"] = 25
+        with self.assertRaisesRegex(ValueError, "snapshot drift backwards"):
             validate_batch(index, batch, pages)
         index, batch, pages = fixture()
         batch["entries"][0]["id"] = 26
@@ -130,6 +131,32 @@ class ChinaReviewBatchTest(unittest.TestCase):
         index, batch, pages = fixture()
         batch["entries"][0]["compare_ids"] = [26]
         with self.assertRaisesRegex(ValueError, "same batch"):
+            validate_batch(index, batch, pages)
+
+    def test_forward_only_new_collections_do_not_enter_frozen_review_batch(self):
+        index, batch, pages = fixture()
+        index["snapshot"] = {"date": "2026-10-15", "records": 27}
+        index["records"].append([
+            27, "2026-10-15", 0, 0, "", "本日新增未审资料"])
+        result = validate_batch(index, batch, pages)
+        self.assertTrue(result["snapshot_advanced"])
+        self.assertEqual(result["baseline_snapshot"], batch["baseline_snapshot"])
+        self.assertEqual(result["preserved_records"], 27)
+        self.assertEqual(result["batch_records"], 25)
+        self.assertFalse(any(e["id"] == 27 for e in result["entries"]))
+        self.assertFalse(result["publication_enabled"])
+        index["records"][0][5] = "Changed old title"
+        with self.assertRaisesRegex(ValueError, "identity drift"):
+            validate_batch(index, batch, pages)
+
+    def test_exact_historical_trail_set_must_still_be_preserved(self):
+        index, batch, pages = fixture()
+        batch["protected_source_trail_ids"] = []
+        with self.assertRaisesRegex(ValueError, "exact protected Brief-trail set"):
+            validate_batch(index, batch, pages)
+        index, batch, pages = fixture()
+        index["trail_ids"].clear()
+        with self.assertRaisesRegex(ValueError, "protected historic Brief citations"):
             validate_batch(index, batch, pages)
 
     def test_reject_unilateral_comparison_and_missing_record_html(self):
