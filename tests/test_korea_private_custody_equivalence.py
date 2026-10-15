@@ -38,7 +38,7 @@ def fixture(folder):
     original = stamp(state, b"synthetic-hwpx-no-real-korean-original")
     article = stamp(state, b"synthetic-html-no-original-copy")
     write_json(state / "clock.json", {
-        "desk": "korea", "day_zero_utc": "2026-10-06T16:52:01+00:00",
+        "desk": "korea", "day_zero_utc": "2026-10-06T16:52:01.420713+00:00",
         "day_zero_run_id": "local-native-20261006-korea",
     })
     write_json(state / "ledger" / "20261014T205938.600469+0000-38636466191-1.json", {
@@ -162,10 +162,23 @@ class KoreaPrivateCustodyEquivalenceTests(unittest.TestCase):
         with self.assertRaises(custody.CustodyHold):
             custody.inventory(self.source, frozen_commit=self.frozen)
 
+    def test_original_day_zero_run_and_instant_cannot_be_reset(self):
+        for key, wrong in (
+            ("day_zero_utc", "2026-10-06T22:00:00+00:00"),
+            ("day_zero_run_id", "manual-reset-20261006"),
+        ):
+            clock = self.source / "state" / "clock.json"
+            snapshot = json.loads(clock.read_text(encoding="utf-8"))
+            snapshot[key] = wrong
+            write_json(clock, snapshot)
+            with self.subTest(field=key), self.assertRaises(custody.CustodyHold):
+                custody.inventory(self.source, frozen_commit=self.frozen)
+            git(self.source, "reset", "--hard", "HEAD")
+
     def test_wrong_desk_or_korean_original_text_hash_fails(self):
         p = self.source / "state" / "clock.json"
         write_json(p, {"desk": "indonesia",
-                       "day_zero_utc": "2026-10-06T16:52:01+00:00"})
+                       "day_zero_utc": "2026-10-06T16:52:01.420713+00:00"})
         with self.assertRaises(custody.CustodyHold):
             custody.inventory(self.source, frozen_commit=self.frozen)
         git(self.source, "reset", "--hard", "HEAD")
