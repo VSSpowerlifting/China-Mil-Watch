@@ -5,6 +5,8 @@ on:
     paths:
       - 'scripts/verify_china_retirement_render.py'
       - 'scripts/prepare_china_retirement_release.py'
+      - 'scripts/verify_china_retirement_pages_readback.py'
+      - 'tests/test_china_retirement_pages_readback.py'
       - 'tests/test_china_retirement_release.py'
       - '.github/workflows/china_retirement_release.yml'
   workflow_dispatch:
@@ -47,7 +49,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Prove release verifier rejects broken references and legacy routes
-        run: python -m unittest -v tests.test_china_retirement_release
+        run: python -m unittest -v tests.test_china_retirement_release tests.test_china_retirement_pages_readback
       - name: Prove this contract did not modify the tracked corpus/site
         run: |
           set -euo pipefail
@@ -98,7 +100,8 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Recheck exact retirement, reingestion, and publication protection contracts
         run: |
-          python -m unittest -v             tests.test_retired_article_urls             tests.test_china_retirement_atomic             tests.test_china_active_retirement             tests.test_china_retirement_release
+          python -m unittest -v             tests.test_retired_article_urls             tests.test_china_retirement_atomic             tests.test_china_active_retirement             tests.test_china_retirement_release \
+            tests.test_china_retirement_pages_readback
       - name: Prepare full 4400-record reduction in external scratch ONLY
         env:
           EXPECTED_DB: ${{ inputs.expected_db_sha256 }}
@@ -191,6 +194,26 @@ jobs:
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
           commit_message: 'Release China active archive retirement ${{ github.run_id }}'
+      - name: Authenticate deployed Pages branch by full Git byte readback
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          # Fetch exactly the branch produced by Pages. Never trust the local
+          # output alone or a green push with an incomplete remote tree.
+          git fetch --no-tags origin \
+            refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          mkdir -p "$RUNNER_TEMP/china-pages-readback"
+          git archive refs/remotes/origin/gh-pages | \
+            tar -xf - -C "$RUNNER_TEMP/china-pages-readback"
+          python -m scripts.verify_china_retirement_pages_readback \
+            --expected-output output \
+            --pages-tree "$RUNNER_TEMP/china-pages-readback" \
+            --db pla_watch.db --expected-tombstones 4400
+          # The full release commit was pushed before Pages deployment. We
+          # must not accidentally alter its database or tracked site now.
+          git diff --exit-code HEAD -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
       - name: Prove preview was strictly nonpublishing
         if: "!inputs.publish"
         run: |
