@@ -12,8 +12,11 @@ on:
 permissions:
   contents: read
 
+# Share the existing repository writer's concurrency lock. Without
+# this, a Korea/U.S. file-only Pages update can race the independent branch
+# readback and create a false integrity failure (or conceal stale Pages).
 concurrency:
-  group: china-retirement-postdaily-audit
+  group: daily-update
   cancel-in-progress: false
 
 jobs:
