@@ -6,6 +6,7 @@ import sqlite3
 import tempfile
 import unittest
 
+from migrations.versions import m0008_retired_article_urls
 from scripts.plan_china_active_retirement import (plan, scratch_retirement,
                                                     publication_record_dependencies)
 
@@ -139,13 +140,21 @@ class ChinaRetirementScratchTest(unittest.TestCase):
         con = sqlite3.connect(str(self.original))
         con.executescript("""
             PRAGMA foreign_keys=ON;
-            CREATE TABLE articles (id INTEGER PRIMARY KEY, url TEXT UNIQUE);
+            CREATE TABLE sources(id INTEGER PRIMARY KEY, slug TEXT NOT NULL UNIQUE);
+            INSERT INTO sources VALUES (1, 'pla_daily');
+            INSERT INTO sources VALUES (2, 'sg_mindef_releases');
+            CREATE TABLE articles(
+                id INTEGER PRIMARY KEY,
+                url TEXT NOT NULL UNIQUE,
+                source_id INTEGER NOT NULL REFERENCES sources(id));
             CREATE TABLE article_categories (
                 article_id INTEGER REFERENCES articles(id) ON DELETE CASCADE,
                 category_id INTEGER NOT NULL);
         """)
-        con.executemany("INSERT INTO articles(id,url) VALUES(?,?)",
-                        [(i, "source-%s" % i) for i in range(1, 8)])
+        m0008_retired_article_urls.up(con)
+        con.executemany("INSERT INTO articles(id,url,source_id) VALUES(?,?,?)",
+                        [(i, "source-%s" % i, 1 if i <= 5 else 2)
+                         for i in range(1, 8)])
         con.executemany("INSERT INTO article_categories(article_id,category_id) VALUES(?,1)",
                         [(i,) for i in range(1, 8)])
         con.commit()
@@ -155,10 +164,17 @@ class ChinaRetirementScratchTest(unittest.TestCase):
     def tearDown(self):
         self.temp.cleanup()
 
+    def stage(self, *args, **kwargs):
+        # Unit fixture has 2 China retirements; production defaults remain
+        # strictly 4300–4500 in both planner and atomic executor.
+        kwargs.setdefault("minimum_retire", 1)
+        kwargs.setdefault("maximum_retire", 2)
+        return scratch_retirement(*args, **kwargs)
+
     def test_scratch_deletion_really_removes_rows_without_touching_input(self):
         original = self.original.read_bytes()
         scratch = self.root / "retired.db"
-        result = scratch_retirement(self.original, scratch, self.data)
+        result = self.stage(self.original, scratch, self.data)
         self.assertFalse(result["production_db_modified"])
         self.assertEqual(result["retired"], 2)
         self.assertEqual(self.original.read_bytes(), original)
@@ -170,6 +186,8 @@ class ChinaRetirementScratchTest(unittest.TestCase):
                         con.execute("SELECT article_id FROM article_categories")}
             self.assertEqual(remaining, {1, 2, 3, 6, 7})
             self.assertEqual(attached, remaining)
+            self.assertEqual(con.execute(
+                "SELECT COUNT(*) FROM retired_article_urls").fetchone()[0], 2)
             self.assertEqual(con.execute("PRAGMA integrity_check").fetchone()[0],
                              "ok")
 
@@ -177,7 +195,7 @@ class ChinaRetirementScratchTest(unittest.TestCase):
         from hashlib import sha256
         dest = self.root / "reduced.db"
         tombstones = self.root / "private-tombstones.json"
-        result = scratch_retirement(
+        result = self.stage(
             self.original, dest, self.data, tombstone_path=tombstones)
         self.assertEqual(result["url_tombstone_count"], 2)
         self.assertEqual(result["private_tombstone_receipt"], str(tombstones))
@@ -193,20 +211,20 @@ class ChinaRetirementScratchTest(unittest.TestCase):
         receipt = self.root / "exists.json"
         receipt.write_text("protected")
         with self.assertRaisesRegex(ValueError, "tombstone path"):
-            scratch_retirement(self.original, self.root / "new.db", self.data,
+            self.stage(self.original, self.root / "new.db", self.data,
                                tombstone_path=receipt)
         self.assertEqual(receipt.read_text(), "protected")
         self.assertFalse((self.root / "new.db").exists())
 
     def test_refuses_overwriting_existing_database(self):
         with self.assertRaisesRegex(ValueError, "not exist"):
-            scratch_retirement(self.original, self.original, self.data)
+            self.stage(self.original, self.original, self.data)
 
     def test_refuses_stale_index_without_creating_scratch(self):
         data = dict(self.data, retired_ids=(4, 5, 999))
         dest = self.root / "new.db"
-        with self.assertRaisesRegex(ValueError, "does not match"):
-            scratch_retirement(self.original, dest, data)
+        with self.assertRaisesRegex(ValueError, "fingerprint|database advanced"):
+            self.stage(self.original, dest, data)
         self.assertFalse(dest.exists())
 
 
