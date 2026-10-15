@@ -46,6 +46,14 @@ Each eligibility decision requires:
 The receipts contain only identities, hashes, dates, explicit license scope,
 and HOLD-safe flags; no original source bodies or model outputs.
 
+**Executable staging path:** `stage_verified_original_text()` accepts the
+EXACT previously preserved full UTF-8 original, replays its digest and standing
+rights rules, and—without a per-document human rights signature—writes only
+`original.txt` and a safely escaped `noindex` HTML source page to a NEW
+external staging directory. It cannot write to `main`, tracked SQLite or
+`gh-pages`. A separately authorized production writer still needs to ship
+this proven artifact to the real site and verify deployed bytes.
+
 **Important security constraint:** callbacks supplied as
 `source_replay`, `policy_replay`, `exception_replay` and optional
 `item_license_replay` are integration points for the already authenticated
