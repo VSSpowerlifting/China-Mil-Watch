@@ -77,6 +77,17 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "collection timestamp"):
             scan(index, pages)
 
+    def test_missing_stored_prose_is_flagged_without_inventing_body(self):
+        index, pages = data()
+        pages[5] = pages[5][pages[5].index("<table>"):]
+        result = scan(index, pages)
+        match = next(r for r in result["candidates"] if r["id"] == 5)
+        self.assertIn("unreadable_or_missing_stored_text", match["cues"])
+        self.assertEqual(match["stored_characters"], 0)
+        pages[5] = "<html><p>no provenance</p></html>"
+        with self.assertRaisesRegex(ValueError, "collection timestamp"):
+            scan(index, pages)
+
     def test_wrong_source_and_repeated_id_fail_closed(self):
         index, pages = data()
         index["records"].append(list(index["records"][0]))
