@@ -11,7 +11,10 @@ All evidence verifiers must come from trusted code outside publisher metadata.
 from __future__ import annotations
 
 import hashlib
+import html
 import re
+import shutil
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlsplit
 
@@ -245,3 +248,73 @@ def qualify_standing_text(source, *, kind, proposed_sha256,
         "analysis_editorially_approved": False,
         "publication_performed": False,
     }
+
+
+def stage_verified_original_text(source, *, original_utf8, attribution,
+                                 now_utc, target_dir,
+                                 source_replay=None, policy_replay=None,
+                                 exception_replay=None, item_license_replay=None):
+    """Automatically prepare licensed original text, never deploy it.
+
+    This is the fast lane missing from a per-article human-review-first design.
+    Source replay must independently affirm the exact first-party preserved
+    capture AND its complete original text SHA. A current, independently
+    checked standing license + item exceptions replace manual copyright
+    approval for this particular plain-text original.
+
+    Output is a new external noindex-only staging directory. Publishing that
+    artifact on Pages requires a distinct readback-validated release workflow.
+    """
+    need(type(original_utf8) is bytes and 80 <= len(original_utf8) <= 2_000_000,
+         "complete_original_text_bytes_unavailable")
+    try:
+        text = original_utf8.decode("utf-8")
+    except UnicodeError:
+        raise StandingLicenseHold("complete_original_text_not_utf8") from None
+    need(len(text.strip()) >= 70
+         and not any((ord(ch) < 32 and ch not in "\n\r\t") or ord(ch) == 127
+                     for ch in text),
+         "complete_original_text_contains_unsafe_bytes")
+    proof = qualify_standing_text(
+        source, kind="original_text", proposed_sha256=digest(original_utf8),
+        attribution=attribution, now_utc=now_utc,
+        source_replay=source_replay, policy_replay=policy_replay,
+        exception_replay=exception_replay,
+        item_license_replay=item_license_replay)
+    target = Path(target_dir).expanduser()
+    resolved = target.resolve()
+    project = Path(__file__).resolve().parents[1]
+    need(not target.exists() and not target.is_symlink()
+         and target.parent.is_dir() and not target.parent.is_symlink()
+         and resolved != project and project not in resolved.parents,
+         "unpublished_staging_requires_new_external_directory")
+    target.mkdir(mode=0o700)
+    try:
+        (target / "original.txt").write_bytes(original_utf8)
+        markup = "\n".join((
+            '<!doctype html>',
+            '<html lang="en"><head><meta charset="utf-8">',
+            '<meta name="robots" content="noindex">',
+            '<title>IPR staged licensed official original — not published</title>',
+            '</head><body><main>',
+            '<h1>Licensed official original — pending site deployment</h1>',
+            '<p>Publisher source: <a href="' +
+            html.escape(source["official_url"], quote=True) + '">' +
+            html.escape(source["official_url"]) + '</a></p>',
+            '<p>License: <a href="' +
+            html.escape(proof["policy_url"], quote=True) + '">' +
+            html.escape(proof["license_id"]) + '</a></p>',
+            '<p>' + html.escape(attribution) + '</p>',
+            '<p>Original-language government text only. IPR has not '
+            'translated or independently verified the publisher claims.</p>',
+            '<pre lang="' + html.escape(source["language"], quote=True)
+            + '">' + html.escape(text) + '</pre>',
+            '</main></body></html>',
+        ))
+        (target / "index.html").write_text(markup, encoding="utf-8")
+    except Exception:
+        shutil.rmtree(target)
+        raise
+    return {**proof, "staged_original_text_sha256": digest(original_utf8),
+            "preview_noindex": True, "staged_path": str(target),
+            "publication_performed": False}
