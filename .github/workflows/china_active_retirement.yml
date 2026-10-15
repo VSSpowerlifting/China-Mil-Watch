@@ -147,7 +147,7 @@ jobs:
           # Neither old record routes nor predecessor legacy aliases may
           # survive in the rebuilt sitemap after physical retirement.
           import re, xml.etree.ElementTree as ET
-          retired_route = re.compile(r"/(?:record|article)/([0-9]+)\\.html$")
+          retired_route = re.compile(r"/(?:record|article)/([0-9]+)\.html$")
           for node in ET.parse(after/"sitemap.xml").iter():
               if node.tag.rsplit("}", 1)[-1] != "loc" or not node.text:
                   continue
