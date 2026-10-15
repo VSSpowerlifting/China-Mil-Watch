@@ -1,0 +1,43 @@
+name: Private vault offline encrypted backup — fictional-only QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/private_vault_encrypted_bundle.py'
+      - 'tests/test_private_vault_encrypted_bundle.py'
+      - 'docs/engineering/PRIVATE_VAULT_ENCRYPTED_BACKUP_2026-10-15.md'
+      - '.github/workflows/private_vault_encrypted_backup_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  fictional-gpg-backup-restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out tests without persistent token
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check available native Git and GnuPG
+        run: |
+          git --version
+          gpg --version | head -n 1
+      - name: Run fictional-only encrypted bundle creation and restore tests
+        run: python -m unittest tests.test_private_vault_encrypted_bundle -v
+      - name: Assert tracked production evidence and output remain untouched
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No live GitHub vault access, secrets, government-original download, media,
+# artifact upload, credential, public write, collector change or deployment.
