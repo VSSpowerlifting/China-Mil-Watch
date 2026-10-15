@@ -34,7 +34,7 @@ def target(which="seventh_fleet"):
 
 class CanaryContracts(unittest.TestCase):
     def test_fixed_hosts_and_no_submission_to_any_corpus(self):
-        self.assertEqual(len(canary.validate_targets()), 2)
+        self.assertEqual(len(canary.validate_targets()), 3)
         with self.assertRaises(canary.AccessHold):
             canary.validate_targets([("other","attacker.invalid","/x")])
         opener=FakeOpener({})
@@ -43,10 +43,17 @@ class CanaryContracts(unittest.TestCase):
         self.assertEqual(receipt["production_records_written"],0)
         self.assertIs(receipt["website_changed"],False)
         self.assertIs(receipt["new_source_day_claimed"],False)
-        self.assertEqual(len(opener.calls),2)
+        self.assertEqual(len(opener.calls),3)
         self.assertTrue(all(p.endswith("/robots.txt") for p in opener.calls))
         self.assertEqual({row["robots_policy"] for row in receipt["results"]},
                          {"http_403"})
+
+    def test_uscc_is_distinct_official_source_family(self):
+        name,host,path=target("us_china_commission")
+        self.assertEqual(name, "us_china_commission")
+        self.assertEqual(host, "www.uscc.gov")
+        self.assertEqual(path, "/press-releases")
+        self.assertNotIn("navy.mil", host)
 
     def test_unreadable_and_disallowed_policy_never_requests_article_listing(self):
         name,host,path=target()
