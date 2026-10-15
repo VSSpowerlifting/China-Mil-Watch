@@ -146,6 +146,15 @@ jobs:
             --week-ending "$IPR_SUNDAY_WEEK_END" \
             --as-of "$IPR_SUNDAY_AS_OF"
 
+      - name: Quarantine Korea before any Sunday source refresh
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.sunday_korea_quarantine_gate \
+            --packet "$GITHUB_WORKSPACE/research/briefs_editorial_evidence/$IPR_SUNDAY_WEEK_END.json" \
+            --week-ending "$IPR_SUNDAY_WEEK_END" --as-of "$IPR_SUNDAY_AS_OF" \
+            --permit-missing
+
       - name: Verify bounded Japan/Vietnam editorial source packet offline
         run: |
           python - <<'PY'
@@ -215,6 +224,16 @@ jobs:
           missing-notes-policy: ${{ steps.vietnam_sources.outputs.missing_policy }}
           require-vietnam: ${{ steps.vietnam_sources.outputs.require_vietnam }}
           existing-packet: ${{ steps.vietnam_sources.outputs.existing }}
+
+      - name: Quarantine Korea in refreshed model source packet
+        shell: bash
+        env:
+          PRIVATE_WEEK_PACKET: ${{ steps.vietnam_current.outputs.packet }}
+        run: |
+          set -euo pipefail
+          python -m scripts.sunday_korea_quarantine_gate \
+            --packet "$PRIVATE_WEEK_PACKET" \
+            --week-ending "$IPR_SUNDAY_WEEK_END" --as-of "$IPR_SUNDAY_AS_OF"
 
       - name: Verify refreshed exact-week research before the model call
         env:
@@ -298,6 +317,16 @@ jobs:
       # contains Japan. For the Oct10 pilot require the exact three pinned
       # Japan MOD research IDs; for later weeks label omitted Japan explicitly.
       # This step neither verifies original PDF fidelity nor approves sources.
+      - name: Quarantine Korea in final model and email packet
+        shell: bash
+        env:
+          PRIVATE_WEEK_PACKET: ${{ steps.editor_scope.outputs.packet }}
+        run: |
+          set -euo pipefail
+          python -m scripts.sunday_korea_quarantine_gate \
+            --packet "$PRIVATE_WEEK_PACKET" \
+            --week-ending "$IPR_SUNDAY_WEEK_END" --as-of "$IPR_SUNDAY_AS_OF"
+
       - name: Attest Japan research offer in the refreshed single-theme packet
         env:
           PRIVATE_WEEK_PACKET: ${{ steps.editor_scope.outputs.packet }}
