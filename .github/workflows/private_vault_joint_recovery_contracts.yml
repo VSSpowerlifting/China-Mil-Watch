@@ -1,0 +1,42 @@
+name: Private vault joint recovery — fictional-only GPG contract QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/private_vault_recovery_pair.py'
+      - 'tests/test_private_vault_recovery_pair.py'
+      - 'docs/engineering/PRIVATE_VAULT_JOINT_RECOVERY_2026-10-15.md'
+      - '.github/workflows/private_vault_joint_recovery_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  fictional-joint-gpg-restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out without stored credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify local Git and GnuPG
+        run: |
+          git --version
+          gpg --version | head -n 1
+      - name: Joint restore of entirely fictional Git history and ZIP captures
+        run: python -m unittest tests.test_private_vault_recovery_pair -v
+      - name: Guard production database and generated output
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# PR-only, no secrets, publisher downloads, public writes or backup artifact uploads.
