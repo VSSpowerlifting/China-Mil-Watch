@@ -121,6 +121,20 @@ def summarize(ledgers, clock, *, commit, as_of):
     recovered_only = [d for d in missing if d in recovered]
     uncovered = [d for d in missing if d not in recovered]
     current_missing = latest >= FIRST_SLOT and latest not in scheduled
+
+    # The first October 7–13 Day-7 checkpoint remains historically failed;
+    # do not make that fixed protocol silently slide forward. This independent
+    # seven-slot observation identifies only a *prospective ledger candidate*.
+    # Authentication of all Actions attempts, raw bytes, source rights and
+    # editorial permission remain separate and explicitly false.
+    last_seven = due[-7:]
+    recent_missing = [d for d in last_seven if d not in scheduled]
+    prospective_candidate = len(last_seven) == 7 and not recent_missing
+    streak = 0
+    for scheduled_day in reversed(due):
+        if scheduled_day not in scheduled:
+            break
+        streak += 1
     return {
         "schema": SCHEMA,
         "state_branch": STATE_BRANCH,
@@ -137,6 +151,16 @@ def summarize(ledgers, clock, *, commit, as_of):
         "source_dates_without_successful_scheduled_or_explicit_recovery": [
             d.isoformat() for d in uncovered],
         "current_mature_slot_missing": current_missing,
+        "rolling_seven_observation_kind": "LEDGER_ONLY_CANDIDATE_NOT_AUTHENTICATED_ACTIONS",
+        "rolling_seven_mature_dates": [d.isoformat() for d in last_seven],
+        "rolling_seven_missing_scheduled_dates": [
+            d.isoformat() for d in recent_missing],
+        "rolling_seven_consecutive_ledger_candidate": prospective_candidate,
+        "current_scheduled_ledger_streak_days": streak,
+        "october_12_scheduled_gap_still_unrepaired": (
+            latest >= date(2026, 10, 12) and
+            date(2026, 10, 12) not in scheduled),
+        "rolling_seven_production_admission_authorized": False,
         "status": ("CURRENT_SCHEDULED_SLOT_MISSING" if current_missing else
                    "HISTORICAL_SCHEDULED_GAPS_REMAIN" if missing else
                    "LEDGER_SCHEDULED_SLOTS_OBSERVED"),
