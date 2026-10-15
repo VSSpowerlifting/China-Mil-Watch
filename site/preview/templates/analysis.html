@@ -4,11 +4,13 @@
 {% from "_terrain.html" import terrain %}
 {% from "_relief.html" import region_plate with context %}
 {% from "_catalogue_credit.html" import photo_credit %}
+{% from "_continuity_strip.html" import continuity_strip %}
 {% block title %}Analysis — {{ title }}{% endblock %}
 {% block body_open %}<body class="page-briefs material-paper">{% endblock %}
 {% block head_scripts %}
 <link rel="stylesheet" href="relief.css">
 <link rel="stylesheet" href="briefs-catalog.css">
+<link rel="stylesheet" href="continuity.css">
 <script src="reveal.js"></script>
 {% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="{{ briefs_feed_route }}">{% endif %}{% endblock %}
 {% block main_class %} class="leads-with-hero"{% endblock %}
@@ -93,6 +95,7 @@
 <section class="briefs-index" aria-labelledby="briefs-published">
   <h2 id="briefs-published">All Briefs</h2>
   <p class="section-note">Newest reporting window first.{% if review_mode %} This private preview includes an unapproved candidate.{% endif %}</p>
+  {{ continuity_strip(continuity) }}
   <p class="brief-key"><span class="brief-key-term">Photograph</span> is a credited image, shown as visual context and never as evidence.
     <span class="brief-key-term">Editorial plate</span> is original IPR map artwork where no source photograph is used.</p>
   <ol class="brief-cards">
