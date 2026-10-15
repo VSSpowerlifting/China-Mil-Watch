@@ -167,7 +167,19 @@ def qualify_standing_text(source, *, kind, proposed_sha256,
     need(callable(source_replay) and callable(policy_replay)
          and callable(exception_replay),
          "trusted_source_policy_and_exception_verifiers_required")
-    need(source_replay(source) is True,
+    capture = source_replay(source)
+    need(type(capture) is dict and set(capture) == {
+        "source_git_commit", "source_capture_sha256",
+        "entire_clean_original_text_sha256",
+        "original_custody_authenticated", "source_text_complete"
+    }, "versioned_first_party_source_not_authenticated")
+    need(capture["source_git_commit"] == source["source_git_commit"]
+         and capture["source_capture_sha256"] ==
+             source["source_capture_sha256"]
+         and type(capture["entire_clean_original_text_sha256"]) is str
+         and HASH.fullmatch(capture["entire_clean_original_text_sha256"]) is not None
+         and capture["original_custody_authenticated"] is True
+         and capture["source_text_complete"] is True,
          "versioned_first_party_source_not_authenticated")
     verified_policy = policy_replay(policy)
     need(type(verified_policy) is dict
@@ -200,7 +212,8 @@ def qualify_standing_text(source, *, kind, proposed_sha256,
          and item["privacy_or_secrecy_exception"] is False
          and item["includes_embedded_media"] is False
          and type(item["entire_source_text_version_sha256"]) is str
-         and HASH.fullmatch(item["entire_source_text_version_sha256"]) is not None,
+         and item["entire_source_text_version_sha256"] ==
+             capture["entire_clean_original_text_sha256"],
          "source_item_excluded_by_rights_or_scope")
     if policy["item_license_mark_required"]:
         need(callable(item_license_replay)
@@ -210,7 +223,7 @@ def qualify_standing_text(source, *, kind, proposed_sha256,
         # Critical: the proposed public ORIGINAL text must be *exactly* the
         # clean original text observed by the trusted original replay. It
         # cannot be an altered summary or text harvested from unknown assets.
-        need(proposed_sha256 == item["entire_source_text_version_sha256"],
+        need(proposed_sha256 == capture["entire_clean_original_text_sha256"],
              "proposed_original_text_does_not_match_source")
     return {
         "schema": RECEIPT_SCHEMA,
