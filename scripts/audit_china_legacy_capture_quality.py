@@ -38,6 +38,23 @@ def quality_cues(body):
     return {"cues": cues, "char_count": length, "ellipsis_count": teaser_marks}
 
 
+
+def collected_date(html):
+    """Use the recorded collection timestamp, not publisher publication date."""
+    m = re.search(
+        r'<th scope="row">Collected at</th>\\s*<td class="prov-value">'
+        r'(\\d{4}-\\d{2}-\\d{2})[ T]\\d{2}:\\d{2}:\\d{2}',
+        html,
+    )
+    if m is None:
+        raise ValueError("missing source collection timestamp")
+    try:
+        date.fromisoformat(m.group(1))
+    except ValueError:
+        raise ValueError("malformed source collection timestamp") from None
+    return m.group(1)
+
+
 def scan(index, pages, cutoff=CUTOFF):
     if index.get("fields") != FIELDS:
         raise ValueError("compact index fields changed")
@@ -62,23 +79,28 @@ def scan(index, pages, cutoff=CUTOFF):
             date.fromisoformat(r[1])
         except (TypeError, ValueError):
             raise ValueError("invalid date in legacy source record") from None
-        if r[1] >= cutoff:
-            continue
         candidates.append(r)
     if not set(trail_ids).issubset(all_ids):
         raise ValueError("published Brief source trail points to unknown record")
     found, warnings = [], Counter()
+    scanned, post_repair = 0, 0
     for r in candidates:
         ident = r[0]
         if ident not in pages:
             raise ValueError("legacy original record HTML missing")
+        captured_on = collected_date(pages[ident])
+        if captured_on >= cutoff:
+            post_repair += 1
+            continue
+        scanned += 1
         body, url = _original_record(pages[ident])
         info = quality_cues(body)
         for cue in info["cues"]:
             warnings[cue] += 1
         if info["cues"]:
             found.append({
-                "id": ident, "date": r[1], "source": sources[r[2]]["code"],
+                "id": ident, "date": r[1], "collected_on": captured_on,
+                "source": sources[r[2]]["code"],
                 "title": r[5] or r[4], "preserved_source_url": url,
                 "cues": info["cues"], "stored_characters": info["char_count"],
                 "ellipsis_count": info["ellipsis_count"],
@@ -91,8 +113,10 @@ def scan(index, pages, cutoff=CUTOFF):
         "purpose": "private_historical_capture_triage_no_changes",
         "source_snapshot": index.get("snapshot"),
         "source": "global_times_mil",
-        "legacy_publication_dates_before": cutoff,
-        "legacy_records_scanned": len(candidates),
+        "legacy_collections_before": cutoff,
+        "all_global_times_records_examined": len(candidates),
+        "excluded_captured_after_repair": post_repair,
+        "legacy_records_scanned": scanned,
         "flagged_for_manual_quality_review": len(found),
         "cue_counts_not_proven_defects": dict(sorted(warnings.items())),
         "all_source_records_preserved": len(index["records"]),
@@ -118,8 +142,7 @@ def main(argv=None):
     pages = {}
     for r in index["records"]:
         if (0 <= r[2] < len(index["sources"])
-                and index["sources"][r[2]]["code"] == "global_times_mil"
-                and r[1] < CUTOFF):
+                and index["sources"][r[2]]["code"] == "global_times_mil"):
             pages[r[0]] = (args.records_dir / ("%d.html" % r[0])).read_text(
                 encoding="utf-8")
     report = scan(index, pages)
