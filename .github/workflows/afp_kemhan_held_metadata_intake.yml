@@ -1,0 +1,83 @@
+name: AFP and Kemhan — Pinned Held Metadata Intake
+
+# Not a source-family activation. Run real existing shadow Git through the
+# read-only private reader; emit only counts/digests, with every row HELD.
+on:
+  pull_request:
+    paths:
+      - core/crossdesk_official_metadata_candidates.py
+      - scripts/stage_afp_kemhan_official_links.py
+      - tests/test_afp_kemhan_official_link_intake.py
+      - .github/workflows/afp_kemhan_held_metadata_intake.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fictional-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m unittest tests.test_afp_kemhan_official_link_intake -v
+      - run: |
+          git diff --exit-code -- pla_watch.db output/ shadow/ 
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  existing-real-originals-count-only:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Fetch existing unmodified shadow source Git branches to transient runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --depth=1 --single-branch --branch shadow/ph-afp \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/ipr-afp-readonly"
+          git clone --depth=1 --single-branch --branch shadow/indonesia-kemhan \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/ipr-kemhan-readonly"
+          git -C "$RUNNER_TEMP/ipr-afp-readonly" fsck --no-reflogs --connectivity-only
+          git -C "$RUNNER_TEMP/ipr-kemhan-readonly" fsck --no-reflogs --connectivity-only
+      - name: Reverify actual pinned shadow source snapshots; produce count-only held receipts
+        working-directory: repo
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db-start.sha"
+          python -m scripts.stage_afp_kemhan_official_links \
+            --family ph_afp_articles \
+            --source-checkout "$RUNNER_TEMP/ipr-afp-readonly" \
+            --source-commit "$(git -C "$RUNNER_TEMP/ipr-afp-readonly" rev-parse HEAD)" \
+            --count-only
+          python -m scripts.stage_afp_kemhan_official_links \
+            --family id_kemhan_news \
+            --source-checkout "$RUNNER_TEMP/ipr-kemhan-readonly" \
+            --source-commit "$(git -C "$RUNNER_TEMP/ipr-kemhan-readonly" rev-parse HEAD)" \
+            --count-only
+          sha256sum -c "$RUNNER_TEMP/db-start.sha"
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No writes to main, Pages, source branches, production DB, or publisher.
+# This does not approve fresh collection, link reuse, original text, or analysis.
