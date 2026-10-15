@@ -2,7 +2,8 @@
 import copy
 import unittest
 
-from scripts.audit_china_legacy_capture_quality import quality_cues, scan
+from scripts.audit_china_legacy_capture_quality import ROOT, quality_cues, scan
+from scripts.audit_china_original_source_notes import _original_record
 
 
 def data():
@@ -55,6 +56,25 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         self.assertEqual(result["all_source_records_preserved"], 5)
         self.assertFalse(result["publication_authorized"])
         self.assertFalse(result["original_capture_repair_authorized"])
+
+    def test_actual_pre_fix_negative_controls_have_calibrated_review_cues(self):
+        # Fixed historical IPR record IDs rather than model-derived examples.
+        # A future source-correction release must explicitly update this audit
+        # after review; it cannot silently change the underlying classification.
+        suspicious = (170, 793, 1246, 1954, 2753, 3180, 3181)
+        not_flagged = (792, 1630)
+        for ident in suspicious + not_flagged:
+            with self.subTest(ident=ident):
+                html = (ROOT / "output" / "record" / ("%d.html" % ident)).read_text(
+                    encoding="utf-8")
+                body, url = _original_record(html)
+                self.assertIn("globaltimes.cn", url)
+                cues = quality_cues(body)["cues"]
+                if ident in suspicious:
+                    self.assertIn("short_multi_teaser_capture_review", cues)
+                else:
+                    self.assertNotIn("short_multi_teaser_capture_review", cues)
+                    self.assertFalse(cues)
 
     def test_short_genuine_articles_can_trigger_review_without_deletion(self):
         result = quality_cues("Short real press statement")
