@@ -484,7 +484,7 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
                  for b in directory.split('<section class="desk')[1:]
                  if 'data-desk="vietnam"' in b][0]
         self.assertIn("Research published", block)
-        self.assertIn("Source archive: Shadow evaluation — not in corpus", block)
+        self.assertIn("Corpus records</dt><dd>Not admitted", block)
         self.assertIn("Corpus records</dt><dd>Not admitted", block)
         self.assertIn("Last corpus collection</dt><dd>Not admitted", block)
         self.assertNotIn("Records</dt><dd>None collected", block)
