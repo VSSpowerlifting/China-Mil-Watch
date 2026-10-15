@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from scripts import private_vault_encrypted_bundle as backup
 
@@ -112,6 +113,22 @@ class EncryptedVaultBackupTests(unittest.TestCase):
             duplicate, info["encrypted_sha256"], self.pins,
             info["reachable_git_objects"], scratch_dir=self.scratch,
             gpg_home=self.gpg_home)["encrypted_git_bundle_restored"])
+
+    def test_source_ref_changes_during_encryption_are_not_published(self):
+        prior = backup._inventory
+        call = [0]
+        def drift(repo):
+            call[0] += 1
+            original = prior(repo)
+            if call[0] == 2:
+                return dict(original, **{"refs/heads/new-unaudited-branch": "0" * 40})
+            return original
+        with mock.patch.object(backup, "_inventory", side_effect=drift):
+            with self.assertRaisesRegex(backup.BackupHold, "source_changed_during_backup"):
+                self.create()
+        self.assertEqual(call[0], 2)
+        self.assertFalse(self.output.exists())
+        self.assertFalse(any(p.name.endswith(".part") for p in self.root.iterdir()))
 
     def test_encrypted_file_tamper_is_rejected_before_decryption(self):
         info = self.create()
