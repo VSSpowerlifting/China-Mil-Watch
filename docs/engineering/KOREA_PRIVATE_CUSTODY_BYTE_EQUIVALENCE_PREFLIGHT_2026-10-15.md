@@ -9,7 +9,7 @@
 - Both clean Git histories must contain frozen 14-source commit 0595f0fd29b769cbab5dd57c2ef57af174237a67, with **identical checked-out HEAD SHA**.
 - The state tree must contain exactly captures, ledger, clock.json, and shadow.db, with no symlinks, unknown files or excessive file sizes. Every stored capture must match its own SHA-256 filename.
 - The ledger/capture/database/clock file sets and every SHA-256 must match exactly. The shadow SQLite database must pass integrity checks, report Korea as its sole desk, contain valid canonical MND source IDs/URLs, and bind all original text hashes and article/HWPX captures to real files.
-- October 6 day-zero remains unchanged, while October 12 remains without a successful **scheduled** collection slot. No successful manual lookback is counted as replacing that lost scheduled run.
+- The exact October 6 day-zero timestamp **2026-10-06T16:52:01.420713+00:00** and seed run **local-native-20261006-korea** remain unchanged, while October 12 remains without a successful **scheduled** collection slot. No successful manual lookback is counted as replacing that lost scheduled run.
 - The stdout JSON receipt includes only the shared Git commit, counts, day-zero and deliberately false release/visibility/credential flags; **no HWPX bytes, raw source text, reviewer names, entire ledger bodies or email/model input** are emitted.
 
 ## Manual operator procedure only after separate copy approval
