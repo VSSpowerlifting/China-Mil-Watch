@@ -273,6 +273,7 @@ class TestIsolation(StateCase):
                 if path.name in (
                     "ph_afp_oct14_review_docket.yml",
                     "ph_afp_day7_machine_receipt_manual.yml",
+                    "ph_afp_all22_review_docket.yml",
                 ):
                     # Two explicitly named read-only reviewer facilities.
                     # All other AFP workflow entry points remain prohibited.

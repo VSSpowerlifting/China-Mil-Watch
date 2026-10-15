@@ -1,0 +1,117 @@
+name: AFP first 22 originals — unsigned consolidated human review docket
+
+# Manual: genuine frozen Git/SQLite/capture reading. PR: fictional contract tests only.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/ph_afp_all22_review_docket.yml
+      - tests/test_ph_afp_all22_review_docket_workflow.py
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ph-afp-all22-review-docket
+  cancel-in-progress: false
+
+jobs:
+  contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check signed-off boundaries, existing docket and review rules
+        run: python -m unittest tests.test_ph_afp_review_docket tests.test_ph_afp_run_review tests.test_ph_afp_all22_review_docket_workflow -q
+      - name: Assert tracked files unchanged
+        run: test -z "$(git status --porcelain --untracked-files=all)"
+
+  prepare:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run source-review and roster contract tests offline
+        run: python -m unittest tests.test_ph_afp_review_docket tests.test_ph_afp_run_review tests.test_ph_afp_all22_review_docket_workflow -q
+      - name: Verify exact historical state commits and single-state-only archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="$RUNNER_TEMP/ph-afp-originals"
+          git clone -q --single-branch --branch shadow/ph-afp \
+            "https://github.com/$GITHUB_REPOSITORY.git" "$repo"
+          test "$(git -C "$repo" ls-tree --name-only HEAD)" = state
+          for pin in \
+            492001f34ba6176169b6acc96a237f05592a3395 \
+            c668790ce3be88b08b3300b945bad58589b3a5b1 \
+            4dd40b9655ec53fe4fae829eb12ba21032946b25; do
+            git -C "$repo" cat-file -e "$pin^{commit}"
+            git -C "$repo" merge-base --is-ancestor "$pin" HEAD
+            test "$(git -C "$repo" ls-tree --name-only "$pin")" = state
+          done
+      - name: Produce 13 plus 5 plus 4 exact-pinned unsigned metadata entries
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.prepare_ph_afp_review_docket \
+            --state-repo "$RUNNER_TEMP/ph-afp-originals" \
+            --batch 492001f34ba6176169b6acc96a237f05592a3395:37631681338-1 \
+            --batch c668790ce3be88b08b3300b945bad58589b3a5b1:37788547061-1 \
+            --batch 4dd40b9655ec53fe4fae829eb12ba21032946b25:38562843186-1 \
+            --format json > "$RUNNER_TEMP/ph-afp-all22-unsigned.json"
+          python - "$RUNNER_TEMP/ph-afp-all22-unsigned.json" <<'PY'
+          import json, pathlib, sys
+          docket=json.loads(pathlib.Path(sys.argv[1]).read_text(encoding='utf-8'))
+          assert docket["protocol"]=="ipr_ph_afp_metadata_review_docket_v1"
+          assert docket["total_source_records"]==22
+          assert docket["body_unavailable_records"]==0
+          assert len(docket["batches"])==3
+          expected=[
+              ("2026-10-07","37631681338-1","492001f34ba6176169b6acc96a237f05592a3395",13),
+              ("2026-10-08","37788547061-1","c668790ce3be88b08b3300b945bad58589b3a5b1",5),
+              ("2026-10-14","38562843186-1","4dd40b9655ec53fe4fae829eb12ba21032946b25",4),
+          ]
+          for row,(day,run,pin,count) in zip(docket["batches"],expected):
+              assert (row["target_date"],row["run_id"],row["historical_state_commit"],row["new_records"])==(day,run,pin,count)
+              assert len(row["records"])==count
+              for record in row["records"]:
+                  assert record["review_status"]=="not_started"
+                  assert record["human_review_authenticated"] is False
+                  assert record["source_url"].startswith("https://")
+                  assert "original_api_response_utf8" not in record
+                  assert "text_original" not in record
+          for flag in ("source_bodies_or_raw_api_responses_included","human_review_completed",
+                       "source_reuse_approved","production_eligible","weekly_ai_writer_eligible"):
+              assert docket[flag] is False
+          assert docket["automated_review_decisions"]==0
+          print("Exact historical 22-item AFP review roster built; human and rights holds CLOSED")
+          PY
+      - name: Verify no tracked production or shadow writes
+        if: always()
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Retain unsigned metadata docket only
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ph-afp-22-unsigned-review-${{ github.run_id }}
+          path: ${{ runner.temp }}/ph-afp-all22-unsigned.json
+          if-no-files-found: error
+          retention-days: 7
+
+      # No publisher requests, raw-source artifact, collector, model, SMTP or public release.
