@@ -1,0 +1,37 @@
+name: BIS — Held Typed SQLite Admission Rehearsal
+
+# This workflow only checks code and temporary SQLite. It never admits into
+# pla_watch.db or renders/pushes Pages, including on workflow_dispatch.
+on:
+  pull_request:
+    paths:
+      - core/us_bis_official_metadata.py
+      - scripts/stage_us_bis_official_metadata.py
+      - tests/test_us_bis_official_metadata_admission.py
+      - .github/workflows/us_bis_official_metadata_admission_contract.yml
+      - docs/engineering/US_BIS_TYPED_SCRATCH_ADMISSION_2026-10-15.md
+permissions:
+  contents: read
+
+jobs:
+  source-free-held-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Strict BIS issuer, date, identity, SQL and isolation tests
+        run: python -m unittest tests.test_us_bis_official_metadata_admission tests.test_us_bis_homepage_receipt -v
+      - name: Verify tracked live source, database, and public output unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ desks/ site/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
