@@ -128,7 +128,7 @@ class BriefClaimCorrectionReviewTest(unittest.TestCase):
     def test_draft_cannot_invent_a_new_citation_or_issue(self):
         args = list(actual())
         args[1]["cases"][0]["issue_number"] = 13
-        with self.assertRaisesRegex(ValueError, "identity/date"):
+        with self.assertRaisesRegex(ValueError, "reviewed issues"):
             audit(*args)
         args = list(actual())
         args[1]["cases"][0]["case_id"] = "unknown correction"
