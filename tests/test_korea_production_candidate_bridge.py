@@ -123,8 +123,9 @@ class KoreaProductionCandidateBridgeTests(unittest.TestCase):
                             (json.dumps(m, ensure_ascii=False), ident))
                 con.commit()
                 con.close()
-                with self.assertRaises(stage.IntakeHold):
-                    stage.build(str(self.source), frozen=self.frozen)
+                with self.assertRaisesRegex(stage.IntakeHold,
+                                            "wrong_korea_publisher_or_content_scope"):
+                    stage._normalized(stage._rows(self.source)[0])
                 con = sqlite3.connect(db)
                 con.execute("UPDATE shadow_records SET metadata_json=? "
                             "WHERE source_identity=?", (old, ident))
@@ -166,7 +167,7 @@ class KoreaProductionCandidateBridgeTests(unittest.TestCase):
             self.assertFalse(item["approved_for_publication"])
             self.assertFalse(item["approved_for_production"])
             self.assertFalse(item["approved_for_model_or_email"])
-        self.assertNotIn("authorized", repr(report).lower().split("not_authorized"))
+        self.assertEqual(report["approved_count"], 0)
 
     def test_output_never_in_repository_or_overwrites_existing(self):
         stage.create(str(self.source), str(self.out), frozen=self.frozen)
