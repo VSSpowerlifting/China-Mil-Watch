@@ -83,9 +83,16 @@ ellipsis cues. **Those are diagnostics, not source authenticity or editorial
 significance judgments.** The packet does **not copy full article bodies**;
 reviewers follow the preserved URL and the original publisher citation.
 
-The validator fails closed if the compact index or exact source title/date
-drifts, an ID is duplicated/non-China, a published Brief source-trail ID
-is lost, a local rendered record lacks URL/capture provenance, any compare
+The validator freezes the original October 14 `baseline_snapshot` and
+the three protected original Brief-trail IDs, while accepting **forward-only
+new corpus snapshots** when the complete current index count matches its
+records and every one of the 25 selected research IDs still has the *exact*
+same source, title and publication date. New records remain preserved but
+are never automatically inserted into this batch.
+
+The validator fails closed if the index regresses in date/count, any
+of those exact identities drifts, an ID is duplicated/non-China,
+the frozen published Brief source-trail set is lost, a local rendered record lacks URL/capture provenance, any compare
 reference is missing or asymmetrical, or any decision/owner approval is
 invented. An actual source may be short, a photo story may legitimately
 have no prose, and the original may have been republished without
