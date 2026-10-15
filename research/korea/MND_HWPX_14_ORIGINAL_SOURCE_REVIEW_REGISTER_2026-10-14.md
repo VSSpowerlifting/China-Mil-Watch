@@ -36,9 +36,13 @@ The *October 13-to-14* five returning webpage HTML responses had changed page-ca
 
 ## Two distinct completion gates
 
-### Machine HWPX source-fidelity run (pending on the newly fixed workflow)
+### Real archived HWPX machine parity PASSED in focused source-proof run
 
-Use [South Korea HWPX Source-Fidelity Review — Manual](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/workflows/korea_source_fidelity_review.yml) from updated `main` with `as_of=2026-10-14`. The prior [run 38671222575](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38671222575) failed before audit import because the workflow's Python working directory was wrong; PR #592 corrected that module path and was merged only after full CI. **No newer successful manual source-fidelity verdict has been established by this register.** A generated blank human-review assignment is NOT human review.
+The independently completed [Korea HWPX Original Source Proof, run 38671706676](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38671706676), exact PR #592 head `f1eadd0d826468aa1a4aef841cb36a2d2e2feb52`, **actually replayed this same current frozen 14-original state**. The runner printed `records_checked=14`, `machine_hwp_original_parity=PASS`, `scheduled_continuity=FAIL`, `human_source_review=UNMEASURED`, `production_promotion_authorized=false`; actual reviewer-proof artifact `11943717558` was uploaded. This is **not** a synthetic-fixture-only conclusion. It establishes source-byte extraction parity across 14 originals but **does not** establish document visual-order reading, independent semantic interpretation, media rights, Korea Day-7 continuity or authorization to publish.
+
+### Manual workflow handoff still needed for a clean operator-run review
+
+Use [South Korea HWPX Source-Fidelity Review — Manual](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/workflows/korea_source_fidelity_review.yml) from updated `main` with `as_of=2026-10-14`. The prior [run 38671222575](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38671222575) failed before audit import because the workflow's Python working directory was wrong; PR #592 corrected that module path and was merged only after full CI. **The separately scheduled manual HWPX source-fidelity workflow has not yet completed successfully after the fix; the real 14-document source-proof run above is already green.** A generated blank human-review assignment is NOT human review.
 
 Validate 14 original document identities, their actual archived HWPX/canonical page pairs, source-original extraction parity, and how the machine reports the October 12 continuity gap. Inspect the **actual** Actions run, output and artifact, not just synthetic CI. If the machine reports source-fidelity fail, do not interpret this register's hash reconciliation as an override.
 
