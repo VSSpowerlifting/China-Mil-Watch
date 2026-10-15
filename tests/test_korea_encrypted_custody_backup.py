@@ -140,6 +140,7 @@ class KoreaEncryptedLocalBackupTests(unittest.TestCase):
             "--encrypted-out", str(self.encrypted),
             "--recipient-fingerprint", self.fingerprint,
             "--gpg-home", str(self.gpg),
+            "--scratch-parent", str(self.scratch),
         ])
         self.assertEqual(status, 2)
         self.assertFalse(self.encrypted.exists())
