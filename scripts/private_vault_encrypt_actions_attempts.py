@@ -106,10 +106,24 @@ def _read_inventory(path, run_id):
     return hashlib.sha256(raw).hexdigest(), run
 
 
+def _under_git_checkout(path):
+    """Refuse custody files anywhere under a working tree or bare Git repo."""
+    here = Path(path).resolve()
+    for parent in (here, *here.parents):
+        dotgit = parent / ".git"
+        if dotgit.exists() or dotgit.is_symlink():
+            return True
+        if (parent / "HEAD").is_file() and (parent / "objects").is_dir():
+            return True
+    return False
+
+
 def _stage(directory, items):
     root = Path(directory)
     check(root.is_dir() and not root.is_symlink(),
           "artifact_staging_directory_invalid")
+    check(not _under_git_checkout(root),
+          "artifact_staging_inside_git_checkout")
     expected = {"artifact-%d.zip" % art["id"] for art in items}
     filenames = {p.name for p in root.iterdir()}
     check(filenames == expected, "unexpected_or_missing_staged_artifact")
@@ -165,6 +179,8 @@ def _backup_target(path):
     check(not target.exists() and not target.is_symlink()
           and target.parent.is_dir() and not target.parent.is_symlink(),
           "encrypted_target_unsafe_or_exists")
+    check(not _under_git_checkout(target.parent),
+          "encrypted_target_inside_git_checkout")
     return target
 
 
