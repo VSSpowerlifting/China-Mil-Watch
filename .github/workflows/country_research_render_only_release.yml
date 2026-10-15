@@ -7,6 +7,8 @@ on:
     paths:
       - ".github/workflows/country_research_render_only_release.yml"
       - "tests/test_country_research_release_contract.py"
+      - "site/preview/templates/desk.html"
+      - "tests/test_public_country_publisher_access_beta.py"
       - "scripts/guard_country_research_output_scope.py"
       - "tests/test_country_research_output_scope.py"
       - "scripts/stage_country_research_output.py"
@@ -170,6 +172,33 @@ jobs:
           assert "data-reference-list" not in indonesia
           assert "state/shadow.db" not in indonesia
           assert "text_original" not in indonesia and "body_original" not in indonesia
+          # Accelerated link-only public research directory is an explicit,
+          # separately governed surface, never a shadow original/corpus import.
+          official_public_beta = {
+              "philippines": (
+                  "https://www.afp.mil.ph/",
+                  "https://nsc.gov.ph/category/official-statements/",
+              ),
+              "vietnam": (
+                  "https://en.baochinhphu.vn/defense.html",
+                  "https://bocongan.gov.vn/chuyen-muc/thong-tin-doi-ngoai-1751367399",
+                  "https://moit.gov.vn/tin-tuc/phat-trien-nang-luong",
+                  "https://moit.gov.vn/tin-tuc/phat-trien-cong-nghiep/cong-nghiep-nen-tang",
+              ),
+          }
+          for name, urls in official_public_beta.items():
+              content = (base / (name + ".html")).read_text(encoding="utf-8")
+              assert 'id="official-publisher-access"' in content
+              assert "early-access research directory" in content
+              assert "not independently approved IPR" in content
+              assert "not a live IPR" in content
+              assert content.count("Open official publisher</a>") == len(urls)
+              for url in urls:
+                  assert content.count('href="' + url + '"') >= 1
+              assert 'href="archive.html?desk=' + name + '"' not in content
+              assert "No individual source references have completed" in content
+          # The approved individual source records remain empty until
+          # version-specific named human review/rights and a separate release.
           for name in ("philippines", "vietnam"):
               row = json.loads((Path("research") / (name + "_reviewed_links.json")).read_text(encoding="utf-8"))
               assert row["entries"] == [], "nonempty source links need separate review and release"
