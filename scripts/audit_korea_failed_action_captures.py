@@ -61,6 +61,14 @@ def _pinned_state(root, expected_sha):
     require(proc.returncode == 0 and
             proc.stdout.decode("ascii", "strict").strip() == expected_sha,
             "unmatched_shadow_git_commit")
+    try:
+        clean = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=all"],
+            capture_output=True, timeout=15, check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        raise ArtifactHold("git_worktree_status_unavailable") from None
+    require(clean.returncode == 0 and not clean.stdout.strip(),
+            "shadow_checkout_has_uncommitted_or_untracked_files")
     captures = root / "state" / "captures"
     require(captures.is_dir() and not captures.is_symlink(),
             "shadow_capture_directory_missing")
