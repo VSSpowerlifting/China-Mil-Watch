@@ -1,22 +1,23 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Brief editorial journal (14 October 2026, owner-review candidate):**
-`codex/ipr-editorial-design-system-20261014` builds on verified main
-`889ef3ed67e2984d8fbf6acce80f29e0fbc95a90` after reconciliation of the approved
-coastal palette and normal daily update. PR #567 is the navigation prerequisite
-(merge `3799e78a83`, dependency CI `38593731223` passed). All 18 Briefs and future native/source-linked articles
-share a clean paper folio, sea-glass editorial/source objects, section rhythm,
-responsive reading navigation and print/forced-color fallbacks. Historical
-inline presentation is consolidated into the shared stylesheet; native and
-historical adapters share a navigation macro. Five isolated future fixtures
-exercise granted/no photography, long cross-desk, short and source-linked
-reading variants through actual contracts. No canonical manuscripts, approvals,
-media, DB, sources, feeds or desk status changes. The existing exact approved
-Laos presentation remains authoritative. Implementation/limits/release scope:
-`docs/BRIEFS_JOURNAL_DESIGN_SYSTEM_2026-10-14.md`; browser and preservation
-receipts: `docs/evidence/ipr-journal/README.md`. The reviewed candidate requires
-owner visual review and successful exact-head CI before any landing decision;
-no merge or deployment is authorized by this task.
+**Brief long-form reading redesign — Phase 2 (14 October 2026, owner-review candidate):**
+`codex/ipr-briefs-reading-phase2` starts from verified clean main
+`f469801b9c1ddb21e01188b4bfddf4ffa0c913ae`, after #570 merged and deployed.
+The shared article stylesheet opens the reading surface, widens usable desktop
+prose from 630 to 743.77px, quiets navigation (272 to 232px), and differentiates
+argument openings, source matter and closing citations. All eighteen article
+HTML files remain byte-identical; the sole generated delta is `output/briefs.css`.
+No manuscript, approval, image admission, source, database, feed or desk changes.
+Two rendered directions, full-page comparisons, five private future fixtures,
+measurements, 511 passing browser checks and reproduction are indexed in
+`docs/evidence/ipr-reading-phase2/README.md`. Design decisions and separately
+gated future storytelling proposals: `docs/BRIEFS_READING_DESIGN_PHASE2_2026-10-14.md`.
+The owner must inspect the complete reading experience and decide whether its
+prose-led rhythm is sufficient; no new mid-article excerpt or photograph is
+selected. Exact-head offline CI is required on the review PR before a landing
+decision. No merge, deployment or new editorial publication is authorized.
+The #570 architecture and its retained evidence remain documented in
+`docs/BRIEFS_JOURNAL_DESIGN_SYSTEM_2026-10-14.md`.
 
 **Coastal visual identity (14 October 2026, owner-review candidate):**
 `codex/coastal-visual-identity` starts at exact latest main

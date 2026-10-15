@@ -1,0 +1,898 @@
+[
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-reading-finding",
+    "foreground": "rgb(16, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.722300829252721
+  },
+  {
+    "page": "laos",
+    "role": "",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-excerpt-trace",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-section brief-reading-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "section-note",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-label",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-name",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-title",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-bio",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-label",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-name",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-title",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "laos",
+    "role": "brief-author-bio",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "laos",
+    "role": "meta",
+    "foreground": "rgb(88, 105, 104)",
+    "background": "rgb(231, 238, 234)",
+    "contrast": 4.900526637116035
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-cites",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section brief-follow-up",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section brief-follow-up",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section brief-follow-up",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-section brief-follow-up",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "section-note",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(237, 240, 233)",
+    "contrast": 6.961094514475028
+  },
+  {
+    "page": "trident",
+    "role": "section-note",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(237, 240, 233)",
+    "contrast": 6.961094514475028
+  },
+  {
+    "page": "trident",
+    "role": "section-note",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "trident",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "brief-record-meta",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "brief-author-label",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "brief-author-name",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "brief-author-title",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "trident",
+    "role": "brief-author-bio",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "trident",
+    "role": "meta",
+    "foreground": "rgb(88, 105, 104)",
+    "background": "rgb(231, 238, 234)",
+    "contrast": 4.900526637116035
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "",
+    "foreground": "rgb(64, 84, 86)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 7.144813588044496
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "historical-source-meta",
+    "foreground": "rgb(88, 105, 104)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.150099432422702
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "term-word",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section brief-follow-up",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section historical-section brief-follow-up",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-section brief-trail",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 12.719899490596157
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "evidence evidence--model",
+    "foreground": "rgb(68, 108, 121)",
+    "background": "rgb(243, 242, 236)",
+    "contrast": 5.105939799814862
+  },
+  {
+    "page": "fourteen",
+    "role": "brief-citation",
+    "foreground": "rgb(29, 45, 49)",
+    "background": "rgb(231, 238, 234)",
+    "contrast": 12.103495688389456
+  }
+]

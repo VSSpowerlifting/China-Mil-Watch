@@ -1,0 +1,62 @@
+[
+  {
+    "phase": "baseline",
+    "width": 1440,
+    "main": 704,
+    "prose": 630,
+    "padding": "0px 36px 40px",
+    "nav": 272,
+    "gap": "86.4px",
+    "font": "19px",
+    "lineHeight": "35.15px",
+    "height": 9866
+  },
+  {
+    "phase": "baseline",
+    "width": 1280,
+    "main": 704,
+    "prose": 630,
+    "padding": "0px 36px 40px",
+    "nav": 272,
+    "gap": "76.8px",
+    "font": "19px",
+    "lineHeight": "35.15px",
+    "height": 9786
+  },
+  {
+    "phase": "baseline",
+    "width": 375,
+    "main": 331,
+    "prose": 331,
+    "padding": "0px 0px 40px",
+    "nav": 331,
+    "gap": "32px",
+    "font": "18px",
+    "lineHeight": "32.4px",
+    "height": 14436
+  },
+  {
+    "phase": "exploration-a",
+    "width": 1440,
+    "main": 784,
+    "prose": 743.765625,
+    "padding": "0px 0px 40px",
+    "nav": 232,
+    "gap": "48px",
+    "font": "19px",
+    "lineHeight": "33.25px",
+    "height": 8882
+  },
+  {
+    "phase": "exploration-b",
+    "width": 1440,
+    "main": 784,
+    "prose": 784,
+    "padding": "0px 0px 40px",
+    "nav": 232,
+    "gap": "48px",
+    "font": "19px",
+    "lineHeight": "33.25px",
+    "height": 8495
+  }
+]

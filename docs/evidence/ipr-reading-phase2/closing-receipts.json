@@ -1,0 +1,272 @@
+{
+  "checks": [
+    {
+      "width": 320,
+      "mode": "final-screen-geometry",
+      "unchanged": true
+    },
+    {
+      "width": 375,
+      "mode": "final-screen-geometry",
+      "unchanged": true
+    },
+    {
+      "width": 768,
+      "mode": "final-screen-geometry",
+      "unchanged": true
+    },
+    {
+      "width": 1280,
+      "mode": "final-screen-geometry",
+      "unchanged": true
+    },
+    {
+      "width": 1440,
+      "mode": "final-screen-geometry",
+      "unchanged": true
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-09.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-16.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-23.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-05-30.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-06.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-13.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-20.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-06-27.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-04.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-11.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-07-18.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-01.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-08.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "the-pla-watch/posts/2026-08-15.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "briefs/maritime-cooperation-2026.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "briefs/xiangshan-security-frames-defense-ties.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": null
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "mode": "print",
+      "navigation_hidden": true,
+      "backgrounds": [
+        "none",
+        "none",
+        "none",
+        "none"
+      ],
+      "wrap_background": "rgb(255, 255, 255)",
+      "finding_font": "\"Source Serif 4\", Georgia, \"Times New Roman\", serif"
+    },
+    {
+      "route": "briefs/what-is-being-built-in-laos.html",
+      "mode": "citation-copy",
+      "exact_visible_text": true
+    },
+    {
+      "route": "briefs/trident-resolve-regional-scale-specific-chinese-tasks.html",
+      "mode": "citation-copy",
+      "exact_visible_text": true
+    }
+  ],
+  "failures": []
+}
