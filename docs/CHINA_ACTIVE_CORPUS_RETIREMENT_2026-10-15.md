@@ -40,6 +40,18 @@ python -m scripts.plan_china_active_retirement \
 
 The integrated scratch operation reads the tracked SQLite file through `scripts.reconcile_db.read_only`, verifies its article IDs exactly match the frozen corpus index, and writes a **new file outside the repository**. It applies any missing migrations only to that disposable clone, then uses `scripts.stage_china_retirement_atomic.stage_atomic_retirement` to insert the permanent URL/ID ledger entries **and delete the article rows in the SAME SQLite transaction**, with rollback and integrity checks. The former delete-without-ledger path has been removed. The optional tombstone manifest contains only sorted SHA-256 digests of the exact canonical URLs for every retired row and is mode 0600 in private runner scratch. It is a future ingestion-denylist candidate, **not** an active ingestion guard: the collector still needs a separate code change to consult the manifest. No production DB, generated page, backup, database commit or deployment is altered by this PR.
 
+## Authenticated private backup — first genuine restore proof
+
+On October 15, private GitHub Actions [run #38797212318](https://github.com/VSSpowerlifting/ipr-source-evidence-private/actions/runs/38797212318) succeeded in copying the exact **pre-retirement** tracked database and protected editorial inputs from public commit `49913c5a41f33082b7d3acdbf7f6d0f3bda408bd` into an immutable branch of the existing private evidence repository:
+
+- Private ref: `archive/china-active-before-49913c5a41f33082`.
+- Source SQLite SHA-256: `7aa9c4a60fc82b819340b478f109103f95220833f7e7c5bdc5c396c31fbc4f24`.
+- Restored census: **5,273 active records**; **5,187 China**, **86 other desks**.
+- Included `pla_watch.db`, canonical Brief/Timeline JSON, and existing weekly-issue/editorial assets. Original historical generated record pages remain accessible through their pre-cull public Git revision, not through this private snapshot.
+- The job independently downloaded the private ref, compared restored database bytes and manifest, and passed `PRAGMA integrity_check` and article-count verification.
+
+**This is a successful real GitHub-only backup/restore test, not yet a release-head gate.** If daily collection or other changes advance the tracked corpus, re-run the private workflow and pin the *new exact public commit*, DB digest and restored record counts before promoting the deletion. Do not claim that the October 15 snapshot protects records added afterward. Off-GitHub recovery is not provided, per the accepted single-provider storage decision.
+
 ## Release boundary — not yet satisfied
 
 Do not deploy a real deletion until ALL of the following hold:
