@@ -50,6 +50,38 @@
 </section>
 {% endif %}
 
+{# The first genuine recurring U.S. metadata source is a congressional commission,
+   NOT PACOM, DVIDS or an IPR-authored article. These rows come from a typed
+   admitted production SQLite table, never an unverified HTML scraper output. #}
+{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}
+<section class="desk-references uscc-source-links" aria-labelledby="uscc-official-links-heading">
+  <p class="eyebrow">Automatically collected · official URL and date metadata</p>
+  <h2 id="uscc-official-links-heading">U.S.-China Economic and Security Review Commission — official announcements</h2>
+  <p>These are verified links to announcements by a U.S. congressional
+    commission, collected from its official press-release listing and admitted
+    into the IPR metadata database. They are not U.S. Pacific Command statements,
+    independently verified IPR analysis, or copies of the publisher's original
+    material. Direct PACOM collection remains access-blocked. Announcement
+    headlines, article text, documents, photographs and translations are
+    not republished here.</p>
+  <ol class="desk-reference-list" aria-label="Collected USCC official metadata records">
+    {% for ref in uscc_official_links %}
+    <li data-uscc-official-link="{{ ref.source_identity }}">
+      <h3><a href="{{ ref.source_url }}" target="_blank" rel="noopener noreferrer">{{ ref.neutral_label }}</a></h3>
+      <p class="meta">Issuer: U.S.-China Economic and Security Review Commission
+        · Official publication date <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+        · Official link metadata only</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">The collecting feed covers its observed first-party listing,
+    not an exhaustive historical archive. Official publisher content remains on
+    the source website; changes or access errors may interrupt new collection.
+    These metadata records are distinct from IPR's article corpus and do not
+    increase its reported article count.</p>
+</section>
+{% endif %}
+
 {# A permanent publication is IPR-authored analysis with approved citations.
    This is independent of the source-collection status, remains empty until
    an actual reviewed Brief is recorded, and never exposes publisher originals. #}
