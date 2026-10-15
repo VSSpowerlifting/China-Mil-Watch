@@ -55,7 +55,10 @@ def _read_inventory(path, run_id):
     source = Path(path)
     check(source.is_file() and not source.is_symlink()
           and source.stat().st_size <= MAX_INVENTORY, "inventory_invalid")
-    raw = source.read_bytes()
+    # A pre-read stat alone cannot bound an inventory changed during reading.
+    with source.open("rb") as handle:
+        raw = handle.read(MAX_INVENTORY + 1)
+    check(0 < len(raw) <= MAX_INVENTORY, "inventory_invalid")
     try:
         obj = json.loads(raw)
     except (ValueError, UnicodeError):
@@ -101,19 +104,30 @@ def _read_inventory(path, run_id):
     # than trusting a green top-level result and two plausible filenames.
     if attempt_count > 1:
         jobs = run.get("historical_attempt_jobs")
-        check(type(jobs) is list and
-              sorted(x.get("attempt") for x in jobs if type(x) is dict)
+        check(type(jobs) is list and len(jobs) == attempt_count and
+              all(type(x) is dict for x in jobs) and
+              sorted(x.get("attempt") for x in jobs)
                   == list(range(1, attempt_count + 1)),
               "rerun_job_attempt_inventory_missing")
+        seen_job_ids = set()
         for attempt in jobs:
             check(type(attempt.get("jobs")) is list and attempt["jobs"],
                   "rerun_job_rows_missing")
+            unsuccessful = False
             for job in attempt["jobs"]:
                 check(type(job) is dict and type(job.get("job_id")) is int
-                      and job.get("status") == "completed"
+                      and job["job_id"] > 0 and
+                      job["job_id"] not in seen_job_ids and
+                      type(job.get("name")) is str and bool(job["name"]) and
+                      job.get("status") == "completed"
                       and job.get("conclusion") in ("success", "failure",
                           "cancelled", "skipped", "neutral", "timed_out"),
-                      "rerun_job_status_invalid")
+                      "rerun_job_identity_or_status_invalid")
+                seen_job_ids.add(job["job_id"])
+                unsuccessful |= job["conclusion"] not in ("success", "skipped")
+            check(type(attempt.get("has_unsuccessful_job")) is bool and
+                  attempt["has_unsuccessful_job"] == unsuccessful,
+                  "rerun_job_outcome_flag_inconsistent")
         check({x["name_attempt"] for x in items} ==
               set(range(1, attempt_count + 1)),
               "one_or_more_attempt_artifacts_missing")

@@ -148,6 +148,29 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         with self.assertRaisesRegex(box.Hold, "rerun_job_rows_missing"):
             self.create()
 
+    def test_repeated_historical_job_id_is_rejected(self):
+        attempts = self.record["runs"][0]["historical_attempt_jobs"]
+        attempts[1]["jobs"][0]["job_id"] = attempts[0]["jobs"][0]["job_id"]
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "rerun_job_identity_or_status_invalid"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
+    def test_inconsistent_historical_failure_flag_is_rejected(self):
+        attempts = self.record["runs"][0]["historical_attempt_jobs"]
+        attempts[0]["has_unsuccessful_job"] = False
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "rerun_job_outcome_flag_inconsistent"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
+    def test_extra_unrecognized_rerun_attempt_receipt_is_rejected(self):
+        self.record["runs"][0]["historical_attempt_jobs"].append("not a job receipt")
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "rerun_job_attempt_inventory_missing"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
     def test_missing_zip_and_unexpected_files_are_refused(self):
         (self.zips / ("artifact-%d.zip" % ONE)).unlink()
         with self.assertRaisesRegex(box.Hold, "unexpected_or_missing_staged_artifact"):
