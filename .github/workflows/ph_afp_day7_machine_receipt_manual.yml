@@ -113,7 +113,9 @@ jobs:
               assert actions[k] is False
           status = 'positive_seven_slots_machine_only' if (
               ledger['all_seven_ledger_slots_supported'] and
-              actions['all_seven_positive_runs_matched']) else 'review_hold'
+              actions['all_seven_positive_runs_matched'] and
+              actions['no_unmatched_scheduled_runs_visible_in_review_window']
+          ) else 'review_hold'
           receipt = {
               'protocol':'ipr_ph_afp_day7_machine_receipt_v1',
               'state_commit':ledger['immutable_state_commit'],
@@ -122,6 +124,8 @@ jobs:
               'machine_status':status,
               'positive_ledger_slots':ledger['successfully_supported_ledger_slots'],
               'matched_actions_runs':actions['matched_scheduled_successes'],
+              'unmatched_in_window_scheduled_runs':len(
+                  actions['unmatched_scheduled_runs_in_review_window']),
               'all_failed_attempts_verified':False,
               'human_source_reviews_completed':False,
               'source_rights_approved':False,

@@ -49,6 +49,8 @@ class ManualAFPMachineGateTests(unittest.TestCase):
 
     def test_machine_verdict_remains_unapproved_after_seven_positive_runs(self):
         self.assertIn("positive_seven_slots_machine_only", self.flow)
+        self.assertIn("actions['no_unmatched_scheduled_runs_visible_in_review_window']", self.flow)
+        self.assertIn("'unmatched_in_window_scheduled_runs':len(", self.flow)
         self.assertIn("'all_failed_attempts_verified':False", self.flow)
         self.assertIn("'human_source_reviews_completed':False", self.flow)
         self.assertIn("'source_rights_approved':False", self.flow)
