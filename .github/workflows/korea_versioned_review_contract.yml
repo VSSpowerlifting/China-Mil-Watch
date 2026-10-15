@@ -1,0 +1,37 @@
+name: Korea Exact-Version Human and Owner Review — Offline Contract
+
+on:
+  pull_request:
+    paths:
+      - core/korea_versioned_review_admission.py
+      - tests/test_korea_versioned_review_admission.py
+      - .github/workflows/korea_versioned_review_contract.yml
+      - docs/engineering/KOREA_SIGNED_VERSION_BOUND_METADATA_ADMISSION_2026-10-15.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  signed-metadata-rehearsal-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test synthetic separate-signer exact version holds
+        run: python -m unittest tests.test_korea_versioned_review_admission -v
+      - name: No production, originals, source or Pages mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# Fake HMAC keys and fabricated receipts only. No real reviewer keys,
+# permission inference, original HWPX, network, production write or SMTP.
