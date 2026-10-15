@@ -10,7 +10,7 @@ verification, and it deletes evidence.
 
 ## Snapshot findings
 
-Based on the published October 14, 2026 \`output/corpus-index.json\`:
+Based on the published October 14, 2026 `output/corpus-index.json`:
 
 - China stored records: **5,144**, across five China feeds.
 - Exact titles after cautious Unicode/punctuation normalization repeat in
@@ -56,14 +56,14 @@ cross-outlet pair can also represent materially distinct claims or framing.
 
 ## Read-only investigator
 
-\`\`\`bash
+```bash
 python3 -m unittest tests.test_china_duplicate_candidates
 python3 scripts/audit_china_duplicate_candidates.py
 python3 scripts/audit_china_duplicate_candidates.py \
     --out /tmp/ipr-china-duplicate-review.json
 python3 scripts/audit_china_duplicate_candidates.py \
     --record-html output/record/2180.html
-\`\`\`
+```
 
 The tool uses only the **compact existing index**, verifies published
 source-trail ID protection and the index field schema, and does not open the
