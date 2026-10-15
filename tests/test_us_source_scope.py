@@ -154,7 +154,7 @@ class TestTheReadmeStatesTheDominantLimitation(unittest.TestCase):
         self.assertIn("September 19, 2026", README)
         self.assertIn("scheduled collection is paused", README)
         self.assertIn("access_blocked", README)
-        self.assertIn("not a public desk", README)
+        self.assertIn("**not** a public desk", README)
         self.assertNotIn("Day zero has not been reached", README)
 
 
