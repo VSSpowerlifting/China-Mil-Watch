@@ -332,5 +332,10 @@
       "reviewer": null,
       "reviewed_on": null
     }
+  ],
+  "protected_source_trail_ids": [
+    2148,
+    2189,
+    2265
   ]
 }
