@@ -1,0 +1,38 @@
+name: Korea private custody equivalence — synthetic offline contracts
+
+# Safely test future source->private clone equality without cloning real
+# public Korean originals or touching GitHub Actions credentials or remotes.
+on:
+  pull_request:
+    paths:
+      - scripts/verify_korea_private_custody_equivalence.py
+      - tests/test_korea_private_custody_equivalence.py
+      - .github/workflows/korea_private_custody_equivalence_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  no-cutover-byte-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify synthetic full Git branch clones, captures and source integrity
+        run: python -m unittest tests.test_korea_private_custody_equivalence -v
+      - name: Prove production and original-state data untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No real raw HWPX, GitHub source branch copy, secrets, artifacts, migration,
+# branch writes, Sunday, model, SMTP or production admission.
