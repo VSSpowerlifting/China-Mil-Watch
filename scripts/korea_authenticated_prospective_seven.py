@@ -55,6 +55,7 @@ def evaluate(pages, artifacts, ledgers, *, as_of_utc):
              "original Korea Day 0 missing or unhealthy")
 
     observed = {}
+    ambiguous_scheduled_dates = set()
     for run_id, action in actions.items():
         _require(type(run_id) is int and run_id > 0
                  and type(action) is dict
@@ -77,7 +78,16 @@ def evaluate(pages, artifacts, ledgers, *, as_of_utc):
                  "malformed artifact name")
         matching = [n for n in names
                     if n.startswith("candidate-shadow-korea-")]
+        other = [n for n in names
+                 if n.startswith("candidate-shadow-indonesia-")]
         if not matching:
+            if not other and action.get("event") == "schedule":
+                # An artifactless/unselected shared scheduled attempt may
+                # have been Korea; assigning only one desk would invent data.
+                # Conservatively hold BOTH possible nominal desk dates.
+                for cron in ("17:17", SCHEDULE):
+                    ambiguous_scheduled_dates.add(
+                        scheduled_slot_date(created, cron).isoformat())
             continue
         if action.get("event") != "schedule":
             # A manual Korea execution never substitutes for a real schedule.
@@ -106,12 +116,13 @@ def evaluate(pages, artifacts, ledgers, *, as_of_utc):
     # becomes a ledger-plus-Actions candidate. Neither grants rights/use.
     days = [d.isoformat() for d in starts]
     failures = [d for d in days
-                if d not in observed or observed[d] != [True]]
+                if observed.get(d) != [True]
+                or d in ambiguous_scheduled_dates]
     # Do not assign a 7-slot verdict before the 7th genuine post-Day-0 slot.
     enough_history = starts[0] > DAY_ZERO
     streak = 0
     for d in reversed(days):
-        if observed.get(d) != [True]:
+        if observed.get(d) != [True] or d in ambiguous_scheduled_dates:
             break
         streak += 1
     passed = enough_history and not failures
@@ -123,6 +134,8 @@ def evaluate(pages, artifacts, ledgers, *, as_of_utc):
         "verified_first_attempt_schedule_and_ledger_dates":
             [d for d in days if observed.get(d) == [True]],
         "unqualified_dates": failures,
+        "ambiguous_shared_scheduled_dates": sorted(
+            set(days) & ambiguous_scheduled_dates),
         "prospective_consecutive_successful_days": streak,
         "seven_day_actions_and_ledger_candidate": passed,
         "historical_october_12_gap_automatically_repaired": False,
