@@ -8,7 +8,9 @@
 <h1 class="page-name">Desks</h1>
 <p class="lede">A desk is a declared collection scope: one jurisdiction or institutional family,
 with its own sources, its own coverage record, and its own limits. A desk appears here as soon as
-its scope is declared, and is labeled according to what it actually does.</p>
+its scope is declared. Published IPR editorial research is shown separately from
+collection into the production source archive; corpus statistics still describe
+actual admitted government originals, not editorial articles.</p>
 <p class="meta">{{ desks.declared_count }} declared ·
 {{ desks.collecting_count }} collecting into the record ·
 {{ desks.not_collecting_count }} not collecting.</p>
@@ -72,9 +74,12 @@ its scope is declared, and is labeled according to what it actually does.</p>
       style="--wl:{{ m.wide.left }};--wt:{{ m.wide.top }};--wtx:{{ m.wide.tx }};--wty:{{ m.wide.ty }};--ml:{{ m.mid.left }};--mt:{{ m.mid.top }};--mtx:{{ m.mid.tx }};--mty:{{ m.mid.ty }}">
       <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
       <span class="deskmap-selected-label" hidden>Selected desk</span>
-      <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+      <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></p>
       <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
       <p class="deskmap-seat">{{ m.seat }} <span>{{ m.coords }}</span></p>
+      {% if d.slug in editorial_published_desks | default([]) %}
+      <p class="meta">IPR-authored research and source links available. Source archive: {{ d.status_label }}.</p>
+      {% endif %}
       <dl class="deskmap-stats">
         <div><dt>{{ 'Corpus records' if d.status == 'shadow' else 'Records' }}</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}{{ 'Not admitted' if d.status == 'shadow' else 'None collected' }}{% endif %}</dd></div>
         <div><dt>{{ 'Last corpus collection' if d.status == 'shadow' else 'Last collection' }}</dt><dd>{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</dd></div>
@@ -105,7 +110,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
 {% for d in desks if d.slug not in placed %}
 <section class="desk desk--{{ d.status }} deskmap-plate rl-plate is-unplaced" data-desk="{{ d.slug }}">
   <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
-  <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></p>
+  <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></p>
   <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
   <p class="deskmap-seat">Institutional seat not plotted on this map.</p>
   <dl class="deskmap-stats">
@@ -128,7 +133,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
 <dl class="scope-register">
 {% for d in desks %}
   <div class="scope-entry">
-    <dt><a href="{{ d.route }}">{{ d.name }}</a> <span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></dt>
+    <dt><a href="{{ d.route }}">{{ d.name }}</a> <span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></dt>
     <dd><p>{{ d.scope }}</p><p class="blocking">{{ d.status_explanation }}</p>{% if d.record_count %}<p class="card-foot"><a href="archive.html?desk={{ d.slug }}">Browse its records</a></p>{% endif %}</dd>
   </div>
 {% endfor %}
@@ -148,7 +153,7 @@ its scope is declared, and is labeled according to what it actually does.</p>
   {% for d in desks %}
     <tr>
       <td data-label="Desk"><a href="{{ d.route }}">{{ d.name }}</a></td>
-      <td data-label="Status"><span class="desk-state desk-state--{{ d.status }}">{{ d.status_label }}</span></td>
+      <td data-label="Status"><span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></td>
       <td data-label="Configured" class="num">{{ d.configured_source_count }}</td>
       <td data-label="Enabled" class="num">{{ d.enabled_source_count }}</td>
       <td data-label="Records" class="num">{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}<span class="meta">none — see status</span>{% endif %}</td>
