@@ -112,6 +112,18 @@ overwriting an existing report. It is safe to run without output regeneration,
 collection, source requests, web browser access, model inference, merges or
 deployment.
 
+## Historical extractor caveat
+
+The existing `scraper/sources/global_times_mil.py` and
+`tests/test_global_times_extraction.py` explicitly document a **September
+16, 2026 repair** for flow-body and related-article teaser pollution. The
+recorded HTML fixture `flow_1365233_missile_test.html` tests the same missile
+page as record #2180. Thus an older contaminated database capture **does not
+prove the current adapter is broken**. The repair work is a historical
+provenance/correction problem, not permission to rescrape or silently replace
+the original. Track the bounded historical-quality audit in
+[issue #613](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/613).
+
 ## What review of each pair requires
 
 1. Verify each title, original text/caption, issuing institution, hosting
