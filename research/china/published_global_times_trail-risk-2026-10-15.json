@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "purpose": "preliminary_published_source_integrity_research_not_publication",
+  "publication_enabled": false,
+  "owner_approved": false,
+  "source_snapshot": {
+    "date": "2026-10-14",
+    "records": 5230
+  },
+  "created_on": "2026-10-15",
+  "series": "The PLA Watch",
+  "notes": "This list identifies suspect stored Global Times source bodies in published issue trails; it does not establish publisher inaccuracies, human Brief errors or corrections.",
+  "checks": [
+    {
+      "id": 241,
+      "issue_date": "2026-05-16",
+      "issue_number": 2,
+      "expected_original_url": "https://www.globaltimes.cn/page/202605/1360888.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "Brief treats world-class interception language as messaging; independently confirm article identity and technical claim attribution",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2265,
+      "issue_date": "2026-07-11",
+      "issue_number": 10,
+      "expected_original_url": "https://www.globaltimes.cn/page/202607/1365501.shtml",
+      "editorial_attention": "machine_summary_conflict",
+      "review_question": "Machine record summary wrongly anchors ship-exchange to Joint Sea-2025; human Brief describes 2026. Check source-level citation and crew-exchange sentence; see issue #623",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2751,
+      "issue_date": "2026-08-01",
+      "issue_number": 12,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367300.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "Human Brief references Type 071 and H-6K reporting around Huangyan Dao. Verify original reporting and distinguish claimed platform presence from independent operational confirmation",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2752,
+      "issue_date": "2026-08-01",
+      "issue_number": 12,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367306.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "Human Brief discusses Type 076 Sichuan catapult footage. Verify original footage details and whether public claims match source evidence",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2881,
+      "issue_date": "2026-08-01",
+      "issue_number": 12,
+      "expected_original_url": "https://www.globaltimes.cn/page/202607/1367264.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "Human Brief discusses Atlas armed reconnaissance drone live-fire. Distinguish attributed media demonstration from proven operational capability",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2803,
+      "issue_date": "2026-08-08",
+      "issue_number": 13,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367431.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "DF-17 formation footage requires original source comparison; avoid treating commentary about readiness as verified technical performance",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2804,
+      "issue_date": "2026-08-08",
+      "issue_number": 13,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367381.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "Intelligent strike-planning system: verify source and separate described software functions from measured combat capabilities",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2916,
+      "issue_date": "2026-08-08",
+      "issue_number": 13,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367509.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "H-6N weapons display: verify original visuals and commentator inferences about missile target roles",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2917,
+      "issue_date": "2026-08-08",
+      "issue_number": 13,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367510.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "GJ-3A three-drone sensor system: verify footage/event and reporter claims about cross-service intelligence distribution",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 2993,
+      "issue_date": "2026-08-08",
+      "issue_number": 13,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367662.shtml",
+      "editorial_attention": "claim_level_review",
+      "review_question": "Y-20B: verify source claims about role switching and WS-20 status; avoid conflating announcements and operational performance",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 3084,
+      "issue_date": "2026-08-15",
+      "issue_number": 14,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367819.shtml",
+      "editorial_attention": "already_caveated_in_issue",
+      "review_question": "No.14 Oct.3 correction expressly disclaims completeness of this Global Times body and avoids supporting drill assertions solely from it",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 3085,
+      "issue_date": "2026-08-15",
+      "issue_number": 14,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367811.shtml",
+      "editorial_attention": "already_caveated_in_issue",
+      "review_question": "No.14 Oct.3 correction says original GT body incomplete and refrains from claiming portable missile footage based on this capture",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    },
+    {
+      "id": 3145,
+      "issue_date": "2026-08-15",
+      "issue_number": 14,
+      "expected_original_url": "https://www.globaltimes.cn/page/202608/1367962.shtml",
+      "editorial_attention": "already_caveated_in_issue",
+      "review_question": "No.14 Oct.3 correction explicitly uses Global Times headline as metadata while disclosing corrupted body; other sources support exercise comparison",
+      "original_publisher_content_checked": false,
+      "reviewer": null,
+      "reviewed_on": null,
+      "owner_approved": false
+    }
+  ]
+}
