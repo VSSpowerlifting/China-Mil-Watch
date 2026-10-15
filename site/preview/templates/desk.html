@@ -36,7 +36,7 @@
   <ol class="desk-reference-list" aria-label="Published IPR desk research">
     {% for paper in published_research %}
     <li>
-      <h3><a href="{{ paper.ipr_page }}">{{ paper.ipr_title }}</a></h3>
+      <h3><a href="https://indopacificrecord.org/{{ paper.ipr_page }}" rel="noopener noreferrer">{{ paper.ipr_title }}</a></h3>
       <p class="meta">IPR · Published <time datetime="{{ paper.published_on }}">{{ paper.published_on }}</time> · Editorial approval {{ paper.approved_on }}</p>
       <ul>
         {% for source in paper.source_links %}

@@ -26,7 +26,7 @@ class RenderedPermanentResearchContracts(unittest.TestCase):
         (self.root / self.row["ipr_page"]).write_text(
             "<html><main>" + body + "</main></html>", encoding="utf-8")
         source_link = '<a href="' + self.src + '">Original</a>'
-        brief_link = ('<a href="' + self.row["ipr_page"] + '">IPR</a>'
+        brief_link = ('<a href="https://indopacificrecord.org/' + self.row["ipr_page"] + '">IPR</a>'
                       if list_publication else "")
         heading = ('<section aria-labelledby="ipr-published-research-heading">'
                    if status else '<section>')
@@ -55,6 +55,16 @@ class RenderedPermanentResearchContracts(unittest.TestCase):
         with self.assertRaises(RenderHold):
             verify_render(self.root, [self.row])
         self.build(status=False)
+        with self.assertRaises(RenderHold):
+            verify_render(self.root, [self.row])
+
+    def test_relative_or_mismatched_brief_link_never_counts_as_publication(self):
+        self.build()
+        path = self.root / "indonesia.html"
+        html = path.read_text(encoding="utf-8")
+        path.write_text(html.replace("https://indopacificrecord.org/" +
+                                     self.row["ipr_page"], self.row["ipr_page"]),
+                        encoding="utf-8")
         with self.assertRaises(RenderHold):
             verify_render(self.root, [self.row])
 
@@ -102,6 +112,7 @@ class RenderedPermanentResearchContracts(unittest.TestCase):
         self.assertIn("published_research | default([])", template)
         self.assertIn("IPR research published — official originals linked", template)
         self.assertIn("paper.source_links", template)
+        self.assertIn("https://indopacificrecord.org/{{ paper.ipr_page }}", template)
         self.assertIn("rel=\"noopener noreferrer\"", template)
         self.assertNotIn("<img", template.split('{# A permanent publication')[1].split("{# Public Korea")[0])
         self.assertIn("load_editorial_catalog()", renderer)
@@ -109,6 +120,8 @@ class RenderedPermanentResearchContracts(unittest.TestCase):
         self.assertIn("published_research=[]", renderer)
         directory = (ROOT/"site/preview/templates/desks.html").read_text()
         self.assertIn("Research published", directory)
+        self.assertIn("source archive:", directory)
+        self.assertIn('title="{{ d.status_label }}"', directory)
         self.assertIn("Corpus records", directory)
         self.assertIn("editorial_published_desks", directory)
         self.assertIn("editorial_published_desks", renderer)

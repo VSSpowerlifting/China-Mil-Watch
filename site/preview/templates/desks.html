@@ -74,7 +74,7 @@ actual admitted government originals, not editorial articles.</p>
       style="--wl:{{ m.wide.left }};--wt:{{ m.wide.top }};--wtx:{{ m.wide.tx }};--wty:{{ m.wide.ty }};--ml:{{ m.mid.left }};--mt:{{ m.mid.top }};--mtx:{{ m.mid.tx }};--mty:{{ m.mid.ty }}">
       <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
       <span class="deskmap-selected-label" hidden>Selected desk</span>
-      <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></p>
+      <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}" aria-label="{{ 'Research published; source archive: ' ~ d.status_label if d.slug in editorial_published_desks | default([]) else d.status_label }}" title="{{ d.status_label }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></p>
       <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
       <p class="deskmap-seat">{{ m.seat }} <span>{{ m.coords }}</span></p>
       <dl class="deskmap-stats">
@@ -107,7 +107,7 @@ actual admitted government originals, not editorial articles.</p>
 {% for d in desks if d.slug not in placed %}
 <section class="desk desk--{{ d.status }} deskmap-plate rl-plate is-unplaced" data-desk="{{ d.slug }}">
   <span class="deskmap-flag-tab" aria-hidden="true">{{ flag(d.slug) }}</span>
-  <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></p>
+  <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}" aria-label="{{ 'Research published; source archive: ' ~ d.status_label if d.slug in editorial_published_desks | default([]) else d.status_label }}" title="{{ d.status_label }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></p>
   <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
   <p class="deskmap-seat">Institutional seat not plotted on this map.</p>
   <dl class="deskmap-stats">
@@ -130,7 +130,7 @@ actual admitted government originals, not editorial articles.</p>
 <dl class="scope-register">
 {% for d in desks %}
   <div class="scope-entry">
-    <dt><a href="{{ d.route }}">{{ d.name }}</a> <span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></dt>
+    <dt><a href="{{ d.route }}">{{ d.name }}</a> <span class="desk-state desk-state--{{ d.status }}" aria-label="{{ 'Research published; source archive: ' ~ d.status_label if d.slug in editorial_published_desks | default([]) else d.status_label }}" title="{{ d.status_label }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></dt>
     <dd><p>{{ d.scope }}</p><p class="blocking">{{ d.status_explanation }}</p>{% if d.record_count %}<p class="card-foot"><a href="archive.html?desk={{ d.slug }}">Browse its records</a></p>{% endif %}</dd>
   </div>
 {% endfor %}
@@ -150,7 +150,7 @@ actual admitted government originals, not editorial articles.</p>
   {% for d in desks %}
     <tr>
       <td data-label="Desk"><a href="{{ d.route }}">{{ d.name }}</a></td>
-      <td data-label="Status"><span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></td>
+      <td data-label="Status"><span class="desk-state desk-state--{{ d.status }}" aria-label="{{ 'Research published; source archive: ' ~ d.status_label if d.slug in editorial_published_desks | default([]) else d.status_label }}" title="{{ d.status_label }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></td>
       <td data-label="Configured" class="num">{{ d.configured_source_count }}</td>
       <td data-label="Enabled" class="num">{{ d.enabled_source_count }}</td>
       <td data-label="Records" class="num">{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}<span class="meta">none — see status</span>{% endif %}</td>

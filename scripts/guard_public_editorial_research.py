@@ -112,8 +112,9 @@ def verify_render(root, catalog=None):
         if not page.published:
             raise RenderHold("permanent IPR research heading missing")
         for paper in papers:
-            if page.hrefs.count(paper["ipr_page"]) != 1:
-                raise RenderHold("expected exactly one IPR article link on desk page")
+            canonical = "https://indopacificrecord.org/" + paper["ipr_page"]
+            if page.hrefs.count(canonical) != 1:
+                raise RenderHold("expected exactly one canonical IPR article link on desk page")
             for src in paper["source_links"]:
                 if page.hrefs.count(src["publisher_url"]) < 1:
                     raise RenderHold("official original link not rendered on desk page")
