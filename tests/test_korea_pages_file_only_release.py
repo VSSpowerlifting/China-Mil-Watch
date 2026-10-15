@@ -51,7 +51,8 @@ class KoreaFileOnlyPagesTests(unittest.TestCase):
         for snippet in (
             "html.count('data-korea-public-link=')==5",
             "html.count('data-korea-additional-link=')==9",
-            "newsId=')==14",
+            "14 + len(auto)",
+            "data-korea-auto-official-link=",
             "unresolved excavation-year discrepancy",
             "not IPR archived records",
             "KOGL Type 1",
@@ -64,6 +65,7 @@ class KoreaFileOnlyPagesTests(unittest.TestCase):
         ):
             with self.subTest(snippet=snippet):
                 self.assertIn(snippet, text)
+        self.assertIn("release:\n    if: false", text)
         self.assertNotIn("anthropic.messages", text)
         self.assertNotIn("smtplib", text)
         self.assertNotIn("KoreaPolicyAdapter(", text)

@@ -78,7 +78,7 @@ class KoreaAdditionalPublicLinkReleaseTests(unittest.TestCase):
             with self.assertRaises(KoreaGateHold):
                 public.load_additional_korea_official_links()
 
-    def test_normal_public_site_has_fourteen_links_zero_documents(self):
+    def test_normal_public_site_preserves_fourteen_fixed_links_and_live_metadata(self):
         import sys
         sys.path.insert(0, str(ROOT / "site/preview"))
         import generate_preview as gp
@@ -93,8 +93,15 @@ class KoreaAdditionalPublicLinkReleaseTests(unittest.TestCase):
             self.assertEqual(report["korea_additional_official_link_entries"], 9)
             self.assertEqual(page.count('data-korea-public-link='), 5)
             self.assertEqual(page.count('data-korea-additional-link='), 9)
+            from core.korea_official_live_links import load_live_korea_official_links
+            fixed = {r["source_identity"] for r in (
+                load_public_korea_links() + public.load_additional_korea_official_links())}
+            auto = load_live_korea_official_links(ROOT / "pla_watch.db", exclude=fixed)
+            self.assertEqual(page.count('data-korea-auto-official-link='), len(auto))
             self.assertEqual(page.count(
-                "https://www.korea.kr/briefing/pressReleaseView.do?newsId="), 14)
+                "https://www.korea.kr/briefing/pressReleaseView.do?newsId="), 14 + len(auto))
+            for row in auto:
+                self.assertIn(row["source_url"], page)
             self.assertIn("unresolved excavation-year discrepancy", page)
             self.assertIn("not IPR archived records", page)
             self.assertIn("KOGL Type 1", page)
