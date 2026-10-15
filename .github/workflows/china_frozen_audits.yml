@@ -44,7 +44,7 @@ jobs:
             tests.test_china_discovery_reduction_rehearsal \
             tests.test_published_global_times_trail_integrity \
             tests.test_pla_daily_series_for_review \
-            tests.test_preview_prototype.TestTrancheOneIdentityAndStructure.test_every_home_record_is_in_the_analyzed_state
+            tests.test_preview_prototype.TestTrancheOneIdentityAndStructure.test_every_home_record_discloses_its_actual_processing_state
       - name: Ensure production corpus and site were not mutated
         if: ${{ !cancelled() }}
         run: |
