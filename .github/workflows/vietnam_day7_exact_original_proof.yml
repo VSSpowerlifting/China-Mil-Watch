@@ -1,0 +1,151 @@
+name: Vietnam Day-7 Exact Originals — Read-Only Source Proof
+
+# Independently verify real, commit-pinned saved ministry evidence.
+# Never publish private original bodies or treat machine proof as human review.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/vietnam_day7_exact_original_proof.yml'
+      - 'tests/test_vietnam_day7_exact_original_proof_contract.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vn-day7-original-proof-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  prove-three-source-captures:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out read-only reviewer, no persisted token
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: repo
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install reviewed source dependencies
+        run: python -m pip install -r repo/requirements.txt
+      - name: Run source fidelity and packet-integrity regressions offline
+        working-directory: repo
+        run: |
+          python -m unittest \
+            tests.test_vietnam_ministry_remote_review \
+            tests.test_vietnam_ministry_checkpoint_rollup \
+            tests.test_vietnam_shadow_review \
+            tests.test_vietnam_day7_exact_original_proof_contract -q
+
+      - name: Verify three exact archived October 14 source snapshots privately
+        shell: bash
+        env:
+          STATE_REMOTE: https://github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          export GIT_TERMINAL_PROMPT=0
+          root="$RUNNER_TEMP/vn-day7-real-proof"
+          mkdir -m 700 "$root"
+          # Immutable Oct 14 states, not today's advancing source branch HEAD.
+          specs=(
+            'vn_mps_foreign_affairs_vi|shadow/vietnam-mps-foreign-affairs|cb607582eda7bd8760663540c33de2f73da411ff|mps'
+            'vn_moit_energy_vi|shadow/vietnam-moit-energy|5d25d68ee5bd3d1e8e5c7759db880a30d172491a|energy'
+            'vn_moit_foundational_industry_vi|shadow/vietnam-moit-foundational-industry|75035550a2f9db4f7a1cac57925141961b390d60|foundational'
+          )
+          for item in "${specs[@]}"; do
+            IFS='|' read -r slug branch pinned folder <<< "$item"
+            git clone --quiet --single-branch --branch "$branch" "$STATE_REMOTE" "$root/$folder-state"
+            test "$(git -C "$root/$folder-state" branch --show-current)" = "$branch"
+            test "$(git -C "$root/$folder-state" ls-tree --name-only HEAD)" = state
+            git -C "$root/$folder-state" cat-file -e "$pinned^{commit}"
+            git -C "$root/$folder-state" merge-base --is-ancestor "$pinned" HEAD
+            mkdir -m 700 "$root/$folder-packet"
+            ( cd repo && python -m scripts.review_vietnam_ministry_state \
+              --source "$slug" \
+              --state-repo "$root/$folder-state" \
+              --state-commit "$pinned" \
+              --checkpoint day-07 --as-of 2026-10-14 \
+              --out-dir "$root/$folder-packet" > "$RUNNER_TEMP/$folder-packet-sha.txt" )
+            test -z "$(git -C "$root/$folder-state" status --porcelain --untracked-files=all)"
+          done
+          ( cd repo && python -m scripts.vietnam_ministry_checkpoint_rollup \
+            "$root/mps-packet" "$root/energy-packet" "$root/foundational-packet" \
+            > "$root/rollup-private.json" )
+          python - "$root/rollup-private.json" "$RUNNER_TEMP/vn-day7-machine-summary.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          rollup = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert rollup["schema"] == "ipr-vietnam-three-source-checkpoint-rollup/1"
+          assert rollup["source_count"] == 3
+          assert rollup["checkpoint"] == "day-07"
+          assert rollup["as_of"] == "2026-10-14"
+          assert rollup["all_three_review_packets_integrity_checked"] is True
+          assert rollup["all_three_machine_checkpoints_reached"] is True
+          assert rollup["human_signoff_complete"] is False
+          assert rollup["production_promotion_authorized"] is False
+          assert rollup["desk_qualified"] is False
+          sources = {source["source_slug"]: source for source in rollup["sources"]}
+          assert set(sources) == {
+              "vn_mps_foreign_affairs_vi", "vn_moit_energy_vi",
+              "vn_moit_foundational_industry_vi",
+          }
+          expected = {
+              "vn_mps_foreign_affairs_vi": ("cb607582eda7bd8760663540c33de2f73da411ff", 11),
+              "vn_moit_energy_vi": ("5d25d68ee5bd3d1e8e5c7759db880a30d172491a", 2),
+              "vn_moit_foundational_industry_vi": ("75035550a2f9db4f7a1cac57925141961b390d60", 1),
+          }
+          for slug, (commit, count) in expected.items():
+              src = sources[slug]
+              assert src["state_commit"] == commit, "wrong historical source commit"
+              assert src["required_review_record_count"] == count, "wrong original roster count"
+              assert src["checkpoint_reached"] is True
+              assert src["human_signoff_complete"] is False
+              if slug.startswith("vn_moit_"):
+                  assert src["anomaly_count"] >= 8, "MOIT robots warnings lost"
+          summary = {
+              "protocol": "ipr-vietnam-day7-three-source-originals-machine-only/1",
+              "as_of": "2026-10-14",
+              "all_three_packet_hashes_verified": True,
+              "machine_day7_threshold_met": True,
+              "source_checkpoints": [{
+                  "source_slug": slug,
+                  "state_commit": sources[slug]["state_commit"],
+                  "state_tree": sources[slug]["state_tree"],
+                  "machine_packet_sha256": sources[slug]["packet_sha256"],
+                  "records_checked": sources[slug]["required_review_record_count"],
+                  "surface_anomalies_or_other_warnings": sources[slug]["anomaly_count"],
+                  "missing_collecting_days": sources[slug]["missing_collecting_days_count"],
+                  "uncovered_window_dates": sources[slug]["uncovered_date_count"],
+              } for slug in sorted(sources)],
+              "human_original_language_review_authenticated": False,
+              "failed_attempt_artifact_census_authenticated": False,
+              "source_rights_approved": False,
+              "production_admission_authorized": False,
+              "weekly_ai_or_editor_email_authorized": False,
+          }
+          Path(sys.argv[2]).write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print("Real commit-bound three-source original-capture machine proof complete; human and rights gates CLOSED.")
+          print(json.dumps(summary, sort_keys=True))
+          PY
+          test -z "$(git -C repo status --porcelain --untracked-files=all)"
+          # Keep source packets and their complete original-language evidence off uploads.
+          rm -rf "$root"
+          test ! -e "$root"
+
+      - name: Upload sanitized machine receipt ONLY
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vn-day7-original-machine-summary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/vn-day7-machine-summary.json
+          if-no-files-found: error
+          retention-days: 30
+
+      # No publisher calls, model, SMTP, signoff generation, shadow push or deployment.
