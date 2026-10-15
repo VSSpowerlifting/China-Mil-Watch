@@ -1,0 +1,69 @@
+name: Brief claim correction proposal custody
+
+# Audit of private, unsigned research proposals only. No public article edits.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/audit_brief_claim_correction_proposals.py
+      - tests/test_brief_claim_correction_proposals.py
+      - research/china/brief-claim-review-proposals-2026-10-15.json
+      - docs/CHINA_BRIEF_CLAIM_REVIEW_PROPOSALS_2026-10-15.md
+      - .github/workflows/china_brief_claim_correction_review.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-brief-claim-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  unsigned-claim-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Protect canonical database and published issue files
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/brief-db-sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Test unsigned correction and source-trail contract
+        run: python -m unittest -v tests.test_brief_claim_correction_proposals
+      - name: Validate exact No.12 and No.10 published evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/audit_brief_claim_correction_proposals.py
+          python scripts/audit_brief_claim_correction_proposals.py \
+            --private-json "$RUNNER_TEMP/ipr-claim-review.json"
+          python - "$RUNNER_TEMP/ipr-claim-review.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1]))
+          assert data["case_count"]==2
+          assert data["owner_approved"] is False
+          assert data["publication_enabled"] is False
+          assert all(not c["correction_authorized"] for c in data["cases"])
+          assert sum(c["proposed_exact_excerpt"] is not None for c in data["cases"])==1
+          assert all(len(c["current_paragraph_sha256"])==64 for c in data["cases"])
+          print("Only unsigned review cases:", data["status_counts"])
+          PY
+      - name: Verify original database and published site unchanged
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/brief-db-sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
