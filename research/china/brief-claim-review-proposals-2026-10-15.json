@@ -33,7 +33,10 @@
       "possible_correction_notice": "An earlier version of this issue incorrectly referred to an Atlas drone-swarm debut among the August 1 disclosures. The July 31 source concerns KVD002 drones. A distinct Atlas demonstration was reported on March 25, 2026.",
       "human_original_video_verified": false,
       "human_editor_reviewed": false,
-      "owner_approved": false
+      "owner_approved": false,
+      "record_source": "global_times_mil",
+      "original_source_title": "Official documentary reveals PLA’s armed reconnaissance drones conduct live-fire strikes on moving vessel off southeast China",
+      "original_source_date": "2026-07-31"
     },
     {
       "case_id": "PLA-WATCH-10-JOINTSEA-CAPTURE",
@@ -57,7 +60,14 @@
       "possible_correction_notice": null,
       "human_original_video_verified": false,
       "human_editor_reviewed": false,
-      "owner_approved": false
+      "owner_approved": false,
+      "record_source": "global_times_mil",
+      "original_source_title": "'Chinese Aegis' Type 052D destroyer Kaifeng meets Russia's 'carrier killer' Varyag as crews exchange visits during Joint Sea-2026 naval exercise",
+      "original_source_date": "2026-07-08"
     }
-  ]
+  ],
+  "baseline_snapshot": {
+    "date": "2026-10-14",
+    "records": 5230
+  }
 }
