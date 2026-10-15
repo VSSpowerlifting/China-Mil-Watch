@@ -75,8 +75,15 @@ def extract(html, *, as_of):
         resolved=canonical(anchor.get("href",""))
         if resolved is None: continue
         url,slug=resolved
-        card=anchor.find_parent(class_="featured-stories")
-        require(card is not None and isinstance(card,Tag),"release_card_missing")
+        headline=anchor.find_parent("h3",class_="featured-stories__headline")
+        card=headline.parent if headline is not None else None
+        # The Oct 15 real Treasury DOM has exactly ONE publisher date and
+        # ONE release link in this immediate per-item div. The shared
+        # .featured-stories list encloses TEN dated items and is unsafe.
+        require(isinstance(card,Tag) and card.name=="div" and
+                isinstance(card.parent,Tag) and
+                "content--2col__body" in (card.parent.get("class") or []),
+                "release_card_boundary_missing")
         dates=card.select("time")
         require(len(dates)==1,"non_unique_press_card_date")
         day=posted_date(dates[0])
