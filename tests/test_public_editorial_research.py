@@ -62,9 +62,11 @@ class PermanentResearchSafety(unittest.TestCase):
         self.assertEqual(item["approved_by"], "Benjamin Yang")
         self.assertEqual(item["approved_on"], "2026-10-13")
         self.assertEqual(item["approval_commit"], "504e8a95cb53e6fe500695aaa051f9dca82d8fe1")
-        self.assertEqual(len(item["source_links"]), 1)
-        self.assertEqual(item["source_links"][0]["source_slug"], "vn_mps_foreign_affairs_vi")
-        self.assertIsNone(item["source_links"][0]["capture_sha256"])
+        self.assertEqual(len(item["source_links"]), 3)
+        self.assertEqual([x["source_slug"] for x in item["source_links"]],
+                         ["vn_government_news_editorial", "vn_government_news_editorial",
+                          "vn_mps_foreign_affairs_vi"])
+        self.assertTrue(all(x["capture_sha256"] is None for x in item["source_links"]))
         self.assertEqual(published_for_desk("indonesia"), [])
 
     def test_good_metadata_links_only_and_no_false_private_copy_claim(self):
