@@ -116,14 +116,18 @@ def _packet(packet):
          and packet.get("reviewer_identity_authenticated") is False
          and packet.get("per_source_rights_granted") is False
          and packet.get("model_email_or_publication_authorized") is False
-         and packet.get("approved_count") == 0
-         and packet.get("public_body_count") == 0
+         and type(packet.get("approved_count")) is int
+         and packet["approved_count"] == 0
+         and type(packet.get("public_body_count")) is int
+         and packet["public_body_count"] == 0
          and packet.get("private_custody_and_independent_restore_verified") is False
          and packet.get("collection_window_qualified") is False
          and type(packet.get("records")) is list
          and 1 <= len(packet["records"]) <= intake.ROWS
-         and packet.get("candidate_count") == len(packet["records"])
-         and packet.get("source_original_count") == len(packet["records"]),
+         and type(packet.get("candidate_count")) is int
+         and packet["candidate_count"] == len(packet["records"])
+         and type(packet.get("source_original_count")) is int
+         and packet["source_original_count"] == len(packet["records"]),
          "untrusted_or_activated_candidate_packet")
     gitsha = packet.get("source_git_commit")
     need(type(gitsha) is str and re.fullmatch(r"[0-9a-f]{40}", gitsha)
