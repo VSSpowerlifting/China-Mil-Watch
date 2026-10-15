@@ -17,10 +17,13 @@ from scripts.attest_us_bis_scheduled_receipt import attest, BISAttestationHold
 
 def run(source_checkout, run_json, production_db, *, expected_remote_head):
     state = Path(source_checkout).resolve(strict=True)
-    meta = Path(run_json).resolve(strict=True)
-    db = Path(production_db).resolve(strict=True)
+    meta = Path(run_json)
+    db_input = Path(production_db)
     if not meta.is_file() or meta.is_symlink() or meta.stat().st_size > 160000:
         raise BISLiveAdmissionHold("source_run_json_untrusted")
+    if db_input.is_symlink():
+        raise BISLiveAdmissionHold("database_symlink_not_allowed")
+    db = db_input.resolve(strict=True)
     run_data = json.loads(meta.read_text(encoding="utf-8"))
     proof = attest(state, run_data, expected_remote_head=expected_remote_head)
     day, commit = proof["receipt_day"], proof["source_commit"]
@@ -37,12 +40,13 @@ def run(source_checkout, run_json, production_db, *, expected_remote_head):
     # Authenticity and packet integrity were verified *before* DB connection.
     with sqlite3.connect(str(db)) as con:
         con.execute("PRAGMA journal_mode=DELETE")
+        con.execute("BEGIN IMMEDIATE")
         added = admit_attested(con, packet, proof)
         if con.execute("PRAGMA quick_check").fetchone()[0] != "ok":
             raise BISLiveAdmissionHold("sqlite_integrity_hold")
     rows = load_public_links(db)
-    if not any(r["source_identity"] in {x["source_identity"] for x in rows}
-               for r in packet["rows"]):
+    saved_ids = {row["source_identity"] for row in rows}
+    if not all(row["source_identity"] in saved_ids for row in packet["rows"]):
         raise BISLiveAdmissionHold("attested_source_readback_missing")
     return {
         "status":"ATTESTED_BIS_METADATA_SQLITE_ADMITTED",
