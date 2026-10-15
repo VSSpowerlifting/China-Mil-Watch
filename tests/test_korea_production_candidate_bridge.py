@@ -266,9 +266,13 @@ class KoreaProductionCandidateBridgeTests(unittest.TestCase):
                          frozen=self.frozen)
 
     def test_cli_explicit_no_send_acknowledgement(self):
-        with self.assertRaises(stage.IntakeHold):
-            stage.main(["--source-checkout", str(self.source),
-                        "--private-output", str(self.out)])
+        from contextlib import redirect_stdout
+        from io import StringIO
+        with redirect_stdout(StringIO()) as output:
+            result = stage.main(["--source-checkout", str(self.source),
+                                 "--private-output", str(self.out)])
+        self.assertEqual(result, 2)
+        self.assertEqual(json.loads(output.getvalue())["status"], "HOLD")
         self.assertFalse(self.out.exists())
 
     def test_never_wires_korea_into_live_production_or_sunday(self):
