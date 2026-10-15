@@ -414,7 +414,7 @@ def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
 def stage_approved_bundle(bundle, artifacts, approvals, *,
                           role_secrets, authorized_reviewers=None,
                           source_verifier=None, rights_verifier=None,
-                          target_dir):
+                          standing_verifiers=None, target_dir):
     """Stage approved bytes outside the repository. NEVER push to Pages.
 
     The required output destination must not exist, be a symlink, or be under
