@@ -48,7 +48,7 @@ def exception_replay(source, policy):
         "third_party_text_present": False,
         "separate_terms_apply": False,
         "privacy_or_secrecy_exception": False,
-        "includes_embedded_media": False,
+        "released_artifact_embeds_media": False,
         "entire_source_text_version_sha256":
             KOREAN if source["desk"] == "korea" else JAPANESE,
     }
@@ -296,11 +296,11 @@ class StandingReuseContracts(unittest.TestCase):
                                     "source_item_excluded_by_rights_or_scope"):
             rights.qualify_standing_text(s,**x)
 
-    def test_embedded_media_blocks_original_text_only_path(self):
+    def test_publisher_media_cannot_be_embedded_in_released_text_artifact(self):
         s=original();x=options(s)
         def media(source,policy):
             value=exception_replay(source,policy)
-            value["includes_embedded_media"]=True
+            value["released_artifact_embeds_media"]=True
             return value
         x["exception_replay"]=media
         with self.assertRaisesRegex(rights.StandingLicenseHold,
