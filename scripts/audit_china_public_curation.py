@@ -31,7 +31,7 @@ TITLE_REVIEW_CUES = {
     "south_china_sea": re.compile(
         r"(?<!中)南海|黄岩岛|仁爱礁|South China Sea|Scarborough", re.I),
     "east_china_sea": re.compile(
-        r"钓鱼岛|东海|Senkaku|East China Sea", re.I),
+        r"钓鱼岛|(?<!中)东海|Senkaku|East China Sea", re.I),
     "strategic_weapons": re.compile(
         r"核武|火箭军|战略导弹|弹道导弹|洲际导弹|"
         r"strategic missile|ballistic missile|nuclear weapon", re.I),
