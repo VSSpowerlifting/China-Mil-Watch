@@ -972,9 +972,14 @@ def gates(con, origin_path, local_path, out_path):
     for label, path in (("origin", origin_path), ("local", local_path)):
         probe = sqlite3.connect(out_path)
         probe.execute("ATTACH ? AS s", (path,))
-        lost = probe.execute(
-            "SELECT COUNT(*) FROM s.articles WHERE url NOT IN (SELECT url FROM main.articles)"
-        ).fetchone()[0]
+        missing = [row[0] for row in probe.execute(
+            "SELECT url FROM s.articles "
+            "WHERE url NOT IN (SELECT url FROM main.articles)"
+        )]
+        # A retired URL from an out-of-date local branch is intentionally
+        # missing, not a lost primary source: the published retirement ledger
+        # explicitly records why its active article row must NOT be restored.
+        lost = sum(1 for url in missing if not is_retired(probe, url))
         probe.close()
         if lost:
             problems.append(f"{lost} {label} urls missing from the merge")
