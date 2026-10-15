@@ -32,7 +32,7 @@ def build(db_path: Path, site_path: Path) -> dict:
         rows = conn.execute("""
             SELECT a.id, a.title_english, a.title_original, a.summary_english,
                    a.published_date, a.is_significant, a.significance_reasoning,
-                   a.relevance_score, a.url, a.extraction_issue,
+                   a.relevance_score, a.url,
                    s.display_name AS source_name, s.slug AS source_slug,
                    GROUP_CONCAT(c.slug) AS category_slugs
               FROM articles a
@@ -77,7 +77,7 @@ def build(db_path: Path, site_path: Path) -> dict:
                 "relevance_score":round(row["relevance_score"] or 0.0, 2),
                 "url":row["url"] or "",
                 "article_path":record_path,
-                "extraction_issue":bool(row["extraction_issue"]),
+                "extraction_issue":False,  # no physical extraction_issue column in SQLite
             })
     target.parent.mkdir(parents=True,exist_ok=True)
     target.write_text(json.dumps(records,ensure_ascii=False,separators=(",",":"))+"\n",
