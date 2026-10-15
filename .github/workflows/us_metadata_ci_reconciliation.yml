@@ -5,6 +5,7 @@ on:
     paths:
       - tests/test_us_source_scope.py
       - tests/test_local_db_reads.py
+      - tests/test_tracked_db_no_residue.py
       - tests/test_preview_prototype.py
       - tests/test_site_mode_contract.py
       - site/preview/templates/desks.html
@@ -34,6 +35,7 @@ jobs:
           python -m unittest -v \
             tests.test_us_source_scope \
             tests.test_local_db_reads.TestWalJournalBehaviorOnIsolatedClone \
+            tests.test_tracked_db_no_residue.TheMechanismIsWhatWeThinkItIs \
             tests.test_preview_prototype.TestTrancheOneIdentityAndStructure.test_us_desk_separates_live_uscc_metadata_from_blocked_pacom \
             tests.test_site_mode_contract.TestCandidateBuild.test_us_link_metadata_does_not_promote_pacom_body_collector
           python site/render.py --out "$RUNNER_TEMP/us-ci-site" --site-origin https://indopacificrecord.org
