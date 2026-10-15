@@ -173,6 +173,35 @@ class TestAtomicRetirement(unittest.TestCase):
         self.assertEqual([r[0] for r in self.state()["articles"]],
                          [1, 2, 3, 4, 5, 6])
 
+    def test_legacy_source_ledger_is_migrated_only_in_scratch_clone(self):
+        from tests.test_migrations import build_legacy_db
+        source = Path(self.temp.name) / "premigration.db"
+        build_legacy_db(source, articles=6)
+        initial = source.read_bytes()
+        with sqlite3.connect(str(source)) as connection:
+            ids = [r[0] for r in connection.execute(
+                "SELECT id FROM articles ORDER BY id")]
+            self.assertIsNone(connection.execute(
+                "SELECT 1 FROM sqlite_master WHERE name='retired_article_urls'"
+            ).fetchone())
+        chosen = reviewed_selection(retired=tuple(ids[:2]),
+                                    kept=tuple(ids[2:]))
+        scratch = Path(self.temp.name) / "migrated-scratch.db"
+        result = rehearse_on_new_scratch_copy(
+            source, scratch, chosen, "2026-10-15",
+            minimum_retire=2, maximum_retire=2)
+        self.assertEqual(result["retired"], 2)
+        self.assertEqual(source.read_bytes(), initial)
+        with sqlite3.connect(str(scratch)) as reduced:
+            self.assertEqual(verify_no_active_retired_urls(reduced), 2)
+            self.assertEqual(
+                [r[0] for r in reduced.execute(
+                    "SELECT id FROM articles ORDER BY id")],
+                ids[2:])
+            self.assertTrue(reduced.execute(
+                "SELECT 1 FROM schema_migrations WHERE version='0008'"
+            ).fetchone())
+
     def test_new_scratch_copy_rolls_back_failed_delete_and_removes_file(self):
         self.conn.execute("""
             CREATE TRIGGER block_copy_retirement BEFORE DELETE ON articles
