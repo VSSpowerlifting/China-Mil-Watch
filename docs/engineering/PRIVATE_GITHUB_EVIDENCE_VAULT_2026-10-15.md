@@ -2,6 +2,14 @@
 
 **Owner choice: October 15, 2026 — a separate PRIVATE GitHub repository.** The owner has now **created** `VSSpowerlifting/ipr-source-evidence-private` and the connected GitHub API has independently confirmed `visibility=private`, owner-admin permissions and a clean empty branch list at first observation. I subsequently initialized its `main` with a **policy README only** at exact commit `2d53f25a2a4c31b3d1b2a84b569a7f203fdad593` and blob `b1a7c174d224f0d9e9245ab400a31bb19c6eab86`. A follow-up authenticated API read reverified private visibility and exactly one `README.md` Git tree entry, no archive refs or government bodies. **No originals have been transferred**, no independent backup or source-use permission is established, and production is untouched.
 
+## Current authenticated preflight baseline — metadata-only (October 15 update)
+
+The private vault now contains the original policy README, two **metadata-only** Korea manifests, and the two strictly fictional pilot/restore branches. The genuine Korea 14-original source bytes, HWPX, source database and failed Actions ZIP **have not been migrated**. The saved manifests contain source-capture inventory hashes/IDs and a verified cross-check of the genuine October 12 failed ZIP (32 capture payload hashes matched the frozen 58-object source inventory, zero additional capture identities). The failed scheduled slot is still failed; the unique attempt log is not backed up here.
+
+The authenticated preflight now explicitly accepts a **second exact pinned snapshot** of the private vault: current `main` at `43a9ad7efec2731133f0e2e2fb9fee4747091c51`, with README Git blob `0fc7181cb1941c8f1893c30b99caca18a3f87b14`, the exactly pinned `manifests/` tree and the two expected JSON blobs. Only the two original fictional pilot branches are accepted alongside that main commit. Any unexpected blob/ref, public visibility, Pages use or missing administrator access remains a HARD HOLD; the tool does not claim the vault has protected branches, restricted collaborators, independent encrypted backup, rights signoffs or real transfer.
+
+This current snapshot is a **read-only onboarding checkpoint**. Adding another vetted metadata receipt requires explicitly updating the authenticated pin and tests. Do not broaden it to `manifests/**` or accept arbitrary files, and never treat merely being in a private Git repository as permission to store originals.
+
 ## Destination created and initialized — initial onboarding record
 
 Actual destination: **`VSSpowerlifting/ipr-source-evidence-private`**. The owner already created it through GitHub. These original setup requirements have been met for the private visibility/name and initial empty state:
@@ -10,7 +18,7 @@ Actual destination: **`VSSpowerlifting/ipr-source-evidence-private`**. The owner
 - No Pages, no public access, no collaborators by default; review owner/admin and recovery contact; enable strong account MFA. Keep code, original media, full-text payloads and reviewer packets OUT of public repositories.
 - Do not enable an automatic public-source GitHub Actions transfer. No secrets in PR contexts. Treat linked assets and HWPX/PDF embedded media as rights-held pending source-specific reviews.
 
-[View the now-created private repository](https://github.com/VSSpowerlifting/ipr-source-evidence-private). The authenticated preflight now accepts **either an entirely empty new repo or the exact known policy-README-only bootstrap** on a single `main` branch. Any changed README blob, extra file or source-archive ref is a fail-closed preflight discrepancy; once genuine archival refs are added, use the separate full object-parity and retention tools, not this onboarding check. The `main` branch was reported **not protected** on first inspection, so repository rulesets and actor access remain a **separate owner review gate**.
+[View the now-created private repository](https://github.com/VSSpowerlifting/ipr-source-evidence-private). The authenticated preflight accepts an empty new repo, the exact historical policy-README-only bootstrap, or tightly pinned metadata-only + fictional-pilot snapshots described above. It never accepts arbitrary populated archives. Any changed README blob, extra file or source-archive ref is a fail-closed preflight discrepancy; once genuine archival refs are added, use the separate full object-parity and retention tools, not this onboarding check. The `main` branch was reported **not protected** on first inspection, so repository rulesets and actor access remain a **separate owner review gate**.
 
 **Authenticated preflight from an operator-controlled shell with `gh` installed and already authenticated:**
 
