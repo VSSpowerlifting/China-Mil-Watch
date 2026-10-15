@@ -5,9 +5,9 @@ analysis, original HWPX, signed reviewer or source Git path is returned.
 """
 from __future__ import annotations
 
-import sqlite3
 from pathlib import Path
-from urllib.parse import quote
+
+from scripts.reconcile_db import _read_only
 
 from core.korea_official_metadata_admission import PREFIX
 
@@ -18,8 +18,10 @@ def load_live_korea_official_links(db_path, *, exclude=()):
     excluded = set(exclude)
     if any(not isinstance(k, str) for k in excluded):
         raise ValueError("invalid_fixed_reference_id")
-    db = sqlite3.connect("file:%s?mode=ro" % quote(str(path.resolve()), safe="/"), uri=True)
-    try:
+    # The native tracked database is WAL-mode. A plain mode=ro SQLite open
+    # may create -wal/-shm beside the live Git-tracked file, even on SELECT.
+    # Use the established scratch-copy read boundary shared by the renderer.
+    with _read_only(str(path)) as db:
         if not db.execute(
             "SELECT 1 FROM sqlite_master WHERE type='table' "
             "AND name='korea_official_source_records'").fetchone():
@@ -32,8 +34,6 @@ def load_live_korea_official_links(db_path, *, exclude=()):
             "WHERE public_scope='official_link_only' "
             "ORDER BY publisher_posted_date DESC,source_identity DESC"
         ).fetchall()
-    finally:
-        db.close()
     out = []
     seen = set()
     for ident, url, day, issuer, republisher in rows:
