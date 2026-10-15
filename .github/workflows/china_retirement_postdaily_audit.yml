@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   postdaily-audit:
-    if: github.repository == 'VSSpowerlifting/China-Mil-Watch'
+    if: github.repository == 'VSSpowerlifting/IndoPacificRecord'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

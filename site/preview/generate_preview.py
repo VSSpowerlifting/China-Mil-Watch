@@ -2969,6 +2969,11 @@ def build(out_dir: Path, title: str, db_path: Path,
         from core.us_pacom_official_links import load_us_pacom_official_links
         us_pacom_links = (load_us_pacom_official_links()
                           if desk.slug == "us-indopacific" else [])
+        # Only actually admitted congressional commission metadata are shown.
+        # PACOM's static index and blocked collector remain distinct.
+        from core.uscc_official_metadata import load_public_links as load_uscc_live_links
+        uscc_links = (load_uscc_live_links(db_path)
+                      if desk.slug == "us-indopacific" else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -2980,6 +2985,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              indonesia_official_links=indonesia_official_links,
                              indonesia_press_links=indonesia_press_links,
                              us_pacom_official_links=us_pacom_links,
+                             uscc_official_links=uscc_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(

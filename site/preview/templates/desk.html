@@ -16,8 +16,8 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{% if published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
-    <p>{% if published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
+    <h2>{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}Official congressional metadata feed live — PACOM collection blocked{% elif published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
+    <p>{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}The U.S. Desk now automatically collects verified official URL, date and issuer metadata from the U.S.-China Economic and Security Review Commission, a congressional commission. Direct U.S. Pacific Command collection remains access-blocked and DVIDS remains paused; original publisher headlines, article text, photographs and analysis are not automatically republished.{% elif published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
   </div>
 </div>
 
@@ -47,6 +47,38 @@
     PACOM's robots-policy access remains unresolved; DVIDS is a separate paused
     media-service feed, not a proxy for command statements. No U.S. production
     records are counted from these links.</p>
+</section>
+{% endif %}
+
+{# The first genuine recurring U.S. metadata source is a congressional commission,
+   NOT PACOM, DVIDS or an IPR-authored article. These rows come from a typed
+   admitted production SQLite table, never an unverified HTML scraper output. #}
+{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}
+<section class="desk-references uscc-source-links" aria-labelledby="uscc-official-links-heading">
+  <p class="eyebrow">Automatically collected · official URL and date metadata</p>
+  <h2 id="uscc-official-links-heading">U.S.-China Economic and Security Review Commission — official announcements</h2>
+  <p>These are verified links to announcements by a U.S. congressional
+    commission, collected from its official press-release listing and admitted
+    into the IPR metadata database. They are not U.S. Pacific Command statements,
+    independently verified IPR analysis, or copies of the publisher's original
+    material. Direct PACOM collection remains access-blocked. Announcement
+    headlines, article text, documents, photographs and translations are
+    not republished here.</p>
+  <ol class="desk-reference-list" aria-label="Collected USCC official metadata records">
+    {% for ref in uscc_official_links %}
+    <li data-uscc-official-link="{{ ref.source_identity }}">
+      <h3><a href="{{ ref.source_url }}" target="_blank" rel="noopener noreferrer">{{ ref.neutral_label }}</a></h3>
+      <p class="meta">Issuer: U.S.-China Economic and Security Review Commission
+        · Official publication date <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+        · Official link metadata only</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">The collecting feed covers its observed first-party listing,
+    not an exhaustive historical archive. Official publisher content remains on
+    the source website; changes or access errors may interrupt new collection.
+    These metadata records are distinct from IPR's article corpus and do not
+    increase its reported article count.</p>
 </section>
 {% endif %}
 
@@ -522,6 +554,18 @@ it is not an analysis queue. <a href="corpus-guide.html#states">Read the four pr
 {{ week_strip(dweeks, dweeks | map(attribute='count') | max, heading='h2', title=desk.name ~ ' by publication week', note="Records this desk holds per publication week, from the week of its first record. Collection volume, not activity or output; a short bar is a small week in this record, which can mean a quiet source or a collection gap. Each bar opens that week's page, which lists every desk's records.") }}
 {% endif %}
 {% else %}
+{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}
+<dl class="stat-rows">
+  <div class="stat-row"><dt>Collected official congressional metadata links</dt><dd>{{ uscc_official_links|length }}</dd></div>
+  <div class="stat-row"><dt>Direct PACOM command collection</dt><dd>Access blocked</dd></div>
+  <div class="stat-row"><dt>DVIDS media collection</dt><dd>Paused</dd></div>
+  <div class="stat-row"><dt>Admitted U.S. source-body articles</dt><dd>None</dd></div>
+</dl>
+<p class="meta">These automatically admitted USCC metadata rows are held in the production
+SQLite database separately from the source-body article corpus. They do not
+inflate the archive's article count. The congressional feed is live, but no
+PACOM military statement has been collected through it.</p>
+{% else %}
 <dl class="stat-rows">
   <div class="stat-row"><dt>{{ 'Corpus records' if desk.status == 'shadow' else 'Records' }}</dt><dd>{{ 'Not admitted' if desk.status == 'shadow' else 'None collected' }}</dd></div>
   <div class="stat-row"><dt>Sources configured{{ ' in production' if desk.status == 'shadow' and not desk.sources else '' }}</dt><dd>{{ desk.configured_source_count }}</dd></div>
@@ -530,6 +574,7 @@ it is not an analysis queue. <a href="corpus-guide.html#states">Read the four pr
 <p class="meta">This desk has no admitted records in the public IPR corpus. Any independently collected shadow originals remain separate, and no number on this page counts them.</p>
 {% if desk.status == 'shadow' and not desk.sources %}
 <p class="meta">The zero source-configuration figures above describe production only. Active shadow families are documented in the institutional research inventory below.</p>
+{% endif %}
 {% endif %}
 {% endif %}
 
@@ -643,9 +688,16 @@ this page leaves a reader unable to tell whether it was solved or abandoned.</p>
 {% if display_limits %}
 <h2>Limits of this desk, stated plainly</h2>
 <ul>
+{% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}
+  <li>Automatic collection currently covers the official USCC press listing only, not the entire U.S. military or government.</li>
+  <li>Direct PACOM site access is blocked; Navy fleet sites also returned access restrictions. DVIDS is a distinct media service and its collector is paused.</li>
+  <li>Admitted USCC entries preserve publisher URL, publication date and issuer metadata, not original documents, photographs, summaries or IPR analysis.</li>
+  <li>A government statement is an attributable source, not independent verification of the statement's claims.</li>
+{% else %}
 {% for limit in display_limits %}
   <li>{{ limit }}</li>
 {% endfor %}
+{% endif %}
 </ul>
 <p class="meta">These are properties of the desk a reader needs before citing it — see
 <a href="coverage.html">Coverage</a> for what each collection run actually returned.</p>
