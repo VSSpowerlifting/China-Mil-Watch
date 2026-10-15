@@ -29,8 +29,48 @@ HISTORICAL_HOLDS = frozenset({
 })
 
 
+def publication_record_dependencies(root):
+    """Collect explicitly bound record IDs from native Briefs and Timelines.
+
+    Both approved work and unpublished in-progress manuscripts are guarded;
+    deleting a source would otherwise silently damage a saved editorial draft.
+    Historical PLA Watch sidecars do not carry record IDs, so the full index's
+    separately derived exact-URL trail_ids remain mandatory.
+    """
+    root = Path(root)
+    ids = set()
+    counts = Counter()
+    for dirname in ("briefs", "timelines"):
+        folder = root / dirname
+        if not folder.is_dir():
+            raise ValueError("missing canonical publication directory: " + dirname)
+        for path in sorted(folder.glob("*.json")):
+            item = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(item, dict):
+                raise ValueError("invalid canonical editorial JSON: " + str(path))
+            if dirname == "briefs":
+                entries = item.get("source_trail", [])
+            else:
+                entries = [proof for event in item.get("entries", [])
+                           for proof in event.get("evidence", [])]
+            if not isinstance(entries, list):
+                raise ValueError("invalid source dependency array: " + str(path))
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    raise ValueError("invalid source dependency: " + str(path))
+                value = entry.get("record_id")
+                if value is None:
+                    continue
+                if type(value) is not int or value <= 0:
+                    raise ValueError("invalid referenced record ID: " + str(path))
+                ids.add(value)
+                counts[dirname] += 1
+    return ids, dict(counts)
+
+
 def plan(index, *, expected_china_focus=600, minimum_retire=4300,
-         maximum_retire=4500, preferred_retire=4400):
+         maximum_retire=4500, preferred_retire=4400,
+         publication_ids=()):
     """Build a deterministic retirement candidate set, never an editorial verdict."""
     if (index.get("fields") !=
             ["id", "date", "source", "state", "title_en", "title_orig"]):
@@ -84,7 +124,12 @@ def plan(index, *, expected_china_focus=600, minimum_retire=4300,
 
     # Citation-held records are never retired, even when their original
     # capture is suspect. They require correction, not broken public citations.
-    kept = focus_ids | trail_ids | (IMPORTANT_ORIGINALS & full) | others
+    bound = set(publication_ids)
+    if any(type(ident) is not int or ident <= 0 for ident in bound):
+        raise ValueError("invalid canonical publication dependency")
+    if not bound <= full:
+        raise ValueError("published or draft citation refers to missing corpus ID")
+    kept = focus_ids | trail_ids | (IMPORTANT_ORIGINALS & full) | others | bound
     initially_removable = len(full - kept)
     # The owner approved an actual 4,300–4,500 deletion range, NOT an
     # arbitrary minimum of 3,500. If the focus and citations leave more than
@@ -129,6 +174,7 @@ def plan(index, *, expected_china_focus=600, minimum_retire=4300,
         "other_desks_before": len(others),
         "automated_china_focus": len(focus_ids & china),
         "published_trail_references": len(trail_ids),
+        "bound_brief_and_timeline_ids": len(bound),
         "citation_only_china_retained": len((trail_ids & china) - focus_ids),
         "supplemental_automated_context": len(supplemental),
         "china_to_retire": len(removed),
@@ -250,9 +296,12 @@ def main(argv=None):
     parser.add_argument("--tombstones-out", type=Path,
                         help="new private digest manifest; requires --scratch-db")
     args = parser.parse_args(argv)
-    result = plan(json.loads(args.index.read_text(encoding="utf-8")))
+    dependencies, by_type = publication_record_dependencies(ROOT)
+    result = plan(json.loads(args.index.read_text(encoding="utf-8")),
+                  publication_ids=dependencies)
     public = {k: v for k, v in result.items()
               if k not in ("kept_ids", "retired_ids")}
+    public["canonical_publication_reference_counts"] = by_type
     if args.tombstones_out and not args.scratch_db:
         parser.error("--tombstones-out requires --scratch-db")
     if args.scratch_db:
