@@ -102,7 +102,8 @@ class RetentionInventoryTest(unittest.TestCase):
             job(112916943525, attempt=2)]})
         row = census.collect(no_jobs, DAY, DAY, NOW)["runs"][0]
         self.assertIn("attempt_has_no_retained_job_evidence", row["holds"])
-        self.assertIn("historical_failed_or_unfinished_job", row["holds"])
+        # Missing jobs are unknown, not evidence that a specific job failed.
+        self.assertNotIn("historical_failed_or_unfinished_job", row["holds"])
         wrong = FakeAPI(jobs={(RUN, 1): [
             job(112911609417, run_id=123456789, attempt=1)],
             (RUN, 2): [job(112916943525, attempt=2)]})
