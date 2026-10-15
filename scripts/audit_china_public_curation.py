@@ -98,7 +98,7 @@ def audit(index, target=600):
     # Include negative controls from the model-screened-out China records.
     # Without these, a plausible-looking shortlist could conceal systematic
     # false negatives. These are REVIEW candidates, never publication picks.
-    control_goal = min(max(0, target - len(sample_ids)), target * 15 // 100)
+    control_goal = min(max(0, target - len(sample_ids)), max(1, target * 15 // 100))
     add_stratified(
         [r for r in china if r["state"] == "not_selected"],
         len(sample_ids) + control_goal)
