@@ -146,6 +146,38 @@ class VaultPreflightTests(unittest.TestCase):
         self.assertFalse(receipt["independent_backup_and_restore_verified"])
         self.assertFalse(receipt["source_bodies_transferred"])
 
+    def test_live_korea_metadata_only_vault_and_fictional_branches_are_bounded(self):
+        good = [{"name": "main", "commit": {"sha": vault.METADATA_MAIN_SHA}}] + [
+            {"name": name, "commit": {"sha": sha}}
+            for name, sha in vault.PILOT_REFS.items()
+        ]
+        tree = {"truncated": False, "tree": [
+            {"path": path, "sha": value[1], "type": value[0]}
+            for path, value in vault.METADATA_MAIN_TREE.items()
+        ]}
+        dest = dict(fake_api()("repos/" + DEST), default_branch="main")
+        receipt = vault.evaluate(SRC, DEST, api=fake_api(
+            destination=dest, branches=good, tree=tree))
+        self.assertEqual(receipt["bootstrap_state"],
+                         "verified_korea_metadata_only_plus_fictional_pilot")
+        self.assertTrue(receipt["fictional_pilot_git_blob_parity_verified"])
+        self.assertFalse(receipt["ready_to_transfer"])
+        self.assertFalse(receipt["source_bodies_transferred"])
+        self.assertFalse(receipt["independent_backup_and_restore_verified"])
+        self.assertFalse(receipt["publisher_original_retention_rights_approved"])
+        poisoned = [dict(row) for row in tree["tree"]]
+        poisoned[2] = dict(poisoned[2], sha="0" * 40)
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_pilot_main_changed"):
+            vault.evaluate(SRC, DEST, api=fake_api(
+                destination=dest, branches=good,
+                tree={"truncated": False, "tree": poisoned}))
+        extra = tree["tree"] + [
+            {"path": "state/shadow.db", "sha": "f" * 40, "type": "blob"}]
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_pilot_main_changed"):
+            vault.evaluate(SRC, DEST, api=fake_api(
+                destination=dest, branches=good,
+                tree={"truncated": False, "tree": extra}))
+
     def test_extra_ref_wrong_fictional_commit_or_blob_is_rejected(self):
         good = [{"name": "main", "commit": {"sha": vault.PILOT_MAIN_SHA}}] + [
             {"name": n, "commit": {"sha": commit}}
