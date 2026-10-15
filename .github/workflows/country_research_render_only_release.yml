@@ -7,12 +7,28 @@ on:
     paths:
       - ".github/workflows/country_research_render_only_release.yml"
       - "tests/test_country_research_release_contract.py"
+      - "core/public_editorial_research.py"
+      - "research/approved_desk_research.json"
+      - "scripts/guard_public_editorial_research.py"
+      - "tests/test_public_editorial_research.py"
+      - "tests/test_public_editorial_render_gate.py"
+      - "site/preview/templates/desk.html"
+      - "site/preview/templates/desks.html"
+      - "site/preview/generate_preview.py"
       - "scripts/guard_country_research_output_scope.py"
       - "tests/test_country_research_output_scope.py"
       - "scripts/stage_country_research_output.py"
       - "tests/test_stage_country_research_output.py"
       - "scripts/guard_japan_official_reference_release.py"
       - "tests/test_guard_japan_official_reference_release.py"
+  # A reviewed merge of the publication catalog/contract may release the
+  # independently approved *editorial presentation* automatically on main.
+  # No collection, source-text mirrors, or new brief approval happens here.
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/country_research_render_only_release.yml"
+      - "research/approved_desk_research.json"
   workflow_dispatch:
     inputs:
       approved_main_sha:
@@ -41,7 +57,9 @@ jobs:
         with:
           python-version: '3.9'
       - name: Verify explicit release invariants and staging boundaries
-        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release -v
+        run: |
+          python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release -v
+          python -m unittest tests.test_public_editorial_research tests.test_public_editorial_render_gate -v
       - name: Install existing render dependencies (no publisher calls)
         run: pip install -r requirements.txt
       - name: Exercise actual static release build without committing or deploying
@@ -51,6 +69,7 @@ jobs:
           python site/render.py --out "$RUNNER_TEMP/country-render"
           python -m scripts.stage_country_research_output --from-dir "$RUNNER_TEMP/country-render" --to-dir output
           python -m scripts.guard_japan_official_reference_release
+          python -m scripts.guard_public_editorial_research --root output
           python scripts/validate_output.py
           python -m scripts.guard_country_research_output_scope
           test -f output/philippines.html
@@ -63,8 +82,19 @@ jobs:
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
 
+      - name: Retain permanent editorial country pages for independent preview
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipr-permanent-editorial-review-${{ github.run_id }}
+          path: |
+            output/vietnam.html
+            output/desks.html
+          if-no-files-found: error
+          retention-days: 3
+
   release:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
@@ -86,7 +116,7 @@ jobs:
 
       - name: Fail closed on stale or malformed owner-reviewed SHA
         env:
-          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+          EXPECTED_SHA: ${{ github.event_name == 'push' && github.sha || inputs.approved_main_sha }}
         run: |
           set -euo pipefail
           [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Expected a full lowercase SHA"; exit 1; }
@@ -94,7 +124,7 @@ jobs:
           test "$ACTUAL_SHA" = "$EXPECTED_SHA" || {
             echo "::error::Main moved since release review. Actual: $ACTUAL_SHA"; exit 1;
           }
-          echo "Releasing reviewed main: $ACTUAL_SHA"
+          echo "Releasing reviewed main: $ACTUAL_SHA ($GITHUB_EVENT_NAME)"
           sha256sum pla_watch.db > "$RUNNER_TEMP/country-release-db.sha"
           git status --porcelain --untracked-files=all > "$RUNNER_TEMP/country-release-before.txt"
           test ! -s "$RUNNER_TEMP/country-release-before.txt"
@@ -117,6 +147,7 @@ jobs:
           python site/render.py --out "$RUNNER_TEMP/country-render"
           python -m scripts.stage_country_research_output --from-dir "$RUNNER_TEMP/country-render" --to-dir output
           python -m scripts.guard_japan_official_reference_release
+          python -m scripts.guard_public_editorial_research --root output
           python scripts/validate_output.py
 
       - name: Country-desk public scope and metadata hold gate
@@ -129,12 +160,21 @@ jobs:
           reg = json.loads(Path("desks/registry.json").read_text(encoding="utf-8"))
           country = {x["slug"]: x for x in reg["desks"]}
           assert {"china", "singapore", "philippines", "vietnam", "indonesia"} <= country.keys()
+          # A permanently publishing IPR editorial desk is NOT an admitted
+          # source collector. Allow its approved research heading only when
+          # the same catalog is independently authenticated by the render gate.
+          from core.public_editorial_research import load_catalog
+          editorial_desks = {entry["desk"] for entry in load_catalog()}
           for name in ("philippines", "vietnam", "indonesia"):
               d = country[name]
               assert d["public"] is True and d["status"] == "shadow"
               assert d["manifest"] is None and d["has_production_records"] is False
               text = (base / (name + ".html")).read_text(encoding="utf-8")
-              assert "Shadow evaluation" in text
+              if name in editorial_desks:
+                  assert "IPR research published — official originals linked" in text
+                  assert "not a production source-text archive" in text
+              else:
+                  assert "Shadow evaluation" in text
               assert "Individually reviewed official-source references" in text
               assert "No individual source references have completed" in text
               assert "data-reference-list" not in text
@@ -225,7 +265,7 @@ jobs:
           retention-days: 7
 
       - name: Commit generated output to main only when publish is approved
-        if: inputs.publish
+        if: github.event_name == 'push' || inputs.publish
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -239,7 +279,7 @@ jobs:
           git push origin HEAD:main
 
       - name: Publish exact validated output to GitHub Pages
-        if: inputs.publish
+        if: github.event_name == 'push' || inputs.publish
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -148,6 +148,7 @@ from core.catalogue_media import (                                   # noqa: E40
 from core.timelines import load_timelines
 from core.desk_registry import load_registry                         # noqa: E402
 from core.reviewed_source_links import load_public_desk_references    # noqa: E402
+from core.public_editorial_research import load_catalog as load_editorial_catalog, published_for_desk
 from core.indonesia_official_index import load as load_indonesia_official_index  # noqa: E402
 from core.indonesia_press_index import load as load_indonesia_press_index  # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
@@ -2631,6 +2632,10 @@ def build(out_dir: Path, title: str, db_path: Path,
     # from the declared snapshot, which is the single governed source.
     citation = corpus_citation(title, snapshot)
 
+    # Editorial publication is independent of official-source ingestion.
+    editorial_research = load_editorial_catalog()
+    editorial_published_desks = sorted({row["desk"] for row in editorial_research})
+
     # Provisional, explicitly machine-organized discovery view. Preserved
     # record routes, full corpus index and cited issue links remain unchanged.
     focus = build_focus(data["corpus"])
@@ -2667,6 +2672,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         "collection_name": COLLECTION_NAME,
         "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
         "desks": desks,
+        "editorial_published_desks": editorial_published_desks,
         # Where each desk's plate hangs on the Desks-page map; geography only.
         "desk_map": desk_map_layout(desks),
         "live_desk_count": desks.collecting_count,
@@ -2948,10 +2954,12 @@ def build(out_dir: Path, title: str, db_path: Path,
     # Every public desk gets a page, including the ones that collect nothing.
     # A declared desk with no page would be a desk a reader cannot check.
     desk_tmpl = env.get_template("desk.html")
+    # Explicitly approved IPR-authored Briefs only; no shadow original content.
     # Individually approved official-source references are distinct from the
     # production corpus and never change a desk's collection status or counts.
     for desk in desks:
         references = load_public_desk_references(desk.slug)
+        published_research = published_for_desk(desk.slug, editorial_research)
         # A separate first-party link index is NOT an independently reviewed
         # reference, production record, publisher-content copy or source feed.
         indonesia_official_links = (load_indonesia_official_index()
@@ -2963,6 +2971,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (out_dir / desk.route).write_text(
             desk_tmpl.render(page=desk.route, desk=desk,
                              public_source_links=references,
+                             published_research=published_research,
                              public_source_options=source_options,
                              public_reference_languages=languages,
                              indonesia_official_links=indonesia_official_links,
@@ -2994,7 +3003,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                 page="korea.html", desk=korea,
                 korea_preview=True, korea_preview_candidates=candidates,
                 korea_private_structural_refs=private_review_by_identity,
-                public_source_links=[], public_source_options=[],
+                public_source_links=[], published_research=[], public_source_options=[],
                 public_reference_languages=[],
                 display_limits=public_desk_limits(korea, source_views),
                 **ctx),

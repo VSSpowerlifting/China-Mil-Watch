@@ -16,10 +16,43 @@
 <div class="status-panel status-panel--{{ desk.status }}">
   <span class="status-glyph desk-state desk-state--{{ desk.status }}" aria-hidden="true"></span>
   <div>
-    <h2>{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}</h2>
-    <p>{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}</p>
+    <h2>{% if published_research | default([]) and desk.status == 'shadow' %}IPR research published — official originals linked{% else %}{{ "Shadow evaluation — no public corpus records" if desk.slug == "indonesia" else ('Official references available — collection remains in shadow' if desk.slug == 'korea' and not korea_preview | default(false) else desk.status_label) }}{% endif %}</h2>
+    <p>{% if published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original Korean headline/date entries plus nine additional government links identified by article number only. Collection and substantive publication remain in shadow.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
   </div>
 </div>
+
+{# A permanent publication is IPR-authored analysis with approved citations.
+   This is independent of the source-collection status, remains empty until
+   an actual reviewed Brief is recorded, and never exposes publisher originals. #}
+{% if published_research | default([]) %}
+<section class="desk-references" aria-labelledby="ipr-published-research-heading">
+  <p class="eyebrow">IPR original research · published</p>
+  <h2 id="ipr-published-research-heading">Research from this desk</h2>
+  <p>These are approved, published IPR-authored articles. Sources open at their
+  original official publishers; links and bibliographic metadata are retained
+  here, not the government's article bodies or photographs. Where underlying
+  captured originals are retained, their custody and any reuse permissions are
+  reviewed separately.</p>
+  <ol class="desk-reference-list" aria-label="Published IPR desk research">
+    {% for paper in published_research %}
+    <li>
+      <h3><a href="https://indopacificrecord.org/{{ paper.ipr_page }}" rel="noopener noreferrer">{{ paper.ipr_title }}</a></h3>
+      <p class="meta">IPR · Published <time datetime="{{ paper.published_on }}">{{ paper.published_on }}</time> · Editorial approval {{ paper.approved_on }}</p>
+      <ul>
+        {% for source in paper.source_links %}
+        <li><a href="{{ source.publisher_url }}" rel="noopener noreferrer"
+               target="_blank">{{ source.title_original }}</a>
+          <span class="meta"> · {{ source.issuer }} · {{ source.publisher_date }}</span></li>
+        {% endfor %}
+      </ul>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">This preserves citation identity and IPR's own analysis, not
+  a public rehost of the source documents. A URL or digest cannot restore an
+  original if its publisher later removes it.</p>
+</section>
+{% endif %}
 
 {# Public Korea renders a strictly frozen official-link bibliography only.
    Private source/rights/editorial preview below remains separate: no raw
