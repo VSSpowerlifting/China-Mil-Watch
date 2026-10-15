@@ -103,6 +103,27 @@ class KoreaAuthenticatedProspectiveSeven(unittest.TestCase):
                 self.assertFalse(r["seven_day_actions_and_ledger_candidate"])
                 self.assertIn("2026-10-19", r["unqualified_dates"])
 
+    def test_unclassified_shared_scheduled_attempt_blocks_candidate(self):
+        # Other desk artifacts can be safely scoped, but an unselected
+        # scheduled attempt might be a failed Korea run, not proof of silence.
+        pages, artifacts, ledgers = scenario()
+        unknown = action(620019, "2026-10-19T20:55:00Z")
+        pages[0]["workflow_runs"].append(unknown)
+        pages[0]["total_count"] += 1
+        artifacts[str(unknown["id"])] = {"total_count": 0, "artifacts": []}
+        r = judge((pages, artifacts, ledgers))
+        self.assertFalse(r["seven_day_actions_and_ledger_candidate"])
+        self.assertIn("2026-10-19", r["unqualified_dates"])
+        self.assertIn("2026-10-19", r["ambiguous_shared_scheduled_dates"])
+        self.assertEqual(r["prospective_consecutive_successful_days"], 0)
+
+        # The exact same successful Indonesia action is scoped and does not
+        # taint an otherwise genuine seven-day Korean success sequence.
+        artifacts[str(unknown["id"])] = artifact(unknown["id"], "indonesia")
+        clean = judge((pages, artifacts, ledgers))
+        self.assertTrue(clean["seven_day_actions_and_ledger_candidate"])
+        self.assertEqual(clean["ambiguous_shared_scheduled_dates"], [])
+
     def test_12_manual_recovery_does_not_rewrite_original_failure(self):
         pages, artifacts, ledgers = scenario(end=14)
         manual = action(999991, "2026-10-13T09:00:00Z",
