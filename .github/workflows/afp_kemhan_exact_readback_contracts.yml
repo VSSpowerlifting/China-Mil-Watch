@@ -1,0 +1,43 @@
+name: AFP and Kemhan — DB and Deployed Page Readback Contracts
+
+# Tests on fabricated SQLite and HTML. Never fetch private source originals,
+# publish to Pages, or claim a public link was editorially approved.
+on:
+  pull_request:
+    paths:
+      - scripts/verify_regional_source_index_readback.py
+      - tests/test_regional_source_index_readback.py
+      - .github/workflows/afp_kemhan_exact_readback_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-source-index-readback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install 'jinja2>=3,<4'
+      - name: Assert typed production SQLite, public HTML and deployed byte parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python -m unittest \
+            tests.test_regional_source_index_readback \
+            tests.test_regional_live_site_wiring \
+            tests.test_regional_official_link_render -v
+      - name: Verify source/database/output isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
