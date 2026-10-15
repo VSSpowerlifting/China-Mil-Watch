@@ -268,7 +268,8 @@ def sign_for_test_or_offline_reviewer(payload, secret):
 
 
 def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
-                  source_verifier=None, rights_verifier=None):
+                  authorized_reviewers=None, source_verifier=None,
+                  rights_verifier=None):
     """Return a safe staging plan; publication requires separate authorization.
 
     Both source_verifier and rights_verifier must independently replay evidence.
@@ -283,9 +284,24 @@ def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
     for work in bundle["works"]:
         need(rights_verifier(bundle["source"], work) is True,
              "publisher_or_editorial_rights_not_independently_verified")
-    need(type(approvals) is list and type(role_secrets) is dict,
+    need(type(approvals) is list and type(role_secrets) is dict
+         and type(authorized_reviewers) is dict,
          "human_editorial_approval_material_missing")
     by_kind = {w["kind"]: w for w in bundle["works"]}
+    required_roles = {r for k in by_kind for r in REQUIRED_ROLES[k]}
+    need(set(authorized_reviewers) == required_roles and
+         all(type(names) in (tuple, list) and 1 <= len(names) <= 20
+             and all(type(n) is str and 3 <= len(n) <= 100 for n in names)
+             and len(set(names)) == len(names)
+             for names in authorized_reviewers.values()),
+         "independent_reviewer_roster_missing")
+    need(set(role_secrets) >= required_roles
+         and all(type(role_secrets[role]) is bytes
+                 and len(role_secrets[role]) >= 32
+                 for role in required_roles)
+         and len({role_secrets[role] for role in required_roles}) ==
+             len(required_roles),
+         "reviewer_keys_not_role_separated")
     seen = set()
     signers = {}
     for a in approvals:
@@ -309,7 +325,11 @@ def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
              and a["reviewer"] == a["reviewer"].strip()
              and not DANGEROUS_TEXT.search(a["reviewer"]),
              "human_approval_source_version_mismatch")
-        instant(a["reviewed_at_utc"])
+        need(a["reviewer"] in authorized_reviewers[role],
+             "signer_not_in_independent_reviewer_roster")
+        need(instant(a["reviewed_at_utc"]).date() >=
+             date.fromisoformat(bundle["source"]["published_date"]),
+             "review_precedes_publication")
         secret = role_secrets.get(role)
         need(type(secret) is bytes and len(secret) >= 32,
              "independent_reviewer_secret_missing")
@@ -340,8 +360,9 @@ def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
 
 
 def stage_approved_bundle(bundle, artifacts, approvals, *,
-                          role_secrets, source_verifier=None,
-                          rights_verifier=None, target_dir):
+                          role_secrets, authorized_reviewers=None,
+                          source_verifier=None, rights_verifier=None,
+                          target_dir):
     """Stage approved bytes outside the repository. NEVER push to Pages.
 
     The required output destination must not exist, be a symlink, or be under
@@ -349,6 +370,7 @@ def stage_approved_bundle(bundle, artifacts, approvals, *,
     """
     plan = verify_bundle(bundle, artifacts, approvals,
                          role_secrets=role_secrets,
+                         authorized_reviewers=authorized_reviewers,
                          source_verifier=source_verifier,
                          rights_verifier=rights_verifier)
     target = Path(target_dir).expanduser()
