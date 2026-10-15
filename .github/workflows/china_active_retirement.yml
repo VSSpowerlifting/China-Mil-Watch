@@ -152,8 +152,10 @@ jobs:
           set -euo pipefail
           python - "$RUNNER_TEMP/china-retirement-reduced-site" <<'PY'
           from pathlib import Path
-          import shutil,sys
-          from site import render as site_render
+          import shutil,sys,importlib.util
+          spec=importlib.util.spec_from_file_location("ipr_render",Path("site/render.py").resolve())
+          site_render=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(site_render)
           target=Path(sys.argv[1])
           old=Path("output")
           for name in site_render.CARRIED_FORWARD:
