@@ -171,6 +171,14 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
             self.create()
         self.assertFalse(self.encrypted.exists())
 
+    def test_malformed_attempt_number_is_a_clean_hold(self):
+        attempts = self.record["runs"][0]["historical_attempt_jobs"]
+        attempts[0]["attempt"] = "not-an-integer"
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "rerun_job_attempt_inventory_missing"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
     def test_missing_zip_and_unexpected_files_are_refused(self):
         (self.zips / ("artifact-%d.zip" % ONE)).unlink()
         with self.assertRaisesRegex(box.Hold, "unexpected_or_missing_staged_artifact"):
