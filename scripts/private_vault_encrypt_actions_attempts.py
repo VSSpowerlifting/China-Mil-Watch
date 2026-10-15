@@ -304,7 +304,14 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
             finally:
                 if proc.poll() is None:
                     proc.kill()
-                    proc.wait()
+                # tarfile's context manager does not own/close proc.stdin;
+                # failed stream-integrity guards must not leak the pipe.
+                if proc.stdin is not None and not proc.stdin.closed:
+                    try:
+                        proc.stdin.close()
+                    except (OSError, BrokenPipeError):
+                        pass
+                proc.wait()
         except (OSError, BrokenPipeError, subprocess.TimeoutExpired,
                 tarfile.TarError):
             raise Hold("encrypted_sidecar_unavailable") from None
