@@ -138,7 +138,7 @@ from core.brief_collection import (                                  # noqa: E40
     FEED_ROUTE as BRIEFS_FEED_ROUTE, MEDIA_DIRNAME as BRIEFS_MEDIA,
     ROUTE_DIR as BRIEFS_ROUTE_DIR, brief_citation, brief_veil, brief_view,
     build_briefs_feed, load_collection, Collection, brief_entry, order_rows, linked_prose,
-    adjacent_items)
+    adjacent_items, continuity_items)
 from core.article_media import native_article_media                  # noqa: E402
 from core.brief_photography import article_cover                    # noqa: E402
 from core.brief_contract import validate_readiness
@@ -2668,6 +2668,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         # own page.
         "latest_analysis": collection.lead,
         "collection": collection,
+        "continuity": continuity_items(collection, "analysis.html"),
         "photo_brief": next((e for e in collection.briefs if e.get("photo")), None),
         "collection_name": COLLECTION_NAME,
         "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
@@ -2926,6 +2927,8 @@ def build(out_dir: Path, title: str, db_path: Path,
                                                            media=brief["article_media"])
             brief["presentation_review"] = slug == presentation_slug
             brief["adjacent"] = adjacent_items(collection, slug)
+            brief["continuity"] = continuity_items(
+                collection, "briefs/%s.html" % slug, current_slug=slug)
             # A cited record this site preserves links to its record page; one
             # it does not hold links only to the source.
             for group in brief["trail_groups"]:
@@ -3125,7 +3128,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
+    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "continuity.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
     # Explicit named assets only: homepage relief sprites and Phase 4A Desks
