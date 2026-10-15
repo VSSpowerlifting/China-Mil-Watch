@@ -97,6 +97,39 @@ human bilingual/fact checker, corrupt PDFs, no media exceptions, path traversal,
 missing/excess artifacts and isolated staging. Neither a passing CI status nor
 owner metadata consent creates an actual published original.
 
+## Simplified standing-license route (integrated from #703)
+
+The full-content `verify_bundle` now accepts a narrowly scoped
+`standing_source_family_license` rights basis for **original_text** and
+**translation_en** only. This is much less bureaucratic than requiring a new
+per-document rights signoff after every successful collector run:
+
+- A **licensed original text** whose exact bytes equal the authenticated,
+  complete government original and whose current standing family policy plus
+  item exceptions are independently verified can pass without any per-record
+  **rights** or **source-fidelity** human signatures. This is automatic legal
+  scope and integrity checking, not an editorial opinion.
+- An English **translation** can reuse the standing derivative rights without
+  a redundant rights-signoff, but still needs **independent bilingual and final
+  editor** signatures tied to its exact finalized text.
+- PDFs, media, HWPX attachments and IPR analysis **cannot** borrow this
+  standing text license. They use their separate publication rules.
+- Any policy-version mismatch, missing current policy observation, missing
+  KOGL item-level Type 1 mark, third-party expression or changed original
+  bytes refuses staging before files are written.
+- The independently trusted callbacks used for source verification, item rights,
+  publisher license freshness and source completeness must be wired to the
+  preserved original and official policy. No arbitrary JSON positive flags are
+  accepted in place of those authenticators.
+
+The stage writer still goes to an external `noindex` scratch directory,
+never directly to `main` or Pages. Deploying the **genuine first** Japan/Korea
+source needs production original-text storage and the source→DB→site→Pages
+readback. Japan MOD's current HTML access challenges and extracted PDF
+completeness issues can make its *eligible source count smaller than its
+discovered record count*; license permission does not magically reconstruct
+the original missing content.
+
 ## Real next build and operational prerequisites
 
 1. **Enumerate each source family's actual rights policy and exception ledger**
