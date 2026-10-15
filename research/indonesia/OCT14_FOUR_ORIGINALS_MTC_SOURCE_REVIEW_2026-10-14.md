@@ -1,0 +1,36 @@
+# Indonesia Kemhan — October 14 four-original shadow intake and source review hold
+
+**Evidence cutoff:** 14 October 2026; inspected 15 October UTC. **Status: metadata-only machine intake, not an Indonesian-language human review, editor-approved analysis, source/media reuse permission, or public record admission.** No publisher request, source-text export, collector execution, LLM, email or production write was undertaken for this note.
+
+## Pinned actual collection evidence
+
+- Isolated state branch `shadow/indonesia-kemhan` at exact immutable commit `0595c6677be24f8f0f33aecb28eec0050e36e8f9` (**state only, not a production deployment**).
+- Actual [October 13 scheduled run 38473562451](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38473562451): source slot October 13, source collector ledger `state/ledger/20261013T215155.399350+0000-38473562451-1.json` (Git blob `9fe4964bf14eb023e4f6e99a3ff117cb209b21cf`). It selected/retrieved **13**, inserted **one**, recognized **12** duplicates, finished with **27** archived originals and `health=ok`.
+- Actual [October 14 scheduled run 38634144819](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38634144819): source slot October 14, ledger `state/ledger/20261014T204239.192359+0000-38634144819-1.json` (Git blob `e8100bbf2ab9edaa5dd3f0a8f63afbc57a7eff05`). It discovered/selected/retrieved **15**, inserted **four**, recognized **11** duplicates, finished with **31** archived originals. Result/health `ok`; zero recorded fetch, extraction or access failures.
+- Ledger state-hash continuity is exact: October 13 `state_sha256_after=2c226a44b1a2a4f5a85dce8dc3852da695d7f951d442e9ce2a4805e10144cebb` equals October 14 `state_sha256_before`. The new October 14 state-hash is `fee14f45080fad98e792ef7c295882e2ce10474e1d885e6c7acec05cfa4b93dc`.
+- This log/ledger read cannot alone certify the completeness of publisher listings, semantic correctness or future Day-14/30 maturity. The [machine-only Day-7 checkpoint](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/38542531580) previously passed, but the human original-language, reuse rights and owner-publication gates remain outstanding.
+
+## Four additional publisher article identities
+
+These four canonical dated links appear in the actual October 14 `requests` array but **not** in the October 13 request set. All four returned HTTP 200. The SHA-256 values are for their exact **publisher HTML HTTP response capture bytes**, not independently verified original Indonesian extracted text. Names/topic below are **slug-derived review descriptors**, not confirmed facts from reviewed article bodies.
+
+| Review identity (publisher dated URL) | Provisional subject from URL | Captured publisher HTML SHA-256 | HTTP bytes |
+|---|---|---|---:|
+| [Menhan menerima wakil direktur FSMTC Federasi Rusia](https://www.kemhan.go.id/2026/10/14/menhan-ri-terima-kunjungan-wakil-direktur-fsmtc-federasi-rusia.html) | Minister and Russian FSMTC official visit | `fbdd916d1e2487557513f3a045502aeb2a8dbb81996b983c7c92e59c17ecb816` | 110,980 |
+| [Sekjen menutup MTC ke-17 RI–Rusia](https://www.kemhan.go.id/2026/10/14/sekjen-kemhan-resmi-tutup-mtc-ke-17-ri-rusia-dorong-penguatan-kerja-sama-teknik-militer-dan-industri-pertahanan.html) | Closing of the 17th Indonesia–Russia MTC | `0d4af4704807b1e4dfae1241dec997c624d83e142d1a2ee21f6321bda49a99d4` | 113,344 |
+| [Kemhan pada MTC ke-17 RI–Rusia](https://www.kemhan.go.id/2026/10/14/kemhan-dorong-penguatan-kerja-sama-teknik-militer-dan-industri-pertahanan-pada-mtc-ke-17-ri-rusia.html) | Ministry account of the same named 17th MTC | `5fab72191917ef51f7e2445c0f9c1262dc95ec87cc242cb31bcba962d75f3dd3` | 114,556 |
+| [Menhan menerima Dubes RI untuk PEA](https://www.kemhan.go.id/2026/10/14/menhan-ri-terima-kunjungan-duta-besar-ri-untuk-persatuan-emirat-arab-pea-bahas-penguatan-kerja-sama-pertahanan.html) | Minister and Indonesian ambassador to UAE | `92300f78018fc31425944e198d9327d896f2cd78352f2cd75d4516d0eef7655b` | 110,068 |
+
+**Do not interpret three Russia-related articles as independent corroboration**: all four entries are Kemhan **Berita** publications, and two explicitly name the same seventeenth MTC. Before any research brief, a named Indonesian-language reviewer should compare the preserved original texts, participants, document/publication/event dates, organizational roles, concrete announced decisions versus aspirational cooperation language, and repeated wording across the two MTC articles. For the FSMTC meeting, do not conflate a ministerial call with signing a new agreement or completing a transfer. For the UAE article, distinguish the ambassador's nationality and institutional capacity from a UAE government statement or verified defense deal.
+
+## Webpage response drift is not proof of changed source-original text
+
+All **11** October 13 article URLs also selected on October 14 returned **different HTML capture SHA-256 hashes** on October 14. The collector nevertheless reported exactly `duplicates=11`, `updated=0` for those continuing records. This is consistent with page wrapper/session/template changes that leave the extracted original identity/content stable; it is **not proof of no publisher-original modifications** independently verified against the two raw HTML versions. The archived collector has a fail-closed source-identity/content comparison: it would hold rather than silently rewrite a stored original when extracted title/text/date changes. Keep the distinction between full HTTP capture bytes and original-language article bytes.
+
+## Human-review and custody acceptance
+
+A reviewer should record for each of the four new source identities: (1) the exact pinned Git state and the collected HTTP capture hash; (2) source publisher/issuer and any press-release versus press-news classification; (3) original Bahasa Indonesia title, date and material claims, including meeting versus decision language; (4) comparison of the preserved response to currently displayed publisher page and any post-capture changes; (5) independent institutional evidence where a factual assertion needs verification; (6) verbatim source-rights and embedded media notices, with translation and substantial reuse assessed separately; (7) named reviewer, review timestamp, outcome (`hold`/`needs review`/`source-approved for a specified limited use`) and cited provenance.
+
+The review can be prepared with the existing [pinned metadata-only Indonesia reference queue workflow](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/workflows/indonesia_pinned_reference_review_queue.yml), which requires a separate explicit approval for an existing-state-only manual dispatch. No publisher request is necessary to identify these four captured source records.
+
+**Historical holds do not disappear.** The contradictory Yonif TP 880 Bulungan/Kaltara versus terminal Kalbar wording remains `hold_publisher_geography_inconsistent` in [issue #452](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/452); the independent Air Force cross-check supports the North Kalimantan reading but is not a publisher erratum. The public link-only bibliography remains a separate restricted site lane; original body, photos, translations, broad Sunday use and production admission are not conferred by archive presence or this note.
