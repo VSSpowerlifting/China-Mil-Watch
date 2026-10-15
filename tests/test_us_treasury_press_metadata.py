@@ -5,14 +5,12 @@ from scripts import collect_us_treasury_press_metadata as t
 from tests.test_us_navy_first_party_access import FakeOpener, FakeResponse
 
 HTML=b"""<!doctype html><html><body>
-<div class="featured-stories content--2col">
- <time datetime="2026-10-15">October 15, 2026</time>
- <div class="content--2col__body"><h3 class="featured-stories__headline">
- <a href="/news/press-releases/sb0661/">Release A</a></h3></div></div>
-<div class="featured-stories content--2col">
- <time datetime="2026-10-14">October 14, 2026</time>
- <div class="content--2col__body"><h3 class="featured-stories__headline">
- <a href="/news/press-releases/sb0660/">Release B</a></h3></div></div>
+<div class="featured-stories content--2col"><div class="content--2col__body">
+  <div><span class="date-format"><time datetime="2026-10-15">October 15, 2026</time></span>
+    <h3 class="featured-stories__headline"><a href="/news/press-releases/sb0661/">Release A</a></h3></div>
+  <div><span class="date-format"><time datetime="2026-10-14">October 14, 2026</time></span>
+    <h3 class="featured-stories__headline"><a href="/news/press-releases/sb0660/">Release B</a></h3></div>
+</div></div>
 </body></html>"""
 class TreasuryContracts(unittest.TestCase):
     def test_valid_exact_card_date_and_metadata_only(self):
@@ -42,7 +40,7 @@ class TreasuryContracts(unittest.TestCase):
         for html in (
            HTML.replace(b'2026-10-15',b'2026-10-16'),
            HTML.replace(b'<time datetime="2026-10-15">October 15, 2026</time>',b''),
-           HTML.replace(b'</h3></div></div>',b'<a href="/news/press-releases/sb0662">Other</a></h3></div></div>',1),
+           HTML.replace(b'</h3></div>',b'<a href="/news/press-releases/sb0662">Other</a></h3></div>',1),
         ):
             with self.subTest(html=html[:50]):
                 with self.assertRaises(t.TreasuryHold):
