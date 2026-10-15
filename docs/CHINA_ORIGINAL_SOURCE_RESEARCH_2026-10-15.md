@@ -20,7 +20,7 @@ corroboration** of the statement's contested assertions.
 The archive can legitimately preserve such statements as *official positions*
 without ratifying the maritime or military claims they contain.
 
-## Seven evidence-bound starting cases
+## Ten evidence-bound starting cases
 
 The review record is in
 `research/china/original-source-review-2026-10-15.json`, keyed to the
@@ -35,6 +35,10 @@ individual `output/record/{id}.html` pages.
 | [#2265](https://indopacificrecord.org/record/2265.html) | [Global Times, 8 July](https://www.globaltimes.cn/page/202607/1365501.shtml) | Original article covers ship visits during Joint Sea-2026, while IPR's stored body consists of misleading Joint Sea-2025 and other exercise teasers. | **Hold**; source-text restoration would require distinct authorization and old-hash preservation |
 | [#4348](https://indopacificrecord.org/record/4348.html) | [Global Times, 18 September](https://www.globaltimes.cn/page/202609/1370832.shtml) | Original publication and IPR body materially align in the reporting of a China Coast Guard–Philippine vessel encounter. Claims about collision responsibility and footage **remain attributed and contested**, not verified operational facts. | Editorial review and counterpart-source context before inclusion |
 | [#4346](https://indopacificrecord.org/record/4346.html) | [Global Times original also underlying this China Military Online copy](https://www.globaltimes.cn/page/202609/1370832.shtml) | China Military Online text carries the Global Times byline and has near-identical body wording. This looks like **syndicated republication**, not an independent second account. | Review representative choice; **preserve both outlet URLs** |
+| [#170](https://indopacificrecord.org/record/170.html) | [Global Times, 11 May](https://www.globaltimes.cn/page/202605/1360610.shtml) | A substantive Ministry of National Defense spokesperson article exists at the original outlet, while the historical stored text contains unrelated navigation/news teaser excerpts. **This record escaped the initial warning heuristic**—a real false negative, so cue counts cannot be treated as exhaustive. | **Quality hold** and include in heuristic counterexample checks |
+| [#419](https://indopacificrecord.org/record/419.html) | [Global Times, 18 May](https://www.globaltimes.cn/page/202605/1361278.shtml) | Original article contains actual Chinese MND comments on military-to-military relations with the United States. The preserved IPR record has **no readable original-text block**. | **Missing-body quality hold**, no fabricated text anchor |
+| [#905](https://indopacificrecord.org/record/905.html) | [Global Times, 31 May source-stated date](https://www.globaltimes.cn/page/202605/1362339.shtml) | Original publisher page discusses China–Mongolia Steppe Partner training with Xinhua-sourced media, but IPR stored no readable text body. The source-stated date on IPR may differ from a publisher article or exercise event date and should be adjudicated explicitly. | **Missing-body quality hold**, inspect Xinhua original/rights |
+
 | [#946](https://indopacificrecord.org/record/946.html) | **Original publisher body not independently retrieved** | Historical stored Global Times body begins with an unrelated Japanese-politics teaser despite a China Coast Guard title. **No positive source-body match is claimed.** | **Quality hold**; obtain primary article before source signoff |
 
 Even for #2849/#2391, a manual editorial source check should compare the
@@ -57,12 +61,17 @@ The validator independently checks:
    source-record IDs and protected published Brief citation IDs.
 2. Every case's ID, title, source slug and source-stated date against the
    October 14 compact index; Singapore/non-China cannot enter the China packet.
-3. Each captured URL against its preserved `output/record/{id}.html`
+3. **Missing-body cases** may carry a `null` source-text anchor ONLY when the
+   archival `.original-text` section is actually absent, the original
+   publisher URL remains preserved, and the case is a mandatory quality hold.
+   It cannot be simulated by deleting words from a valid capture or used for
+   editorial selection.
+4. Each captured URL against its preserved `output/record/{id}.html`
    provenance table and one exact text anchor against the record's
    `.original-text` section. This catches a changing stored capture.
-4. Source-research URL form, research date after publication, explicit source
+5. Source-research URL form, research date after publication, explicit source
    confidence, next-stage choices, and a mandatory hold for contaminated text.
-5. `owner_approved: false`, `publication_enabled: false` and
+6. `owner_approved: false`, `publication_enabled: false` and
    `human_original_review_required: true` for every source case.
 
 The validation can prove *the notes still refer to the same stored source
