@@ -13,6 +13,14 @@ from scripts.reconcile_db import read_only
 
 ROOT = Path(__file__).resolve().parents[1]
 
+# Mirrors the legacy site's summary-derived extraction alert, not a fictitious
+# persistent SQLite column (site/generator.py::_is_extraction_issue).
+EXTRACTION_SIGNALS = (
+    "does not match", "body does not match",
+    "cannot be meaningfully analyzed", "mismatch between headline",
+    "insufficient substantive content", "visible text does not",
+)
+
 
 def build(db_path: Path, site_path: Path) -> dict:
     db_path = Path(db_path).resolve(strict=True)
@@ -77,7 +85,9 @@ def build(db_path: Path, site_path: Path) -> dict:
                 "relevance_score":round(row["relevance_score"] or 0.0, 2),
                 "url":row["url"] or "",
                 "article_path":record_path,
-                "extraction_issue":False,  # no physical extraction_issue column in SQLite
+                "extraction_issue":any(
+                    signal in (row["summary_english"] or "").lower()
+                    for signal in EXTRACTION_SIGNALS),
             })
     target.parent.mkdir(parents=True,exist_ok=True)
     target.write_text(json.dumps(records,ensure_ascii=False,separators=(",",":"))+"\n",
