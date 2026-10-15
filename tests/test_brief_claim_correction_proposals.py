@@ -29,10 +29,10 @@ class BriefClaimCorrectionReviewTest(unittest.TestCase):
         original = copy.deepcopy(args)
         report = audit(*args)
         self.assertEqual(args, original)
-        self.assertEqual(report["case_count"], 2)
+        self.assertEqual(report["case_count"], 3)
         self.assertEqual(report["unmodified_published_source_record_count"], 5230)
         self.assertEqual(report["status_counts"], {
-            "claim_check_only_not_a_proposed_edit": 1,
+            "claim_check_only_not_a_proposed_edit": 2,
             "owner_review_required": 1,
         })
         self.assertFalse(report["publication_enabled"])
@@ -69,6 +69,22 @@ class BriefClaimCorrectionReviewTest(unittest.TestCase):
         no10["proposed_exact_text"] = "An invented replacement that should never get published."
         with self.assertRaisesRegex(ValueError, "cannot propose a Brief edit"):
             audit(*args)
+
+    def test_no13_y20b_first_use_is_held_for_earlier_april_records(self):
+        index, packet, issues, pages = actual()
+        claim = next(c for c in packet["cases"] if c["issue_number"] == 13)
+        self.assertEqual(claim["source_record_id"], 2993)
+        self.assertIn("first confirmed operational use", claim["existing_exact_text"])
+        self.assertIn("202604", claim["primary_evidence"][1]["url"])
+        report = audit(index, packet, issues, pages)
+        no13 = next(c for c in report["cases"] if c["issue_number"] == 13)
+        self.assertIsNone(no13["proposed_exact_excerpt"])
+        self.assertFalse(no13["correction_authorized"])
+        issue = issues["2026-08-08"]
+        issue["why_it_matters"] = issue["why_it_matters"].replace(
+            "first confirmed operational use", "operational use")
+        with self.assertRaisesRegex(ValueError, "exactly once"):
+            audit(index, packet, issues, pages)
 
     def test_old_exact_text_must_be_present_and_unique(self):
         args = list(actual())
