@@ -110,7 +110,8 @@ never part of output, a sitemap or a public issue number.
 - **Budgets:** 22,031-byte article CSS (gzip 5,148), unchanged 120KB/10KB gates;
   [all eighteen page deliveries](delivery-receipts.json).
 - **Focused tests:** 103 tests passed in the final focused set, including the unified-output
-  contracts; the initial 100-test set also passed.
+  contracts; the initial 100-test set also passed. Eight render-workflow
+  contracts also pass after adding source/generated Brief CSS to its PR filter.
 - **Output validator:** passed before and after regeneration with exactly ten
   governed warnings. No validator or allow-list was relaxed.
 - **Complete offline suite and exact-head CI:** final results and run links are

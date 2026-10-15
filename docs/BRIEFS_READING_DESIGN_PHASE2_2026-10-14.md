@@ -144,4 +144,7 @@ restoration helper removed 26 untracked source-image copies emitted by the
 historical renderer, returning them to the baseline inventory. The **only**
 generated file difference is `output/briefs.css`; no article HTML, catalogue,
 homepage, feed, sitemap, database or image differs. Source and output commits
-are separate. See the exact [file inventory](evidence/ipr-reading-phase2/changed-files.txt).
+are separate. The existing render-contract workflow now also runs for changes
+to the source/generated article stylesheet, so this visual PR receives exact
+committed-output replay in GitHub CI. Only its pull-request path filter changes;
+manual release conditions, permissions and deployment scope are unchanged. See the exact [file inventory](evidence/ipr-reading-phase2/changed-files.txt).

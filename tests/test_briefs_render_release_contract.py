@@ -8,6 +8,11 @@ RUNNER = ROOT / "scripts/run_briefs_render_release.py"
 
 
 class BriefsRenderReleaseContract(unittest.TestCase):
+    def test_shared_article_styles_trigger_exact_output_replay(self):
+        review_paths = self.workflow.split("  pull_request:", 1)[1].split("  workflow_dispatch:", 1)[0]
+        for path in ("site/preview/briefs.css", "output/briefs.css"):
+            self.assertIn('"' + path + '"', review_paths)
+
     def test_review_replay_requires_exact_committed_output_and_release_requires_change(self):
         from scripts.run_briefs_render_release import _check_replay_delta
         _check_replay_delta(set(), verify_current=True)

@@ -1,6 +1,8 @@
 Baseline: f469801b9c1ddb21e01188b4bfddf4ffa0c913ae
 
 SOURCE
+.github/workflows/briefs_render_only_release.yml
+tests/test_briefs_render_release_contract.py
 scripts/verify_brief_reading_design.py
 site/preview/briefs.css
 tests/test_brief_unified_reading.py

@@ -3,6 +3,8 @@ name: Briefs presentation — render-only release
 on:
   pull_request:
     paths:
+      - "site/preview/briefs.css"
+      - "output/briefs.css"
       - ".github/workflows/briefs_render_only_release.yml"
       - "scripts/guard_briefs_render_scope.py"
       - "scripts/run_briefs_render_release.py"
