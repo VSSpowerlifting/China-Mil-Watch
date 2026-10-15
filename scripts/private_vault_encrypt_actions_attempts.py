@@ -329,27 +329,46 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                       and manifest.get("individual_zip_contents_verified") is False
                       and manifest.get("downloaded_zip_origin_authenticated") is False
                       and manifest.get("source_rights_approved") is False
+                      and manifest.get("independent_backup_medium_verified") is False
                       and manifest.get("production_cutover_authorized") is False,
                       "sidecar_manifest_mismatch")
                 items = manifest.get("captured_artifacts")
                 check(type(items) is list and 1 <= len(items) <= MAX_ARTIFACTS,
                       "sidecar_items_invalid")
+                attempt_count = manifest.get("latest_run_attempt")
+                check(type(attempt_count) is int and
+                      1 <= attempt_count <= 50 and
+                      type(manifest.get("case_count")) is int and
+                      manifest["case_count"] == len(items) and
+                      manifest.get("event") in ("schedule", "workflow_dispatch") and
+                      type(manifest.get("workflow")) is str and
+                      manifest["workflow"].startswith(".github/workflows/") and
+                      manifest["workflow"].endswith(".yml"),
+                      "sidecar_manifest_scope_invalid")
                 expected = {}
                 total = 0
+                attempts = set()
                 for item in items:
                     check(type(item) is dict and type(item.get("id")) is int
-                          and item["id"] > 0 and type(item.get("bytes")) is int
-                          and 0 < item["bytes"] <= MAX_ITEM_BYTES and
+                          and item["id"] > 0 and type(item.get("attempt")) is int
+                          and 1 <= item["attempt"] <= attempt_count and
+                          type(item.get("bytes")) is int and
+                          0 < item["bytes"] <= MAX_ITEM_BYTES and
                           type(item.get("sha256")) is str and
                           SHA256.fullmatch(item["sha256"]) and
                           item.get("archive_member") ==
                           "artifacts/artifact-%d.zip" % item["id"],
                           "sidecar_item_malformed")
+                    attempts.add(item["attempt"])
                     name = item["archive_member"]
                     check(name not in expected, "sidecar_member_duplicate")
                     expected[name] = item
                     total += item["bytes"]
                     check(total <= MAX_TOTAL_BYTES, "sidecar_total_exceeds_limit")
+                # Encryption requires all attempt artifacts; recovery must not
+                # accept a self-consistent but incomplete replacement manifest.
+                check(attempts == set(range(1, attempt_count + 1)),
+                      "sidecar_attempt_coverage_missing")
                 actual = set()
                 while True:
                     member = bundle.next()
