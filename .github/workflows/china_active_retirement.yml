@@ -40,6 +40,11 @@ jobs:
           test ! -e pla_watch.db-shm
 
   live-corpus-cohort-rehearsal:
+    # This is a stacked PR whose base is #663, created before the main-branch
+    # 600-record focus renderer in #636 merged. It cannot compute focus_ids
+    # until retargeted to main after #657/#663. Do not report a skipped job
+    # as live-corpus or full-site release verification.
+    if: github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
