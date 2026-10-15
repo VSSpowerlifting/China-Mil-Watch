@@ -1,0 +1,51 @@
+name: Korea Week-42 private reviewer intake — offline no-send QA
+
+# Exercise only forms, hashes and offline file privacy. No original HWPX,
+# external model, Korea publisher request, SMTP, site or source admission.
+on:
+  pull_request:
+    paths:
+      - core/korea_week42_private_review.py
+      - scripts/korea_week42_private_review.py
+      - tests/test_korea_week42_private_review.py
+      - core/korea_private_research_candidates.py
+      - research/korea/private_research_candidates/2026-10-17.json
+      - .github/workflows/korea_week42_private_review_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  private-review-intake-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run source-pinned three-review intake and adversarial tests
+        run: python -m unittest tests.test_korea_private_research_candidates tests.test_korea_week42_private_review -v
+      - name: Test real three-source blank private review and metadata-only receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$RUNNER_TEMP/korea-week42-review-$GITHUB_RUN_ID.json"
+          python -m scripts.korea_week42_private_review --create "$target" --explicit-local-only
+          test -s "$target"
+          test "$(stat -c %a "$target")" = 600
+          python -m scripts.korea_week42_private_review --check "$target" --explicit-local-only
+          rm "$target"
+          test ! -e "$target"
+      - name: Assert protected production tree unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No public artifact, AI, SMTP, credentials, Korea source fetch or scheduling.
