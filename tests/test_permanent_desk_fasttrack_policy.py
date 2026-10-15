@@ -68,7 +68,7 @@ class PermanentDeskExceptionPolicy(unittest.TestCase):
             "without backdating",
             "material coverage failure",
             "stop admission",
-            "does not retroactively",
+            "never retroactively",
         ):
             self.assertIn(phrase, self.record)
 
