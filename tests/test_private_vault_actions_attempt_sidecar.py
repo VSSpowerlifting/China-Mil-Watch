@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import subprocess
+import tarfile
 import tempfile
 import unittest
 import zipfile
@@ -166,6 +167,55 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
                 self.verify(receipt)
         finally:
             self.scratch.chmod(0o700)
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def forge_encrypted_fixture(self, *, corrupt_id=None, drop_id=None):
+        """Test-only re-encryption of fictional payloads; never run on originals."""
+        receipt = self.create()
+        test_plain = self.root / "fictional-only-plaintext-test.tar"
+        run("gpg", "--homedir", str(self.home), "--batch", "--yes",
+            "--output", str(test_plain), "--decrypt", str(self.encrypted))
+        manifest = None
+        files = {}
+        with tarfile.open(test_plain, "r:") as existing:
+            for item in existing:
+                payload = existing.extractfile(item).read()
+                if item.name == "manifest.json":
+                    manifest = payload
+                else:
+                    files[item.name] = payload
+        self.assertIsNotNone(manifest)
+        forged_plain = self.root / "fictional-forged-test.tar"
+        with tarfile.open(forged_plain, "w:") as archive:
+            meta = tarfile.TarInfo("manifest.json")
+            meta.size = len(manifest)
+            archive.addfile(meta, io.BytesIO(manifest))
+            for name, value in files.items():
+                if drop_id is not None and name.endswith("/artifact-%d.zip" % drop_id):
+                    continue
+                if corrupt_id is not None and name.endswith("/artifact-%d.zip" % corrupt_id):
+                    value = value + b"FICTIONAL MALICIOUS TAMPER"
+                info = tarfile.TarInfo(name)
+                info.size = len(value)
+                archive.addfile(info, io.BytesIO(value))
+        encrypted = self.root / "forged-sidecar.tar.gpg"
+        run("gpg", "--homedir", str(self.home), "--batch", "--yes",
+            "--trust-model", "always", "--recipient", self.fpr,
+            "--output", str(encrypted), "--encrypt", str(forged_plain))
+        return encrypted, hashlib.sha256(encrypted.read_bytes()).hexdigest(), receipt
+
+    def test_restore_rejects_reencrypted_modified_attempt_zip(self):
+        encrypted, digest, receipt = self.forge_encrypted_fixture(corrupt_id=ONE)
+        with self.assertRaisesRegex(box.Hold, "sidecar_item_length_mismatch"):
+            box.restore(encrypted, digest, receipt["source_inventory_sha256"],
+                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_restore_rejects_valid_ciphertext_missing_failed_attempt(self):
+        encrypted, digest, receipt = self.forge_encrypted_fixture(drop_id=ONE)
+        with self.assertRaisesRegex(box.Hold, "sidecar_members_missing"):
+            box.restore(encrypted, digest, receipt["source_inventory_sha256"],
+                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
     def test_filename_that_claims_zip_but_is_plaintext_is_refused(self):
