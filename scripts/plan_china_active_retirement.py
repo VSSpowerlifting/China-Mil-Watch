@@ -29,7 +29,8 @@ HISTORICAL_HOLDS = frozenset({
 })
 
 
-def plan(index, *, expected_china_focus=600, minimum_retire=3500):
+def plan(index, *, expected_china_focus=600, minimum_retire=4300,
+         maximum_retire=4500, preferred_retire=4400):
     """Build a deterministic retirement candidate set, never an editorial verdict."""
     if (index.get("fields") !=
             ["id", "date", "source", "state", "title_en", "title_orig"]):
@@ -84,9 +85,39 @@ def plan(index, *, expected_china_focus=600, minimum_retire=3500):
     # Citation-held records are never retired, even when their original
     # capture is suspect. They require correction, not broken public citations.
     kept = focus_ids | trail_ids | (IMPORTANT_ORIGINALS & full) | others
+    initially_removable = len(full - kept)
+    # The owner approved an actual 4,300–4,500 deletion range, NOT an
+    # arbitrary minimum of 3,500. If the focus and citations leave more than
+    # 4,400 removable China rows, protect additional *context* records in
+    # a separate openly automated tier. This does not claim editorial review.
+    supplemental = []
+    if initially_removable > preferred_retire:
+        count = initially_removable - preferred_retire
+        safe = []
+        for row in rows:
+            ident, date, src, state, _, _ = row
+            if ident not in china or ident in kept or ident in HISTORICAL_HOLDS:
+                continue
+            slug = sources[src]["code"]
+            # Avoid adding older known-contaminated Global Times captures
+            # as superficially safe retained context.
+            if slug == "global_times_mil":
+                continue
+            # Prefer original ministry and non-PLA sources, then more recent
+            # records; deterministic and explicitly *non-editorial*.
+            source_priority = {
+                "mod_china": 3, "xinhua_mil": 2,
+                "china_mil_online": 1, "pla_daily": 0,
+            }.get(slug, -1)
+            safe.append((source_priority, date or "", ident))
+        safe.sort(reverse=True)
+        if len(safe) < count:
+            raise ValueError("insufficient safe context rows to reach target range")
+        supplemental = [ident for _, _, ident in safe[:count]]
+        kept.update(supplemental)
     removed = full - kept
-    if not removed <= china or len(removed) < minimum_retire:
-        raise ValueError("retirement set too small or includes a foreign desk")
+    if not removed <= china or not minimum_retire <= len(removed) <= maximum_retire:
+        raise ValueError("retirement outside owner-approved 4300–4500 range")
     if not trail_ids <= kept or not IMPORTANT_ORIGINALS & full <= kept:
         raise ValueError("protected editorial evidence lost")
 
@@ -99,6 +130,7 @@ def plan(index, *, expected_china_focus=600, minimum_retire=3500):
         "automated_china_focus": len(focus_ids & china),
         "published_trail_references": len(trail_ids),
         "citation_only_china_retained": len((trail_ids & china) - focus_ids),
+        "supplemental_automated_context": len(supplemental),
         "china_to_retire": len(removed),
         "china_after": len(china - removed),
         "total_after": len(kept),
