@@ -1,0 +1,37 @@
+name: Philippines AFP Day-7 manual evidence — fast offline contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/ph_afp_day7_machine_receipt_manual.yml
+      - .github/workflows/ph_afp_day7_machine_receipt_contracts.yml
+      - scripts/audit_ph_afp_seven_day.py
+      - scripts/audit_ph_afp_actions_provenance.py
+      - tests/test_ph_afp_day7_machine_workflow.py
+      - tests/test_ph_afp_seven_day.py
+      - tests/test_ph_afp_actions_provenance.py
+
+permissions:
+  contents: read
+
+jobs:
+  machine-contracts:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check read-only provenance, cutoff and false-approval invariants
+        run: |
+          python -m unittest tests.test_ph_afp_day7_machine_workflow tests.test_ph_afp_seven_day tests.test_ph_afp_actions_provenance -v
+      - name: Ensure production corpus and outputs stayed untouched
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          git diff --exit-code -- pla_watch.db output/ shadow/

@@ -237,6 +237,27 @@ class TestIsolation(StateCase):
             with self.subTest(file=path.name):
                 text = path.read_text(encoding="utf-8")
                 self.assertNotIn("scripts/shadow_collect_ph.py", text)
+                if path.name in (
+                        "ph_afp_day7_machine_receipt_manual.yml",
+                        "ph_afp_day7_machine_receipt_contracts.yml"):
+                    # Explicitly permitted non-collector review lanes. AFP
+                    # identifiers are necessary to audit immutable evidence,
+                    # but cannot become a production collection or delivery
+                    # trigger. Their own workflow tests cover receipt details.
+                    self.assertIn("permissions:\n  contents: read", text)
+                    self.assertNotIn("contents: write", text)
+                    self.assertNotIn("actions: write", text)
+                    self.assertNotIn("pull_request_target:", text)
+                    self.assertNotIn("\n  schedule:", text)
+                    self.assertNotIn("\n  push:", text)
+                    self.assertNotIn("scripts/shadow_collect_ph", text)
+                    if path.name.endswith("_manual.yml"):
+                        self.assertIn("on:\n  workflow_dispatch:", text)
+                        self.assertIn("if: github.ref == 'refs/heads/main'", text)
+                    else:
+                        self.assertIn("on:\n  pull_request:", text)
+                        self.assertNotIn("workflow_dispatch:", text)
+                    continue
                 if path.name == "country_desk_checkpoint_intake_contracts.yml":
                     # PR-only tests observe producer contracts without collecting.
                     self.assertIn("on:\n  pull_request:", text)

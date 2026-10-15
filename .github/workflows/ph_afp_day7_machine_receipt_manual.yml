@@ -1,0 +1,150 @@
+name: Philippines AFP pinned Day-7 machine evidence (manual)
+
+# Read-only metadata receipt. No source-body export, human signoff or promotion.
+on:
+  workflow_dispatch:
+    inputs:
+      as_of:
+        description: 'UTC cutoff YYYY-MM-DD, from 2026-10-13 through current UTC date'
+        type: string
+        required: true
+        default: '2026-10-14'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ph-afp-day7-machine-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Check out read-only auditor
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          persist-credentials: false
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install offline auditor dependencies
+        run: python -m pip install -r repo/requirements.txt
+
+      - name: Verify immutable source audit and API-reconciliation regressions
+        working-directory: repo
+        run: python -m unittest tests.test_ph_afp_seven_day tests.test_ph_afp_actions_provenance -v
+
+      - name: Read exact AFP shadow state and audit seven logical slots
+        working-directory: repo
+        shell: bash
+        env:
+          STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+          REVIEW_CUTOFF: ${{ inputs.as_of }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from datetime import date, datetime, timezone
+          value = os.environ['REVIEW_CUTOFF']
+          d = date.fromisoformat(value)
+          assert d.isoformat() == value
+          assert date(2026, 10, 13) <= d <= datetime.now(timezone.utc).date()
+          PY
+          git clone --quiet --single-branch --branch shadow/ph-afp "$STATE_REMOTE" "$RUNNER_TEMP/ph-afp-state"
+          test "$(git -C "$RUNNER_TEMP/ph-afp-state" branch --show-current)" = "shadow/ph-afp"
+          test "$(git -C "$RUNNER_TEMP/ph-afp-state" ls-tree --name-only HEAD)" = "state"
+          mkdir -p "$RUNNER_TEMP/afp-review"
+          git -C "$RUNNER_TEMP/ph-afp-state" rev-parse HEAD > "$RUNNER_TEMP/afp-review/state-sha.txt"
+          sha="$(cat "$RUNNER_TEMP/afp-review/state-sha.txt")"
+          python -m scripts.audit_ph_afp_seven_day \
+            --state-repo "$RUNNER_TEMP/ph-afp-state" --state-commit "$sha" \
+            --start-date 2026-10-07 --as-of "$REVIEW_CUTOFF" \
+            > "$RUNNER_TEMP/afp-review/ledger.json"
+          test -z "$(git -C "$RUNNER_TEMP/ph-afp-state" status --porcelain --untracked-files=all)"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Check complete bounded GitHub AFP workflow-runs export
+        working-directory: repo
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REVIEW_CUTOFF: ${{ inputs.as_of }}
+        run: |
+          set -euo pipefail
+          # Preserve unsuccessful and manual attempts in the input census.
+          gh api --paginate --slurp -X GET \
+            "repos/$GITHUB_REPOSITORY/actions/workflows/ph_afp_shadow.yml/runs?created=2026-10-07..$REVIEW_CUTOFF&per_page=100" \
+            > "$RUNNER_TEMP/afp-runs-input.json"
+          sha="$(cat "$RUNNER_TEMP/afp-review/state-sha.txt")"
+          python -m scripts.audit_ph_afp_actions_provenance \
+            --state-repo "$RUNNER_TEMP/ph-afp-state" --state-commit "$sha" \
+            --start-date 2026-10-07 --as-of "$REVIEW_CUTOFF" \
+            --actions-export "$RUNNER_TEMP/afp-runs-input.json" \
+            > "$RUNNER_TEMP/afp-review/actions.json"
+          rm "$RUNNER_TEMP/afp-runs-input.json"
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+      - name: Record machine-only verdict with explicit human and publication holds
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          folder = Path(os.environ['RUNNER_TEMP']) / 'afp-review'
+          ledger = json.loads((folder/'ledger.json').read_text())
+          actions = json.loads((folder/'actions.json').read_text())
+          assert ledger['immutable_state_commit'] == actions['state_commit']
+          for k in ('human_review_completed_or_verified','source_reuse_rights_approved','production_admission_authorized'):
+              assert ledger[k] is False
+          for k in ('production_eligible','weekly_ai_writer_eligible','historical_failed_and_rerun_attempts_exhaustively_audited'):
+              assert actions[k] is False
+          status = 'positive_seven_slots_machine_only' if (
+              ledger['all_seven_ledger_slots_supported'] and
+              actions['all_seven_positive_runs_matched']) else 'review_hold'
+          receipt = {
+              'protocol':'ipr_ph_afp_day7_machine_receipt_v1',
+              'state_commit':ledger['immutable_state_commit'],
+              'reporting_start':'2026-10-07',
+              'reporting_end':'2026-10-13',
+              'machine_status':status,
+              'positive_ledger_slots':ledger['successfully_supported_ledger_slots'],
+              'matched_actions_runs':actions['matched_scheduled_successes'],
+              'all_failed_attempts_verified':False,
+              'human_source_reviews_completed':False,
+              'source_rights_approved':False,
+              'production_admission_authorized':False,
+              'weekly_ai_writer_authorized':False,
+              'editor_email_or_publication_authorized':False,
+              'production_writes':0,
+          }
+          (folder/'verdict.json').write_text(json.dumps(receipt,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+
+      - name: Retain only metadata-only private reviewer receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ph-afp-day7-machine-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/afp-review/state-sha.txt
+            ${{ runner.temp }}/afp-review/ledger.json
+            ${{ runner.temp }}/afp-review/actions.json
+            ${{ runner.temp }}/afp-review/verdict.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      # No collector dispatch, git push, source-body upload, model, SMTP or release.
