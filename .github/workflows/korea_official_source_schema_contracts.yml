@@ -5,6 +5,14 @@ on:
     paths:
       - migrations/versions/m0008_korea_official_source_metadata.py
       - tests/test_korea_official_source_metadata_schema.py
+      - tests/test_korea_official_metadata_auto_admission.py
+      - core/korea_official_metadata_admission.py
+      - core/korea_official_live_links.py
+      - scripts/admit_korea_official_source_metadata.py
+      - config/korea_official_link_automatic_admission.json
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+      - .github/workflows/korea_verified_official_link_production.yml
       - .github/workflows/korea_official_source_schema_contracts.yml
       - docs/engineering/KOREA_LIVE_METADATA_PIPELINE_SCOPE_2026-10-15.md
 
@@ -31,6 +39,10 @@ jobs:
         run: |
           python -m unittest \
             tests.test_korea_official_source_metadata_schema \
+            tests.test_korea_official_metadata_auto_admission \
+            tests.test_korea_public_bibliography \
+            tests.test_korea_additional_public_links \
+            tests.test_korea_site_preview \
             tests.test_migrations -v
       - name: Assert no live DB, site, or shadow collection modification
         if: ${{ !cancelled() }}
