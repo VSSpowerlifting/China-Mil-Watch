@@ -86,10 +86,15 @@ def approvals(bundle):
     return out
 
 
+def reviewers_for(bundle):
+    roles = {role for w in bundle["works"] for role in m.REQUIRED_ROLES[w["kind"]]}
+    return {role: REVIEWERS[role] for role in roles}
+
+
 def valid(bundle, artifacts, signed=None):
     return m.verify_bundle(
         bundle, artifacts, approvals(bundle) if signed is None else signed,
-        role_secrets=KEYS, authorized_reviewers=REVIEWERS,
+        role_secrets=KEYS, authorized_reviewers=reviewers_for(bundle),
         source_verifier=lambda _source: True,
         rights_verifier=lambda _source, _work: True)
 
@@ -134,7 +139,7 @@ class FullContentReleaseContracts(unittest.TestCase):
         bundle, artifacts = fixture()
         with self.assertRaisesRegex(m.FullContentHold,
                                     "original_source_capture_not_authenticated"):
-            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS, authorized_reviewers=REVIEWERS,
+            m.verify_bundle(bundle, artifacts, approvals(bundle), role_secrets=KEYS, authorized_reviewers=reviewers_for(bundle),
                             source_verifier=lambda _: False,
                             rights_verifier=lambda *_: True)
 
@@ -180,7 +185,7 @@ class FullContentReleaseContracts(unittest.TestCase):
                                     "reviewer_keys_not_role_separated"):
             m.verify_bundle(bundle, artifacts, approvals(bundle),
                             role_secrets=repeated,
-                            authorized_reviewers=REVIEWERS,
+                            authorized_reviewers=reviewers_for(bundle),
                             source_verifier=lambda _: True,
                             rights_verifier=lambda *_: True)
 
@@ -295,7 +300,7 @@ class FullContentReleaseContracts(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             target = Path(d) / "staged"
             out = m.stage_approved_bundle(b, a, signed,
-                role_secrets=KEYS, authorized_reviewers=REVIEWERS,
+                role_secrets=KEYS, authorized_reviewers=reviewers_for(b),
                 source_verifier=lambda _: True,
                 rights_verifier=lambda *_: True,
                 target_dir=target)
@@ -317,7 +322,7 @@ class FullContentReleaseContracts(unittest.TestCase):
             with self.assertRaisesRegex(m.FullContentHold,
                                         "staging_must_be_new_external_directory"):
                 m.stage_approved_bundle(b,a,approvals(b),
-                    role_secrets=KEYS, authorized_reviewers=REVIEWERS,source_verifier=lambda _:True,
+                    role_secrets=KEYS, authorized_reviewers=reviewers_for(b),source_verifier=lambda _:True,
                     rights_verifier=lambda *_:True,target_dir=path)
             self.assertEqual(before,sorted(p.name for p in path.iterdir()))
 
