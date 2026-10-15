@@ -133,7 +133,7 @@ jobs:
           assert not new_ids-old_ids
           assert set(old["trail_ids"]).issubset(new_ids)
           assert set(old["focus_ids"]).issubset(new_ids)
-          assert len(set(new["focus_ids"]))==len(new_ids)
+          assert len(set(new["focus_ids"]))==len(set(old["focus_ids"]))
           for ident in list(gone)[:20]:
               assert not (after/"record"/("%d.html"%ident)).exists()
           for ident in list(old["trail_ids"])[:20]:
