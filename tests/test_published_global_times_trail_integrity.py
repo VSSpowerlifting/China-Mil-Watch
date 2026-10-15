@@ -1,11 +1,17 @@
 """Published Brief source-trail custody and historical capture review tests."""
 import copy
 import json
+from pathlib import Path
 import unittest
 
 from scripts.audit_published_global_times_trail_integrity import (
-    audit, INDEX, CASES, RECORDS, ISSUES,
+    audit, CASES, RECORDS, ISSUES,
 )
+
+# Frozen October 14 evidence (5,230 records, 5,144 China records).
+# Live output/corpus-index.json advances with daily collection and is not
+# the source of truth for exact 2026-10-14 historical audit assertions.
+INDEX = Path(__file__).resolve().parent / "fixtures/china-corpus-index-2026-10-14.json"
 
 
 def actual():

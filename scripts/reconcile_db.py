@@ -55,6 +55,9 @@ import subprocess
 import sys
 import tempfile
 
+from core.retired_article_urls import (is_retired, has_retired_table,
+    next_available_article_id, verify_no_active_retired_urls)
+
 logger = logging.getLogger("reconcile_db")
 
 DB_PATH = "pla_watch.db"
@@ -438,6 +441,19 @@ def reconcile(base_path, origin_path, local_path, out_path):
     con.execute("ATTACH ? AS loc", (local_path,))
     con.execute("ATTACH ? AS bse", (base_path,))
 
+    # Retirements are persistent decisions of the published (origin) side.
+    # A divergent local branch cannot silently introduce or erase them.
+    if _has_table(con, "loc", "retired_article_urls"):
+        local_tombstones = {r[0] for r in con.execute(
+            "SELECT url_sha256 FROM loc.retired_article_urls")}
+        published_tombstones = {r[0] for r in con.execute(
+            "SELECT url_sha256 FROM main.retired_article_urls")}
+        if local_tombstones - published_tombstones:
+            raise SystemExit(
+                "FATAL: local retirement ledger has entries absent from "
+                "the published origin; manual retirement reconciliation required")
+    verify_no_active_retired_urls(con)
+
     art_cols = columns(con, "articles")
     absent = [c for c in ANALYSIS_COLS if c not in art_cols]
     if absent:
@@ -542,10 +558,14 @@ def reconcile(base_path, origin_path, local_path, out_path):
                 "source attribution cannot be merged automatically."
             )
 
-    next_id = con.execute("SELECT IFNULL(MAX(id),0) FROM articles").fetchone()[0] + 1
+    next_id = next_available_article_id(con)
 
     art_map = {}
+    retired_reinsertions_skipped = 0
     for r in new_rows:
+        if is_retired(con, r["url"]):
+            retired_reinsertions_skipped += 1
+            continue
         art_map[r["id"]] = next_id
         con.execute(
             f"INSERT INTO articles (id, scrape_run_id, source_id, "
@@ -558,6 +578,7 @@ def reconcile(base_path, origin_path, local_path, out_path):
         )
         next_id += 1
     report["articles_inserted"] = len(art_map)
+    report["retired_url_reinsertions_skipped"] = retired_reinsertions_skipped
 
     # ── 3. categories for inserted rows ───────────────────────────────────
     ac_new = 0
@@ -614,6 +635,8 @@ def reconcile(base_path, origin_path, local_path, out_path):
             )
             ac_shared += max(cur.rowcount, 0)
     report["categories_for_shared_rows"] = ac_shared
+    # Check both after inserting and after the shared-row backfill.
+    verify_no_active_retired_urls(con)
 
     # ── 6. per-source collection results ──────────────────────────────────
     # Origin's rows are already in the output (it was the base copy). Local rows
@@ -950,9 +973,14 @@ def gates(con, origin_path, local_path, out_path):
     for label, path in (("origin", origin_path), ("local", local_path)):
         probe = sqlite3.connect(out_path)
         probe.execute("ATTACH ? AS s", (path,))
-        lost = probe.execute(
-            "SELECT COUNT(*) FROM s.articles WHERE url NOT IN (SELECT url FROM main.articles)"
-        ).fetchone()[0]
+        missing = [row[0] for row in probe.execute(
+            "SELECT url FROM s.articles "
+            "WHERE url NOT IN (SELECT url FROM main.articles)"
+        )]
+        # A retired URL from an out-of-date local branch is intentionally
+        # missing, not a lost primary source: the published retirement ledger
+        # explicitly records why its active article row must NOT be restored.
+        lost = sum(1 for url in missing if not is_retired(probe, url))
         probe.close()
         if lost:
             problems.append(f"{lost} {label} urls missing from the merge")
@@ -1080,6 +1108,11 @@ def gates(con, origin_path, local_path, out_path):
 
     expected_urls = dict(origin_urls)
     for url, slug in local_urls.items():
+        # A locally stored historical URL can be absent from the deliberately
+        # reduced published collection. The published ledger is explicit proof
+        # this is a retirement, not silent re-attribution of a surviving row.
+        if url not in expected_urls and is_retired(con, url):
+            continue
         if url in expected_urls:
             if expected_urls[url] != slug:
                 problems.append(

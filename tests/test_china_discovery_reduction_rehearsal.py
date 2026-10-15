@@ -6,8 +6,13 @@ import tempfile
 import unittest
 
 from scripts.rehearse_china_discovery_reduction import (
-    INDEX, POLICY, evaluate, create_private_report,
+    POLICY, evaluate, create_private_report,
 )
+
+# Frozen October 14 evidence (5,230 records, 5,144 China records).
+# Live output/corpus-index.json advances with daily collection and is not
+# the source of truth for exact 2026-10-14 historical audit assertions.
+INDEX = Path(__file__).resolve().parent / "fixtures/china-corpus-index-2026-10-14.json"
 
 
 def inputs():
