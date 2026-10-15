@@ -101,8 +101,8 @@ def audit(index, packet, issue_docs, record_pages):
         rows[ident] = row
     if current["records"] != len(rows) or not set(trail).issubset(rows):
         raise ValueError("published corpus count/citation trails changed")
-    if not isinstance(packet.get("cases"), list) or len(packet["cases"]) != 2:
-        raise ValueError("claim-review packet must contain two named cases")
+    if not isinstance(packet.get("cases"), list) or len(packet["cases"]) != 3:
+        raise ValueError("claim-review packet must contain three named cases")
     seen, checked, counts = set(), [], Counter()
     for c in packet["cases"]:
         required = {
@@ -118,15 +118,16 @@ def audit(index, packet, issue_docs, record_pages):
             raise ValueError("claim-review case schema invalid")
         if c["case_id"] in seen or c["case_id"] not in {
             "PLA-WATCH-12-ATLAS-KVD002", "PLA-WATCH-10-JOINTSEA-CAPTURE",
+            "PLA-WATCH-13-WS20-FIRST",
         }:
             raise ValueError("duplicate or unknown claim case")
         seen.add(c["case_id"])
         _date(c["issue_date"])
         _date(c["original_source_date"])
         if (type(c["issue_number"]) is not int or
-            c["issue_number"] not in (10, 12)):
+            c["issue_number"] not in (10, 12, 13)):
             raise ValueError("claim issue must be one of the reviewed issues")
-        if c["issue_field"] not in ("opening_note", "what_was_routine"):
+        if c["issue_field"] not in ("opening_note", "what_was_routine", "why_it_matters"):
             raise ValueError("unsupported issue paragraph field")
         rid = c["source_record_id"]
         if type(rid) is not int or rid not in rows or rid not in trail:
@@ -182,7 +183,9 @@ def audit(index, packet, issue_docs, record_pages):
                 raise ValueError("unexpected direct correction proposal")
         else:
             if (after is not None or c["possible_correction_notice"] is not None
-                    or (c["issue_number"], rid) != (10, 2265)):
+                    or (c["issue_number"], rid, c["issue_field"]) not in (
+                        (10, 2265, "what_was_routine"),
+                        (13, 2993, "why_it_matters"))):
                 raise ValueError("claim-check-only case cannot propose a Brief edit")
         if c["possible_correction_notice"] is not None:
             if not isinstance(c["possible_correction_notice"], str) or len(c["possible_correction_notice"]) < 100:
