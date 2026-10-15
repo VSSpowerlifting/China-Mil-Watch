@@ -110,7 +110,8 @@ def _safe_member(info):
 def _capture_id(filename):
     # GitHub Actions artifact archives commonly flatten the uploaded state/
     # directory to archive root. Accept either layout, never both.
-    for prefix in ("captures/", "state/captures/"):
+    for prefix in ("captures/", "state/captures/",
+                   "candidate-state/state/captures/"):
         if filename.startswith(prefix):
             suffix = filename[len(prefix):]
             require(suffix.endswith(".bin")
