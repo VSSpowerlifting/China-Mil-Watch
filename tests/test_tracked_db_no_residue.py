@@ -94,10 +94,26 @@ class ReadOnlyToolsLeaveNothingBehind(unittest.TestCase):
                 # names the wrong script.
                 self.sweep()
                 proc = self.run_script(argv)
-                self.assertEqual(
-                    0, proc.returncode,
-                    "%s exited %d:\n%s" % (name, proc.returncode,
-                                           proc.stderr[-2000:]))
+                if name == "verify_db_current" and proc.returncode == 1:
+                    # A schema-only PR may add migration 0008 before the
+                    # tracked production database has received its guarded
+                    # production admission. The verifier MUST fail closed in
+                    # that transitional state while still leaving no SQLite
+                    # WAL/SHM sidecars beside the tracked file.
+                    from migrations.runner import discover, applied_versions
+                    from scripts.reconcile_db import read_only
+                    with read_only(TRACKED) as check_db:
+                        pending = ({m.version for m in discover()}
+                                   - set(applied_versions(check_db)))
+                    self.assertEqual({"0008"}, pending,
+                                     "an unrecognized migration is pending")
+                    self.assertIn("database is 'partially_applied'",
+                                  proc.stderr)
+                else:
+                    self.assertEqual(
+                        0, proc.returncode,
+                        "%s exited %d:\n%s" % (name, proc.returncode,
+                                               proc.stderr[-2000:]))
                 left = sidecars_present()
                 self.assertEqual(
                     [], left,
