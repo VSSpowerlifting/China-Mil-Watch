@@ -27,32 +27,7 @@
 <link rel="stylesheet" href="../../styles.css">
 <link rel="stylesheet" href="../../surfaces.css">
 <link rel="stylesheet" href="../../briefs.css">
-<style>
-.historical-provenance{color:var(--band-muted);font-size:.875rem;max-width:68ch;margin-top:1rem}
-.historical-provenance a{color:var(--focus-band)}
-.historical-snapshot{display:flex;flex-wrap:wrap;gap:1rem 2rem;margin:1rem 0}
-.historical-snapshot dt{font-size:.875rem;color:var(--muted)}
-.historical-snapshot dd{font-size:1.25rem;color:var(--ink);margin:0}
-.historical-section p{white-space:pre-line}
-.historical-author{margin:2rem 0;padding:1rem 0;border-top:1px solid var(--rule)}
-.historical-author summary{min-height:44px;cursor:pointer}
-.historical-source-list{list-style:none;padding:0}
-.historical-source-list li{padding:1rem 0;border-top:1px solid var(--rule);overflow-wrap:anywhere}
-.historical-source-list .source-card-original{display:block;margin:.35rem 0;color:var(--ink-2)}
-.brief-section .historical-source-meta{font-family:var(--sans);font-size:.875rem;color:var(--muted)}
-.brief-citation{overflow-wrap:anywhere;font:15px/1.8 var(--sans)}
-.historical-issue-nav{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin:2rem 0}
-.historical-issue-nav a{min-height:44px;display:inline-flex;align-items:center}
-.historical-media img{width:100%;height:auto}
-.historical-media figcaption{font-size:.875rem;color:var(--muted)}
-.historical-veil{grid-area:photo;margin:1.25rem 0 0;border:1px solid var(--rule);overflow:hidden}
-.historical-veil img{display:block;width:100%;height:clamp(190px,27vw,360px);object-fit:cover}
-.historical-veil figcaption{padding:.625rem .8rem;font:.875rem/1.6 var(--sans);color:var(--muted);overflow-wrap:anywhere}
-.historical-veil a{color:inherit;text-underline-offset:.2em}
-.historical-author-links{display:flex;gap:.5rem 1.25rem;flex-wrap:wrap}
-.historical-author-links a{display:inline-flex;align-items:center;min-height:44px}
-@media print{.historical-author>div{display:block!important}.historical-source-list a::after{content:" (" attr(href) ")";font-size:.75rem;overflow-wrap:anywhere}}
-</style>
+
 </head>
 <body><a class="skip" href="#main">Skip to content</a>
 <div class="publication-status"><span>Independent publication</span></div>
@@ -78,7 +53,7 @@
 </header>
 <main id="main" style="--topo-size: 1208px; --topo-offset: -562px; --topo-x: 50%; --topo-flip: 1; --topo-wash-x: 40%; --topo-wash-y: 35%; --topo-duration: 40s" class="leads-with-hero brief-page">
 
-<section class="band brief-hero" aria-labelledby="brief-title">
+<section class="band brief-hero brief-hero--photo" aria-labelledby="brief-title">
   <div class="wrap brief-hero-inner">
     <div class="brief-heading">
       <p class="brief-eyebrow"><a href="../../analysis.html">Indo-Pacific Record Briefs</a></p>
@@ -90,17 +65,20 @@
       <p class="brief-byline">By <span class="byline-name">Benjamin Yang</span></p>
       <p class="historical-provenance">Originally published as The PLA Watch No. 4 under China Mil Watch. Part of <a href="../../analysis.html">Indo-Pacific Record Briefs</a>.</p>
     </div>
+    <figure class="article-plate" data-article-media="plate">
+      <svg class="article-plate-art" viewBox="0 0 300 196" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><use href="../../assets/geo/region.svg#region"/><use href="../../assets/geo/region.svg#region-china"/></svg>
+      <figcaption><span class="article-media-kind">Editorial plate</span> · Original IPR artwork. No source photograph. Decorative, not evidence.</figcaption>
+    </figure>
   </div>
 </section>
   <div class="wrap">
 <div class="brief-layout">
-  <details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
-    <nav class="brief-toc" aria-label="In this brief"><ol>
-      <li><a href="#s-snapshot">Coverage snapshot</a></li>
+<details class="brief-reading-navigation" data-wide-open><summary>Section navigation</summary>
+  <nav class="brief-toc" aria-label="In this brief"><ol>      <li><a href="#s-snapshot">Coverage snapshot</a></li>
 <li><a href="#s-opening">Opening Note</a></li><li><a href="#s-stood-out">What Stood Out</a></li><li><a href="#s-why">Why It Matters</a></li><li><a href="#s-routine">Routine Baseline</a></li><li><a href="#s-term">Term to know</a></li><li><a href="#s-watching">What I'm watching next</a></li>      <li><a href="#s-sources">Source trail</a></li><li><a href="#pw-cite">Citation</a></li>
-    </ol></nav>
-  </details>
-  <article class="brief-main">
+
+</ol></nav>
+</details>  <article class="brief-main">
 <aside class="brief-signal" aria-label="This week's signal"><p class="brief-signal-label">This week's signal</p><p>The CMC issued a formal 26-article directive on senior cadre oversight while the Southern Theater Command publicly acknowledged jamming a NATO frigate near the Paracels.</p></aside>    <section class="brief-section" id="s-snapshot" aria-labelledby="h-snapshot">
       <h2 id="h-snapshot">Coverage Snapshot</h2>
       <p>Covers <time datetime="2026-05-24">24 May 2026</time> – <time datetime="2026-05-30">30 May 2026</time>.</p>
@@ -122,16 +100,16 @@
     <section class="brief-section historical-section" id="s-routine" aria-labelledby="h-s-routine">
       <h2 id="h-s-routine">Routine Baseline</h2><p>Two categories of coverage this week are worth understanding as routine, which means categorizing them correctly rather than dismissing them.</p><p>The first is the week&#39;s ideological-political education content. Articles on the &#34;Iron Army&#34; lineage, Dong Cunrui&#39;s anniversary roll call, the Shenzhou-21 crew&#39;s return framed through patriotic-scientist identity, and the Jin-Cha-Ji base area production movement all fit a stable and recurring PLA Daily pattern: using revolutionary heritage narratives to address the standing problem of motivating a peacetime force. PLA Daily runs this category of content continuously, not episodically, and both the volume and the framing this week were normal. The articles are evidence of how Chinese military political work constructs institutional identity, not of a changed policy line or elevated operational tempo.</p><p>The second is the Fujian Coast Guard patrol near Kinmen, reported on May 26. The CCG&#39;s assertion of jurisdiction in waters adjacent to Taiwan-administered Kinmen has been a regular feature of PLA Daily and state media coverage since the February 2024 capsizing incident. The Taiwan Affairs Office&#39;s same-day endorsement follows a coordinated messaging pattern that has been visible for over a year: operational action paired with immediate political authorization, framed in protective civilian language. This week&#39;s patrol fits that established pattern precisely and extends the baseline without breaking from it. Readers should track cumulative frequency and escalation over time rather than treating individual patrols as discrete events.</p>
     </section>
-<section class="brief-section historical-section" id="s-term" aria-labelledby="h-term"><h2 id="h-term">Term to Know</h2><p class="term-word">思想整风 (Sīxiǎng Zhěngfēng) — Ideological Rectification</p><p>思想整风 translates literally as &#34;rectification of thought&#34; or &#34;ideological rectification.&#34; It refers to a structured campaign within the CCP or PLA apparatus to correct ideological deviation, reinforce political loyalty, and bring cadre thinking into alignment with the Party&#39;s current line. The term has a long history: its most famous use was Mao Zedong&#39;s 1942–1944 Yan&#39;an Rectification Movement, which used criticism and self-criticism sessions to consolidate CCP authority over the Party apparatus. In the current PLA context, 思想整风 refers to mandatory study campaigns, self-criticism meetings, and supervision mechanisms aimed at senior officers, not show trials or purges. The CMC&#39;s May 28 directive invokes this term specifically in relation to the senior cadre corps, framing the post-purge response as requiring a genuine change in how senior officers think about loyalty, discipline, and Party command as well as tighter procedures. When this term appears in PLA Daily, it signals that the leadership considers the problem ideological in nature, not merely bureaucratic or procedural.</p></section><section class="brief-section historical-section" id="s-watching" aria-labelledby="h-watching"><h2 id="h-watching">What I'm Watching Next</h2><p>Three things are worth watching in the coming weeks, within the limits of what the data can show.</p><p>First, implementation follow-through on the CMC senior cadre directive. The directive&#39;s existence is documentable; whether and how PLA Daily covers its implementation (inspection results, named enforcement actions, unit-level study campaigns) will be the more meaningful signal. Directives in PLA media often appear once and then recede. Sustained follow-up coverage would suggest the CMC is treating this as a durable enforcement priority rather than a one-time public statement.</p><p>Second, further European naval transits in the South China Sea. The De Ruyter incident establishes a public PLA baseline for how Southern Theater Command characterizes and responds to NATO-member freedom-of-navigation operations near the Paracels. Whether the PLA applies the same electronic jamming response to subsequent transits, and whether it publicizes that response in the same declaratory terms, will help establish whether this is a new standard posture or a situationally specific response.</p><p>Third, the cadence of CMC Vice Chairman Zhang Shengmin&#39;s ideological consolidation activities as the PLA&#39;s August 2027 centenary approaches. Zhang convened two related events in the same week: the special conference on May 27 and the thematic conference documented separately. Whether that density of activity from a CMC vice chairman on a single ideological campaign sustains or recedes will indicate how seriously the centenary deadline is being used as an accountability lever across the force.</p></section>    <section class="brief-section" id="s-sources" aria-labelledby="h-sources">
+<section class="brief-section historical-section" id="s-term" aria-labelledby="h-term"><h2 id="h-term">Term to Know</h2><p class="term-word">思想整风 (Sīxiǎng Zhěngfēng) — Ideological Rectification</p><p>思想整风 translates literally as &#34;rectification of thought&#34; or &#34;ideological rectification.&#34; It refers to a structured campaign within the CCP or PLA apparatus to correct ideological deviation, reinforce political loyalty, and bring cadre thinking into alignment with the Party&#39;s current line. The term has a long history: its most famous use was Mao Zedong&#39;s 1942–1944 Yan&#39;an Rectification Movement, which used criticism and self-criticism sessions to consolidate CCP authority over the Party apparatus. In the current PLA context, 思想整风 refers to mandatory study campaigns, self-criticism meetings, and supervision mechanisms aimed at senior officers, not show trials or purges. The CMC&#39;s May 28 directive invokes this term specifically in relation to the senior cadre corps, framing the post-purge response as requiring a genuine change in how senior officers think about loyalty, discipline, and Party command as well as tighter procedures. When this term appears in PLA Daily, it signals that the leadership considers the problem ideological in nature, not merely bureaucratic or procedural.</p></section><section class="brief-section historical-section brief-follow-up" id="s-watching" aria-labelledby="h-watching"><h2 id="h-watching">What I'm Watching Next</h2><p>Three things are worth watching in the coming weeks, within the limits of what the data can show.</p><p>First, implementation follow-through on the CMC senior cadre directive. The directive&#39;s existence is documentable; whether and how PLA Daily covers its implementation (inspection results, named enforcement actions, unit-level study campaigns) will be the more meaningful signal. Directives in PLA media often appear once and then recede. Sustained follow-up coverage would suggest the CMC is treating this as a durable enforcement priority rather than a one-time public statement.</p><p>Second, further European naval transits in the South China Sea. The De Ruyter incident establishes a public PLA baseline for how Southern Theater Command characterizes and responds to NATO-member freedom-of-navigation operations near the Paracels. Whether the PLA applies the same electronic jamming response to subsequent transits, and whether it publicizes that response in the same declaratory terms, will help establish whether this is a new standard posture or a situationally specific response.</p><p>Third, the cadence of CMC Vice Chairman Zhang Shengmin&#39;s ideological consolidation activities as the PLA&#39;s August 2027 centenary approaches. Zhang convened two related events in the same week: the special conference on May 27 and the thematic conference documented separately. Whether that density of activity from a CMC vice chairman on a single ideological campaign sustains or recedes will indicate how seriously the centenary deadline is being used as an accountability lever across the force.</p></section>    <section class="brief-section brief-trail" id="s-sources" aria-labelledby="h-sources">
       <h2 id="h-sources">Source Trail</h2>
       <p>13 selected records used in this analysis. Original sources remain authoritative.</p>
       <ol class="historical-source-list">
 <li>
           <a class="source-card-title brief-record-title" href="http://www.81.cn/yw_208727/16463889.html" rel="noopener">Central Military Commission Issues &#39;Several Measures on Strengthening the Education, Management, and Supervision of Senior Military Cadres&#39;</a>
-<span class="source-card-original" lang="zh-Hans">中央军委印发《关于加强军队高级干部教育管理监督的若干措施》</span>          <p class="historical-source-meta">PLA Daily (解放军报) · <time datetime="2026-05-28">2026-05-28</time> · Model-flagged</p>
+<span class="source-card-original" lang="zh-Hans">中央军委印发《关于加强军队高级干部教育管理监督的若干措施》</span>          <p class="historical-source-meta">PLA Daily (解放军报) · <time datetime="2026-05-28">2026-05-28</time> · <span class="evidence evidence--model">Model-flagged</span></p>
         </li><li>
           <a class="source-card-title brief-record-title" href="http://www.81.cn/yw_208727/16463856.html" rel="noopener">Southern Theater Command Spokesperson Zhai Shichen Issues Statement on Provocative Actions by Dutch Warship</a>
-<span class="source-card-original" lang="zh-Hans">南部战区新闻发言人翟士臣就荷兰军舰侵权行为发表谈话</span>          <p class="historical-source-meta">PLA Daily (解放军报) · <time datetime="2026-05-27">2026-05-27</time> · Model-flagged</p>
+<span class="source-card-original" lang="zh-Hans">南部战区新闻发言人翟士臣就荷兰军舰侵权行为发表谈话</span>          <p class="historical-source-meta">PLA Daily (解放军报) · <time datetime="2026-05-27">2026-05-27</time> · <span class="evidence evidence--model">Model-flagged</span></p>
         </li><li>
           <a class="source-card-title brief-record-title" href="http://www.81.cn/yw_208727/16463154.html" rel="noopener">Multi-Branch Forces Persist in Deep Research and Deep Training, Continuously Expanding the Boundaries of Military Training</a>
 <span class="source-card-original" lang="zh-Hans">多军兵种部队坚持深研深训不断拓展练兵边界</span>          <p class="historical-source-meta">PLA Daily (解放军报) · <time datetime="2026-05-25">2026-05-25</time></p>
@@ -172,11 +150,13 @@
 <p class="author-block-title">Principal Analyst, China Mil Watch</p><p class="author-block-bio">Benjamin Yang is the principal analyst at China Mil Watch and an incoming International Affairs student at George Washington University’s Elliott School, focused on U.S.-China relations, public diplomacy, and security affairs.</p>      <p class="historical-author-links"><a href="https://www.linkedin.com/in/benjamin-yang-42b525294" rel="noopener noreferrer">LinkedIn</a> · <a href="mailto:ben.yang@gwmail.gwu.edu">Email</a> · <a href="../../index.html">China Mil Watch</a></p>
       <p>This is the historical author information for this issue. <a href="../../about.html">About Indo-Pacific Record today</a>.</p>
     </div></details>
-    <section class="brief-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>
+    <section class="brief-section brief-citation-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>
       <p class="brief-citation" id="pw-cite">Benjamin Yang, “The PLA Watch: Senior Cadre Oversight, Electronic Warfare, and the Week&#39;s Institutional Texture,” <em>The PLA Watch</em> No. 4, China Mil Watch, 30 May 2026. https://indopacificrecord.org/the-pla-watch/posts/2026-05-30.html</p>
     </section>
-    <nav class="historical-issue-nav" aria-label="Adjacent historical issues">
-<a href="2026-05-23.html">← No. 3 · 23 May 2026</a><a href="2026-06-06.html">No. 5 · 6 June 2026 →</a>    </nav>
+    <nav class="brief-issue-nav historical-issue-nav" aria-label="Adjacent historical issues">
+      <a class="brief-issue-nav-prev" href="2026-05-23.html" rel="prev"><span class="brief-issue-nav-label"><span aria-hidden="true">← </span>Previous Brief</span> <span class="brief-issue-nav-meta">No. 3 · <time datetime="2026-05-23">23 May 2026</time></span> <span class="brief-issue-nav-title">Institutional Friction and the Gap Between Form and Function</span></a>
+      <a class="brief-issue-nav-next" href="2026-06-06.html" rel="next"><span class="brief-issue-nav-label">Next Brief<span aria-hidden="true"> →</span></span> <span class="brief-issue-nav-meta">No. 5 · <time datetime="2026-06-06">6 June 2026</time></span> <span class="brief-issue-nav-title">Loitering Munitions, Rocket Force Readiness, and the Coast Guard&#39;s Expanding Remit</span></a>
+    </nav>
     <p><a href="../../analysis.html">All Indo-Pacific Record Briefs</a></p>
   </article>
 </div>
