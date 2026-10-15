@@ -47,6 +47,27 @@ OWNER_KEYS = frozenset({
     "media_authorized", "production_import_authorized",
     "site_publication_authorized", "model_or_email_authorized",
 })
+PACKET_KEYS = frozenset({
+    "schema", "source_git_commit", "frozen_fourteen_ancestor",
+    "source_db_sha256", "source_original_count", "records",
+    "candidate_count", "approved_count", "public_body_count",
+    "production_import_enabled", "reviewer_identity_authenticated",
+    "per_source_rights_granted",
+    "private_custody_and_independent_restore_verified",
+    "collection_window_qualified",
+    "model_email_or_publication_authorized",
+})
+RECORD_KEYS = frozenset({
+    "candidate_version_sha256", "desk_id", "source_identity", "source_slug",
+    "institution_id", "publisher_institution_id", "authority_tier",
+    "originality", "language_tag", "canonical_source_url",
+    "publisher_posted_date", "original_title_sha256", "original_text_sha256",
+    "publisher_html_sha256", "original_hwpx_sha256", "first_seen_run",
+    "editorial_exception", "disposition", "original_text_included",
+    "original_title_included", "original_media_included",
+    "approved_for_production", "approved_for_publication",
+    "approved_for_model_or_email",
+})
 METADATA = "reviewed_official_link_metadata_only"
 HOLD = "hold"
 RIGHTS = "official_government_outbound_link_with_attribution_reviewed"
@@ -89,12 +110,16 @@ def _sign(payload, *, secret, domain):
 
 
 def _packet(packet):
-    need(type(packet) is dict and packet.get("schema") == intake.SCHEMA
+    need(type(packet) is dict and set(packet) == PACKET_KEYS
+         and packet.get("schema") == intake.SCHEMA
          and packet.get("production_import_enabled") is False
          and packet.get("reviewer_identity_authenticated") is False
          and packet.get("per_source_rights_granted") is False
          and packet.get("model_email_or_publication_authorized") is False
          and packet.get("approved_count") == 0
+         and packet.get("public_body_count") == 0
+         and packet.get("private_custody_and_independent_restore_verified") is False
+         and packet.get("collection_window_qualified") is False
          and type(packet.get("records")) is list
          and 1 <= len(packet["records"]) <= intake.ROWS
          and packet.get("candidate_count") == len(packet["records"])
@@ -108,7 +133,7 @@ def _packet(packet):
          "original_korea_archive_ancestor_changed")
     by_id = {}
     for row in packet["records"]:
-        need(type(row) is dict
+        need(type(row) is dict and set(row) == RECORD_KEYS
              and row.get("desk_id") == "korea"
              and row.get("source_slug") == intake.SOURCE
              and row.get("authority_tier") == "B"
@@ -255,14 +280,16 @@ def verify(packet, seal, *, reviewer_key, owner_key, as_of_utc):
     reviewer = d["reviewer"]
     need(type(reviewer) is str and 3 <= len(reviewer) <= 100
          and reviewer == reviewer.strip()
-         and all(32 <= ord(ch) < 127 for ch in reviewer),
+         and not any(ord(ch) < 32 or ord(ch) == 127 or ch in "<>" for ch in reviewer),
          "reviewer_identity_statement_missing")
     stamp = _time(future)
     need(stamp <= now and stamp.date().isoformat() >= d["publisher_posted_date"],
          "reviewer_timestamp_before_source_or_future")
     need(type(d["discrepancies"]) in (str, type(None))
          and (d["discrepancies"] is None or
-              len(d["discrepancies"]) <= 800),
+              (len(d["discrepancies"]) <= 800
+               and not any(ord(ch) < 32 or ord(ch) == 127
+                           for ch in d["discrepancies"]))),
          "invalid_discrepancies")
     need(d["disposition"] in (HOLD, METADATA),
          "review_disposition_invalid")
@@ -270,7 +297,9 @@ def verify(packet, seal, *, reviewer_key, owner_key, as_of_utc):
          "invalid_rights_basis")
     need(type(d["rights_reference"]) in (str, type(None))
          and (d["rights_reference"] is None or
-              8 <= len(d["rights_reference"]) <= 300),
+              (8 <= len(d["rights_reference"]) <= 300
+               and not any(ord(ch) < 32 or ord(ch) == 127
+                           or ch in "<>" for ch in d["rights_reference"]))),
          "invalid_rights_reference")
     for k in ("original_body_use_authorized", "original_title_use_authorized",
               "media_use_authorized", "model_or_email_authorized"):
@@ -290,7 +319,7 @@ def verify(packet, seal, *, reviewer_key, owner_key, as_of_utc):
     owner_name = owner["owner"]
     need(type(owner_name) is str and 3 <= len(owner_name) <= 100
          and owner_name == owner_name.strip()
-         and all(32 <= ord(ch) < 127 for ch in owner_name)
+         and not any(ord(ch) < 32 or ord(ch) == 127 or ch in "<>" for ch in owner_name)
          and owner_name != reviewer,
          "separate_named_owner_missing")
     owner_time = _time(owner["decided_at_utc"])
