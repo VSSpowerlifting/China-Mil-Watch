@@ -121,6 +121,9 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
         # Bounded source URL + stage diagnostics, never response content.
         # The actual selected source count remains the authoritative total.
         "failure_log": [],
+        "text_unavailable": 0,
+        # Official canonical URLs only, never image bytes or copied bodies.
+        "media_only_urls": [],
         "content_hashes": [],
         "state_sha256_before": before_hash,
         "state_sha256_after": None,
@@ -176,7 +179,7 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
                     "url": ref.url, "stage": "fetch", "status": capture.status})
             continue
         entry["retrieved"] += 1
-        result = adapter.extract(capture)
+        result = adapter.extract_shadow_structural(capture)
         if result.status != st.OK or not result.documents:
             entry["extraction_failures"] += 1
             if len(entry["failure_log"]) < 10:
@@ -186,6 +189,13 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
                               else st.EXTRACTION_FAILURE})
             continue
         for doc in result.documents:
+            if doc.extra.get("content_verdict") == "media_only":
+                # This isn't ministry silence or a textual representation of
+                # the image. Preserve the original identity and empty text.
+                if doc.text_original or doc.extra["content_sha256"] != hashlib.sha256(b"").hexdigest():
+                    raise ValueError("media-only release carried unexpected text")
+                entry["text_unavailable"] += 1
+                entry["media_only_urls"].append(doc.url)
             row = conn.execute("SELECT 1 FROM shadow_records WHERE url = ?",
                                (doc.url,)).fetchone()
             if row:
@@ -318,7 +328,7 @@ def main(argv=None) -> int:
             fh.write("| field | value |\n|---|---|\n")
             for k in ("result", "health", "shadow_day", "discovered",
                       "selected", "retrieved", "inserted", "duplicates",
-                      "fetch_failures", "extraction_failures",
+                      "text_unavailable", "fetch_failures", "extraction_failures",
                       "access_failures",
                       "stored_total", "robots_status"):
                 fh.write("| %s | %s |\n" % (k, entry.get(k)))

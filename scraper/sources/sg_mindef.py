@@ -580,6 +580,19 @@ class SGMindefAdapter(SourceAdapter):
         """
         return self._extract(capture, structural=False)
 
+    def extract_shadow_structural(self, capture: CaptureResult) -> ExtractionResult:
+        """Apply the already-reviewed production structural rule in shadow.
+
+        Retain the original publisher title, canonical URL and slug date.
+        A proven image-only page has NO original textual body: keep empty
+        text_original and the existing media_only verdict, never OCR or alt
+        text. A short page without the known container, missing identity, or
+        unrecognized/failed extraction remains an error. This method is only
+        called by Singapore's isolated shadow collector; the public extract()
+        and production collect() behavior is unchanged.
+        """
+        return self._extract(capture, structural=True)
+
     def _extract(self, capture: CaptureResult, structural: bool
                  ) -> ExtractionResult:
         """`extract()`, optionally reading the page's structure when the body
