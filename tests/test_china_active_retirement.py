@@ -6,7 +6,8 @@ import sqlite3
 import tempfile
 import unittest
 
-from scripts.plan_china_active_retirement import plan, scratch_retirement
+from scripts.plan_china_active_retirement import (plan, scratch_retirement,
+                                                    publication_record_dependencies)
 
 
 def fixture():
@@ -66,6 +67,33 @@ class ChinaRetirementPlanTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "owner-approved"):
             plan(obj, expected_china_focus=4, minimum_retire=2,
                  maximum_retire=3, preferred_retire=2)
+
+    def test_canonical_brief_and_timeline_references_are_additional_protection(self):
+        with tempfile.TemporaryDirectory() as root:
+            root = Path(root)
+            (root / "briefs").mkdir()
+            (root / "timelines").mkdir()
+            (root / "briefs" / "approved.json").write_text(json.dumps({
+                "source_trail": [{"record_id": 4}]
+            }))
+            (root / "timelines" / "private-draft.json").write_text(json.dumps({
+                "entries": [{"evidence": [{"record_id": 5}]}]
+            }))
+            bound, totals = publication_record_dependencies(root)
+            self.assertEqual(bound, {4, 5})
+            self.assertEqual(totals, {"briefs": 1, "timelines": 1})
+            result = plan(fixture(), expected_china_focus=2,
+                          minimum_retire=0, maximum_retire=2,
+                          preferred_retire=2, publication_ids=bound)
+            self.assertTrue(bound <= set(result["kept_ids"]))
+            self.assertEqual(result["bound_brief_and_timeline_ids"], 2)
+            self.assertEqual(result["china_to_retire"], 0)
+
+    def test_invalid_editorial_reference_refuses_retirement(self):
+        with self.assertRaisesRegex(ValueError, "missing corpus ID"):
+            plan(fixture(), expected_china_focus=2,
+                 minimum_retire=1, maximum_retire=2,
+                 preferred_retire=2, publication_ids={99999})
 
     def test_refuses_citation_identity_missing_from_corpus(self):
         obj = fixture()
