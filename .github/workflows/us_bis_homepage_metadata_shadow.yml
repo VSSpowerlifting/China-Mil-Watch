@@ -6,6 +6,8 @@ on:
     paths:
       - scripts/collect_us_bis_homepage_metadata.py
       - tests/test_us_bis_homepage_metadata.py
+      - tests/test_us_bis_homepage_receipt.py
+      - scripts/verify_us_bis_homepage_receipt.py
       - .github/workflows/us_bis_homepage_metadata_shadow.yml
       - docs/engineering/US_BIS_HOMEPAGE_SHADOW_2026-10-15.md
   schedule:
@@ -38,7 +40,7 @@ jobs:
           python-version: '3.9'
       - run: python -m pip install beautifulsoup4
       - name: Negative-source tests (offline)
-        run: python -m unittest tests.test_us_bis_homepage_metadata -v
+        run: python -m unittest tests.test_us_bis_homepage_metadata tests.test_us_bis_homepage_receipt -v
       - name: Prove genuine exact BIS metadata in temp, preserve live records
         shell: bash
         run: |
@@ -47,6 +49,9 @@ jobs:
           python -m scripts.collect_us_bis_homepage_metadata \
             --owner-authorized-readonly-collection \
             --private-output "$RUNNER_TEMP/bis-observation.json"
+          python -m scripts.verify_us_bis_homepage_receipt \
+            --packet "$RUNNER_TEMP/bis-observation.json" \
+            --expected-day "$(date -u +%F)"
           python - <<'PY'
           import json, os
           from pathlib import Path
@@ -102,16 +107,24 @@ jobs:
           cd repo
           test -z "$(git status --porcelain --untracked-files=all)"
           sha256sum pla_watch.db > "$RUNNER_TEMP/bis-db-before.sha"
-          python -m unittest tests.test_us_bis_homepage_metadata -q
+          python -m unittest tests.test_us_bis_homepage_metadata tests.test_us_bis_homepage_receipt -q
           python -m scripts.collect_us_bis_homepage_metadata \
             --owner-authorized-readonly-collection \
             --private-output "$RUNNER_TEMP/bis-today.json"
+          python -m scripts.verify_us_bis_homepage_receipt \
+            --packet "$RUNNER_TEMP/bis-today.json" \
+            --expected-day "$(date -u +%F)"
           sha256sum -c "$RUNNER_TEMP/bis-db-before.sha"
           git diff --exit-code -- pla_watch.db output/ desks/
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
           test -z "$(git status --porcelain --untracked-files=all)"
-          date -u +%F > "$RUNNER_TEMP/bis-utc-day"
+          python - <<'PY' > "$RUNNER_TEMP/bis-utc-day"
+          import json, os
+          from pathlib import Path
+          p=json.loads((Path(os.environ["RUNNER_TEMP"])/"bis-today.json").read_text())
+          print(p["observed_on_utc"])
+          PY
       - name: Append immutable genuine UTC scheduled observation to Git
         shell: bash
         env:
@@ -151,7 +164,11 @@ jobs:
           if ! git diff --cached --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -m "BIS: genuine homepage press metadata $day"
+            digest="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["official_listing_sha256"])' "$RUNNER_TEMP/bis-today.json")"
+            git commit -m "BIS: genuine scheduled homepage metadata $day" \
+              -m "Actions event: $GITHUB_EVENT_NAME" \
+              -m "Actions run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT" \
+              -m "Source listing SHA-256: $digest"
             git push origin HEAD:refs/heads/shadow/us-bis-homepage
           fi
       - name: Source checkout stayed read-only
