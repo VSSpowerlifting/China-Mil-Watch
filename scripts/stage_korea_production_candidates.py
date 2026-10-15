@@ -20,6 +20,7 @@ from pathlib import Path
 from scripts.verify_korea_private_custody_equivalence import (
     FROZEN_14, CustodyHold, inventory,
 )
+from scripts.audit_korea_source_fidelity import source_compare
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_MANIFEST = ROOT / "shadow/kr_policy_briefing/manifest.json"
@@ -193,7 +194,20 @@ def build(source_checkout, *, frozen=FROZEN_14):
         before = inventory(path, frozen_commit=frozen)
     except (CustodyHold, OSError, ValueError):
         raise IntakeHold("korea_source_archive_not_verified") from None
-    normalized = [_normalized(row) for row in _rows(path)]
+    source_rows = _rows(path)
+    normalized = []
+    for row in source_rows:
+        # An SHA-named document is insufficient on its own: reparse the
+        # preserved original HWPX and compare every Korean text paragraph
+        # against the database's full source text before staging a candidate.
+        try:
+            raw = dict(row, metadata=json.loads(row["metadata_json"]))
+            proof = source_compare(raw, path / "state")
+        except (ValueError, OSError, UnicodeError):
+            raise IntakeHold("korea_original_hwpx_replay_failed") from None
+        need(proof["machine_fidelity"] == "PASS",
+             "korea_original_hwpx_replay_failed")
+        normalized.append(_normalized(row))
     need(len(normalized) == before["original_count"],
          "shadow_inventory_count_mismatch")
     ids = [r["source_identity"] for r in normalized]
