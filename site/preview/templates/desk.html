@@ -21,6 +21,39 @@
   </div>
 </div>
 
+{# Early-access, external-only navigation: no captured material, no source-use approval,
+   and no shadow-to-production promotion. All URLs come from the reviewed registry.
+   The per-article public_source_links list is a separate human-approved surface. #}
+{% if desk.slug in ('philippines', 'vietnam') and desk.status == 'shadow' and desk.research %}
+<section class="desk-references" id="official-publisher-access"
+         aria-labelledby="official-publisher-access-title">
+  <p class="eyebrow">Public research access · official publisher entrypoints</p>
+  <h2 id="official-publisher-access-title">Explore primary-source reporting</h2>
+  <p>This is an <strong>early-access research directory</strong>, not a live IPR
+  archive for {{ desk.name }}. The following links open the publishers' own
+  official pages or indexes. They are <strong>not independently approved IPR
+  article citations</strong>, and they do not establish that every item is
+  retrievable, accurate, or collected by IPR.</p>
+  <ul class="desk-public-publisher-links" aria-label="Official publisher navigation">
+    {% for source in desk.research.source_families %}
+    {% if source.publisher_url %}
+    <li><strong>{{ source.name }}</strong>
+      <a href="{{ source.publisher_url }}" rel="noopener noreferrer"
+         target="_blank">Open official publisher</a>
+      <p class="meta">{{ source.format }} · Source-scoped navigation, not an
+      IPR-hosted original or an approved production source.</p>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+  <p class="meta">All articles, documents, images and associated rights remain
+  with their publishers. Original claims require independent editorial checking.
+  Collection reliability, publication rights, source-version review and
+  production admission remain separate. Only specifically approved,
+  individually reviewed publication links appear in the reference list below.</p>
+</section>
+{% endif %}
+
 {# Public Korea renders a strictly frozen official-link bibliography only.
    Private source/rights/editorial preview below remains separate: no raw
    source body, media or machine-produced translation enters publication. #}
@@ -399,7 +432,8 @@ qualification are separate.</p>
   <p class="meta" data-reference-empty hidden>No approved source references match these filters.</p>
 </div>
 {% else %}
-<p class="meta">No individual source references have completed the public-link review. Private research readers and shadow records remain separate.</p>
+<p class="meta">No individual source references have completed the public-link review. Private research readers and shadow records remain separate.
+{% if desk.slug in ('philippines', 'vietnam') %}For unreviewed first-party material, <a href="#official-publisher-access">browse the official publisher entrypoints above</a>; those links are not IPR-reviewed citations.{% endif %}</p>
 {% endif %}
 </section>
 {% endif %}
