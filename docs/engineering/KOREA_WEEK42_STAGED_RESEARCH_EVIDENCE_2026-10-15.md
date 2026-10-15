@@ -22,6 +22,20 @@ Each item fixes `source_content_sha256` of the **archived Unicode Korean origina
 
 **Deliberate exclusion:** [156785161](https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785161), the Oct14 Korean War repatriation article, is blocked by the candidate source-ID allowlist due to unresolved publisher-internal **2025 versus 2026 Inje excavation date** ([#601](https://github.com/VSSpowerlifting/China-Mil-Watch/issues/601)). Other individual claims from that article are not globally declared false.
 
+## Per-article KOGL copyright badge — actual archived evidence
+
+This is based on **reading the saved October 13–14 publisher-page HTML captures**, not inferring article rights from a general policy page or a headline. The exact stored HTML response capture SHA-256 values are embedded in the staged item allowlist and **validated** separately from both HWPX and Unicode text hashes:
+
+| Korean source | Publisher HTML response SHA-256 | Text marker observed in archived HTML |
+|---|---|---|
+| `156784873` | `fffde3346ca3c8b0f9babac69ac51e1ca0743810661c69bcc5dddfdbd33d21de` | KOGL Type 1, **text only**, attribution required |
+| `156784787` | `c320b308182082efb30f4267d55bf91885d37f0ac102c569c8cddc26c281eb3e` | KOGL Type 1, **text only**, attribution required |
+| `156785162` | `da64a9b05c0409da1f1615de0539800615a9b29bf903925a7c435ede1ed1af6f` | KOGL Type 1, **text only**, attribution required |
+
+The saved page copy specifically says in Korean that the **text** may be used under KOGL Type 1 (attribution); the same source page says images, photographs, illustrations and video generally require separate rightsholder permission. See the publisher's own [copyright policy](https://www.korea.kr/guide/copyRight.do) and [KOGL Type 1 terms](https://www.copyright.or.kr/gov/nuri/guide/index.do). These badges are **historical captured markings**, not a guarantee that current terms, individual attachments, file redistribution, third-party copyrights, translations or **external AI-provider processing** are cleared. KOGL Type 1 may allow text reuse **with conditions**, but our `source_rights_approved=false` deliberately remains unchanged until source-specific intended-use/attribution review.
+
+Important: a saved full HTML response hash changing due to portal chrome does not imply the original HWPX text was revised. Preserve the separate source-text, HWPX and page-license capture identities.
+
 ## Strict output/control separation
 
 The stage-only packet is **not located in** `research/briefs_editorial_evidence/`; the scheduled Sunday integration reads only that separate governed directory and is not changed by this work. No Korea source has been added to the Sunday writer. No source body, photo, HWPX attachment or translation is copied into this research packet.
