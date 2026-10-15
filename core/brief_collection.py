@@ -466,6 +466,47 @@ def adjacent_items(collection: Collection, slug: str) -> dict:
             "next": link(rows[at - 1]) if at > 0 else None}
 
 
+
+def continuity_items(collection: Collection, from_route: str,
+                     current_slug: Optional[str] = None) -> list:
+    """Published Briefs, oldest first, with links relative to the reader.
+
+    Use the already-governed unified collection; no inference about subjects,
+    frequency, significance or source coverage. Preview and synthetic rows
+    are never presented as published editions.
+    """
+    import posixpath
+
+    start = posixpath.dirname(from_route) or "."
+    result = []
+    for row in reversed(collection.rows):
+        entry = row["entry"]
+        if entry.get("is_review") or entry.get("synthetic"):
+            continue
+        if row["kind"] == "brief":
+            target = brief_route(entry["slug"])
+        elif row["kind"] == "issue":
+            target = ("the-pla-watch/posts/%s.html" % entry["slug"]
+                      if entry.get("rendered_locally") else entry["url"])
+        else:
+            raise CollectionError(["unknown Brief collection row type"])
+        href = (target if target.startswith(("https://", "http://"))
+                else posixpath.relpath(target, start=start))
+        label = str(entry.get("label") or "").strip().lower()
+        if label not in ("significant", "routine", "pilot"):
+            label = "unclassified"
+        result.append({
+            "slug": entry["slug"],
+            "href": href,
+            "number": entry.get("issue"),
+            "date": entry.get("date"),
+            "title": display_title(entry.get("title")),
+            "kind": label,
+            "current": entry["slug"] == current_slug,
+        })
+    return result
+
+
 def brief_after_issue(collection: Collection, issue_slug: str):
     """
     The published brief that comes next after an earlier issue in the
