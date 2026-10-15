@@ -37,6 +37,25 @@ jobs:
             --scratch-root "$RUNNER_TEMP/china-complete-readonly-preflight" \
             --expected-db-sha256 "$EXPECTED" \
             --site-origin https://indopacificrecord.org
+      - name: Rehearse full static Pages git packaging and independent readback
+        run: |
+          set -euo pipefail
+          SCRATCH="$RUNNER_TEMP/china-complete-readonly-preflight"
+          mkdir -p "$RUNNER_TEMP/synthetic-pages-repo" "$RUNNER_TEMP/synthetic-pages-readback"
+          # Produce a Git snapshot exactly like a static gh-pages branch,
+          # then read it independently by git archive. No remote push.
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" init -q
+          cp -a "$SCRATCH/reduced-site/." "$RUNNER_TEMP/synthetic-pages-repo/"
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" config user.name 'Offline Pages test'
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" config user.email 'offline@example.invalid'
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" add -A
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" commit -qm 'Offline site package only'
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" archive HEAD | \
+            tar -xf - -C "$RUNNER_TEMP/synthetic-pages-readback"
+          python -m scripts.verify_china_retirement_pages_readback \
+            --expected-output "$SCRATCH/reduced-site" \
+            --pages-tree "$RUNNER_TEMP/synthetic-pages-readback" \
+            --db "$SCRATCH/reduced.db" --expected-tombstones 4400
       - name: Verify no production files or sidecars were modified
         if: ${{ !cancelled() }}
         run: |
