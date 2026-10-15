@@ -75,6 +75,26 @@ in the generated index. The audit fails if this protection data is missing,
 duplicate or refers to an unknown ID. An increasing number of protected
 records may legitimately push the review sample over 600.
 
+### Targeted false-negative review
+
+A headline-only sweep of the October 14 **2,534 China records already marked
+not selected** found **70** with conservative Taiwan, maritime, strategic
+weapons or U.S.-military keyword cues. The exact count and reason codes are
+regenerated in the audit ledger. This is a **review warning**, not 70
+incorrect model decisions or 70 records cleared for publication.
+
+Especially inspect record **2849** (an original headline describing a Chinese
+Foreign Ministry statement about Scarborough Shoal baselines), **2391**
+(a headline describing a Foreign Ministry statement about the anniversary of
+the South China Sea arbitration decision), and **2180** (a Global Times
+headline describing a submarine-launched strategic-missile test). These were
+screened out, but their headlines warrant verification against the originals,
+document genre and provenance. Do not infer that a publication's claim is true
+from the headline or that its citation should be elevated automatically.
+
+All 70 cue hits should be reviewed in addition to the stratified screened-out
+control sample. Those populations may overlap; keep distinct reason flags.
+
 ### Human audit before the second phase
 
 Review Chinese originals and English titles in source-stratified and
