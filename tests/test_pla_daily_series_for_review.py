@@ -1,8 +1,14 @@
 """PLA Daily recurring headline series are review cues, not cull commands."""
 import copy
 import json
+from pathlib import Path
 import unittest
-from scripts.audit_pla_daily_series_for_review import INDEX, audit, family
+from scripts.audit_pla_daily_series_for_review import audit, family
+
+# Frozen October 14 evidence (5,230 records, 5,144 China records).
+# Live output/corpus-index.json advances with daily collection and is not
+# the source of truth for exact 2026-10-14 historical audit assertions.
+INDEX = Path(__file__).resolve().parent / "fixtures/china-corpus-index-2026-10-14.json"
 
 class PlaSeriesAuditTest(unittest.TestCase):
     def test_real_series_counts_and_issuer_counterexamples(self):

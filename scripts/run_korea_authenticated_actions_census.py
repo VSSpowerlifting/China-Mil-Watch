@@ -169,6 +169,9 @@ def produce(get, shadow_state, now):
     result = census.scan(
         evidence["pages"], evidence["artifacts"], ledgers,
         as_of_utc=evidence["as_of_utc"])
+    from scripts.korea_authenticated_prospective_seven import evaluate
+    rolling = evaluate(evidence["pages"], evidence["artifacts"], ledgers,
+                       as_of_utc=evidence["as_of_utc"])
     result.update({
         "observed_git_state_commit": commit,
         "api_workflow_history_total": evidence["total_repository_workflow_runs"],
@@ -177,6 +180,7 @@ def produce(get, shadow_state, now):
         "api_scope": "exact_workflow_id_full_retained_history_and_each_run_artifact_list",
         "github_retention_completeness_certified": False,
         "independent_human_review_completed": False,
+        "prospective_seven_slot_observation": rolling,
     })
     return result
 
@@ -209,6 +213,9 @@ def main(argv=None):
         "observed_git_state_commit": report["observed_git_state_commit"],
         "verdict": report["verdict"], "holds": report["holds"],
         "counts": report["counts"],
+        "rolling_seven_candidate": report["prospective_seven_slot_observation"]["seven_day_actions_and_ledger_candidate"],
+        "rolling_seven_missing_or_invalid_dates": report["prospective_seven_slot_observation"]["unqualified_dates"],
+        "october_12_original_failure_remains_unrepaired": True,
         "human_day7_review_completed": False, "production_eligible": False,
     }, sort_keys=True))
     return 1 if report["holds"] else 0
