@@ -39,7 +39,11 @@ editorial value. The baseline changes with each daily collection.
    endorsements.
 
 The first candidate review is intentionally **stratified across source and
-publication month**, not a publication judgment. The fact that a record was
+publication month**, not a publication judgment. It reserves approximately
+**15% of its slots for screened-out negative controls** to reveal important
+records that automated screening may have missed. On the October 14 snapshot,
+a 600-record docket reserves 178 already-cited China source-trail records, 90
+screened-out control records, and 332 additional analyzed records. The fact that a record was
 `analyzed` is not evidence that its claims are true, its title is relevant,
 or it is nonduplicative. Conversely, the `not_selected` state is insufficient
 to justify destroying or silently obscuring an irreplaceable original.
@@ -61,7 +65,9 @@ cannot be overwritten. Output is a **private review docket** with a status
 for every China record and a reproducible, diverse candidate sample. The
 sample is **not** a whitelist and cannot be passed to the renderer as one.
 
-Public Brief-trail records are always sampled even if the machine state
+Screened-out controls are not tentative inclusions. They are an independent
+false-negative review stratum, and the unreviewed excluded population must
+remain in the custody ledger.\n\nPublic Brief-trail records are always sampled even if the machine state
 would have excluded them, using the exact-URL-derived `trail_ids` embedded
 in the generated index. The audit fails if this protection data is missing,
 duplicate or refers to an unknown ID. An increasing number of protected
