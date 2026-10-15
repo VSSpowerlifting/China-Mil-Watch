@@ -49,10 +49,12 @@ because a validator returned exit code zero.
 
 ## What is already entered
 
-`research/china/archive-curation-triage-2026-10-15.json` contains **seven**
+`research/china/archive-curation-triage-2026-10-15.json` contains **nine**
 concrete **triage-only** records: #2849, #2391 (prospective primary retained
 declarations), #943, #2294 (context candidates), and #2180, #946, #2265
-(quality holds). Every source check and owner approval is `null`; no
+(quality holds). It also contains #4348 (a tentative representative for
+republication) and #4346 (tentative grouped secondary), based on their high
+stored-text overlap; both remain unverified and unapproved. Every source check and owner approval is `null`; no
 decision is publication-enabled. These are provisional hypotheses tied to
 the October 14 stored-record source, original title, and date.
 
@@ -108,7 +110,7 @@ added.
    and an editorial pending queue; current publication selections are not
    automatically extended by a similarity match, title flag or model score.
 
-**Stop point:** This PR ends at a demonstrably safe review schema, a seven-case
+**Stop point:** This PR ends at a demonstrably safe review schema, a nine-case
 research example and contract tests. It does not render pages, edit the
 database, change the collection pipeline, touch published Briefs, merge,
 or deploy. Final release requires separate editorial and production approval.
