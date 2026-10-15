@@ -14,7 +14,7 @@ Compute against an **exact regenerated and disclosed focus index** after #636 go
 4. Keep every non-China source ID, including all 86 Singapore records in the baseline.
 5. Consider every other China article row **for retirement from the active database**. This removes thousands of *rows*, not just UI listings. A retired record is not automatically declared inauthentic, duplicate, wrong, or low-quality; it simply falls outside the much narrower **active** collection.
 
-This is a **retention policy**, not an individualized editorial verdict. The distinction must be disclosed on the website and in corpus statistics. The SHA-256 of the exact sorted retirement IDs is in the rehearsal report; there are no invented per-record signoffs.
+This is a **retention policy**, not an individualized editorial verdict. The owner-approved physical retirement range is **4,300–4,500 China rows**, with a 4,400-row preferred target. When the initial protected focus/citations would leave more than 4,400 removable China rows, the planner preserves a small additional **automated contextual reserve**, favoring non-PLA official sources and recent material and excluding known contaminated historical captures. The reserve is not described as editorially checked. If citations and dependencies make fewer than 4,300 rows removable, or too few safe reserve candidates exist, the plan fails instead of silently changing the owner's scope. The SHA-256 of the exact sorted retirement IDs is in the rehearsal report; there are no invented per-record signoffs.
 
 ## Existing physical and legal realities
 
