@@ -5,6 +5,7 @@ Heuristics identify records needing *review*, not proven extraction defects.
 The current Global Times adapter already has a later extraction repair.
 """
 import argparse
+from html import unescape
 from collections import Counter
 from datetime import date
 import json
@@ -93,8 +94,26 @@ def scan(index, pages, cutoff=CUTOFF):
             post_repair += 1
             continue
         scanned += 1
-        body, url = _original_record(pages[ident])
+        unreadable = False
+        try:
+            body, url = _original_record(pages[ident])
+        except ValueError as error:
+            if "original-text block" not in str(error):
+                raise
+            # Some historically stored records have no prose block at all.
+            # A missing body is a QC review finding, not license to invent
+            # missing words or silently mark the document low-value.
+            provenance = re.search(
+                r'<th scope="row">Original URL</th>\s*<td class="prov-value">'
+                r'\s*<a href="([^"]+)"', pages[ident],
+            )
+            if provenance is None:
+                raise ValueError("legacy record missing original URL provenance") from None
+            url = unescape(provenance.group(1))
+            body, unreadable = "", True
         info = quality_cues(body)
+        if unreadable:
+            info["cues"].insert(0, "unreadable_or_missing_stored_text")
         for cue in info["cues"]:
             warnings[cue] += 1
         if info["cues"]:
