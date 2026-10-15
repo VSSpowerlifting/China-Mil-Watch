@@ -146,6 +146,24 @@ class RegionalReadbackTests(unittest.TestCase):
         with self.assertRaisesRegex(ReadbackHold, "claimed_live_desk"):
             verify(self.db,self.site,require_records=True)
 
+    def test_independent_afp_activation_does_not_require_kemhan_launch(self):
+        self.admit_afp()
+        receipt = verify(self.db, self.site, required_desks=("philippines",))
+        self.assertEqual(receipt["source_families"]["ph_afp_articles"][
+            "admitted_official_link_count"], 1)
+        self.assertEqual(receipt["source_families"]["id_kemhan_news"][
+            "admitted_official_link_count"], 0)
+
+    def test_required_indonesia_launch_stays_held_if_only_afp_live(self):
+        self.admit_afp()
+        with self.assertRaisesRegex(ReadbackHold, "claimed_live_desk"):
+            verify(self.db, self.site, required_desks=("indonesia",))
+
+    def test_unknown_required_desk_cannot_be_promoted(self):
+        with self.assertRaisesRegex(ReadbackHold,
+                                    "unknown_required_regional_source_desk"):
+            verify(self.db, self.site, required_desks=("vietnam",))
+
     def test_pages_byte_parity_succeeds_if_equal(self):
         self.admit_afp()
         for page in self.site.glob("*.html"):
