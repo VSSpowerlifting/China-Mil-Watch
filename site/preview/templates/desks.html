@@ -89,7 +89,8 @@ actual admitted government originals, not editorial articles.</p>
   <p class="deskmap-chart-note">Institutional seats · Miller projection</p>
   <div class="deskmap-context" aria-label="Selected desk scope">
       <p class="deskmap-context-default">Each point locates a desk's publishing institutions. Select a desk to read its scope and current limitations; use its entry to open the desk.</p>
-      {% for d in desks if d.slug in placed %}<div class="deskmap-context-entry" data-context-desk="{{ d.slug }}" hidden><p class="deskmap-context-title">{{ d.name }}</p><p>{{ d.scope }}</p><p>{{ d.status_explanation }}</p><a href="{{ d.route }}">Open {{ d.name }}</a></div>{% endfor %}
+      {# Selected-map panel is an excerpt; complete scope and status remain immediately below. #}
+      {% for d in desks if d.slug in placed %}<div class="deskmap-context-entry" data-context-desk="{{ d.slug }}" hidden><p class="deskmap-context-title">{{ d.name }}</p><p>{{ d.scope|truncate(210, True) }}</p><p>{{ d.status_explanation|truncate(160, True) }}</p><a href="#desk-scopes">Read full scope and limitations</a> · <a href="{{ d.route }}">Open {{ d.name }}</a></div>{% endfor %}
     </div>
   <figcaption id="deskmap-key" class="deskmap-key">
     <span class="deskmap-key-item"><span class="deskmap-key-swatch" aria-hidden="true"></span>Collecting into the record</span>
