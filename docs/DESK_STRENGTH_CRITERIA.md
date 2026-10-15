@@ -179,6 +179,18 @@ reviewer at Japan would silently validate Japanese records against Singaporean
 assumptions.
 
 ### C13 — No promotion on elapsed days alone
+**Scope of C13:** This source-collection qualification governs only
+**production ingest of publisher source records**. An independently approved,
+permanently published IPR **editorial research desk** can publish original IPR
+analysis, verified official bibliographic metadata and outgoing first-party
+links without rehosting government documents or photographs. That is a real
+editorial publication, not an interim beta, but **does not count as a
+production-collecting desk, prove private preservation, or change registry
+`status` to `live`**. Its own exact-original source review, source-use
+limitations, editorial approval and guarded website release are required.
+See the separate editorial/research versus collecting-source definitions in
+`docs/PERMANENT_DESK_ACCELERATED_ACTIVATION_2026-10-15.md`.
+
 *Stage 7.* Thirty consecutive genuine collecting days and independently
 completed Day 7, Day 14 and Day 30 human reviews remain the **normal**
 production-promotion standard. Elapsed calendar days by themselves never pass.
