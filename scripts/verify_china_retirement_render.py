@@ -70,10 +70,20 @@ def validate(before_site, after_site, reduced_db, plan_summary):
         if con.execute("PRAGMA foreign_key_check").fetchone() is not None:
             raise ValueError("reduced SQLite has invalid foreign keys")
 
-    for folder in ("record", "article"):
+    # Every active article gets a /record/ page; only fully analyzed and
+    # relevance-passed sources ever had /article/ legacy redirects.
+    analyzed_state = next((i for i, state in enumerate(new["states"])
+                           if state["code"] == "analyzed"), None)
+    if analyzed_state is None:
+        raise ValueError("analyzed processing state missing from index")
+    required_routes = {
+        "record": new_ids,
+        "article": {r[0] for r in new["records"] if r[3] == analyzed_state},
+    }
+    for folder, required in required_routes.items():
         pages = after_site / folder
         found = {int(p.stem) for p in pages.glob("*.html") if p.stem.isdigit()}
-        if found != new_ids:
+        if found != required:
             raise ValueError(folder + " pages contain missing, stale or retired IDs")
 
     export = json.loads((after_site / "data" / "articles.json").read_text(encoding="utf-8"))
