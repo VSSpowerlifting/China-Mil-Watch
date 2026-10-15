@@ -287,10 +287,10 @@ class TestIsolation(StateCase):
                     # These bounded reviewer/intake contracts operate only on
                     # existing preserved Git, never collect or publish AFP.
                     # Audit each exception rather than obscuring source slugs.
-                    self.assertIn("permissions:\\n  contents: read", text)
+                    self.assertIn("permissions:\n  contents: read", text)
                     self.assertIn("persist-credentials: false", text)
                     self.assertNotRegex(
-                        text, r"(?m)^\\s*(?:schedule|push|pull_request_target):")
+                        text, r"(?m)^\s*(?:schedule|push|pull_request_target):")
                     for forbidden in (
                         "contents: write", "actions: write", "pages: write",
                         "id-token: write", "scripts.shadow_collect_ph",
