@@ -8,6 +8,12 @@ RELEASE_FILES = ("archive.html", "browse.js", "corpus-index.json")
 CHINA_SOURCES = {"pla_daily", "mod_china", "china_mil_online",
                  "xinhua_mil", "global_times_mil"}
 POLICY = "automated_research_focus_not_human_curated"
+# Historical extraction holds preserved in the full index, never automatically
+# promoted into the initial focused browse set. Keep synchronized with
+# core.china_discovery.KNOWN_BODY_HOLDS when the prerequisite PR merges.
+HISTORICAL_BODY_HOLDS = frozenset({
+    170, 419, 905, 946, 1246, 1954, 2180, 2265, 2753, 2881, 3180, 3181
+})
 
 
 def stage(generated, public, expected_china=600):
@@ -44,7 +50,7 @@ def stage(generated, public, expected_china=600):
             other.add(record[0])
     if len(selected & china) != expected_china or not other <= selected:
         raise ValueError("China quota or non-China desk visibility violated")
-    if {2265, 2881} & selected:
+    if HISTORICAL_BODY_HOLDS & selected:
         raise ValueError("historically compromised capture promoted")
     if {2391, 2849} <= full and not {2391, 2849} <= selected:
         raise ValueError("provisional important originals missing")
