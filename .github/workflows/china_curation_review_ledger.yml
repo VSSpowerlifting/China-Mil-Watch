@@ -8,6 +8,8 @@ on:
     paths:
       - scripts/validate_china_curation_review.py
       - tests/test_china_curation_review_ledger.py
+      - scripts/preview_china_curation_review.py
+      - tests/test_china_curation_review_preview.py
       - research/china/archive-curation-triage-2026-10-15.json
       - docs/CHINA_CURATION_REVIEW_LEDGER_2026-10-15.md
       - .github/workflows/china_curation_review_ledger.yml
@@ -40,12 +42,23 @@ jobs:
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
       - name: Focused custody and review state tests
-        run: python -m unittest -v tests.test_china_curation_review_ledger
+        run: python -m unittest -v tests.test_china_curation_review_ledger tests.test_china_curation_review_preview
       - name: Validate actual unsigned China review docket
         run: |
           python scripts/validate_china_curation_review.py \
             --index output/corpus-index.json \
             --ledger research/china/archive-curation-triage-2026-10-15.json
+      - name: Render actual review-only and full-preserved private HTML into runner scratch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/preview_china_curation_review.py \
+            --output-dir "$RUNNER_TEMP/ipr-china-private-preview"
+          test -f "$RUNNER_TEMP/ipr-china-private-preview/index.html"
+          test -f "$RUNNER_TEMP/ipr-china-private-preview/preserved.html"
+          test ! -e "$RUNNER_TEMP/ipr-china-private-preview/sitemap.xml"
+          grep -q 'noindex,nofollow,noarchive' "$RUNNER_TEMP/ipr-china-private-preview/index.html"
+          grep -q 'noindex,nofollow,noarchive' "$RUNNER_TEMP/ipr-china-private-preview/preserved.html"
       - name: Confirm no publication switch or custody changes
         if: ${{ !cancelled() }}
         shell: bash
