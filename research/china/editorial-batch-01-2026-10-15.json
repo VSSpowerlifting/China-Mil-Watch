@@ -1,0 +1,336 @@
+{
+  "version": 1,
+  "scope": "china",
+  "purpose": "diagnostic_editorial_intake_not_selection",
+  "publication_enabled": false,
+  "owner_approved": false,
+  "baseline_snapshot": {
+    "date": "2026-10-14",
+    "records": 5230
+  },
+  "batch_id": "china-2026-10-15-01",
+  "created_on": "2026-10-15",
+  "entries": [
+    {
+      "id": 2849,
+      "source": "pla_daily",
+      "published_date": "2026-07-31",
+      "source_title": "中华人民共和国外交部关于菲律宾共和国在中国领土黄岩岛划设所谓“领海基线”的声明",
+      "review_lane": "screened_out_primary_source",
+      "review_question": "Check Foreign Ministry original against PLA Daily republished Chinese text and issuer/date, then judge legal-position significance.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 2391,
+      "source": "pla_daily",
+      "published_date": "2026-07-12",
+      "source_title": "中华人民共和国外交部关于有关国家炒作“南海仲裁案裁决”出台十年的声明",
+      "review_lane": "screened_out_primary_source",
+      "review_question": "Verify Foreign Ministry Chinese statement on the arbitration anniversary and distinguish official policy position from disputed legal claims.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 2180,
+      "source": "global_times_mil",
+      "published_date": "2026-07-06",
+      "source_title": "Chinese navy conducts test launch of strategic missile by submarine; not aimed at any specific country, target",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Compare contaminated pre-repair Global Times teaser capture against original missile-test report; preserve earlier text/hash.",
+      "compare_ids": [
+        2148,
+        2189
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 2265,
+      "source": "global_times_mil",
+      "published_date": "2026-07-08",
+      "source_title": "'Chinese Aegis' Type 052D destroyer Kaifeng meets Russia's 'carrier killer' Varyag as crews exchange visits during Joint Sea-2026 naval exercise",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Verify the Joint Sea-2026 article against unrelated Joint Sea-2025 teaser capture; protect published Brief source trail.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 4348,
+      "source": "global_times_mil",
+      "published_date": "2026-09-18",
+      "source_title": "Exclusive footage shows Philippine vessel repeatedly cutting across CCG vessel’s bow before collision",
+      "review_lane": "republication_comparison",
+      "review_question": "Compare Global Times original collision narrative to China Military Online syndication; identify issuer and footage rights.",
+      "compare_ids": [
+        4346
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 4346,
+      "source": "china_mil_online",
+      "published_date": "2026-09-18",
+      "source_title": "Exclusive footage shows Philippine vessel repeatedly cutting across CCG vessel's bow before collision",
+      "review_lane": "republication_comparison",
+      "review_question": "Check the Global Times byline and reporting at the China Military Online republication; keep both source occurrences.",
+      "compare_ids": [
+        4348
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 946,
+      "source": "global_times_mil",
+      "published_date": "2026-06-01",
+      "source_title": "China Coast Guard conducts routine law-enforcement patrols in the waters east of China's Taiwan island",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Locate original China Coast Guard patrol publisher story; stored body instead has an unrelated Japanese politics teaser.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 170,
+      "source": "global_times_mil",
+      "published_date": "2026-05-11",
+      "source_title": "Commissioning of ‘five essentials for aircraft carriers’ a significant achievement of PLA Navy’s accelerated transformation, development: MND spokesperson",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Inspect original MND carrier aviation comments against two unrelated stored article teasers; initial heuristic false negative.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 419,
+      "source": "global_times_mil",
+      "published_date": "2026-05-18",
+      "source_title": "MND: China Stands Ready to Work With the US Side to Promote the Steady and Long-term Development of a Stable and Positive Mil-to-mil Relationship",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Determine why the MND mil-to-mil report has no stored article prose and prepare versioned repair evidence.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 905,
+      "source": "global_times_mil",
+      "published_date": "2026-05-31",
+      "source_title": "China, Mongolia launch joint army training",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Check China-Mongolia exercise story and media-only versus missing-body interpretation; verify Xinhua attribution.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 792,
+      "source": "global_times_mil",
+      "published_date": "2026-05-28",
+      "source_title": "Chinese defense ministry slams Dutch warship helicopter’s intrusion into airspace over Xisha Qundao, urges it to stop provocations",
+      "review_lane": "source_fidelity_unknown",
+      "review_question": "Read exact publisher original before any fidelity judgment; coherent stored account alone is insufficient verification.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 793,
+      "source": "global_times_mil",
+      "published_date": "2026-05-28",
+      "source_title": "Motionless PLA soldier before Air Force One embodies countless Chinese military members: MND spokesperson",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Compare Air Force One honor-guard publisher article with unrelated stored visit teasers; preserve old capture.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 1246,
+      "source": "global_times_mil",
+      "published_date": "2026-06-09",
+      "source_title": "China absolutely will not allow this: FM spokesperson on Japan, the Philippines infringing upon China’s maritime rights by launching so-called ‘maritime delimitation talks’",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Compare Foreign Ministry response on Japan-Philippines maritime talks with unrelated stored news teasers.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 1630,
+      "source": "global_times_mil",
+      "published_date": "2026-06-21",
+      "source_title": "Chinese official media showcases DF-17 hypersonic missile launch for first time",
+      "review_lane": "primary_source_significance",
+      "review_question": "Separate CCTV reported DF-17 footage from missile capabilities asserted by a Global Times commentator.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 1954,
+      "source": "global_times_mil",
+      "published_date": "2026-06-30",
+      "source_title": "PLA conducts combat readiness patrols, CCG carries out law-enforcement patrols in the territorial sea and airspace of Huangyan Dao",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Check real Huangyan Dao theater/CCG activity article against unrelated reef/science snippet capture.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 2753,
+      "source": "global_times_mil",
+      "published_date": "2026-08-01",
+      "source_title": "China's defense minister vows to thwart any attempt at ‘Taiwan independence’, external interference on PLA’s 99th anniversary",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Compare original Dong Jun anniversary reception remarks with unrelated stored ministry commerce teasers.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 3180,
+      "source": "global_times_mil",
+      "published_date": "2026-08-12",
+      "source_title": "DPP’s rant against China-Indonesia drill exposes secessionist nature, reliance on external forces and deep-seated fears: expert",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Recover editorial distinction between DPP reaction analysis and unrelated CCG/Liaoning teasers.",
+      "compare_ids": [
+        3181
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 3181,
+      "source": "global_times_mil",
+      "published_date": "2026-08-12",
+      "source_title": "Chinese, Indonesian naval frigates complete maritime exercise in waters east of China's Taiwan island: PLA Eastern Theater Command",
+      "review_lane": "historical_capture_quality",
+      "review_question": "Verify joint China-Indonesia frigate exercise account and shared contaminated CCG/Liaoning snippet.",
+      "compare_ids": [
+        3180
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 3454,
+      "source": "pla_daily",
+      "published_date": "2026-08-23",
+      "source_title": "第76集团军某旅依托驻防点位携手多军兵种部队开展小体系练兵",
+      "review_lane": "republication_comparison",
+      "review_question": "Compare PLA Daily and MND military training articles for original byline, issuer, event identity and added detail.",
+      "compare_ids": [
+        3465
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 3465,
+      "source": "mod_china",
+      "published_date": "2026-08-23",
+      "source_title": "第76集团军某旅依托驻防点位携手多军兵种部队开展小体系练兵",
+      "review_lane": "republication_comparison",
+      "review_question": "Compare Ministry of National Defense repost with PLA Daily training report and original Chinese captions.",
+      "compare_ids": [
+        3454
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 2148,
+      "source": "pla_daily",
+      "published_date": "2026-07-06",
+      "source_title": "中国海军成功组织潜射战略导弹试射",
+      "review_lane": "brief_trail_review",
+      "review_question": "Preserve the cited submarine strategic missile test document; compare July 6 version to July 7 version.",
+      "compare_ids": [
+        2189,
+        2180
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 2189,
+      "source": "pla_daily",
+      "published_date": "2026-07-07",
+      "source_title": "中国海军成功组织潜射战略导弹试射",
+      "review_lane": "brief_trail_review",
+      "review_question": "Preserve July 7 cited PLA Daily missile statement and check differences versus the July 6 account.",
+      "compare_ids": [
+        2148,
+        2180
+      ],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 948,
+      "source": "global_times_mil",
+      "published_date": "2026-06-01",
+      "source_title": "Chinese, US militaries hold candid, constructive exchanges on air and maritime safety at MMCA working group meeting: PLA Navy",
+      "review_lane": "screened_out_primary_source",
+      "review_question": "Check original PLA Navy report on MMCA air and maritime safety talks with the United States; assess importance.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 1675,
+      "source": "pla_daily",
+      "published_date": "2026-06-23",
+      "source_title": "南海影像日志丨万顷碧波 绚烂晚霞",
+      "review_lane": "media_and_rights_review",
+      "review_question": "Inspect South China Sea photo captions and rights in original-language feature; prose-only filters miss media evidence.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    },
+    {
+      "id": 4104,
+      "source": "pla_daily",
+      "published_date": "2026-09-12",
+      "source_title": "习近平：中方愿同金砖成员一道，为实现中东海湾地区和平安宁发挥应有作用",
+      "review_lane": "keyword_false_positive_control",
+      "review_question": "Check BRICS statement mentioning Middle East Gulf; demonstrate it is not an East China Sea source.",
+      "compare_ids": [],
+      "editorial_decision": null,
+      "reviewer": null,
+      "reviewed_on": null
+    }
+  ]
+}
