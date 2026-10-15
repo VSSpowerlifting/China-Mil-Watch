@@ -51,6 +51,24 @@ def digest(path):
     return h.hexdigest()
 
 
+class _DigestingReader:
+    """Measure the exact bytes passed into the streamed encrypted TAR."""
+
+    def __init__(self, stream):
+        self._stream = stream
+        self._hash = hashlib.sha256()
+        self.bytes_read = 0
+
+    def read(self, amount=-1):
+        data = self._stream.read(amount)
+        self._hash.update(data)
+        self.bytes_read += len(data)
+        return data
+
+    def hexdigest(self):
+        return self._hash.hexdigest()
+
+
 def _read_inventory(path, run_id):
     source = Path(path)
     check(source.is_file() and not source.is_symlink()
@@ -271,7 +289,11 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
                         info = tarfile.TarInfo("artifacts/artifact-%d.zip" % item["id"])
                         info.size, info.mode, info.mtime = item["bytes"], 0o600, 0
                         with open(item["path"], "rb") as stream:
-                            bundle.addfile(info, stream)
+                            copied = _DigestingReader(stream)
+                            bundle.addfile(info, copied)
+                            check(copied.bytes_read == item["bytes"] and
+                                  copied.hexdigest() == item["sha256"],
+                                  "staged_artifact_stream_digest_mismatch")
                         current = item["path"].stat()
                         check((current.st_dev, current.st_ino,
                                current.st_size, current.st_mtime_ns) == item["stat"]

@@ -8,6 +8,7 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts import private_vault_encrypt_actions_attempts as box
 
@@ -145,6 +146,23 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         self.assertEqual(verified["artifact_count_verified"], 1)
         self.assertFalse(verified["downloaded_zip_origin_authenticated"])
         self.assertFalse(verified["production_cutover_authorized"])
+
+    def test_encrypt_rejects_streamed_bytes_that_differ_from_provider_receipt(self):
+        # The staging ZIP stays untouched; interception of the TAR input must
+        # still cause HOLD, not a superficially successful encrypted backup.
+        addfile = tarfile.TarFile.addfile
+
+        def tamper_stream(bundle, member, fileobj=None):
+            if member.name == "artifacts/artifact-%d.zip" % ONE:
+                return addfile(bundle, member, io.BytesIO(b"X" * member.size))
+            return addfile(bundle, member, fileobj)
+
+        with patch.object(tarfile.TarFile, "addfile", tamper_stream):
+            with self.assertRaisesRegex(
+                    box.Hold, "staged_artifact_stream_digest_mismatch"):
+                self.create()
+        self.assertFalse(self.encrypted.exists())
+        self.assertFalse(any(".part" in path.name for path in self.root.iterdir()))
 
     def test_wrong_private_key_cannot_certify_recovery(self):
         receipt = self.create()
