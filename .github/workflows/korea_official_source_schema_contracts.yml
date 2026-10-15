@@ -1,0 +1,43 @@
+name: Korea Official Source Metadata — Schema-Only Contract
+
+on:
+  pull_request:
+    paths:
+      - migrations/versions/m0008_korea_official_source_metadata.py
+      - tests/test_korea_official_source_metadata_schema.py
+      - .github/workflows/korea_official_source_schema_contracts.yml
+      - docs/engineering/KOREA_LIVE_METADATA_PIPELINE_SCOPE_2026-10-15.md
+
+permissions:
+  contents: read
+
+jobs:
+  offline-metadata-schema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record exact tracked database and public output
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-production-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Run source-free schema and legacy migration regressions
+        run: |
+          python -m unittest \
+            tests.test_korea_official_source_metadata_schema \
+            tests.test_migrations -v
+      - name: Assert no live DB, site, or shadow collection modification
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/korea-production-db.sha"
+          git diff --exit-code -- pla_watch.db output/ shadow/ desks/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
