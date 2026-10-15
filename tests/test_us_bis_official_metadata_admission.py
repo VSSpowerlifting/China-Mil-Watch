@@ -127,7 +127,11 @@ class BISAdmission(unittest.TestCase):
             db=Path(tmp)/"scratch.db"
             with sqlite3.connect(db) as con:
                 admit_scratch(con,packet(),receipt_day=DAY,input_reference_sha=SHA)
-                con.execute("UPDATE bis_official_source_records SET publisher_listing_url='https://evil.invalid' WHERE rowid=1")
+                # Fixed publisher attribution is protected at the SQL layer.
+                with self.assertRaises(sqlite3.IntegrityError):
+                    con.execute("UPDATE bis_official_source_records SET publisher_listing_url='https://evil.invalid' WHERE rowid=1")
+                # Corrupt a field without a SQL CHECK to exercise strict readback.
+                con.execute("UPDATE bis_official_source_records SET canonical_official_url='https://evil.invalid/press-release/test' WHERE rowid=1")
             with self.assertRaises(BISAdmissionHold):
                 load_staged_links(db)
 
