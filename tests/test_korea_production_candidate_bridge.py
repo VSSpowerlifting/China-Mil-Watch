@@ -1,5 +1,7 @@
 """Offline, synthetic Korea original -> held production candidate bridge tests."""
 import hashlib
+import io
+import zipfile
 import json
 import os
 import sqlite3
@@ -29,8 +31,25 @@ class KoreaProductionCandidateBridgeTests(unittest.TestCase):
         rows = con.execute(
             "SELECT source_identity,metadata_json FROM shadow_records ORDER BY source_identity"
         ).fetchall()
+        self.hwpx_by_id = {}
         for i, (ident, metadata) in enumerate(rows):
             m = json.loads(metadata)
+            korean_text = "Synthetic original " + ident.partition(":")[2]
+            # Build five genuine but invented HWPX ZIP/XML byte streams,
+            # allowing the same re-extraction gate used on actual MND originals.
+            payload = io.BytesIO()
+            with zipfile.ZipFile(payload, "w") as archive:
+                xml = "<root><p><run><t>" + korean_text + "</t></run></p></root>"
+                archive.writestr("Contents/section0.xml", xml.encode("utf-8"))
+            binary = payload.getvalue()
+            sha = hashlib.sha256(binary).hexdigest()
+            (self.source / "state/captures" / (sha + ".bin")).write_bytes(binary)
+            self.hwpx_by_id[ident] = sha
+            m.update({
+                "document_capture_sha256": sha,
+                "document_url": "https://www.korea.kr/common/download.do"
+                                "?fileId=198565537&tblKey=GMN",
+            })
             m.update({
                 "issuer": "국방부", "publisher": "대한민국 정책브리핑",
                 "publication_kind": "syndicated_press_release",
@@ -74,7 +93,8 @@ class KoreaProductionCandidateBridgeTests(unittest.TestCase):
                              "held_pending_exact_version_human_and_rights_review")
             self.assertEqual(row["canonical_source_url"],
                              stage.URL + row["source_identity"].split(":")[1])
-            self.assertEqual(row["original_hwpx_sha256"], self.hwpx)
+            self.assertEqual(row["original_hwpx_sha256"],
+                             self.hwpx_by_id[row["source_identity"]])
             self.assertEqual(row["publisher_html_sha256"], self.html)
             for flag in ("original_text_included", "original_title_included",
                          "original_media_included", "approved_for_production",
@@ -148,8 +168,22 @@ class KoreaProductionCandidateBridgeTests(unittest.TestCase):
                     stage.build(str(self.source), frozen=self.frozen)
         git(self.source, "reset", "--hard", self.current_tip)
 
+    def test_forged_korean_text_even_with_matching_new_digest_fails_original_replay(self):
+        # A reviewer cannot trust a shadow DB text+hash pair in isolation.
+        # The HWPX bytes must independently re-extract into those same lines.
+        text = "A fabricated original claim not present in the HWPX"
+        self.update(
+            "UPDATE shadow_records SET text_original=?,content_sha256=? "
+            "WHERE source_identity=?",
+            (text, hashlib.sha256(text.encode()).hexdigest(),
+             sorted(self.hwpx_by_id)[0]))
+        with self.assertRaisesRegex(stage.IntakeHold,
+                                    "korea_original_hwpx_replay_failed"):
+            stage.build(str(self.source), frozen=self.frozen)
+
     def test_corrupted_historical_capture_or_forged_clock_refused(self):
-        original = self.source / "state/captures" / (self.hwpx + ".bin")
+        original = self.source / "state/captures" / (
+            next(iter(self.hwpx_by_id.values())) + ".bin")
         original.write_bytes(b"corrupt fictional hwpx")
         with self.assertRaises(stage.IntakeHold):
             stage.build(str(self.source), frozen=self.frozen)
