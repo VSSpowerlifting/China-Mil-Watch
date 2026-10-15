@@ -21,7 +21,9 @@ TABLE = """
 CREATE TABLE korea_metadata_rehearsal (
     source_identity TEXT NOT NULL PRIMARY KEY,
     source_git_commit TEXT NOT NULL,
+    source_db_sha256 TEXT NOT NULL,
     candidate_version_sha256 TEXT NOT NULL UNIQUE,
+    signed_review_sha256 TEXT NOT NULL,
     official_url TEXT NOT NULL UNIQUE,
     publisher_date TEXT NOT NULL,
     source_slug TEXT NOT NULL,
@@ -29,6 +31,7 @@ CREATE TABLE korea_metadata_rehearsal (
     republisher_institution TEXT NOT NULL,
     originality TEXT NOT NULL,
     authority_tier TEXT NOT NULL,
+    original_title_sha256 TEXT NOT NULL,
     original_text_sha256 TEXT NOT NULL,
     publisher_html_sha256 TEXT NOT NULL,
     original_hwpx_sha256 TEXT NOT NULL,
@@ -76,10 +79,13 @@ def rehearse(source_checkout, packet, seals, *, reviewer_key,
         need(ident in indexed and ident not in seen,
              "duplicate_or_unrecognized_review")
         seen.add(ident)
-        signatures.append(receipt)
+        # Retain only the exact sealed review's digest, not private signer
+        # identities or source-use statements, in the disposable database.
+        signatures.append((receipt, hashlib.sha256(
+            stage.canonical(seal)).hexdigest()))
 
     rows = []
-    for receipt in signatures:
+    for receipt, signed_review_sha256 in signatures:
         if not receipt["metadata_only_disposable_db_rehearsal_candidate"]:
             continue
         src = indexed[receipt["source_identity"]]
@@ -90,11 +96,13 @@ def rehearse(source_checkout, packet, seals, *, reviewer_key,
              "signed_review_source_version_drift")
         rows.append((
             src["source_identity"], verified["source_git_commit"],
-            src["candidate_version_sha256"], src["canonical_source_url"],
+            verified["source_db_sha256"], src["candidate_version_sha256"],
+            signed_review_sha256, src["canonical_source_url"],
             src["publisher_posted_date"], src["source_slug"],
             src["institution_id"], src["publisher_institution_id"],
             src["originality"], src["authority_tier"],
-            src["original_text_sha256"], src["publisher_html_sha256"],
+            src["original_title_sha256"], src["original_text_sha256"],
+            src["publisher_html_sha256"],
             src["original_hwpx_sha256"],
             "metadata_only_rehearsal_not_production",
         ))
@@ -107,16 +115,16 @@ def rehearse(source_checkout, packet, seals, *, reviewer_key,
         tmp.execute(TABLE)
         tmp.executemany(
             "INSERT INTO korea_metadata_rehearsal VALUES "
-            "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)", rows)
+            "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", rows)
         tmp.commit()
         existing = tmp.execute(
             "SELECT source_identity,candidate_version_sha256 FROM "
             "korea_metadata_rehearsal ORDER BY source_identity").fetchall()
-        need(existing == [(r[0], r[2]) for r in rows],
+        need(existing == [(r[0], r[3]) for r in rows],
              "metadata_rehearsal_integrity_failed")
         tmp.executemany(
             "INSERT OR IGNORE INTO korea_metadata_rehearsal VALUES "
-            "(?,?,?,?,?,?,?,?,?,?,?,?,?,?)", rows)
+            "(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", rows)
         need(tmp.execute("SELECT COUNT(*) FROM korea_metadata_rehearsal")
              .fetchone()[0] == len(rows),
              "metadata_rehearsal_not_idempotent")
