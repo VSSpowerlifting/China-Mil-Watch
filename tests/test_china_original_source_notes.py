@@ -140,6 +140,29 @@ class ChinaOriginalResearchTest(unittest.TestCase):
         check["next_step"] = "quality_hold"
         self.assertEqual(validate_packet(packet, index, pages)["research_cases"], 1)
 
+    def test_absent_body_has_null_anchor_and_requires_true_absence(self):
+        packet, index, pages = fixture()
+        c = packet["checks"][0]
+        c["comparison"] = "historical_body_absent"
+        c["next_step"] = "quality_hold"
+        c["stored_body_anchor"] = None
+        original = pages[11]
+        with self.assertRaisesRegex(ValueError, "original text now present"):
+            validate_packet(packet, index, pages)
+        pages[11] = original[original.index("<table>"):]
+        self.assertEqual(validate_packet(packet, index, pages)["research_cases"], 1)
+        c["stored_body_anchor"] = "fabricated words"
+        with self.assertRaisesRegex(ValueError, "null anchor"):
+            validate_packet(packet, index, pages)
+        c["stored_body_anchor"] = None
+        c["next_step"] = "candidate_original_review"
+        with self.assertRaisesRegex(ValueError, "remain held"):
+            validate_packet(packet, index, pages)
+        c["next_step"] = "quality_hold"
+        pages[11] = "<html><p>no source, no provenance</p></html>"
+        with self.assertRaisesRegex(ValueError, "provenance URL missing"):
+            validate_packet(packet, index, pages)
+
     def test_evidence_url_requires_https_but_historical_captured_url_may_be_http(self):
         packet, index, pages = fixture()
         packet["checks"][0]["research_url"] = "http://www.fmprc.gov.cn/a"
