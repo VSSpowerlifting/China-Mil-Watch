@@ -26,29 +26,37 @@ reviewer identity, signing secret, or personal data is held in this table.**
 Existing `articles` IDs remain separate, because a verified official URL does
 not constitute an edited or machine-analyzed research article.
 
-## Next production changes (not implemented by the schema PR)
+## Operational pipeline built on this branch (not deployed until CI and merge)
 
-1. Secure runner authenticates the actual immutable Korea shadow state and
-   replays per-source collection proofs. Production access to original HWPX
-   remains restricted to the processing runner; only validated metadata passes
-   to the public repository.
-2. Idempotent transaction imports newly verified MND references into this
-   `held` table without silently replacing previously published source
-   versions, asserting a fictional source-success day, or widening to DAPA.
-3. **Standing owner policy decision still required:** may new future MND
-   official URLs + issuer + dates (and, separately, original Korean titles)
-   become `official_link_only` **automatically** after exact-source checks,
-   without per-record human signatures? Existing 14-link signoff alone cannot
-   justify automatically approving future source versions.
-4. After owner-approved policy and tests, the publisher reads only
-   `official_link_only` metadata and writes **only** Korea's page. No
-   `./output` directory reupload, no rerender of China or Briefs. Check
-   release checksum, observed IDs, lack of media/body, and rollback.
-5. Demonstrate *one genuine new original* moving from new collection through
-   capture replay, production database, and Pages. Verify record and GitHub
-   Pages tip independently before changing Korea's public status/registry.
-   Keep report of scheduling failures and collection gaps, rather than
-   converting them into passing days.
+1. Workflow `.github/workflows/korea_verified_official_link_production.yml`
+   clones the exact existing MND shadow Git branch after collection or on a
+   daily retry, and `scripts/stage_korea_production_candidates.py` reconstructs
+   its source ancestry and HWPX/HTML/text bytes and hashes. The runner holds
+   originals only temporarily; only structured metadata enters production.
+2. `core/korea_official_metadata_admission.py` admits eligible verified MND
+   references into the new live SQLite metadata table under an explicit
+   version-locked, owner-approved standing policy. Disputed source 156785161
+   stays excluded, repeated records are idempotent, and changed versions are
+   held rather than overwritten.
+3. **Standing policy APPROVED by owner on October 15, 2026:** automatically
+   publish new source-verified MND official URL, portal date, issuing ministry,
+   republisher and neutral numerical ID. No per-record human signature is
+   required for these factual link-only fields. The owner expressly excludes
+   original Korean headlines, article bodies, imagery, translation, analysis,
+   model and email use. The exact checked policy is recorded in
+   `config/korea_official_link_automatic_admission.json`.
+4. The renderer reads only `official_link_only` metadata and appends new
+   verified references in a clearly differentiated page section. Existing
+   frozen fourteen links remain, without duplicated entries. The workflow
+   stages only `pla_watch.db` and `output/korea.html` on main, then updates
+   only `korea.html` on Pages. A render may regenerate unrelated output
+   locally, but the workflow neither stages nor uploads those assets.
+5. **Still required before calling the desk genuinely live:** a green exact-
+   head full test suite, merge into main, one real-source workflow run showing
+   verified admission to the actual DB, successful Pages file-only update,
+   and independent comparison of `main:pla_watch.db`, `main:output/korea.html`
+   and `gh-pages:korea.html`. The workflow must fail safely on missing or
+   stale shadow evidence, concurrent main changes and page overwrite races.
 
 Separate future releases are required for original document reproduction,
 Korean title/license attribution scope, article analysis, model handling and
@@ -56,14 +64,13 @@ photography. The portal's observed KOGL Type 1 **text-only** badge on the
 first fourteen releases is not automatic proof of rights on future pages or
 embedded media.
 
-## Exact user input needed
+## User decision received
 
-A single editorial policy decision approving automatic link/date/issuer-only
-admission of **new, future** MND / Korea Policy Briefing references (or
-requiring human review before public display). Also decide whether the
-original Korean title is included when the *specific new page* retains a
-matching copyright notice. The conservative default until approval is
-private intake and HOLD, not auto publication.
+The owner expressly approved recurring publication of new government MND
+URL/date/issuer metadata after exact-source checks, **without individual
+human review**. Original Korean titles are excluded from the automatic path
+regardless of future publisher copyright markings. The known chronology
+exception and unverified original-source state are always held.
 
 No new paid infrastructure is required for this schema stage. Reuse GitHub
 Actions and SQLite, with separate review of runner write credentials,
