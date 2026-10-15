@@ -1,0 +1,52 @@
+name: China focus-first archive integrity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/china_discovery.py
+      - site/preview/generate_preview.py
+      - site/preview/browse.js
+      - site/preview/templates/archive.html
+      - tests/test_china_focus_discovery.py
+      - docs/CHINA_FOCUS_FIRST_RELEASE_2026-10-15.md
+      - .github/workflows/china_focus_first.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-focus-first-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  focus-invariants:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Record original published artifacts' fingerprints
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/sha_db"
+          test -z "$(git status --porcelain --untracked-files=all -- output/ pla_watch.db)"
+      - name: Check source-balanced cohort, preserved URLs and search scopes
+        run: |
+          python -m unittest -v tests.test_china_focus_discovery
+          python -m py_compile core/china_discovery.py site/preview/generate_preview.py
+      - name: Ensure unchanged full corpus
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/sha_db"
+          git diff --exit-code -- output/ pla_watch.db
+          test -z "$(git status --porcelain --untracked-files=all -- output/ pla_watch.db)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
