@@ -118,16 +118,6 @@ jobs:
           assert r["production_db_modified"] is False
           print("Physical scratch deletion and permanent URL ledger:",r["retired"])
           PY
-      - name: Stage previously published editorial media and issue sidecars
-        run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/china-retirement-reduced-site"
-          for name in the-pla-watch assets favicon.svg logo-icon.png logo-wordmark.png og-image.png CNAME .nojekyll; do
-            if test -e "output/$name"; then
-              cp -a "output/$name" "$RUNNER_TEMP/china-retirement-reduced-site/$name"
-            fi
-          done
-          test ! -e "$RUNNER_TEMP/china-retirement-reduced-site/data/articles.json"
       - name: Render reduced archive from disposable database, then verify exact retained identities
         run: |
           set -euo pipefail
@@ -156,6 +146,37 @@ jobs:
           print("Reduced site identities:",len(new_ids),
                 "retired:",len(gone),
                 "preserved citation IDs:",len(old["trail_ids"]))
+          PY
+      - name: Carry original published editorial issues and media after fresh render
+        run: |
+          set -euo pipefail
+          python - "$RUNNER_TEMP/china-retirement-reduced-site" <<'PY'
+          from pathlib import Path
+          import shutil,sys,importlib.util
+          spec=importlib.util.spec_from_file_location("ipr_render",Path("site/render.py").resolve())
+          site_render=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(site_render)
+          target=Path(sys.argv[1])
+          old=Path("output")
+          for name in site_render.CARRIED_FORWARD:
+              src=old/name
+              dst=target/name
+              if not src.exists():
+                  continue
+              if src.is_dir():
+                  for file in src.rglob("*"):
+                      if file.is_file():
+                          candidate=dst/file.relative_to(src)
+                          if not candidate.exists():
+                              candidate.parent.mkdir(parents=True,exist_ok=True)
+                              shutil.copy2(file,candidate)
+              elif not dst.exists():
+                  dst.parent.mkdir(parents=True,exist_ok=True)
+                  shutil.copy2(src,dst)
+          # Never carry the old articles.json; it still advertises retired IDs.
+          (target/"data"/"articles.json").unlink(missing_ok=True)
+          print("Carried preserved publication files and assets; sitemap entries:",
+                site_render.add_carried_pages_to_sitemap(target))
           PY
       - name: Regenerate legacy JSON export from retained DB, never publish obsolete entries
         run: |
