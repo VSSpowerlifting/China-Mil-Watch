@@ -439,7 +439,7 @@ class TestVietnamShadowIsNotPublicCoverage(DeskCase):
         self.assertIn("Corpus records</dt><dd>Not admitted", html)
         self.assertIn("Sources enabled in production</dt><dd>0", html)
         self.assertNotIn("Sources enabled in shadow", html)
-        self.assertIn("MPS foreign-affairs", html)
+        self.assertIn("Ministry of Public Security — foreign affairs (Vietnamese)", html)
         self.assertIn("No source is enabled in production", html)
 
     def test_the_vietnam_page_shows_no_collection_statistic(self):
