@@ -120,6 +120,7 @@ def rehearse(source_checkout, packet, seals, *, reviewer_key,
         need(tmp.execute("SELECT COUNT(*) FROM korea_metadata_rehearsal")
              .fetchone()[0] == len(rows),
              "metadata_rehearsal_not_idempotent")
+        tmp.commit()  # SQLite backup must not copy a source with an open write transaction.
         need(tmp.execute("PRAGMA quick_check").fetchone()[0] == "ok",
              "metadata_rehearsal_database_corrupt")
         flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
