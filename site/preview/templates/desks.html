@@ -77,9 +77,6 @@ actual admitted government originals, not editorial articles.</p>
       <p class="card-meta"><span class="desk-state desk-state--{{ d.status }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></p>
       <h2 class="plain"><a href="{{ d.route }}">{{ d.name }}</a></h2>
       <p class="deskmap-seat">{{ m.seat }} <span>{{ m.coords }}</span></p>
-      {% if d.slug in editorial_published_desks | default([]) %}
-      <p class="meta">IPR-authored research and source links available. Source archive: {{ d.status_label }}.</p>
-      {% endif %}
       <dl class="deskmap-stats">
         <div><dt>{{ 'Corpus records' if d.status == 'shadow' else 'Records' }}</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}{{ 'Not admitted' if d.status == 'shadow' else 'None collected' }}{% endif %}</dd></div>
         <div><dt>{{ 'Last corpus collection' if d.status == 'shadow' else 'Last collection' }}</dt><dd>{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</dd></div>
