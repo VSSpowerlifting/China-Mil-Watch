@@ -111,6 +111,33 @@ class RetentionInventoryTest(unittest.TestCase):
         self.assertIn("artifact_already_expired", row["holds"])
         self.assertLess(row["artifacts"][0]["hours_until_expiry"], 0)
 
+    def test_us_shadow_collector_is_included_in_historic_coverage(self):
+        old = run(run_id=32311419939, attempt=1,
+                  workflow=".github/workflows/us_shadow.yml",
+                  event="workflow_dispatch")
+        actual = census.collect(FakeAPI(
+            runs=[old], artifacts={32311419939: [artifact(
+                ident=9386615960, run_id=32311419939, attempt=1,
+                name="us-indopacom-shadow-ledger-32311419939",
+                expiry="2026-11-17T23:01:01Z")]}),
+            DAY, DAY, NOW)
+        self.assertEqual(actual["scoped_run_count"], 1)
+        self.assertIn("artifact_attempt_name_not_decodable",
+                      actual["runs"][0]["holds"])
+
+    def test_historical_august_manual_collector_window_allowed(self):
+        base = run(run_id=32311419939, attempt=1,
+                   workflow=".github/workflows/singapore_shadow.yml")
+        base["created_at"] = "2026-08-19T23:01:01Z"
+        fake = FakeAPI(runs=[base], artifacts={32311419939: [artifact(
+            ident=9386615960, run_id=32311419939, attempt=1,
+            name="singapore-shadow-ledger-32311419939",
+            expiry="2026-11-17T23:01:01Z")]})
+        report = census.collect(fake, "2026-08-19", "2026-08-19", NOW)
+        self.assertEqual(report["earliest_retained_expiry_utc"],
+                         "2026-11-17T23:01:01Z")
+        self.assertEqual(report["scoped_run_count"], 1)
+
     def test_unknown_workflow_and_noncollection_event_skipped(self):
         fake = FakeAPI(runs=[run(workflow="other.yml")])
         self.assertEqual(census.collect(fake, DAY, DAY, NOW)["scoped_run_count"], 0)
@@ -167,7 +194,7 @@ class RetentionInventoryTest(unittest.TestCase):
         for first, last in (
             ("2026-10-15", "2026-10-14"),
             ("2026-10-01", "2026-12-31"),
-            ("2026-09-30", "2026-10-01"),
+            ("2026-07-31", "2026-08-01"),
             ("2026-10-15", "2026-10-17"),
         ):
             with self.subTest(first=first, last=last):
