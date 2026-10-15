@@ -1,0 +1,51 @@
+name: Korea Fourteen Official-Links Private Review — No Publication
+
+on:
+  pull_request:
+    paths:
+      - research/korea/MND_14_PUBLIC_LINK_REVIEW_CANDIDATES_2026-10-15.json
+      - scripts/preview_korea_fourteen_official_links.py
+      - tests/test_korea_fourteen_link_review.py
+      - .github/workflows/korea_fourteen_links_review_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fourteen-link-hold-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install the existing site-preview test dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Prove 14 identities and 9 unauthorized links remain held
+        run: python -m unittest tests.test_korea_fourteen_link_review tests.test_korea_public_bibliography -v
+      - name: Generate restricted local preview, verify, destroy
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$RUNNER_TEMP/korea-fourteen-private-review-$GITHUB_RUN_ID.md"
+          python -m scripts.preview_korea_fourteen_official_links \
+            --private-preview-out "$target" --explicit-no-publish
+          test -s "$target"
+          test "$(stat -c %a "$target")" = 600
+          test "$(grep -c 'Official URL:' "$target")" = 14
+          test "$(grep -c 'HELD — no new public link permission' "$target")" = 9
+          rm "$target"
+          test ! -e "$target"
+      - name: Nothing altered on the public site
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json research/korea_public_reference_ids.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No archived Korean bytes, images, live site build, upload, production source,
+# workflow dispatch, external model, email, or Pages deployment.

@@ -1,0 +1,128 @@
+{
+  "schema": "ipr-korea-fourteen-source-public-link-candidates/1",
+  "state_ref": "shadow/korea-policy-briefing",
+  "state_commit": "0595f0fd29b769cbab5dd57c2ef57af174237a67",
+  "first_five_existing_release_commit": "dcb43b9c4edb471d6def5876701ec4a2e39d5264",
+  "source_family": "kr_policy_mnd_releases",
+  "issuer_original": "국방부",
+  "publisher_original": "대한민국 정책브리핑",
+  "license_evidence": "KOGL Type 1 page notice, text only, attribution required; excludes embedded nontext media",
+  "mode": "owner_review_only_not_public_release",
+  "reviewer_attestation_authenticated": false,
+  "owner_approval_for_new_public_links": false,
+  "eligible_new_public_links": 0,
+  "entries": [
+    {
+      "news_id": "156784297",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297",
+      "hwpx_capture_sha256": "d1b8c4d21f97c9a33da1602ec9433487c591e49e442f3b4a5960410bda145be4",
+      "publisher_html_capture_sha256": "ef95a714bc72f9a51cd6030c689fcb5bfc53f607b826db743cb0be916dc0c498",
+      "status": "existing_public_bibliography_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156784196",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784196",
+      "hwpx_capture_sha256": "808e26d5eddc604d3d09c5bf3655ad928cd32ba0529eb8f5fd93066e36b61f91",
+      "publisher_html_capture_sha256": "48722481ff29aab334fecac4365c70ef5ea50b0c1f9f56b44b10b7c3af1bd536",
+      "status": "existing_public_bibliography_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156783708",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156783708",
+      "hwpx_capture_sha256": "fa2520e26bf2f672f7793b473a6d2e1cad68cc8340fd6d4849479922ae947c35",
+      "publisher_html_capture_sha256": "92ac398d3031a228bcb0df7b269bd754973a41d7ea86750eedad876141aba5e3",
+      "status": "existing_public_bibliography_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156783602",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156783602",
+      "hwpx_capture_sha256": "2faaf0922ca4a87c8822ad5e746b6e622618e3de0de76a5764b4d0fc65849587",
+      "publisher_html_capture_sha256": "f35b2a15cf52153e1eb0c66fc6efea85d1846ec8f3ea4afdf3b6ed3bc8409e0c",
+      "status": "existing_public_bibliography_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156784652",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784652",
+      "hwpx_capture_sha256": "4cdc5332b6b383b402811db492a3c00b1f899c1888bed97c4138ccbea0fe7b60",
+      "publisher_html_capture_sha256": "2079e04b090d32aefe86875561429ca4b10dda1dc213eecd7a9bb3abde5e7f7f",
+      "status": "existing_public_bibliography_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156785015",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785015",
+      "hwpx_capture_sha256": "b2a767bf0b057945447a594e06771bfb3cb442e391f679b4b5a019237041b3a5",
+      "publisher_html_capture_sha256": "3fe7532b2c0b41738727bba8c4fac878e3fa8b229885fb0ae9200e537c743cb3",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156785005",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785005",
+      "hwpx_capture_sha256": "97ba036646c105ccb3b91e0e589cf6bca95f51f22f2893af9e40081c98aae1a7",
+      "publisher_html_capture_sha256": "36dc1aad036c9410a09b660cf2cae7a361e47a9b51dc989ccf3cf7beabde5e4e",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156784873",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784873",
+      "hwpx_capture_sha256": "2a197b95c0174964b31148167a5c1b9d29bb64ecf60ab4326504d98793f87d4a",
+      "publisher_html_capture_sha256": "fffde3346ca3c8b0f9babac69ac51e1ca0743810661c69bcc5dddfdbd33d21de",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156784787",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784787",
+      "hwpx_capture_sha256": "57ab003628355b5b29f6204ad59ee925b439849c58c9022355b924d7928db43e",
+      "publisher_html_capture_sha256": "c320b308182082efb30f4267d55bf91885d37f0ac102c569c8cddc26c281eb3e",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156785190",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785190",
+      "hwpx_capture_sha256": "7e97ddcc58c24d338049c3c828ef4e9717fecc9ecd2d24a20b7477b3886d58af",
+      "publisher_html_capture_sha256": "e096195bfefbafb9c32133de3a7b932ffb679be445504abb3c56ae8af7de0596",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156785162",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785162",
+      "hwpx_capture_sha256": "3fdaba73bce1140a1ba0f94948d4ab9849a16703d4e52f8b8858f2639dfb7994",
+      "publisher_html_capture_sha256": "da64a9b05c0409da1f1615de0539800615a9b29bf903925a7c435ede1ed1af6f",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156785161",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785161",
+      "hwpx_capture_sha256": "01a0045fdd46efceb61f2e051f7bb11113404986587d121a60222b7ffe81a957",
+      "publisher_html_capture_sha256": "ec1e51e271af470bd5349ad158a8eed5f6aa9195b4eb06195aaf19b9b9a04daa",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": "inconsistent_2025_2026_excavation_year_issue_601"
+    },
+    {
+      "news_id": "156785160",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785160",
+      "hwpx_capture_sha256": "797cc2af8157b02039cae710d296c55e8013bc664733f189cbb25ec1d5dee313",
+      "publisher_html_capture_sha256": "6efcf57128985ee68b5ebf27efd9c9ae3dc33744bdf360a37791050ab3625983",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    },
+    {
+      "news_id": "156785058",
+      "source_url": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156785058",
+      "hwpx_capture_sha256": "f306593af1ef8d4d0ffffdf8fd05ca0ec33352eb16ca6cd4565be91b9209b17e",
+      "publisher_html_capture_sha256": "45c61e5227d96f680133944a3bcf1a4310a245ce367c858f321a5a626425890e",
+      "status": "hold_candidate_official_link_only",
+      "editorial_exception": null
+    }
+  ]
+}
