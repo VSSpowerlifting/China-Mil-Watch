@@ -274,7 +274,7 @@ class KoreaContentFilesystemAndIntegration(unittest.TestCase):
             "test_five_realistically_shaped_synthetic_rows_stay_unpublished")
         bridge.setUp()
         self.addCleanup(bridge.doCleanups)
-        staged = stage.build(str(bridge.source))
+        staged = stage.build(str(bridge.source), frozen=bridge.frozen)
         stage_row = staged["records"][0]
         identity = stage_row["source_identity"]
         original = next(r for r in stage._rows(bridge.source)
@@ -322,8 +322,15 @@ class KoreaContentFilesystemAndIntegration(unittest.TestCase):
         rights_path = self.write_secret("rights.json", rights)
         draft_path = self.write_secret("draft.json", draft)
         preview = self.folder / "korea-private.html"
-        receipt = rehearse(str(bridge.source), identity,
-                          str(rights_path), str(draft_path), str(preview))
+        # The fictional Git branch has its own frozen-ancestor identity.
+        # Override that *only within this test*, never in the CLI or runner.
+        from unittest.mock import patch
+        actual_stage_build = stage.build
+        def build_fictional(source):
+            return actual_stage_build(source, frozen=bridge.frozen)
+        with patch.object(stage, "build", side_effect=build_fictional):
+            receipt = rehearse(str(bridge.source), identity,
+                              str(rights_path), str(draft_path), str(preview))
         self.assertEqual("PRIVATE_REVIEW_ONLY", receipt["status"])
         self.assertEqual(0, receipt["public_files_written"])
         self.assertEqual(0, receipt["production_records_written"])
