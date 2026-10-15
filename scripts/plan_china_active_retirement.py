@@ -10,6 +10,8 @@ pla_watch.db or output/. Active production deletion requires a separate
 reviewed and recoverable release.
 """
 import argparse
+from datetime import date
+import os
 from collections import Counter
 from hashlib import sha256
 import json
@@ -187,20 +189,18 @@ def plan(index, *, expected_china_focus=600, minimum_retire=4300,
     }
 
 
-def scratch_retirement(db_path, scratch_path, plan_data, tombstone_path=None):
-    """Apply deletions ONLY to a fresh SQLite file outside this repository."""
-    from scripts.reconcile_db import read_only
+def scratch_retirement(db_path, scratch_path, plan_data,
+                       tombstone_path=None, *, minimum_retire=4300,
+                       maximum_retire=4500, retired_at=None):
+    """Retire physical rows and durable tombstones together on a NEW scratch DB.
 
-    db_path = Path(db_path).resolve(strict=True)
-    scratch_path = Path(scratch_path)
-    if not scratch_path.is_absolute() or scratch_path.exists():
-        raise ValueError("scratch path must be absolute and not exist")
-    if not scratch_path.parent.is_dir() or scratch_path.parent.is_symlink():
-        raise ValueError("scratch parent must exist and not be a symlink")
-    destination = scratch_path.resolve()
-    if (destination == ROOT or ROOT in destination.parents
-            or destination == db_path):
-        raise ValueError("cannot write into repository or tracked database")
+    The old delete-only rehearsal MUST NOT be used: it silently omitted the
+    persistent re-ingestion ledger. All deletions now flow through the one
+    validated SQLite transaction in stage_china_retirement_atomic.
+    """
+    from scripts.stage_china_retirement_atomic import rehearse_on_new_scratch_copy
+
+    receipt = None
     if tombstone_path is not None:
         receipt = Path(tombstone_path)
         if (not receipt.is_absolute() or receipt.exists()
@@ -208,82 +208,58 @@ def scratch_retirement(db_path, scratch_path, plan_data, tombstone_path=None):
             raise ValueError("tombstone path must be a new absolute scratch file")
         receipt = receipt.resolve()
         if (receipt == ROOT or ROOT in receipt.parents
-                or receipt == destination or receipt == db_path):
+                or receipt == Path(scratch_path).resolve()
+                or receipt == Path(db_path).resolve()):
             raise ValueError("tombstone receipt must be outside the repository")
 
-    # Copies the input through the repository's read-only scratch mechanism.
-    # No direct SQLite connection ever touches the tracked file on disk.
-    with read_only(db_path) as source:
-        originals = {r[0] for r in source.execute("SELECT id FROM articles")}
-        expected = set(plan_data["kept_ids"]) | set(plan_data["retired_ids"])
-        if originals != expected:
-            raise ValueError("tracked database does not match the reviewed index")
-        # Retired canonical URLs must be blocked from future collection.
-        # Hash the literal stored URL bytes: the ingestion path inserts these
-        # exact URLs, without case folding or an invented recanonicalization.
-        urls = dict(source.execute("SELECT id, url FROM articles"))
-        digests = sorted(sha256(urls[i].encode("utf-8")).hexdigest()
-                         for i in plan_data["retired_ids"])
-        if len(digests) != len(set(digests)):
-            raise ValueError("duplicate retired URL or noncanonical input")
-        # Any new dependent relation that cannot cascade must be designed
-        # separately; silently losing foreign-key evidence is unacceptable.
-        tables = [r[0] for r in source.execute(
-            "SELECT name FROM sqlite_master WHERE type='table'"
-        ) if not r[0].startswith("sqlite_")]
-        for table in tables:
-            for fk in source.execute('PRAGMA foreign_key_list("%s")' %
-                                     table.replace('"', '""')):
-                if fk[2] == "articles" and fk[6].upper() != "CASCADE":
-                    raise ValueError("unsafe referencing relation: " + table)
-        target = sqlite3.connect(str(destination))
-        try:
-            source.backup(target)
-            target.execute("PRAGMA foreign_keys=ON")
-            target.execute("PRAGMA journal_mode=DELETE")
-            ids = plan_data["retired_ids"]
-            target.execute("BEGIN IMMEDIATE")
-            for start in range(0, len(ids), 400):
-                group = ids[start:start + 400]
-                target.execute("DELETE FROM articles WHERE id IN (%s)" %
-                               ",".join("?" for _ in group), group)
-            count = target.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
-            if count != plan_data["total_after"]:
-                raise ValueError("post-retirement article count disagrees")
-            if target.execute("PRAGMA foreign_key_check").fetchone():
-                raise ValueError("foreign-key violation after retirement")
-            if target.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
-                raise ValueError("SQLite integrity failure after retirement")
-            kept = {r[0] for r in target.execute("SELECT id FROM articles")}
-            if kept != set(plan_data["kept_ids"]):
-                raise ValueError("retained IDs changed unexpectedly")
-            target.commit()
-        except BaseException:
-            target.rollback()
-            target.close()
-            destination.unlink(missing_ok=True)
-            raise
-        else:
-            target.close()
-    if tombstone_path is not None:
-        payload = {
-            "version": 1, "algorithm": "sha256-of-exact-stored-article-url",
-            "snapshot": plan_data["snapshot"],
-            "retired_count": len(digests),
-            "retirement_id_sha256": plan_data["retirement_id_sha256"],
-            "retired_url_sha256": digests,
-        }
-        try:
-            with receipt.open("x", encoding="utf-8") as stream:
-                stream.write(json.dumps(payload, sort_keys=True) + "\n")
-            receipt.chmod(0o600)
-        except BaseException:
-            destination.unlink(missing_ok=True)
-            raise
-    return {"scratch_db": str(destination), "retired": len(plan_data["retired_ids"]),
-            "kept": plan_data["total_after"], "production_db_modified": False,
-            "url_tombstone_count": len(digests),
-            "private_tombstone_receipt": str(receipt) if tombstone_path else None}
+    # No operation against the original database: the helper uses an explicit
+    # read-only source copy, upgrades migrations only in scratch, verifies
+    # every ID, inserts hashed retired URLs and deletes their article rows in
+    # one transaction, and rolls back on any failure.
+    report = rehearse_on_new_scratch_copy(
+        db_path, scratch_path, plan_data,
+        retired_at or date.today().isoformat(),
+        minimum_retire=minimum_retire, maximum_retire=maximum_retire,
+    )
+    dest = Path(report["scratch_db"])
+    try:
+        with sqlite3.connect(str(dest)) as conn:
+            rows = conn.execute(
+                "SELECT url_sha256 FROM retired_article_urls "
+                "WHERE selection_sha256=? ORDER BY url_sha256",
+                (plan_data["retirement_id_sha256"],)
+            ).fetchall()
+            if len(rows) != report["retired"]:
+                raise ValueError("durable retirement ledger count differs from plan")
+            digests = [r[0] for r in rows]
+            if len(set(digests)) != len(digests):
+                raise ValueError("duplicate hashed retired URL in durable ledger")
+        if receipt is not None:
+            payload = {
+                "version": 1, "algorithm": "sha256-of-exact-stored-article-url",
+                "snapshot": plan_data["snapshot"],
+                "retired_count": len(digests),
+                "retirement_id_sha256": plan_data["retirement_id_sha256"],
+                "retired_url_sha256": digests,
+                "atomic_retirement": True,
+            }
+            # Mode 0600 from creation, no temporarily world-readable file.
+            fd = os.open(str(receipt), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, "w", encoding="utf-8") as output:
+                json.dump(payload, output, sort_keys=True)
+                output.write("\n")
+    except BaseException:
+        dest.unlink(missing_ok=True)
+        if receipt is not None:
+            receipt.unlink(missing_ok=True)
+        raise
+    return {
+        "scratch_db": str(dest), "retired": report["retired"],
+        "kept": report["retained"], "production_db_modified": False,
+        "url_tombstone_count": len(digests),
+        "private_tombstone_receipt": str(receipt) if receipt else None,
+        "atomic_retirement": True,
+    }
 
 
 def main(argv=None):
