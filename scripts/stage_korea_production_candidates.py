@@ -268,8 +268,8 @@ def main(argv=None):
     p.add_argument("--private-output", required=True)
     p.add_argument("--explicit-no-send-or-promotion", action="store_true")
     args = p.parse_args(argv)
-    need(args.explicit_no_send_or_promotion, "explicit_local_hold_required")
     try:
+        need(args.explicit_no_send_or_promotion, "explicit_local_hold_required")
         print(json.dumps(create(args.source_checkout, args.private_output),
                          sort_keys=True))
         return 0
