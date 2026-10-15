@@ -39,6 +39,21 @@ def is_retired(conn: sqlite3.Connection, url: str) -> bool:
     ).fetchone() is not None
 
 
+def next_available_article_id(conn: sqlite3.Connection) -> int:
+    """Never give a new source the identity of an already retired public page.
+
+    SQLite INTEGER PRIMARY KEY without AUTOINCREMENT otherwise chooses
+    MAX(active id)+1 and can reuse a deleted former maximum row.
+    """
+    live_max = conn.execute(
+        "SELECT COALESCE(MAX(id), 0) FROM articles"
+    ).fetchone()[0]
+    retired_max = (conn.execute(
+        "SELECT COALESCE(MAX(original_article_id), 0) FROM retired_article_urls"
+    ).fetchone()[0] if has_retired_table(conn) else 0)
+    return max(live_max, retired_max) + 1
+
+
 def verify_no_active_retired_urls(conn: sqlite3.Connection) -> int:
     """Return ledger size or fail on any accidentally resurrected active URL."""
     if not has_retired_table(conn):
@@ -49,7 +64,12 @@ def verify_no_active_retired_urls(conn: sqlite3.Connection) -> int:
     if len(hashes) != conn.execute(
             "SELECT COUNT(*) FROM retired_article_urls").fetchone()[0]:
         raise ValueError("duplicate retirement ledger identities")
-    for (url,) in conn.execute("SELECT url FROM articles"):
+    former_ids = {row[0] for row in conn.execute(
+        "SELECT original_article_id FROM retired_article_urls"
+    )}
+    for ident, url in conn.execute("SELECT id, url FROM articles"):
+        if ident in former_ids:
+            raise ValueError("retired article ID reused by an active record")
         if url_sha256(url) in hashes:
             raise ValueError("retired URL found inside active articles")
     return len(hashes)
