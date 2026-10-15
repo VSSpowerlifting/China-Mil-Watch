@@ -1,0 +1,50 @@
+name: Korea Week-42 Offline Manuscript Rehearsal — No Send
+
+on:
+  pull_request:
+    paths:
+      - scripts/rehearse_korea_week42_manuscript.py
+      - tests/test_korea_week42_manuscript_rehearsal.py
+      - core/korea_private_research_candidates.py
+      - research/korea/private_research_candidates/2026-10-17.json
+      - .github/workflows/korea_week42_manuscript_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-source-citation-and-hold:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test bound source notes, citation parity and no-send checks
+        run: python -m unittest tests.test_korea_week42_manuscript_rehearsal -v
+      - name: Rehearse private manuscript and verify then delete
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$RUNNER_TEMP/korea-week42-private-rehearsal-$GITHUB_RUN_ID.md"
+          python -m scripts.rehearse_korea_week42_manuscript \
+            --create "$target" --explicit-local-no-send
+          test -s "$target"
+          test "$(stat -c %a "$target")" = 600
+          python -m scripts.rehearse_korea_week42_manuscript \
+            --check "$target" --explicit-local-no-send
+          rm "$target"
+          test ! -e "$target"
+      - name: No production changes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No source HWPX or publisher fetch, no model, SMTP, Sunday input, public
+# article, static deployment, private reviewer upload, or CI artifact.
