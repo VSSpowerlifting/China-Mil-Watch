@@ -86,13 +86,13 @@ def _run(args, *, stdout=None, timeout=180):
 
 
 def backup_restore(source_checkout, encrypted_output, recipient_fingerprint,
-                   gpg_home, *, frozen_commit=FROZEN_14,
+                   gpg_home, scratch_parent, *, frozen_commit=FROZEN_14,
                    explicit_owner_restricted_retention=False):
     """Generate *encrypted-only* durable output, restore in owner-only scratch.
 
     No persistently written plaintext backup at encryption time (pipe Git
     bundle directly to GPG). Decryption uses a temporary 0600 plaintext bundle
-    inside a 0700 local scratch directory; the OS may retain deleted blocks.
+    inside an explicitly chosen 0700 local scratch directory; the OS may retain deleted blocks.
     Run only on an owner-approved encrypted trusted host.
     """
     require(explicit_owner_restricted_retention is True,
@@ -104,10 +104,15 @@ def backup_restore(source_checkout, encrypted_output, recipient_fingerprint,
             and shutil.which("git") is not None,
             "git_and_gpg_required")
     gpg = _safe_directory(gpg_home, label="gpg_home")
+    scratch = _safe_directory(scratch_parent, label="scratch")
     source = Path(source_checkout).expanduser()
     require(source.is_absolute() and source.is_dir()
             and not source.is_symlink(), "source_checkout_invalid")
     source = source.resolve()
+    code_root = Path(__file__).resolve().parents[1]
+    require(scratch != source and source not in scratch.parents
+            and scratch != code_root and code_root not in scratch.parents,
+            "scratch_inside_source_or_public_repository")
     try:
         before = inventory(source, frozen_commit=frozen_commit)
     except (CustodyHold, OSError, ValueError) as exc:
@@ -150,7 +155,8 @@ def backup_restore(source_checkout, encrypted_output, recipient_fingerprint,
         require(0 < target.stat().st_size <= MAX_BACKUP_BYTES
                 and stat.S_IMODE(target.stat().st_mode) == 0o600,
                 "encrypted_backup_size_or_mode_invalid")
-        with tempfile.TemporaryDirectory(prefix="ipr-korea-private-restore-") as tmp:
+        with tempfile.TemporaryDirectory(prefix="ipr-korea-private-restore-",
+                                         dir=scratch) as tmp:
             folder = Path(tmp)
             os.chmod(folder, 0o700)
             plain = folder / "restorable.bundle"
@@ -205,12 +211,14 @@ def main(argv=None):
     parser.add_argument("--encrypted-out", required=True)
     parser.add_argument("--recipient-fingerprint", required=True)
     parser.add_argument("--gpg-home", required=True)
+    parser.add_argument("--scratch-parent", required=True,
+                        help="existing 0700 trusted encrypted scratch directory")
     parser.add_argument("--owner-approved-restricted-retention", action="store_true")
     args = parser.parse_args(argv)
     try:
         receipt = backup_restore(
             args.source_checkout, args.encrypted_out,
-            args.recipient_fingerprint, args.gpg_home,
+            args.recipient_fingerprint, args.gpg_home, args.scratch_parent,
             explicit_owner_restricted_retention=args.owner_approved_restricted_retention)
         print(json.dumps(receipt, sort_keys=True))
         return 0
