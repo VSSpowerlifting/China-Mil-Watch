@@ -157,7 +157,7 @@ class KoreaStandingLinkAdmissionTests(unittest.TestCase):
         sys.path.insert(0, str(ROOT / "site/preview"))
         import generate_preview as gp
         copied_db = Path(self.temp.name) / "production-copy.sqlite"
-        with sqlite3.connect("file:%s?mode=ro" % (ROOT / "pla_watch.db"),
+        with sqlite3.connect("file:%s?mode=ro&immutable=1" % (ROOT / "pla_watch.db"),
                              uri=True) as src, sqlite3.connect(copied_db) as out:
             src.backup(out)
         with sqlite3.connect(copied_db) as con:
