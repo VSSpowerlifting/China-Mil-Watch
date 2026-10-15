@@ -115,6 +115,16 @@ class ActionsContracts(unittest.TestCase):
         self.assertEqual(out["unmatched_scheduled_runs_in_review_window"], [])
         self.assertFalse(out["production_eligible"])
         self.assertFalse(out["human_reviews_or_reuse_rights_approved"])
+        # Seven real-looking positives can coexist with an additional failed
+        # schedule in the same review window. Positive-match truth alone is
+        # insufficient for the manual workflow's machine headline.
+        extra = dict(actions[0], id=99999999995,
+                     created_at="2026-10-11T13:51:00Z", conclusion="failure")
+        ambiguous = proof.compare(score, ledgers, proof.parse_export(
+            {"total_count": 8, "workflow_runs": actions + [extra]}))
+        self.assertTrue(ambiguous["all_seven_positive_runs_matched"])
+        self.assertFalse(
+            ambiguous["no_unmatched_scheduled_runs_visible_in_review_window"])
 
     def test_unpaired_scheduled_run_is_disclosed_not_silent(self):
         extra = dict(self.actions[0], id=99999999999, conclusion="failure")
