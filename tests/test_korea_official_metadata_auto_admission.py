@@ -44,6 +44,7 @@ def packet(ids=None):
             institution_id="kr_mnd", publisher_institution_id="kr_policy_briefing",
             authority_tier="B", originality="syndicated", language_tag="ko",
             approved_for_production=False, approved_for_publication=False,
+            approved_for_model_or_email=False,
             original_text_included=False, original_title_included=False,
             original_media_included=False, candidate_version_sha256=version,
             editorial_exception=("year_dispute" if article_id == "156785161"
@@ -65,8 +66,10 @@ class KoreaStandingLinkAdmissionTests(unittest.TestCase):
         self.stamp = "2026-10-15T20:00:00Z"
 
     def go(self, p=None):
-        return admission.admit(self.db, p or self.packet, self.policy,
-                               as_of_utc=self.stamp)
+        result = admission.admit(self.db, p or self.packet, self.policy,
+                                 as_of_utc=self.stamp)
+        self.db.commit()
+        return result
 
     def test_owner_policy_is_limited_to_five_factual_public_fields(self):
         self.assertEqual(self.policy["public_fields"], admission.FIELDS)
