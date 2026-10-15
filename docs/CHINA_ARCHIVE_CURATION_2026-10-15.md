@@ -67,7 +67,9 @@ sample is **not** a whitelist and cannot be passed to the renderer as one.
 
 Screened-out controls are not tentative inclusions. They are an independent
 false-negative review stratum, and the unreviewed excluded population must
-remain in the custody ledger.\n\nPublic Brief-trail records are always sampled even if the machine state
+remain in the custody ledger.
+
+Public Brief-trail records are always sampled even if the machine state
 would have excluded them, using the exact-URL-derived `trail_ids` embedded
 in the generated index. The audit fails if this protection data is missing,
 duplicate or refers to an unknown ID. An increasing number of protected
