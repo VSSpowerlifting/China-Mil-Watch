@@ -157,11 +157,14 @@ def verify(database, main_html, pages_html):
               and entry["dates"] == [approved[ident]["date"]],
               "public_metadata_href_or_date_mismatch")
         visible = " ".join(" ".join(entry["text"]).split())
-        check(visible.startswith("MND official press release " + ident[13:])
-              and "Issuer: Republic of Korea Ministry of National Defense" in visible
-              and "Republication: Republic of Korea Policy Briefing" in visible
-              and "Official government outbound link only" in visible,
-              "unauthorized_or_missing_official_link_label")
+        # Exact allowlist, not substring checks: an extra original Korean
+        # headline, translated paragraph, AI claim, or media caption must HOLD.
+        expected = ("MND official press release " + ident[13:]
+                    + " Issuer: Republic of Korea Ministry of National Defense (국방부)"
+                    + " · Republication: Republic of Korea Policy Briefing (대한민국 정책브리핑)"
+                    + " · Portal posted: " + approved[ident]["date"]
+                    + " · Official government outbound link only")
+        check(visible == expected, "unexpected_text_in_automatic_source_link")
     return {"status": "VERIFIED_PUBLICATION_READBACK",
             "main_database_sha256": sha256(database.read_bytes()).hexdigest(),
             "main_and_pages_korea_html_sha256": sha256(main_bytes).hexdigest(),
