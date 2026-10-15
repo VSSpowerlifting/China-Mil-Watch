@@ -82,6 +82,11 @@ class RenderedPermanentResearchContracts(unittest.TestCase):
         self.assertIn("load_editorial_catalog()", renderer)
         self.assertIn("published_research=published_research", renderer)
         self.assertIn("published_research=[]", renderer)
+        directory = (ROOT/"site/preview/templates/desks.html").read_text()
+        self.assertIn("Research published", directory)
+        self.assertIn("Source archive: {{ d.status_label }}", directory)
+        self.assertIn("editorial_published_desks", directory)
+        self.assertIn("editorial_published_desks", renderer)
 
 if __name__ == "__main__":
     unittest.main()
