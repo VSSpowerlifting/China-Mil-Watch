@@ -94,13 +94,13 @@ class JointRecoveryTests(unittest.TestCase):
     def test_wrong_inventory_refused_before_any_decrypt(self):
         args = self.args()
         self.zipcase.manifest.write_text(self.zipcase.manifest.read_text() + " ")
-        with mock.patch.object(gitbox, "verify_restore") as git_decrypt, (
-                mock.patch.object(gate.zipbox, "restore") as zip_decrypt):
-            with self.assertRaisesRegex(
-                    gate.RecoveryHold, "restore_inventory_checksum_mismatch"):
-                gate.verify_pair(**args)
-            git_decrypt.assert_not_called()
-            zip_decrypt.assert_not_called()
+        with mock.patch.object(gitbox, "verify_restore") as git_decrypt:
+            with mock.patch.object(gate.zipbox, "restore") as zip_decrypt:
+                with self.assertRaisesRegex(
+                        gate.RecoveryHold, "restore_inventory_checksum_mismatch"):
+                    gate.verify_pair(**args)
+                git_decrypt.assert_not_called()
+                zip_decrypt.assert_not_called()
         self.assertEqual(list(self.scratch.iterdir()), [])
 
     def test_tampered_second_ciphertext_refused_before_git_decrypt(self):
