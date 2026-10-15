@@ -63,7 +63,7 @@ provenance, event-equivalence, or publisher-authorship certifications.
 | Record pair | Stored lengths (characters) | Approx. overlap | Investigation |
 |---|---:|---:|---|
 | #4346 / #4348 | 4,015 / 4,008 | 0.994 | Likely same distributed report; check author/origin and rights |
-| #3454 / #3465 | 1,612 / 1,590 | 0.979 | Likely MLA/PLA Daily syndication; MND hostname does not confer authorship |
+| #3454 / #3465 | 1,612 / 1,590 | 0.979 | Likely MND/PLA Daily republication; MND hostname does not confer authorship |
 | #3294 / #3353 | 805 / 837 | 0.963 | Similar operational-training feature; check publication provenance |
 | #3304 / #3352 | 1,647 / 1,618 | 0.969 | Near-identical border-unit feature; low likely discovery value |
 | #3245 / #3354 | 838 / 813 | 0.969 | Near-identical naval aviation training feature |
