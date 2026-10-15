@@ -1,6 +1,9 @@
 """No-network standing-license tests. Fictional capture and policy evidence."""
 import copy
+import hashlib
+import tempfile
 import unittest
+from pathlib import Path
 
 from core import standing_source_rights as rights
 
@@ -78,6 +81,89 @@ def options(source, *, translation=False):
 
 
 class StandingReuseContracts(unittest.TestCase):
+    def test_automatic_japan_original_stages_exact_bytes_without_human_rights_signature(self):
+        text = ("Official Japanese government source text. " * 6).encode("utf-8")
+        source = original()
+        params = options(source)
+        clean_hash = hashlib.sha256(text).hexdigest()
+        def frozen_capture(s):
+            proof = replay_capture(s)
+            proof["entire_clean_original_text_sha256"] = clean_hash
+            return proof
+        def clean_scope(s, policy):
+            proof = exception_replay(s, policy)
+            proof["entire_source_text_version_sha256"] = clean_hash
+            return proof
+        with tempfile.TemporaryDirectory() as folder:
+            destination = Path(folder) / "original-staging"
+            receipt = rights.stage_verified_original_text(
+                source, original_utf8=text,
+                attribution=params["attribution"], now_utc=TIME,
+                target_dir=destination, source_replay=frozen_capture,
+                policy_replay=license_replay, exception_replay=clean_scope)
+            self.assertTrue(destination.joinpath("index.html").is_file())
+            self.assertEqual(destination.joinpath("original.txt").read_bytes(), text)
+            html = destination.joinpath("index.html").read_text(encoding="utf-8")
+            self.assertIn('content="noindex"', html)
+            self.assertIn('lang="ja"', html)
+            self.assertEqual(receipt["staged_original_text_sha256"], clean_hash)
+            self.assertFalse(receipt["publication_performed"])
+
+    def test_no_staging_if_source_sha_or_license_is_not_verified(self):
+        text=("Fictional official text, not a real ministry statement. "*5).encode()
+        s=original()
+        with tempfile.TemporaryDirectory() as root:
+            d=Path(root)/"never-created"
+            with self.assertRaisesRegex(rights.StandingLicenseHold,
+                                        "proposed_original_text_does_not_match_source"):
+                rights.stage_verified_original_text(s,original_utf8=text,
+                    attribution=options(s)["attribution"],now_utc=TIME,
+                    target_dir=d,source_replay=replay_capture,
+                    policy_replay=license_replay,
+                    exception_replay=exception_replay)
+            self.assertFalse(d.exists())
+
+    def test_refuse_staging_inside_source_repository(self):
+        text=("Official first-party text for fictional contract testing. "*6).encode()
+        s=original()
+        digest=hashlib.sha256(text).hexdigest()
+        def replay(src):
+            v=replay_capture(src);v["entire_clean_original_text_sha256"]=digest
+            return v
+        def scope(src,policy):
+            v=exception_replay(src,policy)
+            v["entire_source_text_version_sha256"]=digest
+            return v
+        dest=Path(rights.__file__).resolve().parents[1]/"never-write-here"
+        with self.assertRaisesRegex(rights.StandingLicenseHold,
+                                    "unpublished_staging_requires_new_external_directory"):
+            rights.stage_verified_original_text(s,original_utf8=text,
+                attribution=options(s)["attribution"],now_utc=TIME,
+                target_dir=dest,source_replay=replay,
+                policy_replay=license_replay,exception_replay=scope)
+        self.assertFalse(dest.exists())
+
+    def test_staging_does_not_html_execute_untrusted_publisher_text(self):
+        text=("This is fictional official text; <script>alert('x')</script> "
+              "should be escaped, not executed or served as raw markup. " * 3).encode()
+        s=original();d=hashlib.sha256(text).hexdigest()
+        def replay(src):
+            v=replay_capture(src);v["entire_clean_original_text_sha256"]=d
+            return v
+        def scope(src,policy):
+            v=exception_replay(src,policy)
+            v["entire_source_text_version_sha256"]=d
+            return v
+        with tempfile.TemporaryDirectory() as root:
+            dest=Path(root)/"staged"
+            rights.stage_verified_original_text(s,original_utf8=text,
+                attribution=options(s)["attribution"],now_utc=TIME,
+                target_dir=dest,source_replay=replay,
+                policy_replay=license_replay,exception_replay=scope)
+            h=(dest/"index.html").read_text()
+            self.assertIn("&lt;script&gt;",h)
+            self.assertNotIn("<script>",h)
+
     def test_verified_japan_first_party_text_requires_no_item_rights_signature(self):
         s = original()
         receipt = rights.qualify_standing_text(s, **options(s))
