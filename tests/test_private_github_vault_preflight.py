@@ -94,6 +94,16 @@ class VaultPreflightTests(unittest.TestCase):
             with self.assertRaisesRegex(vault.VaultPreflightError, reason):
                 vault.evaluate(SRC, DEST, api=fake_api(source=value))
 
+    def test_malformed_identity_type_returns_a_fixed_safe_hold(self):
+        for identity in (None, 7, [], {}):
+            with self.subTest(identity=identity):
+                src = dict(fake_api()("repos/" + SRC), full_name=identity)
+                with self.assertRaisesRegex(vault.VaultPreflightError, "source_identity_mismatch"):
+                    vault.evaluate(SRC, DEST, api=fake_api(source=src))
+                dest = dict(fake_api()("repos/" + DEST), full_name=identity)
+                with self.assertRaisesRegex(vault.VaultPreflightError, "vault_identity_mismatch"):
+                    vault.evaluate(SRC, DEST, api=fake_api(destination=dest))
+
     def test_does_not_believe_malformed_api_or_unavailable_endpoint(self):
         with self.assertRaisesRegex(vault.VaultPreflightError, "repository_api_shape"):
             vault.evaluate(SRC, DEST, api=lambda endpoint: [])
