@@ -11,16 +11,34 @@ class CountryResearchReleaseContract(unittest.TestCase):
     def setUpClass(cls):
         cls.body = WORKFLOW.read_text(encoding="utf-8")
 
-    def test_manual_only_for_release_and_exact_main_sha(self):
+    def test_owner_reviewed_merge_or_manual_exact_main_sha_release(self):
         text = self.body
         self.assertIn("workflow_dispatch:", text)
         self.assertIn("approved_main_sha:", text)
         self.assertIn("EXPECTED_SHA:", text)
         self.assertIn('test "$ACTUAL_SHA" = "$EXPECTED_SHA"', text)
         self.assertIn("github.ref == 'refs/heads/main'", text)
-        self.assertNotIn("\n  push:", text)
+        self.assertIn("\n  push:", text)
+        self.assertIn('    branches: [main]', text)
+        self.assertIn('      - "research/approved_desk_research.json"', text)
+        self.assertIn('      - ".github/workflows/country_research_render_only_release.yml"', text)
         self.assertNotIn("\n  schedule:", text)
-        self.assertIn("if: inputs.publish", text)
+        self.assertIn("github.event_name == 'push' && github.sha || inputs.approved_main_sha", text)
+        self.assertIn("github.event_name == 'push' || inputs.publish", text)
+        self.assertIn("github.event_name == 'workflow_dispatch'", text)
+
+    def test_no_unreviewed_site_change_triggers_auto_publication(self):
+        text = self.body
+        trigger = text.split("\n  push:", 1)[1].split("\n  workflow_dispatch:", 1)[0]
+        self.assertIn("branches: [main]", trigger)
+        self.assertEqual(
+            [line.strip().strip('- ').strip('"') for line in
+             trigger.splitlines() if line.strip().startswith('- "')],
+            [".github/workflows/country_research_render_only_release.yml",
+             "research/approved_desk_research.json"])
+        self.assertNotIn("site/preview", trigger)
+        self.assertNotIn("pla_watch.db", trigger)
+        self.assertNotIn("desks/registry.json", trigger)
 
     def test_never_collects_or_spends_model_tokens(self):
         text = self.body
@@ -120,7 +138,7 @@ class CountryResearchReleaseContract(unittest.TestCase):
         self.assertIn('"state/shadow.db"', text)
         self.assertIn("'href=\"archive.html?desk=japan\"' not in japan_html", text)
         self.assertIn("            output/japan.html", text)
-        self.assertIn("if: inputs.publish", text)
+        self.assertIn("if: github.event_name == 'push' || inputs.publish", text)
 
     def test_scoped_staging_command_executes_without_literal_backslash(self):
         """Reproduce the exact workflow staging shell in a disposable git repo.

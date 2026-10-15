@@ -21,6 +21,14 @@ on:
       - "tests/test_stage_country_research_output.py"
       - "scripts/guard_japan_official_reference_release.py"
       - "tests/test_guard_japan_official_reference_release.py"
+  # A reviewed merge of the publication catalog/contract may release the
+  # independently approved *editorial presentation* automatically on main.
+  # No collection, source-text mirrors, or new brief approval happens here.
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/country_research_render_only_release.yml"
+      - "research/approved_desk_research.json"
   workflow_dispatch:
     inputs:
       approved_main_sha:
@@ -86,7 +94,7 @@ jobs:
           retention-days: 3
 
   release:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     permissions:
@@ -108,7 +116,7 @@ jobs:
 
       - name: Fail closed on stale or malformed owner-reviewed SHA
         env:
-          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+          EXPECTED_SHA: ${{ github.event_name == 'push' && github.sha || inputs.approved_main_sha }}
         run: |
           set -euo pipefail
           [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::Expected a full lowercase SHA"; exit 1; }
@@ -116,7 +124,7 @@ jobs:
           test "$ACTUAL_SHA" = "$EXPECTED_SHA" || {
             echo "::error::Main moved since release review. Actual: $ACTUAL_SHA"; exit 1;
           }
-          echo "Releasing reviewed main: $ACTUAL_SHA"
+          echo "Releasing reviewed main: $ACTUAL_SHA ($GITHUB_EVENT_NAME)"
           sha256sum pla_watch.db > "$RUNNER_TEMP/country-release-db.sha"
           git status --porcelain --untracked-files=all > "$RUNNER_TEMP/country-release-before.txt"
           test ! -s "$RUNNER_TEMP/country-release-before.txt"
@@ -257,7 +265,7 @@ jobs:
           retention-days: 7
 
       - name: Commit generated output to main only when publish is approved
-        if: inputs.publish
+        if: github.event_name == 'push' || inputs.publish
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -271,7 +279,7 @@ jobs:
           git push origin HEAD:main
 
       - name: Publish exact validated output to GitHub Pages
-        if: inputs.publish
+        if: github.event_name == 'push' || inputs.publish
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
