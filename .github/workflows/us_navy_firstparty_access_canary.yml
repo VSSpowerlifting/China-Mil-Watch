@@ -1,6 +1,6 @@
-name: US First-Party Navy Source Access — Bounded Read-Only Canary
+name: US First-Party Sources — Bounded Read-Only Access Canary
 
-# Two strictly fixed Navy hosts. This probe records access/robots outcomes
+# Three strictly fixed government hosts (two Navy; one congressional commission). This probe records access/robots outcomes
 # On the owning PR, do one bounded authorized source-policy observation.
 # but NEVER commits source state, performs crawling, or advances a desk clock.
 on:
