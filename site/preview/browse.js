@@ -9,19 +9,24 @@
       live = $("result-live"), wait = $("index-state"), fail = $("index-error"),
       none = $("no-results"), prev = $("page-prev"), next = $("page-next"),
       chips = $("chips"), reset = $("f-reset");
-  var KEYS = "q desk source status sort institution language from to trail".split(" ");
+  var KEYS = "scope q desk source status sort institution language from to trail".split(" ");
   var NAME = {q: "Title", from: "From", to: "To"}, F = {},
       TR = "In an analysis source trail";
   KEYS.forEach(function (k) { F[k] = $("f-" + k); });
-  var PER = 50, data, pending, view = [], page = 1, trail = {};
+  var PER = 50, data, pending, view = [], page = 1, trail = {}, focus = {};
   var WANT = root.getAttribute("data-snapshot-date"),
-      COUNT = parseInt(root.getAttribute("data-snapshot-records"), 10);
+      COUNT = parseInt(root.getAttribute("data-snapshot-records"), 10),
+      FOCUS_COUNT = parseInt(root.getAttribute("data-focus-records"), 10);
 
   /* Every row, never a sample. */
   function valid(d) {
     if (!d || !d.snapshot || !A(d.records)) return false;
     if (d.snapshot.date !== WANT || d.snapshot.records !== COUNT ||
-        d.records.length !== COUNT || !A(d.fields) ||
+        d.records.length !== COUNT || !A(d.focus_ids) ||
+        d.focus_ids.length !== FOCUS_COUNT ||
+        d.focus_policy !== "automated_research_focus_not_human_curated" ||
+        d.focus_ids.some(function (id) { return !Number.isSafeInteger(id); }) ||
+        new Set(d.focus_ids).size !== d.focus_ids.length || !A(d.fields) ||
         d.fields.join() !== "id,date,source,state,title_en,title_orig")
       return false;
     if (!["sources", "institutions", "languages", "states"].every(
@@ -32,7 +37,8 @@
       if (!A(r) || r.length !== 6 || !d.sources[r[2]] ||
           !d.states[r[3]]) return false;
     }
-    return true;
+    var all = new Set(d.records.map(function (r) { return r[0]; }));
+    return d.focus_ids.every(function (id) { return all.has(id); });
   }
 
   function get(k) {
@@ -42,13 +48,13 @@
   function put(k, v) {
     var e = F[k];
     if (e.type === "checkbox") e.checked = v === "1";
-    else e.value = v || (k === "sort" ? "new" : "");
+    else e.value = v || (k === "sort" ? "new" : k === "scope" ? "focus" : "");
     if (e.selectedIndex < 0) e.selectedIndex = 0;
   }
   function filtered() {
-    return KEYS.some(function (k) { return k !== "sort" && get(k); });
+    return KEYS.some(function (k) { return k !== "sort" && k !== "scope" && get(k); });
   }
-  function asked() { return filtered() || page > 1 || get("sort") === "old"; }
+  function asked() { return filtered() || page > 1 || get("sort") === "old" || get("scope") === "all"; }
   function readUrl() {
     var p = new URLSearchParams(location.search);
     KEYS.forEach(function (k) { put(k, p.get(k)); });
@@ -58,7 +64,8 @@
     var p = new URLSearchParams();
     KEYS.forEach(function (k) {
       var v = get(k);
-      if (v && !(k === "sort" && v === "new")) p.set(k, v);
+      if (v && !(k === "sort" && v === "new") &&
+          !(k === "scope" && v === "focus")) p.set(k, v);
     });
     if (page > 1) p.set("page", page);
     p = p.toString();
@@ -67,6 +74,7 @@
   }
 
   function matches(r) {
+    if (get("scope") === "focus" && !focus[r[0]]) return false;
     var s = data.sources[r[2]], q = get("q").toLowerCase(), v;
     if (q && (r[4] + " " + r[5]).toLowerCase().indexOf(q) < 0) return false;
     if ((v = get("desk")) && !(s.desk && s.desk.code === v)) return false;
@@ -150,7 +158,8 @@
     out.textContent = "";
     out.appendChild(wrap);
     var msg = total ? "Showing " + n(start + 1) + "–" + n(start + rows.length) +
-      " of " + n(total) + (filtered() ? " matching records" : " records")
+      " of " + n(total) + (get("scope") === "focus" ? " research-focus records" :
+        " preserved records") + (filtered() ? " matching filters" : "")
       : "No records match these filters.";
     range.textContent = total ? msg + (pages > 1 ? " · page " + page +
       " of " + pages : "") : "";
@@ -165,7 +174,7 @@
     chips.textContent = "";
     KEYS.forEach(function (k) {
       var v = get(k), e = F[k];
-      if (!v || k === "sort") return;
+      if (!v || k === "sort" || k === "scope") return;
       var label = (NAME[k] ? NAME[k] + ": " : "") + (k === "trail"
         ? TR : e.tagName === "SELECT"
         ? e.options[e.selectedIndex].text.replace(/ \([\d,]+\)$/, "") : v);
@@ -194,6 +203,7 @@
         .then(function (j) {
           if (!valid(j)) throw Error("invalid index");
           (j.trail_ids || []).forEach(function (id) { trail[id] = 1; });
+          j.focus_ids.forEach(function (id) { focus[id] = 1; });
           wait.hidden = true;
           return (data = j);
         });
