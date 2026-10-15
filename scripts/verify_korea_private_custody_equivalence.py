@@ -15,7 +15,8 @@ import subprocess
 from pathlib import Path
 
 FROZEN_14 = "0595f0fd29b769cbab5dd57c2ef57af174237a67"
-FIRST_DAY = "2026-10-06"
+FROZEN_CLOCK_UTC = "2026-10-06T16:52:01.420713+00:00"
+FROZEN_DAY_ZERO_RUN = "local-native-20261006-korea"
 MISS = "2026-10-12"
 SUCCESS = {"ok", "ok_all_duplicates", "ok_no_publications", "ok_all_filtered"}
 SHA64 = re.compile(r"[0-9a-f]{64}\Z")
@@ -111,9 +112,12 @@ def inventory(repo, *, frozen_commit=FROZEN_14):
     demand(any(x.startswith("captures/") for x in files) and
            any(x.startswith("ledger/") for x in files), "empty archived state")
     clock = read_json(state / "clock.json", 10000)
-    demand(type(clock) is dict and clock.get("desk") == "korea"
-           and clock.get("day_zero_utc", "").startswith(FIRST_DAY + "T"),
-           "Korea day-zero clock changed")
+    demand(type(clock) is dict and set(clock) ==
+           {"desk", "day_zero_utc", "day_zero_run_id"}
+           and clock["desk"] == "korea"
+           and clock["day_zero_utc"] == FROZEN_CLOCK_UTC
+           and clock["day_zero_run_id"] == FROZEN_DAY_ZERO_RUN,
+           "Korea original day-zero timestamp or run identity changed")
     ledgers = []
     for rel in sorted(files):
         if rel.startswith("ledger/"):
