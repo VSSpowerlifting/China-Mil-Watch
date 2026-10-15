@@ -31,6 +31,7 @@ SCOPED_WORKFLOWS = frozenset((
 MAX_DAYS = 35
 MAX_RUNS_PER_DAY = 500
 MAX_ARTIFACTS_PER_RUN = 200
+MAX_JOBS_PER_ATTEMPT = 200
 MAX_RESPONSE_BYTES = 6_000_000
 NUMBER = re.compile(r"[1-9][0-9]{5,15}\Z")
 STAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\Z")
@@ -143,6 +144,38 @@ def collect(fetch, first, last, as_of):
             require(run.get("status") in ("completed", "queued", "in_progress",
                                          "waiting", "requested", "pending"),
                     "run_status_unknown")
+            # GitHub's top-level run only reports the *latest* attempt.
+            # For a rerun, verify EACH original attempt's actual Actions
+            # jobs, rather than deducing an earlier failure from artifact
+            # names or the latest green conclusion.
+            historical_attempts = []
+            if attempt > 1:
+                for ordinal in range(1, attempt + 1):
+                    route = ("repos/" + REPO + "/actions/runs/" +
+                             str(run_id) + "/attempts/" + str(ordinal) + "/jobs")
+                    jobs = pages(fetch, route, "jobs", MAX_JOBS_PER_ATTEMPT)
+                    normalized = []
+                    for job in jobs:
+                        require(job.get("run_id") == run_id and
+                                job.get("run_attempt") == ordinal and
+                                type(job.get("name")) is str and
+                                job.get("status") in ("completed", "queued", "in_progress",
+                                                       "waiting", "requested", "pending") and
+                                job.get("conclusion") in (
+                                    None, "success", "failure", "cancelled", "skipped",
+                                    "neutral", "timed_out", "action_required"),
+                                "attempt_job_identity_or_status_invalid")
+                        normalized.append({
+                            "job_id": job["id"], "name": job["name"],
+                            "status": job["status"], "conclusion": job["conclusion"],
+                        })
+                    normalized.sort(key=lambda j: j["job_id"])
+                    historical_attempts.append({
+                        "attempt": ordinal, "jobs": normalized,
+                        "has_unsuccessful_job": any(
+                            j["conclusion"] not in ("success", "skipped")
+                            for j in normalized),
+                    })
             artifact_path = ("repos/" + REPO + "/actions/runs/" +
                              str(run_id) + "/artifacts")
             listing = pages(fetch, artifact_path, "artifacts",
@@ -183,6 +216,10 @@ def collect(fetch, first, last, as_of):
                 reasons.append("artifact_already_expired")
             if attempt > 1 and set(range(1, attempt)) - labeled_attempts:
                 reasons.append("earlier_attempt_receipt_not_established")
+            if any(not x["jobs"] for x in historical_attempts):
+                reasons.append("attempt_has_no_retained_job_evidence")
+            if any(x["has_unsuccessful_job"] for x in historical_attempts):
+                reasons.append("historical_failed_or_unfinished_job")
             if any(x["name_attempt"] is None for x in artifacts):
                 reasons.append("artifact_attempt_name_not_decodable")
             if run["status"] != "completed" or run.get("conclusion") != "success":
@@ -191,6 +228,7 @@ def collect(fetch, first, last, as_of):
                 "run_id": run_id, "workflow": workflow, "event": event,
                 "created_utc": created.isoformat().replace("+00:00", "Z"),
                 "latest_run_attempt": attempt, "conclusion": run.get("conclusion"),
+                "historical_attempt_jobs": historical_attempts,
                 "artifacts": artifacts, "holds": sorted(set(reasons)),
             })
         current += timedelta(days=1)
@@ -204,6 +242,8 @@ def collect(fetch, first, last, as_of):
         "schema": SCHEMA, "repo": REPO, "window": {"from": first, "through": last},
         "as_of_utc": as_of, "scoped_run_count": len(observed),
         "retained_artifact_count": len(artifact_rows),
+        "rerun_attempts_with_job_audit": sum(
+            len(x["historical_attempt_jobs"]) for x in observed),
         "retained_compressed_bytes": sum(x["bytes"] for x in artifact_rows),
         "earliest_retained_expiry_utc": (artifact_rows[0]["expires_utc"]
                                          if artifact_rows else None),
