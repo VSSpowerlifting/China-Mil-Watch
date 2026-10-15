@@ -5,7 +5,7 @@ There is no case folding, URL rebuilding, source-status inference or political
 content classification. This guard only acts on explicitly retired URL hashes
 already committed to the database's retirement ledger.
 
-Old test/scratch DBs without migration 0008 have no retirements and remain
+Old test/scratch DBs without migration 0009 have no retirements and remain
 usable. Production daily collection applies/verifies migrations before ingest;
 the release must separately prove the ledger survives any DB reconciliation.
 """
@@ -57,7 +57,7 @@ def next_available_article_id(conn: sqlite3.Connection) -> int:
 def verify_no_active_retired_urls(conn: sqlite3.Connection) -> int:
     """Return ledger size or fail on any accidentally resurrected active URL."""
     if not has_retired_table(conn):
-        raise ValueError("retired URL ledger missing; migration 0008 required")
+        raise ValueError("retired URL ledger missing; migration 0009 required")
     if conn.execute(
             "SELECT 1 FROM sqlite_master WHERE type='trigger' "
             "AND name='guard_retired_article_id_reuse'"

@@ -107,7 +107,7 @@ class ReadOnlyToolsLeaveNothingBehind(unittest.TestCase):
                         shutil.copy2(TRACKED, copied)
                         with closing(connect(copied)) as conn:
                             pending = set(m.version for m in discover()) - set(applied_versions(conn))
-                            self.assertEqual({"0008"}, pending)
+                            self.assertEqual({"0009"}, pending)
                             apply_all(conn, sync_config=False)
                         verified = self.run_script(
                             ["scripts/verify_db_current.py", "--db", str(copied), "--quiet"])

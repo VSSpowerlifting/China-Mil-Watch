@@ -8,7 +8,7 @@ from unittest.mock import patch
 from core.retired_article_urls import (
     has_retired_table, is_retired, url_sha256, verify_no_active_retired_urls,
 )
-from migrations.versions import m0008_retired_article_urls as migration
+from migrations.versions import m0009_retired_article_urls as migration
 from storage import db
 from tests.test_reconcile import (
     ReconcileCase, migrate, add_run, add_article, query, rdb,

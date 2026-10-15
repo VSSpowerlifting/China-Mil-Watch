@@ -6,7 +6,7 @@ The owner authorized retiring **4,300–4,500 China records** from the *active* 
 
 ## Durable tombstone contract
 
-Migration **0008** creates the **empty** `retired_article_urls` ledger. It has unique SHA-256 of the exact stored canonical URL (UTF-8), unique positive original record ID, issuing source slug, retirement date and exact selection-manifest digest. It has **no foreign key** to `articles`, whose historical row is the object being retired. The migration does not delete, relabel, hide, or insert any records; the table remains empty until a separately approved production cull.
+Migration **0009** creates the **empty** `retired_article_urls` ledger. It has unique SHA-256 of the exact stored canonical URL (UTF-8), unique positive original record ID, issuing source slug, retirement date and exact selection-manifest digest. It has **no foreign key** to `articles`, whose historical row is the object being retired. The migration does not delete, relabel, hide, or insert any records; the table remains empty until a separately approved production cull.
 
 `core/retired_article_urls.py` computes exact URL hashes, checks membership and rejects any database containing a retained article whose URL is simultaneously tombstoned. An intentionally retired URL is not a new collectable document. This status is about retention, not source authenticity, quality or political value.
 
@@ -15,7 +15,7 @@ Three actual ingestion boundaries are covered:
 2. Both `insert_article` and `insert_articles_atomic` repeat the check inside their actual SQLite write transaction, including keyword-rejected articles.
 3. `scripts/reconcile_db.py` skips locally reintroduced tombstoned URLs, preserves the published-origin ledger, fails if local carries retirement entries absent from published origin, and treats deliberately retired local URLs as protected from reinsertion rather than an unreported loss.
 
-The DB schema verifier requires migration 0008 and checks that no active article matches a retired URL hash **or reuses its original numeric article ID**. Because SQLite `INTEGER PRIMARY KEY` can otherwise reuse the highest deleted ID, both ingestion paths and the reconciler now allocate above the high-water mark across active and retired IDs. A SQLite trigger independently rejects a reused retired ID even from direct SQL. A missing or inconsistent ledger fails database verification.
+The DB schema verifier requires migration 0009 and checks that no active article matches a retired URL hash **or reuses its original numeric article ID**. Because SQLite `INTEGER PRIMARY KEY` can otherwise reuse the highest deleted ID, both ingestion paths and the reconciler now allocate above the high-water mark across active and retired IDs. A SQLite trigger independently rejects a reused retired ID even from direct SQL. A missing or inconsistent ledger fails database verification.
 
 ## Scope and real remaining release gates
 
