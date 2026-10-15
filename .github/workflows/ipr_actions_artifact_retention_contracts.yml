@@ -1,0 +1,35 @@
+name: Cross-desk original-artifact retention — offline contract QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/ipr_actions_artifact_retention_contracts.yml'
+      - 'scripts/inventory_ipr_actions_artifact_expiry.py'
+      - 'tests/test_ipr_actions_artifact_retention_inventory.py'
+      - 'docs/engineering/CROSS_DESK_ACTIONS_ARTIFACT_RETENTION_2026-10-15.md'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-fake-actions-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify pagination and retention evidence on fictional data ONLY
+        run: python -m unittest tests.test_ipr_actions_artifact_retention_inventory -v
+      - name: Ensure no archive/database/output mutation
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+
+# No Actions token in tests, no ZIP downloads, third-party source byte,
+# scheduled job, collection/retry, state push, AI/email or deployment.
