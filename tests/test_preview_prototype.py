@@ -1602,8 +1602,15 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(self.page('index.html'), 'html.parser')
         recent = [int(a['href'].split('/')[1].split('.')[0]) for a in soup.select('.home-recent h3 a')]
-        corpus = gp.load_corpus(TRACKED_DB)['corpus']
-        self.assertEqual(recent, [r['id'] for r in corpus[:4]])
+        # Homepage explicitly presents the latest ANALYZED records, not the
+        # first four records in the unfiltered corpus (new arrivals may not
+        # have completed automated processing).
+        data = gp.load_corpus(TRACKED_DB)
+        self.assertEqual(recent, [r['id'] for r in data['recent'][:4]])
+        by_id = {r['id']: r for r in data['corpus']}
+        self.assertTrue(all(by_id[rid]['state'] == 'analyzed'
+                            for rid in recent))
+        corpus = data['corpus']
         selected = soup.select_one('.home-selected h3 a')
         if selected:
             rid = int(selected['href'].split('/')[1].split('.')[0])

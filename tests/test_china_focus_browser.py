@@ -138,8 +138,10 @@ class ChinaFocusRealBrowser(unittest.TestCase):
             self.assertEqual(p.locator("li.record-row").count(), 50)
             p.locator('a[href="corpus.html"]').first.click()
             self.assertTrue(p.url.endswith("corpus.html"))
-            self.assertIn("record/", p.locator("body").inner_text().lower()
-                          + p.content().lower())
+            # corpus.html is the complete week index, not an exhaustive
+            # inline record list. Follow the real no-script route to a week.
+            p.locator('a[href^="week-"]').first.click()
+            self.assertGreater(p.locator('a[href^="record/"]').count(), 0)
         finally:
             ctx.close()
 
