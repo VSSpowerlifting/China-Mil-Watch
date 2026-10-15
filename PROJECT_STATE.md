@@ -1,23 +1,19 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Brief long-form reading redesign — Phase 2 (14 October 2026, owner-review candidate):**
-`codex/ipr-briefs-reading-phase2` starts from verified clean main
-`f469801b9c1ddb21e01188b4bfddf4ffa0c913ae`, after #570 merged and deployed.
-The shared article stylesheet opens the reading surface, widens usable desktop
-prose from 630 to 743.77px, quiets navigation (272 to 232px), and differentiates
-argument openings, source matter and closing citations. All eighteen article
-HTML files remain byte-identical; the sole generated delta is `output/briefs.css`.
-No manuscript, approval, image admission, source, database, feed or desk changes.
-Two rendered directions, full-page comparisons, five private future fixtures,
-measurements, 511 passing browser checks and reproduction are indexed in
-`docs/evidence/ipr-reading-phase2/README.md`. Design decisions and separately
-gated future storytelling proposals: `docs/BRIEFS_READING_DESIGN_PHASE2_2026-10-14.md`.
-The owner must inspect the complete reading experience and decide whether its
-prose-led rhythm is sufficient; no new mid-article excerpt or photograph is
-selected. Exact-head offline CI is required on the review PR before a landing
-decision. No merge, deployment or new editorial publication is authorized.
-The #570 architecture and its retained evidence remain documented in
-`docs/BRIEFS_JOURNAL_DESIGN_SYSTEM_2026-10-14.md`.
+**Brief reading foundation approved; cartographic accent candidate (14 October 2026):**
+The owner approved PR #588 head `d5c3ca5169bf10eb7685897c234b06452c3592e5`
+as the Phase 2 design baseline. The follow-up on the same branch/PR adds only
+a shared, abstract two-line terrain profile in existing whitespace at alternate
+section openings and the source transition. Three actual Chromium directions
+and full-page desktop/mobile evidence: `docs/evidence/ipr-cartographic-accents/README.md`.
+Prose geometry, typography, navigation and section spacing remain unchanged;
+all eighteen article HTML files and the 114-file protected inventory are retained.
+The sole generated delta is `output/briefs.css`; no editorial content, media,
+approval, rights/custody or publication changes. Accents hide in print/forced
+colors and add no motion, script or font. Verification and exact-head CI are
+reported in PR #588. Owner review of the selected ornament is the next action;
+no merge or deployment is authorized. The approved foundation and earlier
+comparison remain in `docs/BRIEFS_READING_DESIGN_PHASE2_2026-10-14.md`.
 
 **Coastal visual identity (14 October 2026, owner-review candidate):**
 `codex/coastal-visual-identity` starts at exact latest main
