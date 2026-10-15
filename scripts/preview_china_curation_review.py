@@ -90,7 +90,7 @@ def _page(title, section, body, counts, baseline, total, count):
     heading = (
         "<!doctype html><html lang='en'><head><meta charset='utf-8'>"
         "<meta name='viewport' content='width=device-width,initial-scale=1'>"
-        "<meta name='robots' content='noindex,nofollow,noarchive'>"
+        "<meta name=\"robots\" content=\"noindex,nofollow,noarchive\">"
         "<meta http-equiv='Content-Security-Policy' "
         "content=\"default-src 'none'; style-src 'unsafe-inline';"
         " script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'\">"
@@ -155,7 +155,7 @@ def preview(index, ledger):
         source = sources[r[2]]
         state = states[r[3]]
         return _row(r, review, source.get("label", source["code"]),
-                    state.get("label", state["code"]))
+                    state.get("label", state["code"].replace("_", " ")))
 
     proposed = "".join(article(i, reviews[i]) for i in docket_ids)
     entire = "".join(article(i, None) for i in all_ids)
