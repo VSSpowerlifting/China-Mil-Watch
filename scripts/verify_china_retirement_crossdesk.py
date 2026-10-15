@@ -9,6 +9,7 @@ Read-only: the source uses the repository's read_only helper; the destination
 uses immutable SQLite URI. This script neither publishes nor modifies a DB.
 """
 import argparse
+from html.parser import HTMLParser
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -108,51 +109,86 @@ def validate(source_db, retired_db):
 
 
 
+class _OfficialUSLinkParser(HTMLParser):
+    """stdlib HTML parser for the two first-party US desk link families."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.rows = {
+            "uscc_official_source_records": [],
+            "treasury_official_source_records": [],
+        }
+        self.active = None
+        self.all_text = []
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "li":
+            for attr, family in (
+                ("data-uscc-official-link", "uscc_official_source_records"),
+                ("data-us-treasury-official-link",
+                 "treasury_official_source_records"),
+            ):
+                if attr in attrs:
+                    if self.active is not None:
+                        raise ValueError("nested U.S. metadata link item")
+                    self.active = {
+                        "family": family, "identity": attrs[attr],
+                        "href": None, "dates": [], "text": [],
+                    }
+                    break
+        if self.active is not None:
+            if tag == "a" and self.active["href"] is None:
+                self.active["href"] = attrs.get("href")
+            elif tag == "time" and attrs.get("datetime") is not None:
+                self.active["dates"].append(attrs["datetime"])
+
+    def handle_data(self, data):
+        self.all_text.append(data)
+        if self.active is not None:
+            self.active["text"].append(data)
+
+    def handle_endtag(self, tag):
+        if tag == "li" and self.active is not None:
+            item = self.active
+            if not item["href"] or not item["identity"]:
+                raise ValueError("official U.S. metadata lacks source identity or URL")
+            self.rows[item["family"]].append(
+                (item["identity"], item["href"], tuple(item["dates"]),
+                 " ".join(" ".join(item["text"]).split()))
+            )
+            self.active = None
+
+
 def verify_us_public_link_parity(before_site, after_site, sqlite_receipt):
-    """No U.S. metadata reference may disappear or change in the rebuilt page.
+    """Preserve link identity, URL, issuer/date text and PACOM access hold.
 
-    This is deliberately scoped to the official-link rows rather than all
-    page chrome: record totals should change as China retires, but the U.S.
-    publisher URL, identity, date and issuer must not.
+    Unlike the corpus totals, this first-party metadata must be unchanged by
+    deletion of the unrelated Chinese article cohort. Standard library only,
+    so CI's credential-free short contract need not install network packages.
     """
-    from bs4 import BeautifulSoup
-
-    selectors = {
-        "uscc_official_source_records": "li[data-uscc-official-link]",
-        "treasury_official_source_records": "li[data-us-treasury-official-link]",
-    }
-    before_path = Path(before_site) / "us-indopacific.html"
-    after_path = Path(after_site) / "us-indopacific.html"
-    before = BeautifulSoup(before_path.read_text(encoding="utf-8"), "html.parser")
-    after = BeautifulSoup(after_path.read_text(encoding="utf-8"), "html.parser")
+    before = _OfficialUSLinkParser()
+    after = _OfficialUSLinkParser()
+    before.feed((Path(before_site) / "us-indopacific.html").read_text(
+        encoding="utf-8"))
+    after.feed((Path(after_site) / "us-indopacific.html").read_text(
+        encoding="utf-8"))
     receipt = {}
-    for table, selector in selectors.items():
-        observed = []
-        for doc in (before, after):
-            items = doc.select(selector)
-            rows = []
-            for li in items:
-                anchor = li.select_one("a[href]")
-                if anchor is None:
-                    raise ValueError("U.S. official metadata reference lacks external URL")
-                rows.append((
-                    li.get("data-uscc-official-link")
-                    if table.startswith("uscc_")
-                    else li.get("data-us-treasury-official-link"),
-                    anchor["href"], tuple(
-                        tag.get("datetime") for tag in li.select("time[datetime]")
-                    ), li.get_text(" ", strip=True),
-                ))
-            if len(set(rows)) != len(rows):
-                raise ValueError("duplicate official U.S. metadata reference: " + table)
-            observed.append(rows)
-        expected_rows = sqlite_receipt["official_source_rows"][table]
-        if expected_rows is not None and expected_rows > 0 and not observed[0]:
+    for table in (
+        "uscc_official_source_records",
+        "treasury_official_source_records",
+    ):
+        original = before.rows[table]
+        rendered = after.rows[table]
+        if len(set(original)) != len(original) or len(set(rendered)) != len(rendered):
+            raise ValueError("duplicate official U.S. metadata reference: " + table)
+        expected = sqlite_receipt["official_source_rows"][table]
+        if expected is not None and expected > 0 and not original:
             raise ValueError("live U.S. SQLite metadata was not rendered: " + table)
-        if observed[0] != observed[1]:
+        if original != rendered:
             raise ValueError("U.S. official link/date/issuer changed or vanished: " + table)
-        receipt[table] = len(observed[1])
-    if "PACOM collection blocked" not in after.get_text(" ", strip=True):
+        receipt[table] = len(rendered)
+    if "PACOM collection blocked" not in " ".join(after.all_text):
         raise ValueError("official U.S. link metadata must not promote PACOM collector")
     return receipt
 
