@@ -114,13 +114,40 @@ def compare(scorecard, ledgers, actions):
             matched += not bool(issues)
         results.append({"date": slot["date"], "run_id": run_id,
                         "status": result, "issues": issues})
-    visible_other = [
-        {"id": x["id"], "event": x.get("event"),
-         "created_at": x.get("created_at"), "conclusion": x.get("conclusion")}
-        for x in actions.values()
-        if x.get("workflow_id") == WORKFLOW_ID and
-        x.get("event") == "schedule" and x["id"] not in scheduled_ids
-    ]
+    # Positive matches do not clear additional scheduled runs on the same
+    # logical days. Report them as an explicit machine-review hold, even if
+    # the additional run itself concluded successfully. An invalid creation
+    # date is also a hold: it cannot safely be classified outside the window.
+    # This is limited to the supplied API export, NOT an exhaustive attempt
+    # census or authentication of the query scope.
+    first = audit.day(scorecard["window_start"])
+    last = audit.day(scorecard["window_end"])
+    visible_other = []
+    in_window_unmatched = []
+    for x in actions.values():
+        if not (x.get("workflow_id") == WORKFLOW_ID and
+                x.get("event") == "schedule" and
+                x["id"] not in scheduled_ids):
+            continue
+        summary = {
+            "id": x["id"], "event": x.get("event"),
+            "created_at": x.get("created_at"),
+            "status": x.get("status"),
+            "conclusion": x.get("conclusion"),
+            "run_attempt": x.get("run_attempt"),
+        }
+        visible_other.append(summary)
+        try:
+            created_day = audit.utc(x.get("created_at")).date()
+        except (audit.AFPSevenDayError, TypeError, ValueError):
+            in_window_unmatched.append(
+                dict(summary, review_reason="unclassifiable_scheduled_run_date")
+            )
+        else:
+            if first <= created_day <= last:
+                in_window_unmatched.append(
+                    dict(summary, review_reason="additional_scheduled_run_in_window")
+                )
     return {
         "protocol": "ipr_ph_afp_actions_positive_match_v1",
         "desk": "ph-afp",
@@ -136,6 +163,9 @@ def compare(scorecard, ledgers, actions):
             scorecard["all_seven_ledger_slots_supported"] is True,
         "slots": results,
         "other_scheduled_runs_in_export": visible_other,
+        "unmatched_scheduled_runs_in_review_window": in_window_unmatched,
+        "no_unmatched_scheduled_runs_visible_in_review_window":
+            not bool(in_window_unmatched),
         "export_query_scope_independently_authenticated": False,
         "historical_failed_and_rerun_attempts_exhaustively_audited": False,
         "github_metadata_signed_or_authenticated_by_script": False,
