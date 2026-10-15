@@ -50,6 +50,7 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         self.assertEqual(result["excluded_captured_after_repair"], 1)
         self.assertEqual(result["flagged_for_manual_quality_review"], 2)
         self.assertEqual({r["id"] for r in result["candidates"]}, {1, 2})
+        self.assertEqual(result["unflagged_control_ids"], [5])
         self.assertTrue(any(r["published_brief_trail"] for r in result["candidates"]))
         self.assertEqual(result["all_source_records_preserved"], 5)
         self.assertFalse(result["publication_authorized"])
