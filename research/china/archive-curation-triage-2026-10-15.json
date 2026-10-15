@@ -133,6 +133,42 @@
       "source_check": null,
       "owner_approval": null,
       "representative_id": null
+    },
+    {
+      "id": 4348,
+      "source": "global_times_mil",
+      "published_date": "2026-09-18",
+      "source_title": "Exclusive footage shows Philippine vessel repeatedly cutting across CCG vessel’s bow before collision",
+      "disposition": "retain_context",
+      "representative_id": null,
+      "rationale": "Potential original Global Times feature on a China Coast Guard and Philippine vessel encounter; stored text substantially overlaps China Military Online republication, but verify original footage, incident date, and attribution.",
+      "review_stage": "triage",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/4348.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null
+    },
+    {
+      "id": 4346,
+      "source": "china_mil_online",
+      "published_date": "2026-09-18",
+      "source_title": "Exclusive footage shows Philippine vessel repeatedly cutting across CCG vessel's bow before collision",
+      "disposition": "group_secondary",
+      "representative_id": 4348,
+      "rationale": "Potential republication of the Global Times feature under a different outlet; retain its stable URL and publisher occurrence while proposing one representative for curated browse, subject to original-issuer and body comparison.",
+      "review_stage": "triage",
+      "evidence": [
+        {
+          "kind": "stored_record",
+          "url": "https://indopacificrecord.org/record/4346.html"
+        }
+      ],
+      "source_check": null,
+      "owner_approval": null
     }
   ]
 }
