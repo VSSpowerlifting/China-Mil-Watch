@@ -1,0 +1,39 @@
+name: Vault failed-attempt ZIP sidecar — fictional offline backup contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/private_vault_actions_attempt_sidecar_contracts.yml'
+      - 'scripts/private_vault_encrypt_actions_attempts.py'
+      - 'tests/test_private_vault_actions_attempt_sidecar.py'
+      - 'docs/engineering/PRIVATE_VAULT_FAILED_ATTEMPT_ZIP_BACKUP_2026-10-15.md'
+
+permissions:
+  contents: read
+
+jobs:
+  test-opaque-artifact-sidecars:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify offline Git/GPG versions
+        run: |
+          python --version
+          gpg --version | head -n 1
+      - name: Exercise fictional two-attempt encrypted ZIP and restore
+        run: python -m unittest tests.test_private_vault_actions_attempt_sidecar -v
+      - name: Prohibit any production DB or output alteration
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+
+# NO GitHub credentials, Actions ZIP downloads, ministry access, secrets,
+# archive originals, cross-repo writes, SMTP/LLM, collector or deployment.
