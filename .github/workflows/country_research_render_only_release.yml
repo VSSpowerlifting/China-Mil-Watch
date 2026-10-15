@@ -74,6 +74,17 @@ jobs:
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
 
+      - name: Retain permanent editorial country pages for independent preview
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipr-permanent-editorial-review-${{ github.run_id }}
+          path: |
+            output/vietnam.html
+            output/desks.html
+          if-no-files-found: error
+          retention-days: 3
+
   release:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
