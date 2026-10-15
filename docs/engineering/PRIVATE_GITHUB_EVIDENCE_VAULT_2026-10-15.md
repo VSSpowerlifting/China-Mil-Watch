@@ -1,5 +1,19 @@
 # Private GitHub source vault — provider choice and safe activation
 
+> **Current-state correction, October 15, 2026.** The empty/policy-only
+> repository snapshots and “no originals transferred” claims below document
+> an **earlier onboarding state**, not the current vault. Nine native source
+> Git histories now reside on distinct private `archive/*` refs, with matching
+> original Git commits and independent private readback. The first nine-job
+> [daily fast-forward sync run](https://github.com/VSSpowerlifting/ipr-source-evidence-private/actions/runs/38786044913)
+> succeeded. The original public refs remain; failed-attempt/ZIP-only evidence
+> is not comprehensively preserved, off-GitHub recovery is not claimed, and
+> collector/publishing cutover and source-use rights are separate. The current
+> private README and dated frozen-source inventory govern the archive baseline
+> (visible only to authorized private-repository members). The onboarding
+> preflight described below is **not a current validator of a populated vault**.
+
+
 **Owner choice: October 15, 2026 — a separate PRIVATE GitHub repository.** The owner has now **created** `VSSpowerlifting/ipr-source-evidence-private` and the connected GitHub API has independently confirmed `visibility=private`, owner-admin permissions and a clean empty branch list at first observation. I subsequently initialized its `main` with a **policy README only** at exact commit `2d53f25a2a4c31b3d1b2a84b569a7f203fdad593` and blob `b1a7c174d224f0d9e9245ab400a31bb19c6eab86`. A follow-up authenticated API read reverified private visibility and exactly one `README.md` Git tree entry, no archive refs or government bodies. **No originals have been transferred**, no independent backup or source-use permission is established, and production is untouched.
 
 ## Current authenticated preflight baseline — metadata-only (October 15 update)
