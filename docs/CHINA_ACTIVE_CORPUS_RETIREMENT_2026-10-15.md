@@ -33,10 +33,12 @@ This is a **retention policy**, not an individualized editorial verdict. The dis
 python -m unittest -v tests.test_china_active_retirement
 python -m scripts.plan_china_active_retirement
 # Optional, scratch copy only, NOT production:
-python -m scripts.plan_china_active_retirement --scratch-db /private/tmp/ipr-china-retirement-candidate.db
+python -m scripts.plan_china_active_retirement \
+  --scratch-db /private/tmp/ipr-china-retirement-candidate.db \
+  --tombstones-out /private/tmp/ipr-china-retired-url-hashes.json
 ```
 
-The scratch operation reads the tracked SQLite file through `scripts.reconcile_db.read_only`, verifies its article IDs exactly match the frozen corpus index, inspects foreign keys, writes a **new file outside the repository**, deletes candidate article rows and their cascading categories in a transaction, and checks integrity and all surviving IDs. No production DB, generated page, backup, database commit or deployment is altered by this PR.
+The scratch operation reads the tracked SQLite file through `scripts.reconcile_db.read_only`, verifies its article IDs exactly match the frozen corpus index, inspects foreign keys, writes a **new file outside the repository**, deletes candidate article rows and their cascading categories in a transaction, and checks integrity and all surviving IDs. The optional tombstone manifest contains only sorted SHA-256 digests of the exact canonical URLs for every retired row and is mode 0600 in private runner scratch. It is a future ingestion-denylist candidate, **not** an active ingestion guard: the collector still needs a separate code change to consult the manifest. No production DB, generated page, backup, database commit or deployment is altered by this PR.
 
 ## Release boundary — not yet satisfied
 
