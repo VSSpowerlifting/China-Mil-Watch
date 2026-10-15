@@ -21,6 +21,29 @@
   </div>
 </div>
 
+{# Country-linked original IPR editorial already owner-approved and published.
+   Independent of source collection/archival admission. No interim/beta labels. #}
+{% if published_editorials | default([]) %}
+<section class="desk-references desk-published-research"
+         aria-labelledby="desk-published-research-title">
+  <p class="eyebrow">Indo-Pacific Record · published research</p>
+  <h2 id="desk-published-research-title">Published analysis from this desk</h2>
+  <p>Original IPR editorial analysis, already approved and published through
+  the Briefs process. Government-source statements are attributed to their
+  publishers. These publications do not mean the desk's automated source
+  collection has been admitted into the public corpus.</p>
+  <ol class="desk-reference-list" aria-label="Published IPR analysis">
+  {% for item in published_editorials %}
+    <li>
+      <h3><a href="{{ item.route }}">{{ item.title }}</a></h3>
+      <p>{{ item.dek }}</p>
+      <p class="meta">IPR Brief {{ item.issue_number }} · {{ item.source_note }}</p>
+    </li>
+  {% endfor %}
+  </ol>
+</section>
+{% endif %}
+
 {# Public Korea renders a strictly frozen official-link bibliography only.
    Private source/rights/editorial preview below remains separate: no raw
    source body, media or machine-produced translation enters publication. #}
