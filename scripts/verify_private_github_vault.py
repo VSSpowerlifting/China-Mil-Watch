@@ -32,6 +32,14 @@ METADATA_MAIN_TREE = {
     "manifests/korea_oct12_failed_actions_capture_audit_2026-10-15.json":
         ("blob", "3aac056afc0cb36bfc4767d406c59c270775cf56"),
 }
+# Exact owner-approved private GitHub-only storage policy, with the same
+# already pinned metadata manifests and zero publisher-original bytes on main.
+# Preserve the older exact metadata pin as a distinct historical baseline.
+GITHUB_ONLY_MAIN_SHA = "90c8fcbb6ad736ca08ca272b38915b29ea4599fc"
+GITHUB_ONLY_MAIN_TREE = {
+    **METADATA_MAIN_TREE,
+    "README.md": ("blob", "5ff54211535881882c66f8459ca1e6f33e34fbdb"),
+}
 PILOT_REFS = {
     "pilot/fictional-custody-20261015": "48c7746a1f3b94f76a6859ecd341122e3cdf4d31",
     "pilot/fictional-restore-20261015": "ca89f369bb947cdbe26ed98aa48e9792abea6fd8",
@@ -157,7 +165,8 @@ def evaluate(source, vault, *, api=_api):
         actual = {item["name"]: item["commit"].get("sha") for item in branches}
         if (len(actual) != 3 or
                 actual not in ({"main": PILOT_MAIN_SHA, **PILOT_REFS},
-                               {"main": METADATA_MAIN_SHA, **PILOT_REFS})):
+                               {"main": METADATA_MAIN_SHA, **PILOT_REFS},
+                               {"main": GITHUB_ONLY_MAIN_SHA, **PILOT_REFS})):
             raise VaultPreflightError("vault_pilot_branches_changed")
         if dest.get("default_branch") != "main":
             raise VaultPreflightError("vault_bootstrap_default_branch_invalid")
@@ -177,8 +186,10 @@ def evaluate(source, vault, *, api=_api):
             permitted_main = {
                 "README.md": ("blob", BOOTSTRAP_README_BLOB_SHA),
             }
-        else:
+        elif actual["main"] == METADATA_MAIN_SHA:
             permitted_main = METADATA_MAIN_TREE
+        else:
+            permitted_main = GITHUB_ONLY_MAIN_TREE
         if (len(main_rows) != len(permitted_main)
                 or any(type(row) is not dict for row in main_rows)):
             raise VaultPreflightError("vault_pilot_main_changed")
@@ -199,9 +210,13 @@ def evaluate(source, vault, *, api=_api):
             observed = {row.get("path"): row.get("sha") for row in rows}
             if len(observed) != len(PILOT_EXPECTED_BLOBS) or observed != PILOT_EXPECTED_BLOBS:
                 raise VaultPreflightError("vault_pilot_tree_unexpected")
-        bootstrap = ("verified_korea_metadata_only_plus_fictional_pilot"
-                     if actual["main"] == METADATA_MAIN_SHA else
-                     "verified_fictional_copy_and_restore_only")
+        bootstrap = (
+            "verified_github_only_policy_plus_metadata_and_fictional_pilot"
+            if actual["main"] == GITHUB_ONLY_MAIN_SHA else
+            "verified_korea_metadata_only_plus_fictional_pilot"
+            if actual["main"] == METADATA_MAIN_SHA else
+            "verified_fictional_copy_and_restore_only"
+        )
     else:
         raise VaultPreflightError("vault_not_bootstrap_only")
     # Do NOT assume an accessible private repo grants Actions cross-repo write.
@@ -216,13 +231,18 @@ def evaluate(source, vault, *, api=_api):
         "bootstrap_state": bootstrap,
         "fictional_pilot_git_blob_parity_verified": (
             bootstrap in ("verified_fictional_copy_and_restore_only",
-                          "verified_korea_metadata_only_plus_fictional_pilot")),
+                          "verified_korea_metadata_only_plus_fictional_pilot",
+                          "verified_github_only_policy_plus_metadata_and_fictional_pilot")),
         "main_branch_protection_verified": False,
         "pages_disabled_verified": True,
         "private_forking_disabled_verified": forks_blocked,
         "vault_access_hardening_complete": False,
         "operator_repo_admin_verified": True,
         "cross_repo_workflow_credential_verified": False,
+        # Owner permits GitHub-only V1 custody. This records only the exact
+        # observed policy blob, NOT a permissions grant for publisher bytes.
+        "github_only_storage_choice_verified": (
+            bootstrap == "verified_github_only_policy_plus_metadata_and_fictional_pilot"),
         "independent_backup_and_restore_verified": False,
         "publisher_original_retention_rights_approved": False,
         "failed_attempt_capture_inventory_complete": False,

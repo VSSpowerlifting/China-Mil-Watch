@@ -178,6 +178,44 @@ class VaultPreflightTests(unittest.TestCase):
                 destination=dest, branches=good,
                 tree={"truncated": False, "tree": extra}))
 
+    def test_live_github_only_policy_blob_is_exactly_pinned(self):
+        branches = [{"name": "main", "commit": {
+            "sha": vault.GITHUB_ONLY_MAIN_SHA}}] + [
+                {"name": name, "commit": {"sha": sha}}
+                for name, sha in vault.PILOT_REFS.items()
+            ]
+        dest = dict(fake_api()("repos/" + DEST), default_branch="main")
+        correct_tree = {"truncated": False, "tree": [
+            {"path": path, "sha": sha, "type": kind}
+            for path, (kind, sha) in vault.GITHUB_ONLY_MAIN_TREE.items()
+        ]}
+        report = vault.evaluate(SRC, DEST, api=fake_api(
+            destination=dest, branches=branches, tree=correct_tree))
+        self.assertEqual(
+            report["bootstrap_state"],
+            "verified_github_only_policy_plus_metadata_and_fictional_pilot")
+        self.assertTrue(report["github_only_storage_choice_verified"])
+        self.assertTrue(report["fictional_pilot_git_blob_parity_verified"])
+        for name in ("ready_to_transfer", "source_bodies_transferred",
+                     "independent_backup_and_restore_verified",
+                     "publisher_original_retention_rights_approved",
+                     "production_cutover_authorized"):
+            self.assertFalse(report[name])
+
+        changed = [dict(row) for row in correct_tree["tree"]]
+        changed[0]["sha"] = "0" * 40
+        with self.assertRaisesRegex(
+                vault.VaultPreflightError, "vault_pilot_main_changed"):
+            vault.evaluate(SRC, DEST, api=fake_api(
+                destination=dest, branches=branches,
+                tree={"truncated": False, "tree": changed}))
+        # A plausible new README SHA does not bypass our commit pin.
+        branches[0] = {"name": "main", "commit": {"sha": "f" * 40}}
+        with self.assertRaisesRegex(
+                vault.VaultPreflightError, "vault_pilot_branches_changed"):
+            vault.evaluate(SRC, DEST, api=fake_api(
+                destination=dest, branches=branches, tree=correct_tree))
+
     def test_extra_ref_wrong_fictional_commit_or_blob_is_rejected(self):
         good = [{"name": "main", "commit": {"sha": vault.PILOT_MAIN_SHA}}] + [
             {"name": n, "commit": {"sha": commit}}
