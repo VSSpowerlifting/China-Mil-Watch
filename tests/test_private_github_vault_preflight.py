@@ -12,7 +12,7 @@ SRC = "VSSpowerlifting/China-Mil-Watch"
 DEST = "VSSpowerlifting/ipr-source-evidence-private"
 
 
-def fake_api(*, destination=None, source=None, branches=None, tree=None):
+def fake_api(*, destination=None, source=None, branches=None, tree=None, pilot_trees=None):
     origin = source if source is not None else {
         "full_name": SRC, "private": False, "visibility": "public",
     }
@@ -30,6 +30,13 @@ def fake_api(*, destination=None, source=None, branches=None, tree=None):
             {"truncated": False, "tree": [{"path": "README.md", "type": "blob",
              "sha": vault.BOOTSTRAP_README_BLOB_SHA}]} if tree is None else tree),
     }
+    pilot_tree = {"truncated": False, "tree": [
+        {"path": name, "sha": sha, "type": "blob"}
+        for name, sha in vault.PILOT_EXPECTED_BLOBS.items()
+    ]}
+    for sha in vault.PILOT_REFS.values():
+        values["repos/" + DEST + "/git/trees/" + sha + "?recursive=1"] = (
+            pilot_tree if pilot_trees is None else pilot_trees.get(sha, pilot_tree))
     return values.__getitem__
 
 
@@ -122,6 +129,43 @@ class VaultPreflightTests(unittest.TestCase):
         with self.assertRaisesRegex(vault.VaultPreflightError, "vault_not_bootstrap_only"):
             vault.evaluate(SRC, DEST, api=fake_api(
                 destination=dest, branches=[{"name": "main"}, {"name": "archive/korea"}]))
+
+    def test_exact_private_fictional_restore_branches_pass_as_pilot_only(self):
+        branches = [{"name": "main", "commit": {"sha": vault.PILOT_MAIN_SHA}}] + [
+            {"name": n, "commit": {"sha": commit}}
+            for n, commit in vault.PILOT_REFS.items()
+        ]
+        dest = dict(fake_api()("repos/" + DEST), default_branch="main")
+        receipt = vault.evaluate(SRC, DEST, api=fake_api(
+            destination=dest, branches=branches))
+        self.assertEqual(receipt["bootstrap_state"],
+                         "verified_fictional_copy_and_restore_only")
+        self.assertEqual(receipt["destination_initial_branches"], 3)
+        self.assertTrue(receipt["fictional_pilot_git_blob_parity_verified"])
+        self.assertFalse(receipt["ready_to_transfer"])
+        self.assertFalse(receipt["independent_backup_and_restore_verified"])
+        self.assertFalse(receipt["source_bodies_transferred"])
+
+    def test_extra_ref_wrong_fictional_commit_or_blob_is_rejected(self):
+        good = [{"name": "main", "commit": {"sha": vault.PILOT_MAIN_SHA}}] + [
+            {"name": n, "commit": {"sha": commit}}
+            for n, commit in vault.PILOT_REFS.items()
+        ]
+        dest = dict(fake_api()("repos/" + DEST), default_branch="main")
+        bad = [dict(x) for x in good]
+        bad[1] = {"name": good[1]["name"], "commit": {"sha": "0" * 40}}
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_pilot_branches_changed"):
+            vault.evaluate(SRC, DEST, api=fake_api(destination=dest, branches=bad))
+        bad_extra = good + [{"name": "archive/real-original", "commit": {"sha": "0"*40}}]
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_not_bootstrap_only"):
+            vault.evaluate(SRC, DEST, api=fake_api(destination=dest, branches=bad_extra))
+        first = next(iter(vault.PILOT_REFS.values()))
+        wrong_tree = {"truncated": False, "tree": [
+            {"path": "pilot/manifest.json", "type": "blob", "sha": "0"*40}
+        ]}
+        with self.assertRaisesRegex(vault.VaultPreflightError, "vault_pilot_tree_unexpected"):
+            vault.evaluate(SRC, DEST, api=fake_api(
+                destination=dest, branches=good, pilot_trees={first: wrong_tree}))
 
     def test_refuses_nonempty_wrong_identity_fork_archived_disabled_or_no_admin(self):
         base = fake_api()("repos/" + DEST)
