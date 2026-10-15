@@ -121,6 +121,7 @@ def validate_batch(index, batch, pages):
     if not isinstance(batch, dict) or set(batch) != {
         "version", "scope", "purpose", "publication_enabled", "owner_approved",
         "baseline_snapshot", "batch_id", "created_on", "entries",
+        "protected_source_trail_ids",
     }:
         raise ValueError("diagnostic intake schema changed")
     if (batch["version"] != 1 or batch["scope"] != "china"
@@ -128,8 +129,22 @@ def validate_batch(index, batch, pages):
             or batch["publication_enabled"] is not False
             or batch["owner_approved"] is not False):
         raise ValueError("diagnostic batch may never be a publication approval")
-    if batch["baseline_snapshot"] != index.get("snapshot"):
-        raise ValueError("index snapshot drift; re-review before using intake batch")
+    baseline, current = batch["baseline_snapshot"], index.get("snapshot")
+    if (not isinstance(baseline, dict) or not isinstance(current, dict)
+            or type(baseline.get("records")) is not int
+            or type(current.get("records")) is not int):
+        raise ValueError("missing or invalid corpus snapshot counts")
+    _day(baseline.get("date"), "intake baseline date")
+    _day(current.get("date"), "current index date")
+    if (current["date"] < baseline["date"]
+            or current["records"] < baseline["records"]):
+        raise ValueError("index snapshot drift backwards; re-review before intake")
+    frozen_trails = batch["protected_source_trail_ids"]
+    if (not isinstance(frozen_trails, list)
+            or len(frozen_trails) != len(set(frozen_trails))
+            or any(type(ident) is not int for ident in frozen_trails)
+            or not set(frozen_trails).issubset(trail)):
+        raise ValueError("protected historic Brief citations missing or malformed")
     if batch["batch_id"] != "china-2026-10-15-01":
         raise ValueError("unexpected batch ID")
     _day(batch["created_on"], "batch date")
@@ -153,6 +168,10 @@ def validate_batch(index, batch, pages):
         catalog[rid] = row
     if not set(trail).issubset(catalog):
         raise ValueError("a published Brief source-trail ID has disappeared")
+    if current["records"] != len(catalog):
+        raise ValueError("index snapshot record count does not match corpus records")
+    if not set(frozen_trails).issubset(catalog):
+        raise ValueError("protected intake source trail no longer exists")
     decisions, rendered, seen = [], [], set()
     for proposal in batch["entries"]:
         required = {
@@ -197,6 +216,10 @@ def validate_batch(index, batch, pages):
             "review_question": question, "compare_ids": related, **original,
             "editorial_decision": None, "human_original_review": "pending",
         })
+    actual_protected = {row["id"] for row in rendered
+                        if row["protected_brief_trail"]}
+    if actual_protected != set(frozen_trails):
+        raise ValueError("intake's exact protected Brief-trail set has changed")
     for proposal in batch["entries"]:
         for other in proposal["compare_ids"]:
             if other not in seen:
@@ -207,7 +230,10 @@ def validate_batch(index, batch, pages):
     return {
         "version": 1, "batch_id": batch["batch_id"], "purpose": "private_diagnostic_only",
         "publication_enabled": False, "owner_approved": False,
-        "source_snapshot": index["snapshot"], "preserved_records": len(catalog),
+        "source_snapshot": index["snapshot"],
+        "baseline_snapshot": baseline,
+        "snapshot_advanced": current != baseline,
+        "preserved_records": len(catalog),
         "batch_records": len(rendered), "protected_brief_trail": sum(
             x["protected_brief_trail"] for x in rendered),
         "review_lane_counts": dict(sorted(Counter(
