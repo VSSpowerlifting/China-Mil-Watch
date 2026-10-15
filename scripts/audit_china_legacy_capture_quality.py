@@ -42,8 +42,8 @@ def quality_cues(body):
 def collected_date(html):
     """Use the recorded collection timestamp, not publisher publication date."""
     m = re.search(
-        r'<th scope="row">Collected at</th>\\s*<td class="prov-value">'
-        r'(\\d{4}-\\d{2}-\\d{2})[ T]\\d{2}:\\d{2}:\\d{2}',
+        r'<th scope="row">Collected at</th>\s*<td class="prov-value">'
+        r'(\d{4}-\d{2}-\d{2})[ T]\d{2}:\d{2}:\d{2}',
         html,
     )
     if m is None:
