@@ -60,7 +60,7 @@ class BISDeskBridge(unittest.TestCase):
             content=str(soup)
             self.assertIn("separately dated BIS homepage",content)
             self.assertIn("not the agency's full publication history",content)
-            self.assertIn("does not add article records",content)
+            self.assertIn("do not add article records",content)
             self.assertIn("PACOM remains access-blocked",content)
             self.assertNotIn("title_original",content)
             self.assertNotIn("text_original",content)
