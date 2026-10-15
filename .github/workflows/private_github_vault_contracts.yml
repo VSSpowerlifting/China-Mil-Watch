@@ -1,0 +1,43 @@
+name: Private GitHub evidence vault — offline operator preflight contracts
+
+# Tests an API simulation only. No gh authentication, private repo access,
+# source-original clones, upload/download, secrets or real provider use.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'scripts/verify_private_github_vault.py'
+      - 'tests/test_private_github_vault_preflight.py'
+      - 'scripts/verify_private_github_ref_parity.py'
+      - 'tests/test_private_github_ref_parity.py'
+      - 'scripts/rehearse_private_github_fixture_backup.py'
+      - 'tests/test_private_github_fixture_backup.py'
+      - 'docs/engineering/PRIVATE_GITHUB_EVIDENCE_VAULT_2026-10-15.md'
+      - '.github/workflows/private_github_vault_contracts.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test-readonly-vault-gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Exercise hypothetical private GitHub API results — OFFLINE
+        run: python -m unittest tests.test_private_github_vault_preflight tests.test_private_github_ref_parity tests.test_private_github_fixture_backup -v
+      - name: Assert no corpus, output or config was changed
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ .github/workflows/daily_update.yml
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No workflow_dispatch, model, publisher network, credential secret,
+# repository creation, actions upload, source-body migration or deployment.
