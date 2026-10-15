@@ -51,6 +51,17 @@ def exception_replay(source, policy):
     }
 
 
+def replay_capture(source):
+    return {
+        "source_git_commit": source["source_git_commit"],
+        "source_capture_sha256": source["source_capture_sha256"],
+        "entire_clean_original_text_sha256": (
+            KOREAN if source["desk"] == "korea" else JAPANESE),
+        "original_custody_authenticated": True,
+        "source_text_complete": True,
+    }
+
+
 def options(source, *, translation=False):
     return {
         "kind": "translation_en" if translation else "original_text",
@@ -59,7 +70,7 @@ def options(source, *, translation=False):
         "attribution": ("Unofficial IPR translation based on " if translation
                         else "Original source: ") + source["official_url"],
         "now_utc": TIME,
-        "source_replay": lambda _: True,
+        "source_replay": replay_capture,
         "policy_replay": license_replay,
         "exception_replay": exception_replay,
         "item_license_replay": lambda *_: True,
@@ -106,6 +117,39 @@ class StandingReuseContracts(unittest.TestCase):
         s=original();x=options(s);x["exception_replay"]=None
         with self.assertRaisesRegex(rights.StandingLicenseHold,
                                     "trusted_source_policy_and_exception_verifiers_required"):
+            rights.qualify_standing_text(s,**x)
+
+    def test_capture_replay_hash_must_match_frozen_source(self):
+        s=original();x=options(s)
+        def wrong(source):
+            r=replay_capture(source)
+            r["source_capture_sha256"]="7"*64
+            return r
+        x["source_replay"]=wrong
+        with self.assertRaisesRegex(rights.StandingLicenseHold,
+                                    "versioned_first_party_source_not_authenticated"):
+            rights.qualify_standing_text(s,**x)
+
+    def test_source_version_must_be_complete_original(self):
+        s=original();x=options(s)
+        def incomplete(source):
+            r=replay_capture(source)
+            r["source_text_complete"]=False
+            return r
+        x["source_replay"]=incomplete
+        with self.assertRaisesRegex(rights.StandingLicenseHold,
+                                    "versioned_first_party_source_not_authenticated"):
+            rights.qualify_standing_text(s,**x)
+
+    def test_rights_exception_checker_cannot_invent_a_different_text_hash(self):
+        s=original();x=options(s)
+        def inconsistent(source,policy):
+            r=exception_replay(source,policy)
+            r["entire_source_text_version_sha256"]="8"*64
+            return r
+        x["exception_replay"]=inconsistent
+        with self.assertRaisesRegex(rights.StandingLicenseHold,
+                                    "source_item_excluded_by_rights_or_scope"):
             rights.qualify_standing_text(s,**x)
 
     def test_source_replay_failure_holds(self):
