@@ -128,14 +128,27 @@ jobs:
             echo '::error::Private backup ref changed'; exit 1;
           }
           gh api "repos/VSSpowerlifting/ipr-source-evidence-private/contents/recovery-manifest.json?ref=$BACKUP_REF"             --jq '.content' | base64 -d > "$RUNNER_TEMP/verified-private-backup.json"
-          python - "$RUNNER_TEMP/verified-private-backup.json" "$EXPECTED_SHA" "$EXPECTED_DB" <<'PY'
-          import json,sys
-          item=json.load(open(sys.argv[1],encoding="utf-8"))
-          assert item["source_commit_sha"]==sys.argv[2], "backup and current main differ"
-          assert item["db_sha256"]==sys.argv[3], "backup and current database differ"
-          assert item["article_rows"]==5273 or item["article_rows"]>0
-          assert item["china_rows"]>4400
-          print("PASS: private GitHub backup commit, source SHA and SQLite SHA match")
+          # Require the manifest to match both the exact tracked Git blob
+          # AND the authoritative pre-retirement source census. The previous
+          # article_rows > 0 fallback was too weak for an irreversible cull.
+          DB_GIT_BLOB="$(git rev-parse HEAD:pla_watch.db)"
+          python - "$RUNNER_TEMP/verified-private-backup.json" \
+            "$EXPECTED_SHA" "$EXPECTED_DB" "$DB_GIT_BLOB" \
+            "$RUNNER_TEMP/china-retirement-production-preview/plan.json" <<'PY'
+          import json, pathlib, sys
+          item = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"))
+          plan = json.loads(pathlib.Path(sys.argv[5]).read_text(encoding="utf-8"))
+          assert item["version"] == 1, "unknown recovery manifest version"
+          assert item["source_repository"] == "VSSpowerlifting/IndoPacificRecord", "wrong repository backup"
+          assert item["source_commit_sha"] == sys.argv[2], "backup and current main differ"
+          assert item["db_sha256"] == sys.argv[3], "backup and current database differ"
+          assert item["db_git_blob_sha1"] == sys.argv[4], "backup is not the tracked Git SQLite blob"
+          assert item["article_rows"] == plan["total_before"], "recovered article census mismatch"
+          assert item["china_rows"] == plan["china_before"], "recovered China census mismatch"
+          assert item["non_china_rows"] == plan["other_desks_before"], "other desks not fully backed up"
+          assert item["db_bytes"] > 0 and item["china_rows"] >= 4400
+          assert plan["china_to_retire"] == 4400, "unreviewed retirement size"
+          print("PASS: private backup ref+commit, Git blob, original bytes and exact census verified")
           PY
       - name: Verify current main unchanged before any destructive promotion
         if: inputs.publish
