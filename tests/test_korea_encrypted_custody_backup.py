@@ -49,6 +49,8 @@ class KoreaEncryptedLocalBackupTests(unittest.TestCase):
         self.root = Path(self.tmp.name)
         self.source, self.cloned, self.pin, _, _ = fixture(self.root)
         self.encrypted = self.root / "korea-state.bundle.gpg"
+        self.scratch = self.root / "encrypted-scratch"
+        self.scratch.mkdir(mode=0o700)
 
     def run_backup(self, **changes):
         kw = dict(
@@ -56,6 +58,7 @@ class KoreaEncryptedLocalBackupTests(unittest.TestCase):
             encrypted_output=str(self.encrypted),
             recipient_fingerprint=self.fingerprint,
             gpg_home=str(self.gpg),
+            scratch_parent=str(self.scratch),
             frozen_commit=self.pin,
             explicit_owner_restricted_retention=True,
         )
@@ -116,6 +119,19 @@ class KoreaEncryptedLocalBackupTests(unittest.TestCase):
             self.run_backup(encrypted_output=str(self.source / "bad.gpg"))
         with self.assertRaises(backup.BackupHold):
             self.run_backup(encrypted_output="relative.gpg")
+        self.assertFalse(self.encrypted.exists())
+
+    def test_unsafe_or_missing_scratch_directory_is_refused(self):
+        self.scratch.chmod(0o755)
+        with self.assertRaises(backup.BackupHold):
+            self.run_backup()
+        self.assertFalse(self.encrypted.exists())
+        self.scratch.chmod(0o700)
+        with self.assertRaises(backup.BackupHold):
+            self.run_backup(scratch_parent=str(self.source))
+        self.assertFalse(self.encrypted.exists())
+        with self.assertRaises(backup.BackupHold):
+            self.run_backup(scratch_parent=str(self.root / "nonexistent"))
         self.assertFalse(self.encrypted.exists())
 
     def test_invalid_cli_receipt_cannot_claim_release_authority(self):
