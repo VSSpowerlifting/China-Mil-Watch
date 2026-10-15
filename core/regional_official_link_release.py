@@ -247,6 +247,7 @@ def admit(conn, packet, policy, receipt, *, as_of_utc,
     Default HOLD: no deployment caller currently has a trusted independent
     validator. Do not pass a self-declared JSON flag or an unverified receipt.
     """
+    need(policy == load_owner_policy(), "owner_policy_is_not_repository_pinned")
     need(callable(trusted_validator), "trusted_release_evidence_validator_missing")
     eligible = verify_cohort(packet, policy)
     proof_digest = verify_release_evidence(receipt, packet, eligible)
