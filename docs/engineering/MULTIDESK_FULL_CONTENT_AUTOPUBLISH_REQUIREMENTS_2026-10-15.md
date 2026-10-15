@@ -70,7 +70,9 @@ that are mapped to their exact host and country.
    reviewer for PDF, rights + independent bilingual and publishing editor
    for an English translation, rights + independent factual checker and editor
    for IPR analysis. Reviewer-role HMAC keys must be independently provisioned
-   and NEVER committed to GitHub or passed into model prompts. Source
+   and NEVER committed to GitHub or passed into model prompts. Role keys
+   must be distinct, and each signature's reviewer identity must match an
+   independently provisioned allowed-reviewer roster for that role. Source
    originality, translation fidelity and article truth cannot be established
    merely by possession of signing keys.
 4. **Automatic release staging after all gates:** once and only once the
