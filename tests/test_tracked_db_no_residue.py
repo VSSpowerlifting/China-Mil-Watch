@@ -126,6 +126,16 @@ class TheMechanismIsWhatWeThinkItIs(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.tmp, True)
         self.db = self.tmp / "copy.db"
         shutil.copy(TRACKED, self.db)
+        # These tests assert the sidecar behavior of WAL, not that production
+        # must always use the WAL journal format. Enable it only on this
+        # isolated copy; tracked SQLite and its current journal stay untouched.
+        con = sqlite3.connect(str(self.db))
+        try:
+            self.assertEqual(
+                con.execute("PRAGMA journal_mode=WAL").fetchone()[0].lower(),
+                "wal")
+        finally:
+            con.close()
 
     def sides(self):
         return [s for s in SIDECARS if (self.tmp / (self.db.name + s)).exists()]
