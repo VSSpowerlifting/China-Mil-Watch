@@ -148,7 +148,6 @@ jobs:
           git push origin HEAD:main
           echo "changed=true" >> "$GITHUB_OUTPUT"
       - name: Check out current Pages without uploading other files
-        if: steps.commit.outputs.changed == 'true'
         uses: actions/checkout@v4
         with:
           ref: gh-pages
@@ -156,11 +155,18 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
       - name: Publish only Korea HTML to existing Pages branch
-        if: steps.commit.outputs.changed == 'true'
         shell: bash
         run: |
           set -euo pipefail
           sha256sum -c "$RUNNER_TEMP/korea-prod-page-sha"
+          # Always reconcile Pages, even if an earlier attempt committed the
+          # DB/page to main then failed BEFORE updating gh-pages. This is the
+          # essential retry/recovery guarantee for an unattended release.
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo "::error::Main changed since this Korea page was rendered"
+            exit 1
+          }
           cd korea-existing-pages
           test -z "$(git status --porcelain --untracked-files=all)"
           pages_old="$(git rev-parse HEAD)"
