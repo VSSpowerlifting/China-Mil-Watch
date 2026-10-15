@@ -149,6 +149,35 @@ class KoreaStandingLinkAdmissionTests(unittest.TestCase):
             "SELECT COUNT(*) FROM korea_official_source_records"
         ).fetchone()[0], 0)
 
+    def test_generated_real_korea_route_reads_only_live_link_metadata(self):
+        # Full site render against a disposable copy of the actual production
+        # corpus. This never changes pla_watch.db or tracked output.
+        import sys
+        from core.korea_reference_gate import ROOT
+        sys.path.insert(0, str(ROOT / "site/preview"))
+        import generate_preview as gp
+        copied_db = Path(self.temp.name) / "production-copy.sqlite"
+        with sqlite3.connect("file:%s?mode=ro" % (ROOT / "pla_watch.db"),
+                             uri=True) as src, sqlite3.connect(copied_db) as out:
+            src.backup(out)
+        with sqlite3.connect(copied_db) as con:
+            schema.up(con)
+            admission.admit(con, self.packet, self.policy, as_of_utc=self.stamp)
+            con.commit()
+        target = Path(self.temp.name) / "site"
+        gp.build(target, "Korea automatic official metadata", copied_db,
+                 snapshot=gp.snapshot_from_corpus(copied_db),
+                 site_origin="https://indopacificrecord.org")
+        page = (target / "korea.html").read_text(encoding="utf-8")
+        self.assertEqual(page.count('data-korea-public-link='), 5)
+        self.assertEqual(page.count('data-korea-additional-link='), 9)
+        self.assertEqual(page.count('data-korea-auto-official-link='), 5)
+        self.assertIn("MND official press release 156799905", page)
+        self.assertIn("Portal posted:", page)
+        for forbidden in ("summary_english", "text_original", "source_git_commit",
+                          "original_title_sha256", "original_hwpx_sha256"):
+            self.assertNotIn(forbidden, page)
+
     def test_existing_old_style_database_fails_publication_closed(self):
         old = Path(self.temp.name) / "legacy.sqlite"
         with sqlite3.connect(old) as conn:
