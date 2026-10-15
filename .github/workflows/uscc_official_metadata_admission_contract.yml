@@ -1,0 +1,66 @@
+name: USCC First-Party Metadata — Exact Observation to SQLite Contract
+
+on:
+  pull_request:
+    paths:
+      - core/uscc_official_metadata.py
+      - scripts/admit_uscc_official_metadata.py
+      - tests/test_uscc_official_metadata_admission.py
+      - .github/workflows/uscc_official_metadata_admission_contract.yml
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-uscc-admission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Run offline malicious-source and idempotency tests
+        run: python -m unittest tests.test_uscc_official_metadata_admission -v
+      - name: Pin production DB and checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/uscc-prod-before.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          cp pla_watch.db "$RUNNER_TEMP/uscc-rehearsal.sqlite"
+      - name: Read actual Git-preserved USCC observation only
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git clone --quiet --single-branch --branch shadow/uscc-press             "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"             "$RUNNER_TEMP/uscc-source"
+          git -C "$RUNNER_TEMP/uscc-source" rev-parse HEAD             > "$RUNNER_TEMP/uscc-source.sha"
+          python -m scripts.admit_uscc_official_metadata             --source-checkout "$RUNNER_TEMP/uscc-source"             --production-db "$RUNNER_TEMP/uscc-rehearsal.sqlite"             --standing-official-links-approval
+          python -m scripts.admit_uscc_official_metadata             --source-checkout "$RUNNER_TEMP/uscc-source"             --production-db "$RUNNER_TEMP/uscc-rehearsal.sqlite"             --standing-official-links-approval
+          python - <<'PY'
+          import os, sqlite3
+          from core.uscc_official_metadata import load_public_links
+          db=os.path.join(os.environ["RUNNER_TEMP"],"uscc-rehearsal.sqlite")
+          rows=load_public_links(db)
+          assert len(rows)>=10
+          assert all(x["source_url"].startswith("https://www.uscc.gov/press-releases/")
+                     for x in rows)
+          with sqlite3.connect(db) as con:
+              assert con.execute("PRAGMA quick_check").fetchone()[0]=="ok"
+              assert con.execute("SELECT COUNT(*) FROM uscc_official_observations").fetchone()[0]>=1
+          print("Real observed USCC metadata, idempotent:",len(rows))
+          PY
+      - name: Ensure source branch and production files remained unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C "$RUNNER_TEMP/uscc-source" rev-parse HEAD)" =                "$(cat "$RUNNER_TEMP/uscc-source.sha")"
+          sha256sum -c "$RUNNER_TEMP/uscc-prod-before.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
