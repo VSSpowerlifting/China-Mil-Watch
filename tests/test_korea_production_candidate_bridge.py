@@ -122,6 +122,52 @@ class KoreaProductionCandidateBridgeTests(unittest.TestCase):
         git(self.source, "add", "state")
         git(self.source, "commit", "-q", "-m", "synthetic change")
 
+    def test_future_new_korea_release_is_normalized_but_never_auto_admitted(self):
+        new_ident = "korea-policy:156799901"
+        body = "Entirely invented future Korean source for rehearsal"
+        zipped = io.BytesIO()
+        with zipfile.ZipFile(zipped, "w") as archive:
+            archive.writestr(
+                "Contents/section0.xml",
+                ("<root><p><run><t>" + body + "</t></run></p></root>").encode())
+        raw = zipped.getvalue()
+        docsha = hashlib.sha256(raw).hexdigest()
+        (self.source / "state/captures" / (docsha + ".bin")).write_bytes(raw)
+        m = {
+            "issuer": "국방부", "publisher": "대한민국 정책브리핑",
+            "publication_kind": "syndicated_press_release",
+            "body_scope": "published_hwpx_text",
+            "attachments_collected": True,
+            "document_capture_sha256": docsha,
+            "document_url": "https://www.korea.kr/common/download.do"
+                            "?fileId=198565539&tblKey=GMN",
+        }
+        con = sqlite3.connect(self.source / "state/shadow.db")
+        con.execute(
+            "INSERT INTO shadow_records "
+            "(source_identity,url,source_slug,title_original,text_original,"
+            "published_date,language_tag,metadata_json,content_sha256,"
+            "capture_sha256,first_seen_run) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (new_ident, stage.URL + "156799901", stage.SOURCE,
+             "가상 국방부 새 보도자료", body, "2026-10-15", "ko",
+             json.dumps(m, ensure_ascii=False),
+             hashlib.sha256(body.encode()).hexdigest(), self.html,
+             "38636466191-1"))
+        con.commit()
+        con.close()
+        git(self.source, "add", "state")
+        git(self.source, "commit", "-q", "-m", "fictional later original")
+        result = stage.create(str(self.source), str(self.out), frozen=self.frozen)
+        self.assertEqual(result["source_original_count"], 6)
+        data = json.loads(self.out.read_text())
+        latest = next(x for x in data["records"]
+                      if x["source_identity"] == new_ident)
+        self.assertEqual(latest["original_hwpx_sha256"], docsha)
+        self.assertEqual(latest["publisher_posted_date"], "2026-10-15")
+        self.assertFalse(latest["approved_for_production"])
+        self.assertFalse(latest["approved_for_publication"])
+        self.assertFalse(data["production_import_enabled"])
+
     def test_wrong_issuer_or_document_scope_is_refused(self):
         for field, wrong in [
             ("issuer", "방위사업청"),
