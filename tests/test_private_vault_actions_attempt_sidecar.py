@@ -157,6 +157,13 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
             self.verify(receipt)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
+    def test_filename_that_claims_zip_but_is_plaintext_is_refused(self):
+        target = self.zips / ("artifact-%d.zip" % ONE)
+        target.write_bytes(b"NOT A ZIP, ONLY FIXTURE TEXT")
+        with self.assertRaisesRegex(box.Hold, "staged_file_not_zip"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
+
     def test_no_overwrite_existing_encrypted_backup(self):
         self.create()
         with self.assertRaisesRegex(box.Hold, "encrypted_target_unsafe_or_exists"):
