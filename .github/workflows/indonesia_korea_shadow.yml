@@ -81,6 +81,15 @@ jobs:
         working-directory: repo
         run: python -m unittest tests.test_indonesia_korea_shadow -q
 
+      - name: Fail closed on Korea public writer policy before source access
+        if: ${{ env.SHADOW_DESK == 'korea' }}
+        run: |
+          set -euo pipefail
+          python repo/scripts/check_korea_public_shadow_writer.py \
+            --policy repo/config/korea_shadow_writer_policy.json \
+            --desk "$SHADOW_DESK" --state-branch "$STATE_BRANCH" \
+            --stage pre_collect
+
       - name: Check out isolated state
         env:
           STATE_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
@@ -152,6 +161,12 @@ jobs:
           set -euo pipefail
           cd "${RUNNER_TEMP}/candidate-state"
           test "$(git branch --show-current)" = "$STATE_BRANCH"
+          if [ "$SHADOW_DESK" = korea ]; then
+            python "${GITHUB_WORKSPACE}/repo/scripts/check_korea_public_shadow_writer.py" \
+              --policy "${GITHUB_WORKSPACE}/repo/config/korea_shadow_writer_policy.json" \
+              --desk "$SHADOW_DESK" --state-branch "$STATE_BRANCH" \
+              --stage pre_public_push
+          fi
           test ! -e state/shadow.db-wal
           test ! -e state/shadow.db-shm
           git config user.name "github-actions[bot]"

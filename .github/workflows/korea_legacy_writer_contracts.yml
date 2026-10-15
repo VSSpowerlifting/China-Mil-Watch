@@ -1,0 +1,37 @@
+name: Korea legacy public writer cutover guard — synthetic checks
+
+# No deployment, no source retrieval or private vault credential. Tests only.
+on:
+  pull_request:
+    paths:
+      - config/korea_shadow_writer_policy.json
+      - scripts/check_korea_public_shadow_writer.py
+      - tests/test_korea_public_writer_cutover_guard.py
+      - .github/workflows/indonesia_korea_shadow.yml
+      - .github/workflows/korea_legacy_writer_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  korea-fail-closed-legacy-writer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run only synthetic Korea writer-mode policy and workflow checks
+        run: python -m unittest tests.test_korea_public_writer_cutover_guard -v
+      - name: Assert public IPR production files unchanged
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# No scheduled run in this test workflow; no originals, ZIPs, AI, SMTP or vault use.
