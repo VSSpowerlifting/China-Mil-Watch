@@ -76,31 +76,43 @@ def audit(index, target=600):
     # No title-based importance scoring. Important statements can use bland
     # titles, and sensational headlines are not proof of source authority.
     sample_ids = {r["id"] for r in protected}
-    buckets = defaultdict(list)
-    for row in china:
-        if row["id"] not in sample_ids and row["state"] == "analyzed":
-            buckets[(row["source"], row["date"][:7])].append(row)
-    for rows in buckets.values():
-        rows.sort(key=_stable_key)
-    strata = sorted(buckets)
-    # Round-robin across source/month: an intentionally diverse audit sample,
-    # not a recommendation to equalize institutions in the published archive.
-    position = 0
-    while len(sample_ids) < target and strata:
-        stratum = strata[position % len(strata)]
-        row = buckets[stratum].pop(0)
-        sample_ids.add(row["id"])
-        if not buckets[stratum]:
-            strata.remove(stratum)
-            position = position % len(strata) if strata else 0
-        else:
-            position += 1
+    def add_stratified(pool, stop_at):
+        buckets = defaultdict(list)
+        for row in pool:
+            if row["id"] not in sample_ids:
+                buckets[(row["source"], row["date"][:7])].append(row)
+        for entries in buckets.values():
+            entries.sort(key=_stable_key)
+        strata = sorted(buckets)
+        position = 0
+        while len(sample_ids) < stop_at and strata:
+            stratum = strata[position % len(strata)]
+            row = buckets[stratum].pop(0)
+            sample_ids.add(row["id"])
+            if not buckets[stratum]:
+                strata.remove(stratum)
+                position = position % len(strata) if strata else 0
+            else:
+                position += 1
+
+    # Include negative controls from the model-screened-out China records.
+    # Without these, a plausible-looking shortlist could conceal systematic
+    # false negatives. These are REVIEW candidates, never publication picks.
+    control_goal = min(max(0, target - len(sample_ids)), target * 15 // 100)
+    add_stratified(
+        [r for r in china if r["state"] == "not_selected"],
+        len(sample_ids) + control_goal)
+    control_ids = sample_ids - {r["id"] for r in protected}
+    add_stratified(
+        [r for r in china if r["state"] == "analyzed"], target)
 
     rows = []
     status_counts = Counter()
     for row in china:
         if row["in_published_trail"]:
             status = "protected_trail_review"
+        elif row["id"] in control_ids:
+            status = "screening_negative_control"
         elif row["id"] in sample_ids:
             status = "stratified_review_sample"
         elif row["state"] == "analyzed":
@@ -128,6 +140,7 @@ def audit(index, target=600):
         "china_records_by_processing_state": dict(sorted(Counter(
             r["state"] for r in china).items())),
         "protected_china_trail_records": len(protected),
+        "screening_negative_control_records": len(control_ids),
         "review_sample_count": len(sample_ids),
         "review_sample_by_source": dict(sorted(Counter(
             r["source"] for r in china if r["id"] in sample_ids).items())),
