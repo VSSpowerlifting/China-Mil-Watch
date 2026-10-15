@@ -95,6 +95,40 @@ The snapshot is frozen: when the full corpus changes or the status counts
 change, **the rehearsal fails closed**, rather than silently expanding a
 candidate set after new daily collection.
 
+### PLA Daily concentration: repeat-series review, not bulk suppression
+
+The same read-only PR includes `scripts/audit_pla_daily_series_for_review.py`,
+which inventories high-frequency **headline-prefix families** in the actual
+4,173-record PLA Daily portion of the snapshot. Monthly PLA Daily volumes
+were 788 (May), 933 (June), 706 (July), 778 (August), 697 (September),
+and 271 (October through the October 14 snapshot).
+
+The repeated families include **强军论坛 / Strong Military Forum (100)**,
+**八一锐评 / August First Commentary (45)**, **军营观察 / Military Camp
+Observation (45)**, and **清风正气歌 (26)**. These make sensible *editorial
+batching* candidates to assess repetitive commentary vs unique substantive
+policy or military evidence. **They are not predetermined exclusions.**
+
+**Critical counterexample:** the same prefix method finds **外交部 / Foreign
+Ministry (138)**, **国台办 / Taiwan Affairs Office (26)** and other
+official issuers. Their routine briefings may be repetitive but may also
+contain substantive changes and exact positions that researchers need. Never
+classify an issuing ministry's 138 documents as low-value solely because
+they share the first two Chinese characters or a newsroom heading. A
+reviewer must distinguish original issuer from PLA Daily republication,
+source-stated date vs event date, and unique content vs syndicated overlap.
+
+```sh
+python3 -m unittest -v tests.test_pla_daily_series_for_review
+python3 scripts/audit_pla_daily_series_for_review.py
+```
+
+A frequency report has **zero editorial rejection decisions** and does not
+change full-corpus totals, search, canonical routes, historical text or
+Brief citation trails. It should direct **batch 2 toward the real 4,173-record
+PLA Daily concentration**, rather than spending the entire curation effort
+on the 158-record Global Times source-quality problem.
+
 ### Release engineering and editorial plan
 
 **Phase A — independently approve the source-discovery policy.** Decide
