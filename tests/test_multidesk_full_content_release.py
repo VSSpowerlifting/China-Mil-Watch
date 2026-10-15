@@ -214,8 +214,9 @@ class FullContentReleaseContracts(unittest.TestCase):
         bundle, artifacts=fixture(("original_text",))
         bundle["works"][0]["rights_basis"]="standing_source_family_license"
         proof=standing_evidence(bundle["source"],artifacts["original_text"])
+        verified_policy_observer=proof["policy_replay"]
         def changed(policy):
-            p=proof["policy_replay"](policy)
+            p=verified_policy_observer(policy)
             p["policy_changed_or_withdrawn"]=True
             return p
         proof["policy_replay"]=changed
