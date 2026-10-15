@@ -153,6 +153,72 @@ class EncryptedVaultBackupTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertFalse(any(p.name.endswith(".part") for p in self.root.iterdir()))
 
+    def test_timeout_reaps_both_children_without_publishing_ciphertext(self):
+        # Genuine fictional Git producer, synthetic stalled GPG child.
+        real_popen = subprocess.Popen
+        created = []
+        git_children = []
+
+        class TimedOutGPG:
+            def __init__(self):
+                self.killed = False
+
+            def wait(self, timeout=None):
+                if not self.killed:
+                    raise subprocess.TimeoutExpired("fictional-gpg", timeout)
+                return -9
+
+            def poll(self):
+                return -9 if self.killed else None
+
+            def kill(self):
+                self.killed = True
+
+        def launch(argv, *args, **kwargs):
+            if argv[0] == "gpg" and "--encrypt" in argv:
+                child = TimedOutGPG()
+                created.append(child)
+                return child
+            child = real_popen(argv, *args, **kwargs)
+            if argv[0] == "git" and "bundle" in argv and "create" in argv:
+                git_children.append(child)
+            return child
+
+        with mock.patch.object(backup.subprocess, "Popen", side_effect=launch):
+            with self.assertRaisesRegex(
+                    backup.BackupHold, "encrypted_export_unavailable"):
+                self.create()
+        self.assertEqual(len(created), 1)
+        self.assertTrue(created[0].killed)
+        self.assertEqual(len(git_children), 1)
+        self.assertIsNotNone(git_children[0].poll())
+        self.assertFalse(self.output.exists())
+        self.assertFalse(any(p.name.endswith(".part") for p in self.root.iterdir()))
+
+    def test_gpg_launch_failure_reaps_git_producer_and_leaves_no_backup(self):
+        # The git producer can start successfully before GPG refuses to
+        # launch. The exceptional path must still close and reap Git.
+        real_popen = subprocess.Popen
+        git_children = []
+
+        def launch(argv, *args, **kwargs):
+            if argv[0] == "gpg" and "--encrypt" in argv:
+                raise OSError("fictional GPG launch failure")
+            child = real_popen(argv, *args, **kwargs)
+            if argv[0] == "git" and "bundle" in argv and "create" in argv:
+                git_children.append(child)
+            return child
+
+        with mock.patch.object(backup.subprocess, "Popen", side_effect=launch):
+            with self.assertRaisesRegex(
+                    backup.BackupHold, "encrypted_export_unavailable"):
+                self.create()
+        self.assertEqual(len(git_children), 1)
+        self.assertIsNotNone(git_children[0].poll())
+        self.assertTrue(git_children[0].stdout.closed)
+        self.assertFalse(self.output.exists())
+        self.assertFalse(any(p.name.endswith(".part") for p in self.root.iterdir()))
+
     def test_encrypted_file_tamper_is_rejected_before_decryption(self):
         info = self.create()
         with self.output.open("ab") as handle:
