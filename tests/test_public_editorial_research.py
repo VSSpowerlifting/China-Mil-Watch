@@ -53,8 +53,18 @@ class PermanentResearchSafety(unittest.TestCase):
         with self.assertRaises(PublicationHold):
             self.verify(doc)
 
-    def test_real_catalog_contains_no_unapproved_ghost_editions(self):
-        self.assertEqual(load_catalog(today=NOW), [])
+    def test_real_catalog_only_reuses_prior_owner_approved_brief(self):
+        rows = load_catalog(today=NOW)
+        self.assertEqual(len(rows), 1)
+        item = rows[0]
+        self.assertEqual(item["desk"], "vietnam")
+        self.assertEqual(item["ipr_page"], "briefs/what-is-being-built-in-laos.html")
+        self.assertEqual(item["approved_by"], "Benjamin Yang")
+        self.assertEqual(item["approved_on"], "2026-10-13")
+        self.assertEqual(item["approval_commit"], "504e8a95cb53e6fe500695aaa051f9dca82d8fe1")
+        self.assertEqual(len(item["source_links"]), 1)
+        self.assertEqual(item["source_links"][0]["source_slug"], "vn_mps_foreign_affairs_vi")
+        self.assertIsNone(item["source_links"][0]["capture_sha256"])
         self.assertEqual(published_for_desk("indonesia"), [])
 
     def test_good_metadata_links_only_and_no_false_private_copy_claim(self):
