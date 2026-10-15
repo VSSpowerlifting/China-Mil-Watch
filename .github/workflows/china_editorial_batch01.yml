@@ -1,0 +1,67 @@
+name: China editorial 25-case intake custody
+
+# Focused, offline PR contract: emits a PRIVATE draft into ephemeral runner
+# scratch. Does not publish or authorize a public archive selection.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/prepare_china_editorial_batch.py
+      - tests/test_china_editorial_batch.py
+      - research/china/editorial-batch-01-2026-10-15.json
+      - docs/CHINA_EDITORIAL_BATCH01_2026-10-15.md
+      - .github/workflows/china_editorial_batch01.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-editorial-batch01-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  batch-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Baseline immutable corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db-before.sha"
+          git status --porcelain --untracked-files=all -- pla_watch.db output/ > "$RUNNER_TEMP/corpus-before"
+          test ! -s "$RUNNER_TEMP/corpus-before"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Run editorial intake safety cases
+        run: python -m unittest -v tests.test_china_editorial_batch
+      - name: Generate real 25-case private intake packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/prepare_china_editorial_batch.py \
+            --index output/corpus-index.json \
+            --batch research/china/editorial-batch-01-2026-10-15.json \
+            --records-dir output/record \
+            --output-dir "$RUNNER_TEMP/ipr-china-batch01"
+          test -f "$RUNNER_TEMP/ipr-china-batch01/review.html"
+          test -f "$RUNNER_TEMP/ipr-china-batch01/summary.json"
+          test ! -e "$RUNNER_TEMP/ipr-china-batch01/sitemap.xml"
+          grep -q 'noindex,nofollow,noarchive' "$RUNNER_TEMP/ipr-china-batch01/review.html"
+          python -c 'import json,sys; d=json.load(open(sys.argv[1])); assert d["batch_records"]==25 and d["owner_approved"] is False and d["publication_enabled"] is False; assert all(x["editorial_decision"] is None for x in d["entries"]); print("Source counts:",d["source_counts"],"trail:",d["protected_brief_trail"],"missing bodies:",d["missing_or_empty_stored_text"])' "$RUNNER_TEMP/ipr-china-batch01/summary.json"
+      - name: Assert canonical records unchanged
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db-before.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
