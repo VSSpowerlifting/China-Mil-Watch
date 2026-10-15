@@ -26,7 +26,9 @@ def data():
     def html(text, collected_at="2026-07-06 16:01:17"):
         return ('<div class="original-text"><p>' + text
                 + '</p></div><table><th scope="row">Original URL</th>'
-                '<td class="prov-value"><a href="https://www.globaltimes.cn/test">Source</a></td></table>')
+                '<td class="prov-value"><a href="https://www.globaltimes.cn/test">Source</a></td>'
+                '<tr><th scope="row">Collected at</th><td class="prov-value">'
+                + collected_at + ' — collection metadata</td></tr></table>')
     pages = {
         1: html(("Unrelated articles ... " * 11) + "actual article fragment."),
         2: html("A very short excerpt about something else."),
