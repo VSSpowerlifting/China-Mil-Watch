@@ -1,6 +1,7 @@
 name: US First-Party Navy Source Access — Bounded Read-Only Canary
 
 # Two strictly fixed Navy hosts. This probe records access/robots outcomes
+# On the owning PR, do one bounded authorized source-policy observation.
 # but NEVER commits source state, performs crawling, or advances a desk clock.
 on:
   pull_request:
@@ -43,8 +44,9 @@ jobs:
 
   one-off-navy-policy-probe:
     if: >-
-      github.event_name == 'workflow_dispatch' &&
-      inputs.owner_authorized_readonly_probe
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+      inputs.owner_authorized_readonly_probe)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
