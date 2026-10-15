@@ -262,46 +262,41 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
 
 def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
             run_id, *, scratch_dir, gpg_home=None):
+    """Verify encrypted ZIP sidecar as a bounded stream; NO plaintext TAR on disk."""
+    check(type(run_id) is int and run_id > 0, "run_id_invalid")
     check(type(expected_cipher_sha) is str and SHA256.fullmatch(expected_cipher_sha)
           and type(expected_inventory_sha) is str
           and SHA256.fullmatch(expected_inventory_sha),
           "expected_digest_invalid")
     root, backup = Path(scratch_dir), Path(encrypted)
     check(root.is_dir() and not root.is_symlink()
+          and (root.stat().st_mode & 0o077) == 0
           and backup.is_file() and not backup.is_symlink()
           and not backup.resolve().is_relative_to(root.resolve()),
           "restore_paths_unsafe")
     check(digest(backup) == expected_cipher_sha,
           "encrypted_sidecar_checksum_mismatch")
-    with tempfile.TemporaryDirectory(prefix="ipr-attempt-restore-", dir=str(root)) as temp:
-        private = Path(temp)
-        os.chmod(private, 0o700)
-        plaintext = private / "decrypted.tar"
+    try:
+        proc = subprocess.Popen(
+            ["gpg", *_gpg_args(gpg_home), "--batch", "--no-tty",
+             "--decrypt", str(backup)],
+            stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    except OSError:
+        raise Hold("decryption_unavailable") from None
+    try:
         try:
-            result = subprocess.run(
-                ["gpg", *_gpg_args(gpg_home), "--batch", "--no-tty",
-                 "--decrypt", "--output", str(plaintext), str(backup)],
-                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                timeout=180, check=False)
-        except (OSError, subprocess.TimeoutExpired):
-            raise Hold("decryption_unavailable") from None
-        check(result.returncode == 0 and plaintext.is_file(),
-              "decryption_failed")
-        os.chmod(plaintext, 0o600)
-        try:
-            with tarfile.open(plaintext, "r:") as bundle:
-                members = bundle.getmembers()
-                check(len(members) >= 2 and len(members) <= MAX_ARTIFACTS + 1
-                      and all(m.isfile() and m.size <= MAX_ITEM_BYTES
-                              and m.name == m.name.lstrip("/")
-                              and ".." not in m.name.split("/")
-                              for m in members), "sidecar_member_unsafe")
-                check(members[0].name == "manifest.json"
-                      and members[0].size < MAX_INVENTORY,
-                      "sidecar_manifest_missing")
-                stream = bundle.extractfile(members[0])
-                check(stream is not None, "sidecar_manifest_missing")
-                manifest = json.load(stream)
+            with tarfile.open(fileobj=proc.stdout, mode="r|") as bundle:
+                first = bundle.next()
+                check(first is not None and first.name == "manifest.json"
+                      and first.isfile() and 0 < first.size <= MAX_INVENTORY,
+                      "sidecar_manifest_missing_or_unsafe")
+                stream = bundle.extractfile(first)
+                check(stream is not None, "sidecar_manifest_missing_or_unsafe")
+                with stream:
+                    raw_manifest = stream.read(MAX_INVENTORY + 1)
+                check(len(raw_manifest) == first.size,
+                      "sidecar_manifest_length_invalid")
+                manifest = json.loads(raw_manifest)
                 check(type(manifest) is dict
                       and manifest.get("schema") == SCHEMA
                       and manifest.get("run_id") == run_id
@@ -311,9 +306,10 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                       and manifest.get("production_cutover_authorized") is False,
                       "sidecar_manifest_mismatch")
                 items = manifest.get("captured_artifacts")
-                check(type(items) is list and len(items) == len(members) - 1
-                      and 1 <= len(items) <= MAX_ARTIFACTS, "sidecar_items_invalid")
-                expected_names = set()
+                check(type(items) is list and 1 <= len(items) <= MAX_ARTIFACTS,
+                      "sidecar_items_invalid")
+                expected = {}
+                total = 0
                 for item in items:
                     check(type(item) is dict and type(item.get("id")) is int
                           and item["id"] > 0 and type(item.get("bytes")) is int
@@ -323,32 +319,54 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                           item.get("archive_member") ==
                           "artifacts/artifact-%d.zip" % item["id"],
                           "sidecar_item_malformed")
-                    expected_names.add(item["archive_member"])
-                check(len(expected_names) == len(items)
-                      and {m.name for m in members[1:]} == expected_names,
-                      "sidecar_member_identity_mismatch")
-                for member in members[1:]:
-                    item = next(x for x in items if x["archive_member"] == member.name)
+                    name = item["archive_member"]
+                    check(name not in expected, "sidecar_member_duplicate")
+                    expected[name] = item
+                    total += item["bytes"]
+                    check(total <= MAX_TOTAL_BYTES, "sidecar_total_exceeds_limit")
+                actual = set()
+                for member in bundle:
+                    check(member.isfile() and member.name in expected and
+                          member.name not in actual and
+                          member.name == member.name.lstrip("/") and
+                          ".." not in member.name.split("/"),
+                          "sidecar_member_unsafe_or_extra")
+                    item = expected[member.name]
                     check(member.size == item["bytes"], "sidecar_item_length_mismatch")
-                    h = hashlib.sha256()
-                    with bundle.extractfile(member) as stream:
+                    stream = bundle.extractfile(member)
+                    check(stream is not None, "sidecar_item_unreadable")
+                    sha = hashlib.sha256()
+                    with stream:
                         for block in iter(lambda: stream.read(1024 * 1024), b""):
-                            h.update(block)
-                    check(h.hexdigest() == item["sha256"],
+                            sha.update(block)
+                    check(sha.hexdigest() == item["sha256"],
                           "sidecar_item_checksum_mismatch")
+                    actual.add(member.name)
+                check(actual == set(expected), "sidecar_members_missing")
+            proc.stdout.close()
+            check(proc.wait(timeout=180) == 0, "decryption_failed")
         except (tarfile.TarError, UnicodeError, ValueError, TypeError, OSError) as exc:
             if isinstance(exc, Hold):
                 raise
-            raise Hold("sidecar_tar_invalid") from None
-        return {
-            "schema": SCHEMA, "status": "decrypted_sidecar_verified",
-            "run_id": run_id, "artifact_count_verified": len(items),
-            "encrypted_sha256": expected_cipher_sha,
-            "all_opaque_zip_sha256_verified": True,
-            "individual_zip_contents_verified": False,
-            "independent_backup_medium_verified": False,
-            "production_cutover_authorized": False,
-        }
+            raise Hold("sidecar_stream_invalid") from None
+        except subprocess.TimeoutExpired:
+            raise Hold("decryption_timeout") from None
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+            proc.wait()
+        if proc.stdout is not None and not proc.stdout.closed:
+            proc.stdout.close()
+    return {
+        "schema": SCHEMA, "status": "decrypted_sidecar_verified",
+        "run_id": run_id, "artifact_count_verified": len(items),
+        "encrypted_sha256": expected_cipher_sha,
+        "all_opaque_zip_sha256_verified": True,
+        "individual_zip_contents_verified": False,
+        "plaintext_tar_written_to_disk": False,
+        "independent_backup_medium_verified": False,
+        "production_cutover_authorized": False,
+    }
 
 
 def main(argv=None):
