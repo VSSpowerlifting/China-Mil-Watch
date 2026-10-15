@@ -1,0 +1,47 @@
+name: China retirement full live-corpus scratch preflight
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/prepare_china_retirement_release.py'
+      - 'scripts/verify_china_retirement_render.py'
+      - 'tests/test_china_retirement_release.py'
+      - '.github/workflows/china_retirement_full_preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  full-scratch-rehearsal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Record source SQLite identity
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/old-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Install offline rendering dependencies
+        run: pip install -r requirements.txt
+      - name: Prepare complete reduced archive in isolated scratch
+        run: |
+          set -euo pipefail
+          EXPECTED="$(sha256sum pla_watch.db | cut -d' ' -f1)"
+          python -m scripts.prepare_china_retirement_release \
+            --scratch-root "$RUNNER_TEMP/china-complete-readonly-preflight" \
+            --expected-db-sha256 "$EXPECTED" \
+            --site-origin https://indopacificrecord.org
+      - name: Verify no production files or sidecars were modified
+        if: ${{ !cancelled() }}
+        run: |
+          sha256sum -c "$RUNNER_TEMP/old-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
