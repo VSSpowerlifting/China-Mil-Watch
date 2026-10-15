@@ -114,7 +114,7 @@ class ChinaFocusRealBrowser(unittest.TestCase):
                     self.assertGreater(page.locator("#results li.record-row").count(), 0)
                     page.go_back(wait_until="networkidle")
                     page.wait_for_function(
-                        """() => document.querySelector('#f-scope').value === 'all'""")
+                        """() => document.querySelector('#f-scope').value === 'focus'""")
                     page.goto(self.origin + "/archive.html?scope=all",
                               wait_until="networkidle")
                     self.assertEqual(page.locator("#f-scope").input_value(), "all")
