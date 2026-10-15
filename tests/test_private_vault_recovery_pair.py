@@ -91,13 +91,50 @@ class JointRecoveryTests(unittest.TestCase):
                                    "recovery_artifact_paths_unsafe"):
             gate.verify_pair(**args)
 
-    def test_wrong_inventory_fails_after_git_restore(self):
+    def test_wrong_inventory_refused_before_any_decrypt(self):
         args = self.args()
         self.zipcase.manifest.write_text(self.zipcase.manifest.read_text() + " ")
-        with self.assertRaisesRegex(
-                gate.RecoveryHold, "restore_inventory_checksum_mismatch"):
-            gate.verify_pair(**args)
+        with mock.patch.object(gitbox, "verify_restore") as git_decrypt, (
+                mock.patch.object(gate.zipbox, "restore") as zip_decrypt):
+            with self.assertRaisesRegex(
+                    gate.RecoveryHold, "restore_inventory_checksum_mismatch"):
+                gate.verify_pair(**args)
+            git_decrypt.assert_not_called()
+            zip_decrypt.assert_not_called()
         self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_tampered_second_ciphertext_refused_before_git_decrypt(self):
+        args = self.args()
+        with self.zipcase.encrypted.open("ab") as handle:
+            handle.write(b"fictional appended damage")
+        with mock.patch.object(gitbox, "verify_restore") as git_decrypt:
+            with self.assertRaisesRegex(
+                    gate.RecoveryHold, "encrypted_sidecar_checksum_mismatch"):
+                gate.verify_pair(**args)
+            git_decrypt.assert_not_called()
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_wrong_cipher_receipt_digest_refused_before_decrypt(self):
+        args = self.args()
+        self.git_backup["encrypted_sha256"] = "invalid"
+        self.write_receipts()
+        args = self.args()
+        with mock.patch.object(gitbox, "verify_restore") as git_decrypt:
+            with self.assertRaisesRegex(
+                    gate.RecoveryHold, "git_backup_receipt_invalid"):
+                gate.verify_pair(**args)
+            git_decrypt.assert_not_called()
+
+    def test_sidecar_inventory_count_mismatch_refused_before_decrypt(self):
+        args = self.args()
+        self.zip_backup["attempt_artifact_count"] += 1
+        self.write_receipts()
+        args = self.args()
+        with mock.patch.object(gitbox, "verify_restore") as git_decrypt:
+            with self.assertRaisesRegex(
+                    gate.RecoveryHold, "sidecar_receipt_coverage_mismatch"):
+                gate.verify_pair(**args)
+            git_decrypt.assert_not_called()
 
     def test_wrong_private_key_returns_hold_without_plaintext(self):
         args = self.args()

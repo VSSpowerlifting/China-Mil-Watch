@@ -94,6 +94,36 @@ def verify_pair(*, git_encrypted, git_receipt, git_receipt_sha,
     require(type(zipr.get("run_id")) is int and zipr["run_id"] == run_id and
             type(zipr.get("attempt_artifact_count")) is int and
             zipr["attempt_artifact_count"] > 0, "sidecar_receipt_run_invalid")
+    require(type(git.get("encrypted_sha256")) is str and
+            SHA.fullmatch(git["encrypted_sha256"]) and
+            type(git.get("reachable_git_objects")) is int and
+            git["reachable_git_objects"] > 0,
+            "git_backup_receipt_invalid")
+    require(type(zipr.get("ciphertext_sha256")) is str and
+            SHA.fullmatch(zipr["ciphertext_sha256"]) and
+            type(zipr.get("source_inventory_sha256")) is str and
+            SHA.fullmatch(zipr["source_inventory_sha256"]),
+            "sidecar_backup_receipt_invalid")
+
+    # Validate all independent input receipts and BOTH ciphertexts before
+    # decrypting either, so a known bad second component never causes a
+    # premature plaintext Git recovery of the otherwise intact first.
+    try:
+        gitbox._expected(git_pins)
+        source_sha, source_run = zipbox._read_inventory(inventory, run_id)
+    except (gitbox.BackupHold, zipbox.Hold) as exc:
+        raise RecoveryHold(str(exc)) from None
+    require(source_sha == zipr["source_inventory_sha256"],
+            "restore_inventory_checksum_mismatch")
+    require(len(source_run["artifacts"]) == zipr["attempt_artifact_count"],
+            "sidecar_receipt_coverage_mismatch")
+    require(git_path.is_file() and not git_path.is_symlink() and
+            zip_path.is_file() and not zip_path.is_symlink(),
+            "encrypted_input_not_regular")
+    require(gitbox._sha256(git_path) == git["encrypted_sha256"],
+            "encrypted_bundle_sha_mismatch")
+    require(zipbox.digest(zip_path) == zipr["ciphertext_sha256"],
+            "encrypted_sidecar_checksum_mismatch")
 
     try:
         restored_git = gitbox.verify_restore(

@@ -12,6 +12,12 @@ A verified encrypted Actions ZIP is not proof that Git history was preserved.
 Use `python -m scripts.private_vault_recovery_pair` on an **owner-controlled,
 offline terminal** to actually decrypt/restore *both* an encrypted Git bundle and
 one pinned Actions ZIP sidecar with an independently retained original census.
+The tool checks **both ciphertext SHA-256s and the original complete per-run
+artifact census before decrypting either backup**. Altered inventory, missing
+attempts, incorrect run identity or damaged ciphertext aborts before a temporary
+plaintext Git bundle is generated. The check is deliberately repeated by each
+underlying restore operation: a passing preflight alone is not recovery proof.
+
 The supplied JSON creation receipts must have owner-recorded SHA-256 values from
 **outside the copy being tested**. Store immutable receipts and original census
 separately; receipt digests are integrity comparisons, not signatures or
