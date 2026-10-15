@@ -48,14 +48,25 @@ jobs:
         run: |
           set -euo pipefail
           umask 077
-          git clone --depth=1 --single-branch --branch shadow/ph-afp \
+          git clone --single-branch --branch shadow/ph-afp \
             "https://github.com/${GITHUB_REPOSITORY}.git" \
             "$RUNNER_TEMP/ipr-afp-readonly"
-          git clone --depth=1 --single-branch --branch shadow/indonesia-kemhan \
+          git clone --single-branch --branch shadow/indonesia-kemhan \
             "https://github.com/${GITHUB_REPOSITORY}.git" \
             "$RUNNER_TEMP/ipr-kemhan-readonly"
           git -C "$RUNNER_TEMP/ipr-afp-readonly" fsck --no-reflogs --connectivity-only
           git -C "$RUNNER_TEMP/ipr-kemhan-readonly" fsck --no-reflogs --connectivity-only
+          # Use the exact owner-reviewed historic cohorts, not newly advanced
+          # branch tips. Each old commit must still be an ancestor of the
+          # collector branch; a force-push or history loss is a HOLD.
+          afp=8a63ba423818e30d147096fd1a32949cf6905ee5
+          kemhan=0595c6677be24f8f0f33aecb28eec0050e36e8f9
+          git -C "$RUNNER_TEMP/ipr-afp-readonly" cat-file -e "$afp^{commit}"
+          git -C "$RUNNER_TEMP/ipr-kemhan-readonly" cat-file -e "$kemhan^{commit}"
+          git -C "$RUNNER_TEMP/ipr-afp-readonly" merge-base --is-ancestor "$afp" HEAD
+          git -C "$RUNNER_TEMP/ipr-kemhan-readonly" merge-base --is-ancestor "$kemhan" HEAD
+          test "$(git -C "$RUNNER_TEMP/ipr-afp-readonly" ls-tree --name-only "$afp")" = state
+          test "$(git -C "$RUNNER_TEMP/ipr-kemhan-readonly" ls-tree --name-only "$kemhan")" = state
       - name: Reverify actual pinned shadow source snapshots; produce count-only held receipts
         working-directory: repo
         shell: bash
@@ -65,12 +76,12 @@ jobs:
           python -m scripts.stage_afp_kemhan_official_links \
             --family ph_afp_articles \
             --source-checkout "$RUNNER_TEMP/ipr-afp-readonly" \
-            --source-commit "$(git -C "$RUNNER_TEMP/ipr-afp-readonly" rev-parse HEAD)" \
+            --source-commit "8a63ba423818e30d147096fd1a32949cf6905ee5" \
             --count-only
           python -m scripts.stage_afp_kemhan_official_links \
             --family id_kemhan_news \
             --source-checkout "$RUNNER_TEMP/ipr-kemhan-readonly" \
-            --source-commit "$(git -C "$RUNNER_TEMP/ipr-kemhan-readonly" rev-parse HEAD)" \
+            --source-commit "0595c6677be24f8f0f33aecb28eec0050e36e8f9" \
             --count-only
           sha256sum -c "$RUNNER_TEMP/db-start.sha"
           git diff --exit-code -- pla_watch.db output/ shadow/
