@@ -2,7 +2,7 @@
 {% from "_atlas.html" import breadcrumb %}
 {% from "_weeks.html" import week_strip %}
 {% block title %}{{ desk.name }} — {{ title }}{% endblock %}
-{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia', 'japan') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
+{% block head_scripts %}{% if desk.slug in ('vietnam', 'philippines', 'korea', 'indonesia', 'japan', 'us-indopacific') or korea_preview | default(false) %}<link rel="stylesheet" href="desk-references.css">{% endif %}{% endblock %}
 {% block content %}
 {{ breadcrumb([('Desks', 'desks.html'), (desk.name, none)]) }}
 <header class="page-head">
@@ -20,6 +20,35 @@
     <p>{% if published_research | default([]) and desk.status == 'shadow' %}IPR's approved original research is publicly available. Its cited government originals remain on the official publishers' sites; this is not a production source-text archive or a claim of comprehensive collecting coverage.{% else %}{% if desk.slug == "korea" and not korea_preview | default(false) %}Public official-source directory: five original headline/date entries, nine additional historical links, and separately admitted new official-link metadata when available. Original document bodies and substantive analysis remain outside the production archive.{% else %}{{ desk.status_explanation }}{% endif %}{% endif %}</p>
   </div>
 </div>
+
+{# US: first-party publisher URLs, never collected source originals. #}
+{% if desk.slug == 'us-indopacific' and us_pacom_official_links | default([]) %}
+<section class="desk-references us-pacom-source-links" aria-labelledby="us-pacom-links-heading">
+  <p class="eyebrow">Official-source directory · nine external government links</p>
+  <h2 id="us-pacom-links-heading">U.S. Pacific Command — source references</h2>
+  <p>Nine official U.S. Pacific Command links identified by command-hosted
+  page number and displayed date. These direct readers to the original publisher.
+  They are <strong>not IPR-collected or independently approved research records</strong>,
+  do not certify the command's claims, and do not establish that the site's
+  automated access restrictions have been resolved. Titles, bodies, documents,
+  photographs and translations are not copied here.</p>
+  <ol class="desk-reference-list" aria-label="Nine external US PACOM government references">
+    {% for ref in us_pacom_official_links %}
+    <li data-us-pacom-link="{{ ref.source_identity }}">
+      <h3><a href="{{ ref.source_url }}" target="_blank" rel="noopener noreferrer">{{ ref.neutral_label }}</a></h3>
+      <p class="meta">Publisher: U.S. Pacific Command · Website category:
+        {{ 'Press releases and readouts' if ref.section == 'press_release' else 'News articles' }}
+        · Published <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+        · Outbound official link only</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">This fixed research directory does not operate a PACOM crawler.
+    PACOM's robots-policy access remains unresolved; DVIDS is a separate paused
+    media-service feed, not a proxy for command statements. No U.S. production
+    records are counted from these links.</p>
+</section>
+{% endif %}
 
 {# A permanent publication is IPR-authored analysis with approved citations.
    This is independent of the source-collection status, remains empty until

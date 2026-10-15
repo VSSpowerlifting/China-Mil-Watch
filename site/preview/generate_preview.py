@@ -2425,8 +2425,6 @@ def build(out_dir: Path, title: str, db_path: Path,
             korea_additional_rows = load_additional_korea_official_links()
             if len(korea_additional_rows) != 9:
                 raise ValueError("Korea additional official URLs require nine exact owner-approved identities")
-            # Production metadata is a distinct table, not a shadow promotion
-            # or an article. Publish ONLY approved URL/date/issuer fields.
             from core.korea_official_live_links import load_live_korea_official_links
             frozen_ids = {r["source_identity"] for r in (
                 korea_public_rows + korea_additional_rows)}
@@ -2974,6 +2972,9 @@ def build(out_dir: Path, title: str, db_path: Path,
                                     if desk.slug == "indonesia" else [])
         indonesia_press_links = (load_indonesia_press_index()
                                  if desk.slug == "indonesia" else [])
+        from core.us_pacom_official_links import load_us_pacom_official_links
+        us_pacom_links = (load_us_pacom_official_links()
+                          if desk.slug == "us-indopacific" else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -2984,6 +2985,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              public_reference_languages=languages,
                              indonesia_official_links=indonesia_official_links,
                              indonesia_press_links=indonesia_press_links,
+                             us_pacom_official_links=us_pacom_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),

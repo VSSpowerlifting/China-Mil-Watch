@@ -148,24 +148,39 @@ how a parser bug becomes a permanent, invisible corpus defect.
 * **Isolation** — the runner refuses to write inside the repository working
   tree and never names `pla_watch.db` or `output/`.
 
-## Launch: what activating this desk actually does
+## Historical launch and current pause — not a new Day 0
 
-Nothing here is active. Activating it means three deliberate acts, in order:
+The DVIDS shadow experiment **did launch once**: authenticated GitHub Actions
+manual run [#35476931301](https://github.com/VSSpowerlifting/China-Mil-Watch/actions/runs/35476931301)
+succeeded September 19, 2026 and committed 40 eligible records on the isolated
+`shadow/us-indopacom` state ref (`a36f67aee80e7520fb9fb401f69ca7c0ce112ce5`).
+That is genuine historical shadow state, **not** a public desk, a production
+record, permission for publisher reuse, or a completed reliability window.
+Earlier notes claiming the branch never existed or Day 0 was never observed
+described a **pre-launch** state and are superseded here.
 
-1. **Bootstrap the state branch.** `shadow/us-indopacom` does not exist. The
-   workflow creates it as an **orphan** on first run (`git checkout --orphan`,
-   `git rm -rf .`), so it shares no history with `main` and no PR can target
-   it. Until the first successful run there is no `clock.json`, and therefore
-   **no day zero**.
-2. **Enable `.github/workflows/us_shadow.yml`.** Its cron is `40 8 * * *`.
-   That slot is chosen against the lateness each other schedule has actually
-   shown, not their nominal times: Japan (22:40 UTC) has run 1h50m-7h38m late,
-   reaching ~06:18 UTC; the Daily (12:23 UTC) lands ~17:00-18:30 UTC;
-   Singapore (21:10 UTC) lands ~23:00-00:00 UTC. 08:40 UTC is the one wide
-   gap. It is also 04:40 America/New_York, so the DVIDS publication day being
-   collected is closed rather than half-written.
-3. **Nothing else.** The registry entry stays `access_blocked`, no source is
-   enabled, and no record reaches `pla_watch.db` or `output/`.
+The experimental daily `08:40 UTC` schedule subsequently ran September 20
+through October 7, 2026. All 18 consecutive logical collecting dates failed
+*before feed discovery* at the `robots.txt` request (502/504). The cron was
+removed October 7. `.github/workflows/us_shadow.yml` now offers a **manual-only**
+diagnostic dispatch requiring explicit authorization for the individual reprobe;
+it is not an automatic collection service. No successes are to be inferred from
+the missing dates, and the one old successful collection does not qualify this
+source for publishing.
+
+Reactivation of a DVIDS shadow schedule requires separate owner authorization,
+a readable policy permitting both declared RSS and article paths, a bounded
+authenticated runner collection, and independent subsequent reliability review.
+It would **not** unlock a command-authored first-party feed: DVIDS unit tagging
+is a separate Tier B source, not US PACOM press-release authorship. Full
+attempt/run evidence and the current restart contract are in
+[`docs/US_DVIDS_EGRESS_PAUSE_2026-10-07.md`](../../docs/US_DVIDS_EGRESS_PAUSE_2026-10-07.md).
+
+**Separate first-party PACOM research:** a
+[nine-URL indexed link review](../../docs/engineering/US_PACOM_FIRST_PARTY_LINK_RESEARCH_2026-10-15.md)
+now documents only official PACOM URL/date leads. It neither retrieves source
+bodies nor resolves the command site's access restrictions. The public U.S.
+Indo-Pacific Reference Desk stays `access_blocked` and no public data changes.
 
 ### Retention is a count, and there is no backfill
 
@@ -206,5 +221,7 @@ Consequences, stated plainly:
    and must not be counted as one.
 4. **No bilingual dimension.** Every item is English. The desk contributes
    nothing to the project's translation or original-language evidence work.
-5. **Not launched.** No workflow is enabled, no state branch exists, and the
-   desk has collected nothing. Day zero has not been reached.
+5. **Paused after Day 0.** One manual shadow collection succeeded on September 19,
+   2026 (40 eligible records), but 18 subsequent scheduled slots failed on
+   robots-policy access and the schedule is disabled. The old state branch is
+   not a live collection service and supplies no public IPR records.
