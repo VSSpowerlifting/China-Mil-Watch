@@ -31,8 +31,9 @@ class PublishedTrailRiskTest(unittest.TestCase):
         self.assertEqual(result["issues_affected"], [2, 10, 12, 13, 14])
         self.assertEqual(result["attention_counts"], {
             "already_caveated_in_issue": 3,
-            "claim_level_review": 9,
+            "claim_level_review": 8,
             "machine_summary_conflict": 1,
+            "published_claim_source_mismatch": 1,
         })
         self.assertEqual(result["stored_snippet_warning_count_not_proven_defects"], 13)
         self.assertEqual(result["historical_record_count"], 5230)
@@ -111,6 +112,20 @@ class PublishedTrailRiskTest(unittest.TestCase):
         pages[2265] = pages[2265].replace("Joint Sea-2025 naval exercise",
                                           "Joint Sea-2026 naval exercise")
         with self.assertRaisesRegex(ValueError, "machine summary conflict"):
+            audit(index, packet, pages, issues)
+
+    def test_specific_no12_atlas_vs_kvd002_claim_requires_review(self):
+        index, packet, pages, issues = actual()
+        case = next(c for c in packet["checks"] if c["id"] == 2881)
+        self.assertEqual(case["editorial_attention"],
+                         "published_claim_source_mismatch")
+        result = audit(index, packet, pages, issues)
+        self.assertFalse(next(x for x in result["cases"] if x["id"] == 2881)[
+            "brief_inaccuracy_established"])
+        issues["2026-08-01"]["opening_note"] = (
+            issues["2026-08-01"]["opening_note"].replace(
+                "Atlas drone swarm", "KVD002 armed reconnaissance"))
+        with self.assertRaisesRegex(ValueError, "Atlas/KVD002 issue claim"):
             audit(index, packet, pages, issues)
 
     def test_forward_daily_collection_does_not_fabricate_new_approvals(self):
