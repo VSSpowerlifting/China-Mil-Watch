@@ -107,6 +107,25 @@ the government claim is true.
 | `2391` | Not selected | The captured body contains the numbered sections of the July 12 Foreign Ministry declaration; the matching Xinhua publication cites the Foreign Ministry as source: `https://www1.xinhuanet.com/world/20260712/81756443caa14e029ca5be5680412ef3/c.html`. IPR's collected `81.cn` URL is a republication. | **Retain candidate:** authoritative South China Sea official position, with original issuer identified. |
 | `2180` | Not selected | Global Times article `https://www.globaltimes.cn/page/202607/1365233.shtml` and defense-ministry Xinhua republication `https://eng.mod.gov.cn/2025xb/N/T/16472056.html` both describe a July 6 strategic missile test attributed to the PLA Navy. IPR's 3,000+-character stored-text block is mostly unrelated article teasers/navigation and lacks the core test account. | **Hold for source-text repair:** topic is significant; do not treat stored body as complete, nor auto-promote it. |
 
+Three additional headline-level contrasts underscore why keywords cannot
+decide selection:
+
+- **#948:** official MND reporting records U.S.–China Military Maritime
+  Consultative Agreement working-group talks in Hawaii (May 28–29, 2026).
+  This is directly relevant as *official military-to-military messaging* and
+  is a strong retain candidate pending text/provenance review
+  (`https://eng.mod.gov.cn/2025xb/N/T/16464949.html`).
+- **#4104:** a BRICS speech on the **Middle East Gulf** (中东海湾)
+  accidentally matched the naive `东海` cue. This is not evidence of an
+  East China Sea record. The review cue now excludes this phrase; the title
+  needs normal scope review rather than automatic exclusion or promotion.
+- **#1675:** a photo feature about the South China Sea documents coast-guard
+  presence near Second Thomas Shoal in its captions. Editorial utility may
+  reside in captions, even where there is little article prose. Check images,
+  caption attribution and reuse rights before promoting. A descriptive photo
+  essay is **not** equivalent to an operational log or independent proof of
+  presence (`https://news.fjsen.com/2026-06/23/content_32206613.htm`).
+
 The first two records are strong **curated-inclusion candidates**, not final
 editorial approvals; they still need duplicate-event clustering and reviewer
 sign-off. The third should enter a quality-repair queue and retain its source
