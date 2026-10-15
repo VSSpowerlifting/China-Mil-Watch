@@ -6,7 +6,7 @@
 {% block head_scripts %}<link rel="stylesheet" href="relief.css"><link rel="stylesheet" href="archive.css">{% endblock %}
 {% block main_class %} class="archive-page"{% endblock %}
 {% block content %}
-<header class="page-head"><h1>The record.</h1><p class="lede">{{ corpus_total | count }} preserved records. Search English and original titles.</p></header>
+<header class="page-head"><h1>The record.</h1><p class="lede">{{ corpus_total | count }} preserved records. Search English and original titles.</p><p class="finder-note">Start with a smaller <strong>automatically assembled research focus</strong> ({{ focus.china_focus | count }} China records, plus {{ (focus.all_focus - focus.china_focus) | count }} records from other desks). It is not individually fact-checked or editor-approved. All {{ corpus_total | count }} preserved records, their permanent links and publication citations remain available below and through Full preserved record.</p></header>
 {# The finder. `#browse` and the form both ship `hidden`; browse.js reveals
    them, so with JavaScript off no control ever appears operative when nothing
    can operate it. The newest records below are rendered on the server and
@@ -21,9 +21,16 @@
    plain GET, so a query survives in the address and the back button restores
    it. (DECISION_LOG 2026-09-27, the Records finder.) #}
 <div id="browse" data-snapshot-date="{{ snapshot.date }}"
-     data-snapshot-records="{{ corpus_total }}" hidden>
+     data-snapshot-records="{{ corpus_total }}" data-focus-records="{{ focus.all_focus }}" hidden>
   <form id="controls" class="finder rl-finder" role="search" action="archive.html" method="get" hidden>
     <div class="finder-row">
+      <div class="finder-field">
+        <label for="f-scope">Browse collection</label>
+        <select id="f-scope" name="scope">
+          <option value="focus" selected>Research focus ({{ focus.all_focus | count }} records)</option>
+          <option value="all">Full preserved record ({{ corpus_total | count }} records)</option>
+        </select>
+      </div>
       <div class="finder-field finder-field--q">
         <label for="f-q">Title contains</label>
         <input id="f-q" name="q" type="search" autocomplete="off"
@@ -124,7 +131,7 @@ accessible through the week-by-week browse above.</p>
 <h2 id="results-heading" class="visually-hidden">Records</h2>
 {# tabindex="-1": a page turn moves focus here (browse.js `turn`), because
    the button pressed may have become disabled. #}
-<p class="result-range" id="result-range" tabindex="-1">The newest {{ archive_first | length }} of {{ corpus_total | count }} records</p>
+<p class="result-range" id="result-range" tabindex="-1">The newest {{ archive_first | length }} of {{ focus.all_focus | count }} research-focus records. <a href="corpus.html">All {{ corpus_total | count }} preserved records by week</a>.</p>
 <p class="visually-hidden" id="result-live" role="status" aria-live="polite"></p>
 <div id="results">
   {{ record_days(archive_first, desk_by_source) }}
@@ -136,7 +143,7 @@ Remove a filter, widen the date range, or try the original-language title.</p></
 <nav id="pager" class="pager" aria-label="Result pages">
   <button type="button" id="page-prev" hidden>Previous page</button>
   <button type="button" id="page-next" hidden>Next page</button>
-  <p id="nojs-path">Every record is also reachable by publication week:
+  <p id="nojs-path">Every record is also reachable by publication week in the complete preserved collection:
   <a href="corpus.html">browse the corpus by week</a>. No JavaScript required.</p>
 </nav>
 
@@ -145,8 +152,7 @@ Remove a filter, widen the date range, or try the original-language title.</p></
    them. #}
 {{ week_strip(weeks, volume_max, heading='h2', title='Records by publication week') }}
 
-<noscript><p class="nojs-note">Search and filters need JavaScript. The newest
-records above, and every record by publication week, do not.</p></noscript>
+<noscript><p class="nojs-note">Search and filters need JavaScript. The smaller research focus above is still readable. The full record, including every historic China source and Brief citation, remains available through the <a href="corpus.html">week-by-week preserved corpus</a>.</p></noscript>
 
 {# A server-derived chart of the four exhaustive processing states. The exact
    figures are text; bar widths are decorative and never the only evidence. #}
