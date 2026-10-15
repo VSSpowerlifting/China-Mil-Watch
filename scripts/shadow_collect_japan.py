@@ -273,6 +273,14 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket,
         bucket[name] += 1
         entry[name] += 1
 
+    def note_failure(ref, stage, status):
+        # Report selected-item failures without leaking response bytes or
+        # extractor diagnostic prose. Discovery failures remain separately
+        # reported in failed_endpoints.
+        bucket["attempt_failures"].append({
+            "url": ref.url, "stage": stage, "status": status,
+        })
+
     discovery = adapter.discover(window)
     bucket["listing_status"] = discovery.status
     bucket["failed_endpoints"] = discovery.failed_endpoints
@@ -322,12 +330,14 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket,
         if capture.status == st.OK_ALL_DUPLICATES:
             if not conn.execute("SELECT 1 FROM shadow_records WHERE url = ?", (ref.url,)).fetchone():
                 count("fetch_failures")
+                note_failure(ref, "fetch", "orphan_not_modified")
                 _record_unretrieved(conn, ref, adapter, st.FETCH_FAILURE, run_id)
                 continue
             count("duplicates")          # 304: unchanged since the stored validator
             continue
         if capture.status != st.OK:
             count("fetch_failures")
+            note_failure(ref, "fetch", capture.status)
             _record_unretrieved(conn, ref, adapter, capture.status, run_id)
             continue
 
@@ -335,6 +345,8 @@ def _collect_source(conn, adapter, window, run_id, entry, bucket,
         result = adapter.extract(capture)
         if result.status != st.OK or not result.documents:
             count("extraction_failures")
+            note_failure(ref, "extract", result.status if result.status != st.OK
+                         else "empty_documents")
             _record_unretrieved(conn, ref, adapter,
                                 result.error_detail or result.status, run_id)
             continue
@@ -437,7 +449,7 @@ def run(state_dir: Path, target: date, lookback: int, cap: int,
                   "revalidation_deferred": 0, "fetch_failures": 0,
                   "extraction_failures": 0, "pre_bootstrap": 0,
                   "deferred": 0, "undated": 0, "listing_status": None,
-                  "kinds": {}}
+                  "kinds": {}, "attempt_failures": []}
         _collect_source(conn, source_adapter, window, run_id, entry, bucket,
                         bootstrap["cutoff_date"], cap)
         bucket["robots_status"] = getattr(source_adapter, "robots_status", "not_checked")
