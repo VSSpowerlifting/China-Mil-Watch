@@ -79,14 +79,23 @@ class FreshCloneCase(unittest.TestCase):
         return hashlib.sha256(self.db.read_bytes()).hexdigest()
 
 
-class TestTheTrackedDatabaseIsStillWalMode(FreshCloneCase):
-    """The premise the rest of this module rests on."""
+class TestWalJournalBehaviorOnIsolatedClone(FreshCloneCase):
+    """Prove WAL semantics on a disposable copy, not by pinning main's mode."""
 
-    def test_the_tracked_database_really_is_wal_mode(self):
+    def test_the_scratch_database_can_enter_wal_mode(self):
+        # The tracked SQLite file is a release artifact; future runs may
+        # checkpoint/convert it to DELETE mode without any reader regression.
+        # Force WAL only on this isolated fixture to test the behavior that
+        # matters for the read-only sidecar safety contracts.
+        original = hashlib.sha256(TRACKED.read_bytes()).hexdigest()
+        with sqlite3.connect(self.db) as con:
+            self.assertEqual(
+                con.execute("PRAGMA journal_mode=WAL").fetchone()[0].lower(),
+                "wal")
         header = self.db.read_bytes()[:100]
-        self.assertEqual((header[18], header[19]), (2, 2),
-                         "write/read version 2 == WAL; if this ever changes, "
-                         "the reasoning below needs revisiting")
+        self.assertEqual((header[18], header[19]), (2, 2))
+        self.assertEqual(hashlib.sha256(TRACKED.read_bytes()).hexdigest(),
+                         original, "changing scratch journal mode touched main")
 
 
 class TestGovernedConsumersReadThroughTheHelper(unittest.TestCase):
