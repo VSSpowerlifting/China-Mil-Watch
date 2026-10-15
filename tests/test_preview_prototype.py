@@ -1598,21 +1598,27 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertIn('Machine translation', html)
         self.assertNotIn('in the language they were published in', html)
 
-    def test_every_home_record_is_in_the_analyzed_state(self):
+    def test_every_home_record_discloses_its_actual_processing_state(self):
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(self.page('index.html'), 'html.parser')
-        recent = [int(a['href'].split('/')[1].split('.')[0]) for a in soup.select('.home-recent h3 a')]
-        # The homepage record list now follows the machine-organized
-        # focus-first discovery collection (PR #636), not the unfiltered
-        # latest-analyzed feed. Verify the exact deterministic focus order
-        # and separately ensure every chosen source is actually analyzed.
+        cards = soup.select('.home-recent li.home-card')
+        recent = [int(card.select_one('h3 a')['href'].split('/')[1].split('.')[0])
+                  for card in cards]
+        # The homepage is an "As published" SOURCE REGISTER, not an
+        # analyzed-only feed. Focus permits some title-only primary sources
+        # and separately identified provisional leads; their real processing
+        # states must be visible rather than falsely called analyzed.
         data = gp.load_corpus(TRACKED_DB)
         from core.china_discovery import build_focus
         focus = build_focus(data['corpus'])
         self.assertEqual(recent, [r['id'] for r in focus['rows'][:4]])
         by_id = {r['id']: r for r in data['corpus']}
-        self.assertTrue(all(by_id[rid]['state'] == 'analyzed'
-                            for rid in recent))
+        for card, rid in zip(cards, recent):
+            source = by_id[rid]
+            badge = card.select_one('.state')
+            self.assertIsNotNone(badge)
+            self.assertIn('state--' + source['state'], badge.get('class', []))
+            self.assertEqual(badge.get_text(strip=True), source['state_label'])
         corpus = data['corpus']
         selected = soup.select_one('.home-selected h3 a')
         if selected:
