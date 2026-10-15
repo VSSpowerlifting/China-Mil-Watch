@@ -11,6 +11,7 @@ on:
     paths:
       - "scripts/watch_korea_shadow_slots.py"
       - "tests/test_korea_shadow_slot_watchdog.py"
+      - "tests/test_korea_prospective_seven_slots.py"
       - "scripts/audit_korea_actions_attempts.py"
       - "tests/test_korea_actions_attempts.py"
       - ".github/workflows/korea_shadow_slot_watchdog.yml"
@@ -35,7 +36,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Test mature-slot boundaries, logical provenance and no source release
-        run: python -m unittest tests.test_korea_shadow_slot_watchdog tests.test_korea_actions_attempts -v
+        run: python -m unittest tests.test_korea_shadow_slot_watchdog tests.test_korea_prospective_seven_slots tests.test_korea_actions_attempts -v
       - name: Assert production and desk configuration unchanged
         run: git diff --exit-code -- pla_watch.db output/ shadow/
 
@@ -53,7 +54,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Verify synthetic calendar and schedule/recovery separation
-        run: python -m unittest tests.test_korea_shadow_slot_watchdog -q
+        run: python -m unittest tests.test_korea_shadow_slot_watchdog tests.test_korea_prospective_seven_slots -q
       - name: Fetch ONLY metadata blobs of exact Korea shadow Git tip
         shell: bash
         run: |
