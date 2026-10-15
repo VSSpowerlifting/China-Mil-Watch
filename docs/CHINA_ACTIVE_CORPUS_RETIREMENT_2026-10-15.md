@@ -10,7 +10,7 @@ Compute against an **exact regenerated and disclosed focus index** after #636 go
 
 1. Keep every one of the 600 focused China source IDs. This is a provisional research-utility selection, **not** a claim of 600 human reviews.
 2. Keep every source ID cited by a published Brief (the October 14 index lists 182 trail references, including 178 China records). Importantly, some cited captures are contaminated and need correction; citation protection is not an endorsement.
-3. Keep both specifically identified, consequential original-language Chinese Foreign Ministry leads (#2391, #2849), if they exist.
+3. Keep both specifically identified, consequential original-language Chinese Foreign Ministry leads (#2391, #2849), if they exist. Separately read the canonical `briefs/*.json` source trails and `timelines/*.json` evidence objects and retain every explicitly referenced record ID, including references in unpublished timeline drafts. This independently checks dependencies rather than assuming the compact index's published-trail list captured them all.
 4. Keep every non-China source ID, including all 86 Singapore records in the baseline.
 5. Consider every other China article row **for retirement from the active database**. This removes thousands of *rows*, not just UI listings. A retired record is not automatically declared inauthentic, duplicate, wrong, or low-quality; it simply falls outside the much narrower **active** collection.
 
