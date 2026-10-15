@@ -343,16 +343,14 @@ class TestCandidateBuild(unittest.TestCase):
         self.assertIn("Corpus records</dt><dd>Not admitted", html)
         self.assertIn("No source is enabled in production.", html)
 
-    def test_the_us_is_not_a_collecting_desk_in_the_build(self):
-        """
-        It has a page, because a declared desk a reader cannot check is worse
-        than one labelled honestly. What it may not have is a status, a count
-        or a source that reads like an operating desk.
-        """
+    def test_us_official_metadata_is_live_while_pacom_remains_blocked(self):
+        """Congressionally sourced links are distinct from PACOM originals."""
         html = (self.out / "us-indopacific.html").read_text(encoding="utf-8")
-        self.assertIn("Access blocked — not collecting", html)
-        self.assertIn("Records</dt><dd>None collected", html)
-        self.assertNotIn("Live — collecting", html)
+        self.assertIn("Official congressional metadata feed live — PACOM collection blocked", html)
+        self.assertIn("Collected official congressional metadata links", html)
+        self.assertIn("Direct PACOM command collection", html)
+        self.assertIn("Admitted U.S. source-body articles", html)
+        self.assertNotIn("Nothing has been configured, enabled or collected.", html)
 
     def test_no_undeclared_desk_was_introduced(self):
         """Known public shadow desks render, but undeclared desks stay absent."""

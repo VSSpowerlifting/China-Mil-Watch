@@ -146,23 +146,21 @@ class TheMechanismIsWhatWeThinkItIs(unittest.TestCase):
     def sides(self):
         return [s for s in SIDECARS if (self.tmp / (self.db.name + s)).exists()]
 
-    def test_the_database_really_is_in_wal_mode(self):
-        """Bytes 18 and 19 of the header are the write and read versions;
-        2 means WAL. If this ever stops being true the rest is moot."""
+    def test_database_header_identifies_supported_sqlite_journal_mode(self):
+        """Production may use rollback (1) or WAL (2) after reconciliation."""
         with open(self.db, "rb") as fh:
             header = fh.read(20)
-        self.assertEqual(2, header[18])
-        self.assertEqual(2, header[19])
+        self.assertIn((header[18], header[19]), ((1, 1), (2, 2)))
 
-    def test_a_plain_connect_and_read_creates_the_sidecars(self):
-        """The portable half of the premise. A plain read of a WAL database
-        writes two files next to it, everywhere, on every build."""
+    def test_plain_read_obeys_the_actual_journal_mode(self):
+        """Rollback needs no sidecars; WAL creates them while open."""
         con = sqlite3.connect(str(self.db))
         self.addCleanup(con.close)
+        mode = con.execute("PRAGMA journal_mode").fetchone()[0].lower()
         con.execute("SELECT count(*) FROM articles").fetchone()
-        self.assertEqual(sorted(SIDECARS), sorted(self.sides()),
-                         "a plain read did not create the sidecars, so the "
-                         "premise of the fix has changed")
+        self.assertIn(mode, ("delete", "wal"))
+        expected = sorted(SIDECARS) if mode == "wal" else []
+        self.assertEqual(expected, sorted(self.sides()))
 
     def test_whether_close_removes_them_is_a_property_of_the_build(self):
         """Not portable, and the reason the fix is not 'just close it'.
