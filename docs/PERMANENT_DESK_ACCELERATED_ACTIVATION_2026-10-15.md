@@ -14,7 +14,7 @@ A minimum of **seven consecutive successfully collected real scheduled logical d
 
 ## Nonwaivable pre-publication evidence
 
-1. **C1–C12 all pass** for the actual admitted source subset, on legally and technically accessible official endpoints. A blocked page or a failed body extraction cannot be made whole by a metadata link or a source from another ministry.
+1. **C1–C12 all pass** for the actual admitted source subset, on legally and technically accessible official endpoints, under the publisher's robots/access terms. A blocked page or a failed body extraction cannot be made whole by a metadata link or a source from another ministry.
 2. **Exact original integrity:** every source record proposed for public admission is bound to original URL, publisher date, byte/capture hashes, immutable Git state and the preserved raw version, with all provenance discrepancies, encoded-text problems and issuer-attribution anomalies dispositioned.
 3. **Named substantive human source review:** a real person has inspected the exact original language and publication version, recorded accuracy/reuse findings and documented independent corroboration where the claim needs it. CI, a model or an owner's general statement that someone checked the sources is not an authenticated per-version review.
 4. **Source-specific rights and access decision:** record publisher terms, any robots/noindex restrictions, full-text redistribution, translation, short editorial quotation, metadata links, and photographs/attachments **separately**. Admitting a bibliographic link does not permit original-body republication. Restricted or third-party materials remain excluded unless permission or an independently documented lawful basis exists.
@@ -23,7 +23,7 @@ A minimum of **seven consecutive successfully collected real scheduled logical d
 
 ## After permanent promotion
 
-Every accelerated source must continue scheduled production observation and record actual Day-14 and Day-30 review decisions **after** those dates occur. If the complete source/rights chain, availability or data fidelity fails, stop admission for that source and consider pausing the collector. Retain historic published version identifiers and publish corrections transparently as necessary. The reviewer may not backdate a signoff or silently rewrite the original state. A missing future checkpoint is reported as an unresolved release obligation and triggers an owner assessment; it never retroactively proves historic evidence did not exist.
+Every accelerated source must continue scheduled production observation and record actual Day-14 and Day-30 review decisions after those dates occur, not early or by assumption. If the complete source/rights chain, availability or data fidelity fails, stop admission for that source and consider pausing the collector. Retain historic published version identifiers and publish corrections transparently as necessary. The reviewer may not backdate a signoff or silently rewrite the original state. A missing future checkpoint is reported as an unresolved release obligation and triggers an owner assessment; it never retroactively proves historic evidence did not exist.
 
 A desk can become `live` only when the **admitted production source set** genuinely passes this release, the scheduled production path works, the site renders genuine records accurately, and the guarded deployment succeeds. No permanent-launch flag is inferred from the word “approved” in chat.
 
