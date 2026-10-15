@@ -21,6 +21,35 @@
   </div>
 </div>
 
+{# US: first-party publisher URLs, never collected source originals. #}
+{% if desk.slug == 'us-indopacific' and us_pacom_official_links | default([]) %}
+<section class="desk-references us-pacom-source-links" aria-labelledby="us-pacom-links-heading">
+  <p class="eyebrow">Official-source directory · nine external government links</p>
+  <h2 id="us-pacom-links-heading">U.S. Pacific Command — source references</h2>
+  <p>Nine official U.S. Pacific Command links identified by command-hosted
+  page number and displayed date. These direct readers to the original publisher.
+  They are <strong>not IPR-collected or independently approved research records</strong>,
+  do not certify the command's claims, and do not establish that the site's
+  automated access restrictions have been resolved. Titles, bodies, documents,
+  photographs and translations are not copied here.</p>
+  <ol class="desk-reference-list" aria-label="Nine external US PACOM government references">
+    {% for ref in us_pacom_official_links %}
+    <li data-us-pacom-link="{{ ref.source_identity }}">
+      <h3><a href="{{ ref.source_url }}" target="_blank" rel="noopener noreferrer">{{ ref.neutral_label }}</a></h3>
+      <p class="meta">Publisher: U.S. Pacific Command · Website category:
+        {{ 'Press releases and readouts' if ref.section == 'press_release' else 'News articles' }}
+        · Published <time datetime="{{ ref.published_date }}">{{ ref.published_date }}</time>
+        · Outbound official link only</p>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="meta">This fixed research directory does not operate a PACOM crawler.
+    PACOM's robots-policy access remains unresolved; DVIDS is a separate paused
+    media-service feed, not a proxy for command statements. No U.S. production
+    records are counted from these links.</p>
+</section>
+{% endif %}
+
 {# A permanent publication is IPR-authored analysis with approved citations.
    This is independent of the source-collection status, remains empty until
    an actual reviewed Brief is recorded, and never exposes publisher originals. #}
