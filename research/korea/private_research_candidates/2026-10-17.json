@@ -27,7 +27,9 @@
         "Only the Army Pangyo location is reported opened; Yongsan, Daejeon, Busan and Yangjae hubs are planned, not four additional completed openings.",
         "Robotics, command-and-control AI, hazardous-material transport and other applications are stated future research goals, not proven operational military capabilities.",
         "This is a Korean defense ministry press release republished by Korea Policy Briefing; independent field evidence, photo rights and source reuse approval remain unestablished."
-      ]
+      ],
+      "publisher_html_capture_sha256": "fffde3346ca3c8b0f9babac69ac51e1ca0743810661c69bcc5dddfdbd33d21de",
+      "text_license_marking": "KOGL Type 1 - text only - attribution required"
     },
     {
       "desk": "korea",
@@ -49,7 +51,9 @@
         "The underlying Korean press document was distributed October 9, while its Korea Policy Briefing republication is dated October 12; the talks themselves occurred October 8–9.",
         "The ministry's description of consultation and future collaboration does not establish a signed defense technology agreement, a program launch or joint deployment.",
         "All assertions are attributable to this one Korean government press account and do not independently validate Japanese participation, activity or source/media reuse rights."
-      ]
+      ],
+      "publisher_html_capture_sha256": "c320b308182082efb30f4267d55bf91885d37f0ac102c569c8cddc26c281eb3e",
+      "text_license_marking": "KOGL Type 1 - text only - attribution required"
     },
     {
       "desk": "korea",
@@ -71,7 +75,9 @@
         "The government press account reports the visit and the minister's instructions; it does not provide independent readiness-testing results or prove an operational capability improvement.",
         "References to planned industrial-site use and airfield relocation must not be rewritten as evidence that the installation has moved, the base has been handed over or construction finished.",
         "The ministry's account is a single institutional source; the precise site, economic implications, photographs and rights require separate verification before publication."
-      ]
+      ],
+      "publisher_html_capture_sha256": "da64a9b05c0409da1f1615de0539800615a9b29bf903925a7c435ede1ed1af6f",
+      "text_license_marking": "KOGL Type 1 - text only - attribution required"
     }
   ]
 }
