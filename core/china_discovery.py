@@ -49,7 +49,7 @@ def _source(row):
 
 
 def _is_china(row):
-    return _source(row) in CHINA_SOURCE_CAPS
+    return row.get("desk_id") == "china" or _source(row) in CHINA_SOURCE_CAPS
 
 
 def _normal(title):
@@ -61,7 +61,7 @@ def _captured_on(row):
 
 
 def _eligible(row):
-    if row.get("id") in KNOWN_BODY_HOLDS:
+    if row.get("id") in KNOWN_BODY_HOLDS or _source(row) not in CHINA_SOURCE_CAPS:
         return False
     if _source(row) == "global_times_mil":
         # Historical pre-repair Global Times copies have demonstrated severe
@@ -152,10 +152,19 @@ def build_focus(corpus, china_target=FOCUS_TARGET):
     seen = {"titles": set(), "ids": set()}
     # Preserve per-source breadth; do not let 4,000 PLA Daily titles override
     # every other source merely because of collection volume.
-    for slug, quota in CHINA_SOURCE_CAPS.items():
-        selected.extend(_balanced(
-            [r for r in china if _source(r) == slug and _eligible(r)],
-            max(1, round(quota * china_target / FOCUS_TARGET)), seen))
+    allocations = {slug: quota * china_target // FOCUS_TARGET
+                   for slug, quota in CHINA_SOURCE_CAPS.items()}
+    unassigned = china_target - sum(allocations.values())
+    remainders = sorted(
+        CHINA_SOURCE_CAPS,
+        key=lambda slug: (-(CHINA_SOURCE_CAPS[slug] * china_target % FOCUS_TARGET), slug))
+    for slug in remainders[:unassigned]:
+        allocations[slug] += 1
+    for slug, quota in allocations.items():
+        if quota:
+            selected.extend(_balanced(
+                [r for r in china if _source(r) == slug and _eligible(r)],
+                quota, seen))
     # If a low-volume source cannot fill its allocated spots (e.g. the
     # quarantined historical Global Times bodies), fill only from other
     # machine-analyzed, non-held China material — never false "approved" IDs.
