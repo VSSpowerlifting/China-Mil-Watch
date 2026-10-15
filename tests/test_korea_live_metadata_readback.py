@@ -18,9 +18,9 @@ def html(with_live=True):
         rows.append(
             '<li data-korea-auto-official-link="%s">'
             '<h4><a href="%s">MND official press release 155001000</a></h4>'
-            '<p>Issuer: Republic of Korea Ministry of National Defense · '
-            'Republication: Republic of Korea Policy Briefing · '
-            '<time datetime="2026-10-15">2026-10-15</time> '
+            '<p>Issuer: Republic of Korea Ministry of National Defense (국방부) · '
+            'Republication: Republic of Korea Policy Briefing (대한민국 정책브리핑) · '
+            'Portal posted: <time datetime="2026-10-15">2026-10-15</time> '
             '· Official government outbound link only</p></li>'
             % (LIVE, PREFIX + "155001000"))
     return "<html><body><ol>" + "".join(rows) + "</ol></body></html>"
@@ -82,6 +82,15 @@ class TestKoreaLivePublicationReadback(unittest.TestCase):
         self.main.write_text(tampered, encoding="utf-8")
         self.pages.write_text(tampered, encoding="utf-8")
         with self.assertRaisesRegex(ReadbackHold, "unauthorized_media"):
+            verify(self.db, self.main, self.pages)
+
+    def test_extra_original_title_text_is_hold(self):
+        tampered = html().replace(
+            'Official government outbound link only',
+            'Original Korean headline not authorized · Official government outbound link only')
+        self.main.write_text(tampered, encoding="utf-8")
+        self.pages.write_text(tampered, encoding="utf-8")
+        with self.assertRaisesRegex(ReadbackHold, "unexpected_text"):
             verify(self.db, self.main, self.pages)
 
     def test_held_chronology_source_cannot_publish(self):
