@@ -65,7 +65,7 @@ def run(opener=None):
                               urllib.parse.urljoin(url,q.get("href",""))).path)])})
                 card=a.find_parent("li")
                 text=card.get_text(" ",strip=True) if card else ""
-                dates=re.findall(r"(?i)\\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+[0-9]{1,2},?\\s+20[0-9]{2}\\b",text)
+                dates=re.findall(r"(?i)\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+[0-9]{1,2},?\s+20[0-9]{2}\b",text)
                 card_paths={urllib.parse.urlsplit(urllib.parse.urljoin(url,q.get("href",""))).path
                     for q in card.select("a[href]")} if card else set()
                 card_release_paths={p for p in card_paths
