@@ -51,7 +51,7 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
 
     def test_short_genuine_articles_can_trigger_review_without_deletion(self):
         result = quality_cues("Short real press statement")
-        self.assertIn("short_capture_review", result["cues"])
+        self.assertIn("very_short_capture", result["cues"])
         self.assertNotIn("verified_corrupt", result["cues"])
         self.assertEqual(quality_cues("ordinary text " * 50)["cues"], [])
 
