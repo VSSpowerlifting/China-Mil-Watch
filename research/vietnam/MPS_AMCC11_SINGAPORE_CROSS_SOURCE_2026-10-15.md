@@ -22,7 +22,7 @@ The minister's **three priorities in MPS's own Oct 14 report**, in editorial par
 2. Make cooperation more operational: actionable threat information, incident-response coordination, joint capacity, and cross-border law-enforcement collaboration, rather than stopping at declarations.
 3. Develop ASEAN rules/standards for AI governance, cybersecurity and cross-border data sharing.
 
-These are **proposals attributed to Lương Tam Quang**, not established decisions of the eleven-member AMCC, adopted technical standards, legally binding commitments, a new treaty or proof of implementation. MPS further makes claims about Vietnam's prior ratification and Asia-Pacific cybercrime center; no independent legal/institutional documents were checked for those **separate background claims**, so do not upgrade them into authenticated milestones.
+These are **proposals attributed to Lương Tam Quang**, not established decisions of the 11th AMCC, adopted technical standards, legally binding commitments, a new treaty or proof of implementation. MPS further makes claims about Vietnam's prior ratification and Asia-Pacific cybercrime center; no independent legal/institutional documents were checked for those **separate background claims**, so do not upgrade them into authenticated milestones.
 
 MPS also reports **sidebar discussions** with Singapore's K. Shanmugam, Josephine Teo, Estonia's Liisa-Ly Pakosta and a **U.S. Chamber of Commerce delegation**. These are MPS-asserted discussions, not standalone signed agreements, a U.S. government-to-government meeting, cybersecurity procurement or a jointly issued statement. The article carries credited photographic media; those original images are outside this note's allowed text/reference scope.
 
