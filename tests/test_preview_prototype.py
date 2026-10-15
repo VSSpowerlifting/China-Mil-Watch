@@ -1602,11 +1602,14 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(self.page('index.html'), 'html.parser')
         recent = [int(a['href'].split('/')[1].split('.')[0]) for a in soup.select('.home-recent h3 a')]
-        # Homepage explicitly presents the latest ANALYZED records, not the
-        # first four records in the unfiltered corpus (new arrivals may not
-        # have completed automated processing).
+        # The homepage record list now follows the machine-organized
+        # focus-first discovery collection (PR #636), not the unfiltered
+        # latest-analyzed feed. Verify the exact deterministic focus order
+        # and separately ensure every chosen source is actually analyzed.
         data = gp.load_corpus(TRACKED_DB)
-        self.assertEqual(recent, [r['id'] for r in data['recent'][:4]])
+        from core.china_discovery import build_focus
+        focus = build_focus(data['corpus'])
+        self.assertEqual(recent, [r['id'] for r in focus['rows'][:4]])
         by_id = {r['id']: r for r in data['corpus']}
         self.assertTrue(all(by_id[rid]['state'] == 'analyzed'
                             for rid in recent))
