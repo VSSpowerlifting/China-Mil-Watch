@@ -80,6 +80,43 @@ collects a publisher page, repairs a capture, calls an LLM, generates the
 site, exports a human approval, or uploads a review artifact. There is no
 UI or production index integration.
 
+## Scaled legacy-capture triage (not a source-correction pass)
+
+`scripts/audit_china_legacy_capture_quality.py` now checks all stored
+`global_times_mil` source records with a source-stated date **before
+September 16, 2026**, using only the published compact index and local
+`output/record/{id}.html` historical captures. The original scraper received
+its markup and related-rail correction on September 16. This audit must not be
+misreported as evidence that its **current** extraction is defective.
+
+Signals are deliberately narrow, imperfect, and **nonbinding**:
+
+- A very short captured text (fewer than 60 characters), or short article
+  body (fewer than 180 characters), merits review; legitimate terse releases
+  can qualify.
+- Three or more ellipsis-style truncations may indicate unrelated homepage,
+  navigation or recommended-article teasers; genuine quotes can qualify too.
+
+The report returns per-record **review IDs only** plus counts. It cannot
+supply a restored article body, determine that text is truly corrupted,
+verify a publisher response, calculate reliable fault prevalence from
+heuristics alone, or authorize exclusion and corrections. A non-China
+source and all records on/after September 16 remain outside this
+historical diagnosis. Every source ID and cited Brief trail stays intact.
+
+```sh
+python3 -m unittest -v tests.test_china_legacy_capture_quality
+python3 scripts/audit_china_legacy_capture_quality.py
+python3 scripts/audit_china_legacy_capture_quality.py \
+  --out /tmp/ipr-china-legacy-capture-review-20261015.json
+```
+
+The optional full review report must be a **new** path outside the repo. The
+CI gate performs the same complete historical scan, prints aggregate
+metrics, and confirms the live DB and generated output remain byte-unchanged.
+This scales issue #613 from three anecdotal cases to a bounded read-only
+historical-quality docket, pending manual comparisons with original pages.
+
 ## Next substantive editorial work
 
 - Expand first to a bounded sample of screened-out consequential primary
