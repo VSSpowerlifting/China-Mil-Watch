@@ -83,6 +83,55 @@ silently refreshed. Later snapshots with additional records are **allowed**
 and reported as advanced; those arrivals remain unreviewed until explicitly
 added.
 
+## Guarded private reader prototype (separate from production)
+
+The `scripts/preview_china_curation_review.py` **offline-only** command
+reads the ledger and compact published corpus index, validates both using the
+same ledger contract, then generates two independent HTML files in a
+**brand-new absolute directory outside this repository**:
+
+- `index.html` — source-linked proposals only, explicitly marked as
+  `triage` and **NOT APPROVED** (including holds and tentative grouping).
+- `preserved.html` — **every source-record ID** from the same index,
+  regardless of review state, with permanent existing IPR record links. It
+  is available without JavaScript. The optional local search is an
+  enhancement, not the only way to reach a record.
+
+There is **no production renderer import, no use of the production `output/`
+tree, no generated `sitemap.xml`, no deployment URL, and no media/rights or
+record-text export**. HTML escapes titles and notes; both documents display
+`PRIVATE DRAFT`, include a robots `noindex,nofollow,noarchive` directive,
+and load no external scripts, fonts, images or stylesheets. Record links
+intentionally open the **existing** public record page; the preview itself
+never changes that site's content. Only the actual preserved index supplies
+the stored record counts; unreviewed items never disappear from the full view.
+
+To inspect the actual unapproved 9-record proposal:
+```bash
+python3 -m unittest -v \
+  tests.test_china_curation_review_ledger \
+  tests.test_china_curation_review_preview
+
+python3 scripts/preview_china_curation_review.py \
+  --index output/corpus-index.json \
+  --ledger research/china/archive-curation-triage-2026-10-15.json \
+  --output-dir /tmp/ipr-china-curation-private-20261015
+```
+
+The last command refuses any existing output directory (including an empty
+one), relative paths, repository paths, symlinked immediate parents or
+repository ancestor paths. Pick a **new** destination on each subsequent
+run. The CI workflow writes only to GitHub runner scratch, **never uploads
+the preview artifact**, and verifies that the canonical database and
+generated site stay untouched.
+
+**Not yet implemented:** a public approved-selection manifest, automatic
+delivery of the private preview to reviewers, integration into production
+`archive.html`, `browse.js`, the homepage or sitemap, and authenticated
+human editorial approval. These require a separate release proposal and
+owner signoff; adding a forged `owner_approval` JSON object cannot authorize
+publication.
+
 ### Review protocol (next steps, not automatically executed)
 
 1. **Source custody:** Compare original-language publisher capture,
