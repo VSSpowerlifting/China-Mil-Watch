@@ -1,0 +1,189 @@
+name: Korea — Verified Government Links to Production and Pages
+
+# Standing owner approval of Oct 15, 2026: future *verified* MND portal URL,
+# date, issuer and republisher metadata ONLY. No original Korean titles, text,
+# HWPX/photo/media, AI summaries or auto-editorial assessments are published.
+on:
+  workflow_run:
+    workflows:
+      - Indonesia and South Korea Shadow Collection
+    types: [completed]
+  schedule:
+    - cron: '37 20 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  publish-korea-official-links:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    steps:
+      - name: Check out current production main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin exact main and prevent sidecar/dirty state
+        shell: bash
+        run: |
+          set -euo pipefail
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-prod-main-before"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-prod-db-before"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install only existing source and site dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Verify automatic government-link approval contract
+        run: |
+          python -m unittest -v \
+            tests.test_korea_official_source_metadata_schema \
+            tests.test_korea_official_metadata_auto_admission \
+            tests.test_korea_production_candidate_bridge
+      - name: Clone full preserved MND shadow Git history into private runner scratch
+        env:
+          SRC_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --branch shadow/korea-policy-briefing \
+            "$SRC_REMOTE" "$RUNNER_TEMP/korea-official-original-state"
+          test -z "$(git -C "$RUNNER_TEMP/korea-official-original-state" status --porcelain)"
+          git -C "$RUNNER_TEMP/korea-official-original-state" rev-parse HEAD \
+            > "$RUNNER_TEMP/korea-prod-source-before"
+      - name: Admit newly verified official links to live metadata table
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.admit_korea_official_source_metadata \
+            --source-checkout "$RUNNER_TEMP/korea-official-original-state" \
+            --production-db "$GITHUB_WORKSPACE/pla_watch.db" \
+            --standing-official-links-approval
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          python scripts/verify_db_current.py
+      - name: Render site locally; isolate the Korea page only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from core.korea_official_live_links import load_live_korea_official_links
+          from core.korea_public_bibliography import load_public_korea_links
+          from core.korea_additional_public_links import load_additional_korea_official_links
+          existing = load_public_korea_links() + load_additional_korea_official_links()
+          old = {row["source_identity"] for row in existing}
+          rows = load_live_korea_official_links("pla_watch.db", exclude=old)
+          page = Path("output/korea.html").read_text(encoding="utf-8")
+          assert page.count('data-korea-public-link=') == 5
+          assert page.count('data-korea-additional-link=') == 9
+          assert page.count('data-korea-auto-official-link=') == len(rows)
+          for row in rows:
+              assert row["source_identity"] in page
+              assert row["source_url"] in page
+          for forbidden in ('<iframe', 'download.do?fileId=', 'data-review-status=',
+                            'text_original', 'summary_english'):
+              assert forbidden not in page, forbidden
+          print("New approved government links rendered:", len(rows))
+          PY
+          sha256sum output/korea.html > "$RUNNER_TEMP/korea-prod-page-sha"
+          git diff --name-only -- output/ > "$RUNNER_TEMP/korea-other-render-diffs"
+          echo "All rendered output changes listed for audit, not bulk publication:"
+          cat "$RUNNER_TEMP/korea-other-render-diffs"
+      - name: Refuse changed original archive or moving production main
+        env:
+          SRC_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_source="$(git ls-remote "$SRC_REMOTE" refs/heads/shadow/korea-policy-briefing | cut -f1)"
+          test "$current_source" = "$(cat "$RUNNER_TEMP/korea-prod-source-before")" || {
+            echo "::error::Original source Git state advanced; retry on new exact version"
+            exit 1
+          }
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-prod-main-before")" || {
+            echo "::error::Production main moved, aborting rather than replacing changed DB"
+            exit 1
+          }
+          sha256sum -c "$RUNNER_TEMP/korea-prod-page-sha"
+      - name: Commit exactly live SQLite and Korea HTML
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- pla_watch.db output/korea.html
+          staged="$(git diff --cached --name-only)"
+          if [ -z "$staged" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if echo "$staged" | grep -vE '^(pla_watch.db|output/korea.html)$'; then
+            echo "::error::Unexpected staged file; full-site publish prohibited"
+            exit 1
+          fi
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-prod-main-before")"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Korea: admit verified official metadata and update page only"
+          git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Check out current Pages without uploading other files
+        if: steps.commit.outputs.changed == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: korea-existing-pages
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Publish only Korea HTML to existing Pages branch
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/korea-prod-page-sha"
+          cd korea-existing-pages
+          test -z "$(git status --porcelain --untracked-files=all)"
+          pages_old="$(git rev-parse HEAD)"
+          cp ../output/korea.html korea.html
+          cmp ../output/korea.html korea.html
+          git add -- korea.html
+          staged="$(git diff --cached --name-only)"
+          test -z "$staged" || test "$staged" = "korea.html"
+          if [ -n "$staged" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: publish newly verified MND outbound links only"
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$pages_old" || {
+            echo "::error::Pages moved; never overwrite a concurrent release"
+            exit 1
+          }
+          if [ -n "$staged" ]; then
+            git push origin HEAD:gh-pages
+          fi
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+# Original bytes remain in their independently preserved source branch and
+# owner-controlled custody. No source artifact upload, bulk site push,
+# China/Briefs re-render publish, production text, AI request or editor email.
