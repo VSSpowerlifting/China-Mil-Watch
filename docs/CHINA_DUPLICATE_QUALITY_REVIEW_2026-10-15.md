@@ -54,6 +54,40 @@ cross-outlet pair can also represent materially distinct claims or framing.
   of the naval test. Preserve the imperfect historical capture and provenance
   under the governed correction workflow.
 
+## Stored-text side-by-side spot audit
+
+These are character 8-gram Jaccard overlap estimates on the **captured
+`original-text` bodies**, with whitespace normalized. They are **not** factual,
+provenance, event-equivalence, or publisher-authorship certifications.
+
+| Record pair | Stored lengths (characters) | Approx. overlap | Investigation |
+|---|---:|---:|---|
+| #4346 / #4348 | 4,015 / 4,008 | 0.994 | Likely same distributed report; check author/origin and rights |
+| #3454 / #3465 | 1,612 / 1,590 | 0.979 | Likely MLA/PLA Daily syndication; MND hostname does not confer authorship |
+| #3294 / #3353 | 805 / 837 | 0.963 | Similar operational-training feature; check publication provenance |
+| #3304 / #3352 | 1,647 / 1,618 | 0.969 | Near-identical border-unit feature; low likely discovery value |
+| #3245 / #3354 | 838 / 813 | 0.969 | Near-identical naval aviation training feature |
+| #3208 / #3358 | 857 / 847 | 0.973 | Near-identical naval joint-training feature |
+| #2265 / #2294 | 321 / 4,725 | 0.013 | **Severely divergent capture:** one may contain an unrelated exercise teaser |
+| #943 / #946 | 856 / 135 | 0.004 | **Severely divergent capture:** Global Times text looks unrelated to headline |
+| #2148 / #2189 | 146 / 186 | 0.627 | Same missile-test topic, different concise official source messages |
+
+**Critical insight:** Identical headlines with a near-zero body overlap can
+indicate extractor pollution instead of duplicated reporting. Those cases
+should be reviewed for **fidelity first**, not collapsed or excluded. In the
+submarine test pair, substantive differences between the brief wire and
+military press treatment may themselves be worth preserving. A high-overlap
+pair is also not an instruction to remove a citation, URL or source version.
+
+The new `--compare-record-html` option reproduces a stored-body similarity
+measurement for an explicitly supplied pair of existing pages (without
+fetching sources or writing to the repository):
+
+```bash
+python3 scripts/audit_china_duplicate_candidates.py \
+  --compare-record-html output/record/3454.html output/record/3465.html
+```
+
 ## Read-only investigator
 
 ```bash
