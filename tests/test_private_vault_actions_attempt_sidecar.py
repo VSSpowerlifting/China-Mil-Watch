@@ -112,6 +112,7 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         verified = self.verify(receipt)
         self.assertTrue(verified["all_opaque_zip_sha256_verified"])
         self.assertFalse(verified["individual_zip_contents_verified"])
+        self.assertFalse(verified["downloaded_zip_origin_authenticated"])
         self.assertFalse(verified["independent_backup_medium_verified"])
         self.assertFalse(verified["production_cutover_authorized"])
         self.assertFalse(verified["plaintext_tar_written_to_disk"])
@@ -256,6 +257,7 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
     def test_no_fake_permission_or_private_archive_claim(self):
         receipt = self.create()
         self.assertFalse(receipt["source_rights_approved"])
+        self.assertFalse(receipt["downloaded_zip_origin_authenticated"])
         self.assertFalse(receipt["independent_backup_medium_verified"])
         self.assertFalse(receipt["production_cutover_authorized"])
         self.assertEqual(box.SCHEMA, "ipr-actions-attempt-encrypted-sidecar/1")
