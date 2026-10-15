@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import zipfile
 from pathlib import Path
 
 SCHEMA = "ipr-actions-attempt-encrypted-sidecar/1"
@@ -119,6 +120,9 @@ def _stage(directory, items):
               "staged_artifact_not_a_regular_file")
         stat = path.stat()
         check(0 < stat.st_size <= MAX_ITEM_BYTES, "staged_artifact_size_invalid")
+        # ZIPs are handled as opaque bytes: verify container structure only,
+        # without unzipping third-party original content.
+        check(zipfile.is_zipfile(path), "staged_file_not_zip")
         total += stat.st_size
         check(total <= MAX_TOTAL_BYTES, "staged_archive_exceeds_limit")
         files.append({"id": item["id"], "attempt": item["name_attempt"],
@@ -201,6 +205,7 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
         try:
             proc = subprocess.Popen(
                 ["gpg", *_gpg_args(gpg_home), "--batch", "--no-tty",
+                 "--yes",  # only overwrites OUR mkstemp .part file
                  "--trust-model", "always", "--recipient", fingerprint,
                  "--output", partial, "--encrypt"],
                 stdin=subprocess.PIPE, stdout=subprocess.DEVNULL,
