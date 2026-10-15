@@ -1,0 +1,69 @@
+name: Korea — Independent Live Metadata Readback
+
+# Read-only: no source collection, no admission, no publishing permission.
+on:
+  workflow_run:
+    workflows:
+      - Korea — Verified Government Links to Production and Pages
+    types: [completed]
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/verify_korea_live_metadata_readback.py
+      - tests/test_korea_live_metadata_readback.py
+      - .github/workflows/korea_live_metadata_release_readback.yml
+
+permissions:
+  contents: read
+
+jobs:
+  offline-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m unittest tests.test_korea_live_metadata_readback -v
+
+  after-production-readback:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout actual production main read-only
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Fetch only the public Pages tree read-only
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: checked-korea-pages
+          persist-credentials: false
+      - name: Audit committed database against both Korea files
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "main commit: $(git rev-parse HEAD)"
+          echo "pages commit: $(git -C checked-korea-pages rev-parse HEAD)"
+          python -m scripts.verify_korea_live_metadata_readback \
+            --database pla_watch.db \
+            --main-html output/korea.html \
+            --pages-html checked-korea-pages/korea.html
+          git diff --exit-code -- pla_watch.db output/korea.html
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# A pass proves committed metadata/page parity, not fresh-source arrivals,
+# original HWPX fidelity, URL reachability or uninterrupted collection.
