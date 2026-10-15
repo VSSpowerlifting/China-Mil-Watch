@@ -113,6 +113,7 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         self.assertFalse(verified["individual_zip_contents_verified"])
         self.assertFalse(verified["independent_backup_medium_verified"])
         self.assertFalse(verified["production_cutover_authorized"])
+        self.assertFalse(verified["plaintext_tar_written_to_disk"])
         self.assertEqual(list(self.scratch.iterdir()), [])
         self.assertFalse(any(".part" in p.name for p in self.root.iterdir()))
 
@@ -155,6 +156,16 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
             stream.write(b"FICTITIOUS-TAMPER")
         with self.assertRaisesRegex(box.Hold, "encrypted_sidecar_checksum_mismatch"):
             self.verify(receipt)
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_restore_refuses_world_readable_scratch_and_leaves_no_plaintext(self):
+        receipt = self.create()
+        self.scratch.chmod(0o755)
+        try:
+            with self.assertRaisesRegex(box.Hold, "restore_paths_unsafe"):
+                self.verify(receipt)
+        finally:
+            self.scratch.chmod(0o700)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
     def test_filename_that_claims_zip_but_is_plaintext_is_refused(self):
