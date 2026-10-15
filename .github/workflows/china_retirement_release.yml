@@ -1,0 +1,201 @@
+name: China active archive retirement — guarded full-site cutover
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/verify_china_retirement_render.py'
+      - 'scripts/prepare_china_retirement_release.py'
+      - 'tests/test_china_retirement_release.py'
+      - '.github/workflows/china_retirement_release.yml'
+  workflow_dispatch:
+    inputs:
+      approved_main_sha:
+        description: 'Exact 40-character public main SHA whose complete DB is backed up'
+        required: true
+        type: string
+      expected_db_sha256:
+        description: 'Exact SHA-256 of that publicly tracked pre-retirement SQLite file'
+        required: true
+        type: string
+      approved_backup_ref:
+        description: 'Private vault ref archive/china-active-before-<first 16 public SHA>'
+        required: true
+        type: string
+      approved_backup_commit_sha:
+        description: 'Exact private backup commit, independently restored and reviewed'
+        required: true
+        type: string
+      publish:
+        description: 'False: scratch preview only; true: physical DB+full site commit and Pages deploy'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Prove release verifier rejects broken references and legacy routes
+        run: python -m unittest -v tests.test_china_retirement_release
+      - name: Prove this contract did not modify the tracked corpus/site
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  release:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Bind public main SHA and old DB bytes before any staging
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+          EXPECTED_DB: ${{ inputs.expected_db_sha256 }}
+          BACKUP_REF: ${{ inputs.approved_backup_ref }}
+          BACKUP_COMMIT: ${{ inputs.approved_backup_commit_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          [[ "$EXPECTED_DB" =~ ^[0-9a-f]{64}$ ]] || exit 1
+          [[ "$BACKUP_COMMIT" =~ ^[0-9a-f]{40}$ ]] || exit 1
+          test "$BACKUP_REF" = "archive/china-active-before-${EXPECTED_SHA:0:16}"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA" || {
+            echo '::error::main advanced; renew backup and owner review'; exit 1;
+          }
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "$EXPECTED_DB"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Recheck exact retirement, reingestion, and publication protection contracts
+        run: |
+          python -m unittest -v             tests.test_retired_article_urls             tests.test_china_retirement_atomic             tests.test_china_active_retirement             tests.test_china_retirement_release
+      - name: Prepare full 4400-record reduction in external scratch ONLY
+        env:
+          EXPECTED_DB: ${{ inputs.expected_db_sha256 }}
+        run: |
+          python -m scripts.prepare_china_retirement_release             --scratch-root "$RUNNER_TEMP/china-retirement-production-preview"             --expected-db-sha256 "$EXPECTED_DB"             --site-origin https://indopacificrecord.org
+          test -f "$RUNNER_TEMP/china-retirement-production-preview/release-verification.json"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Authenticate exact private GitHub backup ref before destructive promotion
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ secrets.IPR_PRIVATE_VAULT_READ_TOKEN }}
+          BACKUP_REF: ${{ inputs.approved_backup_ref }}
+          BACKUP_COMMIT: ${{ inputs.approved_backup_commit_sha }}
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+          EXPECTED_DB: ${{ inputs.expected_db_sha256 }}
+        run: |
+          set -euo pipefail
+          test -n "$GH_TOKEN" || {
+            echo '::error::Missing privately scoped IPR_PRIVATE_VAULT_READ_TOKEN repository secret'; exit 1;
+          }
+          actual_backup="$(gh api "repos/VSSpowerlifting/ipr-source-evidence-private/git/ref/heads/$BACKUP_REF" --jq '.object.sha')"
+          test "$actual_backup" = "$BACKUP_COMMIT" || {
+            echo '::error::Private backup ref changed'; exit 1;
+          }
+          gh api "repos/VSSpowerlifting/ipr-source-evidence-private/contents/recovery-manifest.json?ref=$BACKUP_REF"             --jq '.content' | base64 -d > "$RUNNER_TEMP/verified-private-backup.json"
+          python - "$RUNNER_TEMP/verified-private-backup.json" "$EXPECTED_SHA" "$EXPECTED_DB" <<'PY'
+          import json,sys
+          item=json.load(open(sys.argv[1],encoding="utf-8"))
+          assert item["source_commit_sha"]==sys.argv[2], "backup and current main differ"
+          assert item["db_sha256"]==sys.argv[3], "backup and current database differ"
+          assert item["article_rows"]==5273 or item["article_rows"]>0
+          assert item["china_rows"]>4400
+          print("PASS: private GitHub backup commit, source SHA and SQLite SHA match")
+          PY
+      - name: Verify current main unchanged before any destructive promotion
+        if: inputs.publish
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$EXPECTED_SHA" || {
+            echo '::error::Main moved during build; do not publish stale deletion'; exit 1;
+          }
+      - name: Promote exactly verified scratch DB and rebuilt full site, then validate again
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          SITE="$RUNNER_TEMP/china-retirement-production-preview/reduced-site"
+          DB="$RUNNER_TEMP/china-retirement-production-preview/reduced.db"
+          test -s "$DB"
+          test -d "$SITE"
+          # A clean scratch rebuild prevents retired records surviving as
+          # orphaned Pages files. Keep source checkout and run failures isolated.
+          rsync -a --delete "$SITE/" output/
+          cp "$DB" pla_watch.db
+          python scripts/verify_db_current.py
+          python scripts/validate_output.py
+          python -m scripts.verify_china_retirement_render             --before "$RUNNER_TEMP/china-retirement-production-preview/before-site"             --after output --db pla_watch.db             --plan "$RUNNER_TEMP/china-retirement-production-preview/plan.json"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test -z "$(git status --porcelain --untracked-files=all -- . ':!output' ':!pla_watch.db')"
+          git add -A -- pla_watch.db output/
+          git diff --cached --quiet && {
+            echo '::error::Expected reviewed production corpus change is absent'; exit 1;
+          }
+      - name: Commit single reviewed corpus and full-site release to unchanged main
+        if: inputs.publish
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$EXPECTED_SHA" || {
+            echo '::error::main advanced before release commit'; exit 1;
+          }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Archive: retire 4400 China records with permanent URL tombstones'
+          git push origin HEAD:main
+      - name: Deploy full surviving archive and preserved editorial pages
+        if: inputs.publish
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Release China active archive retirement ${{ github.run_id }}'
+      - name: Prove preview was strictly nonpublishing
+        if: "!inputs.publish"
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
