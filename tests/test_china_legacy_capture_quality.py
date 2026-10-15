@@ -62,6 +62,15 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         self.assertNotIn("verified_corrupt", result["cues"])
         self.assertEqual(quality_cues("ordinary text " * 50)["cues"], [])
 
+    def test_calibrated_two_ellipsis_short_snippets_get_review_not_verdict(self):
+        bad = "Unrelated first article ... Another unrelated teaser ... "
+        self.assertIn("short_multi_teaser_capture_review", quality_cues(bad)["cues"])
+        authentic_long = bad + ("Actual longer article body. " * 35)
+        self.assertNotIn(
+            "short_multi_teaser_capture_review", quality_cues(authentic_long)["cues"])
+        self.assertNotIn("proven_corrupt", quality_cues(bad)["cues"])
+        self.assertEqual(quality_cues("Clean original text. " * 40)["cues"], [])
+
     def test_no_silent_skips_for_missing_records(self):
         index, pages = data()
         del pages[1]
