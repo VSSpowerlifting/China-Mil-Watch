@@ -26,6 +26,7 @@ SCOPED_WORKFLOWS = frozenset((
     ".github/workflows/japan_shadow.yml",
     ".github/workflows/jcg_guarded_daily_shadow.yml",
     ".github/workflows/japan_jcg_shadow_manual.yml",
+    ".github/workflows/us_shadow.yml",
 ))
 MAX_DAYS = 35
 MAX_RUNS_PER_DAY = 500
@@ -115,7 +116,7 @@ def collect(fetch, first, last, as_of):
     begin, finish = day(first), day(last)
     now = utc(as_of)
     require(begin <= finish and (finish - begin).days < MAX_DAYS and
-            finish <= now.date() and begin >= date(2026, 10, 1),
+            finish <= now.date() and begin >= date(2026, 8, 1),
             "requested_window_invalid")
     observed = []
     seen_runs = set()
