@@ -31,7 +31,8 @@ def fixture():
 
 
 def sample_plan(index):
-    return plan(index, expected_china_focus=2, minimum_retire=1)
+    return plan(index, expected_china_focus=2, minimum_retire=1,
+                maximum_retire=2, preferred_retire=2)
 
 
 class ChinaRetirementPlanTest(unittest.TestCase):
@@ -46,6 +47,25 @@ class ChinaRetirementPlanTest(unittest.TestCase):
         self.assertEqual(result["retired_ids"], (4, 5))
         self.assertEqual(set(result["kept_ids"]), {1, 2, 3, 6, 7})
         self.assertEqual(result["citation_only_china_retained"], 1)
+
+    def test_safe_context_buffer_enforces_exact_retirement_range(self):
+        obj = fixture()
+        for ident in (8, 9, 10, 11):
+            obj["records"].append(
+                [ident, "2026-10-15", 0, 0, "Unreviewed context", "新消息"])
+        obj["snapshot"]["records"] = len(obj["records"])
+        result = sample_plan(obj)
+        self.assertEqual(result["china_to_retire"], 2)
+        self.assertEqual(result["supplemental_automated_context"], 4)
+        self.assertTrue({3, 6, 7}.issubset(set(result["kept_ids"])))
+        self.assertTrue(set(result["retired_ids"]).isdisjoint({3, 6, 7}))
+
+    def test_insufficient_actual_retirements_fail_owner_range(self):
+        obj = fixture()
+        obj["focus_ids"] = [1, 2, 4, 5, 6, 7]
+        with self.assertRaisesRegex(ValueError, "owner-approved"):
+            plan(obj, expected_china_focus=4, minimum_retire=2,
+                 maximum_retire=3, preferred_retire=2)
 
     def test_refuses_citation_identity_missing_from_corpus(self):
         obj = fixture()
