@@ -25,6 +25,7 @@ HOSTS = {
     "ph_nsc_official_statements": ("philippines", "nsc.gov.ph"),
     "id_kemhan_news": ("indonesia", "www.kemhan.go.id"),
     "kr_policy_mnd_releases": ("korea", "www.korea.kr"),
+    "vn_government_news_editorial": ("vietnam", "baochinhphu.vn"),
     "vn_mps_foreign_affairs_vi": ("vietnam", "bocongan.gov.vn"),
     "vn_moit_energy_vi": ("vietnam", "moit.gov.vn"),
     "vn_moit_foundational_industry_vi": ("vietnam", "moit.gov.vn"),
