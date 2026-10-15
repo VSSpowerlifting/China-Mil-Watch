@@ -44,7 +44,7 @@ jobs:
         run: |
           set -euo pipefail
           sha256sum pla_watch.db > "$RUNNER_TEMP/uscc-db.sha"
-          python scripts/collect_uscc_press_metadata.py --owner-authorized-readonly-collection --private-output "$RUNNER_TEMP/uscc-preview.json"
+          python -m scripts.collect_uscc_press_metadata --owner-authorized-readonly-collection --private-output "$RUNNER_TEMP/uscc-preview.json"
           python - <<'PY'
           import json, os
           from pathlib import Path
@@ -92,7 +92,7 @@ jobs:
           cd repo
           test -z "$(git status --porcelain --untracked-files=all)"
           python -m unittest tests.test_uscc_press_metadata -q
-          python scripts/collect_uscc_press_metadata.py --owner-authorized-readonly-collection --private-output "$RUNNER_TEMP/uscc-new.json"
+          python -m scripts.collect_uscc_press_metadata --owner-authorized-readonly-collection --private-output "$RUNNER_TEMP/uscc-new.json"
           test -s "$RUNNER_TEMP/uscc-new.json"
           git diff --exit-code -- pla_watch.db output/ desks/
           test ! -e pla_watch.db-wal
