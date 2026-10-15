@@ -1402,12 +1402,13 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertIn("Access blocked — not collecting", desks)
         self.assertIn("Records</dt><dd>None collected", desks)
 
-    def test_the_us_reference_desk_is_declared_but_never_promoted(self):
-        """
-        Every declared desk is now rendered, the reference desk included: a
-        desk a reader cannot open is worse than one labelled honestly. What it
-        may never carry is a status, a count or a source that reads like an
-        operating desk, and its own page has to say so in its own words.
+    def test_us_desk_separates_live_uscc_metadata_from_blocked_pacom(self):
+        """USCC links are live metadata; command-body collection stays blocked.
+
+        Old copy asserted "Nothing has been ... collected", which became
+        false when the USCC metadata-only lane entered production. Preserve
+        the actual limits: no PACOM crawler, no U.S. source-body articles,
+        and no promotion of the whole reference desk to a live body feed.
         """
         directory = self.page("desks.html")
         block = [b.split("</section>", 1)[0]
@@ -1418,15 +1419,29 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("Live — collecting", block)
         self.assertNotIn("desk--live", block)
 
-        page = self.page("us-indopacific.html")
-        self.assertIn("Access blocked — not collecting", page)
-        self.assertIn("It is not a feed of US defense releases.", page)
-        self.assertIn("Nothing has been configured, enabled or "
-                      "collected.", page)
         from bs4 import BeautifulSoup
-        desk_content = BeautifulSoup(page, "html.parser").main.get_text(" ", strip=True)
-        self.assertNotRegex(
-            desk_content, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b")
+        page = BeautifulSoup(self.page("us-indopacific.html"), "html.parser")
+        self.assertIsNotNone(page.select_one(".status-panel--access_blocked"))
+        main = page.main
+        self.assertIsNotNone(main)
+        text = main.get_text(" ", strip=True)
+        self.assertIn("Official congressional metadata feed live", text)
+        self.assertIn("PACOM collection blocked", text)
+        self.assertIn("It is not a feed of US defense releases.", text)
+        links = main.select("li[data-uscc-official-link] a")
+        self.assertGreater(len(links), 0, "official USCC metadata lane disappeared")
+        self.assertTrue(all(a.get("href", "").startswith("https://www.uscc.gov/")
+                            for a in links))
+        rows = main.select(".stat-rows .stat-row")
+        article_rows = [row for row in rows
+                        if "Admitted U.S. source-body articles" in row.get_text(" ", strip=True)]
+        self.assertEqual(len(article_rows), 1)
+        self.assertEqual(article_rows[0].select_one("dd").get_text(" ", strip=True),
+                         "None", "USCC link metadata is not military source-body admission")
+        self.assertIn("Direct PACOM command collection", text)
+        self.assertIn("Access blocked", text)
+        self.assertIn("DVIDS media collection", text)
+        self.assertIn("Paused", text)
 
     # ── Maintainer ──────────────────────────────────────────────────────
 
