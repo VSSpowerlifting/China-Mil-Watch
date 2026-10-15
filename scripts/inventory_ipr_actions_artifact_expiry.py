@@ -36,6 +36,7 @@ MAX_RESPONSE_BYTES = 6_000_000
 NUMBER = re.compile(r"[1-9][0-9]{5,15}\Z")
 STAMP = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z\Z")
 ART_ATTEMPT = re.compile(r"-(?P<run>[1-9][0-9]{5,15})-(?P<attempt>[1-9][0-9]*)\Z")
+PROVIDER_DIGEST = re.compile(r"sha256:[0-9a-f]{64}\Z")
 
 
 class CensusHold(ValueError):
@@ -193,6 +194,14 @@ def collect(fetch, first, last, as_of):
                 if type(art.get("workflow_run")) is dict:
                     require(art["workflow_run"].get("id") == run_id,
                             "artifact_wrong_run_scope")
+                # upload-artifact v4+ exposes the uploaded ZIP SHA-256 in
+                # GitHub's authenticated artifact API. Absent means unknown,
+                # never a fabricated digest or a successful custody claim.
+                provider_digest = art.get("digest")
+                require(provider_digest is None or
+                        (type(provider_digest) is str and
+                         PROVIDER_DIGEST.fullmatch(provider_digest)),
+                        "artifact_provider_digest_invalid")
                 match = ART_ATTEMPT.search(art["name"])
                 parsed = None
                 if match:
@@ -206,6 +215,8 @@ def collect(fetch, first, last, as_of):
                     "id": art["id"], "name": art["name"], "bytes": art["size_in_bytes"],
                     "expires_utc": expires.isoformat().replace("+00:00", "Z"),
                     "expired": art["expired"], "name_attempt": parsed,
+                    "provider_sha256": (provider_digest[7:]
+                                        if provider_digest is not None else None),
                     "hours_until_expiry": int((expires - now).total_seconds() // 3600),
                 })
             artifacts.sort(key=lambda x: (x["expires_utc"], x["id"]))
@@ -214,6 +225,8 @@ def collect(fetch, first, last, as_of):
                 reasons.append("no_retained_artifacts")
             if any(x["expired"] or x["hours_until_expiry"] < 0 for x in artifacts):
                 reasons.append("artifact_already_expired")
+            if any(x["provider_sha256"] is None for x in artifacts):
+                reasons.append("provider_artifact_digest_unavailable")
             if attempt > 1 and set(range(1, attempt)) - labeled_attempts:
                 reasons.append("earlier_attempt_receipt_not_established")
             if any(not x["jobs"] for x in historical_attempts):

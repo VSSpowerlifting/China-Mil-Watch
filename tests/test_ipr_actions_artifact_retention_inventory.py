@@ -26,11 +26,12 @@ def run(run_id=RUN, attempt=2, workflow=WORKFLOW, event="workflow_dispatch",
 
 
 def artifact(ident=11498114543, run_id=RUN, attempt=1,
-             name=None, expiry=END, expired=False):
+             name=None, expiry=END, expired=False,
+             digest="sha256:" + "a" * 64):
     return {
         "id": ident,
         "name": name or ("vietnam-ministry-shadow-%s-%s" % (run_id, attempt)),
-        "size_in_bytes": 160207,
+        "size_in_bytes": 160207, "digest": digest,
         "expired": expired, "expires_at": expiry,
         "workflow_run": {"id": run_id},
     }
@@ -83,6 +84,8 @@ class RetentionInventoryTest(unittest.TestCase):
         r = report["runs"][0]
         self.assertEqual(r["latest_run_attempt"], 2)
         self.assertEqual([a["name_attempt"] for a in r["artifacts"]], [1, 2])
+        self.assertEqual([a["provider_sha256"] for a in r["artifacts"]],
+                         ["a" * 64, "a" * 64])
         self.assertEqual(r["holds"], ["historical_failed_or_unfinished_job"])
         self.assertEqual(len(r["historical_attempt_jobs"]), 2)
         self.assertTrue(r["historical_attempt_jobs"][0]["has_unsuccessful_job"])
@@ -96,6 +99,25 @@ class RetentionInventoryTest(unittest.TestCase):
                       "source_retention_rights_granted",
                       "production_cutover_authorized"):
             self.assertFalse(report[field])
+
+    def test_missing_provider_digest_is_an_explicit_hold_not_fabricated(self):
+        fake = FakeAPI(artifacts={RUN: [
+            artifact(digest=None),
+            artifact(11499686512, attempt=2),
+        ]})
+        row = census.collect(fake, DAY, DAY, NOW)["runs"][0]
+        self.assertIn("provider_artifact_digest_unavailable", row["holds"])
+        self.assertIsNone(row["artifacts"][0]["provider_sha256"])
+        self.assertEqual(row["artifacts"][1]["provider_sha256"], "a" * 64)
+
+    def test_malformed_provider_digest_fails_closed(self):
+        for digest in ("sha1:" + "a" * 40, "sha256:NOT-A-DIGEST",
+                       "sha256:" + "a" * 63, {"sha256": "a" * 64}):
+            with self.subTest(digest=digest):
+                fake = FakeAPI(artifacts={RUN: [artifact(digest=digest)]})
+                with self.assertRaisesRegex(
+                        census.CensusHold, "artifact_provider_digest_invalid"):
+                    census.collect(fake, DAY, DAY, NOW)
 
     def test_changed_or_missing_historical_jobs_cannot_claim_complete_custody(self):
         no_jobs = FakeAPI(jobs={(RUN, 1): [], (RUN, 2): [
