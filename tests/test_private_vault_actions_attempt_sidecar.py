@@ -66,10 +66,12 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
                 "conclusion": "success",
                 "historical_attempt_jobs": [
                     {"attempt": 1, "has_unsuccessful_job": True, "jobs": [{
-                        "job_id": FAKE_JOB_ONE, "status": "completed",
+                        "job_id": FAKE_JOB_ONE, "name": "fictional failed collection",
+                         "status": "completed",
                         "conclusion": "failure"}]},
                     {"attempt": 2, "has_unsuccessful_job": False, "jobs": [{
-                        "job_id": FAKE_JOB_TWO, "status": "completed",
+                        "job_id": FAKE_JOB_TWO, "name": "fictional successful rerun",
+                         "status": "completed",
                         "conclusion": "success"}]},
                 ],
                 "artifacts": [
