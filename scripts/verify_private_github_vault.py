@@ -75,9 +75,9 @@ def evaluate(source, vault, *, api=_api):
 
     if type(src) is not dict or type(dest) is not dict or type(branches) is not list:
         raise VaultPreflightError("repository_api_shape")
-    if src.get("full_name", "").lower() != source.lower():
+    if type(src.get("full_name")) is not str or src["full_name"].lower() != source.lower():
         raise VaultPreflightError("source_identity_mismatch")
-    if dest.get("full_name", "").lower() != vault.lower():
+    if type(dest.get("full_name")) is not str or dest["full_name"].lower() != vault.lower():
         raise VaultPreflightError("vault_identity_mismatch")
     if src.get("private") is not False or src.get("visibility") != "public":
         raise VaultPreflightError("source_visibility_not_public")
