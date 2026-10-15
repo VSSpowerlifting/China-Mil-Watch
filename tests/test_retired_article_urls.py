@@ -104,6 +104,20 @@ class TestRetiredUrlIngestion(unittest.TestCase):
                     (self.allowed,))
             self.assertEqual(verify_no_active_retired_urls(con), 1)
 
+    def test_implicit_sqlite_rowid_cannot_reuse_retired_published_id(self):
+        # Without an AFTER INSERT trigger SQLite allocates MAX(active ID)+1
+        # only after BEFORE INSERT triggers have evaluated NEW.id. Keep 22
+        # active and 23 retired: implicit allocation must abort at 23.
+        with sqlite3.connect(str(self.path)) as con:
+            con.execute(
+                "INSERT INTO articles(id,url,source_id) VALUES (22, ?, 1)",
+                ("https://www.81.cn/china/unrelated.html",))
+            with self.assertRaisesRegex(sqlite3.IntegrityError, "retired article ID"):
+                con.execute(
+                    "INSERT INTO articles(url,source_id) VALUES (?, 1)",
+                    ("https://www.81.cn/china/fresh-implicit.html",))
+            self.assertEqual(verify_no_active_retired_urls(con), 1)
+
     def test_active_and_retired_id_overlap_is_a_verification_error(self):
         # Do not rely solely on the URL hash: a writer could otherwise
         # produce a different article at a once-published numeric route.
