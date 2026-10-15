@@ -14,12 +14,15 @@ Each supplied review seal then independently passes #658's strict schema, separa
 
 Only records with verified `reviewed_official_link_metadata_only` scope are copied into a transient SQLite table containing:
 
-- source identity and immutable state/source version SHA;
+- source identity, immutable state/source version SHA and original shadow database SHA;
+- SHA-256 fingerprint of the complete, independently signed reviewer+owner seal (the seal itself remains in restricted custody);
 - canonical government outbound URL and portal date;
 - source publisher and original issuing institution stored separately;
 - syndicated/authority classification;
-- SHA-256 pins for original text, captured official portal page and HWPX;
+- SHA-256 pins for the original title, complete text, captured official portal page and HWPX;
 - fixed `metadata_only_rehearsal_not_production` status.
+
+An individual rehearsal row cannot independently authenticate review or rights: the new `signed_review_sha256` is a lookup/integrity anchor, not permission. A future production importer must retrieve the privately held exact sealed decision, verify both HMACs and full source evidence again, and reject a missing or mismatched receipt. The SQLite file is never sufficient authority on its own.
 
 **No original title, Korean article body, embedded images, translation, English summary, model text, signing key, reviewer identity, database article ID, corpus approval status, production write, site record or Sunday email is permitted.**
 
