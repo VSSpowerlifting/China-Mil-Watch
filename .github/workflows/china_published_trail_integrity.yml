@@ -1,0 +1,70 @@
+name: Published China source-trail integrity audit
+
+# Only reads preserved pages, issue source trails and protected corpus index.
+# No source requests, model use, record repairs or production site generation.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/audit_published_global_times_trail_integrity.py
+      - tests/test_published_global_times_trail_integrity.py
+      - research/china/published_global_times_trail-risk-2026-10-15.json
+      - docs/CHINA_PUBLISHED_TRAIL_INTEGRITY_2026-10-15.md
+      - .github/workflows/china_published_trail_integrity.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-published-trail-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  source-trail-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Capture unchanged database/site custody
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/trail-db-before.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Published citation and edit-boundary regression tests
+        run: python -m unittest -v tests.test_published_global_times_trail_integrity
+      - name: Audit actual five issues and thirteen captured source records
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/audit_published_global_times_trail_integrity.py
+          python scripts/audit_published_global_times_trail_integrity.py \
+            --private-json "$RUNNER_TEMP/china-published-trail-audit.json"
+          python - "$RUNNER_TEMP/china-published-trail-audit.json" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1]))
+          assert data['published_global_times_trails_reviewed']==13
+          assert data['issues_affected']==[2,10,12,13,14]
+          assert data['stored_snippet_warning_count_not_proven_defects']==13
+          assert data['owner_approved'] is False
+          assert data['publication_enabled'] is False
+          assert all(not case['correction_authorized'] for case in data['cases'])
+          print("Cited-source QA leads:", data['attention_counts'])
+          PY
+      - name: Confirm no canonical corpus/public files touched
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/trail-db-before.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
