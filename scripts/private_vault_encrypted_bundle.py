@@ -268,8 +268,12 @@ def verify_restore(encrypted, expected_cipher_sha, refs, object_count,
             raise BackupHold("decrypt_failed_or_key_unavailable") from None
         os.chmod(plain, 0o600)
         restored = p / "restored.git"
-        _run(["git", "clone", "--bare", "--quiet", str(plain), str(restored)],
+        # 'git clone --bare' drops nonstandard refs (e.g., refs/notes/*
+        # and refs/archives/*). Restore the full pinned namespace instead.
+        _run(["git", "init", "--bare", "--quiet", str(restored)],
              max_output=1024)
+        _run(["git", "-C", str(restored), "fetch", "--quiet", "--no-tags",
+              str(plain), "+refs/*:refs/*"], max_output=1024)
         if _inventory(restored) != expected:
             raise BackupHold("restored_refs_mismatch")
         _git(restored, "fsck", "--full", "--no-reflogs", "--no-progress")
