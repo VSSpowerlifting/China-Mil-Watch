@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "purpose": "private_claim_level_correction_review_not_publication",
+  "publication_enabled": false,
+  "owner_approved": false,
+  "created_on": "2026-10-15",
+  "series": "The PLA Watch",
+  "cases": [
+    {
+      "case_id": "PLA-WATCH-12-ATLAS-KVD002",
+      "issue_date": "2026-08-01",
+      "issue_number": 12,
+      "issue_field": "opening_note",
+      "source_record_id": 2881,
+      "expected_cited_original_url": "https://www.globaltimes.cn/page/202607/1367264.shtml",
+      "existing_exact_text": "the Atlas drone swarm system's live-fire debut",
+      "proposed_exact_text": "CCTV footage of a KVD002 armed reconnaissance drone striking a moving maritime target",
+      "editorial_status": "owner_review_required",
+      "reason": "Original Global Times July 31 report specifically concerns KVD002 drone live-fire against a moving target, requiring manual terminal guidance after camera lock problems. The distinct Atlas full-process demonstration was reported March 25, not as an August 1 anniversary debut.",
+      "primary_evidence": [
+        {
+          "kind": "publisher_original",
+          "url": "https://www.globaltimes.cn/page/202607/1367264.shtml",
+          "supports": "KVD002 July 31 source article and manual guidance limitation"
+        },
+        {
+          "kind": "issuing_broadcaster_record",
+          "url": "https://www.cctvplus.com/archive/20260325/8471877.shtml",
+          "supports": "Separate March 25 Atlas demonstration chronology"
+        }
+      ],
+      "related_existing_issue": "https://github.com/VSSpowerlifting/China-Mil-Watch/issues/627",
+      "possible_correction_notice": "An earlier version of this issue incorrectly referred to an Atlas drone-swarm debut among the August 1 disclosures. The July 31 source concerns KVD002 drones. A distinct Atlas demonstration was reported on March 25, 2026.",
+      "human_original_video_verified": false,
+      "human_editor_reviewed": false,
+      "owner_approved": false
+    },
+    {
+      "case_id": "PLA-WATCH-10-JOINTSEA-CAPTURE",
+      "issue_date": "2026-07-11",
+      "issue_number": 10,
+      "issue_field": "what_was_routine",
+      "source_record_id": 2265,
+      "expected_cited_original_url": "https://www.globaltimes.cn/page/202607/1365501.shtml",
+      "existing_exact_text": "with reporting on air defense, anti-submarine work, live-fire tasks, and crew exchanges.",
+      "proposed_exact_text": null,
+      "editorial_status": "claim_check_only_not_a_proposed_edit",
+      "reason": "The human-edited issue describes Joint Sea-2026 correctly. The linked historical record's unrelated 2025 teaser and derivative machine summary incorrectly attribute crew exchanges to 2025. Verify that this issue's crew exchange clause has reliable underlying source corroboration before deciding whether any Brief correction is needed.",
+      "primary_evidence": [
+        {
+          "kind": "publisher_original",
+          "url": "https://www.globaltimes.cn/page/202607/1365501.shtml",
+          "supports": "Original dated 2026 crew-exchange article; a separate archival capture/summary correction is needed"
+        }
+      ],
+      "related_existing_issue": "https://github.com/VSSpowerlifting/China-Mil-Watch/issues/623",
+      "possible_correction_notice": null,
+      "human_original_video_verified": false,
+      "human_editor_reviewed": false,
+      "owner_approved": false
+    }
+  ]
+}
