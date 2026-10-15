@@ -196,6 +196,50 @@ def text_quality_warning(html):
     }
 
 
+
+def compare_stored_bodies(left_html, right_html):
+    """Compare only captured page bodies, never infer a duplicate event.
+
+    This is deliberately NOT a textual or editorial quality score. Similar
+    stored bodies can be syndicated with different issuer/status/rights.
+    Dissimilar bodies can still cover one event or signal extraction failure.
+    """
+    def content(html):
+        parser = _TextOnly()
+        parser.feed(html)
+        if parser.found != 1 or parser.depth:
+            return None
+        return " ".join(" ".join(parser.parts).split())
+
+    left, right = content(left_html), content(right_html)
+    if left is None or right is None:
+        return {"status": "manual_review_missing_body",
+                "similarity": None, "text_lengths": [
+                    len(left) if left is not None else None,
+                    len(right) if right is not None else None]}
+    def grams(txt):
+        txt = "".join(txt.casefold().split())
+        return {txt[i:i + 8] for i in range(max(0, len(txt) - 7))}
+    a, b = grams(left), grams(right)
+    intersection = len(a & b)
+    union = len(a | b)
+    similarity = round(intersection / union, 4) if union else None
+    # These are only review triage categories, not determinations.
+    if similarity is None or min(len(left), len(right)) < 80:
+        status = "manual_review_short_text"
+    elif similarity >= 0.90:
+        status = "high_stored_text_overlap_review"
+    elif similarity <= 0.15:
+        status = "divergent_stored_text_review"
+    else:
+        status = "ambiguous_overlap_review"
+    return {
+        "status": status, "similarity": similarity,
+        "text_lengths": [len(left), len(right)],
+        "warning": "Stored-text overlap never proves same event, issuing institution or safe removal.",
+    }
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--index", type=Path, default=INDEX)
@@ -204,6 +248,9 @@ def main(argv=None):
                     help="Optional existing record HTML for non-mutating text check")
     ap.add_argument("--out", type=Path,
                     help="Private JSON review file outside the repository")
+    ap.add_argument("--compare-record-html", type=Path, nargs=2,
+                    metavar=("RECORD_A", "RECORD_B"),
+                    help="Optional local two-record stored-body overlap review")
     args = ap.parse_args(argv)
     if args.out:
         dest = args.out.resolve()
@@ -215,6 +262,10 @@ def main(argv=None):
     if args.record_html:
         report["record_text_quality"] = text_quality_warning(
             args.record_html.read_text(encoding="utf-8"))
+    if args.compare_record_html:
+        a, b = args.compare_record_html
+        report["stored_body_comparison"] = compare_stored_bodies(
+            a.read_text(encoding="utf-8"), b.read_text(encoding="utf-8"))
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report, ensure_ascii=False,
