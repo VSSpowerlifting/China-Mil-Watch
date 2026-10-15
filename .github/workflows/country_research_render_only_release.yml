@@ -7,6 +7,13 @@ on:
     paths:
       - ".github/workflows/country_research_render_only_release.yml"
       - "tests/test_country_research_release_contract.py"
+      - "core/public_editorial_research.py"
+      - "research/approved_desk_research.json"
+      - "scripts/guard_public_editorial_research.py"
+      - "tests/test_public_editorial_research.py"
+      - "tests/test_public_editorial_render_gate.py"
+      - "site/preview/templates/desk.html"
+      - "site/preview/generate_preview.py"
       - "scripts/guard_country_research_output_scope.py"
       - "tests/test_country_research_output_scope.py"
       - "scripts/stage_country_research_output.py"
@@ -41,7 +48,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Verify explicit release invariants and staging boundaries
-        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release -v
+        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release tests.test_public_editorial_research tests.test_public_editorial_render_gate -v
       - name: Install existing render dependencies (no publisher calls)
         run: pip install -r requirements.txt
       - name: Exercise actual static release build without committing or deploying
@@ -51,6 +58,7 @@ jobs:
           python site/render.py --out "$RUNNER_TEMP/country-render"
           python -m scripts.stage_country_research_output --from-dir "$RUNNER_TEMP/country-render" --to-dir output
           python -m scripts.guard_japan_official_reference_release
+          python -m scripts.guard_public_editorial_research --root output
           python scripts/validate_output.py
           python -m scripts.guard_country_research_output_scope
           test -f output/philippines.html
@@ -117,6 +125,7 @@ jobs:
           python site/render.py --out "$RUNNER_TEMP/country-render"
           python -m scripts.stage_country_research_output --from-dir "$RUNNER_TEMP/country-render" --to-dir output
           python -m scripts.guard_japan_official_reference_release
+          python -m scripts.guard_public_editorial_research --root output
           python scripts/validate_output.py
 
       - name: Country-desk public scope and metadata hold gate
