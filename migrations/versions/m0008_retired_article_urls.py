@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS retired_article_urls (
 
 TRIGGER_DDL = """
 CREATE TRIGGER IF NOT EXISTS guard_retired_article_id_reuse
-BEFORE INSERT ON articles
+AFTER INSERT ON articles
 WHEN EXISTS (
   SELECT 1 FROM retired_article_urls WHERE original_article_id = NEW.id
 )
@@ -47,5 +47,7 @@ def is_already_applied(conn: sqlite3.Connection) -> bool:
 
 def up(conn: sqlite3.Connection) -> None:
     # Empty on purpose: creating this table never makes a retention decision.
+    # AFTER INSERT also protects implicit SQLite rowid allocation; in a BEFORE
+    # trigger NEW.id is undefined until SQLite chooses a rowid.
     conn.execute(DDL)
     conn.execute(TRIGGER_DDL)
