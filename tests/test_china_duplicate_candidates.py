@@ -93,6 +93,10 @@ class ChinaDuplicateCandidatesTest(unittest.TestCase):
                      + '<br>continued</p></div>')
         self.assertEqual(text_quality_warning(with_void)["status"],
                          "no_heuristic_warning")
+        self_closing = ('<div class="original-text"><p>' + ("本文。" * 45)
+                        + '<br/>continued</p></div>')
+        self.assertEqual(text_quality_warning(self_closing)["status"],
+                         "no_heuristic_warning")
 
 
 if __name__ == "__main__":
