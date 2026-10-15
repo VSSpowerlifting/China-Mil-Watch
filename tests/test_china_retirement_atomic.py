@@ -6,7 +6,8 @@ from pathlib import Path
 import unittest
 
 from migrations.versions import m0008_retired_article_urls
-from scripts.stage_china_retirement_atomic import stage_atomic_retirement
+from scripts.stage_china_retirement_atomic import (stage_atomic_retirement,
+                                                   rehearse_on_new_scratch_copy)
 from core.retired_article_urls import url_sha256, verify_no_active_retired_urls
 
 
@@ -153,6 +154,47 @@ class TestAtomicRetirement(unittest.TestCase):
         self.conn.commit()
         with self.assertRaisesRegex(ValueError, "unsafe foreign-key"):
             self.stage()
+
+    def test_new_scratch_copy_retires_without_changing_original_bytes(self):
+        original_bytes = self.path.read_bytes()
+        scratch = Path(self.temp.name) / "separate-reduced.db"
+        result = rehearse_on_new_scratch_copy(
+            self.path, scratch, reviewed_selection(), "2026-10-15",
+            minimum_retire=2, maximum_retire=3)
+        self.assertEqual(result["retired"], 2)
+        self.assertTrue(result["original_db_unchanged"])
+        self.assertEqual(self.path.read_bytes(), original_bytes)
+        with sqlite3.connect(str(scratch)) as reduced:
+            self.assertEqual(
+                [row[0] for row in reduced.execute(
+                    "SELECT id FROM articles ORDER BY id")],
+                [2, 3, 5, 6])
+            self.assertEqual(verify_no_active_retired_urls(reduced), 2)
+        self.assertEqual([r[0] for r in self.state()["articles"]],
+                         [1, 2, 3, 4, 5, 6])
+
+    def test_new_scratch_copy_rolls_back_failed_delete_and_removes_file(self):
+        self.conn.execute("""
+            CREATE TRIGGER block_copy_retirement BEFORE DELETE ON articles
+            WHEN OLD.id=4
+            BEGIN SELECT RAISE(ABORT, 'never partial'); END
+        """)
+        self.conn.commit()
+        original_bytes = self.path.read_bytes()
+        scratch = Path(self.temp.name) / "failed-copy.db"
+        with self.assertRaisesRegex(sqlite3.IntegrityError, "never partial"):
+            rehearse_on_new_scratch_copy(
+                self.path, scratch, reviewed_selection(), "2026-10-15",
+                minimum_retire=2, maximum_retire=3)
+        self.assertFalse(scratch.exists())
+        self.assertEqual(self.path.read_bytes(), original_bytes)
+        self.assertEqual(len(self.state()["ledger"]), 0)
+
+    def test_scratch_copy_refuses_occupied_destination(self):
+        with self.assertRaisesRegex(ValueError, "new absolute"):
+            rehearse_on_new_scratch_copy(
+                self.path, self.path, reviewed_selection(), "2026-10-15",
+                minimum_retire=2, maximum_retire=3)
 
     def test_second_run_does_not_duplicate_retirement(self):
         self.stage()
