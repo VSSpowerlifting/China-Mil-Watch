@@ -107,6 +107,56 @@ def validate(source_db, retired_db):
     }
 
 
+
+def verify_us_public_link_parity(before_site, after_site, sqlite_receipt):
+    """No U.S. metadata reference may disappear or change in the rebuilt page.
+
+    This is deliberately scoped to the official-link rows rather than all
+    page chrome: record totals should change as China retires, but the U.S.
+    publisher URL, identity, date and issuer must not.
+    """
+    from bs4 import BeautifulSoup
+
+    selectors = {
+        "uscc_official_source_records": "li[data-uscc-official-link]",
+        "treasury_official_source_records": "li[data-us-treasury-official-link]",
+    }
+    before_path = Path(before_site) / "us-indopacific.html"
+    after_path = Path(after_site) / "us-indopacific.html"
+    before = BeautifulSoup(before_path.read_text(encoding="utf-8"), "html.parser")
+    after = BeautifulSoup(after_path.read_text(encoding="utf-8"), "html.parser")
+    receipt = {}
+    for table, selector in selectors.items():
+        observed = []
+        for doc in (before, after):
+            items = doc.select(selector)
+            rows = []
+            for li in items:
+                anchor = li.select_one("a[href]")
+                if anchor is None:
+                    raise ValueError("U.S. official metadata reference lacks external URL")
+                rows.append((
+                    li.get("data-uscc-official-link")
+                    if table.startswith("uscc_")
+                    else li.get("data-us-treasury-official-link"),
+                    anchor["href"], tuple(
+                        tag.get("datetime") for tag in li.select("time[datetime]")
+                    ), li.get_text(" ", strip=True),
+                ))
+            if len(set(rows)) != len(rows):
+                raise ValueError("duplicate official U.S. metadata reference: " + table)
+            observed.append(rows)
+        expected_rows = sqlite_receipt["official_source_rows"][table]
+        if expected_rows is not None and expected_rows > 0 and not observed[0]:
+            raise ValueError("live U.S. SQLite metadata was not rendered: " + table)
+        if observed[0] != observed[1]:
+            raise ValueError("U.S. official link/date/issuer changed or vanished: " + table)
+        receipt[table] = len(observed[1])
+    if "PACOM collection blocked" not in after.get_text(" ", strip=True):
+        raise ValueError("official U.S. link metadata must not promote PACOM collector")
+    return receipt
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-db", type=Path, required=True)

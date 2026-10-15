@@ -19,7 +19,7 @@ from scripts.plan_china_active_retirement import (
     plan, publication_record_dependencies, scratch_retirement,
 )
 from scripts.verify_china_retirement_render import validate
-from scripts.verify_china_retirement_crossdesk import validate as crossdesk_validate
+from scripts.verify_china_retirement_crossdesk import (validate as crossdesk_validate, verify_us_public_link_parity)
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE_RENDER = ROOT / "site" / "render.py"
@@ -110,6 +110,7 @@ def prepare(scratch_root, *, expected_db_sha256, site_origin):
     _render(reduced, after, site_origin)
     _carried_published_assets(after)
     rebuild_export(reduced, after)
+    us_public_links = verify_us_public_link_parity(before, after, crossdesk)
 
     proof = validate(before, after, reduced, plan_path)
     subprocess.run([sys.executable, str(ROOT / "scripts" / "validate_output.py"),
@@ -129,6 +130,7 @@ def prepare(scratch_root, *, expected_db_sha256, site_origin):
         "protected_trails": proof["protected_trails"],
         "legacy_export": proof["legacy_export"],
         "preserved_other_desk_sqlite": crossdesk,
+        "preserved_us_public_link_counts": us_public_links,
         "site_path": str(after),
         "scratch_db_path": str(reduced),
         "no_production_mutation": True,
