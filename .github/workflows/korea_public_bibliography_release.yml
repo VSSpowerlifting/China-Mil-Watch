@@ -1,8 +1,8 @@
-name: Korea Desk — five official-source links release
+name: Korea Desk — fourteen official-source links release
 
 # Explicit owner-authorized publication of government bibliography only.
-# Push triggers on this owner-reviewed release-contract update to publish
-# the approved Korea publisher-index navigation, never new source IDs.
+# Push on an owner-reviewed release-contract change publishes exactly five
+# original bibliographic entries and nine newly approved outbound MND URLs.
 # Never requests a Korean publisher, shadow Git, HWPX, model or new collector.
 on:
   pull_request:
@@ -100,7 +100,7 @@ jobs:
           assert 'href="korea.html"' in (base/"desks.html").read_text(encoding="utf-8")
           assert "https://indopacificrecord.org/korea.html" in (
               base/"sitemap.xml").read_text(encoding="utf-8")
-          print("Public metadata-only Korea route: exactly five official links, no source media or body.")
+          print("Public metadata-only Korea route: five original entries plus nine URL-only references; no source media or body.")
           PY
           sha256sum -c /tmp/ipr-korea-links-db.sha
           test ! -e pla_watch.db-wal
@@ -249,4 +249,4 @@ jobs:
           cname: indopacificrecord.org
           user_name: github-actions[bot]
           user_email: 41898282+github-actions[bot]@users.noreply.github.com
-          commit_message: 'Korea five-source directory: ${{ github.run_id }}'
+          commit_message: 'Korea fourteen-link directory: ${{ github.run_id }}'
