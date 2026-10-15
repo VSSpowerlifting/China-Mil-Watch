@@ -93,6 +93,32 @@ used for one.
 
 ---
 
+## Source-history custody (GitHub-only; October 15, 2026)
+
+Nine existing source-specific shadow **Git histories** (Korea, Indonesia,
+Philippines AFP, Singapore, two Japanese sources and three Vietnamese sources)
+were copied to separate `archive/*` refs in an owner-controlled **private
+GitHub repository**. Original and private Git commit IDs, tip trees, and
+reachable histories were checked after independent private readback. The nine
+frozen tip trees total **594 file entries / 64,975,663 bytes** when counted
+separately, not 594 published records or a deduplicated Git storage measurement.
+
+The first private [nine-source fast-forward sync run](https://github.com/VSSpowerlifting/ipr-source-evidence-private/actions/runs/38786044913)
+passed on October 15. The daily private Git-only sync does not run collectors,
+publish new records, move public database state or grant rights to source
+material. Future success must be checked per run. Existing public source refs
+have **not** been removed or made private by this copy.
+
+**This is GitHub-only custody, not an independent backup** or comprehensive
+retention of GitHub Actions ZIP-only/failed-attempt evidence. Collection gaps,
+media/source reuse permissions, old public Git/Pages exposure, and production
+cutover remain separate. Optional encryption/off-GitHub recovery tooling is not
+a requirement for this owner-selected storage phase. See the
+[private-vault status notes](docs/engineering/PRIVATE_GITHUB_EVIDENCE_VAULT_2026-10-15.md)
+for the historical preflight and current limitations.
+
+---
+
 ## Project Structure
 
 ```
