@@ -181,6 +181,7 @@ def create_backup(repo, output, recipient, refs, *, gpg_home=None):
             git = subprocess.Popen(
                 ["git", "-C", str(repo), "bundle", "create", "-", "--all"],
                 stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            gpg = None
             try:
                 gpg = subprocess.Popen(
                     ["gpg", *_gpg_home_args(gpg_home), "--batch", "--no-tty",
@@ -192,9 +193,19 @@ def create_backup(repo, output, recipient, refs, *, gpg_home=None):
                 crypto_status = gpg.wait(timeout=120)
                 source_status = git.wait(timeout=120)
             finally:
-                if git.poll() is None:
-                    git.kill()
-                    git.wait()
+                # Always terminate/reap BOTH subprocesses on any failure.
+                # In particular, a timed-out GPG writer must not survive.
+                if git.stdout is not None and not git.stdout.closed:
+                    git.stdout.close()
+                try:
+                    if gpg is not None:
+                        if gpg.poll() is None:
+                            gpg.kill()
+                        gpg.wait(timeout=10)
+                finally:
+                    if git.poll() is None:
+                        git.kill()
+                    git.wait(timeout=10)
         except (OSError, subprocess.TimeoutExpired):
             raise BackupHold("encrypted_export_unavailable") from None
         if source_status or crypto_status or not Path(partial).stat().st_size:

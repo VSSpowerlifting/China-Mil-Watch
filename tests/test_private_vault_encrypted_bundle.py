@@ -153,6 +153,42 @@ class EncryptedVaultBackupTests(unittest.TestCase):
         self.assertFalse(self.output.exists())
         self.assertFalse(any(p.name.endswith(".part") for p in self.root.iterdir()))
 
+    def test_timeout_reaps_both_children_without_publishing_ciphertext(self):
+        # Genuine fictional Git producer, synthetic stalled GPG child.
+        real_popen = subprocess.Popen
+        created = []
+
+        class TimedOutGPG:
+            def __init__(self):
+                self.killed = False
+
+            def wait(self, timeout=None):
+                if not self.killed:
+                    raise subprocess.TimeoutExpired("fictional-gpg", timeout)
+                return -9
+
+            def poll(self):
+                return -9 if self.killed else None
+
+            def kill(self):
+                self.killed = True
+
+        def launch(argv, *args, **kwargs):
+            if argv[0] == "gpg" and "--encrypt" in argv:
+                child = TimedOutGPG()
+                created.append(child)
+                return child
+            return real_popen(argv, *args, **kwargs)
+
+        with mock.patch.object(backup.subprocess, "Popen", side_effect=launch):
+            with self.assertRaisesRegex(
+                    backup.BackupHold, "encrypted_export_unavailable"):
+                self.create()
+        self.assertEqual(len(created), 1)
+        self.assertTrue(created[0].killed)
+        self.assertFalse(self.output.exists())
+        self.assertFalse(any(p.name.endswith(".part") for p in self.root.iterdir()))
+
     def test_encrypted_file_tamper_is_rejected_before_decryption(self):
         info = self.create()
         with self.output.open("ab") as handle:
