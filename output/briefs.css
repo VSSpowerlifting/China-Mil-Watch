@@ -285,3 +285,13 @@ main#main.brief-page>.wrap{background:var(--brief-paper);border:0}
   .brief-toc a{color:LinkText}
   .brief-reading-navigation>summary,.brief-signal-label,.brief-excerpt-trace{color:CanvasText}
 }
+
+/* Abstract profile ornament; no place, scale, measurement or evidentiary meaning.
+   Empty paint-only pseudo-elements sit in existing section whitespace. */
+.brief-page{--brief-profile-span:184px;--brief-profile-height:28px;--brief-profile-top:-48px;--brief-profile:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20240%2040%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M2%2026%2024%2026%2039%2021%2055%2023%2073%2012%2088%2016%20106%208%20125%2014%20143%2013%20162%2024%20181%2027%20203%2022%20222%2025%20238%2025%22%20vector-effect%3D%22non-scaling-stroke%22%20stroke%3D%22%23548d87%22%2F%3E%3Cpath%20d%3D%22M2%2033%2025%2033%2041%2030%2060%2031%2079%2023%2095%2026%20113%2019%20130%2025%20149%2024%20167%2033%20189%2035%20209%2031%20238%2032%22%20vector-effect%3D%22non-scaling-stroke%22%20stroke%3D%22%2384999a%22%2F%3E%3C%2Fsvg%3E")}
+.brief-section{position:relative}
+.brief-section:nth-of-type(even):not(.brief-trail):not(.brief-citation-section):not(.brief-follow-up)::after,
+.brief-trail::after{content:"";position:absolute;right:0;top:var(--brief-profile-top);width:var(--brief-profile-span);height:var(--brief-profile-height);background:var(--brief-profile) no-repeat center/100% 100%;opacity:.85;pointer-events:none}
+.brief-trail::after{width:240px;height:28px;top:-48px}
+@media(max-width:600px){.brief-page{--brief-profile-span:112px;--brief-profile-height:18px;--brief-profile-top:-38px}.brief-trail::after{width:160px;height:20px;top:-40px}}
+@media print,(forced-colors:active){.brief-section::after{display:none}}
