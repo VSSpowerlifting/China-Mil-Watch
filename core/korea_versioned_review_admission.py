@@ -104,7 +104,8 @@ def _packet(packet):
     need(type(gitsha) is str and re.fullmatch(r"[0-9a-f]{40}", gitsha)
          is not None, "candidate_state_not_version_pinned")
     _sha(packet.get("source_db_sha256"))
-    _sha(packet.get("frozen_fourteen_ancestor")) if False else None
+    need(packet.get("frozen_fourteen_ancestor") == intake.FROZEN_14,
+         "original_korea_archive_ancestor_changed")
     by_id = {}
     for row in packet["records"]:
         need(type(row) is dict
@@ -130,6 +131,27 @@ def _packet(packet):
                     "original_title_sha256", "original_hwpx_sha256",
                     "publisher_html_sha256"):
             _sha(row.get(key))
+        need(row.get("publisher_posted_date") ==
+             intake._date(row.get("publisher_posted_date"))
+             and row.get("institution_id") == "kr_mnd"
+             and row.get("publisher_institution_id") == "kr_policy_briefing"
+             and type(row.get("first_seen_run")) is str
+             and intake.RUN.fullmatch(row["first_seen_run"]) is not None,
+             "malformed_source_candidate")
+        check_version = intake.digest(intake.canonical({
+            "source_identity": sid,
+            "source_url": row["canonical_source_url"],
+            "published_date": row["publisher_posted_date"],
+            "original_text_sha256": row["original_text_sha256"],
+            "publisher_html_sha256": row["publisher_html_sha256"],
+            "original_hwpx_sha256": row["original_hwpx_sha256"],
+        }))
+        need(row["candidate_version_sha256"] == check_version,
+             "candidate_version_digest_changed")
+        need(row.get("editorial_exception") ==
+             ("unresolved_2025_2026_excavation_year_issue_601"
+              if sid == "korea-policy:156785161" else None),
+             "source_editorial_exception_removed")
         by_id[sid] = row
     return by_id
 
@@ -244,9 +266,8 @@ def verify(packet, seal, *, reviewer_key, owner_key, as_of_utc):
          "invalid_discrepancies")
     need(d["disposition"] in (HOLD, METADATA),
          "review_disposition_invalid")
-    need(d["rights_basis"] in ("unreviewed", RIGHTS)
-         and d["rights_reference"] is None or False,
-         "invalid_rights_reference") if False else None
+    need(d["rights_basis"] in ("unreviewed", RIGHTS),
+         "invalid_rights_basis")
     need(type(d["rights_reference"]) in (str, type(None))
          and (d["rights_reference"] is None or
               8 <= len(d["rights_reference"]) <= 300),
