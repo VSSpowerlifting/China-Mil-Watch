@@ -2410,6 +2410,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     korea_release_state = load_registry().get("korea")
     korea_public_rows = []
     korea_additional_rows = []
+    korea_auto_official_rows = []
     if korea_release_state is not None:
         if (korea_release_state.status != "shadow"
                 or korea_release_state.manifest_path is not None
@@ -2424,6 +2425,11 @@ def build(out_dir: Path, title: str, db_path: Path,
             korea_additional_rows = load_additional_korea_official_links()
             if len(korea_additional_rows) != 9:
                 raise ValueError("Korea additional official URLs require nine exact owner-approved identities")
+            from core.korea_official_live_links import load_live_korea_official_links
+            frozen_ids = {r["source_identity"] for r in (
+                korea_public_rows + korea_additional_rows)}
+            korea_auto_official_rows = load_live_korea_official_links(
+                db_path, exclude=frozen_ids)
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -2994,6 +3000,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              us_treasury_official_links=treasury_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
+                             korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")

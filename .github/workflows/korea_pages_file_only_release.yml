@@ -41,8 +41,10 @@ jobs:
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
 
+  # Retired in favor of korea_verified_official_link_production.yml, which
+  # handles both fresh metadata admissions and single-file Pages repair.
   korea-pages-file-only-release:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: false
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
@@ -89,7 +91,11 @@ jobs:
           html=Path("output/korea.html").read_text(encoding="utf-8")
           assert html.count('data-korea-public-link=')==5
           assert html.count('data-korea-additional-link=')==9
-          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=')==14
+          from core.korea_official_live_links import load_live_korea_official_links
+          fixed = {x["source_identity"] for x in five+nine}
+          auto = load_live_korea_official_links("pla_watch.db", exclude=fixed)
+          assert html.count('data-korea-auto-official-link=') == len(auto)
+          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=')==14 + len(auto)
           assert all(x['source_url'] in html for x in five+nine)
           assert "unresolved excavation-year discrepancy" in html
           assert "not IPR archived records" in html
@@ -139,7 +145,7 @@ jobs:
       - name: Check out CURRENT Pages branch separately
         uses: actions/checkout@v4
         with:
-          repository: VSSpowerlifting/China-Mil-Watch
+          repository: ${{ github.repository }}
           ref: gh-pages
           path: korea-existing-pages
           fetch-depth: 0

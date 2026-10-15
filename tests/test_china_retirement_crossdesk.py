@@ -1,11 +1,11 @@
-"""No China cull may mutate independent live U.S. metadata records."""
+"""No China cull may mutate independent live U.S. or Korea metadata records."""
 import shutil
 import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.verify_china_retirement_crossdesk import validate, verify_us_public_link_parity
+from scripts.verify_china_retirement_crossdesk import validate, verify_us_public_link_parity, verify_korea_public_link_parity
 
 
 class LiveUSMetadataSurvivors(unittest.TestCase):
@@ -29,6 +29,16 @@ class LiveUSMetadataSurvivors(unittest.TestCase):
                     issuer TEXT NOT NULL);
                 CREATE TABLE treasury_official_observations(
                     observed_on_utc TEXT NOT NULL, source_identity TEXT NOT NULL);
+                CREATE TABLE korea_official_source_records(
+                    source_identity TEXT PRIMARY KEY,
+                    canonical_official_url TEXT NOT NULL,
+                    publisher_posted_date TEXT NOT NULL,
+                    public_scope TEXT NOT NULL);
+                CREATE INDEX korea_live_date_idx ON korea_official_source_records(publisher_posted_date);
+                INSERT INTO korea_official_source_records VALUES
+                    ('korea-policy:156799901',
+                     'https://www.korea.kr/briefing/pressReleaseView.do?newsId=156799901',
+                     '2026-10-15', 'official_link_only');
                 INSERT INTO uscc_official_source_records VALUES
                     ('uscc:a','https://www.uscc.gov/a','USCC');
                 INSERT INTO uscc_official_observations VALUES
@@ -50,7 +60,26 @@ class LiveUSMetadataSurvivors(unittest.TestCase):
         self.assertEqual(receipt["official_source_rows"],
                          {"uscc_official_source_records": 1,
                           "treasury_official_source_records": 1})
-        self.assertEqual(len(receipt["preserved_tables"]), 5)
+        self.assertEqual(len(receipt["preserved_tables"]), 6)
+        self.assertEqual(len(receipt["korea_released_official_links"]), 1)
+
+    def test_korea_live_row_loss_fails(self):
+        with sqlite3.connect(self.new) as db:
+            db.execute("DELETE FROM korea_official_source_records")
+        with self.assertRaisesRegex(ValueError, "korea_official_source_records"):
+            validate(self.old, self.new)
+
+    def test_korea_live_schema_drift_fails(self):
+        with sqlite3.connect(self.new) as db:
+            db.execute("DROP INDEX korea_live_date_idx")
+        with self.assertRaisesRegex(ValueError, "korea_official_source_records"):
+            validate(self.old, self.new)
+
+    def test_korea_release_scope_change_fails(self):
+        with sqlite3.connect(self.new) as db:
+            db.execute("UPDATE korea_official_source_records SET public_scope='held'")
+        with self.assertRaisesRegex(ValueError, "korea_official_source_records"):
+            validate(self.old, self.new)
 
     def test_uscc_record_loss_fails(self):
         with sqlite3.connect(self.new) as db:
@@ -98,6 +127,63 @@ class LiveUSMetadataSurvivors(unittest.TestCase):
         self.assertEqual(receipt["official_source_rows"],
                          {"uscc_official_source_records": None,
                           "treasury_official_source_records": None})
+
+
+class KoreaPublisherLinkReadback(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        root = Path(self.tmp.name)
+        self.before, self.after = root / "before", root / "after"
+        for location in (self.before, self.after):
+            location.mkdir()
+        self.fixture = """<section>
+        <li data-korea-public-link="korea-policy:156799900"><a href="https://www.korea.kr">Fixed</a></li>
+        <li data-korea-auto-official-link="korea-policy:156799901">
+          <a href="https://www.korea.kr/briefing/pressReleaseView.do?newsId=156799901">MND official press release</a>
+          <time datetime="2026-10-15">2026-10-15</time>Issuer: MND
+        </li></section>"""
+        for location in (self.before, self.after):
+            (location / "korea.html").write_text(self.fixture, encoding="utf-8")
+        self.receipt = {"korea_released_official_links": [
+            ("korea-policy:156799901",
+             "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156799901",
+             "2026-10-15")
+        ]}
+
+    def test_identical_korea_auto_links_survive(self):
+        self.assertEqual(
+            verify_korea_public_link_parity(self.before, self.after, self.receipt), 1
+        )
+
+    def test_changed_korea_date_is_rejected(self):
+        page = self.after / "korea.html"
+        page.write_text(self.fixture.replace('datetime="2026-10-15"', 'datetime="2026-10-16"'))
+        with self.assertRaisesRegex(ValueError, "protected SQLite"):
+            verify_korea_public_link_parity(self.before, self.after, self.receipt)
+
+    def test_removed_live_link_is_rejected_even_if_both_pages_are_empty(self):
+        for root in (self.before, self.after):
+            page = root / "korea.html"
+            page.write_text(self.fixture.replace('data-korea-auto-official-link=', 'data-removed='))
+        with self.assertRaisesRegex(ValueError, "protected SQLite"):
+            verify_korea_public_link_parity(self.before, self.after, self.receipt)
+
+    def test_changed_source_directory_is_rejected(self):
+        page = self.after / "korea.html"
+        page.write_text(self.fixture.replace('data-korea-public-link=', 'data-removed='))
+        with self.assertRaisesRegex(ValueError, "source directory"):
+            verify_korea_public_link_parity(self.before, self.after, self.receipt)
+
+    def test_duplicate_auto_link_is_rejected(self):
+        page = self.after / "korea.html"
+        page.write_text(self.fixture.replace("</section>", """
+        <li data-korea-auto-official-link="korea-policy:156799901">
+          <a href="https://www.korea.kr/briefing/pressReleaseView.do?newsId=156799901">Duplicate</a>
+          <time datetime="2026-10-15">2026-10-15</time>
+        </li></section>"""))
+        with self.assertRaisesRegex(ValueError, "duplicate Korea"):
+            verify_korea_public_link_parity(self.before, self.after, self.receipt)
 
 
 class USPublisherLinkReadback(unittest.TestCase):

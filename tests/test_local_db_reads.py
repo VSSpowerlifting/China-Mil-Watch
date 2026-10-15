@@ -1,8 +1,9 @@
 """
 Reading the tracked database must work on a fresh clone, on any platform.
 
-The tracked database is WAL-mode, and a fresh `git clone` has no `-wal`/`-shm`
-beside it because the sidecars are gitignored. What a direct
+The tracked production database can be WAL-mode or rollback-journal mode.
+A fresh `git clone` has no `-wal`/`-shm` beside it because the sidecars
+are gitignored. What a direct
 `file:…?mode=ro` URI does in that state is **not fixed**: it depends on the
 SQLite build, the VFS and the filesystem. SQLite's rule since 3.22.0 is that a
 read-only WAL database can be opened when the `-wal`/`-shm` files already
@@ -79,14 +80,14 @@ class FreshCloneCase(unittest.TestCase):
         return hashlib.sha256(self.db.read_bytes()).hexdigest()
 
 
-class TestTheTrackedDatabaseIsStillWalMode(FreshCloneCase):
-    """The premise the rest of this module rests on."""
+class TestTrackedDatabaseJournalMode(FreshCloneCase):
+    """The tracked SQLite file may use either supported journal mode."""
 
-    def test_the_tracked_database_really_is_wal_mode(self):
+    def test_header_has_a_valid_rollback_or_wal_mode(self):
         header = self.db.read_bytes()[:100]
-        self.assertEqual((header[18], header[19]), (2, 2),
-                         "write/read version 2 == WAL; if this ever changes, "
-                         "the reasoning below needs revisiting")
+        self.assertEqual(header[:16], b"SQLite format 3\x00")
+        self.assertIn((header[18], header[19]), ((1, 1), (2, 2)),
+                      "SQLite mode bytes must agree and identify rollback or WAL")
 
 
 class TestGovernedConsumersReadThroughTheHelper(unittest.TestCase):

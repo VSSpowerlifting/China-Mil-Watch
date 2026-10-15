@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "core/retired_article_urls.py"
-      - "migrations/versions/m0008_retired_article_urls.py"
+      - "migrations/versions/m0009_retired_article_urls.py"
       - "storage/db.py"
       - "scripts/reconcile_db.py"
       - "scripts/verify_db_current.py"
