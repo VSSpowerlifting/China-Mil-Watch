@@ -109,7 +109,7 @@ def plan(index, *, expected_china_focus=600, minimum_retire=3500):
     }
 
 
-def scratch_retirement(db_path, scratch_path, plan_data):
+def scratch_retirement(db_path, scratch_path, plan_data, tombstone_path=None):
     """Apply deletions ONLY to a fresh SQLite file outside this repository."""
     from scripts.reconcile_db import read_only
 
@@ -123,6 +123,15 @@ def scratch_retirement(db_path, scratch_path, plan_data):
     if (destination == ROOT or ROOT in destination.parents
             or destination == db_path):
         raise ValueError("cannot write into repository or tracked database")
+    if tombstone_path is not None:
+        receipt = Path(tombstone_path)
+        if (not receipt.is_absolute() or receipt.exists()
+                or not receipt.parent.is_dir() or receipt.parent.is_symlink()):
+            raise ValueError("tombstone path must be a new absolute scratch file")
+        receipt = receipt.resolve()
+        if (receipt == ROOT or ROOT in receipt.parents
+                or receipt == destination or receipt == db_path):
+            raise ValueError("tombstone receipt must be outside the repository")
 
     # Copies the input through the repository's read-only scratch mechanism.
     # No direct SQLite connection ever touches the tracked file on disk.
@@ -131,6 +140,14 @@ def scratch_retirement(db_path, scratch_path, plan_data):
         expected = set(plan_data["kept_ids"]) | set(plan_data["retired_ids"])
         if originals != expected:
             raise ValueError("tracked database does not match the reviewed index")
+        # Retired canonical URLs must be blocked from future collection.
+        # Hash the literal stored URL bytes: the ingestion path inserts these
+        # exact URLs, without case folding or an invented recanonicalization.
+        urls = dict(source.execute("SELECT id, url FROM articles"))
+        digests = sorted(sha256(urls[i].encode("utf-8")).hexdigest()
+                         for i in plan_data["retired_ids"])
+        if len(digests) != len(set(digests)):
+            raise ValueError("duplicate retired URL or noncanonical input")
         # Any new dependent relation that cannot cascade must be designed
         # separately; silently losing foreign-key evidence is unacceptable.
         tables = [r[0] for r in source.execute(
@@ -170,8 +187,25 @@ def scratch_retirement(db_path, scratch_path, plan_data):
             raise
         else:
             target.close()
+    if tombstone_path is not None:
+        payload = {
+            "version": 1, "algorithm": "sha256-of-exact-stored-article-url",
+            "snapshot": plan_data["snapshot"],
+            "retired_count": len(digests),
+            "retirement_id_sha256": plan_data["retirement_id_sha256"],
+            "retired_url_sha256": digests,
+        }
+        try:
+            with receipt.open("x", encoding="utf-8") as stream:
+                stream.write(json.dumps(payload, sort_keys=True) + "\n")
+            receipt.chmod(0o600)
+        except BaseException:
+            destination.unlink(missing_ok=True)
+            raise
     return {"scratch_db": str(destination), "retired": len(plan_data["retired_ids"]),
-            "kept": plan_data["total_after"], "production_db_modified": False}
+            "kept": plan_data["total_after"], "production_db_modified": False,
+            "url_tombstone_count": len(digests),
+            "private_tombstone_receipt": str(receipt) if tombstone_path else None}
 
 
 def main(argv=None):
@@ -181,12 +215,17 @@ def main(argv=None):
     parser.add_argument("--db", type=Path, default=ROOT / "pla_watch.db")
     parser.add_argument("--scratch-db", type=Path,
                         help="optional NEW database path outside repo; never publish")
+    parser.add_argument("--tombstones-out", type=Path,
+                        help="new private digest manifest; requires --scratch-db")
     args = parser.parse_args(argv)
     result = plan(json.loads(args.index.read_text(encoding="utf-8")))
     public = {k: v for k, v in result.items()
               if k not in ("kept_ids", "retired_ids")}
+    if args.tombstones_out and not args.scratch_db:
+        parser.error("--tombstones-out requires --scratch-db")
     if args.scratch_db:
-        public["rehearsal"] = scratch_retirement(args.db, args.scratch_db, result)
+        public["rehearsal"] = scratch_retirement(
+            args.db, args.scratch_db, result, tombstone_path=args.tombstones_out)
     print(json.dumps(public, sort_keys=True, indent=2))
     return 0
 
