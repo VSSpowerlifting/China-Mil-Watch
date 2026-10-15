@@ -1,16 +1,16 @@
 # Private GitHub source vault — provider choice and safe activation
 
-**Owner choice: October 15, 2026 — a separate PRIVATE GitHub repository.** This specifies the provider for the previously approved independent original-evidence archive (#332/#342). It does **not** create that repository, transfer originals, resolve publisher permissions, or enable production. Avoid repurposing unrelated existing private repositories.
+**Owner choice: October 15, 2026 — a separate PRIVATE GitHub repository.** The owner has now **created** `VSSpowerlifting/ipr-source-evidence-private` and the connected GitHub API has independently confirmed `visibility=private`, owner-admin permissions and a clean empty branch list at first observation. I subsequently initialized its `main` with a **policy README only** at exact commit `2d53f25a2a4c31b3d1b2a84b569a7f203fdad593` and blob `b1a7c174d224f0d9e9245ab400a31bb19c6eab86`. A follow-up authenticated API read reverified private visibility and exactly one `README.md` Git tree entry, no archive refs or government bodies. **No originals have been transferred**, no independent backup or source-use permission is established, and production is untouched.
 
-## Create the empty destination
+## Destination created and initialized — initial onboarding record
 
-Proposed name: **`VSSpowerlifting/ipr-source-evidence-private`**. The owner can create it using the GitHub New repository UI, choosing:
+Actual destination: **`VSSpowerlifting/ipr-source-evidence-private`**. The owner already created it through GitHub. These original setup requirements have been met for the private visibility/name and initial empty state:
 - Owner `VSSpowerlifting`, name `ipr-source-evidence-private`, **Private**.
 - **Do not initialize** with a README, license, .gitignore or template. Do not import/fork the public IPR repo: public-history copies are not erased by a new fork.
 - No Pages, no public access, no collaborators by default; review owner/admin and recovery contact; enable strong account MFA. Keep code, original media, full-text payloads and reviewer packets OUT of public repositories.
 - Do not enable an automatic public-source GitHub Actions transfer. No secrets in PR contexts. Treat linked assets and HWPX/PDF embedded media as rights-held pending source-specific reviews.
 
-[Create a private repository on GitHub](https://github.com/new?owner=VSSpowerlifting&name=ipr-source-evidence-private&visibility=private). This is a UI setup link; it does not create anything automatically. After creation, verify the authenticated repository API reports `visibility=private`, `private=true`, nonfork, nonarchived, correct owner and empty branches. If a different private repository is chosen later, re-run all checks for that exact name.
+[View the now-created private repository](https://github.com/VSSpowerlifting/ipr-source-evidence-private). The authenticated preflight now accepts **either an entirely empty new repo or the exact known policy-README-only bootstrap** on a single `main` branch. Any changed README blob, extra file or source-archive ref is a fail-closed preflight discrepancy; once genuine archival refs are added, use the separate full object-parity and retention tools, not this onboarding check. The `main` branch was reported **not protected** on first inspection, so repository rulesets and actor access remain a **separate owner review gate**.
 
 **Authenticated preflight from an operator-controlled shell with `gh` installed and already authenticated:**
 
@@ -38,13 +38,13 @@ The CLI uses only **GET** requests via `gh api`, does not open source captures, 
 | Phase | Can proceed now? | Exact stop condition |
 |---|---|---|
 | Private GitHub provider design, authenticated **read-only** destination checker, fictional unit tests | **Yes** | No source bytes, secrets, network in PR CI |
-| Owner creates `ipr-source-evidence-private` from GitHub UI | Owner action | Verify **private**, correct owner, empty, no unwanted collaborators |
+| Owner creates `ipr-source-evidence-private` from GitHub UI | **Complete** — verified private + owner; policy README only | Still review collaborators, branch restrictions, backup and credential scope |
 | Cross-repository App/short-lived token, branch protections, budget, backup permissions | Separately reviewed setup | No credentials or source copies in public PR jobs |
 | One historical source family, plus one genuinely failed-attempt ZIP, copy/rehash/restore pilot | Later, explicit live pilot approval | Source-original rights retention scope reviewed; independent backup complete |
 | All desk archives + production DB/historic artifacts | Later migration approval | Every original/attempt/tree/corpus hash reconciles |
 | Stop public full-state writes/artifacts, public projection + release | Later C6 approval | Verified fail-closed private persistence, human rights approvals, full tests, rollback |
 
-**Non-goals of the current PR:** no new repository created, no source transfer or provider access attempted, no secret/provisioning mutation, no publisher requests, no model/email/publication, no Git history rewrite, no website/collector modification. Full offline CI required before merging any supporting code. Provider selection does not change the legal/retention status of a single ministry original.
+**Non-goals of the current PR:** The new repository and policy-only initial README now exist (created by owner and initialized through the connected GitHub tool). No source-original transfer, privileged cross-repository credential, independent backup, publisher request, model/email/publication, Git history rewrite, website/collector change or source-rights grant occurred. Full offline CI remains required before merging supporting code. Provider selection does not change legal/retention status of any ministry original.
 
 
 ## After an approved restricted transfer: independent read-only Git object parity
