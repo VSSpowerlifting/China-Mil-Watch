@@ -20,6 +20,18 @@ REPORT_SCHEMA = "ipr-private-github-vault-preflight/1"
 # A branch name alone (or a random README file) must never imply safe custody.
 BOOTSTRAP_README_BLOB_SHA = "b1a7c174d224f0d9e9245ab400a31bb19c6eab86"
 PILOT_MAIN_SHA = "2d53f25a2a4c31b3d1b2a84b569a7f203fdad593"
+# Current owner-selected private vault has added only vetted metadata inventory
+# for the genuine Korea source and its failed October 12 Actions artifact.
+# These blobs contain no source-original response bytes or reviewer identities.
+METADATA_MAIN_SHA = "43a9ad7efec2731133f0e2e2fb9fee4747091c51"
+METADATA_MAIN_TREE = {
+    "README.md": ("blob", "0fc7181cb1941c8f1893c30b99caca18a3f87b14"),
+    "manifests": ("tree", "9c5d77bdfe65c14f368e28cd60774df7813473e4"),
+    "manifests/korea_mnd_custody_preflight_2026-10-15.json":
+        ("blob", "8db0105180c02692763e050f18855f2ffc145aa7"),
+    "manifests/korea_oct12_failed_actions_capture_audit_2026-10-15.json":
+        ("blob", "3aac056afc0cb36bfc4767d406c59c270775cf56"),
+}
 PILOT_REFS = {
     "pilot/fictional-custody-20261015": "48c7746a1f3b94f76a6859ecd341122e3cdf4d31",
     "pilot/fictional-restore-20261015": "ca89f369bb947cdbe26ed98aa48e9792abea6fd8",
@@ -70,7 +82,7 @@ def _api(endpoint):
 
 
 def evaluate(source, vault, *, api=_api):
-    """Validate an empty or pinned README-only private vault; never transfer."""
+    """Validate tightly pinned, metadata-only private vault states; never transfer."""
     source_owner, _ = check_slug(source)
     vault_owner, _ = check_slug(vault)
     if source.lower() == vault.lower():
@@ -144,7 +156,8 @@ def evaluate(source, vault, *, api=_api):
             raise VaultPreflightError("vault_pilot_branches_invalid")
         actual = {item["name"]: item["commit"].get("sha") for item in branches}
         if (len(actual) != 3 or
-                actual != {"main": PILOT_MAIN_SHA, **PILOT_REFS}):
+                actual not in ({"main": PILOT_MAIN_SHA, **PILOT_REFS},
+                               {"main": METADATA_MAIN_SHA, **PILOT_REFS})):
             raise VaultPreflightError("vault_pilot_branches_changed")
         if dest.get("default_branch") != "main":
             raise VaultPreflightError("vault_bootstrap_default_branch_invalid")
@@ -157,10 +170,23 @@ def evaluate(source, vault, *, api=_api):
         except (TypeError, KeyError, OSError, ValueError):
             raise VaultPreflightError("authenticated_api_unavailable") from None
         if (type(main_tree) is not dict or main_tree.get("truncated") is not False
-                or type(main_tree.get("tree")) is not list
-                or len(main_tree["tree"]) != 1
-                or main_tree["tree"][0].get("path") != "README.md"
-                or main_tree["tree"][0].get("sha") != BOOTSTRAP_README_BLOB_SHA):
+                or type(main_tree.get("tree")) is not list):
+            raise VaultPreflightError("vault_pilot_main_changed")
+        main_rows = main_tree["tree"]
+        if actual["main"] == PILOT_MAIN_SHA:
+            permitted_main = {
+                "README.md": ("blob", BOOTSTRAP_README_BLOB_SHA),
+            }
+        else:
+            permitted_main = METADATA_MAIN_TREE
+        if (len(main_rows) != len(permitted_main)
+                or any(type(row) is not dict for row in main_rows)):
+            raise VaultPreflightError("vault_pilot_main_changed")
+        main_observed = {
+            row.get("path"): (row.get("type"), row.get("sha"))
+            for row in main_rows
+        }
+        if main_observed != permitted_main:
             raise VaultPreflightError("vault_pilot_main_changed")
         for tree in trees:
             if type(tree) is not dict or tree.get("truncated") is not False:
@@ -173,7 +199,9 @@ def evaluate(source, vault, *, api=_api):
             observed = {row.get("path"): row.get("sha") for row in rows}
             if len(observed) != len(PILOT_EXPECTED_BLOBS) or observed != PILOT_EXPECTED_BLOBS:
                 raise VaultPreflightError("vault_pilot_tree_unexpected")
-        bootstrap = "verified_fictional_copy_and_restore_only"
+        bootstrap = ("verified_korea_metadata_only_plus_fictional_pilot"
+                     if actual["main"] == METADATA_MAIN_SHA else
+                     "verified_fictional_copy_and_restore_only")
     else:
         raise VaultPreflightError("vault_not_bootstrap_only")
     # Do NOT assume an accessible private repo grants Actions cross-repo write.
@@ -187,7 +215,8 @@ def evaluate(source, vault, *, api=_api):
         "destination_initial_branches": len(branches),
         "bootstrap_state": bootstrap,
         "fictional_pilot_git_blob_parity_verified": (
-            bootstrap == "verified_fictional_copy_and_restore_only"),
+            bootstrap in ("verified_fictional_copy_and_restore_only",
+                          "verified_korea_metadata_only_plus_fictional_pilot")),
         "main_branch_protection_verified": False,
         "pages_disabled_verified": True,
         "private_forking_disabled_verified": forks_blocked,
