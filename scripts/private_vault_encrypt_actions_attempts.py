@@ -256,7 +256,14 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
         encrypted_sha = digest(partial)
         try:
             os.link(partial, target)  # never replace a separately created backup
+            directory_fd = os.open(str(target.parent), os.O_RDONLY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
         except OSError:
+            # If link already succeeded but directory fsync failed, retain the
+            # ciphertext for inspection, but NEVER report durable success.
             raise Hold("backup_target_race_or_unsafe") from None
         return {
             "schema": SCHEMA, "status": "encrypted_backup_created",
