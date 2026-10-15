@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from core.korea_private_research_candidates import (
@@ -58,6 +58,7 @@ def template(*, week_ending="2026-10-17"):
                 "source_content_sha256": row["source_content_sha256"],
                 "hwpx_capture_sha256": row["hwpx_capture_sha256"],
                 "publisher_html_capture_sha256": row["publisher_html_capture_sha256"],
+                "evidence_anchors": [],
                 "human_review": {
                     "disposition": "pending",
                     "reviewer": "",
@@ -123,6 +124,33 @@ def _section(value, kind, flags, positive, now):
     return _timestamp(value["reviewed_at_utc"], now=now)
 
 
+def _anchors(value):
+    """Check claimed original-language line citations, not their truth.
+
+    Independent reviewer must verify every hash against the frozen extracted
+    Korean text and original rendered HWPX before attesting authenticity.
+    """
+    require(type(value) is list and 1 <= len(value) <= 8,
+            "one to eight private evidence anchors required")
+    observed = set()
+    for row in value:
+        _exact(row, ("line_number", "line_sha256", "claim_kind",
+                     "editorial_linkage"), "private original-language anchor")
+        number = row["line_number"]
+        require(type(number) is int and 1 <= number <= 10000
+                and number not in observed, "duplicate or invalid original line")
+        observed.add(number)
+        require(type(row["line_sha256"]) is str and
+                re.fullmatch(r"[0-9a-f]{64}", row["line_sha256"]) is not None,
+                "invalid original-language line SHA-256")
+        require(row["claim_kind"] in (
+            "announcement", "plan", "reported_action", "assessment", "discussion"
+        ), "invalid original-language claim kind")
+        require(_text(row["editorial_linkage"], max_len=240, optional=False)
+                and len(row["editorial_linkage"]) >= 24,
+                "missing bounded English-original claim linkage")
+
+
 def validate(data, *, now=None, week_ending="2026-10-17"):
     """Validate structure and versions; NEVER authenticate a person or grant use.
 
@@ -158,6 +186,13 @@ def validate(data, *, now=None, week_ending="2026-10-17"):
             ("explicit_local_no_send_rehearsal_only",),
             "acknowledged_local_rehearsal_only", now,
         )
+        if human is None:
+            require(got["evidence_anchors"] == [],
+                    "unreviewed source cannot claim reviewed line anchors")
+        else:
+            _anchors(got["evidence_anchors"])
+            require(human.date() >= date.fromisoformat(got["published_date"]),
+                    "human review predates original publisher document")
         require(rights is None or human is not None,
                 "rights review must not precede original-language review")
         require(owner is None or (rights is not None and human is not None),
