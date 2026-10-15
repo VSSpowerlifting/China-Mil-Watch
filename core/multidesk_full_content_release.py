@@ -29,7 +29,7 @@ RECEIPT_SCHEMA = "ipr-full-content-human-approval/1"
 DOMAIN = b"IPR-FULL-CONTENT-HUMAN-APPROVAL-v1\x00"
 HASH = re.compile(r"[0-9a-f]{64}\Z")
 GIT = re.compile(r"[0-9a-f]{40}\Z")
-SLUG = re.compile(r"[a-z0-9][a-z0-9_-]{2,120}\Z")
+IDENTITY = re.compile(r"[a-z0-9][a-z0-9._:/-]{2,220}\Z")
 UTC = re.compile(r"20\d{2}-\d\d-\d\dT\d\d:\d\d:\d\dZ\Z")
 KINDS = frozenset(("original_text", "original_pdf", "translation_en", "analysis_en"))
 REQUIRED_ROLES = {
@@ -144,8 +144,10 @@ def _validate_bundle(bundle, artifacts):
          and s["desk"] == FAMILIES[family][0],
          "source_family_not_approved")
     official_url(s["official_url"], FAMILIES[family][1])
-    need(type(s["source_identity"]) is str and SLUG.fullmatch(
-         s["source_identity"]) is not None,
+    need(type(s["source_identity"]) is str and IDENTITY.fullmatch(
+         s["source_identity"]) is not None
+         and ".." not in s["source_identity"]
+         and "//" not in s["source_identity"],
          "source_identity_not_canonical")
     need(type(s["publisher"]) is str and 3 <= len(s["publisher"]) <= 120
          and not DANGEROUS_TEXT.search(s["publisher"]),
