@@ -144,6 +144,7 @@ def audit(index, docket, pages, issues):
     for c in docket["checks"]:
         allowed = {
             "id", "issue_date", "issue_number", "expected_original_url",
+            "original_source_title", "original_source_date",
             "editorial_attention", "review_question",
             "original_publisher_content_checked", "reviewer", "reviewed_on",
             "owner_approved",
@@ -155,6 +156,9 @@ def audit(index, docket, pages, issues):
             raise ValueError("missing or duplicate record in source risk docket")
         by_id[ident] = c
         rec = records[ident]
+        if (c["original_source_title"] != (rec[5] or rec[4])
+                or c["original_source_date"] != rec[1]):
+            raise ValueError("original publication source title/date drift")
         src = sources[rec[2]]
         if ((src.get("desk") or {}).get("code") != "china"
                 or src["code"] != "global_times_mil" or ident not in trails):
