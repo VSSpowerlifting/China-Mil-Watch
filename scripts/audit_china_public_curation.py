@@ -1,0 +1,209 @@
+#!/usr/bin/env python3
+"""Read-only, title-level China corpus curation audit; NEVER a publication gate.
+
+Uses the already-published compact index. A proposed review sample is not an
+editorial judgment and must not be reused as a record allowlist. No database,
+generated output, source record, brief, or published route is modified.
+"""
+import argparse
+from collections import Counter, defaultdict
+import hashlib
+import json
+import re
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_INDEX = REPO_ROOT / "output" / "corpus-index.json"
+REQUIRED_FIELDS = ["id", "date", "source", "state", "title_en", "title_orig"]
+
+
+def _stable_key(row):
+    # Reproducible within the snapshot, with no random seed or freshness bias.
+    digest = hashlib.sha256(str(row["id"]).encode("ascii")).hexdigest()
+    return (digest, row["id"])
+
+
+# Headline cues are REVIEW WARNINGS, not selection or significance decisions.
+# Original-language review must determine relevance and whether the publisher
+# merely republished a statement from another institution.
+TITLE_REVIEW_CUES = {
+    "taiwan": re.compile(r"台湾|台海|Taiwan", re.I),
+    "south_china_sea": re.compile(
+        r"(?<!中)南海|黄岩岛|仁爱礁|South China Sea|Scarborough", re.I),
+    "east_china_sea": re.compile(
+        r"钓鱼岛|(?<!中)东海|Senkaku|East China Sea", re.I),
+    "strategic_weapons": re.compile(
+        r"核武|火箭军|战略导弹|弹道导弹|洲际导弹|"
+        r"strategic missile|ballistic missile|nuclear weapon", re.I),
+    "military_contacts": re.compile(
+        r"美军|美舰|中美军事|PLA.*US|US.*PLA|U\.S\. military", re.I),
+}
+
+
+def title_review_cues(title_original, title_english):
+    text = "%s %s" % (title_original or "", title_english or "")
+    return [name for name, pattern in TITLE_REVIEW_CUES.items()
+            if pattern.search(text)]
+
+
+def audit(index, target=600):
+    """Build a stratified *human review sample* and an exhaustive status ledger.
+
+    Every published Brief trail record is guaranteed a review slot, even if its
+    machine-processing state would otherwise keep it out of this sampling pool.
+    Other candidates include a screened-out false-negative control and an
+    analyzed-China sample across source/month strata. Headline warnings are
+    separate review cues, not editorial acceptance or machine reranking.
+    """
+    if not isinstance(target, int) or isinstance(target, bool) or target < 1:
+        raise ValueError("target must be a positive integer")
+    if index.get("fields") != REQUIRED_FIELDS:
+        raise ValueError("unexpected compact-index schema; fail closed")
+    sources, states = index["sources"], index["states"]
+    trails = index.get("trail_ids")
+    if not isinstance(trails, list):
+        raise ValueError("source-trail protection data missing; fail closed")
+    trail_ids = set(trails)
+    if len(trail_ids) != len(trails):
+        raise ValueError("duplicate source-trail IDs")
+    records, seen_ids = [], set()
+    for raw in index["records"]:
+        if not isinstance(raw, list) or len(raw) != len(REQUIRED_FIELDS):
+            raise ValueError("unexpected record fields")
+        rid, date, src_idx, state_idx, title_en, title_orig = raw
+        if not isinstance(rid, int) or isinstance(rid, bool) or rid in seen_ids:
+            raise ValueError("duplicate or invalid record ID")
+        seen_ids.add(rid)
+        if (not isinstance(src_idx, int) or isinstance(src_idx, bool)
+                or src_idx < 0 or src_idx >= len(sources)
+                or not isinstance(state_idx, int) or isinstance(state_idx, bool)
+                or state_idx < 0 or state_idx >= len(states)):
+            raise ValueError("invalid source/state index")
+        source = sources[src_idx]
+        desk = (source.get("desk") or {}).get("code")
+        if not isinstance(date, str) or len(date) < 7:
+            raise ValueError("missing record publication month")
+        records.append({
+            "id": rid,
+            "date": date,
+            "source": source["code"],
+            "desk": desk,
+            "state": states[state_idx]["code"],
+            "title_en": title_en,
+            "title_orig": title_orig,
+            "in_published_trail": rid in trail_ids,
+            "title_review_cues": title_review_cues(title_orig, title_en),
+        })
+    if not trail_ids.issubset(seen_ids):
+        raise ValueError("a protected Brief trail ID has no stored record")
+
+    china = [r for r in records if r["desk"] == "china"]
+    protected = [r for r in china if r["in_published_trail"]]
+    # No title-based importance scoring. Important statements can use bland
+    # titles, and sensational headlines are not proof of source authority.
+    sample_ids = {r["id"] for r in protected}
+    def add_stratified(pool, stop_at):
+        buckets = defaultdict(list)
+        for row in pool:
+            if row["id"] not in sample_ids:
+                buckets[(row["source"], row["date"][:7])].append(row)
+        for entries in buckets.values():
+            entries.sort(key=_stable_key)
+        strata = sorted(buckets)
+        position = 0
+        while len(sample_ids) < stop_at and strata:
+            stratum = strata[position % len(strata)]
+            row = buckets[stratum].pop(0)
+            sample_ids.add(row["id"])
+            if not buckets[stratum]:
+                strata.remove(stratum)
+                position = position % len(strata) if strata else 0
+            else:
+                position += 1
+
+    # Include negative controls from the model-screened-out China records.
+    # Without these, a plausible-looking shortlist could conceal systematic
+    # false negatives. These are REVIEW candidates, never publication picks.
+    control_goal = min(max(0, target - len(sample_ids)), max(1, target * 15 // 100))
+    add_stratified(
+        [r for r in china if r["state"] == "not_selected"],
+        len(sample_ids) + control_goal)
+    control_ids = sample_ids - {r["id"] for r in protected}
+    add_stratified(
+        [r for r in china if r["state"] == "analyzed"], target)
+
+    rows = []
+    status_counts = Counter()
+    for row in china:
+        if row["in_published_trail"]:
+            status = "protected_trail_review"
+        elif row["id"] in control_ids:
+            status = "screening_negative_control"
+        elif row["id"] in sample_ids:
+            status = "stratified_review_sample"
+        elif row["state"] == "analyzed":
+            status = "analyzed_not_sampled"
+        elif row["state"] == "not_selected" and row["title_review_cues"]:
+            status = "screened_out_title_cue_review"
+        elif row["state"] == "not_selected":
+            status = "screened_not_selected_requires_review"
+        else:
+            status = "processing_not_complete"
+        result = dict(row)
+        result["review_status"] = status
+        result["editorially_approved"] = False
+        status_counts[status] += 1
+        rows.append(result)
+
+    return {
+        "version": 1,
+        "purpose": "private_human_review_only",
+        "publication_allowlist": False,
+        "snapshot": index.get("snapshot"),
+        "requested_sample_size": target,
+        "preserved_corpus_records": len(records),
+        "china_stored_records": len(china),
+        "china_records_by_source": dict(sorted(Counter(
+            r["source"] for r in china).items())),
+        "china_records_by_processing_state": dict(sorted(Counter(
+            r["state"] for r in china).items())),
+        "protected_china_trail_records": len(protected),
+        "screening_negative_control_records": len(control_ids),
+        "screened_out_title_cue_records": sum(
+            1 for r in china if r["state"] == "not_selected"
+            and r["title_review_cues"]),
+        "review_sample_count": len(sample_ids),
+        "review_sample_by_source": dict(sorted(Counter(
+            r["source"] for r in china if r["id"] in sample_ids).items())),
+        "review_status_counts": dict(sorted(status_counts.items())),
+        "rows": rows,
+    }
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--index", type=Path, default=DEFAULT_INDEX)
+    parser.add_argument("--target", type=int, default=600)
+    parser.add_argument("--out", type=Path,
+                        help="Optional PRIVATE JSON review ledger OUTSIDE repository")
+    args = parser.parse_args(argv)
+    if args.out is not None:
+        dest = args.out.resolve()
+        if dest == REPO_ROOT or REPO_ROOT in dest.parents:
+            parser.error("--out must be outside the repository, including output/")
+        if dest.exists():
+            parser.error("--out already exists; refusing to overwrite")
+    report = audit(json.loads(args.index.read_text(encoding="utf-8")),
+                   target=args.target)
+    summary = {k: v for k, v in report.items() if k != "rows"}
+    print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True))
+    if args.out is not None:
+        # Export only after all validation and status derivation succeeded.
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True)
+            + "\n", encoding="utf-8")
+
+
+if __name__ == "__main__":
+    main()
