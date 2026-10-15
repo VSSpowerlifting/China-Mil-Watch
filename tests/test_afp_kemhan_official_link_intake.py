@@ -53,6 +53,7 @@ class CandidateTests(unittest.TestCase):
         self.assertEqual(x["candidate_count"], 1)
         self.assertEqual(x["records"][0]["official_issuer"], "ph_afp")
         self.assertIsNone(x["records"][0]["official_republisher"])
+        self.assertEqual(x["records"][0]["official_publisher"], "ph_afp")
         self.assertFalse(x["public_release_enabled"])
         self.assertFalse(x["production_import_enabled"])
         self.assertNotIn("ORIGINAL HEADLINE", json.dumps(x))
@@ -61,7 +62,8 @@ class CandidateTests(unittest.TestCase):
     def test_indonesia_candidate_keeps_issuer_distinction(self):
         x = build(indonesia(), "id_kemhan_news")
         self.assertIsNone(x["records"][0]["official_issuer"])
-        self.assertEqual(x["records"][0]["official_republisher"], "id_kemhan")
+        self.assertEqual(x["records"][0]["official_publisher"], "id_kemhan")
+        self.assertIsNone(x["records"][0]["official_republisher"])
         self.assertNotIn("title_original", json.dumps(x))
 
     def test_stable_metadata_digests(self):
