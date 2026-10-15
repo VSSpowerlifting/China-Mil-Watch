@@ -46,7 +46,7 @@ def rehearse_on_new_scratch_copy(source_db, scratch_db, plan_data, retired_at,
         raise ValueError("scratch SQLite journal path is already occupied")
 
     with read_only(source_db) as original:
-        # The production database may legitimately predate migration 0008.
+        # The production database may legitimately predate migration 0009.
         # Migrate only the disposable copy. SQLite's migration runner owns
         # explicit BEGIN/COMMIT, so open in autocommit mode.
         target = sqlite3.connect(str(scratch_db), isolation_level=None)

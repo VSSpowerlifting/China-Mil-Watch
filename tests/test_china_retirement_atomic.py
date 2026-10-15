@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 import unittest
 
-from migrations.versions import m0008_retired_article_urls
+from migrations.versions import m0009_retired_article_urls
 from scripts.stage_china_retirement_atomic import (stage_atomic_retirement,
                                                    rehearse_on_new_scratch_copy)
 from core.retired_article_urls import url_sha256, verify_no_active_retired_urls
@@ -41,7 +41,7 @@ class TestAtomicRetirement(unittest.TestCase):
                 article_id INTEGER REFERENCES articles(id) ON DELETE CASCADE,
                 category_id INTEGER);
         """)
-        m0008_retired_article_urls.up(self.conn)
+        m0009_retired_article_urls.up(self.conn)
         for ident in range(1, 7):
             slug_id = 2 if ident == 3 else 1
             self.conn.execute(
@@ -199,7 +199,7 @@ class TestAtomicRetirement(unittest.TestCase):
                     "SELECT id FROM articles ORDER BY id")],
                 ids[2:])
             self.assertTrue(reduced.execute(
-                "SELECT 1 FROM schema_migrations WHERE version='0008'"
+                "SELECT 1 FROM schema_migrations WHERE version='0009'"
             ).fetchone())
 
     def test_new_scratch_copy_rolls_back_failed_delete_and_removes_file(self):

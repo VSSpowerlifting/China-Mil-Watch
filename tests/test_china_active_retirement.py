@@ -6,7 +6,7 @@ import sqlite3
 import tempfile
 import unittest
 
-from migrations.versions import m0008_retired_article_urls
+from migrations.versions import m0009_retired_article_urls
 from scripts.plan_china_active_retirement import (plan, scratch_retirement,
                                                     publication_record_dependencies)
 
@@ -151,7 +151,7 @@ class ChinaRetirementScratchTest(unittest.TestCase):
                 article_id INTEGER REFERENCES articles(id) ON DELETE CASCADE,
                 category_id INTEGER NOT NULL);
         """)
-        m0008_retired_article_urls.up(con)
+        m0009_retired_article_urls.up(con)
         con.executemany("INSERT INTO articles(id,url,source_id) VALUES(?,?,?)",
                         [(i, "source-%s" % i, 1 if i <= 5 else 2)
                          for i in range(1, 8)])
