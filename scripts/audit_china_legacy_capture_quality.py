@@ -83,7 +83,7 @@ def scan(index, pages, cutoff=CUTOFF):
         candidates.append(r)
     if not set(trail_ids).issubset(all_ids):
         raise ValueError("published Brief source trail points to unknown record")
-    found, warnings = [], Counter()
+    found, warnings, clean_controls = [], Counter(), []
     scanned, post_repair = 0, 0
     for r in candidates:
         ident = r[0]
@@ -125,6 +125,8 @@ def scan(index, pages, cutoff=CUTOFF):
                 "ellipsis_count": info["ellipsis_count"],
                 "published_brief_trail": ident in trail_ids,
             })
+        else:
+            clean_controls.append(ident)
     found.sort(key=lambda x: (
         -int("multiple_ellipsis_teaser_cues" in x["cues"]),
         -len(x["cues"]), -x["ellipsis_count"], x["id"]))
@@ -142,6 +144,7 @@ def scan(index, pages, cutoff=CUTOFF):
         "publication_authorized": False,
         "original_capture_repair_authorized": False,
         "candidates": found,
+        "unflagged_control_ids": sorted(clean_controls),
     }
 
 
@@ -171,6 +174,10 @@ def main(argv=None):
                             encoding="utf-8")
     summary = {k: v for k, v in report.items() if k != "candidates"}
     summary["top_review_ids"] = [x["id"] for x in report["candidates"][:20]]
+    summary["review_examples_by_cue"] = {
+        cue: [r["id"] for r in report["candidates"] if cue in r["cues"]][:12]
+        for cue in report["cue_counts_not_proven_defects"]
+    }
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True, indent=2))
 
 
