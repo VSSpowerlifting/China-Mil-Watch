@@ -131,7 +131,7 @@ class KoreaSignedVersionReviewTests(unittest.TestCase):
 
     def test_reviewed_disputed_extraction_year_is_still_held(self):
         p = packet("korea-policy:156785161")
-        with self.assertRaisesRegex(gate.AdmissionHold, "excavation"):
+        with self.assertRaisesRegex(gate.AdmissionHold, "original_year_dispute"):
             check(p, signed(p))
 
     def test_owner_cannot_inherit_full_body_ai_or_public_site_rights(self):
