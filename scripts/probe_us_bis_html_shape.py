@@ -21,7 +21,7 @@ HOST="www.bis.gov"
 ROBOTS="https://www.bis.gov/robots.txt"
 ROUTES=("/", "/enforcement")
 MAX_BYTES=650_000
-RELEASE_PATH=re.compile(r"/(?:press-release|news-update|enforcement)/[a-z0-9-]+/?\\Z")
+RELEASE_PATH=re.compile(r"/(?:press-release|news-update|enforcement)/[a-z0-9-]+/?\Z")
 
 def run(opener=None):
     opener=opener or urllib.request.build_opener(NoRedirect)
