@@ -91,6 +91,10 @@ misreported as evidence that its **current** extraction is defective.
 
 Signals are deliberately narrow, imperfect, and **nonbinding**:
 
+- A **missing/unreadable** historical stored-text block receives its own
+  `unreadable_or_missing_stored_text` cue. The original record URL and
+  collection timestamp must still be present; no replacement prose is
+  invented.
 - A very short captured text (fewer than 60 characters), or short article
   body (fewer than 180 characters), merits review; legitimate terse releases
   can qualify.
