@@ -32,6 +32,8 @@ def compose(rows, *, week_ending=WEEK):
     """Source-bound editorial manuscript, without unsourced analytical claims."""
     require(week_ending == WEEK and type(rows) is list
             and len(rows) == len(FIXED), "unexpected rehearsal source scope")
+    require(rows == load(week_ending=WEEK, as_of=WEEK),
+            "manuscript sources must exactly match staged validated packet")
     for row, (ident, _) in zip(rows, FIXED):
         require(type(row) is dict and row.get("source_id") == ident
                 and row.get("status") == "held-not-sunday-or-model-eligible"
