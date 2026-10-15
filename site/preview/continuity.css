@@ -1,0 +1,21 @@
+/* A brief-edition navigation rail, not an event/data time axis. */
+.brief-continuity{margin:2rem 0;padding:1rem clamp(.8rem,2vw,1.4rem);border:1px solid var(--rule,#c9d4d3);background:var(--paper,#fff);color:var(--ink,#152e3b);max-width:100%}
+.brief-continuity-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.2rem 1rem;margin-bottom:.8rem}
+.brief-continuity-head h2{font-size:1.05rem;line-height:1.4;margin:0}
+.brief-continuity-head p{font-size:.85rem;line-height:1.5;margin:0;color:var(--ink-2,#465b63)}
+.brief-continuity-list{list-style:none;display:flex;align-items:stretch;gap:0;margin:0;padding:.3rem 0 .45rem;overflow-x:auto;scrollbar-width:thin;border-bottom:1px solid currentColor}
+.brief-continuity-list li{list-style:none;flex:1 0 36px;min-width:36px;max-width:96px;text-align:center}
+.brief-continuity-list a{display:flex;min-height:52px;align-items:center;flex-direction:column;justify-content:flex-end;gap:3px;text-decoration:none;color:inherit;border-radius:2px;padding:4px 2px;font:600 .8rem/1.3 var(--sans,Arial,sans-serif)}
+.brief-continuity-list a:hover{background:rgba(30,95,94,.08);text-decoration:underline}
+.brief-continuity-list a:focus-visible{outline:2px solid var(--focus,#235e64);outline-offset:-2px}
+.brief-continuity-tick{display:block;height:10px;width:5px;min-width:5px;background:currentColor;opacity:.45}
+.brief-continuity-list [data-edition-kind="significant"] .brief-continuity-tick{height:23px;opacity:.9}
+.brief-continuity-list [data-edition-kind="routine"] .brief-continuity-tick{height:15px}
+.brief-continuity-list [data-edition-kind="pilot"] .brief-continuity-tick{height:12px;border:1px solid currentColor;background:transparent}
+.brief-continuity-current a{background:rgba(30,95,94,.08);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+.brief-continuity-current .brief-continuity-tick{width:8px;opacity:1}
+.brief-continuity-key{font-size:.76rem;line-height:1.5;color:var(--ink-2,#465b63);margin:.7rem 0 0}
+.brief-continuity-key a{color:inherit;text-underline-offset:3px}
+@media(max-width:600px){.brief-continuity{margin:1.4rem 0}.brief-continuity-list li{flex-basis:42px}.brief-continuity-head{display:block}}
+@media print{.brief-continuity{display:none}}
+@media(forced-colors:active){.brief-continuity{background:Canvas;color:CanvasText;border-color:CanvasText}.brief-continuity-list a:focus-visible{outline-color:Highlight}.brief-continuity-current a{outline:1px solid CanvasText}}
