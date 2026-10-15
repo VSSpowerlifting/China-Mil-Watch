@@ -48,7 +48,6 @@ class AFPArtifactBoundary(unittest.TestCase):
     def test_collector_gates_and_actual_state_push_remain_separate(self):
         self.assertIn("  schedule:", self.text)
         self.assertIn("  workflow_dispatch:", self.text)
-        self.assertIn("      - name: Publish", self.text) if False else None
         self.assertIn("      - name: Preserve completed shadow attempt", self.text)
         self.assertIn("git push origin HEAD:refs/heads/shadow/ph-afp", self.text)
         self.assertNotIn("gh-pages", self.text)
