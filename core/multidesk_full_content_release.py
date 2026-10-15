@@ -22,6 +22,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from core.public_editorial_research import HOSTS as EDITORIAL_HOSTS
+from core.standing_source_rights import (
+    StandingLicenseHold, qualify_standing_text,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = "ipr-multidesk-full-content-bundle/1"
@@ -80,6 +83,7 @@ APPROVAL_KEYS = frozenset((
 RIGHTS_BASIS = frozenset((
     "per_item_official_license", "documented_written_permission",
     "documented_public_domain", "ipr_original_copyright",
+    "standing_source_family_license",
 ))
 DANGEROUS_TEXT = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
 
@@ -269,26 +273,73 @@ def sign_for_test_or_offline_reviewer(payload, secret):
 
 def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
                   authorized_reviewers=None, source_verifier=None,
-                  rights_verifier=None):
+                  rights_verifier=None, standing_verifiers=None):
     """Return a safe staging plan; publication requires separate authorization.
 
-    Both source_verifier and rights_verifier must independently replay evidence.
-    Caller-supplied "approved":true JSON is never sufficient. Neither callback
-    is provided in CI or production yet; absent callback is always HOLD.
+    Source replay is always mandatory. Ordinary document rights are checked by
+    rights_verifier; when a source-family standing *text* license is applicable,
+    the independent standing-source, current-policy and exception verifiers can
+    REPLACE per-item human rights approval. Complete exact source text also
+    replaces repetitive human source-fidelity signatures. Translation/editor
+    quality signoff remains separate; PDF/media rights NEVER inherit text use.
     """
     digest = _validate_bundle(bundle, artifacts)
-    need(callable(source_verifier) and callable(rights_verifier),
+    need(callable(source_verifier),
          "independent_source_and_rights_verifiers_not_wired")
     need(source_verifier(bundle["source"]) is True,
          "original_source_capture_not_authenticated")
+    by_kind = {w["kind"]: w for w in bundle["works"]}
+    review_roles = {}
+    qualified_standing = []
     for work in bundle["works"]:
-        need(rights_verifier(bundle["source"], work) is True,
-             "publisher_or_editorial_rights_not_independently_verified")
+        k = work["kind"]
+        if work["rights_basis"] == "standing_source_family_license":
+            need(k in ("original_text", "translation_en"),
+                 "standing_text_rights_cannot_cover_pdf_or_analysis")
+            need(type(standing_verifiers) is dict
+                 and set(standing_verifiers) == {
+                     "now_utc", "source_replay", "policy_replay",
+                     "exception_replay", "item_license_replay"},
+                 "standing_source_license_verifiers_missing")
+            src = bundle["source"]
+            source = {
+                "desk": src["desk"],
+                "source_family": src["source_family"],
+                "source_identity": src["source_identity"],
+                "official_url": src["official_url"],
+                "source_git_commit": src["source_git_commit"],
+                "source_capture_sha256": src["source_capture_sha256"],
+                "publisher_posted_date": src["published_date"],
+                "language": src["source_language"],
+            }
+            try:
+                qualified = qualify_standing_text(
+                    source, kind=k, proposed_sha256=work["content_sha256"],
+                    attribution=work["attribution_text"],
+                    **standing_verifiers)
+            except StandingLicenseHold:
+                raise FullContentHold("standing_source_license_not_qualified") from None
+            need(qualified["publisher_policy_sha256"] ==
+                 work["rights_evidence_sha256"]
+                 and qualified["policy_url"] == work["rights_evidence_url"],
+                 "standing_source_policy_version_drift")
+            qualified_standing.append(k)
+            # For authentic *unchanged* government source text, byte-verified
+            # replay is its source fidelity approval. The standing publisher
+            # license replaces a new human rights signature for every record.
+            # New translations still NEED separate bilingual/editor review.
+            review_roles[k] = (frozenset() if k == "original_text"
+                               else frozenset(("bilingual", "editor")))
+        else:
+            need(callable(rights_verifier),
+                 "independent_source_and_rights_verifiers_not_wired")
+            need(rights_verifier(bundle["source"], work) is True,
+                 "publisher_or_editorial_rights_not_independently_verified")
+            review_roles[k] = REQUIRED_ROLES[k]
     need(type(approvals) is list and type(role_secrets) is dict
          and type(authorized_reviewers) is dict,
          "human_editorial_approval_material_missing")
-    by_kind = {w["kind"]: w for w in bundle["works"]}
-    required_roles = {r for k in by_kind for r in REQUIRED_ROLES[k]}
+    required_roles = {r for roles in review_roles.values() for r in roles}
     need(set(authorized_reviewers) == required_roles and
          all(type(names) in (tuple, list) and 1 <= len(names) <= 20
              and all(type(n) is str and 3 <= len(n) <= 100 for n in names)
@@ -307,7 +358,7 @@ def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
     for a in approvals:
         payload = signature_payload(a)
         kind, role = a["kind"], a["role"]
-        need(kind in by_kind and role in REQUIRED_ROLES[kind],
+        need(kind in by_kind and role in review_roles[kind],
              "approval_role_out_of_scope")
         need((kind, role) not in seen,
              "duplicate_artifact_role_approval")
@@ -338,7 +389,7 @@ def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
              hmac.compare_digest(a["signature_hmac_sha256"], expected),
              "human_review_approval_signature_invalid")
         signers[(kind, role)] = a["reviewer"]
-    need(seen == {(k, r) for k in by_kind for r in REQUIRED_ROLES[k]},
+    need(seen == {(k, r) for k in by_kind for r in review_roles[k]},
          "necessary_human_work_review_missing")
     # Separate a translation/factual checker from the final publishing editor.
     for k in ("translation_en", "analysis_en"):
@@ -353,6 +404,7 @@ def verify_bundle(bundle, artifacts, approvals, *, role_secrets,
         "source_git_commit": bundle["source"]["source_git_commit"],
         "bundle_sha256": digest,
         "kinds": sorted(by_kind),
+        "standing_license_qualified_kinds": sorted(qualified_standing),
         "permission_asserted_by_unverified_json_only": False,
         "source_rights_and_originals_independently_validated": True,
         "downstream_publication_performed": False,
@@ -372,7 +424,8 @@ def stage_approved_bundle(bundle, artifacts, approvals, *,
                          role_secrets=role_secrets,
                          authorized_reviewers=authorized_reviewers,
                          source_verifier=source_verifier,
-                         rights_verifier=rights_verifier)
+                         rights_verifier=rights_verifier,
+                         standing_verifiers=standing_verifiers)
     target = Path(target_dir).expanduser()
     resolved = target.resolve()
     need(not target.exists() and not target.is_symlink()
