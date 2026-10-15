@@ -2,6 +2,7 @@
 {% from "_brief_navigation.html" import reading_navigation %}
 {% from "_article_media.html" import article_figure %}
 {% from "_article_nav.html" import issue_nav %}
+{% from "_continuity_strip.html" import continuity_strip %}
 {# Earlier Briefs: current site identity, unchanged historical evidence.
    The hero image is presented by `core.article_media`: a curated Photograph
    or a cited-source Signal Veil through `article_figure`; a held image keeps
@@ -11,6 +12,7 @@
 {% block og_type %}article{% endblock %}
 {% block head_scripts %}
 <link rel="stylesheet" href="{{ root }}briefs.css">
+<link rel="stylesheet" href="{{ root }}continuity.css">
 
 {% endblock %}
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
@@ -98,6 +100,7 @@
     <section class="brief-section brief-citation-section" id="s-cite" aria-labelledby="h-cite"><h2 id="h-cite">Cite this edition</h2>
       <p class="brief-citation" id="pw-cite">{% if edition.author_name %}{{ edition.author_name }}, {% endif %}“{{ edition.title }},” <em>{{ edition.series_name }}</em>{% if edition.issue_number %} No. {{ edition.issue_number }}{% endif %}, {{ edition.publication }}, {{ edition.week_ending|reader_date }}. {{ edition.page_url }}</p>
     </section>
+{{ continuity_strip(continuity) }}
 {% if adjacent is defined %}{{ issue_nav(adjacent.previous, adjacent.next, 'Adjacent historical issues', 'historical-issue-nav') }}{% endif %}
     <p><a href="{{ root }}analysis.html">All Indo-Pacific Record Briefs</a></p>
   </article>
