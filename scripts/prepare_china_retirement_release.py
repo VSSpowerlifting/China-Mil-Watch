@@ -19,6 +19,7 @@ from scripts.plan_china_active_retirement import (
     plan, publication_record_dependencies, scratch_retirement,
 )
 from scripts.verify_china_retirement_render import validate
+from scripts.verify_china_retirement_crossdesk import validate as crossdesk_validate
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE_RENDER = ROOT / "site" / "render.py"
@@ -102,6 +103,10 @@ def prepare(scratch_root, *, expected_db_sha256, site_origin):
     if not result["atomic_retirement"] or result["url_tombstone_count"] != 4400:
         raise ValueError("physical retirement not atomically tombstoned")
 
+    # Physical China deletion must not touch independent official U.S. feed
+    # rows, their historical collection receipts, or the source registry.
+    crossdesk = crossdesk_validate(BASE_DB, reduced)
+
     _render(reduced, after, site_origin)
     _carried_published_assets(after)
     rebuild_export(reduced, after)
@@ -123,6 +128,7 @@ def prepare(scratch_root, *, expected_db_sha256, site_origin):
         "retained": proof["retained"],
         "protected_trails": proof["protected_trails"],
         "legacy_export": proof["legacy_export"],
+        "preserved_other_desk_sqlite": crossdesk,
         "site_path": str(after),
         "scratch_db_path": str(reduced),
         "no_production_mutation": True,
