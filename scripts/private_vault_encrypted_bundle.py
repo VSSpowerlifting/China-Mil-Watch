@@ -132,11 +132,26 @@ def _gpg_identity(home, fingerprint):
     return fingerprint.upper()
 
 
+
+def _inside_any_git_repository(path):
+    """Do not stage encrypted custody backups within *any* Git repository."""
+    resolved = Path(path).resolve()
+    for directory in (resolved, *resolved.parents):
+        marker = directory / ".git"
+        if marker.exists() or marker.is_symlink():
+            return True
+        # Bare Git repositories have HEAD and objects at their root.
+        if (directory / "HEAD").is_file() and (directory / "objects").is_dir():
+            return True
+    return False
+
+
 def _target(path, repo):
     dest = Path(path)
     parent = dest.parent
     if (dest.is_symlink() or dest.exists() or not parent.is_dir()
-            or parent.is_symlink() or dest.resolve().is_relative_to(repo.resolve())):
+            or parent.is_symlink() or dest.resolve().is_relative_to(repo.resolve())
+            or _inside_any_git_repository(parent)):
         raise BackupHold("backup_target_unsafe_or_exists")
     return dest
 
