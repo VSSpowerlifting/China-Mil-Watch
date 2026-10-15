@@ -115,3 +115,22 @@ def render_live_links(conn: sqlite3.Connection, desk: str) -> str:
             % (ident, url, safe_label, day, day))
     lines += ["</ul>", "</section>"]
     return "\n".join(lines)
+
+def load_admitted_links(db_path, desk: str):
+    """Read admitted source metadata from SQLite, not unreviewed shadow state.
+
+    Until the independently gated migration has actually landed, no table
+    means no public source-index links. A PRESENT but broken/untrusted schema
+    is a failure, never an excuse to substitute private candidate records.
+    Scratch-copy reads avoid WAL sidecars beside the tracked production DB.
+    """
+    need(desk in DESK_TO_FAMILY, "not_a_supported_regional_live_desk")
+    from scripts.reconcile_db import read_only
+    with read_only(str(db_path)) as conn:
+        present = conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
+            (TABLE,),
+        ).fetchone()
+        if present is None:
+            return []
+        return read_live_links(conn, desk)
