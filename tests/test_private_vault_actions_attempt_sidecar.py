@@ -289,11 +289,11 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
                         gpg_home=self.home)
 
     def test_restore_rejects_coherent_manifest_that_erases_failed_attempt(self):
-        # A replaced manifest plus its matching ZIP list must not erase
-        # evidence from the failed first attempt, even after a successful rerun.
+        # The original census parity check now catches the missing artifact
+        # before the secondary within-manifest attempt-coverage guard.
         encrypted, sha, receipt = self.forge_encrypted_fixture(
             drop_id=ONE, forget_manifest_id=ONE)
-        with self.assertRaisesRegex(box.Hold, "sidecar_attempt_coverage_missing"):
+        with self.assertRaisesRegex(box.Hold, "sidecar_inventory_scope_mismatch"):
             box.restore(encrypted, sha, receipt["source_inventory_sha256"],
                         RUN, inventory=self.manifest, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
