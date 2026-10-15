@@ -165,8 +165,12 @@ class TestRetiredUrlReconciliation(ReconcileCase):
 
     def test_reconciled_new_article_uses_id_above_retired_high_water(self):
         migrate(self.origin)
-        with sqlite3.connect(str(self.origin)) as con:
+        con = sqlite3.connect(str(self.origin))
+        try:
             retire(con, "http://www.81.cn/x/old-retired-high.html", 9200)
+            con.commit()
+        finally:
+            con.close()
         add_run(self.local, 11)
         add_article(self.local, 4001, 11, "fresh-source")
         out, report, problems = self.run_reconcile()
