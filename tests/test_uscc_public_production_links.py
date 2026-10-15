@@ -14,6 +14,9 @@ class USCCPublicTemplateTests(unittest.TestCase):
         self.assertIn('if desk.slug == "us-indopacific" else []',generator)
         self.assertIn('not U.S. Pacific Command statements',template)
         self.assertIn("No U.S. production",template)
+        self.assertIn("Official congressional metadata feed live",template)
+        self.assertIn("Collected official congressional metadata links",template)
+        self.assertIn("Direct PACOM site access is blocked",template)
 
 if __name__ == "__main__":
     unittest.main()

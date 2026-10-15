@@ -15,6 +15,8 @@ on:
     branches: [main]
     paths:
       - .github/workflows/uscc_verified_official_links_release.yml
+      - site/preview/templates/desk.html
+      - site/preview/generate_preview.py
   workflow_run:
     workflows:
       - USCC Congressional Press Metadata — First-Party Daily Shadow
