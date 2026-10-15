@@ -36,6 +36,12 @@ def quality_cues(body):
         cues.append("short_capture_review")
     if teaser_marks >= 3:
         cues.append("multiple_ellipsis_teaser_cues")
+    # Calibrated against all nine initial pre-fix unflagged controls. Multiple
+    # truncated, very short snippets may represent a related-story rail even
+    # if the capture lacks the >=3 ellipses caught by the older heuristic.
+    # A short genuine publisher article can still trigger this: REVIEW only.
+    if 2 <= teaser_marks < 3 and length < 500:
+        cues.append("short_multi_teaser_capture_review")
     return {"cues": cues, "char_count": length, "ellipsis_count": teaser_marks}
 
 
