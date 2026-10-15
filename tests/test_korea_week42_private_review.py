@@ -17,6 +17,13 @@ CLOCK = datetime(2026, 10, 15, 12, 0, 0, tzinfo=timezone.utc)
 
 def reported_complete(data, index=0):
     row = data["entries"][index]
+    # Synthetic test-only line hash: structurally valid, NOT evidence from HWPX.
+    row["evidence_anchors"] = [{
+        "line_number": 1,
+        "line_sha256": "a" * 64,
+        "claim_kind": "reported_action",
+        "editorial_linkage": "Test-only asserted source relationship, never independently authenticated",
+    }]
     human = row["human_review"]
     human["disposition"] = "reviewed_source_version"
     human["reviewer"] = "Korean Reviewer Example"
@@ -119,6 +126,29 @@ class KoreaWeek42HumanReviewTests(unittest.TestCase):
         self.assertIs(receipt["model_use_authorized"], False)
         self.assertNotIn("Korean Reviewer Example", json.dumps(receipt))
         self.assertNotIn("Rights Reviewer Example", json.dumps(receipt))
+
+    def test_original_language_line_anchors_required_and_bounded(self):
+        for corruption in ("missing", "duplicate", "bad-hash", "bad-kind",
+                           "bad-linkage", "before-publication"):
+            packet = copy.deepcopy(self.packet)
+            reported_complete(packet, 2)
+            anchors = packet["entries"][2]["evidence_anchors"]
+            if corruption == "missing":
+                anchors.clear()
+            elif corruption == "duplicate":
+                anchors.append(copy.deepcopy(anchors[0]))
+            elif corruption == "bad-hash":
+                anchors[0]["line_sha256"] = "not-a-digest"
+            elif corruption == "bad-kind":
+                anchors[0]["claim_kind"] = "completed_joint_deployment"
+            elif corruption == "bad-linkage":
+                anchors[0]["editorial_linkage"] = "<script>secret</script>"
+            else:
+                packet["entries"][2]["human_review"]["reviewed_at_utc"] = "2026-10-13T12:00:00Z"
+                packet["entries"][2]["rights_review"]["reviewed_at_utc"] = "2026-10-13T13:00:00Z"
+                packet["entries"][2]["owner_review"]["reviewed_at_utc"] = "2026-10-13T14:00:00Z"
+            with self.subTest(corruption=corruption), self.assertRaises(KoreaResearchHold):
+                intake.validate(packet, now=CLOCK)
 
     def test_review_stage_order_and_timestamp_fail_closed(self):
         packet = copy.deepcopy(self.packet)
