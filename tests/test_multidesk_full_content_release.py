@@ -95,6 +95,28 @@ def valid(bundle, artifacts, signed=None):
 
 
 class FullContentReleaseContracts(unittest.TestCase):
+    def test_full_content_queue_emits_all_specialist_tasks_with_hold(self):
+        b, a = fixture(tuple(sorted(m.KINDS)))
+        queue = m.unsigned_review_queue(b, a)
+        expected = sum(len(m.REQUIRED_ROLES[k]) for k in m.KINDS)
+        self.assertEqual(len(queue["review_tasks"]), expected)
+        self.assertFalse(queue["public_release_authorized"])
+        self.assertFalse(queue["contains_original_source_bodies"])
+        self.assertTrue(all(x["decision"] == "hold"
+                            and x["human_signoff_attached"] is False
+                            for x in queue["review_tasks"]))
+        self.assertNotIn("fictional", json.dumps(queue))
+        self.assertTrue({"rights", "bilingual", "editor", "fact_checker"}
+                        .issubset({x["role"] for x in queue["review_tasks"]}))
+
+    def test_unsigned_queue_does_not_replace_signatures(self):
+        b, a = fixture(("original_text",))
+        queue = m.unsigned_review_queue(b, a)
+        self.assertEqual(queue["source_identity"], b["source"]["source_identity"])
+        with self.assertRaisesRegex(m.FullContentHold,
+                                    "necessary_human_work_review_missing"):
+            valid(b, a, signed=[])
+
     def test_permitted_original_text_with_independent_verifiers(self):
         bundle, artifacts = fixture()
         result = valid(bundle, artifacts)
