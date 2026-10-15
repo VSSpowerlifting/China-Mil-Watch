@@ -3510,7 +3510,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
         # by the live region). Behaviourally:
         # TestBrowserRejectsMalformedIndex.test_an_empty_result_is_stated_once.
         js = (self.out / "browse.js").read_text(encoding="utf-8")
-        body = js.split("function render(", 1)[1].split("\n  }", 1)[0]
+        body = js.split("function render(", 1)[1].split("function drawChips(", 1)[0]
         self.assertRegex(body, r'range\.textContent = total \?[^;]*: "";')
         self.assertIn("none.hidden = total !== 0", body)
 
