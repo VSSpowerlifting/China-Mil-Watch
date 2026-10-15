@@ -209,6 +209,7 @@ class TestHonestCounters(RunnerCase):
         entry = self.go()
         self.assertEqual(entry["fetch_failures"], 0)
         self.assertEqual(entry["extraction_failures"], 0)
+        self.assertEqual(entry["sources"][0]["attempt_failures"], [])
 
     def test_a_partially_challenged_run_is_ok_but_flagged_partial(self):
         entry = self.go()
@@ -475,6 +476,17 @@ class TestSelectionDoesNotStarve(RunnerCase):
                 entry = self.collect(adapter, cap=2, run_id="partial-%s" % extraction)
                 self.assertEqual(entry["health"], "partial")
                 self.assertEqual(entry["unretrieved_total"], 1)
+                failures = entry["sources"][0]["attempt_failures"]
+                self.assertEqual(failures, [{
+                    "url": refs[1].url,
+                    "stage": "extract" if extraction else "fetch",
+                    "status": st.EXTRACTION_FAILURE if extraction else st.FETCH_FAILURE,
+                }])
+                self.assertNotIn("derived failure", json.dumps(failures))
+                ledger = list((self.state / "ledger").glob("*.json"))
+                saved = [json.loads(p.read_text()) for p in ledger]
+                self.assertTrue(any(row["sources"][0]["attempt_failures"] == failures
+                                    for row in saved))
 
     def test_a_new_challenge_does_not_mask_an_open_pdf_route_failure(self):
         refs = [queued_ref(1), queued_ref(2)]
@@ -492,6 +504,8 @@ class TestSelectionDoesNotStarve(RunnerCase):
         self.assertEqual((entry["inserted"], entry["listing_failures"], entry["health"]),
                          (1, 1, "partial"))
         self.assertEqual(entry["sources"][1]["failed_endpoints"], ["derived endpoint"])
+        self.assertEqual(entry["sources"][1]["attempt_failures"], [])
+        self.assertEqual(entry["sources"][0]["attempt_failures"], [])
 
     def test_legacy_off_feed_gap_is_unassigned_and_not_silently_healthy(self):
         ref = queued_ref(1)
@@ -519,6 +533,20 @@ class TestSelectionDoesNotStarve(RunnerCase):
         entry = self.collect(QueueAdapter([ref], {ref.url: st.OK_ALL_DUPLICATES}))
         self.assertEqual((entry["duplicates"], entry["fetch_failures"], entry["unretrieved_total"]),
                          (0, 1, 1))
+        self.assertEqual(entry["sources"][0]["attempt_failures"], [{
+            "url": ref.url, "stage": "fetch", "status": "orphan_not_modified",
+        }])
+
+    def test_empty_extraction_is_recorded_without_inventing_an_original(self):
+        ref = queued_ref(4)
+        adapter = QueueAdapter([ref])
+        adapter.extract = lambda capture: ExtractionResult(adapter.slug, st.OK, [])
+        entry = self.collect(adapter)
+        self.assertEqual(entry["extraction_failures"], 1)
+        self.assertEqual(entry["stored_total"], 0)
+        self.assertEqual(entry["sources"][0]["attempt_failures"], [{
+            "url": ref.url, "stage": "extract", "status": "empty_documents",
+        }])
 
     def collect(self, adapter, cap=1, run_id="r1"):
         return runner.run(self.state, date(2026, 8, 26), 14, cap, run_id, "c", adapter=adapter)
