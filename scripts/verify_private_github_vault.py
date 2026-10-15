@@ -15,6 +15,10 @@ import subprocess
 import sys
 
 REPORT_SCHEMA = "ipr-private-github-vault-preflight/1"
+# An owner-created README-only bootstrap has been verified on the live private
+# destination. The pinned blob identifies our non-sensitive policy README.
+# A branch name alone (or a random README file) must never imply safe custody.
+BOOTSTRAP_README_BLOB_SHA = "b1a7c174d224f0d9e9245ab400a31bb19c6eab86"
 GITHUB_REPO = re.compile(r"[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9._-]{1,100}\Z")
 
 
@@ -55,7 +59,7 @@ def _api(endpoint):
 
 
 def evaluate(source, vault, *, api=_api):
-    """Validate a *brand-new, empty* private destination; never run a transfer."""
+    """Validate an empty or pinned README-only private vault; never transfer."""
     source_owner, _ = check_slug(source)
     vault_owner, _ = check_slug(vault)
     if source.lower() == vault.lower():
@@ -88,8 +92,33 @@ def evaluate(source, vault, *, api=_api):
     permissions = dest.get("permissions")
     if type(permissions) is not dict or permissions.get("admin") is not True:
         raise VaultPreflightError("vault_owner_access_unverified")
-    if branches:
-        raise VaultPreflightError("vault_not_empty")
+    if not branches:
+        bootstrap = "uninitialized_empty"
+    elif len(branches) == 1 and type(branches[0]) is dict and branches[0].get("name") == "main":
+        # Only this exact policy README is permitted in a newly initialized
+        # destination. A populated archive requires a separate *readback*
+        # auditor, not this one-time bootstrap entry test.
+        if dest.get("default_branch") != "main":
+            raise VaultPreflightError("vault_bootstrap_default_branch_invalid")
+        try:
+            tree = api("repos/" + vault + "/git/trees/main?recursive=1")
+        except VaultPreflightError:
+            raise
+        except (TypeError, KeyError, OSError, ValueError):
+            raise VaultPreflightError("authenticated_api_unavailable") from None
+        if type(tree) is not dict or tree.get("truncated") is not False:
+            raise VaultPreflightError("vault_bootstrap_tree_invalid")
+        files = tree.get("tree")
+        if type(files) is not list or len(files) != 1:
+            raise VaultPreflightError("vault_bootstrap_tree_not_readme_only")
+        leaf = files[0]
+        if (type(leaf) is not dict or leaf.get("path") != "README.md"
+                or leaf.get("type") != "blob"
+                or leaf.get("sha") != BOOTSTRAP_README_BLOB_SHA):
+            raise VaultPreflightError("vault_bootstrap_readme_unverified")
+        bootstrap = "verified_readme_only"
+    else:
+        raise VaultPreflightError("vault_not_bootstrap_only")
     # Do NOT assume an accessible private repo grants Actions cross-repo write.
     # PR jobs and public source GITHUB_TOKEN may not see vault originals.
     return {
@@ -98,7 +127,9 @@ def evaluate(source, vault, *, api=_api):
         "destination_repo": vault,
         "destination_visibility_verified": "private",
         "destination_identity_checked": True,
-        "destination_initial_branches": 0,
+        "destination_initial_branches": len(branches),
+        "bootstrap_state": bootstrap,
+        "main_branch_protection_verified": False,
         "operator_repo_admin_verified": True,
         "cross_repo_workflow_credential_verified": False,
         "independent_backup_and_restore_verified": False,
