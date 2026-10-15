@@ -1,0 +1,39 @@
+name: Korea Versioned Production-Candidate Bridge — Offline No-Send
+
+on:
+  pull_request:
+    paths:
+      - scripts/stage_korea_production_candidates.py
+      - tests/test_korea_production_candidate_bridge.py
+      - .github/workflows/korea_production_candidate_bridge_contracts.yml
+      - docs/engineering/KOREA_VERSIONED_PRODUCTION_CANDIDATE_BRIDGE_2026-10-15.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  korea-typed-normalization-held:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing HWPX parsing dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Run synthetic original-to-candidate staging and negative permissions tests
+        run: python -m unittest tests.test_korea_production_candidate_bridge -v
+      - name: Assert unchanged Korean release and production files
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# This synthetic test does not read the real Korea private/public shadow,
+# upload reviewer packets, promote into production, call a model, send an email
+# or publish a site. All candidate outputs live in deleted test-only /tmp.

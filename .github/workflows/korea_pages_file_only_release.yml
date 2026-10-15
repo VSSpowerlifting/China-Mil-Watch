@@ -1,0 +1,183 @@
+name: Korea — Owner-Approved Fourteen Links, File-Only Pages Repair
+
+# This release does NOT upload the full ./output tree. The original Korea
+# Pages publisher correctly held when unrelated China output was regenerated.
+# Both destination branches get ONLY their own korea.html file updated.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/korea_pages_file_only_release.yml
+      - tests/test_korea_pages_file_only_release.py
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/korea_pages_file_only_release.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  file-only-scope-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install existing site tests
+        run: python -m pip install -r requirements.txt
+      - name: Verify Korea source identities and file-only publication contract
+        run: |
+          python -m unittest tests.test_korea_pages_file_only_release tests.test_korea_additional_public_links tests.test_korea_public_bibliography tests.test_korea_output_release_scope -v
+      - name: No source, database or rendered file written by contract
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ desks/registry.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  # Retired in favor of korea_verified_official_link_production.yml, which
+  # handles both fresh metadata admissions and single-file Pages repair.
+  korea-pages-file-only-release:
+    if: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - name: Check out current main with authenticated write token
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Pin exact main and tracked production checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-publish-main-head"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-publish-db.sha"
+      - name: Install only existing renderer dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Check production corpus and render website (only Korea may be published)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/verify_db_current.py
+          python site/render.py
+          python scripts/validate_output.py
+          python -m unittest tests.test_korea_pages_file_only_release tests.test_korea_additional_public_links tests.test_korea_public_bibliography -q
+          python - <<'PY'
+          from pathlib import Path
+          from core.korea_public_bibliography import load_public_korea_links
+          from core.korea_additional_public_links import load_additional_korea_official_links
+          import json
+          five=load_public_korea_links()
+          nine=load_additional_korea_official_links()
+          assert len(five)==5 and len(nine)==9
+          html=Path("output/korea.html").read_text(encoding="utf-8")
+          assert html.count('data-korea-public-link=')==5
+          assert html.count('data-korea-additional-link=')==9
+          from core.korea_official_live_links import load_live_korea_official_links
+          fixed = {x["source_identity"] for x in five+nine}
+          auto = load_live_korea_official_links("pla_watch.db", exclude=fixed)
+          assert html.count('data-korea-auto-official-link=') == len(auto)
+          assert html.count('https://www.korea.kr/briefing/pressReleaseView.do?newsId=')==14 + len(auto)
+          assert all(x['source_url'] in html for x in five+nine)
+          assert "unresolved excavation-year discrepancy" in html
+          assert "not IPR archived records" in html
+          assert "KOGL Type 1" in html
+          assert "noindex, nofollow" not in html
+          for bad in ("body_original","text_original","download.do?fileId=",
+                      "data-review-status=","english_description"):
+              assert bad not in html, bad
+          reg=json.loads(Path("desks/registry.json").read_text())["desks"]
+          kr=next(x for x in reg if x["slug"]=="korea")
+          assert kr["public"] is True and kr["status"]=="shadow"
+          assert kr["manifest"] is None and kr["has_production_records"] is False
+          assert Path("output/korea.html").is_file()
+          PY
+          sha256sum -c "$RUNNER_TEMP/korea-publish-db.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+          sha256sum output/korea.html > "$RUNNER_TEMP/korea-output-page.sha"
+          # The renderer may also rewrite China output. Log that drift,
+          # but it is NEVER staged, uploaded, or published by this workflow.
+          git diff --name-only -- output/ > "$RUNNER_TEMP/korea-render-deltas"
+          echo "Rendered files differing from main (only Korea is transferable):"
+          cat "$RUNNER_TEMP/korea-render-deltas"
+      - name: Commit ONLY Korea HTML on main after exact-HEAD reconciliation
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/korea-output-page.sha"
+          git add -- output/korea.html
+          staged="$(git diff --cached --name-only)"
+          if [ -n "$staged" ]; then
+            test "$staged" = "output/korea.html" || {
+              echo "::error::Attempted non-Korea main commit"; exit 1;
+            }
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Publish Korea fourteen official links, HTML only"
+          fi
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-publish-main-head")" || {
+            echo "::error::Main moved; stop rather than write from a stale render"; exit 1;
+          }
+          if [ -n "$staged" ]; then
+            git push origin HEAD:main
+          fi
+      - name: Check out CURRENT Pages branch separately
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          ref: gh-pages
+          path: korea-existing-pages
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Publish only the verified Korea HTML, preserving all other Pages files
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/korea-output-page.sha"
+          cd korea-existing-pages
+          test -z "$(git status --porcelain --untracked-files=all)"
+          pages_old="$(git rev-parse HEAD)"
+          cp ../output/korea.html korea.html
+          cmp -s ../output/korea.html korea.html
+          git add -- korea.html
+          staged="$(git diff --cached --name-only)"
+          test -z "$staged" || test "$staged" = "korea.html" || {
+            echo "::error::Attempted to stage another Pages file"; exit 1;
+          }
+          if [ -n "$staged" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: add nine official MND outbound links only"
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$pages_old" || {
+            echo "::error::Pages moved; refuse a stale or broader overwrite"; exit 1;
+          }
+          if [ -n "$staged" ]; then
+            git push origin HEAD:gh-pages
+          fi
+          test -z "$(git status --porcelain --untracked-files=all)"
+          echo "Korea file-only Pages branch publication complete."
+# Never run the full-tree peaceiris publish_dir upload, force-push, rewrite
+# historical source evidence, fetch a Korean publisher or admit production.

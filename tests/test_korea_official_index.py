@@ -64,8 +64,29 @@ class KoreaOfficialIndexContracts(unittest.TestCase):
             self.assertLess(page.index("korea-publisher-shortcuts-title"),
                             page.index('data-korea-public-link='))
             self.assertEqual(page.count('data-korea-public-link='), 5)
-            for new_id in ("156784787", "156784873", "156784618", "156784625"):
-                self.assertNotIn(new_id, page)  # unreviewed MND and DAPA articles
+            # Two formerly unreviewed MND IDs now have explicitly approved
+            # link-only status, while the DAPA/unselected items stay excluded.
+            self.assertEqual(page.count('data-korea-additional-link='), 9)
+            for approved_id in ("156784787", "156784873"):
+                self.assertIn(
+                    'data-korea-additional-link="korea-policy:' + approved_id + '"',
+                    page)
+            # A subsequently captured, hash-verified official link may be
+            # admitted under the separate standing metadata-only policy;
+            # a merely unreviewed fixed-directory entry may not appear.
+            from core.korea_official_live_links import load_live_korea_official_links
+            from core.korea_public_bibliography import load_public_korea_links
+            from core.korea_additional_public_links import load_additional_korea_official_links
+            fixed = {x["source_identity"] for x in (
+                load_public_korea_links() + load_additional_korea_official_links())}
+            auto_ids = {x["source_identity"].partition(":")[2] for x in
+                        load_live_korea_official_links(ROOT / "pla_watch.db", exclude=fixed)}
+            for unapproved_id in ("156784618", "156784625"):
+                if unapproved_id not in auto_ids:
+                    self.assertNotIn(unapproved_id, page)
+            for forbidden in ("body_original", "download.do?fileId=",
+                              "english_description", "data-review-status="):
+                self.assertNotIn(forbidden, page)
             self.assertIn("not IPR archived records", page)
             self.assertNotIn("download.do?fileId=", page)
 

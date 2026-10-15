@@ -179,16 +179,58 @@ reviewer at Japan would silently validate Japanese records against Singaporean
 assumptions.
 
 ### C13 — No promotion on elapsed days alone
-*Stage 7.* Thirty collecting days is **necessary and never sufficient**.
+**Scope of C13:** This source-collection qualification governs only
+**production ingest of publisher source records**. An independently approved,
+permanently published IPR **editorial research desk** can publish original IPR
+analysis, verified official bibliographic metadata and outgoing first-party
+links without rehosting government documents or photographs. That is a real
+editorial publication, not an interim beta, but **does not count as a
+production-collecting desk, prove private preservation, or change registry
+`status` to `live`**. Its own exact-original source review, source-use
+limitations, editorial approval and guarded website release are required.
+See the separate editorial/research versus collecting-source definitions in
+`docs/PERMANENT_DESK_ACCELERATED_ACTIVATION_2026-10-15.md`.
 
-**Measured by:** promotion requires, together: 30 consecutive collecting days;
-every scheduled day with a terminal result; every anomaly dispositioned; the
-Day 7, Day 14 and Day 30 human checkpoint reviews completed; C1–C12 all `PASS`;
-and an owner sign-off recorded in `DECISION_LOG.md`.
-**Fails when:** a day count is quoted as progress toward public status. Elapsed
-days live in the ledger and are deliberately not restated in documentation or
-on any page — a number copied out of a ledger goes stale the next day and reads
-as a promise.
+*Stage 7.* Thirty consecutive genuine collecting days and independently
+completed Day 7, Day 14 and Day 30 human reviews remain the **normal**
+production-promotion standard. Elapsed calendar days by themselves never pass.
+
+**Standard path:** all C1–C12 `PASS`, every scheduled run and retry attempt
+reconciled, 30 consecutive genuine collecting days, each anomaly dispositioned,
+all three human reviews completed, source-specific lawful reuse scope decided,
+and a recorded owner sign-off in `DECISION_LOG.md`.
+
+**Owner-authorized accelerated permanent activation — exceptional path:**
+For a specifically named, narrowly scoped first-party source family, the owner
+may *separately* authorize permanent public production after **at least seven
+consecutive successful scheduled logical collecting days** rather than waiting
+for Day 30. This is an explicit waiver of **elapsed collection duration and
+prospective Day 14/30 prelaunch timing only**. It is not a waiver of C1–C12, a
+complete Actions run/attempt/job census for the observed window, complete and
+faithful preservation of the evidence, accurate source/date/identity matching,
+a source-version-bound named human review of **every record selected for
+publication**, unresolved anomaly holds, the publisher's robots/access terms,
+reuse rights **for the exact proposed public output**, or explicit owner
+authorization recorded with exact source-state SHA and a reviewed release PR.
+Publication-scope exclusions are recorded individually; unreviewed records are
+not included. See `docs/PERMANENT_DESK_ACCELERATED_ACTIVATION_2026-10-15.md`.
+
+**After accelerated promotion:** collect and independently evaluate actual
+Day 14 and Day 30 evidence as operational postlaunch checkpoints, without
+backdating or declaring these reviews passed in advance. Any source-access
+refusal, integrity conflict, material coverage failure, rights discrepancy or
+unresolved postlaunch checkpoint must be surfaced and the affected source
+paused/removed from new public ingestion pending review. The public archive
+must preserve history and corrections rather than silently suppress source
+provenance.
+
+**Fails when:** source-specific authorization, original reviews or rights
+cannot be produced, or a desk is claimed live because merely seven or thirty
+calendar days elapsed. No source, desk status, production database, render,
+model input or deployed page changes automatically when this policy is updated.
+A desk is described as **live** only after an independently validated
+production integration and authorized guarded deployment; otherwise it
+remains unpromoted.
 
 ---
 

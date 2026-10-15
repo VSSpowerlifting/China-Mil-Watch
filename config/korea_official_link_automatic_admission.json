@@ -1,0 +1,26 @@
+{
+  "schema": "ipr-korea-standing-official-links-policy/1",
+  "approved_on_utc": "2026-10-15",
+  "issuer": "kr_mnd",
+  "republisher": "kr_policy_briefing",
+  "collector_source_slug": "kr_policy_mnd_releases",
+  "source_url_prefix": "https://www.korea.kr/briefing/pressReleaseView.do?newsId=",
+  "automatic_metadata_admission": true,
+  "automatic_public_official_link_only": true,
+  "public_fields": [
+    "canonical_official_url",
+    "publisher_posted_date",
+    "official_issuer",
+    "official_republisher",
+    "source_identity"
+  ],
+  "publish_original_korean_titles": false,
+  "publish_original_text": false,
+  "publish_document_media": false,
+  "publish_translations_or_analysis": false,
+  "publish_to_model_or_email": false,
+  "independent_human_signoff_required_for_links_only": false,
+  "documented_exception_holds": [
+    "korea-policy:156785161"
+  ]
+}
