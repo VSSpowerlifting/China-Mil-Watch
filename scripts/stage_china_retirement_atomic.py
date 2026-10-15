@@ -21,6 +21,51 @@ CHINA_SOURCES = frozenset({
 })
 
 
+def rehearse_on_new_scratch_copy(source_db, scratch_db, plan_data, retired_at,
+                                 *, minimum_retire=4300, maximum_retire=4500):
+    """Read source without touching its WAL and retire in a NEW outside-repo DB.
+
+    Source bytes are never modified, copied database is never placed in the
+    checkout, and no live output changes. The caller must still independently
+    verify backup restoration and render a complete new site before release.
+    """
+    from scripts.reconcile_db import read_only
+
+    source_db = Path(source_db).resolve(strict=True)
+    scratch_db = Path(scratch_db)
+    if not scratch_db.is_absolute() or scratch_db.exists():
+        raise ValueError("scratch destination must be a new absolute path")
+    if (not scratch_db.parent.is_dir() or scratch_db.parent.is_symlink()):
+        raise ValueError("scratch directory must exist and not be a symlink")
+    scratch_db = scratch_db.resolve()
+    if (scratch_db == ROOT or ROOT in scratch_db.parents
+            or scratch_db == source_db):
+        raise ValueError("scratch copy cannot be inside repository or source")
+    if any(Path(str(scratch_db) + suffix).exists()
+           for suffix in ("-wal", "-shm", "-journal")):
+        raise ValueError("scratch SQLite journal path is already occupied")
+
+    with read_only(source_db) as original:
+        target = sqlite3.connect(str(scratch_db))
+        try:
+            original.backup(target)
+            target.execute("PRAGMA journal_mode=DELETE")
+            target.execute("PRAGMA foreign_keys=ON")
+            result = stage_atomic_retirement(
+                target, plan_data, retired_at, minimum_retire=minimum_retire,
+                maximum_retire=maximum_retire)
+        except BaseException:
+            target.close()
+            scratch_db.unlink(missing_ok=True)
+            for suffix in ("-wal", "-shm", "-journal"):
+                Path(str(scratch_db) + suffix).unlink(missing_ok=True)
+            raise
+        else:
+            target.close()
+    return dict(result, scratch_db=str(scratch_db),
+                original_db_unchanged=True)
+
+
 def _checked_scratch_connection(conn):
     files = [r[2] for r in conn.execute("PRAGMA database_list")
              if r[1] == "main"]
