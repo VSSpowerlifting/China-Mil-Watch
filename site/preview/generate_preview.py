@@ -2624,6 +2624,10 @@ def build(out_dir: Path, title: str, db_path: Path,
     # from the declared snapshot, which is the single governed source.
     citation = corpus_citation(title, snapshot)
 
+    # Editorial publication is independent of official-source ingestion.
+    editorial_research = load_editorial_catalog()
+    editorial_published_desks = sorted({row["desk"] for row in editorial_research})
+
     ctx = {
         "title": title,
         "review_mode": bool(review_brief or review_timeline or review_presentation),
@@ -2655,6 +2659,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         "collection_name": COLLECTION_NAME,
         "briefs_feed_route": BRIEFS_FEED_ROUTE if briefs_feed else None,
         "desks": desks,
+        "editorial_published_desks": editorial_published_desks,
         # Where each desk's plate hangs on the Desks-page map; geography only.
         "desk_map": desk_map_layout(desks),
         "live_desk_count": desks.collecting_count,
@@ -2937,7 +2942,6 @@ def build(out_dir: Path, title: str, db_path: Path,
     # A declared desk with no page would be a desk a reader cannot check.
     desk_tmpl = env.get_template("desk.html")
     # Explicitly approved IPR-authored Briefs only; no shadow original content.
-    editorial_research = load_editorial_catalog()
     # Individually approved official-source references are distinct from the
     # production corpus and never change a desk's collection status or counts.
     for desk in desks:
