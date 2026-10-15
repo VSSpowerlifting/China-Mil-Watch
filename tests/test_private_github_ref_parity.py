@@ -76,10 +76,18 @@ class GitRefParityTests(unittest.TestCase):
                                       self.sha)["source_archive_git_object_sets_match"])
 
     def test_changed_vault_commit_does_not_pass_object_copy(self):
-        other = self.sha  # incorrect expected pin is explicitly rejected
         with self.assertRaisesRegex(proof.ParityError, "source_head_changed_since_freeze"):
             proof.compare(self.src, self.vault, SOURCE_REF, VAULT_REF, "0" * 40)
-        self.assertEqual(other, self.sha)
+        git(self.src, "checkout", "-q", "-b", "fictional-unrelated")
+        (self.src / "state" / "different.bin").write_bytes(b"FICTIONAL-DIFFERENT-BRANCH")
+        git(self.src, "add", "state")
+        git(self.src, "commit", "-qm", "Fixture unrelated new capture")
+        subprocess.run(["git", "-C", str(self.vault), "fetch", "--quiet",
+                        str(self.src), "refs/heads/fictional-unrelated:refs/heads/"
+                        + VAULT_REF], check=True, stdout=subprocess.PIPE,
+                       stderr=subprocess.PIPE)
+        with self.assertRaisesRegex(proof.ParityError, "archive_head_does_not_match_source"):
+            proof.compare(self.src, self.vault, SOURCE_REF, VAULT_REF, self.sha)
 
     def test_no_symlinks_or_same_repo_or_unsafe_refs(self):
         with self.assertRaisesRegex(proof.ParityError, "source_is_destination"):
