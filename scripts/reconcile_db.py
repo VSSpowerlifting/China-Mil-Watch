@@ -1107,6 +1107,11 @@ def gates(con, origin_path, local_path, out_path):
 
     expected_urls = dict(origin_urls)
     for url, slug in local_urls.items():
+        # A locally stored historical URL can be absent from the deliberately
+        # reduced published collection. The published ledger is explicit proof
+        # this is a retirement, not silent re-attribution of a surviving row.
+        if url not in expected_urls and is_retired(con, url):
+            continue
         if url in expected_urls:
             if expected_urls[url] != slug:
                 problems.append(
