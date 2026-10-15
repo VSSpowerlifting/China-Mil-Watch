@@ -121,6 +121,16 @@ class KoreaFailedCaptureAuditTests(unittest.TestCase):
         with self.assertRaises(audit.ArtifactHold):
             self.inspect()
 
+    def test_untracked_capture_or_other_source_data_refused(self):
+        extra = self.repo / "state" / "captures" / (self.failed_sha + ".bin")
+        extra.write_bytes(self.failed_only)
+        with self.assertRaises(audit.ArtifactHold):
+            self.inspect()
+        extra.unlink()
+        (self.repo / "state" / "untracked-secret.txt").write_text("fictional")
+        with self.assertRaises(audit.ArtifactHold):
+            self.inspect()
+
     def test_missing_archive_capture_cannot_pass(self):
         self._archive([("state/clock.json", b'{"desk":"korea"}')])
         with self.assertRaises(audit.ArtifactHold):
