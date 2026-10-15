@@ -12,7 +12,7 @@
 {% block og_type %}article{% endblock %}
 {% block head_scripts %}
 <link rel="stylesheet" href="{{ root }}briefs.css">
-<link rel="stylesheet" href="{{ root }}continuity.css">
+{% if continuity|length > 1 %}<link rel="stylesheet" href="{{ root }}continuity.css">{% endif %}
 
 {% endblock %}
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
