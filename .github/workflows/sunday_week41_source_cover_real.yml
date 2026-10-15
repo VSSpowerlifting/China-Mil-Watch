@@ -57,8 +57,9 @@ jobs:
           assert subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip() == pin
           db = Path(DB_PATH)
           assert db.is_file() and not db.is_symlink()
+          assert db.resolve() == Path("pla_watch.db").resolve()
           blob = subprocess.check_output(
-              ["git", "ls-files", "--stage", "--", str(db)], text=True).strip()
+              ["git", "ls-files", "--stage", "--", "pla_watch.db"], text=True).strip()
           assert blob and len(blob.split()) >= 3
           db_git_blob = blob.split()[1]
           desks = ["china", "singapore"]
