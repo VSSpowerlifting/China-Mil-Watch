@@ -121,5 +121,24 @@ class BoundedAttemptJobAuditTests(unittest.TestCase):
             self.check((pages, histories, assessment))
 
 
+    def test_manual_workflow_uses_attempt_receipt_before_verdict(self):
+        from pathlib import Path
+        path = Path(__file__).resolve().parents[1] / ".github/workflows/ph_afp_day7_machine_receipt_manual.yml"
+        source = path.read_text(encoding="utf-8")
+        self.assertIn("tests.test_ph_afp_attempt_history -v", source)
+        self.assertIn("python -m scripts.audit_ph_afp_attempt_history", source)
+        self.assertIn("--runs-export", source)
+        self.assertIn("--actions-assessment", source)
+        self.assertIn("attempts['seven_positive_first_attempt_jobs_verified'] is True", source)
+        self.assertIn("attempts['visible_attempts_completely_reconciled'] is True", source)
+        self.assertIn("Scrub temporary raw GitHub API exports before artifact upload", source)
+        self.assertIn('rm "$RUNNER_TEMP/afp-runs-input.json"', source)
+        paths = source.split("name: Retain only metadata-only private reviewer receipts")[1]
+        self.assertIn("/afp-review/attempts.json", paths)
+        self.assertNotIn("/afp-runs-input.json", paths)
+        self.assertNotIn("contents: write", source)
+        self.assertNotIn("actions: write", source)
+
+
 if __name__ == "__main__":
     unittest.main()
