@@ -18,8 +18,8 @@ SOURCES = (
     ("department_of_defense", "www.defense.gov", "/News/Releases/"),
     ("us_treasury", "home.treasury.gov", "/news/press-releases"),
     ("department_of_state", "www.state.gov", "/press-releases/"),
-    ("gao", "www.gao.gov", "/press-releases"),
-    ("bis", "www.bis.gov", "/press-release"),
+    ("gao", "www.gao.gov", "/press-center"),
+    ("bis", "www.bis.gov", "/news-updates"),
     ("dhs", "www.dhs.gov", "/news-releases"),
 )
 
