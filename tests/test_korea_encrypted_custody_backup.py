@@ -121,6 +121,35 @@ class KoreaEncryptedLocalBackupTests(unittest.TestCase):
             self.run_backup(encrypted_output="relative.gpg")
         self.assertFalse(self.encrypted.exists())
 
+    def test_unrelated_branch_is_not_copied_to_encrypted_backup(self):
+        # The source checkout can have unrelated refs: never bundle --all.
+        def git(*args):
+            return subprocess.run(
+                ["git", "-C", str(self.source), *args],
+                check=True, capture_output=True, text=True, timeout=15).stdout.strip()
+        original_branch = git("branch", "--show-current")
+        git("switch", "-q", "-c", "unrelated-unapproved-material")
+        (self.source / "state" / "unrelated.txt").write_text(
+            "FICTIONAL PRIVATE UNRELATED REF")
+        git("add", "-A")
+        git("commit", "-q", "-m", "synthetic unrelated source ref")
+        git("switch", "-q", original_branch)
+        self.assertEqual(git("rev-parse", "HEAD"), self.pin)
+        self.assertEqual(git("status", "--porcelain"), "")
+        report = self.run_backup()
+        self.assertTrue(report["local_decrypt_and_git_restore_equivalent"])
+        decrypted = subprocess.run(
+            ["gpg", "--homedir", str(self.gpg), "--batch", "--decrypt",
+             str(self.encrypted)],
+            check=True, capture_output=True, timeout=15).stdout
+        bundle = self.root / "synthetic-bundle-for-test-only"
+        bundle.write_bytes(decrypted)
+        heads = subprocess.run(
+            ["git", "bundle", "list-heads", str(bundle)],
+            check=True, capture_output=True, text=True, timeout=15).stdout
+        self.assertEqual(heads.strip(), self.pin + " HEAD")
+        self.assertNotIn(b"FICTIONAL PRIVATE UNRELATED REF", decrypted)
+
     def test_unsafe_or_missing_scratch_directory_is_refused(self):
         self.scratch.chmod(0o755)
         with self.assertRaises(backup.BackupHold):
