@@ -32,13 +32,12 @@ jobs:
           test ! -e pla_watch.db-shm
 
   existing-real-originals-count-only:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
           path: repo
           persist-credentials: false
       - uses: actions/setup-python@v5
