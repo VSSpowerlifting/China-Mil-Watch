@@ -8,6 +8,7 @@ on:
       - "tests/test_us_pacom_official_link_docket.py"
       - ".github/workflows/us_pacom_link_docket_contracts.yml"
       - "docs/engineering/US_PACOM_FIRST_PARTY_LINK_RESEARCH_2026-10-15.md"
+      - "shadow/us_indopacom/README.md"
   workflow_dispatch:
 
 permissions:
