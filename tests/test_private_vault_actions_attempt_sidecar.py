@@ -170,7 +170,8 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
             self.scratch.chmod(0o700)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
-    def forge_encrypted_fixture(self, *, corrupt_id=None, drop_id=None):
+    def forge_encrypted_fixture(self, *, corrupt_id=None, drop_id=None,
+                                forget_manifest_id=None, corrupt_count=False):
         """Test-only re-encryption of fictional payloads; never run on originals."""
         receipt = self.create()
         test_plain = self.root / "fictional-only-plaintext-test.tar"
@@ -186,6 +187,16 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
                 else:
                     files[item.name] = payload
         self.assertIsNotNone(manifest)
+        if forget_manifest_id is not None or corrupt_count:
+            changed = json.loads(manifest)
+            if forget_manifest_id is not None:
+                changed["captured_artifacts"] = [
+                    item for item in changed["captured_artifacts"]
+                    if item["id"] != forget_manifest_id]
+                changed["case_count"] = len(changed["captured_artifacts"])
+            if corrupt_count:
+                changed["case_count"] += 1
+            manifest = (json.dumps(changed, sort_keys=True) + "\n").encode()
         forged_plain = self.root / "fictional-forged-test.tar"
         with tarfile.open(forged_plain, "w:") as archive:
             meta = tarfile.TarInfo("manifest.json")
@@ -216,6 +227,23 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         encrypted, digest, receipt = self.forge_encrypted_fixture(drop_id=ONE)
         with self.assertRaisesRegex(box.Hold, "sidecar_members_missing"):
             box.restore(encrypted, digest, receipt["source_inventory_sha256"],
+                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_restore_rejects_coherent_manifest_that_erases_failed_attempt(self):
+        # A replaced manifest plus its matching ZIP list must not erase
+        # evidence from the failed first attempt, even after a successful rerun.
+        encrypted, sha, receipt = self.forge_encrypted_fixture(
+            drop_id=ONE, forget_manifest_id=ONE)
+        with self.assertRaisesRegex(box.Hold, "sidecar_attempt_coverage_missing"):
+            box.restore(encrypted, sha, receipt["source_inventory_sha256"],
+                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
+        self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_restore_rejects_manifest_count_inconsistency(self):
+        encrypted, sha, receipt = self.forge_encrypted_fixture(corrupt_count=True)
+        with self.assertRaisesRegex(box.Hold, "sidecar_manifest_scope_invalid"):
+            box.restore(encrypted, sha, receipt["source_inventory_sha256"],
                         RUN, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
