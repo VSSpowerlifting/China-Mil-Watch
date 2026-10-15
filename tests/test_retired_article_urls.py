@@ -112,6 +112,10 @@ class TestRetiredUrlIngestion(unittest.TestCase):
             con.execute(
                 "INSERT INTO articles(id, url, source_id) VALUES (23, ?, 1)",
                 (self.allowed,))
+            # Simulate a malformed historical copy with an old row already
+            # present: restoring the enforcement trigger is not enough to
+            # retroactively repair an illegal reused numeric identity.
+            con.execute(migration.TRIGGER_DDL)
             with self.assertRaisesRegex(ValueError, "article ID reused"):
                 verify_no_active_retired_urls(con)
 
@@ -121,6 +125,12 @@ class TestRetiredUrlIngestion(unittest.TestCase):
                 "INSERT INTO articles(url, source_id) VALUES (?, 1)",
                 (self.retired,))
             with self.assertRaisesRegex(ValueError, "retired URL found"):
+                verify_no_active_retired_urls(con)
+
+    def test_missing_sqlite_id_guard_fails_database_validation(self):
+        with sqlite3.connect(str(self.path)) as con:
+            con.execute("DROP TRIGGER guard_retired_article_id_reuse")
+            with self.assertRaisesRegex(ValueError, "protection trigger missing"):
                 verify_no_active_retired_urls(con)
 
     def test_pre_migration_legacy_fixture_does_not_claim_retirements(self):
