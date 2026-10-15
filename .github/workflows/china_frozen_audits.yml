@@ -1,0 +1,49 @@
+name: China historical audits — frozen October evidence
+
+on:
+  pull_request:
+    paths:
+      - "tests/fixtures/china-corpus-index-2026-10-14.json"
+      - "tests/test_brief_claim_correction_proposals.py"
+      - "tests/test_china_discovery_reduction_rehearsal.py"
+      - "tests/test_published_global_times_trail_integrity.py"
+      - "tests/test_pla_daily_series_for_review.py"
+      - ".github/workflows/china_frozen_audits.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  exact-frozen-audits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Prove immutable old Git blob is the original historical corpus
+        run: |
+          set -euo pipefail
+          test "$(git hash-object tests/fixtures/china-corpus-index-2026-10-14.json)" = \
+            fa945253206fe9597f5865c648db8edd5a3fc77d
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Test exact historical audits against authentic pinned corpus
+        run: |
+          python -m unittest -v \
+            tests.test_brief_claim_correction_proposals \
+            tests.test_china_discovery_reduction_rehearsal \
+            tests.test_published_global_times_trail_integrity \
+            tests.test_pla_daily_series_for_review
+      - name: Ensure production corpus and site were not mutated
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
