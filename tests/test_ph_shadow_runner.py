@@ -279,6 +279,26 @@ class TestIsolation(StateCase):
                     # All other AFP workflow entry points remain prohibited.
                     self.assert_read_only_afp_observer(text)
                     continue
+                if path.name in (
+                    "afp_kemhan_held_metadata_intake.yml",
+                    "ph_afp_first23_originals_review.yml",
+                    "afp_kemhan_regional_release_contracts.yml",
+                ):
+                    # These bounded reviewer/intake contracts operate only on
+                    # existing preserved Git, never collect or publish AFP.
+                    # Audit each exception rather than obscuring source slugs.
+                    self.assertIn("permissions:\\n  contents: read", text)
+                    self.assertIn("persist-credentials: false", text)
+                    self.assertNotRegex(
+                        text, r"(?m)^\\s*(?:schedule|push|pull_request_target):")
+                    for forbidden in (
+                        "contents: write", "actions: write", "pages: write",
+                        "id-token: write", "scripts.shadow_collect_ph",
+                        "scripts/shadow_collect_ph", "git push", "curl ",
+                        "wget ", "GITHUB_TOKEN", "secrets.",
+                    ):
+                        self.assertNotIn(forbidden, text)
+                    continue
                 self.assertNotIn("ph_afp", text)
 
     def test_the_source_is_enabled_only_in_the_shadow_manifest(self):
