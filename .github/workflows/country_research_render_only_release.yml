@@ -65,6 +65,19 @@ jobs:
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
 
+      - name: Retain rendered public reference beta for visual inspection
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-reference-beta-preview-${{ github.run_id }}
+          path: |
+            output/philippines.html
+            output/vietnam.html
+            output/desks.html
+            output/desk-references.css
+          if-no-files-found: error
+          retention-days: 3
+
   release:
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
