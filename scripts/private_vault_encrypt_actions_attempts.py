@@ -325,7 +325,10 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                     total += item["bytes"]
                     check(total <= MAX_TOTAL_BYTES, "sidecar_total_exceeds_limit")
                 actual = set()
-                for member in bundle:
+                while True:
+                    member = bundle.next()
+                    if member is None:
+                        break
                     check(member.isfile() and member.name in expected and
                           member.name not in actual and
                           member.name == member.name.lstrip("/") and
