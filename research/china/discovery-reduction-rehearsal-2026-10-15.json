@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "purpose": "internal_machine_screened_discovery_rehearsal_not_editorial_selection",
+  "publication_enabled": false,
+  "owner_approved": false,
+  "baseline_snapshot": {
+    "date": "2026-10-14",
+    "records": 5230
+  },
+  "baseline_max_id": 5236,
+  "created_on": "2026-10-15",
+  "expected_china_full": 5144,
+  "expected_china_analyzed_cohort": 2461,
+  "target_approved_china_discovery_min": 500,
+  "target_approved_china_discovery_max": 700,
+  "mechanical_only_rule": "analyzed_original_state",
+  "protected_source_citation_must_remain_accessible": true,
+  "exception_alerts": [
+    {
+      "id": 2849,
+      "source": "pla_daily",
+      "title": "中华人民共和国外交部关于菲律宾共和国在中国领土黄岩岛划设所谓“领海基线”的声明",
+      "date": "2026-07-31",
+      "state": "not_selected",
+      "protected_brief_trail": false,
+      "reason": "Screened-out issuing ministry original about Scarborough Shoal baselines, not safe to hide editorially"
+    },
+    {
+      "id": 2391,
+      "source": "pla_daily",
+      "title": "中华人民共和国外交部关于有关国家炒作“南海仲裁案裁决”出台十年的声明",
+      "date": "2026-07-12",
+      "state": "not_selected",
+      "protected_brief_trail": false,
+      "reason": "Screened-out issuing ministry declaration about arbitration anniversary, not safe to hide editorially"
+    },
+    {
+      "id": 2180,
+      "source": "global_times_mil",
+      "title": "Chinese navy conducts test launch of strategic missile by submarine; not aimed at any specific country, target",
+      "date": "2026-07-06",
+      "state": "not_selected",
+      "protected_brief_trail": false,
+      "reason": "Historical captured Global Times text polluted despite substantive naval strategic-missile source"
+    },
+    {
+      "id": 946,
+      "source": "global_times_mil",
+      "title": "China Coast Guard conducts routine law-enforcement patrols in the waters east of China's Taiwan island",
+      "date": "2026-06-01",
+      "state": "not_selected",
+      "protected_brief_trail": false,
+      "reason": "Unverified original coast-guard report and contaminated teaser stored text"
+    },
+    {
+      "id": 2265,
+      "source": "global_times_mil",
+      "title": "'Chinese Aegis' Type 052D destroyer Kaifeng meets Russia's 'carrier killer' Varyag as crews exchange visits during Joint Sea-2026 naval exercise",
+      "date": "2026-07-08",
+      "state": "analyzed",
+      "protected_brief_trail": true,
+      "reason": "Cited No.10 Joint Sea-2026 record with unrelated 2025 stored text and erroneous machine summary"
+    },
+    {
+      "id": 2881,
+      "source": "global_times_mil",
+      "title": "Official documentary reveals PLA’s armed reconnaissance drones conduct live-fire strikes on moving vessel off southeast China",
+      "date": "2026-07-31",
+      "state": "analyzed",
+      "protected_brief_trail": true,
+      "reason": "Cited No.12 July KVD002 drone report with teaser contamination and disputed Atlas chronology"
+    }
+  ],
+  "editorial_selection_manifest": null
+}

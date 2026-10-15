@@ -1,0 +1,94 @@
+name: China discovery reduction rehearsal custody
+
+# PRIVATE only; no editorial approvals, corpus modifications or site updates.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/rehearse_china_discovery_reduction.py
+      - tests/test_china_discovery_reduction_rehearsal.py
+      - scripts/audit_pla_daily_series_for_review.py
+      - tests/test_pla_daily_series_for_review.py
+      - research/china/discovery-reduction-rehearsal-2026-10-15.json
+      - docs/CHINA_DISCOVERY_REDUCTION_REHEARSAL_2026-10-15.md
+      - .github/workflows/china_discovery_reduction_rehearsal.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: china-reduction-rehearsal-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preserved-versus-mechanical:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Establish canonical site custody
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Run no-publication and exception regression tests
+        run: python -m unittest -v tests.test_china_discovery_reduction_rehearsal tests.test_pla_daily_series_for_review
+      - name: Render actual 2461-versus-5230 dry-run in private scratch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/rehearse_china_discovery_reduction.py \
+            --private-dir "$RUNNER_TEMP/private-china-reduction"
+          test -f "$RUNNER_TEMP/private-china-reduction/screened.html"
+          test -f "$RUNNER_TEMP/private-china-reduction/preserved.html"
+          test -f "$RUNNER_TEMP/private-china-reduction/summary.json"
+          grep -q noindex,nofollow,noarchive "$RUNNER_TEMP/private-china-reduction/screened.html"
+          python - "$RUNNER_TEMP/private-china-reduction/summary.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          assert d['china_preserved']==5144
+          assert d['china_mechanical_visible']==2461
+          assert d['china_mechanical_not_prominent']==2683
+          assert d['china_editorially_approved']==0
+          assert d['published_trail_ids_preserved']==182
+          assert not d['owner_approved'] and not d['publication_enabled']
+          ids={w['id'] for w in d['warnings']}
+          assert {2849,2391,2265,2881}.issubset(ids)
+          print("Private mechanical-only reduction:",d['china_mechanical_reduction_percent'],"%")
+          PY
+      - name: Survey PLA Daily recurring title prefixes without selection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/audit_pla_daily_series_for_review.py \
+            --index output/corpus-index.json \
+            --report "$RUNNER_TEMP/private-pla-daily-series.json"
+          python - "$RUNNER_TEMP/private-pla-daily-series.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          series={x['family']:x['count'] for x in d['repeated_families']}
+          assert d['pla_daily_preserved']==4173
+          assert series['强军论坛']==100
+          assert series['外交部']==138
+          assert not d['publication_enabled']
+          assert d['editorial_rejection_decisions']==0
+          print("High-volume title families, for manual review only:",series['强军论坛'],series['外交部'])
+          PY
+      - name: Verify canonical corpus and website untouched
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
