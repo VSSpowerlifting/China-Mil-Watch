@@ -69,6 +69,11 @@ def _read_inventory(path, run_id):
                if type(run) is dict and run.get("run_id") == run_id]
     check(len(matches) == 1, "run_missing_or_ambiguous_in_inventory")
     run = matches[0]
+    check(run.get("event") in ("schedule", "workflow_dispatch")
+          and type(run.get("workflow")) is str
+          and run["workflow"].startswith(".github/workflows/")
+          and run["workflow"].endswith(".yml"),
+          "inventory_run_scope_invalid")
     attempt_count = run.get("latest_run_attempt")
     check(type(attempt_count) is int and 1 <= attempt_count <= 50
           and type(run.get("artifacts")) is list, "attempt_inventory_invalid")
@@ -81,6 +86,8 @@ def _read_inventory(path, run_id):
               and type(item.get("name")) is str and len(item["name"]) <= 256
               and type(item.get("name_attempt")) is int
               and 1 <= item["name_attempt"] <= attempt_count
+              and item["name"].endswith("-%d-%d" %
+                                        (run_id, item["name_attempt"]))
               and item.get("expired") is False, "artifact_identity_or_expiry_invalid")
         unique.add(item["id"])
         # The #638 additive metadata receipt gives us GitHub's upload-time
@@ -300,13 +307,16 @@ def create(inventory, run_id, staging_dir, output, recipient, *, gpg_home=None):
 
 
 def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
-            run_id, *, scratch_dir, gpg_home=None):
-    """Verify encrypted ZIP sidecar as a bounded stream; NO plaintext TAR on disk."""
+            run_id, *, inventory, scratch_dir, gpg_home=None):
+    """Check the original inventory while streaming decrypted opaque ZIPs."""
     check(type(run_id) is int and run_id > 0, "run_id_invalid")
     check(type(expected_cipher_sha) is str and SHA256.fullmatch(expected_cipher_sha)
           and type(expected_inventory_sha) is str
           and SHA256.fullmatch(expected_inventory_sha),
           "expected_digest_invalid")
+    actual_inventory_sha, source_run = _read_inventory(inventory, run_id)
+    check(actual_inventory_sha == expected_inventory_sha,
+          "restore_inventory_checksum_mismatch")
     root, backup = Path(scratch_dir), Path(encrypted)
     check(root.is_dir() and not root.is_symlink()
           and (root.stat().st_mode & 0o077) == 0
@@ -359,6 +369,14 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                       manifest["workflow"].startswith(".github/workflows/") and
                       manifest["workflow"].endswith(".yml"),
                       "sidecar_manifest_scope_invalid")
+                # A public encryption key also permits newly forged archives.
+                # Require parity with the independently retained source census.
+                check(manifest["workflow"] == source_run["workflow"]
+                      and manifest["event"] == source_run["event"]
+                      and attempt_count == source_run["latest_run_attempt"]
+                      and len(items) == len(source_run["artifacts"]),
+                      "sidecar_inventory_scope_mismatch")
+                inventory_items = {x["id"]: x for x in source_run["artifacts"]}
                 expected = {}
                 total = 0
                 attempts = set()
@@ -374,6 +392,12 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
                           item.get("archive_member") ==
                           "artifacts/artifact-%d.zip" % item["id"],
                           "sidecar_item_malformed")
+                    census_item = inventory_items.get(item["id"])
+                    check(census_item is not None
+                          and census_item["name_attempt"] == item["attempt"]
+                          and census_item["bytes"] == item["bytes"]
+                          and census_item["provider_sha256"] == item["sha256"],
+                          "sidecar_inventory_item_mismatch")
                     attempts.add(item["attempt"])
                     name = item["archive_member"]
                     check(name not in expected, "sidecar_member_duplicate")
@@ -426,6 +450,8 @@ def restore(encrypted, expected_cipher_sha, expected_inventory_sha,
         "encrypted_sha256": expected_cipher_sha,
         "all_opaque_zip_sha256_verified": True,
         "provider_sha256_parity_preserved_in_manifest": True,
+        "original_inventory_receipt_and_artifact_ids_verified": True,
+        "source_rights_approved": False,
         "individual_zip_contents_verified": False,
         "downloaded_zip_origin_authenticated": False,
         "plaintext_tar_written_to_disk": False,
@@ -448,6 +474,8 @@ def main(argv=None):
     recover.add_argument("--encrypted-input", required=True)
     recover.add_argument("--expected-cipher-sha256", required=True)
     recover.add_argument("--expected-inventory-sha256", required=True)
+    recover.add_argument("--inventory", required=True,
+                         help="Independently retained original census JSON")
     recover.add_argument("--run-id", type=int, required=True)
     recover.add_argument("--scratch-dir", required=True)
     recover.add_argument("--gpg-home")
@@ -460,7 +488,8 @@ def main(argv=None):
         else:
             report = restore(args.encrypted_input, args.expected_cipher_sha256,
                              args.expected_inventory_sha256, args.run_id,
-                             scratch_dir=args.scratch_dir, gpg_home=args.gpg_home)
+                             inventory=args.inventory, scratch_dir=args.scratch_dir,
+                             gpg_home=args.gpg_home)
     except (Hold, OSError, UnicodeError) as exc:
         print(json.dumps({
             "schema": SCHEMA, "status": "HOLD",

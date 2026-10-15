@@ -105,7 +105,7 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
     def verify(self, record):
         return box.restore(self.encrypted, record["ciphertext_sha256"],
                            record["source_inventory_sha256"], RUN,
-                           scratch_dir=self.scratch, gpg_home=self.home)
+                           inventory=self.manifest, scratch_dir=self.scratch, gpg_home=self.home)
 
     def test_real_encrypted_roundtrip_with_failed_and_successful_opaque_zips(self):
         receipt = self.create()
@@ -117,6 +117,8 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         self.assertTrue(verified["all_opaque_zip_sha256_verified"])
         self.assertTrue(receipt["provider_digest_parity_verified_against_input_census"])
         self.assertTrue(verified["provider_sha256_parity_preserved_in_manifest"])
+        self.assertTrue(verified["original_inventory_receipt_and_artifact_ids_verified"])
+        self.assertFalse(verified["source_rights_approved"])
         self.assertFalse(verified["individual_zip_contents_verified"])
         self.assertFalse(verified["downloaded_zip_origin_authenticated"])
         self.assertFalse(verified["independent_backup_medium_verified"])
@@ -174,10 +176,24 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
 
     def test_changed_inventory_digest_is_rejected_on_restore(self):
         receipt = self.create()
-        with self.assertRaisesRegex(box.Hold, "sidecar_manifest_mismatch"):
+        with self.assertRaisesRegex(box.Hold, "restore_inventory_checksum_mismatch"):
             box.restore(self.encrypted, receipt["ciphertext_sha256"],
-                        "0"*64, RUN, scratch_dir=self.scratch, gpg_home=self.home)
+                        "0"*64, RUN, inventory=self.manifest, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_restore_rejects_changed_retained_census_even_if_zip_is_intact(self):
+        receipt = self.create()
+        self.record["local_test_only_untrusted_extra"] = "different receipt bytes"
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "restore_inventory_checksum_mismatch"):
+            self.verify(receipt)
+
+    def test_create_refuses_out_of_scope_event_before_encryption(self):
+        self.record["runs"][0]["event"] = "pull_request"
+        self.write_inventory()
+        with self.assertRaisesRegex(box.Hold, "inventory_run_scope_invalid"):
+            self.create()
+        self.assertFalse(self.encrypted.exists())
 
     def test_corrupted_ciphertext_and_wrong_key_are_refused(self):
         receipt = self.create()
@@ -198,7 +214,8 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         self.assertEqual(list(self.scratch.iterdir()), [])
 
     def forge_encrypted_fixture(self, *, corrupt_id=None, drop_id=None,
-                                forget_manifest_id=None, corrupt_count=False):
+                                forget_manifest_id=None, corrupt_count=False,
+                                rewrite_single_attempt=False):
         """Test-only re-encryption of fictional payloads; never run on originals."""
         receipt = self.create()
         test_plain = self.root / "fictional-only-plaintext-test.tar"
@@ -214,7 +231,7 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
                 else:
                     files[item.name] = payload
         self.assertIsNotNone(manifest)
-        if forget_manifest_id is not None or corrupt_count:
+        if forget_manifest_id is not None or corrupt_count or rewrite_single_attempt:
             changed = json.loads(manifest)
             if forget_manifest_id is not None:
                 changed["captured_artifacts"] = [
@@ -223,6 +240,12 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
                 changed["case_count"] = len(changed["captured_artifacts"])
             if corrupt_count:
                 changed["case_count"] += 1
+            if rewrite_single_attempt:
+                changed["captured_artifacts"] = [
+                    x for x in changed["captured_artifacts"] if x["id"] != ONE]
+                changed["captured_artifacts"][0]["attempt"] = 1
+                changed["latest_run_attempt"] = 1
+                changed["case_count"] = 1
             manifest = (json.dumps(changed, sort_keys=True) + "\n").encode()
         forged_plain = self.root / "fictional-forged-test.tar"
         with tarfile.open(forged_plain, "w:") as archive:
@@ -247,15 +270,23 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
         encrypted, digest, receipt = self.forge_encrypted_fixture(corrupt_id=ONE)
         with self.assertRaisesRegex(box.Hold, "sidecar_item_length_mismatch"):
             box.restore(encrypted, digest, receipt["source_inventory_sha256"],
-                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
+                        RUN, inventory=self.manifest, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
     def test_restore_rejects_valid_ciphertext_missing_failed_attempt(self):
         encrypted, digest, receipt = self.forge_encrypted_fixture(drop_id=ONE)
         with self.assertRaisesRegex(box.Hold, "sidecar_members_missing"):
             box.restore(encrypted, digest, receipt["source_inventory_sha256"],
-                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
+                        RUN, inventory=self.manifest, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
+
+    def test_restore_rejects_self_consistent_attempt_count_rewrite(self):
+        encrypted, sha, receipt = self.forge_encrypted_fixture(
+            drop_id=ONE, rewrite_single_attempt=True)
+        with self.assertRaisesRegex(box.Hold, "sidecar_inventory_scope_mismatch"):
+            box.restore(encrypted, sha, receipt["source_inventory_sha256"],
+                        RUN, inventory=self.manifest, scratch_dir=self.scratch,
+                        gpg_home=self.home)
 
     def test_restore_rejects_coherent_manifest_that_erases_failed_attempt(self):
         # A replaced manifest plus its matching ZIP list must not erase
@@ -264,14 +295,14 @@ class EncryptedAttemptSidecarTests(unittest.TestCase):
             drop_id=ONE, forget_manifest_id=ONE)
         with self.assertRaisesRegex(box.Hold, "sidecar_attempt_coverage_missing"):
             box.restore(encrypted, sha, receipt["source_inventory_sha256"],
-                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
+                        RUN, inventory=self.manifest, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
     def test_restore_rejects_manifest_count_inconsistency(self):
         encrypted, sha, receipt = self.forge_encrypted_fixture(corrupt_count=True)
         with self.assertRaisesRegex(box.Hold, "sidecar_manifest_scope_invalid"):
             box.restore(encrypted, sha, receipt["source_inventory_sha256"],
-                        RUN, scratch_dir=self.scratch, gpg_home=self.home)
+                        RUN, inventory=self.manifest, scratch_dir=self.scratch, gpg_home=self.home)
         self.assertEqual(list(self.scratch.iterdir()), [])
 
     def test_filename_that_claims_zip_but_is_plaintext_is_refused(self):
