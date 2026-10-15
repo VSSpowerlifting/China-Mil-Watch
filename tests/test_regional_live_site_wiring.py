@@ -44,6 +44,8 @@ def html_for(slug, references):
     return env.get_template("desk.html").render(
         title="Indo-Pacific Record", page=slug + ".html",
         desk=desk(slug),
+        maintainer=SimpleNamespace(name="Example Maintainer",
+                                   email="staff@example.invalid"),
         regional_official_links=references,
         public_source_links=[],
         published_research=[],
