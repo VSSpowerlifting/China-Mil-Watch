@@ -7,6 +7,10 @@ on:
     paths:
       - ".github/workflows/country_research_render_only_release.yml"
       - "tests/test_country_research_release_contract.py"
+      - "core/published_desk_editorials.py"
+      - "site/preview/generate_preview.py"
+      - "site/preview/templates/desk.html"
+      - "tests/test_published_desk_editorials.py"
       - "scripts/guard_country_research_output_scope.py"
       - "tests/test_country_research_output_scope.py"
       - "scripts/stage_country_research_output.py"
@@ -41,7 +45,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Verify explicit release invariants and staging boundaries
-        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release -v
+        run: python -m unittest tests.test_country_research_release_contract tests.test_stage_country_research_output tests.test_guard_japan_official_reference_release tests.test_published_desk_editorials -v
       - name: Install existing render dependencies (no publisher calls)
         run: pip install -r requirements.txt
       - name: Exercise actual static release build without committing or deploying
@@ -55,6 +59,9 @@ jobs:
           python -m scripts.guard_country_research_output_scope
           test -f output/philippines.html
           test -f output/vietnam.html
+          grep -F 'Published analysis from this desk' output/vietnam.html
+          grep -F 'href="briefs/what-is-being-built-in-laos.html"' output/vietnam.html
+          test -f output/briefs/what-is-being-built-in-laos.html
           test -f output/indonesia.html
           test -f output/japan.html
           test -f output/desk-references.js
@@ -178,6 +185,13 @@ jobs:
           assert 'href="vietnam.html"' in desk_html
           assert 'href="indonesia.html"' in desk_html
           assert "8 declared" in desk_html and "2 collecting" in desk_html
+          # This country desk's original IPR analysis was already approved
+          # and published. Its Brief link does not imply original-body admission.
+          vietnam_html = (base / "vietnam.html").read_text(encoding="utf-8")
+          assert "Published analysis from this desk" in vietnam_html
+          assert 'href="briefs/what-is-being-built-in-laos.html"' in vietnam_html
+          assert "not mean the desk" in vietnam_html
+          assert (base / "briefs/what-is-being-built-in-laos.html").is_file()
           assert (base / "desk-references.js").is_file()
           assert (base / "desk-references.css").is_file()
           assert (base / "sitemap.xml").is_file()
