@@ -2,8 +2,8 @@
 import copy
 import unittest
 
-from scripts.reconcile_ph_afp_first23_originals import BATCHES, TOTAL, (
-    LATEST, ReviewReconciliationHold, reconcile,
+from scripts.reconcile_ph_afp_first23_originals import (
+    BATCHES, TOTAL, LATEST, ReviewReconciliationHold, reconcile,
 )
 
 
