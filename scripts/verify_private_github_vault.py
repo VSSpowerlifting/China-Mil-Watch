@@ -19,6 +19,17 @@ REPORT_SCHEMA = "ipr-private-github-vault-preflight/1"
 # destination. The pinned blob identifies our non-sensitive policy README.
 # A branch name alone (or a random README file) must never imply safe custody.
 BOOTSTRAP_README_BLOB_SHA = "b1a7c174d224f0d9e9245ab400a31bb19c6eab86"
+PILOT_MAIN_SHA = "2d53f25a2a4c31b3d1b2a84b569a7f203fdad593"
+PILOT_REFS = {
+    "pilot/fictional-custody-20261015": "48c7746a1f3b94f76a6859ecd341122e3cdf4d31",
+    "pilot/fictional-restore-20261015": "ca89f369bb947cdbe26ed98aa48e9792abea6fd8",
+}
+PILOT_EXPECTED_BLOBS = {
+    "README.md": BOOTSTRAP_README_BLOB_SHA,
+    "pilot/manifest.json": "897e6db3ec7f7d2cd3788680eb7d96518fc3d3ac",
+    "pilot/source/successful-original.txt": "c659bae45a6a93b4c05000c0f755e3b0555a6e63",
+    "pilot/source/failed-attempt-original.txt": "c3c9dbfd80646f1ad2d6ea405d200a0dd8d794f8",
+}
 GITHUB_REPO = re.compile(r"[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9._-]{1,100}\Z")
 
 
@@ -123,6 +134,46 @@ def evaluate(source, vault, *, api=_api):
                 or leaf.get("sha") != BOOTSTRAP_README_BLOB_SHA):
             raise VaultPreflightError("vault_bootstrap_readme_unverified")
         bootstrap = "verified_readme_only"
+    elif len(branches) == 3:
+        # This is a frozen, FICTIONAL-ONLY synthetic private pilot. Once a
+        # genuine source archive ref exists, preflight must refuse this
+        # bootstrap state and require a separately authenticated migration
+        # inventory/reconciliation; never silently broaden its allowlist.
+        if any(type(item) is not dict or type(item.get("name")) is not str
+               or type(item.get("commit")) is not dict for item in branches):
+            raise VaultPreflightError("vault_pilot_branches_invalid")
+        actual = {item["name"]: item["commit"].get("sha") for item in branches}
+        if (len(actual) != 3 or
+                actual != {"main": PILOT_MAIN_SHA, **PILOT_REFS}):
+            raise VaultPreflightError("vault_pilot_branches_changed")
+        if dest.get("default_branch") != "main":
+            raise VaultPreflightError("vault_bootstrap_default_branch_invalid")
+        try:
+            main_tree = api("repos/" + vault + "/git/trees/main?recursive=1")
+            trees = [api("repos/" + vault + "/git/trees/" + sha + "?recursive=1")
+                     for sha in PILOT_REFS.values()]
+        except VaultPreflightError:
+            raise
+        except (TypeError, KeyError, OSError, ValueError):
+            raise VaultPreflightError("authenticated_api_unavailable") from None
+        if (type(main_tree) is not dict or main_tree.get("truncated") is not False
+                or type(main_tree.get("tree")) is not list
+                or len(main_tree["tree"]) != 1
+                or main_tree["tree"][0].get("path") != "README.md"
+                or main_tree["tree"][0].get("sha") != BOOTSTRAP_README_BLOB_SHA):
+            raise VaultPreflightError("vault_pilot_main_changed")
+        for tree in trees:
+            if type(tree) is not dict or tree.get("truncated") is not False:
+                raise VaultPreflightError("vault_pilot_tree_invalid")
+            rows = tree.get("tree")
+            if (type(rows) is not list or len(rows) != len(PILOT_EXPECTED_BLOBS)
+                    or any(type(row) is not dict or row.get("type") != "blob"
+                           for row in rows)):
+                raise VaultPreflightError("vault_pilot_tree_unexpected")
+            observed = {row.get("path"): row.get("sha") for row in rows}
+            if len(observed) != len(PILOT_EXPECTED_BLOBS) or observed != PILOT_EXPECTED_BLOBS:
+                raise VaultPreflightError("vault_pilot_tree_unexpected")
+        bootstrap = "verified_fictional_copy_and_restore_only"
     else:
         raise VaultPreflightError("vault_not_bootstrap_only")
     # Do NOT assume an accessible private repo grants Actions cross-repo write.
@@ -135,6 +186,8 @@ def evaluate(source, vault, *, api=_api):
         "destination_identity_checked": True,
         "destination_initial_branches": len(branches),
         "bootstrap_state": bootstrap,
+        "fictional_pilot_git_blob_parity_verified": (
+            bootstrap == "verified_fictional_copy_and_restore_only"),
         "main_branch_protection_verified": False,
         "pages_disabled_verified": True,
         "private_forking_disabled_verified": forks_blocked,
