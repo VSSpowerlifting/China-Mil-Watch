@@ -7,6 +7,7 @@ on:
     paths:
       - scripts/rehearse_china_discovery_reduction.py
       - tests/test_china_discovery_reduction_rehearsal.py
+      - tests/fixtures/china-corpus-index-2026-10-14.json
       - scripts/audit_pla_daily_series_for_review.py
       - tests/test_pla_daily_series_for_review.py
       - research/china/discovery-reduction-rehearsal-2026-10-15.json
@@ -46,6 +47,7 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/rehearse_china_discovery_reduction.py \
+            --index tests/fixtures/china-corpus-index-2026-10-14.json \
             --private-dir "$RUNNER_TEMP/private-china-reduction"
           test -f "$RUNNER_TEMP/private-china-reduction/screened.html"
           test -f "$RUNNER_TEMP/private-china-reduction/preserved.html"
@@ -69,7 +71,7 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/audit_pla_daily_series_for_review.py \
-            --index output/corpus-index.json \
+            --index tests/fixtures/china-corpus-index-2026-10-14.json \
             --report "$RUNNER_TEMP/private-pla-daily-series.json"
           python - "$RUNNER_TEMP/private-pla-daily-series.json" <<'PY'
           import json,sys
