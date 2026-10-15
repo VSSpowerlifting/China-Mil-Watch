@@ -105,8 +105,9 @@ def _read_inventory(path, run_id):
     if attempt_count > 1:
         jobs = run.get("historical_attempt_jobs")
         check(type(jobs) is list and len(jobs) == attempt_count and
-              all(type(x) is dict for x in jobs) and
-              sorted(x.get("attempt") for x in jobs)
+              all(type(x) is dict and type(x.get("attempt")) is int
+                  for x in jobs) and
+              sorted(x["attempt"] for x in jobs)
                   == list(range(1, attempt_count + 1)),
               "rerun_job_attempt_inventory_missing")
         seen_job_ids = set()
