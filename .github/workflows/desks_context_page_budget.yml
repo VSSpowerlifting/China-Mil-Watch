@@ -1,0 +1,46 @@
+name: Desks map context — strict render-byte budget
+
+on:
+  pull_request:
+    paths:
+      - 'site/preview/templates/desks.html'
+      - '.github/workflows/desks_context_page_budget.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  render-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: pip install -r requirements.txt
+      - name: Render actual Desks page in scratch and preserve all full-scope detail
+        run: |
+          set -euo pipefail
+          python site/render.py --out "$RUNNER_TEMP/desks-budget" --site-origin https://indopacificrecord.org
+          python - "$RUNNER_TEMP/desks-budget/desks.html" <<'PY'
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          import sys
+          page = Path(sys.argv[1])
+          size = page.stat().st_size
+          assert size <= 120000, "Desks page too large: %d" % size
+          soup = BeautifulSoup(page.read_text(encoding="utf-8"), "html.parser")
+          contexts = soup.select(".deskmap-context-entry")
+          details = soup.select(".scope-register .scope-entry")
+          assert len(contexts) == 7, "map context lost a plotted desk"
+          assert len(details) == 8, "full accessible desk scope lost a country"
+          assert all(e.select_one('a[href="#desk-scopes"]') for e in contexts)
+          assert all(len(e.select('p')) >= 2 and len(e.get_text(" ",strip=True)) > 100
+                     for e in details), "full scope or source status dropped"
+          print("PASS: Desks page %d/120000 bytes; 7 map summaries, all 8 complete scopes" % size)
+          PY
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
