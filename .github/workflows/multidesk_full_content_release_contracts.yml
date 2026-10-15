@@ -7,6 +7,8 @@ on:
     paths:
       - core/multidesk_full_content_release.py
       - tests/test_multidesk_full_content_release.py
+      - core/standing_source_rights.py
+      - tests/test_standing_source_rights.py
       - docs/engineering/MULTIDESK_FULL_CONTENT_AUTOPUBLISH_REQUIREMENTS_2026-10-15.md
       - .github/workflows/multidesk_full_content_release_contracts.yml
   workflow_dispatch:
@@ -31,6 +33,7 @@ jobs:
           set -euo pipefail
           PYTHONDONTWRITEBYTECODE=1 python -m unittest \
             tests.test_multidesk_full_content_release \
+            tests.test_standing_source_rights \
             tests.test_license_and_rights_scope -v
       - name: Ensure no original, public site or source state was modified
         shell: bash
