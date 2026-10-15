@@ -147,6 +147,7 @@ from core.catalogue_media import (                                   # noqa: E40
 from core.timelines import load_timelines
 from core.desk_registry import load_registry                         # noqa: E402
 from core.reviewed_source_links import load_public_desk_references    # noqa: E402
+from core.published_desk_editorials import published_desk_editorials  # noqa: E402
 from core.indonesia_official_index import load as load_indonesia_official_index  # noqa: E402
 from core.indonesia_press_index import load as load_indonesia_press_index  # noqa: E402
 from core.domain import DESK_STATUSES, DESK_STATUS_LABELS            # noqa: E402
@@ -2950,6 +2951,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (out_dir / desk.route).write_text(
             desk_tmpl.render(page=desk.route, desk=desk,
                              public_source_links=references,
+                             published_editorials=published_desk_editorials(desk.slug),
                              public_source_options=source_options,
                              public_reference_languages=languages,
                              indonesia_official_links=indonesia_official_links,
