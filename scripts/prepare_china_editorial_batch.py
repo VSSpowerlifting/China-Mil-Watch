@@ -26,6 +26,9 @@ LANES = {
     "republication_comparison", "source_fidelity_unknown",
     "primary_source_significance", "brief_trail_review",
     "media_and_rights_review", "keyword_false_positive_control",
+    "strong_military_forum_commentary", "august_first_commentary",
+    "military_camp_observation", "foreign_ministry_primary_issuer",
+    "taiwan_affairs_office_primary_issuer",
 }
 
 
@@ -145,7 +148,8 @@ def validate_batch(index, batch, pages):
             or any(type(ident) is not int for ident in frozen_trails)
             or not set(frozen_trails).issubset(trail)):
         raise ValueError("protected historic Brief citations missing or malformed")
-    if batch["batch_id"] != "china-2026-10-15-01":
+    if batch["batch_id"] not in (
+            "china-2026-10-15-01", "china-2026-10-15-02"):
         raise ValueError("unexpected batch ID")
     _day(batch["created_on"], "batch date")
     if not isinstance(batch["entries"], list) or len(batch["entries"]) != 25:
