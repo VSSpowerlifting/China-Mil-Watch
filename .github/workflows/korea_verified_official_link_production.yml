@@ -4,6 +4,13 @@ name: Korea — Verified Government Links to Production and Pages
 # date, issuer and republisher metadata ONLY. No original Korean titles, text,
 # HWPX/photo/media, AI summaries or auto-editorial assessments are published.
 on:
+  # Run once as soon as this production release is merged into main.
+  # Future additions arrive via successful scheduled shadow collection and
+  # the independent daily retry, without a manual record PR.
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/korea_verified_official_link_production.yml
   workflow_run:
     workflows:
       - Indonesia and South Korea Shadow Collection
