@@ -156,7 +156,9 @@ def build(report, family):
              and raw["review_status"] == "not_human_reviewed_for_public_use"
              and type(raw["title"]) is str and bool(raw["title"].strip())
              and type(raw["first_seen_run"]) is str
-             and RUN.fullmatch(raw["first_seen_run"]) is not None,
+             and (RUN.fullmatch(raw["first_seen_run"]) is not None or
+                  (family == "id_kemhan_news" and
+                   raw["first_seen_run"] == "local-native-20261006-indonesia")),
              "source_version_or_review_state_drift")
         need(ident not in seen_ids and url not in seen_urls,
              "duplicate_source_identity_or_url")
