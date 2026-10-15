@@ -1,0 +1,96 @@
+name: BIS — Independent Scheduled Metadata Receipt Attestation
+
+# Independent evidence only. No SQLite, main branch, or Pages writes.
+on:
+  pull_request:
+    paths:
+      - scripts/attest_us_bis_scheduled_receipt.py
+      - tests/test_us_bis_scheduled_receipt_attestation.py
+      - .github/workflows/us_bis_scheduled_receipt_attestation.yml
+      - docs/engineering/US_BIS_SCHEDULED_RECEIPT_ATTESTATION_2026-10-15.md
+  workflow_run:
+    workflows:
+      - BIS Official Homepage Press Metadata — Scheduled Shadow
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  source-free-authentication-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - name: Adversarial real-run and git-receipt crosschecks (synthetic only)
+        run: |
+          python -m unittest tests.test_us_bis_scheduled_receipt_attestation tests.test_us_bis_homepage_receipt -v
+      - name: Keep all production surfaces unchanged
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+
+  independent-first-scheduled-readback:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'schedule' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.name == 'BIS Official Homepage Press Metadata — Scheduled Shadow'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - name: Acquire authenticated run and exact GitHub remote source head
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID" \
+            > "$RUNNER_TEMP/bis-authenticated-run.json"
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/shadow/us-bis-homepage" \
+            --jq '.object.sha' > "$RUNNER_TEMP/bis-shadow-remote.sha"
+          git clone --quiet --single-branch --branch shadow/us-bis-homepage \
+            "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" \
+            "$RUNNER_TEMP/bis-shadow-source"
+          test "$(git -C "$RUNNER_TEMP/bis-shadow-source" rev-parse HEAD)" = \
+            "$(cat "$RUNNER_TEMP/bis-shadow-remote.sha")"
+      - name: Independently verify Git source commit, exact scheduled event and packet
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.attest_us_bis_scheduled_receipt \
+            --source-checkout "$RUNNER_TEMP/bis-shadow-source" \
+            --authenticated-run-json "$RUNNER_TEMP/bis-authenticated-run.json" \
+            --expected-remote-head "$(cat "$RUNNER_TEMP/bis-shadow-remote.sha")"
+      - name: Refuse moving source and changed production files
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          latest="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/shadow/us-bis-homepage" --jq '.object.sha')"
+          test "$latest" = "$(cat "$RUNNER_TEMP/bis-shadow-remote.sha")" || {
+            echo "::error::Shadow branch moved since verified observation"; exit 1;
+          }
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
