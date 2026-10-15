@@ -84,6 +84,14 @@ class KoreaFailedCaptureAuditTests(unittest.TestCase):
             ("state/captures/" + self.failed_sha + ".bin", self.failed_only),
         ])
         self.assertEqual(self.inspect()[0]["captures_absent_from_shadow"], 1)
+        # Actual 2026-10-12 Actions ZIP used this older long path.
+        self._archive([
+            ("candidate-state/state/captures/" + self.original_sha + ".bin", self.original),
+            ("candidate-state/state/captures/" + self.failed_sha + ".bin", self.failed_only),
+            ("candidate-state/state/clock.json", b'{"desk":"korea"}'),
+            ("candidate-run.log", b"FICTIONAL collector failure log"),
+        ])
+        self.assertEqual(self.inspect()[0]["captures_absent_from_shadow"], 1)
         self._archive([
             ("captures/" + self.original_sha + ".bin", self.original),
             ("state/captures/" + self.failed_sha + ".bin", self.failed_only),
