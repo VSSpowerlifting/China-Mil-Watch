@@ -63,7 +63,18 @@ def run(opener=None):
                       "item_links":len([q for q in n.select("a[href]")
                           if RELEASE_PATH.fullmatch(urllib.parse.urlsplit(
                               urllib.parse.urljoin(url,q.get("href",""))).path)])})
-                found.append({"path":resolved.path,"chain":chain})
+                card=a.find_parent("li")
+                text=card.get_text(" ",strip=True) if card else ""
+                dates=re.findall(r"(?i)\\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+[0-9]{1,2},?\\s+20[0-9]{2}\\b",text)
+                card_paths={urllib.parse.urlsplit(urllib.parse.urljoin(url,q.get("href",""))).path
+                    for q in card.select("a[href]")} if card else set()
+                card_release_paths={p for p in card_paths
+                    if p.startswith("/press-release/")}
+                found.append({"path":resolved.path,"chain":chain,
+                    "card_tag":card.name if card else None,
+                    "card_classes":(card.get("class") or [])[:4] if card else [],
+                    "card_dates":dates[:3],
+                    "card_press_release_links":len(card_release_paths)})
             row.update({"status":"parsed_html_shape","body_bytes":len(body),
                "release_links_seen":len(found),"time_elements":len(soup.select("time")),
                "sample":found[:5]})
