@@ -16,6 +16,7 @@ from typing import Generator, Optional
 from typing import Callable
 
 from config import DB_PATH
+from core.retired_article_urls import is_retired, next_available_article_id
 
 logger = logging.getLogger(__name__)
 
@@ -152,6 +153,10 @@ def get_source_id(slug: str) -> Optional[int]:
 
 def url_exists(url: str) -> bool:
     with get_conn() as conn:
+        # The collector's early dedup guard must treat retired exact URLs as
+        # previously seen, even though their article rows no longer exist.
+        if is_retired(conn, url):
+            return True
         row = conn.execute(
             "SELECT 1 FROM articles WHERE url = ?", (url,)
         ).fetchone()
@@ -226,14 +231,23 @@ def insert_article(article: dict, scrape_run_id: int) -> Optional[int]:
 
     try:
         with get_conn() as conn:
+            # Lock the allocator BEFORE checking/choosing the next article id.
+            # Two collectors must never assign the same published record route.
+            conn.execute("BEGIN IMMEDIATE")
+            # Check inside the same database transaction as the insert.
+            # A retired URL is not a new article even if an old source emits
+            # it again after the public corpus was physically reduced.
+            if is_retired(conn, article["url"]):
+                return None
             cur = conn.execute(
                 """
                 INSERT INTO articles
-                    (url, content_hash, source_id, scrape_run_id,
+                    (id, url, content_hash, source_id, scrape_run_id,
                      title_original, text_original, published_date)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
+                    next_available_article_id(conn),
                     article["url"],
                     article["content_hash"],
                     source_id,
@@ -285,15 +299,20 @@ def insert_articles_atomic(
             if source_id is None:
                 raise ValueError(
                     "unknown source slug: %s" % article["source_slug"])
+            # The atomic batch transaction must not bypass the same retirement
+            # policy applied by individual inserts and url_exists().
+            if is_retired(conn, article["url"]):
+                return None
             try:
                 cur = conn.execute(
                     """
                     INSERT INTO articles
-                        (url, content_hash, source_id, scrape_run_id,
+                        (id, url, content_hash, source_id, scrape_run_id,
                          title_original, text_original, published_date)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
+                        next_available_article_id(conn),
                         article["url"], article["content_hash"], source_id,
                         run_id, article.get("title_original"),
                         article.get("text_original"),

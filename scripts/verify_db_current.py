@@ -42,12 +42,14 @@ from migrations.runner import (                                   # noqa: E402
     apply_all, applied_versions, connect, discover, verify,
 )
 from scripts.reconcile_db import read_only                        # noqa: E402
+from core.retired_article_urls import verify_no_active_retired_urls  # noqa: E402
 
 DEFAULT_DB = REPO_ROOT / "pla_watch.db"
 
 REQUIRED_TABLES = (
     "articles", "sources", "categories", "article_categories", "scrape_runs",
     "schema_migrations", "desks", "institutions", "source_run_results",
+    "retired_article_urls",
 )
 
 # Statuses pipeline.py can write. The merged/committed database must be able to
@@ -117,6 +119,11 @@ def check(conn) -> list:
     for name, count in sorted(report["orphans"].items()):
         if count:
             problems.append("orphan check %s: %d" % (name, count))
+    if "retired_article_urls" in present:
+        try:
+            verify_no_active_retired_urls(conn)
+        except (ValueError, OSError) as exc:
+            problems.append("retired URL ledger: %s" % exc)
 
     return problems
 

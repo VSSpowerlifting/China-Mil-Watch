@@ -94,10 +94,33 @@ class ReadOnlyToolsLeaveNothingBehind(unittest.TestCase):
                 # names the wrong script.
                 self.sweep()
                 proc = self.run_script(argv)
-                self.assertEqual(
-                    0, proc.returncode,
-                    "%s exited %d:\n%s" % (name, proc.returncode,
-                                           proc.stderr[-2000:]))
+                if name == "verify_db_current" and proc.returncode == 1:
+                    # The new schema migration deliberately has not modified
+                    # tracked production SQLite yet. Verify that this is
+                    # precisely the expected fail-closed state, then prove
+                    # the same validator succeeds on a *separate migrated*
+                    # copy. Do not relax the production verifier.
+                    from contextlib import closing
+                    from migrations.runner import apply_all, connect, applied_versions, discover
+                    with tempfile.TemporaryDirectory() as scratch:
+                        copied = Path(scratch) / "migrated-scratch.db"
+                        shutil.copy2(TRACKED, copied)
+                        with closing(connect(copied)) as conn:
+                            pending = set(m.version for m in discover()) - set(applied_versions(conn))
+                            self.assertEqual({"0008"}, pending)
+                            apply_all(conn, sync_config=False)
+                        verified = self.run_script(
+                            ["scripts/verify_db_current.py", "--db", str(copied), "--quiet"])
+                        self.assertEqual(
+                            0, verified.returncode,
+                            "scratch-migrated database must pass strict validation: "
+                            + verified.stderr[-1000:])
+                    self.assertIn("partially_applied", proc.stderr)
+                else:
+                    self.assertEqual(
+                        0, proc.returncode,
+                        "%s exited %d:\n%s" % (name, proc.returncode,
+                                               proc.stderr[-2000:]))
                 left = sidecars_present()
                 self.assertEqual(
                     [], left,
