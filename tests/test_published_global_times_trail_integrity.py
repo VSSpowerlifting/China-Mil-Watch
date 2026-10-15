@@ -82,7 +82,7 @@ class PublishedTrailRiskTest(unittest.TestCase):
             audit(index, packet, pages, issues)
         index, packet, pages, issues = actual()
         index["snapshot"]["records"] -= 1
-        with self.assertRaisesRegex(ValueError, "count or source trail"):
+        with self.assertRaisesRegex(ValueError, "corpus moved backwards"):
             audit(index, packet, pages, issues)
         index, packet, pages, issues = actual()
         index["trail_ids"] = index["trail_ids"] + [99999999]
@@ -116,7 +116,8 @@ class PublishedTrailRiskTest(unittest.TestCase):
     def test_forward_daily_collection_does_not_fabricate_new_approvals(self):
         index, packet, pages, issues = actual()
         index["snapshot"] = {"date": "2026-10-15", "records": 5231}
-        index["records"].append([5231, "2026-10-15", 0, 0, "", "新收集未审资料"])
+        new_id = max(row[0] for row in index["records"]) + 1
+        index["records"].append([new_id, "2026-10-15", 0, 0, "", "新收集未审资料"])
         result = audit(index, packet, pages, issues)
         self.assertEqual(result["historical_record_count"], 5231)
         self.assertEqual(result["published_global_times_trails_reviewed"], 13)
