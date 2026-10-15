@@ -20,7 +20,7 @@ corroboration** of the statement's contested assertions.
 The archive can legitimately preserve such statements as *official positions*
 without ratifying the maritime or military claims they contain.
 
-## Ten evidence-bound starting cases
+## Eighteen evidence-bound starting cases
 
 The review record is in
 `research/china/original-source-review-2026-10-15.json`, keyed to the
@@ -45,6 +45,50 @@ Even for #2849/#2391, a manual editorial source check should compare the
 entire Chinese original and archived text, confirm date/issuer/wording and
 the exact article trail. An assistant research observation is an input to
 that review, not its completion.
+
+## Full negative-control calibration, not just the flagged examples
+
+The original historical quality scan inspected **120** Global Times records
+collected before the September 16 extractor repair, flagging **111** for
+one or more suspicious-text cues. The other **nine** were deliberately held
+out as *unflagged controls*. We manually compared their preserved body snippets
+with their publisher article pages as a separate editorial **research**
+check. They are not an automated accuracy estimate or owner signoffs.
+
+| Control record | First scanner result | Publisher/body spot check | Preliminary custody outcome |
+|---|---|---|---|
+| #170 | Unflagged | Publisher [original](https://www.globaltimes.cn/page/202605/1360610.shtml) contains MND/PLA naval aviation material; captured body is two unrelated truncated teasers | Contaminated-text hold |
+| #792 | Unflagged | Preserved article discusses the Dutch De Ruyter helicopter in the Paracels with substantial source detail, consistent with the attributed publisher/PLA narrative; claims disputed by the Netherlands | Appears substantive; independently review before promotion |
+| #793 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202605/1362170.shtml) carries the MND spokesperson's Air Force One honor guard comments; preserved page contains unrelated snippets | Contaminated-text hold |
+| #1246 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202606/1363127.shtml) reports Foreign Ministry Lin Jian's comments on Japan–Philippines maritime negotiations; captured body holds other-article teasers | Contaminated-text hold |
+| #1630 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202606/1364038.shtml) details DF-17 footage and reports military-commentator inferences; stored body materially tracks the story | Appears substantive; do not treat inferred specifications as confirmed |
+| #1954 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202606/1364766.shtml) reports distinct PLA STC and CCG patrol accounts; captured body holds unrelated marine-science teasers | Contaminated-text hold |
+| #2753 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202608/1367303.shtml) reports Defense Minister Dong Jun's anniversary reception speech; stored text has unrelated recommendation snippets | Contaminated-text hold |
+| #3180 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202608/1368066.shtml) contains China–Indonesia exercise and DPP reaction framing; captured body repeats CCG/Liaoning teasers | Contaminated-text hold |
+| #3181 | Unflagged | [Publisher](https://www.globaltimes.cn/page/202608/1368067.shtml) provides the Chinese/Indonesian frigate exercise narrative; its stored body has the same unrelated CCG/Liaoning snippet cluster as #3180 | Contaminated-text hold |
+
+**Outcome:** seven of nine originally unflagged controls revealed apparent body
+contamination, and two contained relevant substantive text. This is a
+case-level observation, **not** a general classifier precision or recall
+estimate. It also demonstrates that a text extractor can be corrupted in
+multiple ways: missing bodies, a single unrelated teaser, or a repeated
+short two-teaser rail. The source publisher being relevant does not make
+its old captured IPR body accurate.
+
+The quality-audit heuristic now adds a
+`short_multi_teaser_capture_review` cue for a pre-fix body shorter than
+500 characters with exactly two ellipsis-style truncations. That recovers
+the seven observed false negatives **as review candidates only**, while
+the nine original control observations remain permanently documented.
+It is not a rule for deletion, suppression, retroactive factual correction,
+or public selection. A genuine short article containing two ellipses may
+still trigger the review cue.
+
+**Next calibration:** obtain a verified set of both flagged and unflagged
+source originals, with human fidelity judgments and captured HTML fixtures.
+Then inspect whether the remaining short/recommendation-rail heuristics
+over-flag true originals and miss additional bad captures. Do not present
+the large warning fraction as confirmed extraction failure prevalence.
 
 ## Validation contract
 
