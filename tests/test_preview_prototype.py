@@ -1402,13 +1402,8 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertIn("Access blocked — not collecting", desks)
         self.assertIn("Records</dt><dd>None collected", desks)
 
-    def test_the_us_reference_desk_is_declared_but_never_promoted(self):
-        """
-        Every declared desk is now rendered, the reference desk included: a
-        desk a reader cannot open is worse than one labelled honestly. What it
-        may never carry is a status, a count or a source that reads like an
-        operating desk, and its own page has to say so in its own words.
-        """
+    def test_us_reference_desk_distinguishes_live_congressional_metadata_from_pacom_hold(self):
+        """USCC metadata is collected; direct PACOM source access remains blocked."""
         directory = self.page("desks.html")
         block = [b.split("</section>", 1)[0]
                  for b in directory.split('<section class="desk')[1:]
@@ -1419,14 +1414,12 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("desk--live", block)
 
         page = self.page("us-indopacific.html")
-        self.assertIn("Access blocked — not collecting", page)
+        self.assertIn("Official congressional and Treasury metadata feeds live — PACOM collection blocked", page)
         self.assertIn("It is not a feed of US defense releases.", page)
-        self.assertIn("Nothing has been configured, enabled or "
-                      "collected.", page)
-        from bs4 import BeautifulSoup
-        desk_content = BeautifulSoup(page, "html.parser").main.get_text(" ", strip=True)
-        self.assertNotRegex(
-            desk_content, r"\b\d[\d,]*\s+(records|sources|runs|articles)\b")
+        self.assertIn("Collected official congressional metadata links", page)
+        self.assertIn("Direct PACOM command collection", page)
+        self.assertIn("Admitted U.S. source-body articles", page)
+        self.assertNotIn("Nothing has been configured, enabled or collected.", page)
 
     # ── Maintainer ──────────────────────────────────────────────────────
 
@@ -1598,16 +1591,31 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertIn('Machine translation', html)
         self.assertNotIn('in the language they were published in', html)
 
-    def test_every_home_record_is_in_the_analyzed_state(self):
+    def test_home_as_published_records_match_focus_and_show_actual_state(self):
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(self.page('index.html'), 'html.parser')
-        recent = [int(a['href'].split('/')[1].split('.')[0]) for a in soup.select('.home-recent h3 a')]
-        corpus = gp.load_corpus(TRACKED_DB)['corpus']
-        self.assertEqual(recent, [r['id'] for r in corpus[:4]])
+        cards = soup.select('.home-recent .home-card')
+        recent = [
+            int(card.select_one('h3 a')['href'].split('/')[1].split('.')[0])
+            for card in cards
+        ]
+        data = gp.load_corpus(TRACKED_DB)
+        # The "As published" section now uses the provisional discovery
+        # view's first four source records, not the analyzed-only feed.
+        # Unanalyzed originals must retain their actual processing labels.
+        focused = gp.build_focus(data['corpus'])['rows']
+        self.assertEqual(recent, [r['id'] for r in focused[:4]])
+        by_id = {r['id']: r for r in data['corpus']}
+        for card, rid in zip(cards, recent):
+            badge = card.select_one('.state')
+            self.assertIsNotNone(badge)
+            self.assertIn('state--' + by_id[rid]['state'], badge.get('class', []))
+        # "A record to explore" remains drawn from the analyzed-only feed.
         selected = soup.select_one('.home-selected h3 a')
         if selected:
             rid = int(selected['href'].split('/')[1].split('.')[0])
-            self.assertEqual(next(r for r in corpus if r['id'] == rid)['state'], 'analyzed')
+            self.assertIn(rid, by_id)
+            self.assertEqual(by_id[rid]['state'], 'analyzed')
 
     def test_the_layer_explainer_claims_only_what_holds(self):
         flat = ' '.join(re.sub(r'<[^>]+>', ' ', self.page('index.html')).split())
@@ -3503,7 +3511,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
         # by the live region). Behaviourally:
         # TestBrowserRejectsMalformedIndex.test_an_empty_result_is_stated_once.
         js = (self.out / "browse.js").read_text(encoding="utf-8")
-        body = js.split("function render(", 1)[1].split("\n  }", 1)[0]
+        body = js.split("function render(", 1)[1].split("function drawChips(", 1)[0]
         self.assertRegex(body, r'range\.textContent = total \?[^;]*: "";')
         self.assertIn("none.hidden = total !== 0", body)
 

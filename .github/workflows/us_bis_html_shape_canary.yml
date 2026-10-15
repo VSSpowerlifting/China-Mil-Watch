@@ -1,0 +1,31 @@
+name: BIS First-Party Teaser Source — Bounded Listing Access and DOM Shape
+on:
+  pull_request:
+    paths:
+      - scripts/probe_us_bis_html_shape.py
+      - tests/test_us_bis_html_shape.py
+      - .github/workflows/us_bis_html_shape_canary.yml
+      - docs/engineering/US_BIS_BOUNDED_LATEST_SOURCE_2026-10-15.md
+permissions:
+  contents: read
+jobs:
+  bis-one-policy-two-listings:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - run: python -m unittest tests.test_us_bis_html_shape -v
+      - name: Test one BIS policy and at most two bounded official listings
+        run: python -m scripts.probe_us_bis_html_shape
+      - name: No archived corpus, originals or public writes
+        run: |
+          set -e
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

@@ -1,0 +1,23 @@
+{
+  "schema": "ipr-korea-additional-public-official-links/1",
+  "release_mode": "official-outbound-links-only",
+  "owner_scope": "approved-2026-10-15-nine-official-mnd-urls-no-document-bodies-or-interpretation",
+  "source_family": "kr_policy_mnd_releases",
+  "state_commit": "0595f0fd29b769cbab5dd57c2ef57af174237a67",
+  "existing_five_unchanged": true,
+  "separate_owner_public_link_approval": true,
+  "korean_semantic_or_media_rights_approval": false,
+  "production_desk_admission": false,
+  "model_or_email_admission": false,
+  "source_ids": [
+    "156784787",
+    "156784873",
+    "156785005",
+    "156785015",
+    "156785058",
+    "156785160",
+    "156785161",
+    "156785162",
+    "156785190"
+  ]
+}

@@ -1,0 +1,53 @@
+name: Korea activation — SQLite, U.S. status and site regressions
+
+on:
+  pull_request:
+    paths:
+      - tests/test_local_db_reads.py
+      - tests/test_tracked_db_no_residue.py
+      - tests/test_preview_prototype.py
+      - tests/test_site_mode_contract.py
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+      - core/korea_official_live_links.py
+      - migrations/versions/m0008_korea_official_source_metadata.py
+      - .github/workflows/korea_activation_integration_contract.yml
+
+permissions:
+  contents: read
+
+jobs:
+  production-transition-regressions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin live database and site assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-regression-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Install actual site dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Recheck five integration failures without weakening source gates
+        run: |
+          python -m unittest -v \
+            tests.test_local_db_reads.TestTrackedDatabaseJournalMode \
+            tests.test_tracked_db_no_residue.TheMechanismIsWhatWeThinkItIs \
+            tests.test_preview_prototype.TestTrancheOneIdentityAndStructure.test_us_reference_desk_distinguishes_live_congressional_metadata_from_pacom_hold \
+            tests.test_site_mode_contract.TestCandidateBuild.test_us_official_metadata_is_live_while_pacom_remains_blocked
+      - name: Verify tracked inputs unchanged and no SQLite sidecars
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/korea-regression-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

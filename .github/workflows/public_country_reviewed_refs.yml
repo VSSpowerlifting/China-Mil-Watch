@@ -12,6 +12,11 @@ on:
       - "site/preview/desk-references.css"
       - "site/preview/desk-references.js"
       - "tests/test_public_desk_references.py"
+      - "core/public_editorial_research.py"
+      - "research/approved_desk_research.json"
+      - "scripts/guard_public_editorial_research.py"
+      - "tests/test_public_editorial_research.py"
+      - "tests/test_public_editorial_render_gate.py"
       - "tests/test_vietnam_reviewed_links.py"
       - "tests/test_indonesia_reviewed_links.py"
       - "tests/test_desk_rollout_contract.py"
@@ -42,7 +47,7 @@ jobs:
         run: pip install -r requirements.txt
       - name: Source-review schema and render contracts
         run: |
-          python -m unittest tests.test_public_desk_references tests.test_vietnam_reviewed_links tests.test_indonesia_reviewed_links tests.test_desk_rollout_contract tests.test_desk_map tests.test_philippines_publisher_navigation tests.test_japan_vietnam_publisher_navigation -v
+          python -m unittest tests.test_public_editorial_research tests.test_public_editorial_render_gate tests.test_public_desk_references tests.test_vietnam_reviewed_links tests.test_indonesia_reviewed_links tests.test_desk_rollout_contract tests.test_desk_map tests.test_philippines_publisher_navigation tests.test_japan_vietnam_publisher_navigation -v
       - name: Confirm no production, shadow or site mutation
         run: |
           set -euo pipefail

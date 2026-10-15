@@ -1,0 +1,124 @@
+name: China focus-first archive — guarded render and release
+
+on:
+  pull_request:
+    paths:
+      - "scripts/stage_china_focus_output.py"
+      - "tests/test_china_focus_release.py"
+      - ".github/workflows/china_focus_release.yml"
+  workflow_dispatch:
+    inputs:
+      approved_main_sha:
+        description: "Exact 40-character main SHA reviewed after China focus CI"
+        required: true
+        type: string
+      publish:
+        description: "Commit the three validated output files and deploy; otherwise preview"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m unittest tests.test_china_focus_release -v
+
+  release:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Bind to reviewed main; establish clean read-only DB baseline
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[a-f0-9]{40}$ ]] || exit 1
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA" || {
+            echo '::error::main moved; new owner review required'; exit 1;
+          }
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          sha256sum pla_watch.db > "$RUNNER_TEMP/china-db.sha"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Recheck release and focus contracts
+        run: |
+          python -m unittest -v \
+            tests.test_china_focus_release \
+            tests.test_china_focus_discovery
+      - name: Regenerate entire site in external scratch, never scrape or use models
+        run: |
+          python site/render.py --out "$RUNNER_TEMP/china-focus-render" \
+            --site-origin https://indopacificrecord.org
+      - name: Stage only vetted archive, JavaScript and unchanged-full-corpus index
+        run: |
+          set -euo pipefail
+          python -m scripts.stage_china_focus_output \
+            --from-dir "$RUNNER_TEMP/china-focus-render" --to-dir output
+          python scripts/validate_output.py
+          sha256sum -c "$RUNNER_TEMP/china-db.sha"
+          git diff --exit-code -- pla_watch.db
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git status --porcelain --untracked-files=all > "$RUNNER_TEMP/china-changes"
+          test -s "$RUNNER_TEMP/china-changes" || {
+            echo '::error::No release delta exists'; exit 1;
+          }
+          sed 's/^...//' "$RUNNER_TEMP/china-changes" | grep -Ev \
+            '^output/(archive.html|browse.js|corpus-index.json)$' \
+            > "$RUNNER_TEMP/unexpected" || true
+          test ! -s "$RUNNER_TEMP/unexpected" || {
+            cat "$RUNNER_TEMP/unexpected"; echo '::error::Out-of-scope change'; exit 1;
+          }
+      - name: Commit only reviewed browsing output to current main
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" || {
+            echo '::error::main moved during render; abort'; exit 1;
+          }
+          git add -- output/archive.html output/browse.js output/corpus-index.json
+          test -n "$(git diff --cached --name-only)"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Site: release reviewed China research focus archive'
+          git push origin HEAD:main
+      - name: Deploy exact reviewed output via existing Pages mechanism
+        if: inputs.publish
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Deploy focus-first China archive: ${{ github.run_id }}'

@@ -1,0 +1,26 @@
+name: Treasury Official First-Party DOM Shape — One Read Only
+on:
+  pull_request:
+    paths:
+      - scripts/probe_treasury_listing_structure.py
+      - .github/workflows/us_treasury_listing_shape_probe.yml
+permissions:
+  contents: read
+jobs:
+  policy-bounded-dom-shape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - run: python -m scripts.probe_treasury_listing_structure
+      - name: No production or shadow changes
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

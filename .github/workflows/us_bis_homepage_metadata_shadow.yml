@@ -1,0 +1,180 @@
+name: BIS Official Homepage Press Metadata — Scheduled Shadow
+
+# A bounded official URL/date/issuer observation, not a production or public feed.
+on:
+  pull_request:
+    paths:
+      - scripts/collect_us_bis_homepage_metadata.py
+      - tests/test_us_bis_homepage_metadata.py
+      - tests/test_us_bis_homepage_receipt.py
+      - scripts/verify_us_bis_homepage_receipt.py
+      - .github/workflows/us_bis_homepage_metadata_shadow.yml
+      - docs/engineering/US_BIS_HOMEPAGE_SHADOW_2026-10-15.md
+  schedule:
+    - cron: '35 12 * * *'
+  workflow_dispatch:
+    inputs:
+      owner_authorized_source_collection:
+        description: 'Read-only homepage observation (cannot append a scheduled day)'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  source-free-and-real-first-party-verification:
+    if: >-
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       inputs.owner_authorized_source_collection)
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - name: Negative-source tests (offline)
+        run: python -m unittest tests.test_us_bis_homepage_metadata tests.test_us_bis_homepage_receipt -v
+      - name: Prove genuine exact BIS metadata in temp, preserve live records
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/bis-db-before.sha"
+          python -m scripts.collect_us_bis_homepage_metadata \
+            --owner-authorized-readonly-collection \
+            --private-output "$RUNNER_TEMP/bis-observation.json"
+          python -m scripts.verify_us_bis_homepage_receipt \
+            --packet "$RUNNER_TEMP/bis-observation.json" \
+            --expected-day "$(date -u +%F)"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from scripts.collect_us_bis_homepage_metadata import SCHEMA, HOST, INDEX, ISSUER
+          p=json.loads((Path(os.environ["RUNNER_TEMP"])/"bis-observation.json").read_text())
+          assert p["schema"]==SCHEMA and p["source_host"]==HOST
+          assert p["official_listing_url"]==INDEX
+          assert p["visible_dated_rows"]>0 and p["visible_dated_rows"]==len(p["rows"])
+          assert len(p["official_listing_sha256"])==64
+          assert all(set(r)=={
+              "source_identity","canonical_official_url","publisher_posted_date",
+              "official_issuer","official_publisher","publisher_listing_url"
+          } for r in p["rows"])
+          assert all(r["official_issuer"]==ISSUER and r["publisher_listing_url"]==INDEX
+              and r["canonical_official_url"].startswith("https://www.bis.gov/press-release/")
+              for r in p["rows"])
+          assert not any(p[k] for k in (
+              "original_titles_copied","bodies_copied","document_media_copied",
+              "analysis_performed","publication_authorized_by_collector",
+              "complete_publisher_history_claimed"))
+          assert p["production_records_written"]==0
+          print("BIS official homepage individually dated links:",len(p["rows"]))
+          PY
+          sha256sum -c "$RUNNER_TEMP/bis-db-before.sha"
+          git diff --exit-code -- pla_watch.db output/ desks/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test -z "$(git status --porcelain --untracked-files=all)"
+
+  genuine-scheduled-shadow-only:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    concurrency:
+      group: us-bis-homepage-metadata-shadow
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: repo
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - name: Verify offline contracts and collect one real bounded source
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd repo
+          test -z "$(git status --porcelain --untracked-files=all)"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/bis-db-before.sha"
+          python -m unittest tests.test_us_bis_homepage_metadata tests.test_us_bis_homepage_receipt -q
+          python -m scripts.collect_us_bis_homepage_metadata \
+            --owner-authorized-readonly-collection \
+            --private-output "$RUNNER_TEMP/bis-today.json"
+          python -m scripts.verify_us_bis_homepage_receipt \
+            --packet "$RUNNER_TEMP/bis-today.json" \
+            --expected-day "$(date -u +%F)"
+          sha256sum -c "$RUNNER_TEMP/bis-db-before.sha"
+          git diff --exit-code -- pla_watch.db output/ desks/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test -z "$(git status --porcelain --untracked-files=all)"
+          python - <<'PY' > "$RUNNER_TEMP/bis-utc-day"
+          import json, os
+          from pathlib import Path
+          p=json.loads((Path(os.environ["RUNNER_TEMP"])/"bis-today.json").read_text())
+          print(p["observed_on_utc"])
+          PY
+      - name: Append immutable genuine UTC scheduled observation to Git
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git init -q "$RUNNER_TEMP/bis-shadow-git"
+          cd "$RUNNER_TEMP/bis-shadow-git"
+          git remote add origin "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+          if git ls-remote --exit-code --heads origin shadow/us-bis-homepage >/dev/null; then
+            git fetch --quiet --depth=1 origin refs/heads/shadow/us-bis-homepage
+            git checkout --quiet -b shadow/us-bis-homepage FETCH_HEAD
+          else
+            git checkout --quiet --orphan shadow/us-bis-homepage
+            printf '%s\n' \
+              '# Bureau of Industry and Security homepage metadata shadow' \
+              'Genuine scheduled first-party homepage observations only.' \
+              'URLs, publisher-posted dates and issuer metadata; no source headlines, originals, images or analysis.' \
+              'Not publisher completeness, source qualification, SQLite admission or public publication.' \
+              > README.md
+            git add -- README.md
+          fi
+          day="$(cat "$RUNNER_TEMP/bis-utc-day")"
+          mkdir -p observations
+          receipt="observations/$day.json"
+          if test -e "$receipt"; then
+            cmp -s "$RUNNER_TEMP/bis-today.json" "$receipt" || {
+              echo "::error::Same UTC day differs; immutable observation not overwritten"; exit 1;
+            }
+          else
+            cp "$RUNNER_TEMP/bis-today.json" "$receipt"
+            chmod 0644 "$receipt"
+            git add -- "$receipt"
+          fi
+          unexpected="$(git diff --cached --name-only | grep -vE '^(README.md|observations/[0-9]{4}-[0-9]{2}-[0-9]{2}\.json)$' || true)"
+          test -z "$unexpected" || { echo "::error::Unexpected file staged"; exit 1; }
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            digest="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["official_listing_sha256"])' "$RUNNER_TEMP/bis-today.json")"
+            git commit -m "BIS: genuine scheduled homepage metadata $day" \
+              -m "Actions event: $GITHUB_EVENT_NAME" \
+              -m "Actions run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT" \
+              -m "Source listing SHA-256: $digest"
+            git push origin HEAD:refs/heads/shadow/us-bis-homepage
+          fi
+      - name: Source checkout stayed read-only
+        run: |
+          set -euo pipefail
+          cd repo
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
