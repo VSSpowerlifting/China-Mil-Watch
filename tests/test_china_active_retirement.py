@@ -125,6 +125,31 @@ class ChinaRetirementScratchTest(unittest.TestCase):
             self.assertEqual(con.execute("PRAGMA integrity_check").fetchone()[0],
                              "ok")
 
+    def test_private_url_hash_receipt_records_every_retirement(self):
+        from hashlib import sha256
+        dest = self.root / "reduced.db"
+        tombstones = self.root / "private-tombstones.json"
+        result = scratch_retirement(
+            self.original, dest, self.data, tombstone_path=tombstones)
+        self.assertEqual(result["url_tombstone_count"], 2)
+        self.assertEqual(result["private_tombstone_receipt"], str(tombstones))
+        payload = json.loads(tombstones.read_text())
+        self.assertEqual(payload["retired_count"], 2)
+        self.assertEqual(payload["retired_url_sha256"], sorted(
+            sha256(("source-%s" % i).encode()).hexdigest() for i in (4, 5)))
+        self.assertNotIn("source-4", tombstones.read_text())
+        self.assertNotIn("source-5", tombstones.read_text())
+        self.assertEqual(tombstones.stat().st_mode & 0o777, 0o600)
+
+    def test_refuses_overwriting_retirement_manifest(self):
+        receipt = self.root / "exists.json"
+        receipt.write_text("protected")
+        with self.assertRaisesRegex(ValueError, "tombstone path"):
+            scratch_retirement(self.original, self.root / "new.db", self.data,
+                               tombstone_path=receipt)
+        self.assertEqual(receipt.read_text(), "protected")
+        self.assertFalse((self.root / "new.db").exists())
+
     def test_refuses_overwriting_existing_database(self):
         with self.assertRaisesRegex(ValueError, "not exist"):
             scratch_retirement(self.original, self.original, self.data)
