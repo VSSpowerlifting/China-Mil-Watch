@@ -217,13 +217,18 @@ class ChinaRetirementScratchTest(unittest.TestCase):
         self.assertFalse((self.root / "new.db").exists())
 
     def test_refuses_overwriting_existing_database(self):
-        with self.assertRaisesRegex(ValueError, "not exist"):
+        with self.assertRaisesRegex(ValueError, "new absolute"):
             self.stage(self.original, self.original, self.data)
 
     def test_refuses_stale_index_without_creating_scratch(self):
-        data = dict(self.data, retired_ids=(4, 5, 999))
+        from hashlib import sha256
+        # Same number of IDs and internally consistent digest, but ID 999
+        # was never present in the source; ID 5 would also go unaccounted.
+        # This must fail the exact source-identity comparison, not just quota.
+        data = dict(self.data, retired_ids=(4, 999),
+                    retirement_id_sha256=sha256(b"4,999").hexdigest())
         dest = self.root / "new.db"
-        with self.assertRaisesRegex(ValueError, "fingerprint|database advanced"):
+        with self.assertRaisesRegex(ValueError, "database identities differ"):
             self.stage(self.original, dest, data)
         self.assertFalse(dest.exists())
 
