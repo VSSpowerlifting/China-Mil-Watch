@@ -7,6 +7,8 @@ on:
     paths:
       - scripts/rehearse_china_discovery_reduction.py
       - tests/test_china_discovery_reduction_rehearsal.py
+      - scripts/audit_pla_daily_series_for_review.py
+      - tests/test_pla_daily_series_for_review.py
       - research/china/discovery-reduction-rehearsal-2026-10-15.json
       - docs/CHINA_DISCOVERY_REDUCTION_REHEARSAL_2026-10-15.md
       - .github/workflows/china_discovery_reduction_rehearsal.yml
@@ -38,7 +40,7 @@ jobs:
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
       - name: Run no-publication and exception regression tests
-        run: python -m unittest -v tests.test_china_discovery_reduction_rehearsal
+        run: python -m unittest -v tests.test_china_discovery_reduction_rehearsal tests.test_pla_daily_series_for_review
       - name: Render actual 2461-versus-5230 dry-run in private scratch
         shell: bash
         run: |
@@ -61,6 +63,24 @@ jobs:
           ids={w['id'] for w in d['warnings']}
           assert {2849,2391,2265,2881}.issubset(ids)
           print("Private mechanical-only reduction:",d['china_mechanical_reduction_percent'],"%")
+          PY
+      - name: Survey PLA Daily recurring title prefixes without selection
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/audit_pla_daily_series_for_review.py \
+            --index output/corpus-index.json \
+            --report "$RUNNER_TEMP/private-pla-daily-series.json"
+          python - "$RUNNER_TEMP/private-pla-daily-series.json" <<'PY'
+          import json,sys
+          d=json.load(open(sys.argv[1]))
+          series={x['family']:x['count'] for x in d['repeated_families']}
+          assert d['pla_daily_preserved']==4173
+          assert series['强军论坛']==100
+          assert series['外交部']==138
+          assert not d['publication_enabled']
+          assert d['editorial_rejection_decisions']==0
+          print("High-volume title families, for manual review only:",series['强军论坛'],series['外交部'])
           PY
       - name: Verify canonical corpus and website untouched
         if: ${{ !cancelled() }}
