@@ -2405,6 +2405,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     # source IDs remain limited to a reviewed immutable five-record snapshot.
     korea_release_state = load_registry().get("korea")
     korea_public_rows = []
+    korea_additional_rows = []
     if korea_release_state is not None:
         if (korea_release_state.status != "shadow"
                 or korea_release_state.manifest_path is not None
@@ -2415,6 +2416,10 @@ def build(out_dir: Path, title: str, db_path: Path,
             korea_public_rows = load_public_korea_links()
             if len(korea_public_rows) != 5:
                 raise ValueError("Korea public bibliography requires the fixed five-source release")
+            from core.korea_additional_public_links import load_additional_korea_official_links
+            korea_additional_rows = load_additional_korea_official_links()
+            if len(korea_additional_rows) != 9:
+                raise ValueError("Korea additional official URLs require nine exact owner-approved identities")
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -2955,6 +2960,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              indonesia_official_links=indonesia_official_links,
                              indonesia_press_links=indonesia_press_links,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
+                             korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
@@ -3452,6 +3458,7 @@ def build(out_dir: Path, title: str, db_path: Path,
             "korea_private_structural_preview_rows": (
                 len(preview_rows) if review_korea else 0),
             "korea_public_bibliography_entries": len(korea_public_rows),
+            "korea_additional_official_link_entries": len(korea_additional_rows),
             "legacy_redirects": redirects}
 
 

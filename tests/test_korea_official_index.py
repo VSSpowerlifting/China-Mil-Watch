@@ -64,8 +64,18 @@ class KoreaOfficialIndexContracts(unittest.TestCase):
             self.assertLess(page.index("korea-publisher-shortcuts-title"),
                             page.index('data-korea-public-link='))
             self.assertEqual(page.count('data-korea-public-link='), 5)
-            for new_id in ("156784787", "156784873", "156784618", "156784625"):
-                self.assertNotIn(new_id, page)  # unreviewed MND and DAPA articles
+            # Two formerly unreviewed MND IDs now have explicitly approved
+            # link-only status, while the DAPA/unselected items stay excluded.
+            self.assertEqual(page.count('data-korea-additional-link='), 9)
+            for approved_id in ("156784787", "156784873"):
+                self.assertIn(
+                    'data-korea-additional-link="korea-policy:' + approved_id + '"',
+                    page)
+            for unapproved_id in ("156784618", "156784625"):
+                self.assertNotIn(unapproved_id, page)
+            for forbidden in ("body_original", "download.do?fileId=",
+                              "english_description", "data-review-status="):
+                self.assertNotIn(forbidden, page)
             self.assertIn("not IPR archived records", page)
             self.assertNotIn("download.do?fileId=", page)
 
