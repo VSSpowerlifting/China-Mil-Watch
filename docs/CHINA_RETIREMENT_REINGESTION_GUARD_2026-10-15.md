@@ -15,7 +15,7 @@ Three actual ingestion boundaries are covered:
 2. Both `insert_article` and `insert_articles_atomic` repeat the check inside their actual SQLite write transaction, including keyword-rejected articles.
 3. `scripts/reconcile_db.py` skips locally reintroduced tombstoned URLs, preserves the published-origin ledger, fails if local carries retirement entries absent from published origin, and treats deliberately retired local URLs as protected from reinsertion rather than an unreported loss.
 
-The DB schema verifier requires migration 0008 and checks that no active article matches a retired URL hash. A missing or inconsistent ledger fails database verification.
+The DB schema verifier requires migration 0008 and checks that no active article matches a retired URL hash **or reuses its original numeric article ID**. Because SQLite `INTEGER PRIMARY KEY` can otherwise reuse the highest deleted ID, both ingestion paths and the reconciler now allocate above the high-water mark across active and retired IDs. A SQLite trigger independently rejects a reused retired ID even from direct SQL. A missing or inconsistent ledger fails database verification.
 
 ## Scope and real remaining release gates
 
