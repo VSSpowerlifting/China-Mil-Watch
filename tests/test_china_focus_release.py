@@ -84,6 +84,16 @@ class ChinaFocusOutputReleaseTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "compromised"):
             stage(self.render, self.public, expected_china=1)
 
+    def test_refuses_other_historical_body_hold(self):
+        old = fixture()
+        old["records"][0][0] = 419
+        self.write(self.public, old)
+        self.write(self.render, dict(
+            old, focus_ids=[419, 3],
+            focus_policy="automated_research_focus_not_human_curated"))
+        with self.assertRaisesRegex(ValueError, "compromised"):
+            stage(self.render, self.public, expected_china=1)
+
     def test_refuses_untruthful_archive_copy(self):
         (self.render / "archive.html").write_text("small selected archive")
         with self.assertRaisesRegex(ValueError, "disclosure"):
