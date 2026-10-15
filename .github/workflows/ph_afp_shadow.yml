@@ -155,13 +155,19 @@ jobs:
           echo "::error::collection failed or was partial; no successful-run clock advance"
           exit 1
 
-      - name: Preserve run evidence
+      # Do not duplicate captured AFP API response bodies, full original
+      # text, media, or SQLite originals into future Actions artifacts.
+      # The existing public shadow Git history and historic full-state
+      # artifacts remain separate unresolved custody/rights issues.
+      - name: Preserve metadata-only attempt evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ph-afp-shadow-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/shadow-state/state/
+            ${{ runner.temp }}/shadow-state/state/ledger/*.json
+            ${{ runner.temp }}/shadow-state/state/evidence/*.json
+            ${{ runner.temp }}/shadow-state/state/clock.json
             ${{ runner.temp }}/ph-afp-run.log
           if-no-files-found: warn
           retention-days: 90
