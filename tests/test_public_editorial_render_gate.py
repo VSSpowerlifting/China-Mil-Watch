@@ -109,7 +109,7 @@ class RenderedPermanentResearchContracts(unittest.TestCase):
         self.assertIn("published_research=[]", renderer)
         directory = (ROOT/"site/preview/templates/desks.html").read_text()
         self.assertIn("Research published", directory)
-        self.assertIn("Source archive: {{ d.status_label }}", directory)
+        self.assertIn("Corpus records", directory)
         self.assertIn("editorial_published_desks", directory)
         self.assertIn("editorial_published_desks", renderer)
 
