@@ -126,6 +126,57 @@
       "next_step": "quality_hold",
       "human_original_review_required": true,
       "owner_approved": false
+    },
+    {
+      "id": 170,
+      "source": "global_times_mil",
+      "published_date": "2026-05-11",
+      "title": "Commissioning of ‘five essentials for aircraft carriers’ a significant achievement of PLA Navy’s accelerated transformation, development: MND spokesperson",
+      "captured_url": "https://www.globaltimes.cn/page/202605/1360610.shtml",
+      "research_date": "2026-10-15",
+      "human_original_review_required": true,
+      "owner_approved": false,
+      "research_url": "https://www.globaltimes.cn/page/202605/1360610.shtml",
+      "research_kind": "publisher_original",
+      "comparison": "historical_text_contamination",
+      "issuer_attribution": "Global Times report quoting Chinese Ministry of National Defense spokesperson",
+      "source_observation": "An original Global Times article contains substantive PLA Navy aircraft-carrier aviation commentary attributed to the MND, while the supposedly unflagged old IPR body consists of unrelated truncated news teasers. This known negative-control failure proves ellipsis-length heuristics are incomplete.",
+      "stored_body_anchor": "Commenting on claims in a joint statement",
+      "next_step": "quality_hold"
+    },
+    {
+      "id": 419,
+      "source": "global_times_mil",
+      "published_date": "2026-05-18",
+      "title": "MND: China Stands Ready to Work With the US Side to Promote the Steady and Long-term Development of a Stable and Positive Mil-to-mil Relationship",
+      "captured_url": "https://www.globaltimes.cn/page/202605/1361278.shtml",
+      "research_date": "2026-10-15",
+      "human_original_review_required": true,
+      "owner_approved": false,
+      "research_url": "https://www.globaltimes.cn/page/202605/1361278.shtml",
+      "research_kind": "publisher_original",
+      "comparison": "historical_body_absent",
+      "issuer_attribution": "Chinese Ministry of National Defense statement carried on Global Times",
+      "source_observation": "Original publisher page contains an actual MND response about China-US military-to-military communications, attributed to spokesperson Jiang Bin. The legacy IPR record has no readable original-text block; the absence is an archival capture gap, not silence from the ministry.",
+      "stored_body_anchor": null,
+      "next_step": "quality_hold"
+    },
+    {
+      "id": 905,
+      "source": "global_times_mil",
+      "published_date": "2026-05-31",
+      "title": "China, Mongolia launch joint army training",
+      "captured_url": "https://www.globaltimes.cn/page/202605/1362339.shtml",
+      "research_date": "2026-10-15",
+      "human_original_review_required": true,
+      "owner_approved": false,
+      "research_url": "https://www.globaltimes.cn/page/202605/1362339.shtml",
+      "research_kind": "publisher_republication",
+      "comparison": "historical_body_absent",
+      "issuer_attribution": "Xinhua-sourced China-Mongolia exercise report republished by Global Times",
+      "source_observation": "The original publisher page reports the launch of Steppe Partner 2026 joint army training and includes Xinhua-attributed photography. The historical IPR record has no readable original-text block; this is a source-capture quality hold, not grounds to erase the training report.",
+      "stored_body_anchor": null,
+      "next_step": "quality_hold"
     }
   ]
 }
