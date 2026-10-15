@@ -83,7 +83,7 @@ UI or production index integration.
 ## Scaled legacy-capture triage (not a source-correction pass)
 
 `scripts/audit_china_legacy_capture_quality.py` now checks all stored
-`global_times_mil` source records with a source-stated date **before
+`global_times_mil` source records whose **preserved collection timestamp precedes
 September 16, 2026**, using only the published compact index and local
 `output/record/{id}.html` historical captures. The original scraper received
 its markup and related-rail correction on September 16. This audit must not be
@@ -100,9 +100,10 @@ Signals are deliberately narrow, imperfect, and **nonbinding**:
 The report returns per-record **review IDs only** plus counts. It cannot
 supply a restored article body, determine that text is truly corrupted,
 verify a publisher response, calculate reliable fault prevalence from
-heuristics alone, or authorize exclusion and corrections. A non-China
-source and all records on/after September 16 remain outside this
-historical diagnosis. Every source ID and cited Brief trail stays intact.
+heuristics alone, or authorize exclusion and corrections. Non-China sources and captures collected on/after September 16 remain
+outside this historical diagnosis, **even when their source publication date
+is earlier**. If a record lacks a trustworthy collected-at timestamp, the
+scan fails closed rather than guessing its extraction vintage. Every source ID and cited Brief trail stays intact.
 
 ```sh
 python3 -m unittest -v tests.test_china_legacy_capture_quality
