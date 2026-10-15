@@ -111,6 +111,8 @@ class ActionsContracts(unittest.TestCase):
         out = proof.compare(score, ledgers, proof.parse_export(
             {"total_count": 7, "workflow_runs": actions}))
         self.assertTrue(out["all_seven_positive_runs_matched"])
+        self.assertTrue(out["no_unmatched_scheduled_runs_visible_in_review_window"])
+        self.assertEqual(out["unmatched_scheduled_runs_in_review_window"], [])
         self.assertFalse(out["production_eligible"])
         self.assertFalse(out["human_reviews_or_reuse_rights_approved"])
 
@@ -121,6 +123,50 @@ class ActionsContracts(unittest.TestCase):
                                                 "workflow_runs": self.actions + [extra]}))
         self.assertEqual([x["id"] for x in out["other_scheduled_runs_in_export"]],
                          [99999999999])
+        self.assertFalse(out["no_unmatched_scheduled_runs_visible_in_review_window"])
+        self.assertEqual(
+            out["unmatched_scheduled_runs_in_review_window"][0]["review_reason"],
+            "additional_scheduled_run_in_window"
+        )
+
+    def test_extra_successful_run_in_window_remains_an_ambiguity(self):
+        extra = dict(self.actions[0], id=99999999998,
+                     created_at="2026-10-09T13:51:00Z")
+        out = proof.compare(
+            self.scorecard, self.ledgers,
+            proof.parse_export({"total_count": 3,
+                                "workflow_runs": self.actions + [extra]})
+        )
+        self.assertFalse(out["no_unmatched_scheduled_runs_visible_in_review_window"])
+        self.assertEqual(
+            [x["id"] for x in out["unmatched_scheduled_runs_in_review_window"]],
+            [99999999998]
+        )
+
+    def test_later_clean_run_does_not_contaminate_oct7_oct13_audit(self):
+        extra = dict(self.actions[0], id=99999999997,
+                     created_at="2026-10-14T13:51:00Z")
+        out = proof.compare(
+            self.scorecard, self.ledgers,
+            proof.parse_export({"total_count": 3,
+                                "workflow_runs": self.actions + [extra]})
+        )
+        self.assertTrue(out["no_unmatched_scheduled_runs_visible_in_review_window"])
+        self.assertEqual(out["unmatched_scheduled_runs_in_review_window"], [])
+        self.assertEqual(len(out["other_scheduled_runs_in_export"]), 1)
+
+    def test_unclassifiable_extra_schedule_date_fails_closed(self):
+        extra = dict(self.actions[0], id=99999999996, created_at=None)
+        out = proof.compare(
+            self.scorecard, self.ledgers,
+            proof.parse_export({"total_count": 3,
+                                "workflow_runs": self.actions + [extra]})
+        )
+        self.assertFalse(out["no_unmatched_scheduled_runs_visible_in_review_window"])
+        self.assertEqual(
+            out["unmatched_scheduled_runs_in_review_window"][0]["review_reason"],
+            "unclassifiable_scheduled_run_date"
+        )
 
 
 if __name__ == "__main__":
