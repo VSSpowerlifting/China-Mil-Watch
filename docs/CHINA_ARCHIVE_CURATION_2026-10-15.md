@@ -95,6 +95,50 @@ from the headline or that its citation should be elevated automatically.
 All 70 cue hits should be reviewed in addition to the stratified screened-out
 control sample. Those populations may overlap; keep distinct reason flags.
 
+### Original-publication spot checks (15 October 2026)
+
+These are **editorial leads, not verified claims about external events**. The
+source record establishes what a publisher said. It cannot establish that
+the government claim is true.
+
+| Stored ID | Processing outcome | Source-specific spot check | Editorial disposition |
+|---|---|---|---|
+| `2849` | Not selected | The captured original Chinese body materially matches the July 31, 2026 Foreign Ministry statement independently located at `https://www.fmprc.gov.cn/wjbxw_new/202607/t20260731_11996501.shtml`. IPR's stored URL is a PLA Daily republication, so the outlet is **not** the statement's issuing institution. | **Retain candidate:** primary diplomatic-legal position on Scarborough Shoal. Mark issuer MFA; retain PLA Daily as the captured outlet. |
+| `2391` | Not selected | The captured body contains the numbered sections of the July 12 Foreign Ministry declaration; the matching Xinhua publication cites the Foreign Ministry as source: `https://www1.xinhuanet.com/world/20260712/81756443caa14e029ca5be5680412ef3/c.html`. IPR's collected `81.cn` URL is a republication. | **Retain candidate:** authoritative South China Sea official position, with original issuer identified. |
+| `2180` | Not selected | Global Times article `https://www.globaltimes.cn/page/202607/1365233.shtml` and defense-ministry Xinhua republication `https://eng.mod.gov.cn/2025xb/N/T/16472056.html` both describe a July 6 strategic missile test attributed to the PLA Navy. IPR's 3,000+-character stored-text block is mostly unrelated article teasers/navigation and lacks the core test account. | **Hold for source-text repair:** topic is significant; do not treat stored body as complete, nor auto-promote it. |
+
+The first two records are strong **curated-inclusion candidates**, not final
+editorial approvals; they still need duplicate-event clustering and reviewer
+sign-off. The third should enter a quality-repair queue and retain its source
+record/citation unchanged until corrected through the governed correction
+process. Do **not** silently replace its original captured text or hide the
+historical extraction error.
+
+**Issuer/outlet distinction:** the site's displayed institution attached to
+both `81.cn` records is the CMC Political Work Department (outlet ownership),
+while the texts themselves are Foreign Ministry statements. A curation
+classification must have separate `issuing_institution` (evidenced from the
+document) and `captured_publisher` (from the source manifest). Neither
+should be guessed merely from the hostname.
+
+### Human review dispositions (proposed)
+
+An evidence-bound reviewer should record exactly one of:
+`retain_primary` (substantive original statement/operation/technical
+disclosure), `retain_context` (useful messaging context or continuing
+thread), `duplicate_cluster` (secondary occurrence with a canonical event
+representative and visible surviving link), `exclude_discovery` (routine,
+off-scope, or low-value), or `hold_quality` (missing/polluted text,
+uncertain issuer/date, or unresolved rights/provenance). All statuses keep
+the stored record. Record the stable ID, issue/author attribution, capture
+outlet, evidence URL, date, exact section checked, 1–2-sentence reason, and
+reviewer/date; never publish the label as a verified fact about operations.
+
+A small second-review sample of both proposed inclusions and exclusions
+must be independently assessed. Published Brief-trail references **protect
+direct links and provenance**, not automatically curated placement: a Brief
+may cite an otherwise routine record for context.
+
 ### Human audit before the second phase
 
 Review Chinese originals and English titles in source-stratified and
