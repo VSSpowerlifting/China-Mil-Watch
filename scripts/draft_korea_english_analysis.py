@@ -194,7 +194,9 @@ def main(argv=None):
             "editorial_approval": False, "public_files_written": 0,
         }, sort_keys=True))
         return 0
-    except (KoreaEnglishHold, OSError, ValueError):
+    except Exception:
+        # Provider/network/JSON errors may contain source or model text.
+        # Never emit an exception message or traceback in a workflow log.
         print(json.dumps({
             "status": "HOLD",
             "source_text_or_draft_logged": False,
