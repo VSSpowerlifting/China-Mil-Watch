@@ -27,6 +27,17 @@ jobs:
           cache: pip
       - name: Install rendering requirements
         run: pip install -r requirements.txt
+      - name: Run same release contracts before promotion
+        run: |
+          set -euo pipefail
+          python -m unittest -v \
+            tests.test_retired_article_urls \
+            tests.test_china_retirement_atomic \
+            tests.test_china_active_retirement \
+            tests.test_china_retirement_release \
+            tests.test_china_retirement_backup_lineage \
+            tests.test_china_retirement_pages_readback \
+            tests.test_china_retirement_crossdesk
       - name: Rebuild the full 4400-record retirement only in scratch
         run: |
           set -euo pipefail
