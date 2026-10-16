@@ -242,6 +242,8 @@ def prepare(repo: Path, *, mode: str, writer: str, paths: tuple[str, ...] = (),
         if mode == 'file-only':
             if any(p not in output for p in paths):
                 raise Hold('file-only path is absent from committed main output')
+            if set(paths) & divergent_pages_paths:
+                raise Hold('file-only would overwrite a Pages-only changed file')
             # A file-only release may legitimately leave unrelated files at an
             # older version of main, but it MUST NOT renew a generation with
             # content explicitly removed from current main:output. A separate
