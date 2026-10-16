@@ -26,6 +26,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   synthetic-invariants:
@@ -78,6 +79,32 @@ jobs:
             "$RUNNER_TEMP/sg-proof"
           git -C "$RUNNER_TEMP/sg-proof" rev-parse HEAD > "$RUNNER_TEMP/sg-source.sha"
           test -z "$(git -C "$RUNNER_TEMP/sg-proof" status --porcelain --untracked-files=all)"
+      - name: Authenticate real first-attempt scheduled collector and successful job
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID_INPUT: ${{ github.event.workflow_run.id || inputs.run_id }}
+          COLLECTOR_SHA_INPUT: ${{ github.event.workflow_run.head_sha || inputs.collector_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID_INPUT" =~ ^[0-9]{9,16}$ ]] || exit 1
+          [[ "$COLLECTOR_SHA_INPUT" =~ ^[a-f0-9]{40}$ ]] || exit 1
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID_INPUT}" > "$RUNNER_TEMP/sg-actions-run.json"
+          jq -e --arg sha "$COLLECTOR_SHA_INPUT" '
+            .name == "Singapore Shadow Collection" and
+            .event == "schedule" and .status == "completed" and
+            .conclusion == "success" and .run_attempt == 1 and
+            .head_branch == "main" and .head_sha == $sha
+          ' "$RUNNER_TEMP/sg-actions-run.json" > /dev/null
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID_INPUT}/jobs?filter=latest&per_page=100" > "$RUNNER_TEMP/sg-actions-jobs.json"
+          jq -e '
+            .total_count == (.jobs | length) and
+            ([.jobs[] | select(
+              .name == "shadow" and .conclusion == "success" and
+              ([.steps[]? | select(.name == "Run shadow collection" and .conclusion == "success")] | length) == 1
+            )] | length) == 1
+          ' "$RUNNER_TEMP/sg-actions-jobs.json" > /dev/null
+
       - name: Confirm scheduled runner identity against preserved source version
         shell: bash
         env:
