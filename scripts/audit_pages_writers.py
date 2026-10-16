@@ -23,6 +23,16 @@ What it does
   handoff. They are deliberately NOT failures: the race is not fixed, and
   this tool must not pretend otherwise.
 
+Where it blocks
+---------------
+* PR CI (``pr_offline_checks.yml``) runs the repository-state ratchet tests
+  in ``tests/test_pages_writer_audit.py`` and fails on any violation.
+* ``daily_update.yml`` runs this script as the step immediately before its
+  gh-pages deploy, so a violation blocks publication only. Its pre-collection
+  test step sets ``IPR_DEFER_PAGES_WRITER_AUDIT=1`` (``DEFER_ENV``), which
+  skips those repository-state tests there: an unregistered publisher must
+  not stop collection, validation or the database commit.
+
 Output never echoes workflow lines, so tokens such as
 ``x-access-token:${{ github.token }}`` cannot leak into logs.
 
@@ -45,6 +55,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SHARED_LOCK = "daily-update"
+# Set only by daily_update's pre-collection test step; see "Where it blocks".
+DEFER_ENV = "IPR_DEFER_PAGES_WRITER_AUDIT"
 
 # ── Registry of known writers ────────────────────────────────────────────────
 # id = "<workflow file>::<job id>". ``locks`` are concurrency-group literals
@@ -62,8 +74,9 @@ REGISTRY = {
     "china_retirement_pages_retry.yml::verify-and-redeploy": {
         "class": "full-tree", "locks": (SHARED_LOCK,),
         "guards": ("approved_sha", "main_ref_guard")},
+    # Owner-authorized cutover, deliberately in its own queue (d3543b5136).
     "china_retirement_release.yml::release": {
-        "class": "full-tree", "locks": (SHARED_LOCK,),
+        "class": "full-tree", "locks": ("china-retirement-cutover",),
         "guards": ("approved_sha", "main_cas", "main_ref_guard")},
     "country_research_render_only_release.yml::release": {
         "class": "full-tree", "locks": (SHARED_LOCK,),
@@ -84,6 +97,12 @@ REGISTRY = {
         "class": "full-tree", "locks": (SHARED_LOCK,),
         "guards": ("main_cas", "main_ref_guard")},
     "korea_original_text_pages_release.yml::release-only-this-korean-original": {
+        "class": "file-only", "locks": ("korea-verified-official-link-production",),
+        "guards": ("main_cas", "pages_cas", "main_ref_guard")},
+    "korea_reviewed_english_release.yml::owner-reviewed-korea-english-release": {
+        "class": "file-only", "locks": ("korea-verified-official-link-production",),
+        "guards": ("main_cas", "pages_cas", "main_ref_guard")},
+    "korea_standing_original_text_production.yml::publish-future-original-korean-text": {
         "class": "file-only", "locks": ("korea-verified-official-link-production",),
         "guards": ("main_cas", "pages_cas", "main_ref_guard")},
     "korea_pages_file_only_release.yml::korea-pages-file-only-release": {

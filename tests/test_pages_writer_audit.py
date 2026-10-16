@@ -7,6 +7,7 @@ deployment race is fixed; see tests/test_pages_stale_deploy_race.py.
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -41,6 +42,8 @@ jobs:
 """
 
 
+@unittest.skipIf(os.environ.get(audit.DEFER_ENV) == "1",
+                 "Pages-writer ratchet deferred to daily_update's publication gate")
 class RepoInventory(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -56,8 +59,11 @@ class RepoInventory(unittest.TestCase):
 
     def test_known_writers_outside_shared_lock(self):
         self.assertEqual(self.report["summary"]["outside_shared_lock"], [
+            "china_retirement_release.yml::release",
             "deploy_output_only.yml::deploy",
             "korea_original_text_pages_release.yml::release-only-this-korean-original",
+            "korea_reviewed_english_release.yml::owner-reviewed-korea-english-release",
+            "korea_standing_original_text_production.yml::publish-future-original-korean-text",
             "korea_verified_official_link_production.yml::publish-korea-official-links",
         ])
 

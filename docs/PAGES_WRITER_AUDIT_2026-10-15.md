@@ -1,7 +1,10 @@
 # GitHub Pages writer audit and stale-deploy reproduction — 2026-10-15
 
-Issue #346 (audit phase only). Audited at `main` `7763663963`; rebased onto `c56d9714d0`. **The race is not
-fixed.** This change adds detection and reproduction only. No workflow, Pages
+Issue #346 (audit phase only). Audited at `main` `7763663963`; rebased onto
+`c56d9714d0`, then merged with `d55d8e2b8b` (2026-10-16). **The race is not
+fixed.** This change adds detection and reproduction only. The one workflow
+change is in `daily_update.yml`: the ratchet is deferred in its pre-collection
+test step and enforced as a gate immediately before its deploy (§6). No Pages
 branch, database, collector or content was changed or pushed.
 
 Deliverables:
@@ -11,8 +14,11 @@ Deliverables:
 - `tests/test_pages_writer_audit.py`: inventory and ratchet tests, 20 cases.
 - `tests/test_pages_stale_deploy_race.py`: hermetic interleaving
   reproductions plus a test-only reference fence, 15 cases.
+- `tests/test_pages_audit_collection_isolation.py`: proves daily collection
+  proceeds when the audit fails, while the publication gate and PR CI still
+  block, 7 cases.
 
-## 1. Writer inventory (18 jobs across 212 workflow files; auditor output)
+## 1. Writer inventory (20 jobs across 217 workflow files; auditor output)
 
 | Writer (`file::job`) | Class | Concurrency held | Checkout | Freshness before publish |
 |---|---|---|---|---|
@@ -20,7 +26,7 @@ Deliverables:
 | `deploy_output_only::deploy` | full-tree | **pages-deploy only** | **trigger SHA, any ref** | **none**; no `refs/heads/main` guard |
 | `briefs_render_only_release::publish` | full-tree | daily-update | main | approved SHA + main CAS |
 | `china_focus_release::release` | full-tree | daily-update | main | approved SHA + main CAS |
-| `china_retirement_release::release` | full-tree | daily-update | main | approved SHA + main CAS |
+| `china_retirement_release::release` | full-tree | **own `china-retirement-cutover` group** (d3543b5136, during this audit) | main | approved SHA + main CAS |
 | `china_retirement_pages_retry::verify-and-redeploy` | full-tree | daily-update | main | approved SHA at start; main is not rechecked at deploy |
 | `country_research_render_only_release::release` | full-tree | daily-update | main | approved SHA + main CAS |
 | `indonesia_official_links_release::publish` | full-tree | daily-update | main | main CAS |
@@ -30,6 +36,8 @@ Deliverables:
 | `korea_pages_file_only_release` | file-only push | daily-update | main | main CAS + Pages CAS |
 | `korea_verified_official_link_production` | file-only push | **own group** (deliberate) | main | main CAS + Pages CAS |
 | `korea_original_text_pages_release` (#722, merged during this audit) | file-only push (`korea.html`, `korea-originals/`) | **korea-verified group** | main | main CAS + Pages CAS |
+| `korea_reviewed_english_release` (merged during this audit) | file-only push (`korea.html`, `korea-translations/`, `korea-analysis/`) | **korea-verified group** | main | main CAS + Pages CAS |
+| `korea_standing_original_text_production` (merged during this audit) | file-only push (`korea.html`, `korea-originals/`) | **korea-verified group** | main | main CAS + Pages CAS |
 | `treasury_verified_official_links_release` | file-only push | daily-update | main | main CAS + Pages CAS |
 | `uscc_verified_official_links_release` | file-only push | daily-update | main | main CAS + Pages CAS |
 | `us_bis_verified_official_links_release` | file-only push | daily-update | main | main CAS + Pages CAS |
@@ -68,8 +76,9 @@ the same `origin/gh-pages` check and push.
 3. **`daily_update`'s no-commit path deploys the job-start tree.** That tree
    reverts a `korea_verified_official_link_production` publish made meanwhile.
    This is reachable today, because that workflow is deliberately outside
-   `daily-update`. The same exposure now applies to
-   `korea_original_text_pages_release`, which shares that group.
+   `daily-update`. The same exposure applies to the three other writers in
+   that group: original text (#722), reviewed English, and standing original
+   text.
 4. **`daily_update`'s commit path has the same exposure.** The window is after
    `pull --rebase && push` and before peaceiris.
 5. **A fresh full-tree deploy erases content that exists only on gh-pages.**
@@ -78,8 +87,10 @@ the same `origin/gh-pages` check and push.
    writer is perfectly serialized.
 6. **A stale overlay preserves unrelated pages but reverts its own files.**
 7. **`deploy_output_only` publishes whatever ref or SHA was dispatched.** It
-   holds only `pages-deploy`, so it is never serialized with the fourteen
-   writers that hold only `daily-update`. Its own text shows this; the race
+   holds only `pages-deploy`, so it is never serialized with the thirteen
+   writers that hold only `daily-update`. The full-tree
+   `china_retirement_release` now has its own cutover group too, so it is not
+   serialized with them either. Its own text shows this; the race
    tests reproduce it in mechanism 1.
 8. **No authorized rollback is distinguishable from a stale republish.** Both
    are a plain full-tree push of an older tree.
@@ -128,8 +139,8 @@ sufficient only if three conditions all hold:
 
 Today all three fail somewhere:
 
-- `deploy_output_only`, both korea-verified-group writers and owner pushes
-  are outside the group.
+- `deploy_output_only`, `china_retirement_release` (own cutover group), the
+  four korea-verified-group writers and owner pushes are outside the group.
 - `daily_update` deploys a tree that can be older than current main.
 - Content can exist only on gh-pages.
 
@@ -163,6 +174,32 @@ cancellations, which is the reason Korea left the group. A group expresses
    require that public content lands in `main:output` first. Optionally, a
    post-deploy readback can fail on drift.
 
+**Limit: a generation manifest and a source-SHA ancestry check cannot, on
+their own, preserve content that exists only on gh-pages.** Both describe the
+full-tree *source* (`main:output` at `source_sha`), not the tree that is live.
+File-only writers change gh-pages after their main commit. Owner-local pushes
+change it with no main commit at all. So the live tree is
+`source_sha:output` plus whatever was laid over it since. A full-tree writer
+whose source correctly descends from the deployed `source_sha` passes both
+checks and still erases every gh-pages-only file (§2.5,
+`test_current_fresh_full_tree_erases_pages_only_content`;
+`test_fence_does_not_cover_writers_that_bypass_it`). The remediation must
+therefore:
+
+- **Treat publisher classes differently.** File-only and overlay publishers
+  bump the generation and record the paths and blob digests they own. A
+  full-tree publisher must prove those paths are already in its tree, or
+  re-apply them, or refuse. It must never silently drop them.
+- **Attest the final assembled artifact, not only its source.** Record a
+  digest of the exact tree pushed: the gh-pages commit's tree hash, or a
+  sorted path→blob digest that excludes the manifest. Store it alongside
+  `generation` and `source_sha`.
+- **Check the live digest before a full-tree push.** The live tree's digest
+  must equal the last attested digest. Any mismatch means unattested content,
+  from an out-of-band push or a file-only writer without the manifest. The
+  publisher must then refuse, never overwrite.
+- **Read back after deploy.** Compare the live digest with the attested one.
+
 **Simpler alternative to evaluate first: a single deployer.**
 
 - Exactly one workflow publishes, in its own lock, always from
@@ -174,8 +211,9 @@ cancellations, which is the reason Korea left the group. A group expresses
 
 ## 5. Recommendations and acceptance criteria for the fix PR
 
-**Exact next implementation step:** add the generation manifest and the
-pre-push check to one shared, tested helper (script or composite action).
+**Exact next implementation step:** add the generation manifest (with the
+assembled-artifact digest, per the §4 limit) and the pre-push check to one
+shared, tested helper (script or composite action).
 Adopt it first in `deploy_output_only` and `daily_update`, which carry the
 two highest-risk hazards. In the same PR:
 
@@ -199,26 +237,47 @@ two highest-risk hazards. In the same PR:
 6. The gh-pages provenance records the deployed source SHA, not `GITHUB_SHA`.
 7. A written policy (DECISION_LOG) covers out-of-band gh-pages pushes, or a
    post-deploy drift readback blocks on drift.
+8. The manifest records the assembled-artifact digest. A full-tree publish
+   refuses when the live digest differs from the last attested digest.
+   File-only publishers update the digest and their owned paths, and a test
+   shows a full-tree publish preserving or refusing over them, never erasing
+   them.
 
-## 6. Keeping the ratchet current
+## 6. Keeping the ratchet current, and where it blocks
 
 A new or changed Pages writer must be added to `REGISTRY` in
-`scripts/audit_pages_writers.py`, in a reviewed PR. Both new test modules run
-under `python -m unittest discover -s tests -t .`. That command runs in two
-places:
-
-- `pr_offline_checks.yml`, on non-draft PRs.
-- `daily_update.yml` Step 4c, before collection.
-
-So an unregistered writer that reaches main without passing PR checks halts
-the daily run. That is fail-closed by design. The suite then fails in any of
-these cases:
+`scripts/audit_pages_writers.py`, in a reviewed PR. The ratchet fails on any
+of these:
 
 - an unregistered writer;
 - an unresolved `git push` target;
 - a scope escalation (file-only → overlay → full-tree, force, orphan);
 - a dropped concurrency lock;
 - a dropped guard.
+
+**It blocks publication, never collection.**
+
+- **PR CI** (`pr_offline_checks.yml`, non-draft PRs) runs the full suite. The
+  repository-state ratchet tests (`RepoInventory`) fail the PR on any
+  violation.
+- **`daily_update.yml` step 4c** (the pre-collection suite) sets
+  `IPR_DEFER_PAGES_WRITER_AUDIT=1`. That skips only `RepoInventory`; the
+  hermetic audit and race tests still run. An unregistered publisher therefore
+  cannot stop collection, validation, the database commit or evidence custody.
+- **`daily_update.yml` step 6c** runs `python scripts/audit_pages_writers.py`
+  immediately before the deploy, after the database and output are committed
+  to main. A violation fails that step, so the deploy is skipped. So is the
+  success record, exactly as after a deploy failure, so the next scheduled
+  slot runs again (including collection) until the registry is fixed.
+- `tests/test_pages_audit_collection_isolation.py` proves all three
+  behaviours end to end against a scratch repository with an unregistered
+  writer, and pins the step order. No other workflow may set the deferral
+  variable.
+
+**Why this split matters.** Within a day of the audit, `main` gained two
+unregistered Korea writers and moved `china_retirement_release` to its own
+group (all now registered). Had the ratchet halted step 4c, daily collection
+would have stopped for an unrelated publisher change.
 
 Open PRs that touch workflows (#679 edits the registered
 `china_retirement_pages_retry`) keep passing unless they remove a registered

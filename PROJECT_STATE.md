@@ -812,12 +812,17 @@ review date, not a qualification threshold. Neither desk is promoted.
 ## 6. Known technical debt
 
 * **gh-pages stale-rollback race — audited, NOT fixed (#346, 2026-10-15).**
-  `scripts/audit_pages_writers.py` inventories 18 Pages writers (10 full-tree,
-  1 overlay, 7 file-only) and fails CI on unregistered or widened writers.
+  `scripts/audit_pages_writers.py` inventories 20 Pages writers (10 full-tree,
+  1 overlay, 9 file-only). An unregistered or widened writer fails PR CI and
+  `daily_update`'s pre-deploy gate (step 6c), never collection: step 4c defers
+  the ratchet (`IPR_DEFER_PAGES_WRITER_AUDIT`), proven by
+  `tests/test_pages_audit_collection_isolation.py`.
   `tests/test_pages_stale_deploy_race.py` reproduces stale full-tree overwrites
-  (`deploy_output_only` and the two korea-verified-group writers outside `daily-update`;
-  `daily_update` deploying a pre-refresh tree) in hermetic git sandboxes. No
-  writer has a generation fence; history shows 0 unexplained reversions.
+  (writers outside `daily-update`; `daily_update` deploying a pre-refresh tree)
+  in hermetic git sandboxes. No writer has a generation fence; history shows 0
+  unexplained reversions. A future fence must attest the assembled-artifact
+  digest, since a manifest plus source-SHA ancestry cannot protect
+  gh-pages-only content.
   Handoff and acceptance criteria: `docs/PAGES_WRITER_AUDIT_2026-10-15.md`.
 
 * **PR offline-check draft efficiency (owner review pending, 2026-10-07).**

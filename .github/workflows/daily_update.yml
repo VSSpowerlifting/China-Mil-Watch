@@ -189,8 +189,14 @@ jobs:
       # No network, no model calls, temporary databases only — the suite never
       # touches the tracked pla_watch.db. Runs before collection so a broken
       # build cannot scrape, spend, commit or deploy.
+      #
+      # The Pages-writer ratchet (#346) is publication eligibility, not build
+      # health: it is deferred here and enforced at the deploy gate (step 6c),
+      # so an unregistered publisher cannot stop collection or evidence custody.
       - name: Run offline test suite
         if: steps.timecheck.outputs.should_run == 'true'
+        env:
+          IPR_DEFER_PAGES_WRITER_AUDIT: "1"
         run: python -m unittest discover -s tests -t . -v
 
       # Measures exactly one phase: the offline suite. Placed immediately after
@@ -444,6 +450,14 @@ jobs:
 
             git push
           fi
+
+      # ── 6c. Pages publication gate: writer audit (#346) ──────────────────
+      # Read-only. Runs after the database and output are committed, so a
+      # failure blocks only the deploy (and, like a deploy failure, the
+      # success record below). It does not fence the stale-deploy race.
+      - name: Pages publication gate (writer audit)
+        if: steps.timecheck.outputs.should_run == 'true'
+        run: python scripts/audit_pages_writers.py
 
       # ── 7. Deploy output/ to gh-pages ─────────────────────────────────────
       - name: Deploy to GitHub Pages
