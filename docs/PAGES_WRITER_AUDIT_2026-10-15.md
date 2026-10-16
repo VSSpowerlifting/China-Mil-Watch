@@ -1,6 +1,6 @@
 # GitHub Pages writer audit and stale-deploy reproduction — 2026-10-15
 
-Issue #346 (audit phase only). Base: `main` at `7763663963`. **The race is not
+Issue #346 (audit phase only). Audited at `main` `7763663963`; rebased onto `c56d9714d0`. **The race is not
 fixed.** This change adds detection and reproduction only. No workflow, Pages
 branch, database, collector or content was changed or pushed.
 
