@@ -274,17 +274,22 @@ def prepare(repo: Path, *, mode: str, writer: str, paths: tuple[str, ...] = (),
             'source_sha': source_sha, 'writer': writer,
             'tree_sha256': digest(target), 'rollback': None,
         }
-        # A no-op still records an attempted new generation when explicitly
-        # requested. This avoids an ambiguous success marker after a skipped push.
+        # Dry-run must prove the *same committed Git bytes* as --push. Building
+        # the candidate in an ephemeral Pages clone is harmless to the remote,
+        # and detects ignored files, smudge/clean filters, wrong file modes,
+        # and other stage/commit differences before anyone treats a green
+        # preflight as permission to deploy.
+        write_worktree(pages, target, new_doc)
+        if digest(tree_files(pages)) != new_doc['tree_sha256']:
+            raise Hold('staged release tree digest mismatch')
+        git(pages, 'add', '-A')
+        git(pages, '-c', 'user.name=ipr-release-guard', '-c',
+            'user.email=release-guard@users.noreply.github.com', 'commit',
+            '-q', '-m', 'Guarded Pages generation %s' % new_doc['generation'])
+        verify_committed_release(pages, target, new_doc)
+        # A no-op still records a generation because the same-commit manifest
+        # advances. Never push or mutate the remote unless explicitly approved.
         if push:
-            write_worktree(pages, target, new_doc)
-            if digest(tree_files(pages)) != new_doc['tree_sha256']:
-                raise Hold('staged release tree digest mismatch')
-            git(pages, 'add', '-A')
-            git(pages, '-c', 'user.name=ipr-release-guard', '-c',
-                'user.email=release-guard@users.noreply.github.com', 'commit',
-                '-q', '-m', 'Guarded Pages generation %s' % new_doc['generation'])
-            verify_committed_release(pages, target, new_doc)
             # Source freshness check just before push, in addition to the Pages
             # fast-forward CAS. Main and Pages are two refs, not one atomic txn.
             git(repo, 'fetch', '-q', 'origin', 'main')
