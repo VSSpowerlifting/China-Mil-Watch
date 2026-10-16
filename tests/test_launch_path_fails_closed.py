@@ -144,10 +144,8 @@ class TestTheAcceptedSnapshot(unittest.TestCase):
         from core.retired_article_urls import verify_no_active_retired_urls
         derived = gp.snapshot_from_corpus(gp.TRACKED_DB)
         self.assertEqual(gp.DECLARED_SNAPSHOT, self.ACCEPTED)
-        with sqlite3.connect(
-            Path(gp.TRACKED_DB).resolve().as_uri() + "?mode=ro&immutable=1",
-            uri=True,
-        ) as conn:
+        from scripts.reconcile_db import read_only
+        with read_only(gp.TRACKED_DB) as conn:
             self.assertEqual(verify_no_active_retired_urls(conn), 4400)
             live = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
         self.assertEqual(derived["expected_records"], live)
