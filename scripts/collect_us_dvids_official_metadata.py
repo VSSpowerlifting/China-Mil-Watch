@@ -122,9 +122,23 @@ def build_packet(api_payload, *, observed_on_utc):
         "public_release_authorized": False,
     }
 
+def normalize_issued_key(value):
+    """Strip copy/paste whitespace, never alter the DVIDS-issued key itself.
+
+    The DVIDS public Search API key begins with 'key-'; never substitute the
+    private OAuth client secret or silently bypass the publisher's key format.
+    No credential contents, length, prefix sample or URL are logged.
+    """
+    need(type(value) is str and bool(value.strip()),
+         "dvids_issued_api_key_missing")
+    key = value.strip(" \t\r\n")
+    need(KEY_RE.fullmatch(key) is not None,
+         "dvids_public_search_key_format_invalid_expected_key_dash")
+    return key
+
+
 def fetch_with_issued_key(key):
-    need(type(key) is str and KEY_RE.fullmatch(key) is not None,
-         "dvids_issued_api_key_missing_or_bad_format")
+    key = normalize_issued_key(key)
     params = urllib.parse.urlencode({
         "api_key": key,
         "cocom": "USINDOPACOM",
