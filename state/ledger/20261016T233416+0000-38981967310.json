@@ -1,0 +1,39 @@
+{
+ "access_failures": 0,
+ "cap": 40,
+ "collector_commit": "8e5d83f196aa9dc9307e312a7acf3197483bd0ef",
+ "content_hashes": [],
+ "corpus_range": [
+  "2026-07-21",
+  "2026-10-10"
+ ],
+ "day_zero_utc": "2026-08-19T23:03:09+00:00",
+ "discovered": 33,
+ "duplicates": 33,
+ "error_detail": null,
+ "extraction_failures": 0,
+ "failure_log": [],
+ "fetch_failures": 0,
+ "filtered": 0,
+ "finished_utc": "2026-10-16T23:34:16+00:00",
+ "health": "ok",
+ "inserted": 0,
+ "listing_status": "ok",
+ "lookback_days": 30,
+ "media_only_urls": [
+  "https://www.mindef.gov.sg/news-and-events/latest-releases/22sep26-infographic/"
+ ],
+ "result": "ok_all_duplicates",
+ "retrieved": 33,
+ "robots_status": "allowed",
+ "run_id": "38981967310",
+ "selected": 33,
+ "shadow_day": 58,
+ "started_utc": "2026-10-16T23:32:56+00:00",
+ "state_sha256_after": "635ede3d0406343b247f91321bf734a4cce358af5462c1b66699ecd3c4026a87",
+ "state_sha256_before": "635ede3d0406343b247f91321bf734a4cce358af5462c1b66699ecd3c4026a87",
+ "stored_total": 89,
+ "target_date": "2026-10-16",
+ "target_date_source": "schedule-slot",
+ "text_unavailable": 1
+}
