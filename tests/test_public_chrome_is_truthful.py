@@ -185,8 +185,12 @@ class TestQuotedSourceTextIsNotPoliced(BuildCase):
     """
 
     def test_the_chrome_pattern_does_not_match_the_record_body(self):
-        page = self.out / "record" / "1.html"
-        html = page.read_text("utf-8", errors="replace")
+        # Article 1 was retired during the China cutover. Choose an actual
+        # active record so the no-chrome-in-source-body safety contract stays
+        # exercised without restoring any tombstoned page.
+        pages = sorted((self.out / "record").glob("*.html"))
+        self.assertTrue(pages, "no surviving record page rendered")
+        html = pages[0].read_text("utf-8", errors="replace")
         chrome = " ".join(m.group(0) for m in CHROME.finditer(html))
         body = re.search(r"<main\b[\s\S]*?</main>", html, re.I)
         self.assertIsNotNone(body)
