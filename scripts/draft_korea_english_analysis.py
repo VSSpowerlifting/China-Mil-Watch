@@ -105,6 +105,22 @@ def response_json(client, *, system, prompt, max_tokens=6500):
     raise KoreaEnglishHold("korea_model_response_not_exact_json")
 
 
+def source_quote_catalog(paragraphs):
+    """Deterministic, bounded excerpts of pinned source paragraphs."""
+    catalog = {}
+    for index, paragraph in enumerate(paragraphs, 1):
+        for number, start in enumerate(range(0, len(paragraph), 180), 1):
+            quote = paragraph[start:start + 220].strip()
+            if len(quote) < 8:
+                continue
+            catalog["P%02dQ%03d" % (index, number)] = {
+                "index": index, "text_ko": quote,
+            }
+    need(bool(catalog) and len(catalog) <= 150,
+         "korea_machine_quote_catalog_unavailable")
+    return catalog
+
+
 def draft(source, *, client):
     original = source_paragraphs(source)
     numbered = [{
