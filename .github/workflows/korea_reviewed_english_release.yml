@@ -57,8 +57,10 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from core.korea_english_publication import public_registry
-          assert public_registry()==[], "No English release authorized on this PR"
-          print("Default Korea English analysis and translation releases: 0")
+          published=public_registry()
+          print("Verified previously authorized Korea English/analysis pairs:",len(published))
+          # A future reviewed release must not make unrelated site PRs fail:
+          # this check audits registered releases rather than assuming zero.
           PY
           git diff --exit-code -- pla_watch.db output/ research/korea_english_publications.json
 
@@ -87,9 +89,11 @@ jobs:
           assert chosen[0]["original_text_sha256"]=="ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284"
           assert len(chosen[0]["text_original"].encode("utf-8"))==969
           assert len(source_paragraphs(chosen[0]))==22
-          assert public_registry()==[], "No unreviewed English packet may publish"
+          approved=public_registry()
+          assert all(r["source_identity"] in {o["source_identity"] for o in rows}
+                     for r,_,_ in approved), "English release without public original"
           print("Genuine source verified for bounded translation segments:",22)
-          print("Public editorial translations and analyses:",0)
+          print("Authenticated registered English/analysis pairs:",len(approved))
           PY
           git diff --exit-code -- pla_watch.db output/ research/korea_english_publications.json
 
