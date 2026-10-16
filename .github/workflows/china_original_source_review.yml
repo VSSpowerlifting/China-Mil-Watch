@@ -51,7 +51,7 @@ jobs:
       - name: Verify frozen historical research and live survivor custody
         run: |
           python -m unittest -v tests.test_china_research_postcull
-          python scripts/verify_china_research_postcull.py
+          python -m scripts.verify_china_research_postcull
       - name: Confirm archive untouched
         if: ${{ !cancelled() }}
         shell: bash
