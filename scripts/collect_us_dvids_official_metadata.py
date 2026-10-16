@@ -30,7 +30,10 @@ ISSUER = "dvids_defense_visual_information_distribution_service"
 SCHEMA = "ipr.dvids.usindopacom.news.metadata_shadow.v1"
 URL_RE = re.compile(r"https://www\.dvidshub\.net/news/([0-9]{1,12})(?:/[a-z0-9-]+)?\Z")
 ID_RE = re.compile(r"news:([0-9]{1,12})\Z")
-KEY_RE = re.compile(r"key-[A-Za-z0-9_-]{8,128}\Z")
+# DVIDS documents the `key-` public-key prefix, but not a suffix alphabet or
+# fixed suffix length. Avoid rejecting correctly issued keys on invented rules.
+KEY_PREFIX = "key-"
+MAX_KEY_BYTES = 512
 
 class DVIDSHold(ValueError):
     pass
@@ -127,13 +130,17 @@ def normalize_issued_key(value):
 
     The DVIDS public Search API key begins with 'key-'; never substitute the
     private OAuth client secret or silently bypass the publisher's key format.
-    No credential contents, length, prefix sample or URL are logged.
+    No credential contents, length, suffix characters or URL are logged.
     """
     need(type(value) is str and bool(value.strip()),
          "dvids_issued_api_key_missing")
-    key = value.strip(" \t\r\n")
-    need(KEY_RE.fullmatch(key) is not None,
-         "dvids_public_search_key_format_invalid_expected_key_dash")
+    key = value.strip()
+    need(key.startswith(KEY_PREFIX),
+         "dvids_public_search_key_prefix_missing")
+    suffix = key[len(KEY_PREFIX):]
+    need(bool(suffix) and len(key.encode("utf-8")) <= MAX_KEY_BYTES
+         and all("!" <= char <= "~" for char in suffix),
+         "dvids_public_search_key_suffix_invalid")
     return key
 
 
