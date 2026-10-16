@@ -18,7 +18,7 @@ from core.korea_text_only_exception_replay import (
     ExceptionHold, KoreaTextOnlyExceptionReplay,
 )
 from core.standing_source_rights import (
-    StandingLicenseHold, stage_verified_original_text,
+    POLICIES, StandingLicenseHold, stage_verified_original_text,
 )
 from scripts.stage_korea_production_candidates import IntakeHold
 
@@ -31,7 +31,16 @@ def rehearse(checkout, identity, target):
     source = adapter.source
     raw = adapter.read_original_text_private()
     rights = CurrentKoreaPolicyReplay()
+    # Authenticate current publisher terms FIRST. The publication-attempt
+    # clock must follow (not precede) the actual HTTPS policy observation.
+    # Reuse this exact authenticated result within this one local invocation.
+    observed_policy = rights(POLICIES["kr_policy_mnd_releases"])
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    def authenticated_policy_replay(policy):
+        if policy != POLICIES["kr_policy_mnd_releases"]:
+            raise PolicyHold("policy_family_not_korea")
+        return observed_policy
     attribution = (
         "Republic of Korea Ministry of National Defense, published through "
         "Korea Policy Briefing (Republic of Korea). KOGL Type 1 text only; "
@@ -44,7 +53,7 @@ def rehearse(checkout, identity, target):
         now_utc=stamp,
         target_dir=target,
         source_replay=adapter.source_replay,
-        policy_replay=rights,
+        policy_replay=authenticated_policy_replay,
         exception_replay=screen,
         item_license_replay=adapter.item_license_replay,
     )
