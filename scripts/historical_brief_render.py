@@ -16,7 +16,7 @@ from jinja2 import Environment, FileSystemLoader
 from config import SITE_ORIGIN
 from core.article_media import historical_article_media
 from core.brief_collection import (CollectionError, brief_after_issue,
-                                   load_collection)
+                                   continuity_items, load_collection)
 from core.brief_collection import display_title as series_display_title
 from core.desk_registry import load_registry
 from core.edition_identity import COLLECTION_NAME, resolve_identity
@@ -79,6 +79,36 @@ def _issue_link(post) -> dict:
             "title": series_display_title(post.get("title"))}
 
 
+def _historical_collection(sidecars, briefs_dir=BRIEFS_DIR):
+    """Read the shared published collection; historical titles remain intact."""
+    editions = [{
+        "slug": s["date"], "date": s["date"],
+        "issue": s.get("issue_number"),
+        "title": s.get("title") or "",
+        "label": s.get("edition_label") or "",
+        "url": f"{SITE_ORIGIN}/the-pla-watch/posts/{s['date']}.html",
+        "rendered_locally": True,
+    } for s in sidecars]
+    return load_collection(editions, load_registry(), briefs_dir=briefs_dir)
+
+
+def continuity_for_historical(sidecars, briefs_dir=BRIEFS_DIR):
+    """Per-page links back to the one approved, cross-era Brief collection."""
+    if not sidecars:
+        return {}
+    try:
+        collection = _historical_collection(sidecars, briefs_dir)
+    except CollectionError as exc:
+        print(f"WARN: no Brief continuity strip: {exc}")
+        return {}
+    return {
+        s["date"]: continuity_items(
+            collection, f"the-pla-watch/posts/{s['date']}.html",
+            current_slug=s["date"])
+        for s in sidecars
+    }
+
+
 def next_brief_after(sidecars, briefs_dir=BRIEFS_DIR):
     """
     The newest earlier issue's "Next" link: the published brief that follows
@@ -92,13 +122,8 @@ def next_brief_after(sidecars, briefs_dir=BRIEFS_DIR):
     """
     if not sidecars:
         return None
-    editions = [{"slug": s["date"], "date": s["date"],
-                 "issue": s.get("issue_number"), "title": s.get("title") or "",
-                 "url": f"{SITE_ORIGIN}/the-pla-watch/posts/{s['date']}.html",
-                 "rendered_locally": True} for s in sidecars]
     try:
-        collection = load_collection(editions, load_registry(),
-                                     briefs_dir=briefs_dir)
+        collection = _historical_collection(sidecars, briefs_dir)
     except CollectionError as exc:
         print(f"WARN: no Next Brief link from the newest issue: {exc}")
         return None
@@ -107,7 +132,7 @@ def next_brief_after(sidecars, briefs_dir=BRIEFS_DIR):
     return {"slug": newest, "link": link} if link else None
 
 
-def render_historical_brief(context: dict, *, next_brief=None) -> str:
+def render_historical_brief(context: dict, *, next_brief=None, continuity=None) -> str:
     """
     Accept the existing resolved post context; only presentation changes.
     `next_brief` is a `next_brief_after` link, shown only when the context
@@ -138,6 +163,7 @@ def render_historical_brief(context: dict, *, next_brief=None) -> str:
             root="../../"),
         adjacent={"previous": _issue_link(edition.get("prev_post")),
                   "next": _issue_link(edition.get("next_post")) or next_brief},
+        continuity=continuity or [],
         historical_author_links=_historical_author_links(edition.get("author_links")),
         sections=[(key, anchor, heading) for key, anchor, heading in SECTIONS
                   if edition.get(key)],

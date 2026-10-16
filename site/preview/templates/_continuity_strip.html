@@ -1,0 +1,26 @@
+{#- A chronological navigation aid for approved Briefs, not an event timeline
+    or an estimate of collection volume. Each item comes from the one
+    published collection in core.brief_collection.continuity_items. -#}
+{% macro continuity_strip(items) -%}
+{% if items|length > 1 %}
+<nav class="brief-continuity" aria-label="All published Briefs">
+  <div class="brief-continuity-head">
+    <h2>Across the Briefs</h2>
+    <p>Published editions, oldest to newest. Follow the series over time.</p>
+  </div>
+  <ol class="brief-continuity-list">
+    {% for item in items %}
+    <li data-edition-kind="{{ item.kind }}"{% if item.current %} class="brief-continuity-current"{% endif %}>
+      <a href="{{ item.href }}"{% if item.current %} aria-current="page"{% endif %}
+         aria-label="{% if item.number is not none %}Brief No. {{ item.number }}{% else %}Brief{% endif %}: {{ item.title }}{% if item.date %}, week ending {{ item.date }}{% endif %}{% if item.current %}, current page{% endif %}"
+         title="{% if item.number is not none %}No. {{ item.number }} — {% endif %}{{ item.title }}">
+        <span class="brief-continuity-tick" aria-hidden="true"></span>
+        <span class="brief-continuity-number">{% if item.number is not none %}{{ item.number }}{% else %}·{% endif %}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="brief-continuity-key">Tick height marks the edition's published editorial label, where recorded; it does not measure source activity or regional events. <a href="{{ items[0].href }}">Start with the earliest Brief</a>.</p>
+</nav>
+{% endif %}
+{%- endmacro %}

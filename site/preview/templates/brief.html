@@ -2,6 +2,7 @@
 {% from "_brief_navigation.html" import reading_navigation %}
 {% from "_atlas.html" import breadcrumb %}
 {% from "_article_nav.html" import issue_nav %}
+{% from "_continuity_strip.html" import continuity_strip %}
 {% from "_article_media.html" import article_figure, cover_figure %}
 {% from "_brief_reading.html" import reading_article %}
 {#- One Indo-Pacific Record Brief, at briefs/<slug>.html.
@@ -22,6 +23,7 @@
 {% block og_type %}article{% endblock %}
 {% block head_scripts %}
 <link rel="stylesheet" href="../briefs.css">
+{% if brief.continuity|length > 1 %}<link rel="stylesheet" href="../continuity.css">{% endif %}
 {% if briefs_feed_route %}<link rel="alternate" type="application/atom+xml" title="{{ collection_name }}" href="../{{ briefs_feed_route }}">{% endif %}
 {% endblock %}
 {% block main_class %} class="leads-with-hero brief-page"{% endblock %}
@@ -293,6 +295,7 @@
       <p class="meta">{% if brief.is_review %}Review candidate. Approval pending.{% else %}Approved {{ brief.approval.approved_on|reader_date }}.{% endif %} Part of {{ brief.series_name }}.</p>
     </section>
 
+{{ continuity_strip(brief.continuity) }}
 {% if brief.adjacent is defined %}{{ issue_nav(brief.adjacent.previous, brief.adjacent.next, 'Adjacent Briefs') }}{% endif %}
     <p class="meta brief-back"><a href="../analysis.html">← All analysis</a></p>
   </article>
