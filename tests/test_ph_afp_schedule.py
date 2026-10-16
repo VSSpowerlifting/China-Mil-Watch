@@ -220,7 +220,7 @@ class TestScheduledWorkflow(unittest.TestCase):
             for publish in (False, True):
                 self.assertFalse(self.publish_allowed(event, publish, outcome='failure'))
                 self.assertFalse(self.publish_allowed(event, publish, success=False))
-        self.assertIn('        if: always()', self.section('Preserve run evidence'))
+        self.assertIn('        if: always()', self.section('Preserve metadata-only attempt evidence'))
         self.assertIn("steps.collect.outcome == 'failure'", self.section(
             'Report incomplete collection after preserving evidence'))
         self.env.update(GITHUB_EVENT_NAME='schedule', AFP_EXIT='0')
