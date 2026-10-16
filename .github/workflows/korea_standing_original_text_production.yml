@@ -1,0 +1,280 @@
+name: Korea — Standing-Licensed Original Text to Live Pages
+
+# Owner-approved 2026-10-15: FUTURE official Korea MND text with verified
+# exact source HWPX/HTML capture and article-local KOGL Type 1 TEXT notice.
+# No Korean HWPX binary, photo, translation, AI, or retrospective 14-item cull.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/korea_standing_original_text_production.yml
+  workflow_run:
+    workflows:
+      - Indonesia and South Korea Shadow Collection
+    types: [completed]
+  schedule:
+    - cron: '17 21 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/admit_korea_standing_original_texts.py
+      - tests/test_korea_standing_original_texts.py
+      - .github/workflows/korea_standing_original_text_production.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: korea-verified-official-link-production
+  cancel-in-progress: false
+
+jobs:
+  future-text-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Validate historical no-backfill, holds, append-only exact source and clean retries
+        run: python -m unittest -v tests.test_korea_standing_original_texts
+      - name: Confirm neither DB nor public source bodies were modified
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ research/korea_published_original_texts.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  real-frozen-source-frontier:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Clone actual preserved Korean source Git evidence read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --branch shadow/korea-policy-briefing \
+            "https://github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/korea-future-baseline"
+      - name: Prove exact archived initial 14 are excluded without reproducing text
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from core.korea_published_originals import read_release_index
+          from scripts.stage_korea_production_candidates import build
+          from scripts.admit_korea_standing_original_texts import baseline
+          proof=build(os.path.join(os.environ["RUNNER_TEMP"],"korea-future-baseline"))
+          historical=baseline()
+          published={x["source_identity"] for x in read_release_index()}
+          source_ids={x["source_identity"] for x in proof["records"]}
+          assert len(historical)==14 and historical<=source_ids
+          assert len(source_ids)==proof["source_original_count"]
+          assert published<=source_ids
+          future=source_ids-historical-published
+          print("Archived excluded:",len(historical))
+          print("Previously published, retained:",len(published))
+          print("Future-only candidates as of source snapshot:",len(future))
+          print("Real source branch version:",proof["source_git_commit"])
+          PY
+          git diff --exit-code -- pla_watch.db output/ research/korea_published_original_texts.json
+
+  publish-future-original-korean-text:
+    if: >-
+      github.event_name != 'pull_request' &&
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout latest production main, never trigger-time stale tree
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin clean production state and SQLite checksum
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = "VSSpowerlifting/IndoPacificRecord"
+          test "$GITHUB_REF" = refs/heads/main
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-text-auto-main-before"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-text-auto-db-sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Install renderer and official-source dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Clone existing authenticated Korea source branch in runner only
+        env:
+          SRC_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --branch shadow/korea-policy-briefing \
+            "$SRC_REMOTE" "$RUNNER_TEMP/korea-future-text-source"
+          git -C "$RUNNER_TEMP/korea-future-text-source" rev-parse HEAD > \
+            "$RUNNER_TEMP/korea-future-text-source-head"
+      - name: Admit at most four NEW eligible MND originals under standing text scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.admit_korea_standing_original_texts \
+            --source-checkout "$RUNNER_TEMP/korea-future-text-source" \
+            --standing-owner-approval-original-text-only
+      - name: Render full site locally, validate but publish Korea paths only
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          from pathlib import Path
+          from core.korea_published_originals import read_release_index
+          from core.korea_public_bibliography import load_public_korea_links
+          from core.korea_additional_public_links import load_additional_korea_official_links
+          from core.korea_official_live_links import load_live_korea_official_links
+          rows=read_release_index()
+          desk=Path("output/korea.html").read_text(encoding="utf-8")
+          wanted={row["route"] for row in rows}
+          root=Path("output/korea-originals")
+          observed={p.relative_to("output").as_posix() for p in root.glob("*.html")}
+          assert observed==wanted
+          assert desk.count('data-korea-original-text=')==len(rows)
+          fixed=load_public_korea_links()+load_additional_korea_official_links()
+          auto=load_live_korea_official_links("pla_watch.db",exclude={
+              x["source_identity"] for x in fixed})
+          assert desk.count('data-korea-public-link=')==5
+          assert desk.count('data-korea-additional-link=')==9
+          assert desk.count('data-korea-auto-official-link=')==len(auto)
+          for row in rows:
+              page=Path("output",row["route"]).read_text(encoding="utf-8")
+              assert row["route"] in desk and row["official_url"] in desk
+              assert row["original_text_sha256"] in page
+              assert "<script" not in page and ".hwpx" not in page
+          print("Eligible published Korea texts:",len(rows))
+          PY
+          sha256sum -c "$RUNNER_TEMP/korea-text-auto-db-sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+      - name: Refuse stale source capture or concurrent main write
+        env:
+          SRC_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_now="$(git ls-remote "$SRC_REMOTE" refs/heads/shadow/korea-policy-briefing | cut -f1)"
+          test "$source_now" = "$(cat "$RUNNER_TEMP/korea-future-text-source-head")"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-text-auto-main-before")"
+      - name: Commit ONLY Korean original-text register, text and HTML on main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- research/korea_published_original_texts.json \
+            research/korea_published_original_texts output/korea.html output/korea-originals
+          python - <<'PY'
+          import subprocess
+          from core.korea_published_originals import read_release_index
+          allowed={"research/korea_published_original_texts.json","output/korea.html"}
+          for row in read_release_index():
+              allowed.add("research/korea_published_original_texts/"+row["news_id"]+".txt")
+              allowed.add("output/"+row["route"])
+          staged=set(subprocess.check_output(["git","diff","--cached","--name-only"],
+                                             text=True).splitlines())
+          assert staged<=allowed, "Attempted non-Korea publication"
+          print("Scoped main publication paths:",len(staged))
+          PY
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-text-auto-main-before")"
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: auto-publish source-pinned KOGL Type 1 Korean originals only"
+            git push origin HEAD:main
+          fi
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-text-auto-main-after"
+      - name: Checkout live Pages branch without bulk site upload
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: korea-standing-existing-pages
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Publish only exact Korea Desk and registered original text pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-text-auto-main-after")"
+          test -z "$(git -C korea-standing-existing-pages status --porcelain --untracked-files=all)"
+          mkdir -p korea-standing-existing-pages/korea-originals
+          cp output/korea.html korea-standing-existing-pages/korea.html
+          cp output/korea-originals/*.html korea-standing-existing-pages/korea-originals/
+          python - <<'PY'
+          from pathlib import Path
+          from core.korea_published_originals import read_release_index
+          routes={"korea.html"}|{row["route"] for row in read_release_index()}
+          found={"korea.html"}|{p.relative_to("korea-standing-existing-pages").as_posix()
+                for p in Path("korea-standing-existing-pages/korea-originals").glob("*.html")}
+          assert routes==found, "Pages missing or orphan Korean original text"
+          for route in routes:
+              assert (Path("output")/route).read_bytes()==(
+                  Path("korea-standing-existing-pages")/route).read_bytes()
+          print("Exact Korea Pages file parity:",len(routes))
+          PY
+          cd korea-standing-existing-pages
+          old="$(git rev-parse HEAD)"
+          git add -A -- korea.html korea-originals
+          PYTHONPATH="$GITHUB_WORKSPACE" python - <<'PY'
+          import subprocess
+          from core.korea_published_originals import read_release_index
+          allowed={"korea.html"}|{row["route"] for row in read_release_index()}
+          changed=set(subprocess.check_output(["git","diff","--cached","--name-only"],
+                                               text=True).splitlines())
+          assert changed<=allowed, "Unexpected foreign Pages file staged"
+          PY
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: auto-release verified Type 1 original text, Korea Pages only"
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$old"
+          if [ "$(git rev-parse HEAD)" != "$old" ]; then
+            git push origin HEAD:gh-pages
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$(git rev-parse HEAD)"
+      - name: Verify exact public HTTPS byte readback of every Korean source page
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.verify_korea_original_deployed_readback \
+            --main-checkout . --pages-checkout korea-standing-existing-pages \
+            --require-https-readback --attempts 8

@@ -1,4 +1,1 @@
-{
-  "schema": "ipr-korea-public-original-text-index/1",
-  "records": []
-}
+{"records":[{"official_url":"https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297","original_text_sha256":"ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284","policy_sha256":"46bdf28da6006355fe59c8428542447aaa83e76a25780a66c96799c356671dd4","publisher_posted_date":"2026-10-06","release_decision_sha256":"01a0ef53b583d23686e7016f50ae3783d6d1bc1f8bc6edb3762f6872271e028e","released_at_utc":"2026-10-16T01:43:03Z","source_git_commit":"0595f0fd29b769cbab5dd57c2ef57af174237a67","source_html_sha256":"ef95a714bc72f9a51cd6030c689fcb5bfc53f607b826db743cb0be916dc0c498","source_identity":"korea-policy:156784297"}],"schema":"ipr-korea-public-original-text-index/1"}

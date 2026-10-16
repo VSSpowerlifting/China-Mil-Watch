@@ -1,0 +1,260 @@
+name: Korea — Owner-reviewed English translation and analysis release
+
+# Separate approval from standing *Korean-original-text* license permission.
+# Model output NEVER triggers public analyst writing automatically.
+on:
+  pull_request:
+    paths:
+      - core/korea_english_publication.py
+      - scripts/draft_korea_english_analysis.py
+      - scripts/admit_korea_reviewed_english.py
+      - research/korea_english_publications.json
+      - tests/test_korea_english_publication.py
+      - tests/test_korea_english_editorial_release.py
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+      - .github/workflows/korea_reviewed_english_release.yml
+  workflow_dispatch:
+    inputs:
+      source_identity:
+        description: 'Existing public Korean original (korea-policy:NNNNNNNNN)'
+        required: true
+        type: string
+      reviewed_packet_sha256:
+        description: 'Exact canonical SHA256 of human-reviewed editorial JSON'
+        required: true
+        type: string
+      approve_editorial_translation_and_analysis:
+        description: 'I reviewed Korean-to-English accuracy, factual analysis and every source citation; publish both'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: korea-verified-official-link-production
+  cancel-in-progress: false
+
+jobs:
+  english-contract-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Test all English source, claim, reviewed-draft and HTML contracts
+        run: python -m unittest -v tests.test_korea_english_publication tests.test_korea_english_editorial_release
+      - name: Verify no English translation or analysis source files are public by default
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from core.korea_english_publication import public_registry
+          published=public_registry()
+          print("Verified previously authorized Korea English/analysis pairs:",len(published))
+          # A future reviewed release must not make unrelated site PRs fail:
+          # this check audits registered releases rather than assuming zero.
+          PY
+          git diff --exit-code -- pla_watch.db output/ research/korea_english_publications.json
+
+  genuine-published-original-english-preflight:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check first real Korean original for complete model and editorial input
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from core.korea_published_originals import read_release_index
+          from core.korea_english_publication import public_registry
+          from scripts.draft_korea_english_analysis import source_paragraphs
+          rows=read_release_index()
+          chosen=[r for r in rows if r["source_identity"]=="korea-policy:156784297"]
+          assert len(chosen)==1
+          assert chosen[0]["original_text_sha256"]=="ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284"
+          assert len(chosen[0]["text_original"].encode("utf-8"))==969
+          assert len(source_paragraphs(chosen[0]))==22
+          approved=public_registry()
+          assert all(r["source_identity"] in {o["source_identity"] for o in rows}
+                     for r,_,_ in approved), "English release without public original"
+          print("Genuine source verified for bounded translation segments:",22)
+          print("Authenticated registered English/analysis pairs:",len(approved))
+          PY
+          git diff --exit-code -- pla_watch.db output/ research/korea_english_publications.json
+
+  owner-reviewed-korea-english-release:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.actor == 'VSSpowerlifting' &&
+      inputs.approve_editorial_translation_and_analysis == true
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      KO_ID: ${{ inputs.source_identity }}
+      KO_APPROVED_SHA: ${{ inputs.reviewed_packet_sha256 }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Pin clean source/DB and authenticated owner review request
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_ACTOR" = VSSpowerlifting
+          test "$GITHUB_REPOSITORY" = VSSpowerlifting/IndoPacificRecord
+          test "$GITHUB_REF" = refs/heads/main
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-english-base-main"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-english-db-before"
+          test -z "$(git status --porcelain --untracked-files=all)"
+      - run: python -m pip install -r requirements.txt
+      - name: Authenticate review selection against exact published Korean body and JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.admit_korea_reviewed_english \
+            --source-identity "$KO_ID" --review-sha256 "$KO_APPROVED_SHA" \
+            --owner-approves-reviewed-english-and-analysis
+      - name: Render all pages locally but stage only approved Korea English routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from core.korea_english_publication import public_registry,render_translation,render_analysis
+          rows=public_registry()
+          selected=[(r,e,s) for r,e,s in rows if r["source_identity"]==os.environ["KO_ID"]]
+          assert len(selected)==1 and selected[0][0]["review_sha256"]==os.environ["KO_APPROVED_SHA"]
+          desk=Path("output/korea.html").read_text(encoding="utf-8")
+          assert desk.count('data-korea-english-reviewed=')==len(rows)
+          for release,editorial,source in rows:
+              nid=source["source_identity"].split(":")[1]
+              for folder,payload in (
+                  ("korea-translations",render_translation(release,editorial,source)),
+                  ("korea-analysis",render_analysis(release,editorial,source))):
+                  route=folder+"/"+nid+".html"
+                  assert route in desk
+                  assert (Path("output")/route).read_text(encoding="utf-8")==payload
+                  assert source["official_url"] in payload
+                  assert source["original_text_sha256"] in payload
+          print("Reviewer-approved English source pairs ready:",len(rows))
+          PY
+          sha256sum -c "$RUNNER_TEMP/korea-english-db-before"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Refuse main mutation during reviewer-approved release
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-english-base-main")"
+      - name: Commit only approved registry and Korea HTML pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- research/korea_english_publications.json \
+            output/korea.html output/korea-translations output/korea-analysis
+          python - <<'PY'
+          import subprocess
+          from core.korea_english_publication import public_registry
+          allowed={"research/korea_english_publications.json","output/korea.html"}
+          for r,e,s in public_registry():
+              n=s["source_identity"].split(":")[1]
+              allowed |= {"output/korea-translations/"+n+".html",
+                          "output/korea-analysis/"+n+".html"}
+          staged=set(subprocess.check_output(["git","diff","--cached","--name-only"],
+                                              text=True).splitlines())
+          assert staged<=allowed,"Unexpected non-Korea changed files"
+          PY
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-english-base-main")"
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: owner-reviewed translation and source-cited analysis"
+            git push origin HEAD:main
+          fi
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-english-main-after"
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: korea-english-existing-pages
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Publish exactly Korea translations, analysis and updated Desk
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-english-main-after")"
+          test -z "$(git -C korea-english-existing-pages status --porcelain --untracked-files=all)"
+          mkdir -p korea-english-existing-pages/korea-translations korea-english-existing-pages/korea-analysis
+          cp output/korea.html korea-english-existing-pages/korea.html
+          cp output/korea-translations/*.html korea-english-existing-pages/korea-translations/
+          cp output/korea-analysis/*.html korea-english-existing-pages/korea-analysis/
+          python - <<'PY'
+          from pathlib import Path
+          from core.korea_english_publication import public_registry
+          rows=public_registry()
+          assert rows
+          for folder in ("korea-translations","korea-analysis"):
+              expected={r["source_identity"].split(":")[1]+".html" for r,_,_ in rows}
+              dest=Path("korea-english-existing-pages")/folder
+              assert {p.name for p in dest.glob("*.html")}==expected
+              for name in expected:
+                  assert (Path("output")/folder/name).read_bytes()==(dest/name).read_bytes()
+          assert Path("output/korea.html").read_bytes()==Path(
+              "korea-english-existing-pages/korea.html").read_bytes()
+          PY
+          cd korea-english-existing-pages
+          base_pages="$(git rev-parse HEAD)"
+          git add -A -- korea.html korea-translations korea-analysis
+          PYTHONPATH="$GITHUB_WORKSPACE" python - <<'PY'
+          import subprocess
+          from core.korea_english_publication import public_registry
+          allowed={"korea.html"}
+          for row,_,src in public_registry():
+              n=src["source_identity"].split(":")[1]
+              allowed|={"korea-translations/"+n+".html","korea-analysis/"+n+".html"}
+          staged=set(subprocess.check_output(["git","diff","--cached","--name-only"],
+                                             text=True).splitlines())
+          assert staged<=allowed
+          PY
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: publish reviewer-approved English translation and analysis only"
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$base_pages"
+          if [ "$(git rev-parse HEAD)" != "$base_pages" ]; then
+            git push origin HEAD:gh-pages
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$(git rev-parse HEAD)"
+          echo "Reviewed Korea English and Desk Pages exact branch parity verified."
