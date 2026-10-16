@@ -88,12 +88,29 @@ class DVIDSNeutralMetadata(unittest.TestCase):
                     d.sanitize(invalid,observed_on_utc=DAY)
 
     def test_credentials_are_mandatory_without_network_fallback(self):
-        with patch.object(d.urllib.request,"urlopen") as remote:
-            for key in (None,"", "public-demo", "key-short"):
-                with self.subTest(key=key):
-                    with self.assertRaisesRegex(d.DVIDSHold,"issued_api_key"):
+        with patch.object(d.urllib.request, "build_opener") as remote:
+            for key in (None, "", "  ", "public-demo", "key-short"):
+                with self.subTest(key_description="empty or nonpublic key"):
+                    with self.assertRaises(d.DVIDSHold):
                         d.fetch_with_issued_key(key)
             remote.assert_not_called()
+
+    def test_dvids_search_public_key_requires_documented_prefix(self):
+        # The publicly documented DVIDS Search API key starts with 'key-'.
+        # A private key, client secret or a key without that prefix is not
+        # silently converted into a public API access key.
+        with self.assertRaisesRegex(d.DVIDSHold,"expected_key_dash"):
+            d.normalize_issued_key("ABC123-private-or-wrong-key")
+        with self.assertRaisesRegex(d.DVIDSHold,"issued_api_key_missing"):
+            d.normalize_issued_key(" \n  ")
+
+    def test_key_copy_whitespace_is_safe_to_trim_without_changing_key(self):
+        key = "key-" + "A1b2C3d4E5f6"
+        self.assertEqual(d.normalize_issued_key(key), key)
+        self.assertEqual(d.normalize_issued_key(" \n" + key + "\r\t"), key)
+        with self.assertRaisesRegex(d.DVIDSHold,"expected_key_dash"):
+            d.normalize_issued_key(key[:6] + " " + key[6:])
+
 
     def test_private_scratch_only_never_overwrites(self):
         with tempfile.TemporaryDirectory() as temp:
