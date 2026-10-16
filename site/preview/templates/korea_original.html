@@ -3,7 +3,8 @@
    default noindex. Never reinterpret or edit original Korean source text. #}
 {% extends "base.html" %}
 {% block title %}Korean MND official release {{ original.news_id }} — Indo-Pacific Record{% endblock %}
-{% block description %}Licensed Korean-language official source text, attributed to the Republic of Korea government.{% endblock %}
+{# Non-brief pages inherit the publication-wide description contract.
+   Source-specific attribution and limitations remain in the visible article. #}
 {% block content %}
 <article class="korea-official-original" aria-label="Verbatim Korean-language original">
   <p><a href="../korea.html">← South Korea Desk</a></p>
