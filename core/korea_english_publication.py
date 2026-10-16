@@ -231,7 +231,7 @@ def _render_approved_editorial_template(name, review, source, *, site_origin):
         for item in review["translations"]
     ]
     page = env.get_template(name).render(
-        review=review, source=source, translations=aligned, number=number,
+        review=review, korea_source=source, translations=aligned, number=number,
         page=route, nested=True,
         title="Indo-Pacific Record", tagline=TAGLINE,
         mode="indo-pacific-record",
