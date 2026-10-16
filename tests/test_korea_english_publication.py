@@ -333,7 +333,29 @@ class ReviewTests(unittest.TestCase):
                 draft.draft(make_source(), client=object())
         self.assertEqual(len(calls), 3, "never retry a failed exact-source second pass")
 
-    def test_different_analysis_validation_failure_never_retried(self):
+    def test_unsupported_claim_type_gets_one_unreviewed_source_only_retry(self):
+        shape = make_review()
+        invalid = json.loads(json.dumps(shape["analysis"], ensure_ascii=False))
+        invalid["claims"][0]["assessment_type"] = "independently_verified"
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append((system, prompt))
+            if len(calls) == 1:
+                return {"translations": shape["translations"]}
+            return invalid if len(calls) == 2 else shape["analysis"]
+        with patch.object(draft, "response_json", side_effect=fake):
+            candidate, receipt = draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 3)
+        self.assertNotIn("independently_verified", calls[2][1],
+                         "the invalid model response must not enter the retry")
+        self.assertIn("bounded_analytical_inference", calls[2][0])
+        self.assertIn("attributed_source_interpretation", calls[2][0])
+        self.assertEqual(candidate["analysis"], shape["analysis"])
+        self.assertEqual(candidate["review"]["status"], "machine_unreviewed")
+        self.assertFalse(candidate["review"]["analysis_fact_checked"])
+        self.assertTrue(receipt["machine_only"])
+
+    def test_second_unsupported_claim_type_still_holds_without_third_draft(self):
         shape = make_review()
         invalid = json.loads(json.dumps(shape["analysis"], ensure_ascii=False))
         invalid["claims"][0]["assessment_type"] = "independently_verified"
@@ -343,11 +365,24 @@ class ReviewTests(unittest.TestCase):
             return ({"translations": shape["translations"]}
                     if len(calls) == 1 else invalid)
         with patch.object(draft, "response_json", side_effect=fake):
-            with self.assertRaisesRegex(KoreaEnglishHold,
-                                        "unsupported_analysis_type"):
+            with self.assertRaisesRegex(
+                    KoreaEnglishHold, "^korea_english_unsupported_analysis_type$"):
                 draft.draft(make_source(), client=object())
-        self.assertEqual(len(calls), 2,
-                         "non-quotation security failures never get model retries")
+        self.assertEqual(len(calls), 3, "strict enum persists after one retry")
+
+    def test_unrelated_analysis_validation_failure_never_retried(self):
+        shape = make_review()
+        invalid = json.loads(json.dumps(shape["analysis"], ensure_ascii=False))
+        invalid["thesis_en"] = ""
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append(True)
+            return ({"translations": shape["translations"]}
+                    if len(calls) == 1 else invalid)
+        with patch.object(draft, "response_json", side_effect=fake):
+            with self.assertRaisesRegex(KoreaEnglishHold, "korea_english_thesis_invalid"):
+                draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 2, "unrelated failures never retry")
 
     def test_model_draft_bogus_alignment_does_not_reach_analyst_call(self):
         r=make_review()
