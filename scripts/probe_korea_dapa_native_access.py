@@ -99,18 +99,86 @@ def provisional_doc_sequence(href):
 
 
 class Anchors(HTMLParser):
+    """Count safe structural shapes ONLY; never print href, JS, title or HTML."""
+
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.links = 0
         self.docseq = set()
+        self.structures = {
+            "anchors_missing_href": 0,
+            "anchors_with_javascript_href": 0,
+            "anchors_with_fragment_href": 0,
+            "anchors_with_onclick": 0,
+            "anchors_with_direct_detail_path": 0,
+            "direct_detail_path_without_qualified_docseq": 0,
+            "forms_get": 0,
+            "forms_post": 0,
+            "forms_other_or_missing_method": 0,
+            "hidden_inputs": 0,
+            "inputs_named_docseq": 0,
+            "anchors_with_numeric_docseq_attribute": 0,
+        }
 
     def handle_starttag(self, tag, attrs):
+        vals = dict(attrs)
+        if tag == "form":
+            method = (vals.get("method") or "").strip().lower()
+            key = {
+                "get": "forms_get",
+                "post": "forms_post",
+            }.get(method, "forms_other_or_missing_method")
+            self.structures[key] += 1
+        elif tag == "input":
+            if (vals.get("type") or "").strip().lower() == "hidden":
+                self.structures["hidden_inputs"] += 1
+            if (vals.get("name") or "").strip().lower() == "docseq":
+                self.structures["inputs_named_docseq"] += 1
         if tag != "a":
             return
         self.links += 1
-        seq = provisional_doc_sequence(dict(attrs).get("href"))
+        href = vals.get("href")
+        if href is None:
+            self.structures["anchors_missing_href"] += 1
+        elif isinstance(href, str):
+            stripped = href.strip()
+            if stripped.lower().startswith("javascript:"):
+                self.structures["anchors_with_javascript_href"] += 1
+            if stripped.startswith("#"):
+                self.structures["anchors_with_fragment_href"] += 1
+            if len(stripped) < 2000:
+                # Only aggregate allowed *path shapes*, not full URLs or query
+                # values from a publisher page; dynamic onclick IDs are not
+                # promoted to source records by this diagnostic.
+                try:
+                    parsed = urlsplit(urljoin(LISTING, stripped))
+                    detail = (parsed.scheme == "https"
+                              and parsed.netloc == "www.dapa.go.kr"
+                              and parsed.path == "/dapa/doc/selectDoc.do")
+                except ValueError:
+                    detail = False
+                if detail:
+                    self.structures["anchors_with_direct_detail_path"] += 1
+        if "onclick" in vals:
+            self.structures["anchors_with_onclick"] += 1
+        if any(
+            key.lower() in ("data-docseq", "data-doc-seq")
+            and isinstance(value, str)
+            and re.fullmatch(r"[1-9][0-9]{0,19}", value)
+            for key, value in attrs
+        ):
+            self.structures["anchors_with_numeric_docseq_attribute"] += 1
+        seq = provisional_doc_sequence(href)
         if seq is not None:
             self.docseq.add(seq)
+        elif href is not None and isinstance(href, str) and len(href) < 2000:
+            try:
+                parsed = urlsplit(urljoin(LISTING, href))
+                if (parsed.netloc == "www.dapa.go.kr"
+                        and parsed.path == "/dapa/doc/selectDoc.do"):
+                    self.structures["direct_detail_path_without_qualified_docseq"] += 1
+            except ValueError:
+                pass
 
 
 def inspect_listing(data):
@@ -135,6 +203,7 @@ def inspect_listing(data):
     ids = sorted(parser.docseq, key=lambda value: int(value))
     return {
         "observed_anchor_count": parser.links,
+        "structure_counts": parser.structures,
         "provisional_docseq_count": len(ids),
         "sample_unverified_docseq": ids[:MAX_SAMPLES],
         "zero_matching_links_is_not_zero_publications": len(ids) == 0,
