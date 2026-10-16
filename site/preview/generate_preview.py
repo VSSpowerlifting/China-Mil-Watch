@@ -2412,6 +2412,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     korea_additional_rows = []
     korea_auto_official_rows = []
     korea_published_original_rows = []
+    korea_english_publication_rows = []
     if korea_release_state is not None:
         if (korea_release_state.status != "shadow"
                 or korea_release_state.manifest_path is not None
@@ -2433,6 +2434,8 @@ def build(out_dir: Path, title: str, db_path: Path,
                 db_path, exclude=frozen_ids)
             from core.korea_published_originals import read_release_index
             korea_published_original_rows = read_release_index()
+            from core.korea_english_publication import public_registry
+            korea_english_publication_rows = public_registry()
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -3012,6 +3015,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
                              korea_published_originals=(korea_published_original_rows if desk.slug == "korea" else []),
+                             korea_english_publications=(korea_english_publication_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
@@ -3027,6 +3031,23 @@ def build(out_dir: Path, title: str, db_path: Path,
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(render_original_page(record), encoding="utf-8")
             written.append(record["route"])
+
+    # English pages are written only for explicitly registered, already
+    # source-pinned originals with an editor-approved review pack. An empty
+    # English index (the default) creates absolutely no new public pages.
+    if korea_english_publication_rows and not review_korea:
+        from core.korea_english_publication import render_translation, render_analysis
+        for release, editorial, source in korea_english_publication_rows:
+            number = source["source_identity"].split(":")[1]
+            for folder, markup in (
+                ("korea-translations", render_translation(release, editorial, source)),
+                ("korea-analysis", render_analysis(release, editorial, source)),
+            ):
+                route = folder + "/" + number + ".html"
+                target = out_dir / route
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(markup, encoding="utf-8")
+                written.append(route)
 
     if review_korea:
         # This is a PRIVATE, unpublished rendering of the SAME site desk

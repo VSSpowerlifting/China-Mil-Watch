@@ -98,8 +98,14 @@ class KoreaAdditionalPublicLinkReleaseTests(unittest.TestCase):
                 load_public_korea_links() + public.load_additional_korea_official_links())}
             auto = load_live_korea_official_links(ROOT / "pla_watch.db", exclude=fixed)
             self.assertEqual(page.count('data-korea-auto-official-link='), len(auto))
+            from core.korea_published_originals import read_release_index
+            # The 14 static official outbound links remain exactly fixed.
+            # Owner-released Korean original-text cards add independent
+            # citations, not another static reference or ingestion record.
+            originals = read_release_index()
             self.assertEqual(page.count(
-                "https://www.korea.kr/briefing/pressReleaseView.do?newsId="), 14 + len(auto))
+                "https://www.korea.kr/briefing/pressReleaseView.do?newsId="),
+                14 + len(auto) + len(originals))
             for row in auto:
                 self.assertIn(row["source_url"], page)
             self.assertIn("unresolved excavation-year discrepancy", page)
