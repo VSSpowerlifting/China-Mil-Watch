@@ -31,7 +31,7 @@ class USMetadataMigrationPreflight(unittest.TestCase):
                 preflight = ('python -m migrations.cli --apply --db '
                              '"$GITHUB_WORKSPACE/pla_watch.db"')
                 assert_index = yaml.index(preflight)
-                admit_index = yaml.index("python -m scripts.admit_")
+                admit_index = yaml.index("python -m scripts.admit_", assert_index)
                 verify_index = yaml.index("python scripts/verify_db_current.py")
                 self.assertLess(assert_index, verify_index)
                 self.assertLess(verify_index, admit_index)
@@ -57,11 +57,14 @@ class USMetadataMigrationPreflight(unittest.TestCase):
                 self.assertEqual(classify(con), "partially_applied")
             # Run precisely the repair command both U.S. workflows invoke,
             # against ONLY this temporary copy. The real DB is untouched.
-            subprocess.run(
+            repaired = subprocess.run(
                 [sys.executable, "-m", "migrations.cli",
                  "--apply", "--db", str(db)],
-                cwd=ROOT, check=True, text=True, capture_output=True,
+                cwd=ROOT, text=True, capture_output=True,
             )
+            self.assertEqual(repaired.returncode, 0,
+                "disposable SQLite repair failure: " +
+                (repaired.stdout + repaired.stderr)[-2500:])
             with sqlite3.connect(str(db)) as con:
                 self.assertEqual(classify(con), "fully_current")
                 self.assertEqual(
