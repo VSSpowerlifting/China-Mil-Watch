@@ -1,0 +1,40 @@
+name: Post-China-cull survivor fixture contracts
+
+# Focused proof that current-corpus tests do not republish retired sources.
+# This workflow performs no database, website, or editorial publication write.
+on:
+  pull_request:
+    paths:
+      - tests/test_china_legacy_capture_quality.py
+      - tests/test_freshness_dates.py
+      - tests/test_public_chrome_is_truthful.py
+      - tests/test_preview_prototype.py
+      - .github/workflows/china_postcull_survivor_contracts.yml
+
+permissions:
+  contents: read
+
+jobs:
+  postcull-survivor-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Verify retired-ID custody, surviving fixtures and zero-state honesty
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest -v             tests.test_china_legacy_capture_quality.HistoricalCaptureAuditTest.test_actual_pre_fix_quality_cases_are_retired_not_resurrected             tests.test_freshness_dates.TestTheRenderedPageShowsAllThree.test_the_labels_appear_on_a_nested_page_too             tests.test_freshness_dates.TestTheRenderedPageShowsAllThree.test_the_methodology_link_resolves_from_a_nested_page             tests.test_public_chrome_is_truthful.TestQuotedSourceTextIsNotPoliced.test_the_chrome_pattern_does_not_match_the_record_body             tests.test_preview_prototype.TestCompactQueryIndex.test_historical_gaps_and_4400_retired_ids_remain_absent             tests.test_preview_prototype.TestCompactQueryIndex.test_every_facet_option_has_backing_records_matching_sql             tests.test_preview_prototype.TestRecordPages.test_every_processing_state_has_a_rendered_page             tests.test_preview_prototype.TestRecordPages.test_exactly_one_h1_per_record_page             tests.test_preview_prototype.TestRecordSemantics.test_retained_stored_text_is_preserved_byte_for_byte             tests.test_preview_prototype.TestSnapshotScopedCitations.test_the_rendered_source_text_block_quotes_the_original_title             tests.test_preview_prototype.TestSnapshotScopedCitations.test_no_citation_contains_a_forbidden_element
+      - name: Assert no active DB, source, output or review change
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/             research/korea_english_publications.json             research/korea_english_reviewed/             research/korea_published_original_texts.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
