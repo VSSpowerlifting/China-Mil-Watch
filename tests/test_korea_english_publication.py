@@ -82,6 +82,53 @@ class ReviewTests(unittest.TestCase):
         self.assertIn("연합훈련",b)
         self.assertIn("Limits of the evidence",b)
 
+    def test_editor_approved_pages_have_ipr_shell_and_public_canonical(self):
+        review, source = make_review(), make_source()
+        for kind, renderer, route in (
+            ("translation", render_translation,
+             "korea-translations/156784297.html"),
+            ("analysis", render_analysis,
+             "korea-analysis/156784297.html"),
+        ):
+            with self.subTest(page=kind):
+                html = renderer({}, review, source)
+                url = "https://indopacificrecord.org/" + route
+                self.assertIn('class="masthead', html)
+                self.assertIn('<footer class="site">', html)
+                self.assertIn('href="#main"', html)
+                self.assertIn('id="main"', html)
+                self.assertIn('<meta name="description" content="Official defense and security texts, preserved as published and analyzed in context.">', html)
+                self.assertIn('<link rel="canonical" href="' + url + '">', html)
+                self.assertIn('<meta property="og:url" content="' + url + '">', html)
+                self.assertNotIn('content="noindex, nofollow"', html)
+                self.assertIn(source["original_text_sha256"], html)
+                self.assertNotIn("<iframe", html)
+                self.assertNotIn(".hwpx", html)
+
+    def test_private_english_pages_remain_noindex_and_source_escaped(self):
+        review, source = make_review(), make_source()
+        review["translations"][0]["text_en"] = '<script>bad()</script>'
+        for renderer in (render_translation, render_analysis):
+            with self.subTest(renderer=renderer.__name__):
+                html = renderer({}, review, source, site_origin=None)
+                self.assertIn('content="noindex, nofollow"', html)
+                self.assertNotIn('rel="canonical"', html)
+                self.assertNotIn('property="og:url"', html)
+                self.assertNotIn("<script>", html)
+                self.assertNotIn(".hwpx", html)
+        self.assertIn("&lt;script&gt;", render_translation({}, review, source,
+                                                          site_origin=None))
+
+    def test_reviewed_page_cannot_be_indexed_at_unapproved_origin(self):
+        with self.assertRaisesRegex(KoreaEnglishHold,
+                                    "korea_english_page_origin_unrecognized"):
+            render_translation({}, make_review(), make_source(),
+                               site_origin="https://example.invalid")
+        with self.assertRaisesRegex(KoreaEnglishHold,
+                                    "korea_english_page_origin_unrecognized"):
+            render_analysis({}, make_review(), make_source(),
+                            site_origin="https://example.invalid")
+
     def test_editor_review_required_for_public(self):
         r=make_review()
         r["review"]["status"]="machine_unreviewed"
