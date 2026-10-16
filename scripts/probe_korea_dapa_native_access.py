@@ -105,6 +105,18 @@ class Anchors(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.links = 0
         self.docseq = set()
+        self._row = None
+        self._cell = None
+        self._cell_chunks = []
+        self.row_counts = {
+            "table_rows": 0,
+            "table_data_cells": 0,
+            "table_rows_with_iso_date": 0,
+            "dated_rows_with_any_anchor": 0,
+            "dated_rows_with_js_or_click_activation": 0,
+            "dated_rows_with_qualified_static_docseq": 0,
+            "dated_rows_without_qualified_static_docseq": 0,
+        }
         self.structures = {
             "anchors_missing_href": 0,
             "anchors_with_javascript_href": 0,
@@ -122,6 +134,17 @@ class Anchors(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         vals = dict(attrs)
+        if tag == "tr":
+            # Count only table structure. A row number is NOT a docSeq.
+            self.row_counts["table_rows"] += 1
+            self._row = {
+                "date": False, "anchor": False, "activation": False,
+                "qualified": False,
+            }
+        elif tag == "td" and self._row is not None:
+            self.row_counts["table_data_cells"] += 1
+            self._cell = True
+            self._cell_chunks = []
         if tag == "form":
             method = (vals.get("method") or "").strip().lower()
             key = {
@@ -137,6 +160,14 @@ class Anchors(HTMLParser):
         if tag != "a":
             return
         self.links += 1
+        if self._row is not None:
+            self._row["anchor"] = True
+            if "onclick" in vals or (
+                isinstance(vals.get("href"), str) and
+                (vals["href"].lstrip().lower().startswith("javascript:")
+                 or vals["href"].lstrip().startswith("#"))
+            ):
+                self._row["activation"] = True
         href = vals.get("href")
         if href is None:
             self.structures["anchors_missing_href"] += 1
@@ -171,6 +202,8 @@ class Anchors(HTMLParser):
         seq = provisional_doc_sequence(href)
         if seq is not None:
             self.docseq.add(seq)
+            if self._row is not None:
+                self._row["qualified"] = True
         elif href is not None and isinstance(href, str) and len(href) < 2000:
             try:
                 parsed = urlsplit(urljoin(LISTING, href))
@@ -179,6 +212,38 @@ class Anchors(HTMLParser):
                     self.structures["direct_detail_path_without_qualified_docseq"] += 1
             except ValueError:
                 pass
+
+
+    def handle_data(self, data):
+        # Inspect at most 80 characters per TD for a date-shape signal;
+        # never persist or print any title/body text.
+        if self._row is not None and self._cell:
+            available = max(0, 80 - sum(map(len, self._cell_chunks)))
+            if available:
+                self._cell_chunks.append(data[:available])
+
+    def handle_endtag(self, tag):
+        if tag == "td" and self._row is not None and self._cell:
+            date_text = "".join(self._cell_chunks).strip()
+            if re.search(r"(?<![0-9])20[0-9]{2}[-.][01][0-9][-.][0-3][0-9](?![0-9])",
+                         date_text):
+                self._row["date"] = True
+            self._cell = None
+            self._cell_chunks = []
+        elif tag == "tr" and self._row is not None:
+            if self._row["date"]:
+                self.row_counts["table_rows_with_iso_date"] += 1
+                if self._row["anchor"]:
+                    self.row_counts["dated_rows_with_any_anchor"] += 1
+                if self._row["activation"]:
+                    self.row_counts["dated_rows_with_js_or_click_activation"] += 1
+                if self._row["qualified"]:
+                    self.row_counts["dated_rows_with_qualified_static_docseq"] += 1
+                else:
+                    self.row_counts["dated_rows_without_qualified_static_docseq"] += 1
+            self._row = None
+            self._cell = None
+            self._cell_chunks = []
 
 
 def inspect_listing(data):
@@ -204,6 +269,7 @@ def inspect_listing(data):
     return {
         "observed_anchor_count": parser.links,
         "structure_counts": parser.structures,
+        "date_row_shape_counts": parser.row_counts,
         "provisional_docseq_count": len(ids),
         "sample_unverified_docseq": ids[:MAX_SAMPLES],
         "zero_matching_links_is_not_zero_publications": len(ids) == 0,
