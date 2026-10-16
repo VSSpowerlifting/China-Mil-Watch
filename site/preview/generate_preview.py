@@ -3029,7 +3029,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         for record in korea_published_original_rows:
             target = out_dir / record["route"]
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(render_original_page(record), encoding="utf-8")
+            # Render candidate-safe noindex markup first; the shared site-origin
+            # pass below installs canonical and social URLs for actual release.
+            target.write_text(render_original_page(record, site_origin=None),
+                              encoding="utf-8")
             written.append(record["route"])
 
     # English pages are written only for explicitly registered, already
