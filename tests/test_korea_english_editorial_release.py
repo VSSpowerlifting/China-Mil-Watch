@@ -155,6 +155,10 @@ class FirstRealKoreaEnglishPacketTests(unittest.TestCase):
             "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284")
         self.assertEqual(packet["review"]["status"], "editor_approved")
         self.assertEqual(packet["review"]["reviewer"], "VSSpowerlifting")
+        self.assertTrue(all(packet["review"][flag] is True for flag in (
+            "translation_semantics_checked", "analysis_fact_checked",
+            "attribution_checked", "source_limitations_checked",
+        )))
         receipt = verify_review(packet, source)
         self.assertEqual(receipt["paragraphs"], 22)
         self.assertEqual(receipt["claims"], 5)
