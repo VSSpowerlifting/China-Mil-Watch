@@ -823,7 +823,7 @@ this page leaves a reader unable to tell whether it was solved or abandoned.</p>
 <h2>Limits of this desk, stated plainly</h2>
 <ul>
 {% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}
-  <li>Automatic collection currently covers {% if us_bis_authenticated_links | default([]) %}the official USCC, Treasury and BIS press listings{% elif us_treasury_official_links | default([]) %}the official USCC and Treasury press listings{% else %}the official USCC press listing{% endif %}, not the entire U.S. military or government. BIS covers a bounded homepage sample, not the agency's full publication history.</li>
+  <li>Automatic collection currently covers {% if us_bis_authenticated_links | default([]) %}the official USCC, Treasury and BIS press listings{% elif us_treasury_official_links | default([]) %}the official USCC and Treasury press listings{% else %}the official USCC press listing{% endif %}, not the entire U.S. military or government.{% if us_bis_authenticated_links | default([]) %} BIS covers a bounded homepage sample, not the agency's full publication history.{% endif %}</li>
   <li>Direct PACOM site access is blocked; Navy fleet sites also returned access restrictions. DVIDS is a distinct media service and its collector is paused.</li>
   <li>Admitted official-source entries preserve publisher URL, publication date and issuer metadata, not original documents, photographs, summaries or IPR analysis.</li>
   <li>A government statement is an attributable source, not independent verification of the statement's claims.</li>
