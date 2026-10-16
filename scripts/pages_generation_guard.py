@@ -40,7 +40,7 @@ def path_ok(s: str) -> bool:
     p = PurePosixPath(s)
     return bool(s) and not s.startswith('/') and str(p) == s and all(
         component not in ('.', '..', '') for component in p.parts
-    ) and s != MANIFEST and not s.startswith('.git/')
+    ) and s != MANIFEST and s != '.git' and not s.startswith('.git/')
 
 
 def digest(files: dict[str, bytes]) -> str:
@@ -226,6 +226,13 @@ def prepare(repo: Path, *, mode: str, writer: str, paths: tuple[str, ...] = (),
             unapproved = set(old) - set(target)
             if unapproved:
                 raise Hold('full-tree would erase non-authorized Pages-only files')
+        # File-only publications also have to respect the committed site
+        # infrastructure contract. Otherwise a narrowly scoped desk writer
+        # can silently attest a generation whose live DNS/nojekyll metadata
+        # contradicts current main:output. The same rule applies at bootstrap.
+        for special in PRESERVED:
+            if special in output and special in old and output[special] != old[special]:
+                raise Hold('DNS / Pages infrastructure mismatch')
         new_doc = {
             'schema': FORMAT, 'generation': previous['generation'] + 1 if previous else 1,
             'source_sha': source_sha, 'writer': writer,
