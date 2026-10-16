@@ -8,6 +8,8 @@ on:
     branches: [main]
     paths:
       - .github/workflows/korea_english_owner_draft_handoff.yml
+      - scripts/send_korea_english_owner_drafts.py
+      - scripts/draft_korea_english_analysis.py
   pull_request:
     paths:
       - scripts/draft_korea_english_analysis.py
