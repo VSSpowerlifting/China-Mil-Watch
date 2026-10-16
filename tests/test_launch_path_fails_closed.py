@@ -154,11 +154,19 @@ class TestTheAcceptedSnapshot(unittest.TestCase):
         """
         derived = gp.snapshot_from_corpus(gp.TRACKED_DB)
         self.assertEqual(gp.DECLARED_SNAPSHOT, self.ACCEPTED)
-        self.assertGreaterEqual(derived["expected_records"],
-                                self.ACCEPTED["expected_records"],
-                                "the corpus has fewer records than the "
-                                "accepted snapshot — records do not "
-                                "disappear, so this is data loss, not growth")
+        # The October 2026 owner-approved China retirement is an explicit,
+        # guarded exception to monotonic active-record growth. Count retired
+        # identities once and prove the ledger's trigger/URL guards are intact.
+        # Without this check, simply shrinking the live DB would look normal.
+        from core.retired_article_urls import verify_no_active_retired_urls
+        from scripts.reconcile_db import read_only
+        with read_only(gp.TRACKED_DB) as con:
+            retired = verify_no_active_retired_urls(con)
+        self.assertEqual(retired, 4400)
+        self.assertGreaterEqual(
+            derived["expected_records"] + retired,
+            self.ACCEPTED["expected_records"],
+            "active plus explicitly retired records fell below the launch pin")
 
     def test_a_corpus_that_has_moved_past_the_pin_still_renders(self):
         """
