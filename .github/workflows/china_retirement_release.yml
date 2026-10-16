@@ -187,13 +187,32 @@ jobs:
           python scripts/verify_db_current.py
           python scripts/validate_output.py
           python -m scripts.verify_china_retirement_render             --before "$RUNNER_TEMP/china-retirement-production-preview/before-site"             --after output --db pla_watch.db             --plan "$RUNNER_TEMP/china-retirement-production-preview/plan.json"
-          test ! -e pla_watch.db-wal
-          test ! -e pla_watch.db-shm
-          test -z "$(git status --porcelain --untracked-files=all -- . ':!output' ':!pla_watch.db')"
-          git add -A -- pla_watch.db output/
-          git diff --cached --quiet && {
-            echo '::error::Expected reviewed production corpus change is absent'; exit 1;
+          test ! -e pla_watch.db-wal || {
+            echo '::error::SQLite WAL sidecar appeared after validation'; exit 1;
           }
+          test ! -e pla_watch.db-shm || {
+            echo '::error::SQLite SHM sidecar appeared after validation'; exit 1;
+          }
+      - name: Prove promotion changed no unrelated repository files
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          extra="$(git status --porcelain --untracked-files=all -- . ':!output' ':!pla_watch.db')"
+          if [ -n "$extra" ]; then
+            printf '%s\\n' "$extra"
+            echo '::error::Release modified paths other than the reviewed SQLite and output site'
+            exit 1
+          fi
+      - name: Stage exact promoted DB/site and prove nonempty retirement diff
+        if: inputs.publish
+        run: |
+          set -euo pipefail
+          git add -A -- pla_watch.db output/
+          if git diff --cached --quiet; then
+            echo '::error::Expected 4400-record production corpus change is absent'
+            exit 1
+          fi
+          git diff --cached --stat | tail -n 12
       - name: Commit single reviewed corpus and full-site release to unchanged main
         if: inputs.publish
         run: |
