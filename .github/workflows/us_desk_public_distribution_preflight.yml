@@ -1,0 +1,69 @@
+name: U.S. Desk — Public HTTP and Pages Distribution Preflight
+
+# Read-only verification. This NEVER collects or qualifies a BIS source,
+# never admits to SQLite, and never commits to main or gh-pages.
+on:
+  pull_request:
+    paths:
+      - scripts/verify_us_desk_distribution.py
+      - tests/test_us_desk_distribution.py
+      - .github/workflows/us_desk_public_distribution_preflight.yml
+      - docs/engineering/US_DESK_PUBLIC_DISTRIBUTION_PREFLIGHT_2026-10-15.md
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-delivery-parity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: existing-pages
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - name: Validate synthetic delivery mismatch contracts first
+        run: python -m unittest tests.test_us_desk_distribution -v
+      - name: Confirm main versus exact existing Pages Git file
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git -C existing-pages status --porcelain --untracked-files=all)"
+          cmp output/us-indopacific.html existing-pages/us-indopacific.html
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+      - name: Independently check the actual public HTTPS response
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://indopacificrecord.org/us-indopacific.html?ipr_us_delivery=$GITHUB_RUN_ID"
+          matched=0
+          for attempt in 1 2 3; do
+            curl --fail --location --silent --show-error \
+              --max-time 20 --header "Cache-Control: no-cache" \
+              --output "$RUNNER_TEMP/us-desk-http.html" "$url" || true
+            if cmp -s existing-pages/us-indopacific.html "$RUNNER_TEMP/us-desk-http.html"; then
+              matched=1
+              break
+            fi
+            sleep 12
+          done
+          test "$matched" = 1 || {
+            echo "::error::Public U.S. Desk not byte-identical to gh-pages"; exit 1;
+          }
+          python -m scripts.verify_us_desk_distribution \
+            --main-html output/us-indopacific.html \
+            --pages-html existing-pages/us-indopacific.html \
+            --public-html "$RUNNER_TEMP/us-desk-http.html"
+      - name: No local production, source or Pages changes
+        run: |
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+          test -z "$(git -C existing-pages status --porcelain --untracked-files=all)"
