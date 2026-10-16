@@ -83,6 +83,21 @@ class EightDeskParityTests(unittest.TestCase):
         with self.assertRaisesRegex(ParityHold, "unrecognized_desk_html:philippines.html"):
             self.check(self.commit_pages())
 
+    def test_lookalike_data_route_attribute_holds(self):
+        path = self.repo / "china.html"
+        path.write_text(path.read_text().replace(
+            'data-route="china.html"', 'x-data-route="china.html"'))
+        with self.assertRaisesRegex(ParityHold, "unrecognized_desk_html:china.html"):
+            self.check(self.commit_pages())
+
+    def test_duplicate_data_route_attributes_hold(self):
+        path = self.repo / "china.html"
+        path.write_text(path.read_text().replace(
+            'data-route="china.html"',
+            'data-route="japan.html" data-route="china.html"'))
+        with self.assertRaisesRegex(ParityHold, "unrecognized_desk_html:china.html"):
+            self.check(self.commit_pages())
+
     def test_empty_or_truncated_html_holds(self):
         (self.repo / "china.html").write_text("<html>broken</html>")
         with self.assertRaisesRegex(ParityHold, "unbounded_page:china.html"):
