@@ -1,6 +1,6 @@
 """Create private, source-pinned Korea English translation + analytical draft.
 
-Two bounded Anthropic calls, no public writes and NO implicit editor approval.
+Two source-bounded drafting stages (each permits one JSON-format retry), no public writes and NO implicit editor approval.
 The model is sent only the already public Korean original plain text.
 Every proposed claim must cite numbered source paragraphs and exact excerpts.
 Generated output is private and labelled machine_unreviewed.
