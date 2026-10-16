@@ -6326,9 +6326,17 @@ class TestStop4RoutesAreIntact(PreviewCase):
         atmosphere = [q for q in (self.out / "atmosphere").iterdir() if q.is_file()] \
             if (self.out / "atmosphere").is_dir() else []
         # Week shards are top-level files, so they are already inside `top`.
+        # Individually owner-released Korean original pages (and reviewed
+        # English pages, if any) are additional nested public routes, not
+        # unexpected output files. Their counts are source-registry governed.
+        from core.korea_published_originals import read_release_index
+        from core.korea_english_publication import public_registry
+        registered_korean_originals = len(read_release_index())
+        reviewed_english_pages = 2 * len(public_registry())
         self.assertEqual(len(files),
                          self.corpus_size + len(top) + len(sources)
                          + len(covers) + len(atmosphere)
+                         + registered_korean_originals + reviewed_english_pages
                          + len([q for q in (self.out / "assets").rglob("*") if q.is_file()]))
         # Three declared files since 2026-09-15: the withdrawn J-20 derivative,
         # which stays published with its licence record because "do not render
