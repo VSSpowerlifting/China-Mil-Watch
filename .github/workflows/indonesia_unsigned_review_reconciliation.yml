@@ -1,0 +1,38 @@
+name: Indonesia — unsigned review reconciliation contracts
+
+# PR-only tests. No actual reviewer identity, permissions or source promotion.
+# Does not read or upload any user's completed private reviewer worksheet.
+on:
+  pull_request:
+    paths:
+      - scripts/reconcile_indonesia_unsigned_reviews.py
+      - tests/test_indonesia_unsigned_review_reconciliation.py
+      - .github/workflows/indonesia_unsigned_review_reconciliation.yml
+
+permissions:
+  contents: read
+
+jobs:
+  private-unsigned-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run private-only reconciliation and immutable-source regressions
+        run: |
+          python -m unittest -v \
+            tests.test_indonesia_unsigned_review_reconciliation \
+            tests.test_indonesia_source_version_review
+      - name: Assert production database and published pages are untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
