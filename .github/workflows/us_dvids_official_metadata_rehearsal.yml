@@ -1,0 +1,90 @@
+name: DVIDS — Authorized USINDOPACOM News API Metadata Rehearsal
+
+# Official DVIDS API requires an individually issued key; never scrape around it.
+# No scheduled harvesting and NO production or gh-pages writes.
+on:
+  pull_request:
+    paths:
+      - scripts/collect_us_dvids_official_metadata.py
+      - tests/test_us_dvids_official_metadata.py
+      - .github/workflows/us_dvids_official_metadata_rehearsal.yml
+      - docs/engineering/US_DVIDS_OFFICIAL_API_FEASIBILITY_2026-10-15.md
+  workflow_dispatch:
+    inputs:
+      owner_authorized_dvids_api_rehearsal:
+        description: 'Issued DVIDS app key configured and one read-only request approved'
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  source-free-official-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Canonical news link/date/issuer and credential boundaries
+        run: python -m unittest tests.test_us_dvids_official_metadata -v
+      - name: No production file or Pages mutation
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ desks/ site/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  authorized-once-private-source-check:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      inputs.owner_authorized_dvids_api_rehearsal == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      DVIDS_API_KEY: ${{ secrets.DVIDS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Offline source and credential rules
+        run: python -m unittest tests.test_us_dvids_official_metadata -v
+      - name: One authorized metadata-only first page in temporary scratch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$DVIDS_API_KEY" || {
+            echo "::error::DVIDS_API_KEY not configured from issued IPR app key"; exit 1;
+          }
+          sha256sum pla_watch.db > "$RUNNER_TEMP/us-dvids-db-before.sha"
+          python -m scripts.collect_us_dvids_official_metadata \
+            --owner-authorized-api-rehearsal \
+            --scratch-json "$RUNNER_TEMP/us-dvids-news-private.json"
+          sha256sum -c "$RUNNER_TEMP/us-dvids-db-before.sha"
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          p=json.loads((Path(os.environ["RUNNER_TEMP"])/"us-dvids-news-private.json").read_text())
+          assert p["query_filters"]=={"cocom":"USINDOPACOM","type":"news","max_results":20,"sort":"publishdate","sortdir":"desc"}
+          assert p["production_records_written"]==0 and not p["public_release_authorized"]
+          assert not p["source_remove_and_update_sync_verified"]
+          assert all(set(r)=={
+              "source_identity","canonical_official_url","publisher_posted_date",
+              "official_issuer","official_publisher","api_source_family"
+          } for r in p["rows"])
+          print("DVIDS metadata-only private review rows:",len(p["rows"]))
+          PY
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
