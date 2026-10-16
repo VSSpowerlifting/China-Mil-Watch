@@ -2277,7 +2277,9 @@ class TestRecordPages(PreviewCase):
                     html, r'<p class="cite-text" id="%s">[^<]+</p>' % anchor)
 
     def test_slate_blue_marks_only_machine_generated_material(self):
-        css = self.css_for("record/1.html")
+        # A record with ID 1 was retired in the authorized China cutover.
+        # Exercise the delivered CSS of a currently rendered analyzed record.
+        css = self.css_for("record/%d.html" % self.first_in_state("analyzed"))
         # The slate-blue family moved with the palette; what may not move is the
         # discipline. One token, reserved for machine output.
         self.assertIn("--machine-ink:       #446C79", css)
@@ -3189,9 +3191,8 @@ class TestCompactQueryIndex(PreviewCase):
         # Before October 2026 there were six natural missing identifiers.
         # The owner-approved China cutover then tombstoned precisely 4,400
         # additional former article IDs; none may be reused or rehosted.
-        with sqlite3.connect(
-            TRACKED_DB.resolve().as_uri() + "?mode=ro&immutable=1", uri=True
-        ) as con:
+        from scripts.reconcile_db import read_only
+        with read_only(TRACKED_DB) as con:
             retired = {
                 row[0] for row in con.execute(
                     "SELECT original_article_id FROM retired_article_urls"
