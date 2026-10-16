@@ -688,14 +688,17 @@ it is not an analysis queue. <a href="corpus-guide.html#states">Read the four pr
   {% if us_treasury_official_links | default([]) %}
   <div class="stat-row"><dt>Collected official Treasury metadata links</dt><dd>{{ us_treasury_official_links|length }}</dd></div>
   {% endif %}
+  {% if us_bis_authenticated_links | default([]) %}
+  <div class="stat-row"><dt>Collected official BIS metadata links</dt><dd>{{ us_bis_authenticated_links|length }}</dd></div>
+  {% endif %}
   <div class="stat-row"><dt>Direct PACOM command collection</dt><dd>Access blocked</dd></div>
   <div class="stat-row"><dt>DVIDS media collection</dt><dd>Paused</dd></div>
   <div class="stat-row"><dt>Admitted U.S. source-body articles</dt><dd>None</dd></div>
 </dl>
-<p class="meta">These automatically admitted USCC metadata rows are held in the production
+<p class="meta">These automatically admitted official metadata rows{% if us_bis_authenticated_links | default([]) %} from USCC, Treasury and BIS{% elif us_treasury_official_links | default([]) %} from USCC and Treasury{% else %} from USCC{% endif %} are held in the production
 SQLite database separately from the source-body article corpus. They do not
-inflate the archive's article count. The congressional feed is live, but no
-PACOM military statement has been collected through it.</p>
+inflate the archive's article count. None of these feeds collect PACOM
+military command statements.</p>
 {% else %}
 <dl class="stat-rows">
   <div class="stat-row"><dt>{{ 'Corpus records' if desk.status == 'shadow' else 'Records' }}</dt><dd>{{ 'Not admitted' if desk.status == 'shadow' else 'None collected' }}</dd></div>
@@ -820,9 +823,9 @@ this page leaves a reader unable to tell whether it was solved or abandoned.</p>
 <h2>Limits of this desk, stated plainly</h2>
 <ul>
 {% if desk.slug == 'us-indopacific' and uscc_official_links | default([]) %}
-  <li>Automatic collection currently covers the official USCC press listing only, not the entire U.S. military or government.</li>
+  <li>Automatic collection currently covers {% if us_bis_authenticated_links | default([]) %}the official USCC, Treasury and BIS press listings{% elif us_treasury_official_links | default([]) %}the official USCC and Treasury press listings{% else %}the official USCC press listing{% endif %}, not the entire U.S. military or government.{% if us_bis_authenticated_links | default([]) %} BIS covers a bounded homepage sample, not the agency's full publication history.{% endif %}</li>
   <li>Direct PACOM site access is blocked; Navy fleet sites also returned access restrictions. DVIDS is a distinct media service and its collector is paused.</li>
-  <li>Admitted USCC entries preserve publisher URL, publication date and issuer metadata, not original documents, photographs, summaries or IPR analysis.</li>
+  <li>Admitted official-source entries preserve publisher URL, publication date and issuer metadata, not original documents, photographs, summaries or IPR analysis.</li>
   <li>A government statement is an attributable source, not independent verification of the statement's claims.</li>
 {% else %}
 {% for limit in display_limits %}
