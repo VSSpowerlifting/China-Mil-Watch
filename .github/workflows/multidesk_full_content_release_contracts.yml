@@ -1,0 +1,45 @@
+name: Cross-Desk Full Content Rights and Editorial Gates
+
+# Validation-only: no publishing triggers, secrets, model calls, official site
+# fetching, production DB writes, or external deployment.
+on:
+  pull_request:
+    paths:
+      - core/multidesk_full_content_release.py
+      - tests/test_multidesk_full_content_release.py
+      - core/standing_source_rights.py
+      - tests/test_standing_source_rights.py
+      - docs/engineering/MULTIDESK_FULL_CONTENT_AUTOPUBLISH_REQUIREMENTS_2026-10-15.md
+      - .github/workflows/multidesk_full_content_release_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-content-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test independent rights, content version and specialist editorial gates
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python -m unittest \
+            tests.test_multidesk_full_content_release \
+            tests.test_standing_source_rights \
+            tests.test_license_and_rights_scope -v
+      - name: Ensure no original, public site or source state was modified
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
