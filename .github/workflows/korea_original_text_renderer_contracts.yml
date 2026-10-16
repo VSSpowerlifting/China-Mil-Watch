@@ -41,7 +41,7 @@ jobs:
           import hashlib
           def git_blob_sha(raw):
               return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") +
-                                  b"\\0" + raw).hexdigest()
+                                  b"\0" + raw).hexdigest()
           for row in rows:
               ident = row["news_id"]
               expected = render_original_page(row)
