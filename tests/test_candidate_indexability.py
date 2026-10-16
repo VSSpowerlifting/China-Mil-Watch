@@ -160,8 +160,15 @@ class TestSupplyingAnOriginProducesALaunchableTree(BuiltTreeCase):
                 self.assertIn("noindex", p.read_text(encoding="utf-8"))
 
     def test_the_stub_canonical_still_points_at_its_record(self):
-        stub = (self.root / "article" / "1000.html").read_text(encoding="utf-8")
-        self.assertIn('rel="canonical" href="../record/1000.html"', stub)
+        # A retired article ID must never be recreated merely to satisfy a
+        # historical fixture. Check a genuinely emitted active redirect.
+        stubs = list(self.pages(stubs=True))
+        self.assertTrue(stubs, "active archive must emit redirect stubs")
+        chosen = stubs[0]
+        self.assertRegex(chosen.stem, r"^[0-9]+$")
+        self.assertIn(
+            'rel="canonical" href="../record/%s.html"' % chosen.stem,
+            chosen.read_text(encoding="utf-8"))
 
 
 class TestTheBuilderAndTheTemplateCannotDrift(unittest.TestCase):
