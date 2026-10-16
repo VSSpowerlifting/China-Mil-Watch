@@ -203,6 +203,33 @@ class GuardTests(unittest.TestCase):
         with self.assertRaisesRegex(Hold, 'infrastructure mismatch'):
             self.publish()
 
+    def test_file_only_refuses_conflicting_committed_cname(self):
+        self.boot()
+        self.write('CNAME', b'wrong.invalid\n')
+        run(self.main, 'add', 'output/CNAME')
+        run(self.main, 'commit', '-m', 'Misconfigured DNS while publishing desk')
+        run(self.main, 'push', 'origin', 'main')
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'infrastructure mismatch'):
+            self.publish(mode='file-only', paths=('korea.html',))
+        self.assertEqual(self.view(), before)
+
+    def test_file_only_bootstrap_refuses_conflicting_committed_cname(self):
+        self.write('CNAME', b'wrong.invalid\n')
+        run(self.main, 'add', 'output/CNAME')
+        run(self.main, 'commit', '-m', 'Misconfigured DNS before bootstrap')
+        run(self.main, 'push', 'origin', 'main')
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'infrastructure mismatch'):
+            self.publish(mode='file-only', paths=('korea.html',), bootstrap=True)
+        self.assertEqual(self.view(), before)
+
+    def test_committed_git_metadata_filename_is_refused(self):
+        from scripts.pages_generation_guard import path_ok
+        self.assertFalse(path_ok('.git'))
+        self.assertFalse(path_ok('.git/config'))
+        self.assertFalse(path_ok('.ipr-release.json'))
+
     def test_pages_cas_refuses_race_after_candidate_built(self):
         self.boot()
         self.update_main('korea.html', b'Korea two')
