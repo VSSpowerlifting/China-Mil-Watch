@@ -811,6 +811,15 @@ review date, not a qualification threshold. Neither desk is promoted.
 
 ## 6. Known technical debt
 
+* **gh-pages stale-rollback race — audited, NOT fixed (#346, 2026-10-15).**
+  `scripts/audit_pages_writers.py` inventories 17 Pages writers (10 full-tree,
+  1 overlay, 6 file-only) and fails CI on unregistered or widened writers.
+  `tests/test_pages_stale_deploy_race.py` reproduces stale full-tree overwrites
+  (`deploy_output_only` and `korea_verified` outside `daily-update`;
+  `daily_update` deploying a pre-refresh tree) in hermetic git sandboxes. No
+  writer has a generation fence; history shows 0 unexplained reversions.
+  Handoff and acceptance criteria: `docs/PAGES_WRITER_AUDIT_2026-10-15.md`.
+
 * **PR offline-check draft efficiency (owner review pending, 2026-10-07).**
   `codex/pr-offline-efficiency-20261007` skips the heavyweight job while draft;
   ready/non-draft events keep the full exact-head suite, Chromium, validator and
