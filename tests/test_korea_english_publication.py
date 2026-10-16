@@ -287,88 +287,112 @@ class ReviewTests(unittest.TestCase):
             draft.response_json(client,system="strict",prompt="original")
         self.assertEqual(client.messages.create.call_count,1)
 
-    def test_model_draft_generation_is_private_and_unreviewed(self):
-        source=make_source()
-        original=original_paragraphs(TEXT)
-        review=make_review()
-        response_calls=[]
-        def fake_response(client,*,system,prompt,max_tokens=6500):
-            response_calls.append(system)
-            if len(response_calls)==1:
-                return {"translations":review["translations"]}
-            return review["analysis"]
-        with patch.object(draft,"response_json",side_effect=fake_response):
-            machine,receipt=draft.draft(source,client=object())
-        self.assertEqual(len(response_calls),2)
-        self.assertEqual(machine["review"]["status"],"machine_unreviewed")
-        self.assertTrue(receipt["machine_only"])
-        self.assertFalse(machine["review"]["analysis_fact_checked"])
-
-    def test_one_inexact_source_quote_gets_one_fresh_source_only_retry(self):
+    def test_model_draft_generation_is_private_and_source_owned(self):
         source = make_source()
-        approved_shape = make_review()
-        bad = json.loads(json.dumps(approved_shape["analysis"], ensure_ascii=False))
-        bad["claims"][0]["source_quotes_ko"] = [
-            "UNTRUSTED_MODEL_OUTPUT_NOT_IN_THE_KOREAN_SOURCE"
-        ]
+        review = make_review()
         calls = []
         def fake(client, *, system, prompt, max_tokens=6500):
             calls.append((system, prompt))
-            if len(calls) == 1:
-                return {"translations": approved_shape["translations"]}
-            return bad if len(calls) == 2 else approved_shape["analysis"]
+            return ({"translations": review["translations"]}
+                    if len(calls) == 1
+                    else model_source_ids(review["analysis"]))
         with patch.object(draft, "response_json", side_effect=fake):
-            candidate, receipt = draft.draft(source, client=object())
-        self.assertEqual(len(calls), 3)
-        self.assertNotIn("UNTRUSTED_MODEL_OUTPUT_NOT_IN_THE_KOREAN_SOURCE",
-                         calls[2][1], "retry must exclude invalid model output")
-        self.assertIn("korean_source", calls[2][1])
-        self.assertEqual(candidate["analysis"], approved_shape["analysis"])
+            machine, receipt = draft.draft(source, client=object())
+        self.assertEqual(len(calls), 2)
+        self.assertIn("source_quote_catalog", calls[1][1])
+        self.assertNotIn("source_quotes_ko", calls[1][0])
+        self.assertEqual(machine["review"]["status"], "machine_unreviewed")
+        self.assertFalse(machine["review"]["analysis_fact_checked"])
         self.assertTrue(receipt["machine_only"])
-        self.assertEqual(candidate["review"]["status"], "machine_unreviewed")
-        self.assertFalse(candidate["review"]["analysis_fact_checked"])
+        ko = original_paragraphs(TEXT)
+        for claim in machine["analysis"]["claims"]:
+            for index, quote in zip(claim["source_indices"],
+                                    claim["source_quotes_ko"]):
+                self.assertIn(quote, ko[index - 1])
+                self.assertGreaterEqual(len(quote), 8)
+                self.assertLessEqual(len(quote), 240)
 
-    def test_second_quote_mismatch_still_fails_without_third_analysis(self):
-        approved_shape = make_review()
-        bad = json.loads(json.dumps(approved_shape["analysis"], ensure_ascii=False))
-        bad["claims"][0]["source_quotes_ko"] = ["INEXACT_KOREAN_SOURCE_QUOTATION"]
+    def test_invented_quote_id_stops_without_email_ready_draft(self):
+        shape = make_review()
+        invalid = model_source_ids(shape["analysis"])
+        invalid["claims"][0]["source_quote_ids"] = ["INVENTED_ID"]
         calls = []
         def fake(client, *, system, prompt, max_tokens=6500):
             calls.append(True)
-            if len(calls) == 1:
-                return {"translations": approved_shape["translations"]}
-            return bad
+            return ({"translations": shape["translations"]}
+                    if len(calls) == 1 else invalid)
         with patch.object(draft, "response_json", side_effect=fake):
             with self.assertRaisesRegex(
-                    KoreaEnglishHold, "^korea_english_claim_quote_not_exact_source$"):
+                    KoreaEnglishHold, "^korea_machine_quote_selection_invalid$"):
                 draft.draft(make_source(), client=object())
-        self.assertEqual(len(calls), 3, "never retry a failed exact-source second pass")
+        self.assertEqual(len(calls), 2)
 
-    def test_unsupported_claim_type_gets_one_unreviewed_source_only_retry(self):
+    def test_cross_paragraph_quote_id_stops_without_repair(self):
         shape = make_review()
-        invalid = json.loads(json.dumps(shape["analysis"], ensure_ascii=False))
+        invalid = model_source_ids(shape["analysis"])
+        invalid["claims"][0]["source_quote_ids"] = ["P02Q001"]
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append(True)
+            return ({"translations": shape["translations"]}
+                    if len(calls) == 1 else invalid)
+        with patch.object(draft, "response_json", side_effect=fake):
+            with self.assertRaisesRegex(
+                    KoreaEnglishHold, "^korea_machine_quote_selection_invalid$"):
+                draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 2)
+
+    def test_model_cannot_inject_korean_quote_body_or_extra_fields(self):
+        shape = model_source_ids(make_review()["analysis"])
+        shape["claims"][0]["source_quotes_ko"] = ["UNTRUSTED_QUOTE"]
+        catalog = draft.source_quote_catalog(original_paragraphs(TEXT))
+        with self.assertRaisesRegex(
+                KoreaEnglishHold, "^korea_machine_claim_quote_ids_invalid$"):
+            draft.resolve_quote_selections(shape, catalog)
+
+    def test_catalog_exact_windows_preserve_korean_whitespace(self):
+        original = "한글  문장.  " * 44
+        catalog = draft.source_quote_catalog([original, "끝"])
+        self.assertGreaterEqual(len(catalog), 3)
+        self.assertEqual({entry["index"] for entry in catalog.values()}, {1})
+        for entry in catalog.values():
+            self.assertIn(entry["text_ko"], original)
+            self.assertTrue(8 <= len(entry["text_ko"]) <= 240)
+
+    def test_reordered_source_indices_still_fail_original_validator(self):
+        shape = model_source_ids(make_review()["analysis"])
+        shape["claims"][0]["source_indices"] = [2, 1]
+        shape["claims"][0]["source_quote_ids"] = ["P02Q001", "P01Q001"]
+        converted = draft.resolve_quote_selections(
+            shape, draft.source_quote_catalog(original_paragraphs(TEXT)))
+        review = make_review()
+        review["analysis"] = converted
+        with self.assertRaisesRegex(
+                KoreaEnglishHold, "^korea_english_claim_indices_invalid$"):
+            verify_review(review, make_source(), allow_machine=True)
+
+    def test_unsupported_claim_type_gets_one_source_only_retry(self):
+        shape = make_review()
+        invalid = model_source_ids(shape["analysis"])
         invalid["claims"][0]["assessment_type"] = "independently_verified"
         calls = []
         def fake(client, *, system, prompt, max_tokens=6500):
             calls.append((system, prompt))
             if len(calls) == 1:
                 return {"translations": shape["translations"]}
-            return invalid if len(calls) == 2 else shape["analysis"]
+            return invalid if len(calls) == 2 else model_source_ids(shape["analysis"])
         with patch.object(draft, "response_json", side_effect=fake):
             candidate, receipt = draft.draft(make_source(), client=object())
         self.assertEqual(len(calls), 3)
-        self.assertNotIn("independently_verified", calls[2][1],
-                         "the invalid model response must not enter the retry")
-        self.assertIn("bounded_analytical_inference", calls[2][0])
-        self.assertIn("attributed_source_interpretation", calls[2][0])
-        self.assertEqual(candidate["analysis"], shape["analysis"])
+        self.assertNotIn("independently_verified", calls[2][1])
+        self.assertIn("source_quote_catalog", calls[2][1])
+        self.assertTrue(receipt["machine_only"])
         self.assertEqual(candidate["review"]["status"], "machine_unreviewed")
         self.assertFalse(candidate["review"]["analysis_fact_checked"])
-        self.assertTrue(receipt["machine_only"])
 
-    def test_second_unsupported_claim_type_still_holds_without_third_draft(self):
+    def test_second_unsupported_type_still_fails_closed(self):
         shape = make_review()
-        invalid = json.loads(json.dumps(shape["analysis"], ensure_ascii=False))
+        invalid = model_source_ids(shape["analysis"])
         invalid["claims"][0]["assessment_type"] = "independently_verified"
         calls = []
         def fake(client, *, system, prompt, max_tokens=6500):
@@ -379,11 +403,11 @@ class ReviewTests(unittest.TestCase):
             with self.assertRaisesRegex(
                     KoreaEnglishHold, "^korea_english_unsupported_analysis_type$"):
                 draft.draft(make_source(), client=object())
-        self.assertEqual(len(calls), 3, "strict enum persists after one retry")
+        self.assertEqual(len(calls), 3)
 
-    def test_unrelated_analysis_validation_failure_never_retried(self):
+    def test_unrelated_invalid_analysis_never_gets_model_retry(self):
         shape = make_review()
-        invalid = json.loads(json.dumps(shape["analysis"], ensure_ascii=False))
+        invalid = model_source_ids(shape["analysis"])
         invalid["thesis_en"] = ""
         calls = []
         def fake(client, *, system, prompt, max_tokens=6500):
@@ -391,9 +415,10 @@ class ReviewTests(unittest.TestCase):
             return ({"translations": shape["translations"]}
                     if len(calls) == 1 else invalid)
         with patch.object(draft, "response_json", side_effect=fake):
-            with self.assertRaisesRegex(KoreaEnglishHold, "korea_english_thesis_invalid"):
+            with self.assertRaisesRegex(
+                    KoreaEnglishHold, "^korea_english_thesis_invalid$"):
                 draft.draft(make_source(), client=object())
-        self.assertEqual(len(calls), 2, "unrelated failures never retry")
+        self.assertEqual(len(calls), 2)
 
     def test_model_draft_bogus_alignment_does_not_reach_analyst_call(self):
         r=make_review()
