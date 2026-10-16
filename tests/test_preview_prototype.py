@@ -1429,9 +1429,10 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("desk--live", block)
 
         page = self.page("us-indopacific.html")
-        self.assertIn("Official congressional and Treasury metadata feeds live — PACOM collection blocked", page)
+        self.assertIn("Official USCC, Treasury and BIS link metadata feeds live — PACOM collection blocked", page)
         self.assertIn("It is not a feed of US defense releases.", page)
         self.assertIn("Collected official congressional metadata links", page)
+        self.assertIn("BIS official press reference", page)
         self.assertIn("Direct PACOM command collection", page)
         self.assertIn("Admitted U.S. source-body articles", page)
         self.assertNotIn("Nothing has been configured, enabled or collected.", page)
