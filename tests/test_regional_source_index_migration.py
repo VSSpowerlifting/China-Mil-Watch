@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import sqlite3
+import tempfile
 import unittest
+from pathlib import Path
 
-from migrations.runner import discover
+from migrations.runner import apply_all, connect, discover
 from migrations.versions import m0010_regional_official_source_links as migration
 
 
@@ -108,6 +110,37 @@ class RegionalSourceIndexMigration(unittest.TestCase):
         self.assertEqual(self.conn.execute(
             "SELECT source_identity FROM regional_official_source_links"
         ).fetchone()[0], "sentinel")
+
+    def test_full_versioned_migration_preserves_existing_corpus_and_tombstones(self):
+        # Exercise real migration discovery and ledger on disposable legacy
+        # schema, rather than relying solely on direct m0010.up() unit tests.
+        from tests.test_migrations import build_legacy_db
+        with tempfile.TemporaryDirectory(prefix="regional-index-migration-") as d:
+            db_path = Path(d) / "legacy.sqlite"
+            original = build_legacy_db(db_path)
+            cx = connect(db_path)
+            try:
+                apply_all(cx)
+                from migrations.runner import applied_versions
+                self.assertIn("0010", applied_versions(cx))
+                self.assertEqual(cx.execute(
+                    "SELECT COUNT(*) FROM regional_official_source_links"
+                ).fetchone()[0], 0)
+                self.assertEqual(cx.execute(
+                    "SELECT COUNT(*) FROM retired_article_urls"
+                ).fetchone()[0], 0)
+                self.assertEqual([
+                    row[0] for row in cx.execute(
+                        "SELECT id FROM articles ORDER BY id"
+                    )
+                ], original["article_ids"])
+                self.assertEqual([
+                    row[0] for row in cx.execute(
+                        "SELECT url FROM articles ORDER BY id"
+                    )
+                ], original["article_urls"])
+            finally:
+                cx.close()
 
     def test_missing_index_can_be_repaired_without_changing_rows(self):
         migration.up(self.conn)
