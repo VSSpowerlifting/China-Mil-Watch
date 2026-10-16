@@ -3043,8 +3043,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         for release, editorial, source in korea_english_publication_rows:
             number = source["source_identity"].split(":")[1]
             for folder, markup in (
-                ("korea-translations", render_translation(release, editorial, source)),
-                ("korea-analysis", render_analysis(release, editorial, source)),
+                ("korea-translations", render_translation(
+                    release, editorial, source, site_origin=None)),
+                ("korea-analysis", render_analysis(
+                    release, editorial, source, site_origin=None)),
             ):
                 route = folder + "/" + number + ".html"
                 target = out_dir / route
