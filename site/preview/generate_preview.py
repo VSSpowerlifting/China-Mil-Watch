@@ -2411,6 +2411,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     korea_public_rows = []
     korea_additional_rows = []
     korea_auto_official_rows = []
+    korea_production_link_count = 0
     if korea_release_state is not None:
         if (korea_release_state.status != "shadow"
                 or korea_release_state.manifest_path is not None
@@ -2428,8 +2429,15 @@ def build(out_dir: Path, title: str, db_path: Path,
             from core.korea_official_live_links import load_live_korea_official_links
             frozen_ids = {r["source_identity"] for r in (
                 korea_public_rows + korea_additional_rows)}
-            korea_auto_official_rows = load_live_korea_official_links(
-                db_path, exclude=frozen_ids)
+            # These are PRODUCTION admissions even when a link also occurs
+            # in the frozen public bibliography. Show the admitted count,
+            # but suppress duplicated bibliography rows in the link rail.
+            korea_admitted_rows = load_live_korea_official_links(db_path)
+            korea_production_link_count = len(korea_admitted_rows)
+            korea_auto_official_rows = [
+                row for row in korea_admitted_rows
+                if row["source_identity"] not in frozen_ids
+            ]
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -3001,6 +3009,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
+                             korea_production_link_count=(korea_production_link_count if desk.slug == "korea" else 0),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
