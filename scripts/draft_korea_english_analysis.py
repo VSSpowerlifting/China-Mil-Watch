@@ -163,6 +163,11 @@ def draft(source, *, client):
             "Two to six distinct substantive, cautious analytical observations, each "
             "anchored by numbered Korean paragraphs and exact Korean quote substrings. "
             "Distinguish explicit source claims from bounded inferences. "
+            "For EACH claim, assessment_type MUST be exactly one of two literal "
+            "enum strings: attributed_source_interpretation for an attributed "
+            "reading of the government source, or bounded_analytical_inference "
+            "for a cautious inference beyond an explicit claim. Do not invent "
+            "other types or claim independent verification. "
             "Never present a translation or analysis as reviewed."
         ),
         prompt=(
@@ -195,13 +200,19 @@ def draft(source, *, client):
     try:
         receipt = verify_review(review, source, allow_machine=True)
     except KoreaEnglishHold as exc:
-        # A model can paraphrase a Korean quote or alter its spacing. Never
-        # silently repair, fuzzy-match, shorten or approve a mismatched quote.
+        # Machine drafts can misquote the source or invent a claim-type label.
         # Retry ONE entire machine-unreviewed analytical draft using only the
-        # pinned Korean paragraphs and translations, NOT the invalid model
-        # response. Re-run every original reviewer-independent security gate.
-        if str(exc) != "korea_english_claim_quote_not_exact_source":
+        # pinned Korean paragraphs and translations, NOT the rejected output.
+        # Never normalize, repair or approve a bad claim type or quotation.
+        # The unchanged source-pinned validator must accept the fresh result.
+        if str(exc) not in (
+            "korea_english_claim_quote_not_exact_source",
+            "korea_english_unsupported_analysis_type",
+        ):
             raise
+        failure_kind = ("non-exact Korean source quotation"
+                        if str(exc) == "korea_english_claim_quote_not_exact_source"
+                        else "unsupported assessment_type enum")
         source_notes = response_json(
             client,
             system=(
@@ -210,6 +221,11 @@ def draft(source, *, client):
                 "Return the same exact analysis object schema: heading_en, "
                 "thesis_en, claims (heading_en, analysis_en, source_indices, "
                 "source_quotes_ko, assessment_type), and limitations_en. "
+                "Every claim assessment_type MUST be exactly either "
+                "attributed_source_interpretation (attributed government source "
+                "interpretation) or bounded_analytical_inference (carefully "
+                "limited inference). NEVER generate any other assessment_type "
+                "or suggest independent verification. "
                 "Each Korean source quote MUST be an EXACT, contiguous "
                 "8-to-240-character substring of the corresponding numbered "
                 "Korean paragraph, copied verbatim with identical whitespace "
@@ -221,9 +237,10 @@ def draft(source, *, client):
                 "Return JSON only, never editorial approval."
             ),
             prompt=(
-                "The preceding machine draft failed exact-source quotation "
-                "validation. This retry does NOT include that untrusted draft. "
-                "Rebuild the complete analysis independently from these "
+                "The preceding machine draft failed validation: "
+                + failure_kind + ". This retry does NOT include that "
+                "untrusted draft. Rebuild the complete analysis independently "
+                "from these "
                 "source-pinned paragraphs and unreviewed translations:\n"
                 + json.dumps({
                     "korean_source": numbered,
@@ -234,8 +251,8 @@ def draft(source, *, client):
             max_tokens=4000,
         )
         review["analysis"] = source_notes
-        # A second mismatch, or ANY different invalid claim/source/format,
-        # fails closed. No third analytical draft, editor review, or sending.
+        # A second quotation mismatch, unsupported assessment type, or ANY
+        # different invalidity fails closed. No third analytical draft or send.
         receipt = verify_review(review, source, allow_machine=True)
     need(receipt["machine_only"] and not receipt["editorial_meaning_verified_by_code"],
          "korea_machine_draft_unexpectedly_marked_reviewed")
