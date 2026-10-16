@@ -250,6 +250,19 @@ class GuardTests(unittest.TestCase):
         self.view()
         self.assertEqual(self.page_bytes('korea.html'), b'Korea one')
 
+    def test_gitignore_cannot_make_manifest_attest_missing_committed_file(self):
+        self.boot()
+        self.write('.gitignore', b'secret.html\n')
+        self.write('secret.html', b'approved artifact')
+        run(self.main, 'add', 'output/.gitignore')
+        run(self.main, 'add', '-f', 'output/secret.html')
+        run(self.main, 'commit', '-m', 'Commit content despite output ignore rule')
+        run(self.main, 'push', 'origin', 'main')
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'committed Pages tree omitted'):
+            self.publish(mode='full-tree')
+        self.assertEqual(self.view(), before)
+
     def test_main_advance_during_pre_push_check_refuses_release(self):
         self.boot()
         self.update_main('korea.html', b'Korea two')
