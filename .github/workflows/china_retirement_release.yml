@@ -10,11 +10,13 @@ on:
       - 'tests/test_china_retirement_crossdesk.py'
       - 'tests/test_china_retirement_pages_readback.py'
       - 'tests/test_china_retirement_release.py'
+      - 'scripts/verify_china_retirement_backup_lineage.py'
+      - 'tests/test_china_retirement_backup_lineage.py'
       - '.github/workflows/china_retirement_release.yml'
   workflow_dispatch:
     inputs:
       approved_main_sha:
-        description: 'Exact 40-character public main SHA whose complete DB is backed up'
+        description: '40-character source commit SHA of private backup (later code-only merges accepted if DB identical)'
         required: true
         type: string
       expected_db_sha256:
@@ -51,7 +53,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Prove release verifier rejects broken references and legacy routes
-        run: python -m unittest -v tests.test_china_retirement_release tests.test_china_retirement_pages_readback tests.test_china_retirement_crossdesk
+        run: python -m unittest -v tests.test_china_retirement_release tests.test_china_retirement_pages_readback tests.test_china_retirement_crossdesk tests.test_china_retirement_backup_lineage
       - name: Prove this contract did not modify the tracked corpus/site
         run: |
           set -euo pipefail
@@ -88,9 +90,17 @@ jobs:
           [[ "$EXPECTED_DB" =~ ^[0-9a-f]{64}$ ]] || exit 1
           [[ "$BACKUP_COMMIT" =~ ^[0-9a-f]{40}$ ]] || exit 1
           test "$BACKUP_REF" = "archive/china-active-before-${EXPECTED_SHA:0:16}"
-          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA" || {
-            echo '::error::main advanced; renew backup and owner review'; exit 1;
+          # Code-only desk merges do not invalidate a private copy of the
+          # exact same SQLite bytes. Fail closed on any database change,
+          # diverged Git ancestry or incorrect private snapshot digest.
+          python -m scripts.verify_china_retirement_backup_lineage \
+            --backup-source-sha "$EXPECTED_SHA" --expected-db-sha256 "$EXPECTED_DB"
+          RELEASE_SHA="$(git rev-parse HEAD)"
+          git fetch --no-tags origin main
+          test "$(git rev-parse origin/main)" = "$RELEASE_SHA" || {
+            echo '::error::main advanced before release pin; rerun'; exit 1;
           }
+          echo "CHINA_RELEASE_SHA=$RELEASE_SHA" >> "$GITHUB_ENV"
           test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "$EXPECTED_DB"
           test -z "$(git status --porcelain --untracked-files=all)"
           test ! -e pla_watch.db-wal
@@ -103,6 +113,7 @@ jobs:
       - name: Recheck exact retirement, reingestion, and publication protection contracts
         run: |
           python -m unittest -v             tests.test_retired_article_urls             tests.test_china_retirement_atomic             tests.test_china_active_retirement             tests.test_china_retirement_release \
+            tests.test_china_retirement_backup_lineage \
             tests.test_china_retirement_pages_readback \
             tests.test_china_retirement_crossdesk
       - name: Prepare full 4400-record reduction in external scratch ONLY
@@ -155,12 +166,10 @@ jobs:
           PY
       - name: Verify current main unchanged before any destructive promotion
         if: inputs.publish
-        env:
-          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
         run: |
           set -euo pipefail
           git fetch origin main
-          test "$(git rev-parse origin/main)" = "$EXPECTED_SHA" || {
+          test "$(git rev-parse origin/main)" = "$CHINA_RELEASE_SHA" || {
             echo '::error::Main moved during build; do not publish stale deletion'; exit 1;
           }
       - name: Promote exactly verified scratch DB and rebuilt full site, then validate again
@@ -187,12 +196,10 @@ jobs:
           }
       - name: Commit single reviewed corpus and full-site release to unchanged main
         if: inputs.publish
-        env:
-          EXPECTED_SHA: ${{ inputs.approved_main_sha }}
         run: |
           set -euo pipefail
           git fetch origin main
-          test "$(git rev-parse origin/main)" = "$EXPECTED_SHA" || {
+          test "$(git rev-parse origin/main)" = "$CHINA_RELEASE_SHA" || {
             echo '::error::main advanced before release commit'; exit 1;
           }
           git config user.name 'github-actions[bot]'
