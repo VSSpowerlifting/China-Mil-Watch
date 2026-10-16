@@ -138,9 +138,18 @@ def normalize_issued_key(value):
     need(key.startswith(KEY_PREFIX),
          "dvids_public_search_key_prefix_missing")
     suffix = key[len(KEY_PREFIX):]
-    need(bool(suffix) and len(key.encode("utf-8")) <= MAX_KEY_BYTES
-         and all("!" <= char <= "~" for char in suffix),
-         "dvids_public_search_key_suffix_invalid")
+    # Explain the class of rejected copy/paste error, never the secret.
+    # A broad suffix character check is appropriate because DVIDS documents
+    # only the key- prefix, not a suffix alphabet or fixed suffix length.
+    need(bool(suffix), "dvids_public_search_key_suffix_empty")
+    need(len(key.encode("utf-8")) <= MAX_KEY_BYTES,
+         "dvids_public_search_key_input_over_limit")
+    need(not any(char.isspace() for char in suffix),
+         "dvids_public_search_key_embedded_whitespace")
+    need(not any(ord(char) < 33 or ord(char) == 127 for char in suffix),
+         "dvids_public_search_key_control_character")
+    need(all(ord(char) < 128 for char in suffix),
+         "dvids_public_search_key_non_ascii_character")
     return key
 
 
