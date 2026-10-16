@@ -127,6 +127,13 @@ class RenderedCase(unittest.TestCase):
     def flat(self, html):
         return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html))
 
+    def active_record_page(self):
+        # The China cull permanently retired 4,400 IDs, including ID 1000.
+        # Sample an actually emitted active record rather than resurrecting it.
+        candidates = sorted((self.root / "record").glob("*.html"))
+        self.assertTrue(candidates, "rendered active corpus has no record pages")
+        return candidates[0].read_text(encoding="utf-8")
+
 
 class TestTheRenderedPageShowsAllThree(RenderedCase):
 
@@ -147,11 +154,11 @@ class TestTheRenderedPageShowsAllThree(RenderedCase):
                 self.assertRegex(text, re.escape(label) + r"\s*" + re.escape(value))
 
     def test_the_labels_appear_on_a_nested_page_too(self):
-        record = (self.root / "record" / "1000.html").read_text(encoding="utf-8")
+        record = self.active_record_page()
         self.assertIn("Records last collected", self.flat(record))
 
     def test_the_methodology_link_resolves_from_a_nested_page(self):
-        record = (self.root / "record" / "1000.html").read_text(encoding="utf-8")
+        record = self.active_record_page()
         if "methodology.html#freshness" in record:
             self.assertIn("../methodology.html#freshness", record)
 

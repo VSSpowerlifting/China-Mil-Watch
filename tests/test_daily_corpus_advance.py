@@ -95,8 +95,13 @@ def rendered_totals(out: Path) -> set:
     for name in ("index.html", "methodology.html", "corpus.html"):
         page = out / name
         if page.exists():
-            for raw in re.findall(r"\b\d{1,3}(?:,\d{3})+\b",
-                                  page.read_text("utf-8")):
+            # The active China corpus now has fewer than 1,000 records.
+            # The prior thousands-only matcher missed its visible total.
+            # Anchor to the actual publication status phrase so dates and
+            # unrelated smaller figures cannot accidentally satisfy the gate.
+            for raw in re.findall(
+                    r"Corpus snapshot:[^<]*?·\s*([\d,]+)\s+records",
+                    page.read_text("utf-8")):
                 found.add(int(raw.replace(",", "")))
     return found
 

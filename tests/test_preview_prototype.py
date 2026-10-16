@@ -1414,9 +1414,10 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("desk--live", block)
 
         page = self.page("us-indopacific.html")
-        self.assertIn("Official congressional and Treasury metadata feeds live — PACOM collection blocked", page)
+        self.assertIn("Official USCC, Treasury and BIS link metadata feeds live — PACOM collection blocked", page)
         self.assertIn("It is not a feed of US defense releases.", page)
         self.assertIn("Collected official congressional metadata links", page)
+        self.assertIn("BIS official press reference", page)
         self.assertIn("Direct PACOM command collection", page)
         self.assertIn("Admitted U.S. source-body articles", page)
         self.assertNotIn("Nothing has been configured, enabled or collected.", page)
@@ -1534,12 +1535,15 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_reader_facing_counts_use_thousands_separators(self):
         data = gp.load_corpus(TRACKED_DB)
         total = data["totals"]["articles"]
-        self.assertGreaterEqual(total, 1000)
+        self.assertGreater(total, 0)
         for page in ("china.html", "about.html"):
             with self.subTest(page=page):
                 html = self.page(page)
                 self.assertIn("{:,}".format(total), html)
-                self.assertNotRegex(html, r">\s*%d\s*<" % total)
+                # Thousands must be grouped; sub-1,000 totals legitimately
+                # have no separator after the China retirement.
+                if total >= 1000:
+                    self.assertNotRegex(html, r">\s*%d\s*<" % total)
 
     def test_ids_dates_and_hashes_are_not_comma_formatted(self):
         """Run ids, dates and hashes are identifiers, not quantities."""
@@ -2006,7 +2010,7 @@ class CorpusCase(unittest.TestCase):
 # ── Tranche 2, commit 3: the full snapshot record set ────────────────────────
 
 class TestRecordPages(PreviewCase):
-    """One prototype page per stored record — all 3,250, and no more."""
+    """One prototype page per currently active stored record, no retired IDs."""
 
     @classmethod
     def setUpClass(cls):
@@ -2024,6 +2028,10 @@ class TestRecordPages(PreviewCase):
             if rec["state"] == state:
                 return rec["id"]
         self.fail("no record in state %s" % state)
+
+    def present_states(self):
+        return [state for state in gp.STATE_ORDER
+                if any(r["state"] == state for r in self.data["corpus"])]
 
     def test_page_count_equals_the_database_count(self):
         pages = list((self.out / "record").glob("*.html"))
@@ -2084,7 +2092,10 @@ class TestRecordPages(PreviewCase):
                 self.assertIn(denial, flat)
 
     def test_every_processing_state_has_a_rendered_page(self):
-        for state in gp.STATE_ORDER:
+        # A zero-count state has no active record page after retirement; this
+        # verifies every state actually represented, without fabricating rows.
+        self.assertTrue(self.present_states())
+        for state in self.present_states():
             with self.subTest(state=state):
                 html = self.record(self.first_in_state(state))
                 self.assertIn(gp.STATE_LABELS[state], html)
@@ -2092,6 +2103,8 @@ class TestRecordPages(PreviewCase):
     def test_records_without_english_claim_no_translation_or_summary(self):
         for state in ("awaiting_screening", "not_selected",
                       "analysis_incomplete"):
+            if state not in self.present_states():
+                continue
             rec_id = self.first_in_state(state)
             html = self.record(rec_id)
             with self.subTest(state=state):
@@ -2101,6 +2114,8 @@ class TestRecordPages(PreviewCase):
     def test_an_unanalyzed_record_is_never_called_not_flagged(self):
         for state in ("awaiting_screening", "not_selected",
                       "analysis_incomplete"):
+            if state not in self.present_states():
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertNotIn("Model-flagged", html)
@@ -2192,7 +2207,7 @@ class TestRecordPages(PreviewCase):
         self.assertIn(str(markupsafe.escape(rec["title_original"][:20])), html)
 
     def test_exactly_one_h1_per_record_page(self):
-        for state in gp.STATE_ORDER:
+        for state in self.present_states():
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertEqual(len(re.findall(r"<h1(?:\s[^>]*)?>", html)), 1)
@@ -2217,7 +2232,7 @@ class TestRecordPages(PreviewCase):
         self.assertNotIn("tabindex=\"-1\"", html)
 
     def test_urls_and_hashes_can_wrap_at_320px(self):
-        css = self.css_for("record/1.html")
+        css = self.css_for("record/%s.html" % self.ids[0])
         rule = re.search(r"\.token,\s*\.prov-value\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(rule)
         self.assertIn("overflow-wrap", rule.group(1))
@@ -2243,7 +2258,7 @@ class TestRecordPages(PreviewCase):
                     html, r'<p class="cite-text" id="%s">[^<]+</p>' % anchor)
 
     def test_slate_blue_marks_only_machine_generated_material(self):
-        css = self.css_for("record/1.html")
+        css = self.css_for("record/%s.html" % self.ids[0])
         # The slate-blue family moved with the palette; what may not move is the
         # discipline. One token, reserved for machine output.
         self.assertIn("--machine-ink:       #446C79", css)
@@ -2842,11 +2857,11 @@ class TestRecordSemantics(PreviewCase):
                 authored = stored.sub(" ", caveat.sub(" ", section))
                 self.assertIsNone(claim.search(authored))
 
-    def test_noisy_stored_text_is_preserved_byte_for_byte(self):
-        """Record 2579's capture carries unrelated page furniture. It stays."""
-        rec = self.data["corpus"] and next(
-            r for r in self.data["corpus"] if r["id"] == 2579)
-        html = self.record(2579)
+    def test_stored_text_is_preserved_byte_for_byte_on_an_active_record(self):
+        # Record 2579 was deliberately retired. Verify the same exact-text
+        # discipline against a current record without restoring removed text.
+        rec = next(r for r in self.data["corpus"] if r.get("text_original"))
+        html = self.record(rec["id"])
         for para in [p.strip() for p in rec["text_original"].split("\n")
                      if p.strip()]:
             with self.subTest(para=para[:40]):
@@ -3142,7 +3157,16 @@ class TestCompactQueryIndex(PreviewCase):
     def test_the_six_missing_ids_remain_absent(self):
         ids = {row[0] for row in self.index["records"]}
         missing = set(range(1, max(ids) + 1)) - ids
-        self.assertEqual(len(missing), 6)
+        from scripts.reconcile_db import read_only
+        from core.retired_article_urls import verify_no_active_retired_urls
+        with read_only(TRACKED_DB) as con:
+            self.assertEqual(verify_no_active_retired_urls(con), 4400)
+            retired = {row[0] for row in con.execute(
+                "SELECT original_article_id FROM retired_article_urls")}
+        self.assertTrue(retired <= missing, "retired ID silently reused")
+        # In addition to 4,400 intentional retirements, preserve the six
+        # original historical gaps, without ever reissuing their routes.
+        self.assertEqual(len(missing - retired), 6)
 
     def test_snapshot_date_and_count_match_the_declaration(self):
         self.assertEqual(self.index["snapshot"]["date"],
@@ -3253,12 +3277,22 @@ class TestCompactQueryIndex(PreviewCase):
                                  for r in self.data["corpus"]),
             "states": Counter(r["state"] for r in self.data["corpus"]),
         }
+        # The interface labels all recognized states, even when no current
+        # active records remain in one of them (e.g. analysis_incomplete).
+        # Counter.update() *adds* values: it doubled the real counts for
+        # all surviving states (633 -> 1266). Register zero-count states
+        # without altering the SQL-derived counts for active records.
+        for state in gp.STATE_ORDER:
+            expected["states"].setdefault(state, 0)
         for key, counts in expected.items():
             offered = {e["code"]: e["count"] for e in self.index[key]}
             with self.subTest(facet=key):
                 self.assertEqual(offered, dict(counts))
                 for code, n in offered.items():
-                    self.assertGreater(n, 0)
+                    if key == "states":
+                        self.assertGreaterEqual(n, 0)
+                    else:
+                        self.assertGreater(n, 0)
 
     def test_only_sources_holding_records_reach_the_source_facet(self):
         """
@@ -5121,6 +5155,10 @@ class TestSnapshotScopedCitations(PreviewCase):
                 return rec["id"]
         raise AssertionError("no record in state %s" % state)
 
+    def present_states(self):
+        return [state for state in gp.STATE_ORDER
+                if any(r["state"] == state for r in self.corpus)]
+
     def _all_html(self):
         return {str(p.relative_to(self.out)): p.read_text(encoding="utf-8")
                 for p in sorted(self.out.rglob("*.html"))}
@@ -5194,10 +5232,14 @@ class TestSnapshotScopedCitations(PreviewCase):
                     self.assertNotIn(english, cite["source_text"])
         # The negative check must cover the bulk of the analyzed set, not a
         # handful of records that happened to qualify.
-        self.assertGreater(compared, 1_000)
+        analyzed_with_english = sum(
+            1 for r in self.corpus if (r.get("title_english") or "").strip())
+        self.assertGreater(compared, analyzed_with_english // 2,
+                           "original-title negatives no longer cover a "
+                           "majority of records with English titles")
 
     def test_the_rendered_source_text_block_quotes_the_original_title(self):
-        for state in gp.STATE_ORDER:
+        for state in self.present_states():
             rec_id = self.first_in_state(state)
             rec = self.by_id[rec_id]
             html = self.record(rec_id)
@@ -5229,6 +5271,10 @@ class TestSnapshotScopedCitations(PreviewCase):
         ):
             with self.subTest(state=state):
                 self.assertIn(expected, notes[state])
+                if state not in self.present_states():
+                    # No public record exists in this state; keep its distinct
+                    # note contract without inventing a historic record page.
+                    continue
                 html = self.record(self.first_in_state(state))
                 self.assertIn(markupsafe.escape(notes[state]), html)
                 # and no other state's note
@@ -5239,6 +5285,8 @@ class TestSnapshotScopedCitations(PreviewCase):
     def test_an_unscreened_record_is_never_told_it_was_analyzed(self):
         for state in ("not_selected", "awaiting_screening",
                       "analysis_incomplete"):
+            if state not in self.present_states():
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertNotIn("machine-generated and have not been reviewed",
@@ -5330,8 +5378,9 @@ class TestSnapshotScopedCitations(PreviewCase):
                                     gp.DECLARED_SNAPSHOT)]
         texts += [gp.edition_citation(e) for e in self.editions]
         for state in gp.STATE_ORDER:
-            cite = gp.record_citation(self.by_id[self.first_in_state(state)],
-                                      "Test Title",
+            record = next((r for r in self.corpus if r["state"] == state),
+                          _fake_record(state=state))
+            cite = gp.record_citation(record, "Test Title",
                                       gp.DECLARED_SNAPSHOT)
             texts += [cite["source_text"], cite["as_held"], cite["note"]]
         for text in texts:

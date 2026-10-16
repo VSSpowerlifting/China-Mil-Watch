@@ -57,24 +57,29 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         self.assertFalse(result["publication_authorized"])
         self.assertFalse(result["original_capture_repair_authorized"])
 
-    def test_actual_pre_fix_negative_controls_have_calibrated_review_cues(self):
-        # Fixed historical IPR record IDs rather than model-derived examples.
-        # A future source-correction release must explicitly update this audit
-        # after review; it cannot silently change the underlying classification.
-        suspicious = (170, 793, 1246, 1954, 2753, 3180, 3181)
-        not_flagged = (792, 1630)
-        for ident in suspicious + not_flagged:
+    def test_pre_fix_historical_controls_stay_retired_without_republication(self):
+        # These nine original Global Times records were intentionally retired
+        # with the 4,400-record China cull. The public repository no longer
+        # carries their source bodies, so it cannot honestly re-evaluate their
+        # historical capture quality. Their exact source-body review remains
+        # a private historical task; synthetic cue calibration stays covered
+        # in this module. Never reintroduce the removed pages as test fixtures.
+        from scripts.reconcile_db import read_only
+        from core.retired_article_urls import verify_no_active_retired_urls
+        historical_ids = (170, 793, 1246, 1954, 2753, 3180, 3181, 792, 1630)
+        with read_only(ROOT / "pla_watch.db") as con:
+            self.assertEqual(verify_no_active_retired_urls(con), 4400)
+            retired_ids = {r[0] for r in con.execute(
+                "SELECT original_article_id FROM retired_article_urls")}
+            live_ids = {r[0] for r in con.execute("SELECT id FROM articles")}
+        for ident in historical_ids:
             with self.subTest(ident=ident):
-                html = (ROOT / "output" / "record" / ("%d.html" % ident)).read_text(
-                    encoding="utf-8")
-                body, url = _original_record(html)
-                self.assertIn("globaltimes.cn", url)
-                cues = quality_cues(body)["cues"]
-                if ident in suspicious:
-                    self.assertIn("short_multi_teaser_capture_review", cues)
-                else:
-                    self.assertNotIn("short_multi_teaser_capture_review", cues)
-                    self.assertFalse(cues)
+                self.assertIn(ident, retired_ids)
+                self.assertNotIn(ident, live_ids)
+                self.assertFalse(
+                    (ROOT / "output" / "record" / ("%d.html" % ident)).exists())
+                self.assertFalse(
+                    (ROOT / "output" / "article" / ("%d.html" % ident)).exists())
 
     def test_short_genuine_articles_can_trigger_review_without_deletion(self):
         result = quality_cues("Short real press statement")

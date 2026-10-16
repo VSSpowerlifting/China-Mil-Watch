@@ -46,7 +46,16 @@ class MaterialIntegrity(unittest.TestCase):
 class CompleteDelivery(unittest.TestCase):
     def test_every_committed_generated_route_meets_complete_budgets(self):
         result = verify(ROOT / 'output')
-        self.assertGreater(result['routes_checked'], 7000)
+        # The owner-approved China retirement removed thousands of public
+        # record/stub routes. Verify *every remaining* HTML route was measured
+        # and retain an active-corpus floor rather than the obsolete 7k count.
+        from scripts.reconcile_db import read_only
+        with read_only(ROOT / 'pla_watch.db') as con:
+            active_count = con.execute('SELECT COUNT(*) FROM articles').fetchone()[0]
+        self.assertEqual(
+            result['routes_checked'],
+            sum(1 for _ in (ROOT / 'output').rglob('*.html')))
+        self.assertGreaterEqual(result['routes_checked'], active_count)
         self.assertEqual(result['failures'], [])
 
     def test_fonts_css_graphics_srcset_icons_and_inline_bytes(self):
