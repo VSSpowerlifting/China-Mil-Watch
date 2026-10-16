@@ -183,7 +183,9 @@ class ReviewTests(unittest.TestCase):
         tr=render_translation({},r,make_source())
         an=render_analysis({},r,make_source())
         self.assertNotIn("<script>",tr)
-        self.assertNotIn("<img ",an)
+        # Shared publication chrome legitimately contains <img> identity assets.
+        # Forbid the injected element, not the standard site logo.
+        self.assertNotIn("<img src=x",an)
         self.assertIn("&lt;script&gt;",tr)
         self.assertIn("&lt;img ",an)
 
