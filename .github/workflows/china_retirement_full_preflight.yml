@@ -1,0 +1,73 @@
+name: China retirement full live-corpus scratch preflight
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/prepare_china_retirement_release.py'
+      - 'scripts/verify_china_retirement_render.py'
+      - 'tests/test_china_retirement_release.py'
+      - '.github/workflows/china_retirement_full_preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  full-scratch-rehearsal:
+    # This is stacked on #665, which is stacked on #663 and #657.
+    # Those feature branches predate the current focus-first main renderer.
+    # The standalone stacked checkout lacks the required current 600-focus
+    # corpus index; it must not produce a misleading red release verdict.
+    # Full end-to-end rehearsals run on the current-main integration PR and
+    # later on this PR after it is retargeted to main.
+    if: github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Record source SQLite identity
+        run: |
+          sha256sum pla_watch.db > "$RUNNER_TEMP/old-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Install offline rendering dependencies
+        run: pip install -r requirements.txt
+      - name: Prepare complete reduced archive in isolated scratch
+        run: |
+          set -euo pipefail
+          EXPECTED="$(sha256sum pla_watch.db | cut -d' ' -f1)"
+          python -m scripts.prepare_china_retirement_release \
+            --scratch-root "$RUNNER_TEMP/china-complete-readonly-preflight" \
+            --expected-db-sha256 "$EXPECTED" \
+            --site-origin https://indopacificrecord.org
+      - name: Rehearse full static Pages git packaging and independent readback
+        run: |
+          set -euo pipefail
+          SCRATCH="$RUNNER_TEMP/china-complete-readonly-preflight"
+          mkdir -p "$RUNNER_TEMP/synthetic-pages-repo" "$RUNNER_TEMP/synthetic-pages-readback"
+          # Produce a Git snapshot exactly like a static gh-pages branch,
+          # then read it independently by git archive. No remote push.
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" init -q
+          cp -a "$SCRATCH/reduced-site/." "$RUNNER_TEMP/synthetic-pages-repo/"
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" config user.name 'Offline Pages test'
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" config user.email 'offline@example.invalid'
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" add -A
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" commit -qm 'Offline site package only'
+          git -C "$RUNNER_TEMP/synthetic-pages-repo" archive HEAD | \
+            tar -xf - -C "$RUNNER_TEMP/synthetic-pages-readback"
+          python -m scripts.verify_china_retirement_pages_readback \
+            --expected-output "$SCRATCH/reduced-site" \
+            --pages-tree "$RUNNER_TEMP/synthetic-pages-readback" \
+            --db "$SCRATCH/reduced.db" --expected-tombstones 4400
+      - name: Verify no production files or sidecars were modified
+        if: ${{ !cancelled() }}
+        run: |
+          sha256sum -c "$RUNNER_TEMP/old-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
