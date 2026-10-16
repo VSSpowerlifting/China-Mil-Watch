@@ -271,6 +271,25 @@
     </ol>
   </section>
   {% endif %}
+  {% if korea_english_publications | default([]) %}
+  <section class="korea-reviewed-english" aria-labelledby="korea-english-published">
+    <p class="eyebrow">Editor-reviewed English · exact Korean source provenance</p>
+    <h3 id="korea-english-published">Reviewed translations and source-grounded analysis</h3>
+    <p>Each translation is checked against the exact published Korean text.
+    Editorial analyses distinguish official statements from independent corroboration
+    and identify the limits of the available source. No HWPX files or images are reproduced.</p>
+    <ol class="korea-reviewed-english-list" aria-label="Published reviewed Korea translations and analyses">
+    {% for item, editorial, source in korea_english_publications %}
+      {% set release_number = source.source_identity.split(':')[1] %}
+      <li data-korea-english-reviewed="{{ source.source_identity }}">
+        <a href="korea-translations/{{ release_number }}.html">Reviewed English translation — release {{ release_number }}</a>
+        · <a href="korea-analysis/{{ release_number }}.html">IPR source-grounded analysis</a>
+        · <a href="korea-originals/{{ release_number }}.html">Verbatim Korean original</a>
+      </li>
+    {% endfor %}
+    </ol>
+  </section>
+  {% endif %}
   {% if korea_published_originals | default([]) %}
   <section class="korea-published-originals" aria-labelledby="korea-originals-heading">
     <p class="eyebrow">Licensed Korean government text · independently source-pinned</p>
