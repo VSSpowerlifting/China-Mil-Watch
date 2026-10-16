@@ -1414,7 +1414,15 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("desk--live", block)
 
         page = self.page("us-indopacific.html")
-        self.assertIn("Official congressional and Treasury metadata feeds live — PACOM collection blocked", page)
+        # Source-family status is conditional: a genuinely admitted BIS row
+        # expands the U.S. metadata feed without unblocking PACOM originals.
+        from core.us_bis_authenticated_metadata import load_public_links as bis_links
+        expected = (
+            "Official USCC, Treasury and BIS link metadata feeds live — PACOM collection blocked"
+            if bis_links(TRACKED_DB) else
+            "Official congressional and Treasury metadata feeds live — PACOM collection blocked"
+        )
+        self.assertIn(expected, page)
         self.assertIn("It is not a feed of US defense releases.", page)
         self.assertIn("Collected official congressional metadata links", page)
         self.assertIn("Direct PACOM command collection", page)
