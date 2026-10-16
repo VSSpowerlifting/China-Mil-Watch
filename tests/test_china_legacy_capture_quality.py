@@ -1,6 +1,5 @@
 """Read-only historical Global Times quality review never deletes/corrects."""
 import copy
-import sqlite3
 import unittest
 
 from scripts.audit_china_legacy_capture_quality import ROOT, quality_cues, scan
@@ -70,10 +69,8 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         suspicious = (170, 793, 1246, 1954, 2753, 3180, 3181)
         not_flagged = (792, 1630)
         selected = set(suspicious + not_flagged)
-        with sqlite3.connect(
-            (ROOT / "pla_watch.db").resolve().as_uri() +
-            "?mode=ro&immutable=1", uri=True
-        ) as connection:
+        from scripts.reconcile_db import read_only
+        with read_only(ROOT / "pla_watch.db") as connection:
             retired = {
                 row[0] for row in connection.execute(
                     "SELECT original_article_id FROM retired_article_urls"
