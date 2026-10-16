@@ -146,12 +146,20 @@ class TestTheRenderedPageShowsAllThree(RenderedCase):
             with self.subTest(label=label):
                 self.assertRegex(text, re.escape(label) + r"\s*" + re.escape(value))
 
+    def surviving_nested_record(self):
+        # Article 1000 was deliberately retired in the 4,400-source China
+        # cutover. Select an actual generated record route instead of
+        # resurrecting that former address to satisfy a freshness test.
+        pages = sorted((self.root / "record").glob("*.html"))
+        self.assertTrue(pages, "current active corpus must render record pages")
+        return pages[0].read_text(encoding="utf-8")
+
     def test_the_labels_appear_on_a_nested_page_too(self):
-        record = (self.root / "record" / "1000.html").read_text(encoding="utf-8")
+        record = self.surviving_nested_record()
         self.assertIn("Records last collected", self.flat(record))
 
     def test_the_methodology_link_resolves_from_a_nested_page(self):
-        record = (self.root / "record" / "1000.html").read_text(encoding="utf-8")
+        record = self.surviving_nested_record()
         if "methodology.html#freshness" in record:
             self.assertIn("../methodology.html#freshness", record)
 
