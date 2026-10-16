@@ -134,6 +134,14 @@ class KoreaApprovedEnglishReadbackTests(unittest.TestCase):
         with self.assertRaisesRegex(EnglishReadbackHold, "content_sha_mismatch"):
             self._verify(require_https=True, session=Session(responses), attempts=1)
 
+    def test_live_redirect_is_held_even_if_final_content_matches(self):
+        responses = dict(self.https)
+        url = "https://indopacificrecord.org/korea-translations/" + self.number + ".html"
+        responses[url] = Response(self.routes[
+            "korea-translations/" + self.number + ".html"], url, status=301)
+        with self.assertRaisesRegex(EnglishReadbackHold, "status_or_origin_mismatch"):
+            self._verify(require_https=True, session=Session(responses), attempts=1)
+
     def test_wrong_content_type_is_not_live_html(self):
         responses = dict(self.https)
         url = "https://indopacificrecord.org/korea-translations/" + self.number + ".html"
