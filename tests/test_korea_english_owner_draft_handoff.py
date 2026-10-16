@@ -97,6 +97,22 @@ class OwnerDraftTests(unittest.TestCase):
         self.assertRaises(Exception,sut.address,"bad\nmail@example.com")
         self.assertRaises(Exception,sut.address,"noemail")
 
+    def test_public_hold_receipt_contains_only_fixed_safe_codes(self):
+        from core.korea_english_publication import KoreaEnglishHold
+        import smtplib
+        self.assertEqual(
+            sut.safe_hold_reason(KoreaEnglishHold("korea_model_response_not_exact_json")),
+            "korea_model_response_not_exact_json")
+        self.assertEqual(
+            sut.safe_hold_reason(KoreaEnglishHold("SECRET raw Korean content")),
+            "korea_owner_draft_processing_failed")
+        self.assertEqual(
+            sut.safe_hold_reason(smtplib.SMTPException("PRIVATE MAIL BODY")),
+            "korea_owner_private_smtp_delivery_failed")
+        self.assertEqual(
+            sut.safe_hold_reason(ValueError("PRIVATE SOURCE")),
+            "korea_owner_draft_processing_failed")
+
     def test_daily_budget_is_two_source_records(self):
         many=[{**SOURCE,"source_identity":"korea-policy:"+str(156990000+n),
                "original_text_sha256":str(n+1).zfill(64)} for n in range(6)]
