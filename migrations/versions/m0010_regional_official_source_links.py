@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS regional_official_source_links (
     official_issuer TEXT,
     official_publisher TEXT NOT NULL CHECK (
         (source_family='ph_afp_articles'
+         AND official_issuer IS NOT NULL
          AND official_issuer='ph_afp' AND official_publisher='ph_afp') OR
         (source_family='id_kemhan_news'
          AND official_issuer IS NULL AND official_publisher='id_kemhan')
