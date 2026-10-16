@@ -45,8 +45,20 @@ class MaterialIntegrity(unittest.TestCase):
 
 class CompleteDelivery(unittest.TestCase):
     def test_every_committed_generated_route_meets_complete_budgets(self):
-        result = verify(ROOT / 'output')
-        self.assertGreater(result['routes_checked'], 7000)
+        root = ROOT / 'output'
+        result = verify(root)
+        # The pre-retirement site had >7,000 HTML routes; October's cull
+        # deliberately reduced that number. Assert every CURRENT committed
+        # HTML route was checked rather than demanding deleted pages return.
+        html_routes = {p.relative_to(root).as_posix()
+                       for p in root.rglob('*.html') if p.is_file()}
+        self.assertTrue(html_routes, "published site has no HTML routes")
+        self.assertEqual(result['routes_checked'], len(html_routes))
+        index = json.loads((root / 'corpus-index.json').read_text('utf-8'))
+        living = {str(r[0]) + '.html' for r in index['records']}
+        self.assertEqual({p.name for p in (root / 'record').glob('*.html')},
+                         living,
+                         "retired, missing or extra record pages would go unchecked")
         self.assertEqual(result['failures'], [])
 
     def test_fonts_css_graphics_srcset_icons_and_inline_bytes(self):

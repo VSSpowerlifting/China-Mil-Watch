@@ -1,12 +1,14 @@
 name: China original-source research receipt contracts
 
 # Validates private, preliminary desk research only; no publisher requests,
-# LLM, generated output, database reads, external artifact upload or release.
+# LLM, generated output, external artifact upload or release. Read-only\n# production SQLite tombstones are checked after the China source retirement.
 on:
   pull_request:
     branches: [main]
     paths:
       - scripts/audit_china_original_source_notes.py
+      - scripts/verify_china_research_postcull.py
+      - tests/test_china_research_postcull.py
       - tests/test_china_original_source_notes.py
       - scripts/audit_china_legacy_capture_quality.py
       - tests/test_china_legacy_capture_quality.py
@@ -42,17 +44,14 @@ jobs:
           test ! -e pla_watch.db-shm
       - name: Test source-review receipts and unsafe cases
         run: python -m unittest -v tests.test_china_original_source_notes tests.test_china_legacy_capture_quality
-      - name: Validate real seven-source checkpoint packet
+      # Original 5,230-record research packet is frozen. After the authorized
+      # 4,400-source retirement, requiring deleted pages is NOT a valid audit.
+      # Check exact historical packet bytes, each tombstone, no ghost routes,
+      # and strict original-text/URL anchors on the three surviving cases.
+      - name: Verify frozen historical research and live survivor custody
         run: |
-          python scripts/audit_china_original_source_notes.py \
-            --packet research/china/original-source-review-2026-10-15.json \
-            --index output/corpus-index.json \
-            --records-dir output/record
-      - name: Survey older Global Times captures for possible teaser contamination
-        run: |
-          python scripts/audit_china_legacy_capture_quality.py \
-            --index output/corpus-index.json \
-            --records-dir output/record
+          python -m unittest -v tests.test_china_research_postcull
+          python -m scripts.verify_china_research_postcull
       - name: Confirm archive untouched
         if: ${{ !cancelled() }}
         shell: bash
