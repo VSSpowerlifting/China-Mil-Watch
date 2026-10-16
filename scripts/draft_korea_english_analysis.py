@@ -192,7 +192,51 @@ def draft(source, *, client):
             "source_limitations_checked": False,
         },
     }
-    receipt = verify_review(review, source, allow_machine=True)
+    try:
+        receipt = verify_review(review, source, allow_machine=True)
+    except KoreaEnglishHold as exc:
+        # A model can paraphrase a Korean quote or alter its spacing. Never
+        # silently repair, fuzzy-match, shorten or approve a mismatched quote.
+        # Retry ONE entire machine-unreviewed analytical draft using only the
+        # pinned Korean paragraphs and translations, NOT the invalid model
+        # response. Re-run every original reviewer-independent security gate.
+        if str(exc) != "korea_english_claim_quote_not_exact_source":
+            raise
+        source_notes = response_json(
+            client,
+            system=(
+                "You produce an UNREVIEWED source-cited analytical JSON object "
+                "for an editor; this is not authorization to publish. "
+                "Return the same exact analysis object schema: heading_en, "
+                "thesis_en, claims (heading_en, analysis_en, source_indices, "
+                "source_quotes_ko, assessment_type), and limitations_en. "
+                "Each Korean source quote MUST be an EXACT, contiguous "
+                "8-to-240-character substring of the corresponding numbered "
+                "Korean paragraph, copied verbatim with identical whitespace "
+                "and punctuation. Quote arrays align one-to-one with ordered "
+                "unique source indices. If uncertain, quote an intact sentence "
+                "from the supplied original; never fabricate or paraphrase "
+                "Korean source evidence. Make 2-6 limited, attributed claims "
+                "without presuming a government statement is independent proof. "
+                "Return JSON only, never editorial approval."
+            ),
+            prompt=(
+                "The preceding machine draft failed exact-source quotation "
+                "validation. This retry does NOT include that untrusted draft. "
+                "Rebuild the complete analysis independently from these "
+                "source-pinned paragraphs and unreviewed translations:\n"
+                + json.dumps({
+                    "korean_source": numbered,
+                    "machine_translation": translations,
+                    "official_url": source["official_url"],
+                }, ensure_ascii=False, separators=(",", ":"))
+            ),
+            max_tokens=4000,
+        )
+        review["analysis"] = source_notes
+        # A second mismatch, or ANY different invalid claim/source/format,
+        # fails closed. No third analytical draft, editor review, or sending.
+        receipt = verify_review(review, source, allow_machine=True)
     need(receipt["machine_only"] and not receipt["editorial_meaning_verified_by_code"],
          "korea_machine_draft_unexpectedly_marked_reviewed")
     return review, receipt
