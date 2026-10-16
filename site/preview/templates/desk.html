@@ -271,7 +271,30 @@
     </ol>
   </section>
   {% endif %}
-  <p class="meta">Official links and sparse factual bibliographic data only. The
+  {% if korea_published_originals | default([]) %}
+  <section class="korea-published-originals" aria-labelledby="korea-originals-heading">
+    <p class="eyebrow">Licensed Korean government text · independently source-pinned</p>
+    <h3 id="korea-originals-heading">Official originals reproduced as text</h3>
+    <p>These Korean-language source texts are reproduced with a link and attribution to
+    the Republic of Korea Ministry of National Defense via Korea Policy Briefing.
+    They are government statements, not independently verified IPR findings.
+    HWPX files, photographs, embedded media and English translations are not mirrored here.</p>
+    <ol class="korea-public-source-list" aria-label="Published licensed Korean original text">
+    {% for item in korea_published_originals %}
+      <li data-korea-original-text="{{ item.source_identity }}">
+        <h4><a href="{{ item.route }}">Read Korean original — release {{ item.news_id }}</a></h4>
+        <p class="meta">Source: <a href="{{ item.official_url }}" rel="noopener noreferrer"
+        target="_blank">Official government article</a>
+        · Portal posted: <time datetime="{{ item.publisher_posted_date }}">{{ item.publisher_posted_date }}</time>
+        · KOGL Type 1 text with attribution</p>
+      </li>
+    {% endfor %}
+    </ol>
+  </section>
+  {% endif %}
+  <p class="meta">{% if korea_published_originals | default([]) %}The original-text list above is distinct
+  from the remaining link-only references. Those links provide sparse factual bibliographic data only.
+  {% else %}Official links and sparse factual bibliographic data only.{% endif %} The
   source publisher marks qualifying text KOGL Type 1 (attribution), but
   original HWPX files and photographs, illustrations, videos and other
   third-party materials are not reproduced. Attribution:
