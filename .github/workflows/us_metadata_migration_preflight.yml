@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+      - name: Install the same dependency set as the production U.S. publishers
+        run: python -m pip install -r requirements.txt
       - name: Recreate observed partial schema on disposable copied DB
         run: |
           set -euo pipefail
