@@ -102,6 +102,9 @@ class ReviewTests(unittest.TestCase):
                 self.assertIn('<meta property="og:url" content="' + url + '">', html)
                 self.assertNotIn('content="noindex, nofollow"', html)
                 self.assertIn(source["original_text_sha256"], html)
+                self.assertIn('href="../korea-originals/156784297.html"', html)
+                self.assertIn('href="' + source["official_url"] + '"', html)
+                self.assertIn('rel="noopener noreferrer"', html)
                 self.assertNotIn("<iframe", html)
                 self.assertNotIn(".hwpx", html)
 
