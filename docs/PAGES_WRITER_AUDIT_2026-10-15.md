@@ -200,8 +200,16 @@ two highest-risk hazards. In the same PR:
 ## 6. Keeping the ratchet current
 
 A new or changed Pages writer must be added to `REGISTRY` in
-`scripts/audit_pages_writers.py`, in a reviewed PR. CI fails in any of these
-cases:
+`scripts/audit_pages_writers.py`, in a reviewed PR. Both new test modules run
+under `python -m unittest discover -s tests -t .`. That command runs in two
+places:
+
+- `pr_offline_checks.yml`, on non-draft PRs.
+- `daily_update.yml` Step 4c, before collection.
+
+So an unregistered writer that reaches main without passing PR checks halts
+the daily run. That is fail-closed by design. The suite then fails in any of
+these cases:
 
 - an unregistered writer;
 - an unresolved `git push` target;
