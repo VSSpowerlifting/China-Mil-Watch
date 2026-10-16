@@ -2,7 +2,6 @@
 import copy
 import json
 from pathlib import Path
-import sqlite3
 import tempfile
 import unittest
 
@@ -12,8 +11,8 @@ from scripts import verify_china_research_postcull as audit
 def current():
     packet = json.loads(audit.PACKET.read_text(encoding="utf-8"))
     index = json.loads(audit.INDEX.read_text(encoding="utf-8"))
-    with sqlite3.connect(audit.DATABASE.resolve().as_uri() + "?mode=ro&immutable=1",
-                         uri=True) as conn:
+    from scripts.reconcile_db import read_only
+    with read_only(audit.DATABASE) as conn:
         retired = {row[0] for row in conn.execute(
             "SELECT original_article_id FROM retired_article_urls")}
         ids = sorted(audit.RETIRED | audit.SURVIVING)
