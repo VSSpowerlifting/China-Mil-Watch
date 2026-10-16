@@ -1,0 +1,22 @@
+{# Registered, exact-source-hash-pinned KOGL Type 1 text only. The shared
+   base shell supplies navigation, skip link, footer, branded assets and
+   default noindex. Never reinterpret or edit original Korean source text. #}
+{% extends "base.html" %}
+{% block title %}Korean MND official release {{ original.news_id }} — Indo-Pacific Record{% endblock %}
+{# Non-brief pages inherit the publication-wide description contract.
+   Source-specific attribution and limitations remain in the visible article. #}
+{% block content %}
+<article class="korea-official-original" aria-label="Verbatim Korean-language original">
+  <p><a href="../korea.html">← South Korea Desk</a></p>
+  <h1 lang="en">Korean MND official release {{ original.news_id }}</h1>
+  <p lang="en"><strong>Official Korean government source text</strong> — not an IPR fact-check or independent endorsement of the claims.</p>
+  <p lang="en">Issuer: Republic of Korea Ministry of National Defense; republication: Republic of Korea Policy Briefing.</p>
+  <p lang="en">Publisher posted: {{ original.publisher_posted_date }} · <a href="{{ original.official_url }}" rel="noopener noreferrer">Original official release</a></p>
+  <p lang="en">Text reproduced with attribution under the article-specific
+     <a href="https://www.korea.kr/guide/copyRight.do">KOGL Type 1 text-use notice and publisher terms</a>.
+     English translations, photographs, HWPX attachments and other media are not included.
+     The Korean text is presented without editorial changes.</p>
+  <p lang="en">Source version SHA-256: <code>{{ original.original_text_sha256 }}</code></p>
+  <pre lang="ko" style="white-space:pre-wrap;overflow-wrap:anywhere;">{{ original.text_original }}</pre>
+</article>
+{% endblock %}

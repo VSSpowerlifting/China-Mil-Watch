@@ -71,6 +71,49 @@ class KoreaPublishedOriginals(unittest.TestCase):
         self.assertNotIn("noindex", markup)
         self.assertNotIn(".hwpx", markup)
 
+    def test_candidate_source_uses_shared_shell_but_remains_noindex(self):
+        self.write([self.row])
+        markup = render_original_page(self.read()[0], site_origin=None)
+        self.assertIn('class="masthead', markup)
+        self.assertIn('class="site"', markup)
+        self.assertIn('href="#main"', markup)
+        self.assertIn('id="main"', markup)
+        self.assertIn('content="noindex, nofollow"', markup)
+        self.assertNotIn('rel="canonical"', markup)
+        self.assertNotIn('property="og:url"', markup)
+        self.assertIn('&lt;script&gt;', markup)
+        self.assertNotIn('<script', markup)
+
+    def test_production_page_has_branded_exact_origin_and_source_escape(self):
+        self.write([self.row])
+        row = self.read()[0]
+        markup = render_original_page(row)
+        canonical = 'https://indopacificrecord.org/korea-originals/' + RID + '.html'
+        self.assertIn('<link rel="canonical" href="' + canonical + '">', markup)
+        self.assertIn('<meta property="og:url" content="' + canonical + '">', markup)
+        self.assertNotIn('content="noindex', markup)
+        self.assertIn('class="masthead', markup)
+        self.assertIn('class="site"', markup)
+        self.assertIn('Official defense and security texts, preserved as published', markup)
+        self.assertIn(
+            '<meta name="description" content="Official defense and security texts, preserved as published and analyzed in context.">',
+            markup)
+        self.assertIn(
+            '<meta property="og:description" content="Official defense and security texts, preserved as published and analyzed in context.">',
+            markup)
+        self.assertIn('name="generator" content="Indo-Pacific Record — indo-pacific-record build"', markup)
+        self.assertIn('href="../assets/identity/selected-ipr/ipr-accent-32.png"', markup)
+        self.assertIn('href="#main"', markup)
+        self.assertEqual(markup.count('&lt;script&gt;'), CONTENT.count('<script>'))
+        self.assertNotIn('<script', markup)
+        self.assertNotIn('.hwpx', markup)
+
+    def test_public_renderer_rejects_noncanonical_website_origin(self):
+        self.write([self.row])
+        with self.assertRaisesRegex(PublishedKoreaHold, "origin_unrecognized"):
+            render_original_page(self.read()[0],
+                                 site_origin="https://unapproved.invalid")
+
     def test_source_body_hash_drift_blocks_republication(self):
         self.write([self.row])
         self.original.write_text(CONTENT + " 수정", encoding="utf-8")
