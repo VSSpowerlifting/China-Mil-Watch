@@ -281,6 +281,16 @@ class GuardTests(unittest.TestCase):
             self.publish(mode='full-tree')
         self.assertEqual(self.view(), before)
 
+    def test_file_only_cannot_reattest_page_withdrawn_from_current_main(self):
+        self.boot()
+        run(self.main, 'rm', 'output/korea.html')
+        self.update_main('index.html', b'<h1>next approved</h1>')
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'retain source content removed from main'):
+            self.publish(mode='file-only', paths=('index.html',))
+        self.assertEqual(self.view(), before)
+        self.assertEqual(self.page_bytes('korea.html'), b'Korea one')
+
     def test_dry_run_preflight_rejects_gitignored_artifact_before_push(self):
         self.boot()
         self.write('.gitignore', b'ignored-document.html\n')
