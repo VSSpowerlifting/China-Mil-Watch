@@ -3139,10 +3139,29 @@ class TestCompactQueryIndex(PreviewCase):
                          sorted(r["id"] for r in self.data["corpus"]))
         self.assertEqual(len(ids), self.snapshot["expected_records"])
 
-    def test_the_six_missing_ids_remain_absent(self):
+    def test_historical_gaps_and_4400_retired_ids_remain_absent(self):
         ids = {row[0] for row in self.index["records"]}
         missing = set(range(1, max(ids) + 1)) - ids
-        self.assertEqual(len(missing), 6)
+        # Before October 2026 there were six natural missing identifiers.
+        # The owner-approved China cutover then tombstoned precisely 4,400
+        # additional former article IDs; none may be reused or rehosted.
+        with sqlite3.connect(
+            TRACKED_DB.resolve().as_uri() + "?mode=ro&immutable=1", uri=True
+        ) as con:
+            retired = {
+                row[0] for row in con.execute(
+                    "SELECT original_article_id FROM retired_article_urls"
+                )
+            }
+        self.assertEqual(len(retired), 4400)
+        self.assertTrue(retired <= missing,
+                        "a tombstoned ID is being advertised as an active record")
+        self.assertEqual(len(missing - retired), 6,
+                         "historical non-retirement gaps changed unexpectedly")
+        self.assertFalse(ids & retired)
+        for ident in retired:
+            self.assertFalse((self.out / "record" / ("%d.html" % ident)).exists(),
+                             "retired source HTML was regenerated")
 
     def test_snapshot_date_and_count_match_the_declaration(self):
         self.assertEqual(self.index["snapshot"]["date"],
