@@ -62,6 +62,37 @@ jobs:
           PY
           git diff --exit-code -- pla_watch.db output/ research/korea_english_publications.json
 
+  genuine-published-original-english-preflight:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Check first real Korean original for complete model and editorial input
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from core.korea_published_originals import read_release_index
+          from core.korea_english_publication import public_registry
+          from scripts.draft_korea_english_analysis import source_paragraphs
+          rows=read_release_index()
+          chosen=[r for r in rows if r["source_identity"]=="korea-policy:156784297"]
+          assert len(chosen)==1
+          assert chosen[0]["original_text_sha256"]=="ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284"
+          assert len(chosen[0]["text_original"].encode("utf-8"))==969
+          assert len(source_paragraphs(chosen[0]))==22
+          assert public_registry()==[], "No unreviewed English packet may publish"
+          print("Genuine source verified for bounded translation segments:",22)
+          print("Public editorial translations and analyses:",0)
+          PY
+          git diff --exit-code -- pla_watch.db output/ research/korea_english_publications.json
+
   owner-reviewed-korea-english-release:
     if: >-
       github.event_name == 'workflow_dispatch' &&
