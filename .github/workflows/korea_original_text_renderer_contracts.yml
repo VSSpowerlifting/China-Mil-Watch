@@ -27,14 +27,23 @@ jobs:
       - run: python -m pip install beautifulsoup4 requests
       - name: Test empty public registry and exact text-only page render contracts
         run: python -m unittest -v tests.test_korea_published_originals
-      - name: Prove first deployment adds no actual Korean source text
+      - name: Prove already approved Korean sources remain exactly registered
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
-          from core.korea_published_originals import read_release_index
-          assert read_release_index() == []
-          print("Public Korean original text release registry: zero rows")
+          from pathlib import Path
+          from core.korea_published_originals import read_release_index, render_original_page
+          rows = read_release_index()
+          observed = list(Path("research/korea_published_original_texts").glob("*.txt"))
+          assert len(rows) == len(observed)
+          for row in rows:
+              ident = row["news_id"]
+              expected = render_original_page(row)
+              page = Path("output/korea-originals") / (ident + ".html")
+              if page.is_file():
+                  assert page.read_text(encoding="utf-8") == expected
+          print("Previously approved Korean originals preserved:", len(rows))
           PY
           git diff --exit-code -- pla_watch.db output/
           test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
