@@ -41,12 +41,18 @@ The private log supplies:
 - the original SQLite SHA-256 (`expected_db_sha256`) and original row counts.
 
 The restored manifest must name the current canonical public repository,
-the precise source Git commit and SQLite Git blob, byte count, SHA-256 and
-complete China/non-China census. The workflow reads back the private branch
+the **backed-up** source Git commit and SQLite Git blob, byte count, SHA-256
+and complete China/non-China census. The workflow reads back the private branch
 into a new checkout and runs `PRAGMA integrity_check`.
-A backup of an *earlier* main SHA cannot cover new records even when the
-database byte SHA coincidentally matches. If main changes again, repeat this
-gate. The vault is private GitHub-only storage, not independent off-GitHub
+A backup from an **ancestor** of the release's current `main` is acceptable
+when its *original tracked SQLite Git blob* is bit-for-bit identical to the
+current tracked database and the SHA-256 of those bytes still matches the
+restored private manifest. The guard proves Git ancestry, old/current Git
+blob equality and a fresh byte digest. It rejects diverged history or any
+database-content change. Code-only desk merges therefore do **not** require
+another private snapshot. New source records or any updated SQLite bytes do.
+The actual release SHA is separately pinned at workflow checkout and must
+remain exactly equal to remote `main` before any destructive promotion or push. The vault is private GitHub-only storage, not independent off-GitHub
 custody.
 
 ## 3. Configure the backup-read token without sharing it
@@ -79,7 +85,7 @@ active SQLite collection.
 
 Only with all previous gates satisfied, run the same SHA-locked workflow
 with `publish: true` and the four validated inputs. This serializes with
-`daily-update` and checks current main again. It then promotes the verified
+`daily-update` and pins and checks the actual current main SHA again. It then promotes the verified
 SQLite+entire-site scratch tree together into one reviewed `main` commit,
 publishes all of `output/` to `gh-pages`, fetches the remote Pages Git
 branch, and compares **every file** and record identity against the released
