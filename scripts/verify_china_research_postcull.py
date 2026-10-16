@@ -24,7 +24,7 @@ INDEX = ROOT / "output/corpus-index.json"
 DATABASE = ROOT / "pla_watch.db"
 # Existing reviewed Git blob: freeze all 18 historical observations, including
 # author/review limitations and the original 5,230-record snapshot.
-PACKET_GIT_BLOB_SHA1 = "9557e585cf537ce37ec38e62565b9c307d837d5"
+PACKET_GIT_BLOB_SHA1 = "9557e585cf537ce37ec38e62565b9c307d837d5d"
 HISTORICAL_SNAPSHOT = {"date": "2026-10-14", "records": 5230}
 SURVIVING = frozenset((2849, 2391, 2265))
 RETIRED = frozenset((
