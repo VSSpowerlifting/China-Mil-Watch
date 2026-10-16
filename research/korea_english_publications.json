@@ -1,4 +1,1 @@
-{
-  "schema": "ipr-korea-editorial-english-publications/1",
-  "releases": []
-}
+{"releases":[{"owner_run_id":"38962141958","released_at_utc":"2026-10-16T20:26:34Z","review_sha256":"d58554299f26ede9d14c5e00337a3f52dd39c9a0e816dc6f1cd4717b73abe5ea","source_identity":"korea-policy:156784297","source_sha256":"ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284"}],"schema":"ipr-korea-editorial-english-publications/1"}
