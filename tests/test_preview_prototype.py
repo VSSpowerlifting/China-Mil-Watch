@@ -1546,15 +1546,19 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                       html)
         self.assertIn("it is not an analysis queue.", html)
 
-    def test_reader_facing_counts_use_thousands_separators(self):
+    def test_reader_facing_counts_reflect_current_corpus_exactly(self):
         data = gp.load_corpus(TRACKED_DB)
         total = data["totals"]["articles"]
-        self.assertGreaterEqual(total, 1000)
+        self.assertEqual(total, self.corpus_size)
+        self.assertGreater(total, 0)
         for page in ("china.html", "about.html"):
             with self.subTest(page=page):
                 html = self.page(page)
+                # Publishing must reflect the active post-retirement corpus;
+                # 873 has no separator; 1,234 must have one when it grows.
                 self.assertIn("{:,}".format(total), html)
-                self.assertNotRegex(html, r">\s*%d\s*<" % total)
+                if total >= 1000:
+                    self.assertNotRegex(html, r">\s*%d\s*<" % total)
 
     def test_ids_dates_and_hashes_are_not_comma_formatted(self):
         """Run ids, dates and hashes are identifiers, not quantities."""
@@ -2871,11 +2875,19 @@ class TestRecordSemantics(PreviewCase):
                 authored = stored.sub(" ", caveat.sub(" ", section))
                 self.assertIsNone(claim.search(authored))
 
-    def test_noisy_stored_text_is_preserved_byte_for_byte(self):
-        """Record 2579's capture carries unrelated page furniture. It stays."""
-        rec = self.data["corpus"] and next(
-            r for r in self.data["corpus"] if r["id"] == 2579)
-        html = self.record(2579)
+    def test_retained_stored_text_is_preserved_byte_for_byte(self):
+        """Text fidelity stays mandatory even after noisy record 2579 retired.
+
+        Select the longest multilined source held in the active corpus. Do not
+        recreate the removed original merely to satisfy a former fixture.
+        """
+        self.assertNotIn(2579, {r["id"] for r in self.data["corpus"]})
+        candidates = [r for r in self.data["corpus"]
+                      if r.get("text_original") and
+                      len(r["text_original"].splitlines()) >= 2]
+        self.assertTrue(candidates, "retained source corpus has no multiline text")
+        rec = max(candidates, key=lambda r: len(r["text_original"]))
+        html = self.record(rec["id"])
         for para in [p.strip() for p in rec["text_original"].split("\n")
                      if p.strip()]:
             with self.subTest(para=para[:40]):
