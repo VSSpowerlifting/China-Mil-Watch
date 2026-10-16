@@ -1,5 +1,6 @@
 """Read-only historical Global Times quality review never deletes/corrects."""
 import copy
+import sqlite3
 import unittest
 
 from scripts.audit_china_legacy_capture_quality import ROOT, quality_cues, scan
@@ -57,24 +58,47 @@ class HistoricalCaptureAuditTest(unittest.TestCase):
         self.assertFalse(result["publication_authorized"])
         self.assertFalse(result["original_capture_repair_authorized"])
 
-    def test_actual_pre_fix_negative_controls_have_calibrated_review_cues(self):
-        # Fixed historical IPR record IDs rather than model-derived examples.
-        # A future source-correction release must explicitly update this audit
-        # after review; it cannot silently change the underlying classification.
+    def test_actual_pre_fix_quality_cases_are_retired_not_resurrected(self):
+        """The nine pre-cutover Global Times examples are no longer public.
+
+        Their original source text now belongs to the retired archive. Reopen
+        neither public routes nor publisher bodies to keep a pre-cull quality
+        audit running. Exact synthetic cue calibration is checked separately
+        below, while this test now guards immutable DB tombstones and no ghost
+        public record pages for each historical example.
+        """
         suspicious = (170, 793, 1246, 1954, 2753, 3180, 3181)
         not_flagged = (792, 1630)
-        for ident in suspicious + not_flagged:
+        selected = set(suspicious + not_flagged)
+        with sqlite3.connect(
+            (ROOT / "pla_watch.db").resolve().as_uri() +
+            "?mode=ro&immutable=1", uri=True
+        ) as connection:
+            retired = {
+                row[0] for row in connection.execute(
+                    "SELECT original_article_id FROM retired_article_urls"
+                )
+            }
+            active = {
+                row[0] for row in connection.execute(
+                    "SELECT id FROM articles WHERE id IN (%s)"
+                    % ",".join("?" for _ in selected),
+                    sorted(selected),
+                )
+            }
+        self.assertTrue(selected <= retired,
+                        "historical samples must have exact retired-ID custody")
+        self.assertFalse(active, "retired historical samples reentered active DB")
+        for ident in sorted(selected):
             with self.subTest(ident=ident):
-                html = (ROOT / "output" / "record" / ("%d.html" % ident)).read_text(
-                    encoding="utf-8")
-                body, url = _original_record(html)
-                self.assertIn("globaltimes.cn", url)
-                cues = quality_cues(body)["cues"]
-                if ident in suspicious:
-                    self.assertIn("short_multi_teaser_capture_review", cues)
-                else:
-                    self.assertNotIn("short_multi_teaser_capture_review", cues)
-                    self.assertFalse(cues)
+                self.assertFalse(
+                    (ROOT / "output" / "record" / ("%d.html" % ident)).exists(),
+                    "retired Global Times source must not be rehosted",
+                )
+                self.assertFalse(
+                    (ROOT / "output" / "article" / ("%d.html" % ident)).exists(),
+                    "retired legacy route must not be rehosted",
+                )
 
     def test_short_genuine_articles_can_trigger_review_without_deletion(self):
         result = quality_cues("Short real press statement")
