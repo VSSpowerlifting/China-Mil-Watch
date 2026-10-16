@@ -10,6 +10,7 @@ import hashlib
 import json
 import re
 import subprocess
+from html.parser import HTMLParser
 from pathlib import Path
 
 ROUTES = (
@@ -48,6 +49,28 @@ def checked_commit(repo, sha):
             "ref_is_not_commit")
 
 
+class _HtmlRoute(HTMLParser):
+    """Read the actual opening HTML element rather than matching attribute text."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=False)
+        self.route_attributes = None
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "html" and self.route_attributes is None:
+            self.route_attributes = [value for name, value in attrs
+                                     if name == "data-route"]
+
+
+def exact_html_route(raw, expected):
+    try:
+        parser = _HtmlRoute()
+        parser.feed(raw.decode("utf-8"))
+    except (UnicodeError, ValueError) as exc:
+        raise ParityHold("unparseable_html_route") from exc
+    return parser.route_attributes == [expected]
+
+
 def read_page(repo, sha, path, route):
     listing = git(repo, "ls-tree", sha, "--", path).decode("utf-8")
     match = re.fullmatch(r"100644 blob ([0-9a-f]{40})\t" +
@@ -58,10 +81,8 @@ def read_page(repo, sha, path, route):
     require(128 <= size <= MAX_HTML_BYTES, "unbounded_page:" + path)
     raw = git(repo, "cat-file", "blob", blob)
     require(len(raw) == size, "blob_size_mismatch:" + path)
-    route_pattern = (rb'<html\b[^>]*\bdata-route="' +
-                     re.escape(route.encode("ascii")) + rb'"')
     require(raw.lstrip().lower().startswith(b"<!doctype html>") and
-            re.search(route_pattern, raw, re.IGNORECASE) is not None and
+            exact_html_route(raw, route) and
             b"<main" in raw.lower() and b"</html>" in raw.lower(),
             "unrecognized_desk_html:" + path)
     return raw
