@@ -49,8 +49,9 @@ jobs:
       # public original record bodies, not the preliminary historical packet.
       # Re-running a source-body audit against absent pages is impossible, not a test of
       # current public safety. Synthetic audit/cue regressions above remain.
-      # Fail closed unless the exact approved retirement is still intact;
-      # historical content review must use the separate private custody path.
+      # Fail closed unless the exact approved retirement is still intact.
+      # Surviving curated China records retain their original-body fidelity
+      # checks; retirement checks cannot imply they were all deleted.
       - name: Verify private-history/public-retirement boundary
         run: |
           set -euo pipefail
@@ -73,18 +74,55 @@ jobs:
           packet_ids = [item["id"] for item in checks]
           if len(packet_ids) != len(set(packet_ids)):
               raise SystemExit("duplicate historical source-review ID")
+          from scripts.audit_china_original_source_notes import (
+              OriginalBodyParser, _original_record, _original_url,
+          )
+
           with read_only("pla_watch.db") as con:
               if verify_no_active_retired_urls(con) != 4400:
                   raise SystemExit("expected exact owner-approved 4,400 China retirements")
               retired_ids = {row[0] for row in con.execute(
                   "SELECT original_article_id FROM retired_article_urls")}
-          for ident in packet_ids:
-              if ident not in retired_ids:
-                  raise SystemExit("historical research ID not retired: %d" % ident)
-              for prefix in ("record", "article"):
-                  if (Path("output") / prefix / ("%d.html" % ident)).exists():
+              live_ids = {row[0] for row in con.execute("SELECT id FROM articles")}
+          index = json.loads(Path("output/corpus-index.json").read_text())
+          source_by_id = {row[0]: row for row in index["records"]}
+          held = kept = 0
+          for case in checks:
+              ident = case["id"]
+              page = Path("output/record") / ("%d.html" % ident)
+              stub = Path("output/article") / ("%d.html" % ident)
+              if ident in retired_ids:
+                  if ident in live_ids or page.exists() or stub.exists():
                       raise SystemExit("retired source unexpectedly public: %d" % ident)
-          print("%d historical notes held without publication; exact China retirement guards intact" % len(packet_ids))
+                  held += 1
+                  continue
+              if ident not in live_ids or not page.is_file():
+                  raise SystemExit("historical research case lost its live/retired identity: %d" % ident)
+              row = source_by_id.get(ident)
+              if row is None or row[1] != case["published_date"]:
+                  raise SystemExit("surviving historical case date/index drift: %d" % ident)
+              source = index["sources"][row[2]]
+              if (source["code"] != case["source"] or
+                      (row[5] or row[4]) != case["title"]):
+                  raise SystemExit("surviving historical case source/title drift: %d" % ident)
+              html = page.read_text(encoding="utf-8")
+              if case["comparison"] == "historical_body_absent":
+                  parser = OriginalBodyParser()
+                  parser.feed(html)
+                  if parser.hits or parser.depth:
+                      raise SystemExit("historical absent-body case changed: %d" % ident)
+                  stored_url = _original_url(html)
+              else:
+                  body, stored_url = _original_record(html)
+                  if case["stored_body_anchor"] not in body:
+                      raise SystemExit("surviving stored-body anchor changed: %d" % ident)
+              if stored_url != case["captured_url"]:
+                  raise SystemExit("surviving source URL drift: %d" % ident)
+              kept += 1
+          if held + kept != len(packet_ids):
+              raise SystemExit("historical review case accounting mismatch")
+          print("%d preliminary source notes: %d retired/held, %d still live and source-checked; no publication authority" % (
+              len(packet_ids), held, kept))
           PY
       - name: Confirm archive untouched
         if: ${{ !cancelled() }}
