@@ -2411,6 +2411,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     korea_public_rows = []
     korea_additional_rows = []
     korea_auto_official_rows = []
+    korea_published_original_rows = []
     if korea_release_state is not None:
         if (korea_release_state.status != "shadow"
                 or korea_release_state.manifest_path is not None
@@ -2430,6 +2431,8 @@ def build(out_dir: Path, title: str, db_path: Path,
                 korea_public_rows + korea_additional_rows)}
             korea_auto_official_rows = load_live_korea_official_links(
                 db_path, exclude=frozen_ids)
+            from core.korea_published_originals import read_release_index
+            korea_published_original_rows = read_release_index()
     if korea_review_packet is not None:
         if not review_korea:
             raise ValueError("Korean approval packet is allowed only in private review mode")
@@ -3008,10 +3011,22 @@ def build(out_dir: Path, title: str, db_path: Path,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
+                             korea_published_originals=(korea_published_original_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
                                  desk, source_views), **ctx),
             encoding="utf-8")
         written.append(desk.route)
+
+    # Reproducible original Korean source pages are emitted ONLY when an
+    # independently owner-released, exact-text-hash-pinned registry exists.
+    # With the default empty release index this writes no public source body.
+    if korea_published_original_rows and not review_korea:
+        from core.korea_published_originals import render_original_page
+        for record in korea_published_original_rows:
+            target = out_dir / record["route"]
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text(render_original_page(record), encoding="utf-8")
+            written.append(record["route"])
 
     if review_korea:
         # This is a PRIVATE, unpublished rendering of the SAME site desk
