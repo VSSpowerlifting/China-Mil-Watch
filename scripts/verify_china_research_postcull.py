@@ -10,7 +10,6 @@ import copy
 import hashlib
 import json
 from pathlib import Path
-import sqlite3
 import sys
 
 # Support both `python -m scripts.verify_china_research_postcull` and direct
@@ -106,8 +105,8 @@ def main():
         raise ValueError("frozen historical packet bytes changed; require explicit new review")
     packet = json.loads(raw)
     index = json.loads(INDEX.read_text(encoding="utf-8"))
-    with sqlite3.connect(DATABASE.resolve().as_uri() + "?mode=ro&immutable=1",
-                         uri=True) as connection:
+    from scripts.reconcile_db import read_only
+    with read_only(DATABASE) as connection:
         tombstones = {r[0] for r in connection.execute(
             "SELECT original_article_id FROM retired_article_urls")}
         ids = sorted(RETIRED | SURVIVING)
