@@ -175,6 +175,44 @@ class NativeDapaCanaryContracts(unittest.TestCase):
         self.assertNotIn("99999", str(result))
         self.assertNotIn("PRIVATE", str(result))
 
+    def test_dated_release_rows_are_counted_without_forged_docseq(self):
+        sample = b"""<html><body><table><tbody>
+        <tr><th>Board header</th></tr>
+        <tr><td>701</td><td><a href="#" onclick="openDoc(59299)">PRIVATE PRESS RELEASE ALPHA</a></td>
+        <td>2026-10-15</td><td>144</td></tr>
+        <tr><td>700</td><td><a href="javascript:openDoc(59298)">PRIVATE PRESS RELEASE BETA</a></td>
+        <td>2026-10-15</td><td>108</td></tr>
+        <tr><td>699</td><td><a href="/dapa/doc/selectDoc.do?bbsSeq=326&docSeq=59297&menuSeq=3069">THIRD</a></td>
+        <td>2026-10-08</td><td>207</td></tr>
+        </tbody></table></body></html>"""
+        result = inspect_listing(sample)
+        rows = result["date_row_shape_counts"]
+        self.assertEqual(rows["table_rows"], 4)
+        self.assertEqual(rows["table_data_cells"], 12)
+        self.assertEqual(rows["table_rows_with_iso_date"], 3)
+        self.assertEqual(rows["dated_rows_with_any_anchor"], 3)
+        self.assertEqual(rows["dated_rows_with_js_or_click_activation"], 2)
+        self.assertEqual(rows["dated_rows_with_qualified_static_docseq"], 1)
+        self.assertEqual(rows["dated_rows_without_qualified_static_docseq"], 2)
+        self.assertEqual(result["provisional_docseq_count"], 1)
+        self.assertEqual(result["sample_unverified_docseq"], ["59297"])
+        self.assertNotIn("PRIVATE", str(result))
+        self.assertNotIn("59299", str(result))
+        self.assertNotIn("59298", str(result))
+        self.assertNotIn("2026-10-15", str(result))
+        self.assertNotIn("ALPHA", str(result))
+
+    def test_no_table_rows_must_not_be_misrepresented_as_empty_listing(self):
+        sample = b"""<html><body><div class="items">
+        <a href="javascript:go(10001)">PRIVATE RELEASE</a>
+        <p>2026-10-15</p></div></body></html>"""
+        result = inspect_listing(sample)
+        self.assertEqual(result["date_row_shape_counts"]["table_rows"], 0)
+        self.assertEqual(result["date_row_shape_counts"]["table_rows_with_iso_date"], 0)
+        self.assertTrue(result["zero_matching_links_is_not_zero_publications"])
+        self.assertNotIn("PRIVATE", str(result))
+        self.assertFalse(result.get("collector_enabled", False))
+
     def test_challenge_and_invalid_listing_cannot_establish_dapa(self):
         for raw, code in (
             (b"\xff", "publisher_listing_not_utf8"),
