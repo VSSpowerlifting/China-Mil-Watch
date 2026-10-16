@@ -137,8 +137,15 @@ def fetch_with_issued_key(key):
         SOURCE + "?" + params,
         headers={"User-Agent": "IndoPacificRecord/1.0 (official link metadata; https://indopacificrecord.org)",
                  "Accept": "application/json"})
+    # Refuse redirects before following them: the issued key lives in the URL.
+    # An ordinary urlopen follows redirects and could disclose that key.
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, req, fp, code, msg, headers, newurl):
+            return None
+
+    opener = urllib.request.build_opener(NoRedirect)
     try:
-        with urllib.request.urlopen(request, timeout=20) as response:
+        with opener.open(request, timeout=20) as response:
             need(response.geturl() == request.full_url, "api_redirect_refused")
             need(response.status == 200, "api_status_not_success")
             raw = response.read(120_001)
