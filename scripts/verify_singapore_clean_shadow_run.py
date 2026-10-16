@@ -88,7 +88,7 @@ def verify(state_checkout, *, run_id, collector_sha):
             "unreported_or_tampered_source_failures")
     urls = data.get("media_only_urls")
     require(type(urls) is list and len(urls) == unavailable
-            and len(urls) == len(set(urls)) and URL in urls
+            and len(urls) == len(set(urls))
             and all(type(u) is str and CANONICAL.fullmatch(u) for u in urls),
             "image_only_release_not_identified_from_real_collection")
     logical_date = data.get("target_date")
@@ -140,7 +140,9 @@ def verify(state_checkout, *, run_id, collector_sha):
         "duplicates": duplicates,
         "stored_originals": stored,
         "publisher_media_only_without_invented_text": unavailable,
-        "known_infographic_verified": True,
+        # Only claim this item was re-observed when this run actually selected
+        # it. A publisher lookback window can eventually exclude older pages.
+        "known_infographic_verified": URL in urls,
         "collection_failures": 0,
         "production_rows_admitted": 0,
         "publication_authorized": False,
