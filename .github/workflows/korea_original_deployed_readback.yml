@@ -1,0 +1,81 @@
+name: Korea — exact original-text deployed HTTPS readback
+
+# An independent, READ-ONLY verifier. Green branch commits alone do not
+# establish that users can actually load the byte-identical public pages.
+on:
+  pull_request:
+    paths:
+      - scripts/verify_korea_original_deployed_readback.py
+      - tests/test_korea_original_deployed_readback.py
+      - .github/workflows/korea_original_deployed_readback.yml
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/korea_original_deployed_readback.yml
+  workflow_run:
+    workflows:
+      - Korea — Owner-authorized exact original-text Pages release
+    types: [completed]
+  schedule:
+    - cron: '41 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-https-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install requests
+      - name: Validate source-to-HTML-to-Pages-to-HTTPS distinction
+        run: python -m unittest -v tests.test_korea_original_deployed_readback
+      - name: No production DB, registry or site mutations
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ research/korea_published_original_texts.json
+
+  independently-verify-deployed-pages:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout current main, not event-time stale code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Checkout existing Pages branch read-only
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: korea-pages-readback
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install requests
+      - name: Verify exact source SHA, renderer, Desk, Pages and public HTTPS bytes
+        run: |
+          python -m scripts.verify_korea_original_deployed_readback \
+            --main-checkout . \
+            --pages-checkout korea-pages-readback \
+            --require-https-readback --attempts 8
+      - name: Assert inspection changed no tracked production or published state
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ research/korea_published_original_texts.json
+          git -C korea-pages-readback diff --exit-code --
