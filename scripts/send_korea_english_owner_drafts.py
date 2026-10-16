@@ -118,7 +118,8 @@ def send_owner(row, review, receipt, *, sender, recipient, password,
 
 
 def run(*, ledger=RECEIPT_PATH, client, sender, recipient, password, send=None):
-    need(sender != recipient or recipient.endswith("@gmail.com"),
+    need(type(sender) is str and type(recipient) is str
+         and sender and recipient,
          "korea_owner_delivery_addresses_invalid")
     rows,data=pending(ledger)
     sent=[]
