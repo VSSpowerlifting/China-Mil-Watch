@@ -48,6 +48,7 @@ class USDDeskSourceTruthTests(unittest.TestCase):
         self.assertIn("official USCC press listing", limits.get_text(" ", strip=True))
         self.assertNotIn("official USCC and Treasury press listings", limits.get_text(" ", strip=True))
         self.assertNotIn("Collected official BIS metadata links", stats.get_text())
+        self.assertNotIn("BIS covers a bounded homepage sample", limits.get_text())
 
     def test_treasury_live_is_not_mislabeled_uscc_only(self):
         stats, limits = render_panels(uscc=10, treasury=10)
