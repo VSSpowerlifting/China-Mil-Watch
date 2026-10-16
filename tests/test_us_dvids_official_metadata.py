@@ -62,7 +62,7 @@ class DVIDSNeutralMetadata(unittest.TestCase):
                     d.sanitize(p,observed_on_utc=DAY)
 
     def test_reject_future_undated_non_utc_or_duplicate(self):
-        for day in ("2026-10-16","2026-10-15T10:00:00Z",None):
+        for day in ("2026-10-16","2026-10-15T10:00:00+02:00",None):
             with self.subTest(day=day):
                 p=response()
                 p["results"][0]["date_published"]=(day+"T01:00:00Z" if day and len(day)==10 else day)
