@@ -89,17 +89,16 @@ class DVIDSNeutralMetadata(unittest.TestCase):
 
     def test_credentials_are_mandatory_without_network_fallback(self):
         with patch.object(d.urllib.request, "build_opener") as remote:
-            for key in (None, "", "  ", "public-demo", "key-short"):
+            for key in (None, "", "  ", "public-demo"):
                 with self.subTest(key_description="empty or nonpublic key"):
                     with self.assertRaises(d.DVIDSHold):
                         d.fetch_with_issued_key(key)
             remote.assert_not_called()
 
     def test_dvids_search_public_key_requires_documented_prefix(self):
-        # The publicly documented DVIDS Search API key starts with 'key-'.
-        # A private key, client secret or a key without that prefix is not
-        # silently converted into a public API access key.
-        with self.assertRaisesRegex(d.DVIDSHold,"expected_key_dash"):
+        # DVIDS specifies public Search keys begin with 'key-'.
+        # Do not transform a private key or account secret into Search access.
+        with self.assertRaisesRegex(d.DVIDSHold,"public_search_key_prefix_missing"):
             d.normalize_issued_key("ABC123-private-or-wrong-key")
         with self.assertRaisesRegex(d.DVIDSHold,"issued_api_key_missing"):
             d.normalize_issued_key(" \n  ")
@@ -108,8 +107,22 @@ class DVIDSNeutralMetadata(unittest.TestCase):
         key = "key-" + "A1b2C3d4E5f6"
         self.assertEqual(d.normalize_issued_key(key), key)
         self.assertEqual(d.normalize_issued_key(" \n" + key + "\r\t"), key)
-        with self.assertRaisesRegex(d.DVIDSHold,"expected_key_dash"):
+        with self.assertRaisesRegex(d.DVIDSHold,"public_search_key_suffix_invalid"):
             d.normalize_issued_key(key[:6] + " " + key[6:])
+
+    def test_do_not_invent_an_undocumented_key_suffix_alphabet_or_length(self):
+        # Public Search documentation specifies prefix, not suffix encoding.
+        # All printable ASCII is safe when urllib.parse.urlencode encodes it.
+        for key in ("key-x", "key-case.with+encoded%chars=ok",
+                    "key-" + "a" * 508):
+            with self.subTest(suffix_category="printable"):
+                self.assertEqual(d.normalize_issued_key(key), key)
+        for bad in ("key-", "key-\x00abc", "key-new\nline",
+                    "key-α", "key-" + "a" * 509):
+            with self.subTest(suffix_category="invalid"):
+                with self.assertRaisesRegex(d.DVIDSHold,
+                                            "public_search_key_suffix_invalid"):
+                    d.normalize_issued_key(bad)
 
 
     def test_private_scratch_only_never_overwrites(self):
