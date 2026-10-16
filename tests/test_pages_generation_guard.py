@@ -140,6 +140,24 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(self.page_bytes('korea.html'), b'Korea two')
         self.assertEqual(self.page_bytes('index.html'), b'<h1>one</h1>')
 
+    def test_mixed_generation_file_only_then_full_tree_holds_without_provenance(self):
+        # Main changes multiple routes. The file-only Korea release publishes
+        # only Korea while recording the newest main SHA in the manifest.
+        # A later full release cannot infer from that single SHA that index
+        # is a deliberately carried-forward older main file, not an
+        # unauthorized Pages-only override. HOLD is safe, not complete.
+        self.boot()
+        self.update_main('korea.html', b'Korea two')
+        self.update_main('index.html', b'<h1>two</h1>')
+        only = self.publish(mode='file-only', paths=('korea.html',))
+        self.assertEqual(only['generation'], 2)
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'full-tree would overwrite a Pages-only changed file'):
+            self.publish(mode='full-tree')
+        self.assertEqual(self.view(), before)
+        self.assertEqual(self.page_bytes('index.html'), b'<h1>one</h1>')
+        self.assertEqual(self.page_bytes('korea.html'), b'Korea two')
+
     def test_full_tree_is_blocked_if_new_pages_only_record_would_be_lost(self):
         self.boot()
         # A separately reviewed Pages-only file-only publication can exist,
@@ -262,6 +280,35 @@ class GuardTests(unittest.TestCase):
         with self.assertRaisesRegex(Hold, 'committed Pages tree omitted'):
             self.publish(mode='full-tree')
         self.assertEqual(self.view(), before)
+
+    def test_dry_run_preflight_rejects_gitignored_artifact_before_push(self):
+        self.boot()
+        self.write('.gitignore', b'ignored-document.html\n')
+        self.write('ignored-document.html', b'official approved content')
+        run(self.main, 'add', 'output/.gitignore')
+        run(self.main, 'add', '-f', 'output/ignored-document.html')
+        run(self.main, 'commit', '-m', 'Stage ignored body deliberately')
+        run(self.main, 'push', 'origin', 'main')
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'committed Pages tree omitted'):
+            self.publish(push=False)
+        self.assertEqual(self.view(), before)
+
+    def test_dry_run_and_push_attest_identical_committed_artifact(self):
+        self.boot()
+        self.update_main('index.html', b'<h1>verified</h1>')
+        before = self.view()
+        preflight = self.publish(push=False)
+        self.assertFalse(preflight['published'])
+        self.assertEqual(self.view(), before)
+        published = self.publish(push=True)
+        self.assertTrue(published['published'])
+        self.assertEqual(preflight['tree_sha256'], published['tree_sha256'])
+        self.assertEqual(preflight['source_sha'], published['source_sha'])
+        self.assertEqual(preflight['generation'], published['generation'])
+        self.view()
+        self.assertEqual(json.loads(self.page_bytes(MANIFEST))['tree_sha256'],
+                         preflight['tree_sha256'])
 
     def test_main_advance_during_pre_push_check_refuses_release(self):
         self.boot()
