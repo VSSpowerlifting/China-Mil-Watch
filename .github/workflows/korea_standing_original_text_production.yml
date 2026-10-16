@@ -50,6 +50,51 @@ jobs:
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
 
+  real-frozen-source-frontier:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Clone actual preserved Korean source Git evidence read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --branch shadow/korea-policy-briefing \
+            "https://github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/korea-future-baseline"
+      - name: Prove exact archived initial 14 are excluded without reproducing text
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from core.korea_published_originals import read_release_index
+          from scripts.stage_korea_production_candidates import build
+          from scripts.admit_korea_standing_original_texts import baseline
+          proof=build(os.path.join(os.environ["RUNNER_TEMP"],"korea-future-baseline"))
+          historical=baseline()
+          published={x["source_identity"] for x in read_release_index()}
+          source_ids={x["source_identity"] for x in proof["records"]}
+          assert len(historical)==14 and historical<=source_ids
+          assert len(source_ids)==proof["source_original_count"]
+          assert published<=source_ids
+          future=source_ids-historical-published
+          print("Archived excluded:",len(historical))
+          print("Previously published, retained:",len(published))
+          print("Future-only candidates as of source snapshot:",len(future))
+          print("Real source branch version:",proof["source_git_commit"])
+          PY
+          git diff --exit-code -- pla_watch.db output/ research/korea_published_original_texts.json
+
   publish-future-original-korean-text:
     if: >-
       github.event_name != 'pull_request' &&
