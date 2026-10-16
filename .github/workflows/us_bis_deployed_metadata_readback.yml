@@ -1,0 +1,104 @@
+name: BIS — Independent Deployed U.S. Desk Readback
+
+# A successful release workflow only starts verification; this does not
+# independently certify publisher text, research or broader BIS coverage.
+on:
+  pull_request:
+    paths:
+      - scripts/verify_us_bis_deployed_metadata.py
+      - tests/test_us_bis_deployed_metadata.py
+      - .github/workflows/us_bis_deployed_metadata_readback.yml
+      - docs/engineering/US_BIS_DEPLOYED_METADATA_READBACK_2026-10-15.md
+  workflow_run:
+    workflows:
+      - BIS — Authenticated Official Links U.S. Desk-Only Release
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  source-free-evidence-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Rehearse live-readback failure cases with synthetic local data
+        run: python -m unittest tests.test_us_bis_deployed_metadata -v
+      - name: Verify no state was mutated
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+
+  actual-public-deployment-readback:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'workflow_run' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.name == 'BIS — Authenticated Official Links U.S. Desk-Only Release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: bis-existing-pages
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4
+      - name: Compare authenticated SQLite and GitHub Pages Git file
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+          test -z "$(git -C bis-existing-pages status --porcelain --untracked-files=all)"
+          cmp output/us-indopacific.html bis-existing-pages/us-indopacific.html
+          python - <<'PY'
+          from core.us_bis_authenticated_metadata import load_public_links
+          from pathlib import Path
+          rows=load_public_links(Path("pla_watch.db"))
+          assert rows, "No genuine source-attested BIS official records"
+          print("Authenticated BIS official link metadata rows:",len(rows))
+          PY
+      - name: Fetch exact public U.S. Desk and require Git/HTTP content agreement
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="https://indopacificrecord.org/us-indopacific.html?bis_readback=$GITHUB_RUN_ID"
+          matched=0
+          for attempt in 1 2 3 4 5 6; do
+            curl --fail --location --silent --show-error --max-time 20 \
+              --output "$RUNNER_TEMP/bis-http.html" "$target" || true
+            if cmp -s bis-existing-pages/us-indopacific.html "$RUNNER_TEMP/bis-http.html"; then
+              matched=1
+              break
+            fi
+            sleep 15
+          done
+          test "$matched" = 1 || {
+            echo "::error::Public CDN does not serve the exact BIS desk from gh-pages"; exit 1;
+          }
+          python -m scripts.verify_us_bis_deployed_metadata \
+            --production-db pla_watch.db \
+            --main-page output/us-indopacific.html \
+            --pages-git-file bis-existing-pages/us-indopacific.html \
+            --public-http-file "$RUNNER_TEMP/bis-http.html"
+      - name: Refuse drift in exact Git readback and tracked public files
+        run: |
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+          test -z "$(git -C bis-existing-pages status --porcelain --untracked-files=all)"
