@@ -1,0 +1,222 @@
+name: BIS — Authenticated Official Links U.S. Desk-Only Release
+
+# Owner's standing approval is limited to verified official URL/date/issuer.
+# No original headlines, articles, media, translations, or analysis.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/us_bis_verified_official_links_release.yml
+      - tests/test_us_bis_verified_official_links_release.py
+      - docs/engineering/US_BIS_METADATA_GUARDED_PAGES_RELEASE_2026-10-15.md
+  workflow_run:
+    workflows:
+      - BIS Official Homepage Press Metadata — Scheduled Shadow
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  source-free-release-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: BIS offline contracts
+        run: |
+          python -m unittest tests.test_us_bis_verified_official_links_release \
+            tests.test_us_bis_authenticated_metadata \
+            tests.test_us_bis_public_metadata_bridge \
+            tests.test_us_bis_scheduled_receipt_attestation -v
+      - name: No production mutation
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+
+  genuine-scheduled-source-only:
+    if: >-
+      github.event_name == 'workflow_run' &&
+      github.event.workflow_run.event == 'schedule' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.name == 'BIS Official Homepage Press Metadata — Scheduled Shadow'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Pin production baseline and forbid dirty checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git rev-parse HEAD > "$RUNNER_TEMP/bis-main-before.sha"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/bis-db-before.sha"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Source and release regression checks
+        run: |
+          python -m unittest tests.test_us_bis_homepage_metadata \
+            tests.test_us_bis_homepage_receipt \
+            tests.test_us_bis_scheduled_receipt_attestation \
+            tests.test_us_bis_authenticated_metadata \
+            tests.test_us_bis_public_metadata_bridge \
+            tests.test_us_bis_verified_official_links_release -v
+      - name: Retrieve actual GitHub Actions metadata and pinned source checkout
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BIS_RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$BIS_RUN_ID" > "$RUNNER_TEMP/bis-run.json"
+          gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/shadow/us-bis-homepage" \
+            --jq '.object.sha' > "$RUNNER_TEMP/bis-source-before.sha"
+          git clone --quiet --single-branch --branch shadow/us-bis-homepage \
+            "https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git" \
+            "$RUNNER_TEMP/bis-source"
+          test "$(git -C "$RUNNER_TEMP/bis-source" rev-parse HEAD)" = \
+               "$(cat "$RUNNER_TEMP/bis-source-before.sha")"
+      - name: Authenticate scheduled event and immutable BIS publisher metadata
+        run: |
+          python -m scripts.attest_us_bis_scheduled_receipt \
+            --source-checkout "$RUNNER_TEMP/bis-source" \
+            --authenticated-run-json "$RUNNER_TEMP/bis-run.json" \
+            --expected-remote-head "$(cat "$RUNNER_TEMP/bis-source-before.sha")"
+      - name: Snapshot every unrelated SQLite table count before admission
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,os,sqlite3
+          from pathlib import Path
+          db=Path("pla_watch.db").resolve()
+          with sqlite3.connect("file:"+str(db)+"?mode=ro",uri=True) as c:
+              names=[r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name") if not r[0].startswith("bis_")]
+              counts={n:c.execute('SELECT COUNT(*) FROM "'+n.replace('"','""')+'"').fetchone()[0] for n in names}
+          (Path(os.environ["RUNNER_TEMP"])/"bis-other-tables.json").write_text(json.dumps(counts,sort_keys=True))
+          PY
+      - name: Admit only authenticated URL/date/issuer metadata, then render
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.admit_us_bis_scheduled_metadata \
+            --source-checkout "$RUNNER_TEMP/bis-source" \
+            --authenticated-run-json "$RUNNER_TEMP/bis-run.json" \
+            --expected-remote-head "$(cat "$RUNNER_TEMP/bis-source-before.sha")" \
+            --database "$GITHUB_WORKSPACE/pla_watch.db" \
+            --standing-official-url-date-issuer-approval
+          python scripts/verify_db_current.py
+          python site/render.py
+          python scripts/validate_output.py
+      - name: Verify BIS links, unrelated SQLite counts, USCC, Treasury and PACOM
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,os,sqlite3
+          from pathlib import Path
+          from bs4 import BeautifulSoup
+          from core.us_bis_authenticated_metadata import load_public_links
+          db=Path("pla_watch.db").resolve()
+          with sqlite3.connect("file:"+str(db)+"?mode=ro",uri=True) as c:
+              names=[r[0] for r in c.execute("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name") if not r[0].startswith("bis_")]
+              actual={n:c.execute('SELECT COUNT(*) FROM "'+n.replace('"','""')+'"').fetchone()[0] for n in names}
+          expected=json.loads((Path(os.environ["RUNNER_TEMP"])/"bis-other-tables.json").read_text())
+          assert actual==expected, "Unrelated tables changed"
+          rows=load_public_links(db)
+          assert rows, "No authenticated BIS link rows"
+          page=Path("output/us-indopacific.html").read_text(encoding="utf-8")
+          soup=BeautifulSoup(page,"html.parser")
+          links=soup.select("li[data-us-bis-official-link] a[href]")
+          assert len(links)==len(rows)
+          assert [a["href"] for a in links]==[r["source_url"] for r in rows]
+          assert all(a["href"].startswith("https://www.bis.gov/press-release/")
+                     and a.get("target")=="_blank" and "noopener" in a.get("rel",[]) for a in links)
+          assert len(soup.select("li[data-us-pacom-link] a"))==9
+          assert len(soup.select("li[data-uscc-official-link] a"))>=10
+          assert len(soup.select("li[data-us-treasury-official-link] a"))>=10
+          assert "PACOM remains access-blocked" in page and "DVIDS paused" in page
+          assert all(x not in page for x in ("title_original","text_original","body_original"))
+          print("BIS first-party dated outbound metadata references:",len(rows))
+          PY
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          sha256sum output/us-indopacific.html > "$RUNNER_TEMP/bis-page.sha"
+      - name: Refuse moving shadow source and main before write
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          latest="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/shadow/us-bis-homepage" --jq '.object.sha')"
+          test "$latest" = "$(cat "$RUNNER_TEMP/bis-source-before.sha")"
+          git fetch --quiet origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/bis-main-before.sha")"
+          sha256sum -c "$RUNNER_TEMP/bis-page.sha"
+      - name: Commit ONLY SQLite and U.S. Desk page to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- pla_watch.db output/us-indopacific.html
+          staged="$(git diff --cached --name-only)"
+          test -z "$(printf '%s\n' "$staged" | grep -vE '^(pla_watch.db|output/us-indopacific.html|)$')"
+          if test -n "$staged"; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "BIS: admit genuine scheduled official link metadata only"
+            git push origin HEAD:refs/heads/main
+          fi
+      - name: Check out current Pages only
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: bis-existing-pages
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Publish ONLY U.S. Desk HTML with exact Git readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/bis-page.sha"
+          git fetch --quiet origin main
+          test "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)"
+          cd bis-existing-pages
+          test -z "$(git status --porcelain --untracked-files=all)"
+          before="$(git rev-parse HEAD)"
+          cp ../output/us-indopacific.html us-indopacific.html
+          cmp ../output/us-indopacific.html us-indopacific.html
+          git add -- us-indopacific.html
+          changed="$(git diff --cached --name-only)"
+          test -z "$changed" || test "$changed" = "us-indopacific.html"
+          if test -n "$changed"; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m "BIS: publish verified U.S. Desk official references only"
+          fi
+          git fetch --quiet origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$before"
+          if test -n "$changed"; then git push origin HEAD:refs/heads/gh-pages; fi
+          cmp ../output/us-indopacific.html us-indopacific.html
+          test "$(git show HEAD:us-indopacific.html | sha256sum | cut -d' ' -f1)" = \
+               "$(sha256sum ../output/us-indopacific.html | cut -d' ' -f1)"
