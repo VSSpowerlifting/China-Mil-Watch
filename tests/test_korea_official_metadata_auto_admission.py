@@ -162,6 +162,18 @@ class KoreaStandingLinkAdmissionTests(unittest.TestCase):
             src.backup(out)
         with sqlite3.connect(copied_db) as con:
             schema.up(con)
+            con.commit()
+        # Compare rendered surfaces, not every admitted DB row: a live desk
+        # can deliberately display only a bounded recent subset of old links.
+        baseline = Path(self.temp.name) / "baseline-site"
+        gp.build(baseline, "Korea automatic official metadata", copied_db,
+                 snapshot=gp.snapshot_from_corpus(copied_db),
+                 site_origin="https://indopacificrecord.org")
+        baseline_page = (baseline / "korea.html").read_text(encoding="utf-8")
+        existing = load_live_korea_official_links(copied_db)
+        self.assertTrue({r["source_identity"] for r in existing}.isdisjoint(
+            {r["source_identity"] for r in self.packet["records"]}))
+        with sqlite3.connect(copied_db) as con:
             admission.admit(con, self.packet, self.policy, as_of_utc=self.stamp)
             con.commit()
         target = Path(self.temp.name) / "site"
@@ -171,14 +183,11 @@ class KoreaStandingLinkAdmissionTests(unittest.TestCase):
         page = (target / "korea.html").read_text(encoding="utf-8")
         self.assertEqual(page.count('data-korea-public-link='), 5)
         self.assertEqual(page.count('data-korea-additional-link='), 9)
-        # The copied production corpus may already contain live MND links.
-        # The five synthetic, disjoint admissions must be additive, not
-        # silently overwrite or hide any existing live metadata.
-        baseline = load_live_korea_official_links(ROOT / "pla_watch.db")
-        self.assertTrue({r["source_identity"] for r in baseline}.isdisjoint(
-            {r["source_identity"] for r in self.packet["records"]}))
-        self.assertEqual(page.count('data-korea-auto-official-link='),
-                         len(baseline) + len(self.packet["records"]))
+        self.assertEqual(
+            page.count('data-korea-auto-official-link=') -
+            baseline_page.count('data-korea-auto-official-link='),
+            len(self.packet["records"]),
+            "new admitted metadata must add links to the real rendered baseline")
         self.assertIn("MND official press release 156799905", page)
         self.assertIn("Portal posted:", page)
         for forbidden in ("summary_english", "text_original", "source_git_commit",
