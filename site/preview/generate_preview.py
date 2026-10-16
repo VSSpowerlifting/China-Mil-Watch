@@ -3024,12 +3024,21 @@ def build(out_dir: Path, title: str, db_path: Path,
     # Reproducible original Korean source pages are emitted ONLY when an
     # independently owner-released, exact-text-hash-pinned registry exists.
     # With the default empty release index this writes no public source body.
+    # Each page renders through the shared shell like every other nested page,
+    # so it carries the masthead, canonical/og:url and the robots switch; the
+    # escaped body comes from the registry module unchanged.
     if korea_published_original_rows and not review_korea:
-        from core.korea_published_originals import render_original_page
+        from core.korea_published_originals import (
+            original_page_title, render_original_body)
+        original_tmpl = env.get_template("korea-original.html")
         for record in korea_published_original_rows:
             target = out_dir / record["route"]
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(render_original_page(record), encoding="utf-8")
+            target.write_text(original_tmpl.render(
+                page="korea.html", nested=True,
+                original_title=original_page_title(record),
+                original_body=Markup(render_original_body(record)), **ctx),
+                encoding="utf-8")
             written.append(record["route"])
 
     # English pages are written only for explicitly registered, already

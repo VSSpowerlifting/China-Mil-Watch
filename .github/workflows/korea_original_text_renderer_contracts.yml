@@ -7,6 +7,8 @@ on:
       - research/korea_published_original_texts.json
       - site/preview/generate_preview.py
       - site/preview/templates/desk.html
+      - site/preview/templates/korea-original.html
+      - scripts/verify_korea_original_deployed_readback.py
       - tests/test_korea_published_originals.py
       - .github/workflows/korea_original_text_renderer_contracts.yml
 
@@ -33,16 +35,16 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          from core.korea_published_originals import read_release_index, render_original_page
+          from core.korea_published_originals import read_release_index, render_original_body
           rows = read_release_index()
           observed = list(Path("research/korea_published_original_texts").glob("*.txt"))
           assert len(rows) == len(observed)
           for row in rows:
               ident = row["news_id"]
-              expected = render_original_page(row)
+              expected = render_original_body(row)
               page = Path("output/korea-originals") / (ident + ".html")
               if page.is_file():
-                  assert page.read_text(encoding="utf-8") == expected
+                  assert page.read_text(encoding="utf-8").count(expected) == 1
           print("Previously approved Korean originals preserved:", len(rows))
           PY
           git diff --exit-code -- pla_watch.db output/

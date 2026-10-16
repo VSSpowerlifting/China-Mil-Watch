@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from scripts import admit_korea_original_text as admit
 from scripts import verify_korea_original_publication as verify
-from core.korea_published_originals import read_release_index, render_original_page
+from core.korea_published_originals import read_release_index, render_original_body
 
 ID = "korea-policy:156784297"
 URL = "https://www.korea.kr/briefing/pressReleaseView.do?newsId=156784297"
@@ -114,7 +114,7 @@ class Tests(unittest.TestCase):
         self.assertEqual(rows[0]["text_original"].encode("utf-8"), TEXT)
         self.assertEqual(rows[0]["release_decision_sha256"],
                          result["release_decision_sha256"])
-        markup = render_original_page(rows[0])
+        markup = render_original_body(rows[0])
         self.assertIn(URL, markup)
         self.assertNotIn("download.do", markup)
         self.assertFalse((self.root / "pla_watch.db").exists())

@@ -8,7 +8,7 @@ from pathlib import Path
 from scripts.verify_korea_original_deployed_readback import (
     ReadbackHold, validate_branch_parity, verify_readback,
 )
-from core.korea_published_originals import read_release_index, render_original_page
+from core.korea_published_originals import read_release_index, render_original_body
 
 ID = "156784297"
 RAW = ("국방부의 가상 시험 공표 문장입니다. " * 16).encode("utf-8")
@@ -57,7 +57,10 @@ class KoreaOriginalReadbackTests(unittest.TestCase):
         self._index([self.row])
         rows = read_release_index(self.main / "research/korea_published_original_texts.json",
                                   self.main / "research/korea_published_original_texts")
-        page = render_original_page(rows[0]).encode("utf-8")
+        # A stand-in for the shared site shell around the escaped body.
+        page = (b'<!doctype html><html lang="en"><body><main id="main">'
+                + render_original_body(rows[0]).encode("utf-8")
+                + b'</main></body></html>')
         for parent in [self.main / "output", self.pages]:
             (parent / "korea-originals" / (ID + ".html")).write_bytes(page)
         desk = (
@@ -103,6 +106,16 @@ class KoreaOriginalReadbackTests(unittest.TestCase):
     def test_pages_html_modified_after_main_publishing_is_held(self):
         (self.pages / "korea-originals" / (ID + ".html")).write_bytes(b"tampered")
         with self.assertRaisesRegex(ReadbackHold, "main_pages_bytes_differ"):
+            validate_branch_parity(self.main, self.pages)
+
+    def test_published_page_missing_the_exact_body_is_held(self):
+        """A shell with a re-escaped or edited body is not the registered text."""
+        stale = (self.main / "output/korea-originals" / (ID + ".html")).read_bytes()
+        edited = stale.replace("국방부의".encode("utf-8"), "편집됨".encode("utf-8"), 1)
+        self.assertNotEqual(edited, stale)
+        for parent in [self.main / "output", self.pages]:
+            (parent / "korea-originals" / (ID + ".html")).write_bytes(edited)
+        with self.assertRaisesRegex(ReadbackHold, "rendered_bytes_differ_from_published"):
             validate_branch_parity(self.main, self.pages)
 
     def test_pages_desk_link_lost_is_held(self):

@@ -6325,10 +6325,20 @@ class TestStop4RoutesAreIntact(PreviewCase):
         # atmosphere.json, is a top-level file and is already inside `top`.
         atmosphere = [q for q in (self.out / "atmosphere").iterdir() if q.is_file()] \
             if (self.out / "atmosphere").is_dir() else []
+        # `korea-originals/` joined the tree on 2026-10-16: one page per
+        # owner-released Korean original in the registry, and no other file.
+        from core.korea_published_originals import read_release_index
+        korea_originals = [q for q in (self.out / "korea-originals").iterdir()
+                           if q.is_file()] \
+            if (self.out / "korea-originals").is_dir() else []
+        self.assertEqual(
+            sorted("korea-originals/" + q.name for q in korea_originals),
+            sorted(row["route"] for row in read_release_index()),
+            "an undeclared page joined korea-originals/")
         # Week shards are top-level files, so they are already inside `top`.
         self.assertEqual(len(files),
                          self.corpus_size + len(top) + len(sources)
-                         + len(covers) + len(atmosphere)
+                         + len(covers) + len(atmosphere) + len(korea_originals)
                          + len([q for q in (self.out / "assets").rglob("*") if q.is_file()]))
         # Three declared files since 2026-09-15: the withdrawn J-20 derivative,
         # which stays published with its licence record because "do not render
