@@ -206,7 +206,7 @@ jobs:
           cd korea-standing-existing-pages
           old="$(git rev-parse HEAD)"
           git add -A -- korea.html korea-originals
-          python - <<'PY'
+          PYTHONPATH="$GITHUB_WORKSPACE" python - <<'PY'
           import subprocess
           from core.korea_published_originals import read_release_index
           allowed={"korea.html"}|{row["route"] for row in read_release_index()}
