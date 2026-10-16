@@ -23,8 +23,8 @@
   {% endfor %}
   <h2>Limits of the evidence</h2>
   <p>{{ review.analysis.limitations_en }}</p>
-  <p>Official source: <a href="{{ source.official_url }}" rel="noopener noreferrer">Republic of Korea Policy Briefing</a>.
+  <p>Official source: <a href="{{ korea_source.official_url }}" rel="noopener noreferrer">Republic of Korea Policy Briefing</a>.
      Evidence is confined to the cited Korean text; no media reproduced.</p>
-  <p>Source SHA-256: <code>{{ source.original_text_sha256 }}</code></p>
+  <p>Source SHA-256: <code>{{ korea_source.original_text_sha256 }}</code></p>
 </article>
 {% endblock %}
