@@ -5,14 +5,16 @@ All four tasks share a common system prompt defined here.  Each build_*
 function returns a ready-to-use messages list for anthropic.messages.create().
 The *_SCHEMA dicts document the expected JSON structure for validation.
 
-PROMPT_VERSION is written to every row in the articles table alongside the
-model ID so that results can be re-analyzed against improved prompts without
-losing provenance.
+PROMPT_VERSION identifies the unchanged base tasks. ANALYSIS_PROMPT_VERSION
+identifies the translation/summary revision on full analysis results, using
+the existing row-level provenance field without changing relevance-only results.
 """
 
 from typing import Any
 
 PROMPT_VERSION = "v1"
+# Relevance and categorization still use v1; only translation/summary changed.
+ANALYSIS_PROMPT_VERSION = f"{PROMPT_VERSION}+chronology-v1"
 
 # ── Shared system prompt ──────────────────────────────────────────────────────
 
@@ -191,6 +193,14 @@ Requirements:
 
 Preserve the structure and paragraph breaks of the original.
 
+Preserve event chronology and completion status in both the title and body. \
+Keep planned, scheduled, ongoing, completed, postponed, and cancelled activities \
+distinct. Preserve future markers such as 将, 将于, 计划, and 将举行 as future \
+language, not completed actions. An announcement of an upcoming activity is not \
+evidence that it occurred. Never infer completion merely because a scheduled \
+date has passed. Preserve ambiguous timing rather than choosing a tense that \
+asserts completion.
+
 Translate official titles, unit designations, and weapon system names into their \
 established English equivalents (e.g., 中央军委 as "Central Military Commission," \
 东部战区 as "Eastern Theater Command," 火箭军 as "Rocket Force"). Use the U.S. \
@@ -244,6 +254,19 @@ article; never invent, re-translate, or embellish Chinese text. The summary rend
 directly under the headline, so do not restate the headline; add what the headline \
 does not say. This first sentence must stand on its own: on index cards only the \
 opening of the summary is shown.
+
+Preserve event chronology and completion status from the title and body throughout \
+the summary. Keep planned, scheduled, ongoing, completed, postponed, and cancelled \
+activities distinct. For an upcoming activity, the concrete development is its \
+announcement or plan: say "announced," "plans to," "is scheduled to," or "will" \
+as the source warrants, not "held," "conducted," or "completed." An announcement \
+of an upcoming activity is not evidence of the activity's completion. Never infer \
+completion merely because a scheduled date has passed. Use the source's actual \
+temporal language; preserve ambiguous timing and do not resolve conflicting \
+title/body timing by asserting completion. In mixed accounts, distinguish past \
+events from future plans; completion of one does not establish completion of another. \
+A report of an already completed exercise may describe it as completed; a \
+postponement or cancellation must not become an occurrence.
 
 The second (and optional third) sentence answers: what concrete institutional or \
 military problem does this article make visible? What specific pattern does it fit, \

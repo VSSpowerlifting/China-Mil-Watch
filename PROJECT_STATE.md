@@ -811,6 +811,13 @@ review date, not a qualification threshold. Neither desk is promoted.
 
 ## 6. Known technical debt
 
+* **Summary chronology (#353):** translation and summary prompts now explicitly
+  preserve planned/completed, postponed/cancelled and ambiguous event status.
+  Full analysis provenance is `v1+chronology-v1`; relevance-only provenance stays
+  `v1`. Offline synthetic/mocked coverage checks the contract and compatibility,
+  not model accuracy. No stored records are corrected. A deterministic audit is
+  deferred: matching events across mixed title/body/summary accounts requires
+  language interpretation; tense keywords alone do not establish contradictions.
 * **PR offline-check draft efficiency (owner review pending, 2026-10-07).**
   `codex/pr-offline-efficiency-20261007` skips the heavyweight job while draft;
   ready/non-draft events keep the full exact-head suite, Chromium, validator and

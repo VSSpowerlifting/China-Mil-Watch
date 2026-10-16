@@ -26,6 +26,7 @@ from typing import Optional
 import anthropic
 
 from analysis.prompts import (
+    ANALYSIS_PROMPT_VERSION,
     PROMPT_VERSION,
     RELEVANCE_SCHEMA,
     SYSTEM_PROMPT,
@@ -628,5 +629,5 @@ class Analyzer:
             "is_significant":         is_significant,
             "significance_reasoning": significance_reason,
             "model_id":               ANALYSIS_MODEL,
-            "prompt_version":         PROMPT_VERSION,
+            "prompt_version":         ANALYSIS_PROMPT_VERSION,
         }
