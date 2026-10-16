@@ -173,11 +173,11 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(draft._exact_model_json('{"translations":[]}'),
                          {"translations":[]})
         self.assertEqual(draft._exact_model_json(
-            '```json\\n{"translations":[]}\\n```'),
+            '```json\n{"translations":[]}\n```'),
             {"translations":[]})
         for raw in (
             'Here is JSON: {"translations":[]}',
-            '{"translations":[]}\\nExtra prose',
+            '{"translations":[]}\nExtra prose',
             '{"translations":[]}{"claims":[]}',
             '[1,2]', '{"translations":[],}',
         ):
