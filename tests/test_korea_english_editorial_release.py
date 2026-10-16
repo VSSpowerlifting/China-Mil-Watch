@@ -137,5 +137,38 @@ class OwnerEnglishAdmissionTests(unittest.TestCase):
         self.assertEqual(pub.owner_event(env),"38839142468")
 
 
+class FirstRealKoreaEnglishPacketTests(unittest.TestCase):
+    """Release-specific validation, without granting publication authority."""
+
+    def test_approved_first_real_packet_is_source_exact_and_unpublished_until_dispatch(self):
+        from core.korea_published_originals import read_release_index
+        from core.korea_english_publication import verify_review
+
+        root = Path(__file__).resolve().parents[1]
+        path = root / "research/korea_english_reviewed/156784297.json"
+        packet = json.loads(path.read_text(encoding="utf-8"))
+        source = next(
+            r for r in read_release_index()
+            if r["source_identity"] == "korea-policy:156784297"
+        )
+        self.assertEqual(source["original_text_sha256"],
+            "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284")
+        self.assertEqual(packet["review"]["status"], "editor_approved")
+        self.assertEqual(packet["review"]["reviewer"], "VSSpowerlifting")
+        receipt = verify_review(packet, source)
+        self.assertEqual(receipt["paragraphs"], 22)
+        self.assertEqual(receipt["claims"], 5)
+        self.assertFalse(receipt["machine_only"])
+        self.assertFalse(receipt["editorial_meaning_verified_by_code"])
+        self.assertEqual(receipt["review_sha256"],
+            "d58554299f26ede9d14c5e00337a3f52dd39c9a0e816dc6f1cd4717b73abe5ea")
+        # Merely staging this approved packet does not grant public release;
+        # the owner-authenticated workflow dispatch and SHA remain mandatory.
+        for published, _, _ in public_registry():
+            if published["source_identity"] == "korea-policy:156784297":
+                self.assertEqual(published["review_sha256"],
+                                 receipt["review_sha256"])
+
+
 if __name__=="__main__":
     unittest.main()
