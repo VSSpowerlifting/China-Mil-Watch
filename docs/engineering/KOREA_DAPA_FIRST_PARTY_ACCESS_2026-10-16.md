@@ -27,6 +27,21 @@ Workflow: `.github/workflows/korea_dapa_native_access_canary.yml`. The user must
 3. Inspect HTML **only in memory** for strict, same-host links to `/dapa/doc/selectDoc.do`, exact `bbsSeq=326`, unique numeric `docSeq`, optional exact menuSeq. Output only counts and up to six provisional numeric identifiers. Never persist titles, source article bodies, press HTML or attachments. Zero qualifying links is **unknown listing structure**, not proof of zero articles.
 4. Output is at most `listing_shape_observed_unverified`, NOT source eligibility, verified DAPA attribution, automatic source permission, rights clearance or production admission. Any failure returns a fixed HOLD code.
 
+## Actual first-party live observation — 2026-10-16
+
+Owner manually dispatched the separately authorized [native-source canary run 38974484820](https://github.com/VSSpowerlifting/IndoPacificRecord/actions/runs/38974484820); its exact run produced:
+
+- `robots_checked=true`, `listing_checked=true`, `requests_attempted=2` (one `robots.txt`, one exact DAPA-owned listing GET); workflow **passed**
+- `observed_anchor_count=325`, `provisional_docseq_count=0`, `sample_unverified_docseq=[]`
+- `zero_matching_links_is_not_zero_publications=true`; no valid same-host static `selectDoc.do?bbsSeq=326&docSeq=...` link was recognized by the **existing strict parser**
+- No article or attachment request, zero publisher-original content saved, and no changes to the production site or DB
+
+**Interpretation:** the press page is reachable in the GitHub Actions network, but its actual list-to-item navigation format remains unverified. A zero numeric ID count cannot prove an empty release list. It may use JavaScript handlers, form submissions or other DOM patterns; these are hypotheses, not observed facts.
+
+This follow-on engineering change records only aggregate counts of anchor/form/link *shapes*, including the number with JavaScript hrefs, onclick handlers, direct-detail paths without qualified IDs, forms and hidden inputs. It does not emit publisher HTML, unverified URLs, full titles, JavaScript code or guessed IDs, and it does not modify the one-time request budget or scope. A **new** separately owner-approved manual run after merge will be required to observe these diagnostics from the publisher.
+
+Do not convert tentative JavaScript/form-derived numeric strings into official source IDs until a real issuer/date/article pair has been independently established through a separately approved source-specific workflow.
+
 ## After a separately approved successful listing observation
 
 Independently establish visible first-party article issuer, posted date and stable document identity against the actual publisher. Then open a new proposal for a source-specific private shadow collector, prospective collection reliability, rights restrictions per content class, and a distinct metadata-only source adapter. **No direct DAPA original text, HWPX, PDF, photograph, translation or analysis may be published by this probe.**
