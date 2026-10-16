@@ -95,7 +95,7 @@ def validate_postcull(packet, index, tombstones, active_ids,
 
 def main():
     raw = PACKET.read_bytes()
-    blob = b"blob " + str(len(raw)).encode("ascii") + b"\\0" + raw
+    blob = b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
     if hashlib.sha1(blob).hexdigest() != PACKET_GIT_BLOB_SHA1:
         raise ValueError("frozen historical packet bytes changed; require explicit new review")
     packet = json.loads(raw)
