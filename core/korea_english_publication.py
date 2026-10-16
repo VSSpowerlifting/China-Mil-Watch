@@ -221,8 +221,9 @@ def render_translation(row, review, source):
         '<p><a href="../korea.html">South Korea Desk</a> · '
         '<a href="../korea-originals/' + number + '.html">Korean original</a></p>'
         '<h1>English translation — Korean MND release ' + number + '</h1>'
-        '<p>English translation reviewed for meaning against the Korean source. '
-        'Not a statement of IPR editorial agreement or independent verification.</p>'
+        '<p>Machine-assisted English translation, subsequently reviewed by an editor '
+        'for meaning against the Korean source. Not a statement of IPR editorial '
+        'agreement or independent verification.</p>'
         '<p>Source: <a href="' + esc(source["official_url"])
         + '">Republic of Korea Ministry of National Defense via Policy Briefing</a>. '
         'Translation made from source text under KOGL Type 1 with attribution; '
@@ -238,7 +239,10 @@ def render_analysis(row, review, source):
     route = "korea-analysis/" + number + ".html"
     claims = "".join(
         '<section><h2>' + esc(c["heading_en"]) + '</h2><p>' +
-        esc(c["analysis_en"]) + '</p><p>Original-source paragraph references: ' +
+        esc(c["analysis_en"]) + '</p><p>Claim type: ' +
+        ('Bounded analytical inference' if c["assessment_type"] ==
+         "bounded_analytical_inference" else 'Attributed official-source interpretation') +
+        '.</p><p>Original-source paragraph references: ' +
         ", ".join(str(i) for i in c["source_indices"]) +
         '.</p><details><summary>Verbatim Korean evidence</summary>' +
         "".join("<blockquote lang='ko'>" + esc(q) + "</blockquote>"
@@ -257,9 +261,10 @@ def render_analysis(row, review, source):
         '<a href="../korea-originals/' + number + '.html">Verified Korean original</a> · '
         '<a href="../korea-translations/' + number + '.html">Reviewed translation</a></p>'
         '<h1>' + esc(review["analysis"]["heading_en"]) + '</h1>'
-        '<p><strong>IPR source-grounded analysis</strong>, reviewed by an editor. '
-        'Claims attributed to the Ministry of National Defense are not independently '
-        'corroborated merely because they appear in an official release.</p>'
+        '<p><strong>IPR source-grounded analysis</strong>, machine-assisted '
+        'and reviewed by an editor. Claims attributed to the Ministry of National '
+        'Defense are not independently corroborated merely because they appear '
+        'in an official release.</p>'
         '<p>' + esc(review["analysis"]["thesis_en"]) + '</p>'
         + claims + '<h2>Limits of the evidence</h2><p>'
         + esc(review["analysis"]["limitations_en"]) + '</p>'
