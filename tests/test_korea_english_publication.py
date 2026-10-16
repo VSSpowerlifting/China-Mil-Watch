@@ -68,6 +68,17 @@ def make_review():
     }
 
 
+def model_source_ids(analysis):
+    """Simulate model ID selections, not model-written Korean quotation text."""
+    shape = json.loads(json.dumps(analysis, ensure_ascii=False))
+    for claim in shape["claims"]:
+        claim["source_quote_ids"] = [
+            "P%02dQ001" % n for n in claim["source_indices"]
+        ]
+        del claim["source_quotes_ko"]
+    return shape
+
+
 class ReviewTests(unittest.TestCase):
     def test_fully_source_pinned_structure_can_be_rendered(self):
         review=make_review()
