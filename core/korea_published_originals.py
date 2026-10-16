@@ -14,6 +14,9 @@ import re
 from datetime import datetime
 from pathlib import Path
 
+from jinja2 import Environment, FileSystemLoader
+
+
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "research" / "korea_published_original_texts.json"
 ORIGINAL_DIR = ROOT / "research" / "korea_published_original_texts"
@@ -106,43 +109,62 @@ def read_release_index(index=INDEX, original_dir=ORIGINAL_DIR):
                   reverse=True)
 
 
-def render_original_page(record):
-    """Re-render verified Korean original bytes as escaped, attributable text."""
-    e = lambda value: html.escape(str(value), quote=True)
+# Rendering and independent deployed-readback verification share this exact
+# deterministic source-page projection. It deliberately uses the SAME base.html
+# template as the rest of the site rather than inventing a second website shell.
+TEMPLATES = ROOT / "site" / "preview" / "templates"
+PUBLIC_ORIGIN = "https://indopacificrecord.org"
+NOINDEX_TAG = '<meta name="robots" content="noindex, nofollow">'
+TAGLINE = ("Official defense and security texts, preserved as published and "
+           "analyzed in context.")
+
+
+def render_original_page(record, *, site_origin=PUBLIC_ORIGIN):
+    """Render qualified original inside shared IPR chrome.
+
+    A missing origin is a safe, noindex private/candidate preview. The public
+    origin replaces the SAME noindex tag and adds the SAME canonical/social
+    metadata as the ordinary site builder. No registration or rights grant
+    happens here; source text is only emitted after read_release_index().
+    """
     rid = record["news_id"]
     require(type(rid) is str and re.fullmatch(r"[0-9]{9}", rid)
             and record["route"] == ROUTE_PREFIX + rid + ".html"
-            and record["official_url"] == URL_PREFIX + rid,
+            and record["official_url"] == URL_PREFIX + rid
+            and type(record["text_original"]) is str
+            and record["text_original"].strip(),
             "korea_original_page_identity_mismatch")
-    title = "Korean MND official release " + rid
-    canonical = "https://indopacificrecord.org/" + record["route"]
-    markup = (
-        '<!doctype html><html lang="ko"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<title>' + e(title) + ' — Indo-Pacific Record</title>'
-        '<meta name="description" content="Licensed Korean-language official source text, attributed to the Republic of Korea government.">'
-        '<link rel="canonical" href="' + e(canonical) + '">'
-        '<link rel="stylesheet" href="../styles.css">'
-        '</head><body><main style="max-width:76ch;margin:2rem auto;padding:1rem;">'
-        '<p><a href="../korea.html">← South Korea Desk</a></p>'
-        '<h1 lang="en">' + e(title) + '</h1>'
-        '<p lang="en"><strong>Official Korean government source text</strong> '
-        '— not an IPR fact-check or independent endorsement of the claims.</p>'
-        '<p lang="en">Issuer: Republic of Korea Ministry of National Defense; '
-        'republication: Republic of Korea Policy Briefing.</p>'
-        '<p lang="en">Publisher posted: ' + e(record["publisher_posted_date"])
-        + ' · <a href="' + e(record["official_url"])
-        + '" rel="noopener noreferrer">Original official release</a></p>'
-        '<p lang="en">Text reproduced with attribution under the article-specific '
-        '<a href="https://www.korea.kr/guide/copyRight.do">KOGL Type 1 text-use '
-        'notice and publisher terms</a>. English translations, photographs, '
-        'HWPX attachments and other media are not included. '
-        'The Korean text is presented without editorial changes.</p>'
-        '<p lang="en">Source version SHA-256: <code>'
-        + e(record["original_text_sha256"]) + '</code></p>'
-        '<article aria-label="Verbatim Korean-language original"><pre lang="ko" '
-        'style="white-space:pre-wrap;overflow-wrap:anywhere;">'
-        + e(record["text_original"]) + '</pre></article>'
-        '</main></body></html>'
+    require(site_origin is None or site_origin == PUBLIC_ORIGIN,
+            "korea_original_page_origin_unrecognized")
+    from core.brief_collection import COLLECTION_NAME
+    env = Environment(loader=FileSystemLoader(str(TEMPLATES)),
+                      autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    page = env.get_template("korea_original.html").render(
+        original=record, page=record["route"], nested=True,
+        title="Indo-Pacific Record", tagline=TAGLINE,
+        mode="indo-pacific-record",
+        maintainer={"name": "Benjamin Yang", "email": "ben.yang@gwmail.gwu.edu"},
+        collection_name=COLLECTION_NAME,
+        live_base=PUBLIC_ORIGIN, desks=[], timelines=[],
+        review_mode=False, run_status=None,
     )
-    return markup
+    require(page.count(NOINDEX_TAG) == 1,
+            "korea_original_page_preview_indexability_invalid")
+    if site_origin is None:
+        return page
+    # Byte-for-byte equivalent to the single origin switch in
+    # site/preview/generate_preview.py. The readback verifier can thus re-render
+    # the exact production HTML without a mutable build or production DB.
+    canonical = site_origin + "/" + record["route"]
+    card = site_origin + "/social-card.png"
+    metadata = "\n".join([
+        '<link rel="canonical" href="%s">' % html.escape(canonical, quote=True),
+        '<meta property="og:url" content="%s">' % html.escape(canonical, quote=True),
+        '<meta property="og:image" content="%s">' % card,
+        '<meta property="og:image:width" content="1200">',
+        '<meta property="og:image:height" content="630">',
+        '<meta property="og:image:alt" content="Indo-Pacific Record">',
+        '<meta name="twitter:image" content="%s">' % card,
+        '<meta name="twitter:image:alt" content="Indo-Pacific Record">',
+    ])
+    return page.replace(NOINDEX_TAG, metadata, 1)
