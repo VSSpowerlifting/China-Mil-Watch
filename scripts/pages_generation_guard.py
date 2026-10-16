@@ -242,6 +242,14 @@ def prepare(repo: Path, *, mode: str, writer: str, paths: tuple[str, ...] = (),
         if mode == 'file-only':
             if any(p not in output for p in paths):
                 raise Hold('file-only path is absent from committed main output')
+            # A file-only release may legitimately leave unrelated files at an
+            # older version of main, but it MUST NOT renew a generation with
+            # content explicitly removed from current main:output. A separate
+            # owner-attested Pages-only preservation policy is still needed.
+            withdrawn = {p for p in old if p not in output and
+                         p in previous_output and p not in PRESERVED}
+            if withdrawn:
+                raise Hold('file-only would retain source content removed from main')
             target = dict(old)
             target.update({p: output[p] for p in paths})
         else:
