@@ -1,6 +1,7 @@
 """Synthetic complete-corpus boundary tests for the manual China cutover."""
 from hashlib import sha256
 import json
+import os
 from pathlib import Path
 import sqlite3
 import tempfile
@@ -90,6 +91,23 @@ class ChinaRetirementReleaseVerifierTest(unittest.TestCase):
         self.assertEqual(r["protected_trails"], 182)
         self.assertEqual(r["legacy_export"], 633)
         self.assertEqual(r["url_id_tombstones"], 4400)
+
+    def test_production_cli_relative_db_path_is_accepted(self):
+        """Production cutover passes --db pla_watch.db, unlike scratch's absolute DB.
+
+        SQLite URI creation requires an absolute path even when the caller
+        supplies a valid relative file from the current working directory.
+        """
+        cwd = Path.cwd()
+        try:
+            os.chdir(self.tmp.name)
+            result = validate(
+                Path("before"), Path("after"), Path("retired.db"),
+                Path("plan.json"))
+        finally:
+            os.chdir(cwd)
+        self.assertEqual(result["retired"], 4400)
+        self.assertEqual(result["retained"], 873)
 
     def test_missing_cited_record_is_fatal(self):
         (self.after / "record" / "1.html").unlink()
