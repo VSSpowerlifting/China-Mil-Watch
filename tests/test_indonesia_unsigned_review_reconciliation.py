@@ -165,12 +165,16 @@ class ReviewReconciliationContracts(unittest.TestCase):
                 self.check(rows=other)
 
     def test_reviewer_names_and_private_notes_are_never_exported(self):
-        self.complete(self.rows[0])
+        # The historical geographic hold sorts before other originals; do
+        # not accidentally turn the privacy test into an illegal allow claim.
+        candidate = next(
+            row for row in self.rows if row["source_geography_hold"] == "NO")
+        self.complete(candidate)
         out = json.dumps(self.check())
         self.assertNotIn("Synthetic reviewer", out)
         self.assertNotIn("Fictional review", out)
-        self.assertNotIn(self.rows[0]["official_url"], out)
-        self.assertNotIn(self.rows[0]["source_identity"], out)
+        self.assertNotIn(candidate["official_url"], out)
+        self.assertNotIn(candidate["source_identity"], out)
 
     def test_cli_strict_headers_size_and_no_raw_personal_errors(self):
         with tempfile.TemporaryDirectory() as dirname:
