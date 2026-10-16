@@ -145,6 +145,17 @@ class SingaporeScheduledProofTests(unittest.TestCase):
         self.assertEqual(result["duplicates"], 2)
         self.assertTrue(result["new_reliability_day_proven"])
 
+    def test_clean_future_slot_can_omit_expired_infographic_without_fake_proof(self):
+        # The Sep 22 original is eventually outside the 30-day publisher
+        # lookback. Requiring it on every subsequent day would make an
+        # otherwise complete production feed permanently red.
+        self.receipt.update(text_unavailable=0, media_only_urls=[])
+        self.write()
+        receipt = self.check()
+        self.assertTrue(receipt["new_reliability_day_proven"])
+        self.assertFalse(receipt["known_infographic_verified"])
+        self.assertEqual(receipt["publisher_media_only_without_invented_text"], 0)
+
     def test_workflow_authenticates_scheduled_attempt_from_actions_api(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github" /
                     "workflows" / "singapore_first_clean_scheduled_proof.yml")
