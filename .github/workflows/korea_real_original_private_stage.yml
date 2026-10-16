@@ -1,0 +1,69 @@
+name: Korea first real source original — private publication rehearsal
+
+on:
+  pull_request:
+    paths:
+      - core/korea_text_only_exception_replay.py
+      - scripts/rehearse_korea_one_original_text.py
+      - tests/test_korea_text_only_exception_replay.py
+      - .github/workflows/korea_real_original_private_stage.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  text-only-exception-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4 requests
+      - name: Test third-party, privacy, alternate-term and file safety holds
+        run: python -m unittest -v tests.test_korea_text_only_exception_replay
+      - name: Verify production and public output unmodified
+        run: |
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+  genuine-first-original-private-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4 requests
+      - name: Fetch frozen Korea source privately into disposable runner state
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --branch shadow/korea-policy-briefing \
+            "https://github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/korea-source-original"
+      - name: Recheck real source, Type 1 mark, current terms and source exceptions
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          python -m scripts.rehearse_korea_one_original_text \
+            --source-checkout "$RUNNER_TEMP/korea-source-original" \
+            --source-identity korea-policy:156784297 \
+            --private-output "$RUNNER_TEMP/korea-private-original-staging" \
+            --explicit-private-no-publish
+          test -f "$RUNNER_TEMP/korea-private-original-staging/original.txt"
+          test -f "$RUNNER_TEMP/korea-private-original-staging/index.html"
+          test "$(stat -c %a "$RUNNER_TEMP/korea-private-original-staging")" = 700
+      - name: Assert no public source copy, live DB change or artifact upload
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
