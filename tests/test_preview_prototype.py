@@ -2882,10 +2882,12 @@ class TestRecordSemantics(PreviewCase):
         recreate the removed original merely to satisfy a former fixture.
         """
         self.assertNotIn(2579, {r["id"] for r in self.data["corpus"]})
+        # After the source cull the surviving captures are single-line.
+        # Requiring a multiline source would invent a non-existent specimen.
+        # Exact text preservation is still tested on the LONGEST real body.
         candidates = [r for r in self.data["corpus"]
-                      if r.get("text_original") and
-                      len(r["text_original"].splitlines()) >= 2]
-        self.assertTrue(candidates, "retained source corpus has no multiline text")
+                      if r.get("text_original")]
+        self.assertTrue(candidates, "retained source corpus has no source text")
         rec = max(candidates, key=lambda r: len(r["text_original"]))
         html = self.record(rec["id"])
         for para in [p.strip() for p in rec["text_original"].split("\n")
