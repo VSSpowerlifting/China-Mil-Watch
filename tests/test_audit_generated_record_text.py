@@ -159,6 +159,21 @@ class GeneratedTextExposureAuditTests(unittest.TestCase):
                "<p>Delta</p></div>")
         self.assertEqual(" ".join(p.fragments).split(), ["Alpha", "Beta", "Gamma", "Delta"])
 
+    def test_parser_br_void_tag_does_not_absorb_footer(self):
+        p = CapturedTextParser()
+        p.feed('<div class="original-text"><p>Alpha<br>Beta &amp; Gamma</p>'
+               '</div><p>UNRELATED FOOTER</p>')
+        self.assertEqual(" ".join(p.fragments).split(),
+                         ["Alpha", "Beta", "&", "Gamma"])
+        self.assertEqual(p.depth, 0)
+
+    def test_parser_img_void_tag_does_not_absorb_footer(self):
+        p = CapturedTextParser()
+        p.feed('<div class="original-text"><p>Alpha<img src="fake.png">'
+               '<em>Beta</em></p></div><aside>UNRELATED FOOTER</aside>')
+        self.assertEqual(" ".join(p.fragments).split(), ["Alpha", "Beta"])
+        self.assertEqual(p.depth, 0)
+
 
 if __name__ == "__main__":
     unittest.main()
