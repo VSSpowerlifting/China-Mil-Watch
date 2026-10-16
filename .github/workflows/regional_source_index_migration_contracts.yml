@@ -1,0 +1,34 @@
+name: Regional source-index migration — zero-row contracts
+
+# Test the *new* immutable migration on a disposable SQLite DB only.
+# Never edit pla_watch.db, shadow refs, output, or gh-pages.
+on:
+  pull_request:
+    paths:
+      - migrations/versions/m0010_regional_official_source_links.py
+      - tests/test_regional_source_index_migration.py
+      - .github/workflows/regional_source_index_migration_contracts.yml
+
+permissions:
+  contents: read
+
+jobs:
+  empty-index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Prove migration uniqueness, empty initial state and schema guards
+        run: python -m unittest tests.test_regional_source_index_migration -v
+      - name: Verify tracked production file and output remain untouched
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
