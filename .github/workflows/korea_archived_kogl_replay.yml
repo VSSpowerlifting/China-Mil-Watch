@@ -1,0 +1,63 @@
+name: Korea archived KOGL Type 1 article-mark replay
+
+on:
+  pull_request:
+    paths:
+      - core/korea_archived_kogl_replay.py
+      - tests/test_korea_archived_kogl_replay.py
+      - .github/workflows/korea_archived_kogl_replay.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-mark-synthetic-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4 requests
+      - name: Validate exact captured publisher mark and callback boundaries
+        run: python -m unittest -v tests.test_korea_archived_kogl_replay
+      - name: No production or public files touched
+        run: |
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+  real-archived-source-mark-readback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4 requests
+      - name: Clone only preserved original state (no artifact uploads)
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --branch shadow/korea-policy-briefing \
+            "https://github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/korea-source-replay"
+      - name: Independently re-extract HWPX and verify each saved license badge
+        env:
+          PYTHONDONTWRITEBYTECODE: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m core.korea_archived_kogl_replay \
+            --source-checkout "$RUNNER_TEMP/korea-source-replay"
+      - name: Ensure no source body or public state committed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
