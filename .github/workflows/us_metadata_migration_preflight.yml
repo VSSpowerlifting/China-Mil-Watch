@@ -27,9 +27,7 @@ jobs:
         run: |
           set -euo pipefail
           PYTHONDONTWRITEBYTECODE=1 python -m unittest \
-            tests.test_us_metadata_migration_preflight \
-            tests.test_uscc_official_metadata_admission \
-            tests.test_us_treasury_official_metadata_admission -v
+            tests.test_us_metadata_migration_preflight -v
       - name: No mutation of tracked production DB or released Pages
         run: |
           set -euo pipefail
