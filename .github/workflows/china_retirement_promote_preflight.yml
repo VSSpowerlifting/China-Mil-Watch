@@ -1,0 +1,81 @@
+name: China retirement — nonpublishing production promotion gate rehearsal
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/china_retirement_promote_preflight.yml'
+      - '.github/workflows/china_retirement_release.yml'
+      - 'scripts/verify_china_retirement_render.py'
+      - 'scripts/prepare_china_retirement_release.py'
+  workflow_dispatch:
+
+# The test never has write permission, secrets, remote writes or Pages actions.
+permissions:
+  contents: read
+
+jobs:
+  local-promotion-rehearsal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - name: Install rendering requirements
+        run: pip install -r requirements.txt
+      - name: Rebuild the full 4400-record retirement only in scratch
+        run: |
+          set -euo pipefail
+          python -m scripts.prepare_china_retirement_release \
+            --scratch-root "$RUNNER_TEMP/china-stage-contract" \
+            --expected-db-sha256 "$(sha256sum pla_watch.db | cut -d' ' -f1)" \
+            --site-origin https://indopacificrecord.org
+      - name: Promote into disposable runner checkout (never commit or push)
+        run: |
+          set -euo pipefail
+          rsync -a --delete "$RUNNER_TEMP/china-stage-contract/reduced-site/" output/
+          cp "$RUNNER_TEMP/china-stage-contract/reduced.db" pla_watch.db
+      - name: Validate promoted database, site, and exact retirement IDs
+        run: |
+          set -euo pipefail
+          python scripts/verify_db_current.py
+          python scripts/validate_output.py
+          python -m scripts.verify_china_retirement_render \
+            --before "$RUNNER_TEMP/china-stage-contract/before-site" \
+            --after output --db pla_watch.db \
+            --plan "$RUNNER_TEMP/china-stage-contract/plan.json"
+      - name: Verify no SQLite sidecars survived cutover validation
+        run: |
+          set -euo pipefail
+          test ! -e pla_watch.db-wal || { echo "::error::Tracked SQLite WAL sidecar appeared"; exit 1; }
+          test ! -e pla_watch.db-shm || { echo "::error::Tracked SQLite SHM sidecar appeared"; exit 1; }
+      - name: Identify any unexpected changes outside intended output and DB
+        run: |
+          set -euo pipefail
+          extra="$(git status --porcelain --untracked-files=all -- . ':!output' ':!pla_watch.db')"
+          if [ -n "$extra" ]; then
+            printf '%s\n' "$extra"
+            echo "::error::Promotion modified paths other than the approved DB and site"
+            exit 1
+          fi
+      - name: Stage precise intended release and prove nonempty Git changes
+        run: |
+          set -euo pipefail
+          git add -A -- pla_watch.db output/
+          git diff --cached --stat | tail -n 12
+          if git diff --cached --quiet; then
+            echo "::error::Expected 4400-record corpus retirement was not staged"
+            exit 1
+          fi
+      - name: Prove the rehearsal did not commit or publish
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA" || {
+            echo "::error::Rehearsal unexpectedly changed Git HEAD"; exit 1;
+          }
+          test "$(git remote -v | wc -l)" -ge 0
+          echo 'PASS: local production promotion verified in disposable runner; no remote write'
