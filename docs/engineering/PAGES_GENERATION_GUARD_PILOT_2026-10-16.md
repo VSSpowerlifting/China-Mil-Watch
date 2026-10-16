@@ -10,7 +10,7 @@ The pilot can bootstrap an unmanifested Pages branch **only** if existing conten
 
 All branch writes occur only in a disposable gh-pages clone. Before an opt-in publication, the pilot rechecks `origin/main` and `origin/gh-pages`; the push is non-force and fast-forward-only. Remote changes, a local stale checkout, divergence between the manifest and actual live files, unexpected symlinks, missing source files, mismatched DNS (including file-only and first bootstrap releases), reserved Git paths, or unapproved carried-forward artifacts **hold rather than publish**.
 
-The 21 dedicated tests execute actual commits/pushes against disposable local bare repositories. They include bootstrap parity, dry-run no-mutation, stale source, CAS concurrency, same-name out-of-band changes, Pages-only new files, exact carry-forward, CNAME preservation, and refusal to imply authorized rollback.
+The 25 dedicated tests execute actual commits/pushes against disposable local bare repositories. They include bootstrap parity, dry-run no-mutation, stale source, CAS concurrency, same-name out-of-band changes, Pages-only new files, exact carry-forward, CNAME preservation, and refusal to imply authorized rollback.
 
 Run: `python -m unittest tests.test_pages_generation_guard -v`.
 
@@ -27,7 +27,7 @@ Run: `python -m unittest tests.test_pages_generation_guard -v`.
 
 ## October 16 follow-up hardening
 
-The file-only path now enforces the same committed `CNAME` and `.nojekyll` consistency contract as full-tree publication, including the initial bootstrap. It refuses to attest a release whose committed site infrastructure conflicts with the live Pages branch, without modifying any site artifact. The guard also rejects the reserved root `.git` path. Three additional offline integration cases cover these holds; **21 focused tests pass**. No production workflow or live release was changed.
+The file-only path now enforces the same committed `CNAME` and `.nojekyll` consistency contract as full-tree publication, including the initial bootstrap. It refuses to attest a release whose committed site infrastructure conflicts with the live Pages branch, without modifying any site artifact. The guard also rejects the reserved root `.git` path. Three additional offline integration cases cover these holds; **25 focused tests pass**. No production workflow or live release was changed.
 
 A second adversarial check simulates `origin/main` advancing between the candidate build and final publication freshness check, and verifies a hard refusal with no Pages push. Another supplies a real Git-tracked symlink on `gh-pages` to verify the walker never follows it. These brought the hermetic suite to 20 cases.
 
@@ -35,4 +35,12 @@ A second adversarial check simulates `origin/main` advancing between the candida
 
 A further regression exposed a real omission: `git add -A` honors a newly committed `.gitignore` in the assembled Pages checkout. Previously, the guard could calculate a correct digest from the *working files* but push a commit that omitted an ignored file. The source SHA and manifest then falsely attested an artifact absent from the deployed Git tree.
 
-Immediately after preparing the commit and before any remote push, `verify_committed_release()` now reads Git HEAD's actual tree and compares every path and blob SHA-1 to the exact approved bytes, including the manifest. Missing, additional, transformed or unsupported entries HOLD. A real local Git regression reproduces the old omission and proves zero remote mutation with the new check. The pilot now has **21 passing integration tests**. This is a commit-content integrity check, not publisher rights approval.
+Immediately after preparing the commit and before any remote push, `verify_committed_release()` now reads Git HEAD's actual tree and compares every path and blob SHA-1 to the exact approved bytes, including the manifest. Missing, additional, transformed or unsupported entries HOLD. A real local Git regression reproduces the old omission and proves zero remote mutation with the new check. The pilot now has **25 passing integration tests**. This is a commit-content integrity check, not publisher rights approval.
+
+## Mixed-generation release and dry-run proof (2026-10-16)
+
+The source-only pilot now stages, commits and verifies its proposed Pages tree **even during dry-run**, solely in a disposable temp clone. This is necessary: earlier dry-run would bless a candidate containing a Git-ignored file that the eventual Git commit omitted. The new regression proves dry-run fails before any remote mutation; another proves dry-run and push attest identical source SHA, generation and final-tree SHA256 when no refs move.
+
+A dedicated mixed-generation test demonstrates the unresolved **liveness boundary**: after a file-only Korea release advances the manifest source SHA while another route remains at older source bytes, the subsequent normal full-tree release HOLDS because v1 cannot attest per-path historical provenance. Do not loosen that HOLD to make green tests. The production protocol must carry explicit, reviewer-authorized per-path provenance or use a unified assembled-tree deployer that reads an authoritative projection. It must distinguish a legitimate older carried file from unapproved Pages-only content and from a now-revoked publication. Until this exists, the pilot does not support automatic safe publication for all desk writers.
+
+A further test proves a file-only release refuses to reattest content **removed from current `main:output`** (when it previously belonged to the committed published tree). This is a public revocation-safety HOLD; an explicit source-use/preservation receipt is needed before carrying Pages-only content forward. Neither the test nor the helper authorizes a rollback or changes live Pages. **25 hermetic local integration tests pass.**
