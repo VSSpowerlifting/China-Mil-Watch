@@ -10,7 +10,7 @@ The pilot can bootstrap an unmanifested Pages branch **only** if existing conten
 
 All branch writes occur only in a disposable gh-pages clone. Before an opt-in publication, the pilot rechecks `origin/main` and `origin/gh-pages`; the push is non-force and fast-forward-only. Remote changes, a local stale checkout, divergence between the manifest and actual live files, unexpected symlinks, missing source files, mismatched DNS (including file-only and first bootstrap releases), reserved Git paths, or unapproved carried-forward artifacts **hold rather than publish**.
 
-The 18 dedicated tests execute actual commits/pushes against disposable local bare repositories. They include bootstrap parity, dry-run no-mutation, stale source, CAS concurrency, same-name out-of-band changes, Pages-only new files, exact carry-forward, CNAME preservation, and refusal to imply authorized rollback.
+The 20 dedicated tests execute actual commits/pushes against disposable local bare repositories. They include bootstrap parity, dry-run no-mutation, stale source, CAS concurrency, same-name out-of-band changes, Pages-only new files, exact carry-forward, CNAME preservation, and refusal to imply authorized rollback.
 
 Run: `python -m unittest tests.test_pages_generation_guard -v`.
 
@@ -27,4 +27,6 @@ Run: `python -m unittest tests.test_pages_generation_guard -v`.
 
 ## October 16 follow-up hardening
 
-The file-only path now enforces the same committed `CNAME` and `.nojekyll` consistency contract as full-tree publication, including the initial bootstrap. It refuses to attest a release whose committed site infrastructure conflicts with the live Pages branch, without modifying any site artifact. The guard also rejects the reserved root `.git` path. Three additional offline integration cases cover these holds; **18 focused tests pass**. No production workflow or live release was changed.
+The file-only path now enforces the same committed `CNAME` and `.nojekyll` consistency contract as full-tree publication, including the initial bootstrap. It refuses to attest a release whose committed site infrastructure conflicts with the live Pages branch, without modifying any site artifact. The guard also rejects the reserved root `.git` path. Three additional offline integration cases cover these holds; **20 focused tests pass**. No production workflow or live release was changed.
+
+A second adversarial check simulates `origin/main` advancing between the candidate build and final publication freshness check, and verifies a hard refusal with no Pages push. Another supplies a real Git-tracked symlink on `gh-pages` to verify the walker never follows it. These bring the hermetic suite to 20 cases.
