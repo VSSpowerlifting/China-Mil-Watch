@@ -3279,8 +3279,11 @@ class TestCompactQueryIndex(PreviewCase):
         }
         # The interface labels all recognized states, even when no current
         # active records remain in one of them (e.g. analysis_incomplete).
-        expected["states"].update({
-            state: expected["states"][state] for state in gp.STATE_ORDER})
+        # Counter.update() *adds* values: it doubled the real counts for
+        # all surviving states (633 -> 1266). Register zero-count states
+        # without altering the SQL-derived counts for active records.
+        for state in gp.STATE_ORDER:
+            expected["states"].setdefault(state, 0)
         for key, counts in expected.items():
             offered = {e["code"]: e["count"] for e in self.index[key]}
             with self.subTest(facet=key):
