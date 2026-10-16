@@ -1,0 +1,24 @@
+{# Only registry-verified, owner-approved English records reach this page.
+   base.html owns metadata, accessible navigation, footer and preview noindex. #}
+{% extends "base.html" %}
+{% block title %}English translation of Korean MND release {{ number }} — Indo-Pacific Record{% endblock %}
+{% block content %}
+<article class="korea-reviewed-translation" lang="en">
+  <p><a href="../korea.html">South Korea Desk</a> · <a href="../korea-originals/{{ number }}.html">Korean original</a></p>
+  <h1>English translation — Korean MND release {{ number }}</h1>
+  <p>Machine-assisted English translation, subsequently reviewed by an editor
+     for meaning against the Korean source. Not a statement of IPR editorial
+     agreement or independent verification.</p>
+  <p>Source: <a href="{{ source.official_url }}" rel="noopener noreferrer">Republic of Korea Ministry of National Defense via Policy Briefing</a>.
+     Translation made from source text under KOGL Type 1 with attribution;
+     changes of language are explicitly disclosed.</p>
+  <p>Original source SHA-256: <code>{{ source.original_text_sha256 }}</code></p>
+  {% for item in translations %}
+  <section aria-labelledby="korea-translated-{{ item.index }}">
+    <h2 id="korea-translated-{{ item.index }}">Paragraph {{ item.index }}</h2>
+    <p lang="en">{{ item.text_en }}</p>
+    <details><summary>Korean source</summary><p lang="ko">{{ item.source_ko }}</p></details>
+  </section>
+  {% endfor %}
+</article>
+{% endblock %}
