@@ -1,0 +1,190 @@
+name: Sunday Week-41 source cover — pinned real-corpus audit
+
+# Executes only local, stored data against a pinned main commit.
+# Never scrapes publishers, starts models, sends email, or changes selection.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/sunday_week41_source_cover_real.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-source-observer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - name: Check out immutable post-580 corpus and existing audit code
+        uses: actions/checkout@v4
+        with:
+          ref: 1a2b531146da50f1cf101e8630899d2b516e2c30
+          persist-credentials: false
+      - name: Set up repository Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Install declared import dependency only
+        run: python -m pip install 'python-dotenv>=1.0.1'
+      - name: Verify pinned corpus and exercise synthetic observer regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = 1a2b531146da50f1cf101e8630899d2b516e2c30
+          test -f pla_watch.db
+          test ! -L pla_watch.db
+          python -m unittest tests.test_audit_sunday_source_cover -v
+      - name: Generate identical Sunday source trail and audit real record IDs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+          from config import DB_PATH
+          from scripts.author_brief import build_draft
+          from scripts.audit_sunday_source_cover import audit
+          from scripts.reconcile_db import read_only
+          from storage.db import get_articles_for_desks
+
+          pin = "1a2b531146da50f1cf101e8630899d2b516e2c30"
+          assert subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip() == pin
+          db = Path(DB_PATH)
+          assert db.is_file() and not db.is_symlink()
+          assert db.resolve() == Path("pla_watch.db").resolve()
+          blob = subprocess.check_output(
+              ["git", "ls-files", "--stage", "--", "pla_watch.db"], text=True).strip()
+          assert blob and len(blob.split()) >= 3
+          db_git_blob = blob.split()[1]
+          desks = ["china", "singapore"]
+          start, end = "2026-10-04", "2026-10-10"
+          with read_only(db) as conn:
+              records = get_articles_for_desks(start, end, desks, conn=conn)
+          # Do not write this in-memory sidecar to disk or print original URLs.
+          sidecar = build_draft(records, desks=desks, week_start=start, week_ending=end)
+          result = audit(sidecar, as_of=end, required_ids=[4911, 4937], db=db)
+          assert set(result) == {
+              "schema", "week_ending", "as_of", "selection_cap_unchanged",
+              "default_selected_ids", "reviewed_anchors",
+              "all_required_anchors_selected", "theme_override",
+              "model_called", "email_sent", "production_or_review_approved",
+          }
+          assert result["selection_cap_unchanged"] == 10
+          assert result["theme_override"] is False
+          assert result["model_called"] is False
+          assert result["email_sent"] is False
+          assert result["production_or_review_approved"] is False
+          assert len(result["default_selected_ids"]) <= 10
+          assert {row["record_id"] for row in result["reviewed_anchors"]} == {4911, 4937}
+          receipt = {
+              "protocol": "ipr-sunday-week41-pinned-source-cover-real-v1",
+              "pinned_source_commit": pin,
+              "database_git_blob": db_git_blob,
+              "reporting_start": start,
+              "reporting_end": end,
+              "database_snapshot_note": "Current Oct14 pinned main revision filtered to prior week; not an authenticated Oct10 historical DB snapshot",
+              "source_trail_count": len(sidecar["source_trail"]),
+              "scaffolded_record_count": len(records),
+              "observer": result,
+              "source_body_exported": False,
+              "source_url_exported": False,
+              "model_or_email_invoked": False,
+              "publication_or_source_rights_approved": False,
+          }
+          report = Path(os.environ["RUNNER_TEMP"]) / "week41-source-cover-identity-only.json"
+          report.write_text(
+              json.dumps(receipt, sort_keys=True, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(receipt, sort_keys=True))
+          PY
+      - name: Check out actual October 10 midday database revision separately
+        uses: actions/checkout@v4
+        with:
+          ref: 0b3d8543e1b905fc36edcb9c90a280801cf792de
+          path: historical-week41-snapshot
+          persist-credentials: false
+      - name: Audit historical midday snapshot independently with current read-only observer
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+          from scripts.author_brief import build_draft
+          from scripts.audit_sunday_source_cover import audit
+          from scripts.reconcile_db import read_only
+          from storage.db import get_articles_for_desks
+
+          historical = Path("historical-week41-snapshot")
+          expected = "0b3d8543e1b905fc36edcb9c90a280801cf792de"
+          actual = subprocess.check_output(
+              ["git", "-C", str(historical), "rev-parse", "HEAD"], text=True).strip()
+          assert actual == expected
+          old_db = historical / "pla_watch.db"
+          assert old_db.is_file() and not old_db.is_symlink()
+          blob = subprocess.check_output(
+              ["git", "-C", str(historical), "ls-files", "--stage", "--", "pla_watch.db"],
+              text=True).strip()
+          assert blob and len(blob.split()) >= 3
+          desks = ["china", "singapore"]
+          start, end = "2026-10-04", "2026-10-10"
+          with read_only(old_db) as conn:
+              records = get_articles_for_desks(start, end, desks, conn=conn)
+          sidecar = build_draft(records, desks=desks, week_start=start, week_ending=end)
+          result = audit(sidecar, as_of=end, required_ids=[4911, 4937], db=old_db)
+          assert len(result["default_selected_ids"]) <= 10
+          assert result["selection_cap_unchanged"] == 10
+          assert {r["record_id"] for r in result["reviewed_anchors"]} == {4911, 4937}
+          assert all(result[k] is False for k in (
+              "model_called", "email_sent", "production_or_review_approved",
+              "theme_override",
+          ))
+          receipt = {
+              "protocol": "ipr-sunday-week41-historical-midday-cover-v1",
+              "pinned_historical_commit": expected,
+              "database_git_blob": blob.split()[1],
+              "historical_commit_utc": "2026-10-10T16:08:10Z",
+              "snapshot_limitation": "Midday October 10 stored state, not proof of complete October 10 evening corpus",
+              "reporting_start": start,
+              "reporting_end": end,
+              "scaffolded_record_count": len(records),
+              "source_trail_count": len(sidecar["source_trail"]),
+              "observer": result,
+              "source_body_exported": False,
+              "source_url_exported": False,
+              "model_or_email_invoked": False,
+              "publication_or_source_rights_approved": False,
+          }
+          report = Path(os.environ["RUNNER_TEMP"]) / "week41-historical-source-cover-identity-only.json"
+          report.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps(receipt, sort_keys=True))
+          PY
+      - name: Refuse repository, database, or public-output mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all -- . ':(exclude)historical-week41-snapshot')"
+          test -z "$(git diff --name-only)"
+          test -z "$(git -C historical-week41-snapshot status --porcelain --untracked-files=all)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test ! -e historical-week41-snapshot/pla_watch.db-wal
+          test ! -e historical-week41-snapshot/pla_watch.db-shm
+      - name: Retain only the small identity-only observer receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: week41-sunday-source-cover-identity-only
+          path: |
+            /home/runner/work/_temp/week41-source-cover-identity-only.json
+            /home/runner/work/_temp/week41-historical-source-cover-identity-only.json
+          if-no-files-found: error
+          retention-days: 14
