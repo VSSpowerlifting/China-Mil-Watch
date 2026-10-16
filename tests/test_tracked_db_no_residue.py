@@ -95,7 +95,7 @@ class ReadOnlyToolsLeaveNothingBehind(unittest.TestCase):
                 self.sweep()
                 proc = self.run_script(argv)
                 if name == "verify_db_current" and proc.returncode == 1:
-                    # A schema-only PR may add migration 0008 before the
+                    # A schema-only PR may add China tombstone migration 0009 before the
                     # tracked production database has received its guarded
                     # production admission. The verifier MUST fail closed in
                     # that transitional state while still leaving no SQLite
@@ -105,7 +105,7 @@ class ReadOnlyToolsLeaveNothingBehind(unittest.TestCase):
                     with read_only(TRACKED) as check_db:
                         pending = ({m.version for m in discover()}
                                    - set(applied_versions(check_db)))
-                    self.assertEqual({"0008"}, pending,
+                    self.assertEqual({"0009"}, pending,
                                      "an unrecognized migration is pending")
                     self.assertIn("database is 'partially_applied'",
                                   proc.stderr)

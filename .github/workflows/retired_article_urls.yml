@@ -1,0 +1,51 @@
+name: Retired article URL ingestion and reconciliation contracts
+
+on:
+  pull_request:
+    paths:
+      - "core/retired_article_urls.py"
+      - "migrations/versions/m0009_retired_article_urls.py"
+      - "storage/db.py"
+      - "scripts/reconcile_db.py"
+      - "scripts/verify_db_current.py"
+      - "tests/test_retired_article_urls.py"
+      - "tests/test_tracked_db_no_residue.py"
+      - ".github/workflows/retired_article_urls.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  exact-url-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Hash original tracked DB and output
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Verify exact-URL, atomic-batch and reconciliation behavior
+        run: |
+          python -m unittest -v \
+            tests.test_retired_article_urls \
+            tests.test_reconcile \
+            tests.test_migrations \
+            tests.test_tracked_db_no_residue
+      - name: Enforce no write to tracked production data
+        if: ${{ !cancelled() }}
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
