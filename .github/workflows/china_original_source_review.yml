@@ -1,7 +1,9 @@
 name: China original-source research receipt contracts
 
-# Validates private, preliminary desk research only; no publisher requests,
-# LLM, generated output, database reads, external artifact upload or release.
+# Validates historical source-review algorithms with synthetic fixtures and
+# read-only post-cull public retirement invariants. Original source bodies and
+# the 2026-10-15 research packet were intentionally de-published. No publisher
+# requests, model use, generated output, artifact upload or release.
 on:
   pull_request:
     branches: [main]
@@ -42,17 +44,35 @@ jobs:
           test ! -e pla_watch.db-shm
       - name: Test source-review receipts and unsafe cases
         run: python -m unittest -v tests.test_china_original_source_notes tests.test_china_legacy_capture_quality
-      - name: Validate real seven-source checkpoint packet
+      # The approved 2026-10-16 China cutover deliberately removed the real
+      # seven-source research packet and 4,400 public record bodies. Re-running
+      # a source-body audit against absent pages is impossible, not a test of
+      # current public safety. Synthetic audit/cue regressions above remain.
+      # Fail closed unless the exact approved retirement is still intact;
+      # historical content review must use the separate private custody path.
+      - name: Verify private-history/public-retirement boundary
         run: |
-          python scripts/audit_china_original_source_notes.py \
-            --packet research/china/original-source-review-2026-10-15.json \
-            --index output/corpus-index.json \
-            --records-dir output/record
-      - name: Survey older Global Times captures for possible teaser contamination
-        run: |
-          python scripts/audit_china_legacy_capture_quality.py \
-            --index output/corpus-index.json \
-            --records-dir output/record
+          set -euo pipefail
+          test ! -e research/china/original-source-review-2026-10-15.json
+          python - <<'PY'
+          from pathlib import Path
+          from scripts.reconcile_db import read_only
+          from core.retired_article_urls import verify_no_active_retired_urls
+
+          with read_only("pla_watch.db") as con:
+              if verify_no_active_retired_urls(con) != 4400:
+                  raise SystemExit("expected exact owner-approved 4,400 China retirements")
+              ids = {row[0] for row in con.execute(
+                  "SELECT original_article_id FROM retired_article_urls")}
+          checked = (170, 793, 1246, 1954, 2753, 3180, 3181, 792, 1630)
+          for ident in checked:
+              if ident not in ids:
+                  raise SystemExit("historical source ID no longer retired: %d" % ident)
+              for prefix in ("record", "article"):
+                  if (Path("output") / prefix / ("%d.html" % ident)).exists():
+                      raise SystemExit("retired source unexpectedly public: %d" % ident)
+          print("Historical review held private; exact retirement guards intact")
+          PY
       - name: Confirm archive untouched
         if: ${{ !cancelled() }}
         shell: bash
