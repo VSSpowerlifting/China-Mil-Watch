@@ -47,8 +47,8 @@ def exact(value, keys, reason):
     need(type(value) is dict and set(value) == set(keys), reason)
 
 
-def prose(value, reason, *, maximum=10000):
-    need(type(value) is str and 8 <= len(value.strip()) <= maximum
+def prose(value, reason, *, minimum=8, maximum=10000):
+    need(type(value) is str and minimum <= len(value.strip()) <= maximum
          and not any((ord(c) < 32 and c not in "\r\n\t") or ord(c) == 127 for c in value),
          reason)
 
@@ -85,7 +85,10 @@ def verify_review(review, source, *, allow_machine=False):
         need(type(pair["index"]) is int and pair["index"] == i
              and pair["original_sha256"] == digest(original.encode("utf-8")),
              "korea_english_translation_alignment_invalid")
-        prose(pair["text_en"], "korea_english_translation_missing", maximum=20000)
+        # Government release layout contains single-word labels such as
+        # "End" and "Contact"; short *accurate* translations must not be padded.
+        prose(pair["text_en"], "korea_english_translation_missing",
+              minimum=1, maximum=20000)
     analysis = review["analysis"]
     exact(analysis, ("heading_en", "thesis_en", "claims", "limitations_en"),
           "korea_english_analysis_fields_invalid")
