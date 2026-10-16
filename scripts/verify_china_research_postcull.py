@@ -11,6 +11,12 @@ import hashlib
 import json
 from pathlib import Path
 import sqlite3
+import sys
+
+# Support both `python -m scripts.verify_china_research_postcull` and direct
+# command-line execution in GitHub Actions' working directory.
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from scripts.audit_china_original_source_notes import ROOT, validate_packet
 
