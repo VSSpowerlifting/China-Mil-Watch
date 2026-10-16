@@ -1,0 +1,70 @@
+name: Korea DAPA first-party press listing — separately authorized access canary
+
+# A distinct publisher hostname. Prior approval to probe korea.kr's DAPA
+# filter does NOT authorize www.dapa.go.kr. No scheduled collector or release.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/probe_korea_dapa_native_access.py
+      - tests/test_korea_dapa_native_access_canary.py
+      - docs/engineering/KOREA_DAPA_FIRST_PARTY_ACCESS_2026-10-16.md
+      - .github/workflows/korea_dapa_native_access_canary.yml
+  workflow_dispatch:
+    inputs:
+      approve_one_time_direct_dapa_access:
+        description: "Separately authorize one www.dapa.go.kr robots GET and, only if allowed, one official press-listing GET; no articles, files, or publication"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Strict URL, robots, rejection and no-permission contracts; no network
+        run: python -m unittest -v tests.test_korea_dapa_native_access_canary
+      - name: Production state unchanged
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/ research/korea_published_original_texts.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  one-time-direct-dapa-observation:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.actor == 'VSSpowerlifting' &&
+      inputs.approve_one_time_direct_dapa_access == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Exactly robots then at most one DAPA-owned press listing GET
+        run: python -m scripts.probe_korea_dapa_native_access --approve-one-time-direct-dapa-access
+      - name: Confirm zero files, government originals or database changed
+        if: always()
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/ research/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/ research/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
