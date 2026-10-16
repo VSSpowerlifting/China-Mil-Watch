@@ -97,6 +97,42 @@ def committed_output(repo: Path, source_sha: str) -> dict[str, bytes]:
     return files
 
 
+def verify_committed_release(pages: Path, wanted: dict[str, bytes], manifest: dict) -> None:
+    """Attest *Git HEAD*, not just the working files before `git add`.
+
+    A tracked .gitignore or .gitattributes filter can make staged/committed
+    bytes differ from the proposed filesystem tree. Comparing blob OIDs to
+    the exact planned bytes prevents a manifest from claiming omitted or
+    silently transformed content. IPR's GitHub repository uses SHA-1 objects.
+    """
+    canonical = (json.dumps(manifest, sort_keys=True, separators=(',', ':')) + '\n').encode()
+    expected = dict(wanted)
+    expected[MANIFEST] = canonical
+    raw = git(pages, 'ls-tree', '-r', '-z', 'HEAD')
+    observed = {}
+    for entry in raw.split(b'\0'):
+        if not entry:
+            continue
+        try:
+            meta, path_bytes = entry.split(b'\t', 1)
+            mode, kind, oid = meta.split(b' ')
+            name = path_bytes.decode('utf-8', errors='strict')
+        except (ValueError, UnicodeDecodeError) as exc:
+            raise Hold('malformed committed Pages tree') from exc
+        if kind != b'blob' or mode not in (b'100644', b'100755'):
+            raise Hold('committed Pages tree contains unsupported entry')
+        if name != MANIFEST and not path_ok(name):
+            raise Hold('committed Pages tree contains unsafe path')
+        observed[name] = oid.decode('ascii')
+    if set(observed) != set(expected):
+        raise Hold('committed Pages tree omitted or added a planned file')
+    for name, content in expected.items():
+        header = b'blob ' + str(len(content)).encode('ascii') + b'\0'
+        blob = hashlib.sha1(header + content).hexdigest()
+        if observed[name] != blob:
+            raise Hold('committed Pages tree transformed planned file bytes')
+
+
 def parse_manifest(raw: bytes) -> dict:
     try:
         doc = json.loads(raw)
@@ -248,6 +284,7 @@ def prepare(repo: Path, *, mode: str, writer: str, paths: tuple[str, ...] = (),
             git(pages, '-c', 'user.name=ipr-release-guard', '-c',
                 'user.email=release-guard@users.noreply.github.com', 'commit',
                 '-q', '-m', 'Guarded Pages generation %s' % new_doc['generation'])
+            verify_committed_release(pages, target, new_doc)
             # Source freshness check just before push, in addition to the Pages
             # fast-forward CAS. Main and Pages are two refs, not one atomic txn.
             git(repo, 'fetch', '-q', 'origin', 'main')
