@@ -95,6 +95,12 @@ class KoreaPublishedOriginals(unittest.TestCase):
         self.assertIn('class="masthead', markup)
         self.assertIn('class="site"', markup)
         self.assertIn('Official defense and security texts, preserved as published', markup)
+        self.assertIn(
+            '<meta name="description" content="Official defense and security texts, preserved as published and analyzed in context.">',
+            markup)
+        self.assertIn(
+            '<meta property="og:description" content="Official defense and security texts, preserved as published and analyzed in context.">',
+            markup)
         self.assertIn('name="generator" content="Indo-Pacific Record — indo-pacific-record build"', markup)
         self.assertIn('href="../assets/identity/selected-ipr/ipr-accent-32.png"', markup)
         self.assertIn('href="#main"', markup)
