@@ -96,7 +96,10 @@ class PublicationChecks(unittest.TestCase):
              mock.patch.object(author_brief, 'POSTS_DIR', self.posts), \
              contextlib.redirect_stdout(io.StringIO()), \
              contextlib.redirect_stderr(io.StringIO()):
-            return author_brief.main(list(args) + ['--db', str(self.db)])
+            argv = list(args)
+            if argv and argv[0] in ('approve', 'ready', 'scaffold'):
+                argv.extend(['--db', str(self.db)])
+            return author_brief.main(argv)
 
     def approve(self, path=None, reference='human approval (simulated test)'):
         return self.run_command('approve', str(path or self.path), '--approved-by', 'Fixture owner',
