@@ -121,6 +121,45 @@ def source_quote_catalog(paragraphs):
     return catalog
 
 
+def resolve_quote_selections(notes, catalog):
+    """Map exact model-selected IDs to source excerpts or reject the packet."""
+    need(type(notes) is dict and set(notes) == {
+         "heading_en", "thesis_en", "claims", "limitations_en"},
+         "korea_machine_analysis_fields_invalid")
+    claims = notes["claims"]
+    need(type(claims) is list and 2 <= len(claims) <= 12,
+         "korea_machine_analysis_claim_count_invalid")
+    converted = []
+    for claim in claims:
+        need(type(claim) is dict and set(claim) == {
+             "heading_en", "analysis_en", "source_indices",
+             "source_quote_ids", "assessment_type"},
+             "korea_machine_claim_quote_ids_invalid")
+        indices, refs = claim["source_indices"], claim["source_quote_ids"]
+        need(type(indices) is list and type(refs) is list
+             and len(indices) == len(refs) and 1 <= len(indices) <= 6,
+             "korea_machine_quote_selection_invalid")
+        quotes = []
+        for index, ref in zip(indices, refs):
+            need(type(index) is int and type(ref) is str
+                 and ref in catalog and catalog[ref]["index"] == index,
+                 "korea_machine_quote_selection_invalid")
+            quotes.append(catalog[ref]["text_ko"])
+        converted.append({
+            "heading_en": claim["heading_en"],
+            "analysis_en": claim["analysis_en"],
+            "source_indices": indices,
+            "source_quotes_ko": quotes,
+            "assessment_type": claim["assessment_type"],
+        })
+    return {
+        "heading_en": notes["heading_en"],
+        "thesis_en": notes["thesis_en"],
+        "claims": converted,
+        "limitations_en": notes["limitations_en"],
+    }
+
+
 def draft(source, *, client):
     original = source_paragraphs(source)
     numbered = [{
