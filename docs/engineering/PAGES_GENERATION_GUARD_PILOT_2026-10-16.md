@@ -1,0 +1,26 @@
+# GitHub Pages generation guard — isolated implementation pilot
+
+Issue [#346](https://github.com/VSSpowerlifting/IndoPacificRecord/issues/346). This is a **source-only, opt-in pilot**, not a cutover, an approved publication policy, or a completed Pages race fix. **No existing workflow invokes it.** It writes neither `main` nor tracked `output/`. Its default mode reads existing Git references and prints only a deterministic generation plan; pushing to `gh-pages` requires the explicit `--push` argument. Do not use `--push` against production before the C4/C5 review, complete writer migration, and approved rollback/carry-forward policy.
+
+## What is implemented
+
+`python scripts/pages_generation_guard.py --mode file-only --writer <name> --path korea.html` prints a candidate manifest without publishing. It requires a full checkout of `main` matching `origin/main`, an exact committed `main:output` snapshot, and existing manifest provenance. `--mode full-tree` checks for unapproved removal and for same-path divergence between the live Pages tree and the prior committed source. A full-tree release can explicitly carry Pages-only paths via `--preserve`, but those paths require independent rights, editorial, and persistence authorization before production use.
+
+The pilot can bootstrap an unmanifested Pages branch **only** if existing content is exactly equal to current `main:output`, aside from the controlled Pages infrastructure files `CNAME` and `.nojekyll`. Bootstrap is separately opt-in (`--bootstrap`) and performs the same readback. A manifest has schema, monotonically increasing generation, exact source SHA, writer identity, final assembled-tree digest, and null rollback marker. It is written **in the same commit as the files**, under `.ipr-release.json`.
+
+All branch writes occur only in a disposable gh-pages clone. Before an opt-in publication, the pilot rechecks `origin/main` and `origin/gh-pages`; the push is non-force and fast-forward-only. Remote changes, a local stale checkout, divergence between the manifest and actual live files, unexpected symlinks, missing source files, mismatched DNS, or unapproved carried-forward artifacts **hold rather than publish**.
+
+The 15 dedicated tests execute actual commits/pushes against disposable local bare repositories. They include bootstrap parity, dry-run no-mutation, stale source, CAS concurrency, same-name out-of-band changes, Pages-only new files, exact carry-forward, CNAME preservation, and refusal to imply authorized rollback.
+
+Run: `python -m unittest tests.test_pages_generation_guard -v`.
+
+## Still required before any production cutover
+
+1. Merge the audit/collection-isolation PR #725 separately and confirm exact-head checks. This pilot has no dependency on its source files.
+2. Independent review of all Pages writers and an explicit, version-bound authoritative source policy for Pages-only Korean originals, translations and analysis. The current `main:output` may not contain those bytes.
+3. An authenticated publication-policy receipt and full artifact approval. This pilot's manifest proves **integrity consistency**, not trustworthiness or legal authorization. Anyone already authorized to rewrite the Pages branch can forge an internally consistent manifest.
+4. Define and implement a real, explicitly authorized rollback flow. **Rollback publication is rejected in this pilot.** A new forward main commit reverting the site is permitted by ordinary ancestry but still requires the site's normal editorial authorization.
+5. Coordinate all 20 currently registered writers through this or a replacement protocol. Any remaining unfenced writer can bypass generation checks. A SHA freshness check and a Pages compare-and-swap are *not* atomic across `main` and `gh-pages` refs; a concurrent main commit can still move between the final check and push.
+6. Production dry-runs against full-fidelity real Pages data, crash recovery, exact deployed HTTPS readback, and regression tests against the final assembled site and any authorized `CARRIED_FORWARD` content.
+
+**Stop condition for this PR:** Tests passing and one source-only PR open for review. No live release, workflow edits, owner approvals, merger, or deployment.
