@@ -14,8 +14,6 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader
-
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "research" / "korea_published_original_texts.json"
@@ -136,7 +134,10 @@ def render_original_page(record, *, site_origin=PUBLIC_ORIGIN):
             "korea_original_page_identity_mismatch")
     require(site_origin is None or site_origin == PUBLIC_ORIGIN,
             "korea_original_page_origin_unrecognized")
-    from core.brief_collection import COLLECTION_NAME
+    # Import templating only for actual HTML projection. Source-identity and
+    # hash verification remain stdlib-only for lightweight collector jobs.
+    from jinja2 import Environment, FileSystemLoader
+    from core.edition_identity import COLLECTION_NAME
     env = Environment(loader=FileSystemLoader(str(TEMPLATES)),
                       autoescape=True, trim_blocks=True, lstrip_blocks=True)
     # base.html is compiled in full even if the snapshot-only branch is not
