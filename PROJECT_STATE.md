@@ -1,5 +1,15 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Archive Research Workbench (16 October 2026, isolated private candidate):**
+`research/archive_workbench/` builds a publication-aware local search/citation
+interface from the existing public projection and approved public loaders.
+Pinned base `a736229d17`; 962 items, 4,400 retirement entries enforced. Archive
+bodies, machine summaries and original URLs remain excluded from bulk search.
+No production integration, output regeneration, desk/rights/approval change or
+deployment. Build/preview/tests, limitations and measured evidence:
+`research/archive_workbench/README.md`. Owner review and a separate production
+integration decision remain outstanding; final-head checks are recorded in the PR.
+
 **Brief reading foundation approved; cartographic accent candidate (14 October 2026):**
 The owner approved PR #588 head `d5c3ca5169bf10eb7685897c234b06452c3592e5`
 as the Phase 2 design baseline. The follow-up on the same branch/PR adds only
