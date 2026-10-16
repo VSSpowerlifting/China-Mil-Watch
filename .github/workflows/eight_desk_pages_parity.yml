@@ -1,0 +1,84 @@
+name: Eight desks — read-only main to Pages Git parity
+
+# Witness exact Git branch bytes only. This does not attest HTTPS, production DB,
+# source qualification, collector history, or rights/publication approval.
+on:
+  schedule:
+    - cron: '47 9 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'scripts/verify_eight_desk_pages_parity.py'
+      - 'tests/test_eight_desk_pages_parity.py'
+      - 'tests/test_eight_desk_pages_parity_mock.py'
+      - '.github/workflows/eight_desk_pages_parity.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: eight-desk-parity-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Hermetic Git-blob tamper and missing-route tests
+        run: |
+          python -m unittest -v tests.test_eight_desk_pages_parity
+          python -m unittest -v tests.test_eight_desk_pages_parity_mock
+
+  witness:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Fetch immutable Pages Git tree without credentials or writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --quiet --no-tags --depth=1 origin \
+            +refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          echo "MAIN_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          echo "PAGES_SHA=$(git rev-parse refs/remotes/origin/gh-pages)" >> "$GITHUB_ENV"
+      - name: Independently verify all eight public desk Git blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.verify_eight_desk_pages_parity \
+            --repo . --main-sha "$MAIN_SHA" --pages-sha "$PAGES_SHA" \
+            --json "$RUNNER_TEMP/eight-desk-git-parity.json"
+      - name: Assert no production or site writes
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Retain count/digest-only witness, including HOLD
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eight-desk-git-parity-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/eight-desk-git-parity.json
+          retention-days: 14
+          if-no-files-found: warn
