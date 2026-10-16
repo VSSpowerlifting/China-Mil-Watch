@@ -129,6 +129,52 @@ class NativeDapaCanaryContracts(unittest.TestCase):
         with self.assertRaisesRegex(AccessHold, "unapproved_dapa_native_destination"):
             fetch_once("https://www.korea.kr/robots.txt", MAX_ROBOTS)
 
+    def test_link_shape_counters_observe_js_form_and_missing_detail_url(self):
+        # All labels, HTML and JS are fictional; output must be counts only.
+        sample = b"""<!doctype html><html><body>
+        <form method="post"><input type="hidden" name="docSeq" value="91293"></form>
+        <a href="javascript:void(0)" onclick="viewDetail('91293')">SENSITIVE TEST HEADLINE</a>
+        <a href="#" onclick="viewDetail('91294')">SENSITIVE OTHER HEADLINE</a>
+        <a data-docseq="91295">SENSITIVE ANCHOR WITHOUT HREF</a>
+        <a href="/dapa/doc/selectDoc.do?bbsSeq=326&menuSeq=3069">Missing ID</a>
+        <a href="/dapa/doc/selectDoc.do?bbsSeq=326&docSeq=91296&menuSeq=3069">Qualified</a>
+        </body></html>"""
+        report = inspect_listing(sample)
+        shapes = report["structure_counts"]
+        self.assertEqual(report["observed_anchor_count"], 5)
+        self.assertEqual(report["provisional_docseq_count"], 1)
+        self.assertEqual(shapes["anchors_with_javascript_href"], 1)
+        self.assertEqual(shapes["anchors_with_fragment_href"], 1)
+        self.assertEqual(shapes["anchors_with_onclick"], 2)
+        self.assertEqual(shapes["anchors_missing_href"], 1)
+        self.assertEqual(shapes["anchors_with_direct_detail_path"], 2)
+        self.assertEqual(shapes["direct_detail_path_without_qualified_docseq"], 1)
+        self.assertEqual(shapes["forms_post"], 1)
+        self.assertEqual(shapes["hidden_inputs"], 1)
+        self.assertEqual(shapes["inputs_named_docseq"], 1)
+        self.assertEqual(shapes["anchors_with_numeric_docseq_attribute"], 1)
+        self.assertNotIn("SENSITIVE", str(report))
+        self.assertNotIn("viewDetail", str(report))
+        self.assertNotIn("91293", str(report))
+        self.assertNotIn("91294", str(report))
+        self.assertNotIn("91295", str(report))
+
+    def test_zero_qualified_ids_remains_unknown_after_aggregate_diagnostic(self):
+        sample = b"""<html><body>
+        <form method="get"></form>
+        <a href="#" onclick="open('99999')">PRIVATE HEADING</a>
+        <a href="javascript:open('99998')">PRIVATE SECOND HEADING</a>
+        </body></html>"""
+        result = inspect_listing(sample)
+        self.assertEqual(result["provisional_docseq_count"], 0)
+        self.assertEqual(result["sample_unverified_docseq"], [])
+        self.assertTrue(result["zero_matching_links_is_not_zero_publications"])
+        self.assertEqual(result["structure_counts"]["anchors_with_onclick"], 1)
+        self.assertEqual(result["structure_counts"]["forms_get"], 1)
+        self.assertEqual(result["structure_counts"]["anchors_with_javascript_href"], 1)
+        self.assertNotIn("99999", str(result))
+        self.assertNotIn("PRIVATE", str(result))
+
     def test_challenge_and_invalid_listing_cannot_establish_dapa(self):
         for raw, code in (
             (b"\xff", "publisher_listing_not_utf8"),
