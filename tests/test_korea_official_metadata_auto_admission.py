@@ -171,7 +171,14 @@ class KoreaStandingLinkAdmissionTests(unittest.TestCase):
         page = (target / "korea.html").read_text(encoding="utf-8")
         self.assertEqual(page.count('data-korea-public-link='), 5)
         self.assertEqual(page.count('data-korea-additional-link='), 9)
-        self.assertEqual(page.count('data-korea-auto-official-link='), 5)
+        # The copied production corpus may already contain live MND links.
+        # The five synthetic, disjoint admissions must be additive, not
+        # silently overwrite or hide any existing live metadata.
+        baseline = load_live_korea_official_links(ROOT / "pla_watch.db")
+        self.assertTrue({r["source_identity"] for r in baseline}.isdisjoint(
+            {r["source_identity"] for r in self.packet["records"]}))
+        self.assertEqual(page.count('data-korea-auto-official-link='),
+                         len(baseline) + len(self.packet["records"]))
         self.assertIn("MND official press release 156799905", page)
         self.assertIn("Portal posted:", page)
         for forbidden in ("summary_english", "text_original", "source_git_commit",
