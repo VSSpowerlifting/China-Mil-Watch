@@ -83,6 +83,9 @@ REGISTRY = {
     "indonesia_press_links_release.yml::publish": {
         "class": "full-tree", "locks": (SHARED_LOCK,),
         "guards": ("main_cas", "main_ref_guard")},
+    "korea_original_text_pages_release.yml::release-only-this-korean-original": {
+        "class": "file-only", "locks": ("korea-verified-official-link-production",),
+        "guards": ("main_cas", "pages_cas", "main_ref_guard")},
     "korea_pages_file_only_release.yml::korea-pages-file-only-release": {
         "class": "file-only", "locks": (SHARED_LOCK,), "guards": _FC},
     "korea_public_bibliography_release.yml::release": {

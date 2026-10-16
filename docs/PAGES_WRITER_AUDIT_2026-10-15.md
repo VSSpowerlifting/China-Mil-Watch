@@ -12,7 +12,7 @@ Deliverables:
 - `tests/test_pages_stale_deploy_race.py`: hermetic interleaving
   reproductions plus a test-only reference fence, 15 cases.
 
-## 1. Writer inventory (17 jobs across 209 workflow files; auditor output)
+## 1. Writer inventory (18 jobs across 212 workflow files; auditor output)
 
 | Writer (`file::job`) | Class | Concurrency held | Checkout | Freshness before publish |
 |---|---|---|---|---|
@@ -29,6 +29,7 @@ Deliverables:
 | `desks_p4a_render_only_release::release` | overlay (`keep_files`) | daily-update + pages-deploy | main | approved SHA + main CAS |
 | `korea_pages_file_only_release` | file-only push | daily-update | main | main CAS + Pages CAS |
 | `korea_verified_official_link_production` | file-only push | **own group** (deliberate) | main | main CAS + Pages CAS |
+| `korea_original_text_pages_release` (#722, merged during this audit) | file-only push (`korea.html`, `korea-originals/`) | **korea-verified group** | main | main CAS + Pages CAS |
 | `treasury_verified_official_links_release` | file-only push | daily-update | main | main CAS + Pages CAS |
 | `uscc_verified_official_links_release` | file-only push | daily-update | main | main CAS + Pages CAS |
 | `us_bis_verified_official_links_release` | file-only push | daily-update | main | main CAS + Pages CAS |
@@ -67,7 +68,8 @@ the same `origin/gh-pages` check and push.
 3. **`daily_update`'s no-commit path deploys the job-start tree.** That tree
    reverts a `korea_verified_official_link_production` publish made meanwhile.
    This is reachable today, because that workflow is deliberately outside
-   `daily-update`.
+   `daily-update`. The same exposure now applies to
+   `korea_original_text_pages_release`, which shares that group.
 4. **`daily_update`'s commit path has the same exposure.** The window is after
    `pull --rebase && push` and before peaceiris.
 5. **A fresh full-tree deploy erases content that exists only on gh-pages.**
@@ -126,7 +128,8 @@ sufficient only if three conditions all hold:
 
 Today all three fail somewhere:
 
-- `deploy_output_only`, `korea_verified` and owner pushes are outside the group.
+- `deploy_output_only`, both korea-verified-group writers and owner pushes
+  are outside the group.
 - `daily_update` deploys a tree that can be older than current main.
 - Content can exist only on gh-pages.
 

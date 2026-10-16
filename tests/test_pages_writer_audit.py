@@ -57,6 +57,7 @@ class RepoInventory(unittest.TestCase):
     def test_known_writers_outside_shared_lock(self):
         self.assertEqual(self.report["summary"]["outside_shared_lock"], [
             "deploy_output_only.yml::deploy",
+            "korea_original_text_pages_release.yml::release-only-this-korean-original",
             "korea_verified_official_link_production.yml::publish-korea-official-links",
         ])
 
