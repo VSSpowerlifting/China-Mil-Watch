@@ -1,0 +1,52 @@
+name: China post-cull frozen research source receipts
+
+# Read-only standalone proof. Runs even while this PR is stacked on #755,
+# because the historical workflow checks pull requests against main only.
+on:
+  pull_request:
+    paths:
+      - scripts/verify_china_research_postcull.py
+      - tests/test_china_research_postcull.py
+      - .github/workflows/china_original_source_review.yml
+      - .github/workflows/china_postcull_research_receipts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frozen-research-receipts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Protect tracked archive from test writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/china-postcull-db.sha"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Verify historical snapshot, tombstone custody and surviving originals
+        run: |
+          python -m unittest -v \
+            tests.test_china_original_source_notes \
+            tests.test_china_legacy_capture_quality \
+            tests.test_china_research_postcull
+          python -m scripts.verify_china_research_postcull
+      - name: Confirm site and production database untouched
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum -c "$RUNNER_TEMP/china-postcull-db.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
