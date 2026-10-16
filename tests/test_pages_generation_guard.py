@@ -281,6 +281,15 @@ class GuardTests(unittest.TestCase):
             self.publish(mode='full-tree')
         self.assertEqual(self.view(), before)
 
+    def test_file_only_cannot_overwrite_attested_pages_only_override(self):
+        self.boot()
+        self.add_attested_pages_only('korea.html', b'owner-released source view')
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'file-only would overwrite a Pages-only changed file'):
+            self.publish(mode='file-only', paths=('korea.html',))
+        self.assertEqual(self.view(), before)
+        self.assertEqual(self.page_bytes('korea.html'), b'owner-released source view')
+
     def test_file_only_cannot_reattest_page_withdrawn_from_current_main(self):
         self.boot()
         run(self.main, 'rm', 'output/korea.html')
