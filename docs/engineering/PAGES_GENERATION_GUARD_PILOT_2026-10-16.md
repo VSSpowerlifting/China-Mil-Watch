@@ -8,9 +8,9 @@ Issue [#346](https://github.com/VSSpowerlifting/IndoPacificRecord/issues/346). T
 
 The pilot can bootstrap an unmanifested Pages branch **only** if existing content is exactly equal to current `main:output`, aside from the controlled Pages infrastructure files `CNAME` and `.nojekyll`. Bootstrap is separately opt-in (`--bootstrap`) and performs the same readback. A manifest has schema, monotonically increasing generation, exact source SHA, writer identity, final assembled-tree digest, and null rollback marker. It is written **in the same commit as the files**, under `.ipr-release.json`.
 
-All branch writes occur only in a disposable gh-pages clone. Before an opt-in publication, the pilot rechecks `origin/main` and `origin/gh-pages`; the push is non-force and fast-forward-only. Remote changes, a local stale checkout, divergence between the manifest and actual live files, unexpected symlinks, missing source files, mismatched DNS, or unapproved carried-forward artifacts **hold rather than publish**.
+All branch writes occur only in a disposable gh-pages clone. Before an opt-in publication, the pilot rechecks `origin/main` and `origin/gh-pages`; the push is non-force and fast-forward-only. Remote changes, a local stale checkout, divergence between the manifest and actual live files, unexpected symlinks, missing source files, mismatched DNS (including file-only and first bootstrap releases), reserved Git paths, or unapproved carried-forward artifacts **hold rather than publish**.
 
-The 15 dedicated tests execute actual commits/pushes against disposable local bare repositories. They include bootstrap parity, dry-run no-mutation, stale source, CAS concurrency, same-name out-of-band changes, Pages-only new files, exact carry-forward, CNAME preservation, and refusal to imply authorized rollback.
+The 18 dedicated tests execute actual commits/pushes against disposable local bare repositories. They include bootstrap parity, dry-run no-mutation, stale source, CAS concurrency, same-name out-of-band changes, Pages-only new files, exact carry-forward, CNAME preservation, and refusal to imply authorized rollback.
 
 Run: `python -m unittest tests.test_pages_generation_guard -v`.
 
@@ -24,3 +24,7 @@ Run: `python -m unittest tests.test_pages_generation_guard -v`.
 6. Production dry-runs against full-fidelity real Pages data, crash recovery, exact deployed HTTPS readback, and regression tests against the final assembled site and any authorized `CARRIED_FORWARD` content.
 
 **Stop condition for this PR:** Tests passing and one source-only PR open for review. No live release, workflow edits, owner approvals, merger, or deployment.
+
+## October 16 follow-up hardening
+
+The file-only path now enforces the same committed `CNAME` and `.nojekyll` consistency contract as full-tree publication, including the initial bootstrap. It refuses to attest a release whose committed site infrastructure conflicts with the live Pages branch, without modifying any site artifact. The guard also rejects the reserved root `.git` path. Three additional offline integration cases cover these holds; **18 focused tests pass**. No production workflow or live release was changed.
