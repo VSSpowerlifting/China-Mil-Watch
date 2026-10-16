@@ -58,7 +58,7 @@ class DeployedBISReadback(unittest.TestCase):
             self.check()
 
     def test_corrupt_date_or_identity_not_readback(self):
-        altered=self.a.read_bytes().replace(b"2026-10-15",b"2024-10-15",1)
+        altered=self.a.read_bytes().replace(self.rows[0]["published_date"].encode(),b"2024-10-15",1)
         with self.assertRaises(BISReadbackHold):
             verified_html(altered,self.rows)
         altered=self.a.read_bytes().replace(
