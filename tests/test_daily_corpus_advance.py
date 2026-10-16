@@ -86,17 +86,22 @@ def drop_records(db: Path, count: int) -> int:
 
 def rendered_totals(out: Path) -> set:
     """
-    Every comma-grouped number the public metric surfaces state.
-
-    Read from the built pages rather than from the build report, because the
-    report is what the renderer believes and these are what a reader is told.
+    Extract numbers ONLY from reader-facing corpus-snapshot labels, whether
+    currently three or four digits. Post-retirement totals such as 833 do not
+    contain comma groups; scanning only comma-grouped numbers makes this
+    test vacuously miss the truthful public value.
     """
     found = set()
     for name in ("index.html", "methodology.html", "corpus.html"):
         page = out / name
         if page.exists():
-            for raw in re.findall(r"\b\d{1,3}(?:,\d{3})+\b",
-                                  page.read_text("utf-8")):
+            html = page.read_text("utf-8")
+            labels = re.findall(
+                r"Corpus snapshot:\s*[^<\n]{0,80}?[·]\s*"
+                r"(\d{1,3}(?:,\d{3})*)\s+records",
+                html,
+            )
+            for raw in labels:
                 found.add(int(raw.replace(",", "")))
     return found
 
