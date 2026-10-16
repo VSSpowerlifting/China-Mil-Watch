@@ -250,6 +250,39 @@ class GuardTests(unittest.TestCase):
         self.view()
         self.assertEqual(self.page_bytes('korea.html'), b'Korea one')
 
+    def test_main_advance_during_pre_push_check_refuses_release(self):
+        self.boot()
+        self.update_main('korea.html', b'Korea two')
+        import scripts.pages_generation_guard as mod
+        orig_git = mod.git
+        raced = [False]
+
+        def hooked_git(cwd, *args, **kwargs):
+            if (not raced[0] and cwd == self.main and
+                    args == ('fetch', '-q', 'origin', 'main')):
+                raced[0] = True
+                self.update_main('index.html', b'<h1>late source</h1>')
+            return orig_git(cwd, *args, **kwargs)
+
+        before = self.view()
+        with patch.object(mod, 'git', side_effect=hooked_git):
+            with self.assertRaisesRegex(Hold, 'main advanced during candidate'):
+                self.publish(mode='file-only', paths=('korea.html',))
+        self.assertTrue(raced[0])
+        self.assertEqual(self.view(), before)
+
+    def test_symlink_on_pages_is_rejected_during_bootstrap(self):
+        # A source-controlled published symlink must never be followed while
+        # assembling a release (even when its target stays within the tree).
+        (self.pages / 'alias.html').symlink_to('index.html')
+        run(self.pages, 'add', 'alias.html')
+        run(self.pages, 'commit', '-m', 'Add symlink')
+        run(self.pages, 'push', 'origin', 'gh-pages')
+        before = self.view()
+        with self.assertRaisesRegex(Hold, 'symlinks'):
+            self.publish(bootstrap=True)
+        self.assertEqual(self.view(), before)
+
     def test_rollback_flag_not_implemented(self):
         self.boot()
         with self.assertRaisesRegex(Hold, 'rollback publication is not implemented'):
