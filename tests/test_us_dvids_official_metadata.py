@@ -107,7 +107,7 @@ class DVIDSNeutralMetadata(unittest.TestCase):
         key = "key-" + "A1b2C3d4E5f6"
         self.assertEqual(d.normalize_issued_key(key), key)
         self.assertEqual(d.normalize_issued_key(" \n" + key + "\r\t"), key)
-        with self.assertRaisesRegex(d.DVIDSHold,"public_search_key_suffix_invalid"):
+        with self.assertRaisesRegex(d.DVIDSHold,"public_search_key_embedded_whitespace"):
             d.normalize_issued_key(key[:6] + " " + key[6:])
 
     def test_do_not_invent_an_undocumented_key_suffix_alphabet_or_length(self):
@@ -117,12 +117,21 @@ class DVIDSNeutralMetadata(unittest.TestCase):
                     "key-" + "a" * 508):
             with self.subTest(suffix_category="printable"):
                 self.assertEqual(d.normalize_issued_key(key), key)
-        for bad in ("key-", "key-\x00abc", "key-new\nline",
-                    "key-α", "key-" + "a" * 509):
-            with self.subTest(suffix_category="invalid"):
-                with self.assertRaisesRegex(d.DVIDSHold,
-                                            "public_search_key_suffix_invalid"):
+        rejected = (
+            ("key-", "suffix_empty"),
+            ("key-\\x00abc", "control_character"),
+            ("key-new\\nline", "embedded_whitespace"),
+            ("key-with space", "embedded_whitespace"),
+            ("key-α", "non_ascii_character"),
+            ("key-" + "a" * 509, "input_over_limit"),
+        )
+        for bad, category in rejected:
+            with self.subTest(suffix_category=category):
+                with self.assertRaisesRegex(d.DVIDSHold, category) as caught:
                     d.normalize_issued_key(bad)
+                # The *category* is diagnostic; no credential content is
+                # ever included in the exception or workflow error.
+                self.assertNotIn(bad, str(caught.exception))
 
 
     def test_private_scratch_only_never_overwrites(self):
