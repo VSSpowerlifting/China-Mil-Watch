@@ -3,6 +3,11 @@ name: Korea — Private English translation and analysis owner handoff
 # Privately draft newly published original Korean government texts, never
 # publish machine analysis and never send the drafts to editorial staff.
 on:
+  # Rehearse the first owner-only handoff immediately upon activation.
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/korea_english_owner_draft_handoff.yml
   pull_request:
     paths:
       - scripts/draft_korea_english_analysis.py
