@@ -109,7 +109,19 @@ class TestNoPageDescribesItselfAsUnpublished(BuildCase):
 
     def test_the_build_actually_produced_pages_to_check(self):
         """A scan of nothing passes for the wrong reason."""
-        self.assertGreater(len(self.pages), 3000)
+        # Previously this required >3,000 rendered pages, which silently
+        # demanded resurrection after the 4,400-record China retirement.
+        # Require every surviving record and at least one other site page.
+        import json
+        index = json.loads(
+            (self.out / "corpus-index.json").read_text(encoding="utf-8"))
+        self.assertGreater(len(index["records"]), 0)
+        self.assertGreater(len(self.pages), len(index["records"]))
+        self.assertEqual(
+            {p.stem for p in self.out.glob("record/*.html")},
+            {str(row[0]) for row in index["records"]},
+            "missing, extra or retired record page in public chrome scan",
+        )
 
     def test_every_page_has_chrome_to_scan(self):
         without = [str(p.relative_to(self.out)) for p in self.pages[:200]
