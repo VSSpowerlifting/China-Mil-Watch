@@ -68,8 +68,11 @@ jobs:
     timeout-minutes: 55
     permissions:
       contents: write
+    # Dedicated queue avoids GitHub Actions replacing a pending owner
+    # cutover with the high-frequency daily-update workflow. Concurrent
+    # main writes remain fail-closed under CHINA_RELEASE_SHA pin and Git push.
     concurrency:
-      group: daily-update
+      group: china-retirement-cutover
       cancel-in-progress: false
     steps:
       - uses: actions/checkout@v4
