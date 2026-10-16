@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -87,9 +88,16 @@ def main(argv=None):
         result = rehearse(args.source_checkout, args.source_identity,
                           args.private_output)
     except (MarkHold, PolicyHold, ExceptionHold, StandingLicenseHold,
-            IntakeHold, ValueError, OSError):
+            IntakeHold, ValueError, OSError) as exc:
+        # Only static, bounded machine-readable codes. Never source text, JSON,
+        # publisher HTML, Korean original bodies or arbitrary OSError paths.
+        code = str(exc) if type(exc) in (
+            MarkHold, PolicyHold, ExceptionHold, StandingLicenseHold,
+            IntakeHold) else ""
+        if not re.fullmatch(r"[a-z][a-z0-9_]{2,127}", code):
+            code = "private_source_or_policy_unavailable"
         print(json.dumps({
-            "schema": SCHEMA, "status": "HOLD",
+            "schema": SCHEMA, "status": "HOLD", "reason_code": code,
             "production_records_written": 0,
             "public_files_written": 0,
         }, sort_keys=True))
