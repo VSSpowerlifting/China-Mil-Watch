@@ -337,6 +337,21 @@ class PreviewCase(unittest.TestCase):
     def page(self, name: str) -> str:
         return (self.out / name).read_text(encoding="utf-8")
 
+    def state_has_records_or_exact_zero(self, state: str) -> bool:
+        """Require correct nonnegative processing counts after the China cutover.
+
+        The state classification remains defined even when nobody currently
+        occupies it; a zero-row state must not require a fabricated record page.
+        """
+        data = getattr(self, "data", None)
+        if data is None:
+            data = gp.load_corpus(TRACKED_DB)
+        counts = {item["code"]: item["count"] for item in data["state_counts"]}
+        self.assertIn(state, counts)
+        live_count = sum(r["state"] == state for r in data["corpus"])
+        self.assertEqual(counts[state], live_count)
+        return live_count > 0
+
     def css_for(self, route="corpus.html") -> str:
         """Read the complete styles delivered to this route, after the split."""
         from core.frontend_budget import measure_page
@@ -2086,12 +2101,22 @@ class TestRecordPages(PreviewCase):
     def test_every_processing_state_has_a_rendered_page(self):
         for state in gp.STATE_ORDER:
             with self.subTest(state=state):
+                if not self.state_has_records_or_exact_zero(state):
+                    # No analysis_incomplete record exists after cutover;
+                    # the zero-state label remains in the structured index.
+                    index = json.loads((self.out / "corpus-index.json").read_text())
+                    self.assertIn({"code": state, "count": 0,
+                                   "label": gp.STATE_LABELS[state]},
+                                  index["states"])
+                    continue
                 html = self.record(self.first_in_state(state))
                 self.assertIn(gp.STATE_LABELS[state], html)
 
     def test_records_without_english_claim_no_translation_or_summary(self):
         for state in ("awaiting_screening", "not_selected",
                       "analysis_incomplete"):
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             rec_id = self.first_in_state(state)
             html = self.record(rec_id)
             with self.subTest(state=state):
@@ -2101,6 +2126,8 @@ class TestRecordPages(PreviewCase):
     def test_an_unanalyzed_record_is_never_called_not_flagged(self):
         for state in ("awaiting_screening", "not_selected",
                       "analysis_incomplete"):
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertNotIn("Model-flagged", html)
@@ -2193,6 +2220,8 @@ class TestRecordPages(PreviewCase):
 
     def test_exactly_one_h1_per_record_page(self):
         for state in gp.STATE_ORDER:
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertEqual(len(re.findall(r"<h1(?:\s[^>]*)?>", html)), 1)
@@ -2217,7 +2246,7 @@ class TestRecordPages(PreviewCase):
         self.assertNotIn("tabindex=\"-1\"", html)
 
     def test_urls_and_hashes_can_wrap_at_320px(self):
-        css = self.css_for("record/1.html")
+        css = self.css_for("record/%d.html" % self.ids[0])
         rule = re.search(r"\.token,\s*\.prov-value\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(rule)
         self.assertIn("overflow-wrap", rule.group(1))
@@ -3275,9 +3304,19 @@ class TestCompactQueryIndex(PreviewCase):
         for key, counts in expected.items():
             offered = {e["code"]: e["count"] for e in self.index[key]}
             with self.subTest(facet=key):
-                self.assertEqual(offered, dict(counts))
-                for code, n in offered.items():
-                    self.assertGreater(n, 0)
+                if key == "states":
+                    # State indices are stable: even the currently empty
+                    # analysis_incomplete state must occupy its real index.
+                    # An empty state is accurately displayed as 0.
+                    self.assertEqual(
+                        offered, {code: counts.get(code, 0)
+                                  for code in gp.STATE_ORDER})
+                    for code, n in offered.items():
+                        self.assertGreaterEqual(n, 0)
+                else:
+                    self.assertEqual(offered, dict(counts))
+                    for code, n in offered.items():
+                        self.assertGreater(n, 0)
 
     def test_only_sources_holding_records_reach_the_source_facet(self):
         """
@@ -5213,10 +5252,16 @@ class TestSnapshotScopedCitations(PreviewCase):
                     self.assertNotIn(english, cite["source_text"])
         # The negative check must cover the bulk of the analyzed set, not a
         # handful of records that happened to qualify.
-        self.assertGreater(compared, 1_000)
+        # Once 4,400 retired sources were removed, a fixed 1,000-example
+        # threshold exceeded the entire active 873-record corpus. Require
+        # coverage of a MAJORITY of reviewed (analyzed) source titles.
+        analyzed_count = sum(r["state"] == "analyzed" for r in self.corpus)
+        self.assertGreater(compared, analyzed_count // 2)
 
     def test_the_rendered_source_text_block_quotes_the_original_title(self):
         for state in gp.STATE_ORDER:
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             rec_id = self.first_in_state(state)
             rec = self.by_id[rec_id]
             html = self.record(rec_id)
@@ -5248,6 +5293,8 @@ class TestSnapshotScopedCitations(PreviewCase):
         ):
             with self.subTest(state=state):
                 self.assertIn(expected, notes[state])
+                if not self.state_has_records_or_exact_zero(state):
+                    continue
                 html = self.record(self.first_in_state(state))
                 self.assertIn(markupsafe.escape(notes[state]), html)
                 # and no other state's note
@@ -5258,6 +5305,8 @@ class TestSnapshotScopedCitations(PreviewCase):
     def test_an_unscreened_record_is_never_told_it_was_analyzed(self):
         for state in ("not_selected", "awaiting_screening",
                       "analysis_incomplete"):
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertNotIn("machine-generated and have not been reviewed",
@@ -5349,8 +5398,12 @@ class TestSnapshotScopedCitations(PreviewCase):
                                     gp.DECLARED_SNAPSHOT)]
         texts += [gp.edition_citation(e) for e in self.editions]
         for state in gp.STATE_ORDER:
-            cite = gp.record_citation(self.by_id[self.first_in_state(state)],
-                                      "Test Title",
+            # Empty active states still require safe synthetic citation
+            # rendering; do not manufacture public article pages for them.
+            rec = (self.by_id[self.first_in_state(state)]
+                   if self.state_has_records_or_exact_zero(state)
+                   else _fake_record(state=state))
+            cite = gp.record_citation(rec, "Test Title",
                                       gp.DECLARED_SNAPSHOT)
             texts += [cite["source_text"], cite["as_held"], cite["note"]]
         for text in texts:
