@@ -1,0 +1,236 @@
+name: Korea — Owner-authorized exact original-text Pages release
+
+# Not scheduled, not collector-triggered and not activated by merging this
+# workflow. Metadata-only approval never silently expands to body text.
+on:
+  pull_request:
+    paths:
+      - .github/workflows/korea_original_text_pages_release.yml
+      - scripts/admit_korea_original_text.py
+      - scripts/verify_korea_original_publication.py
+      - tests/test_korea_original_text_publication_preflight.py
+  workflow_dispatch:
+    inputs:
+      source_identity:
+        description: "One exact Korea source identity (korea-policy:NNNNNNNNN)"
+        required: true
+        type: string
+      original_sha256:
+        description: "Exact 64-character original UTF-8 source SHA-256"
+        required: true
+        type: string
+      approve_public_verbatim_korean_text_only:
+        description: "I authorize qualified Korean government text only; NO HWPX, images, translation or AI analysis"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  review-release-contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install beautifulsoup4 requests
+      - name: Test exact owner, source, SHA, safe output and idempotent retry
+        run: python -m unittest -v tests.test_korea_original_text_publication_preflight tests.test_korea_published_originals
+      - name: No public rows or source bodies committed by pull request CI
+        run: |
+          git diff --exit-code -- pla_watch.db output/ research/korea_published_original_texts.json
+
+  release-only-this-korean-original:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.actor == 'VSSpowerlifting' &&
+      inputs.approve_public_verbatim_korean_text_only == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    concurrency:
+      group: korea-verified-official-link-production
+      cancel-in-progress: false
+    env:
+      KOREA_ID: ${{ inputs.source_identity }}
+      KOREA_SHA: ${{ inputs.original_sha256 }}
+      KOREA_APPROVED: ${{ inputs.approve_public_verbatim_korean_text_only }}
+    steps:
+      - name: Checkout latest main, not an older workflow trigger SHA
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify authenticated owner-only scope and baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_ACTOR" = VSSpowerlifting
+          test "$GITHUB_REPOSITORY" = VSSpowerlifting/IndoPacificRecord
+          test "$GITHUB_EVENT_NAME" = workflow_dispatch
+          test "$GITHUB_REF" = refs/heads/main
+          test "$KOREA_APPROVED" = true
+          test -z "$(git status --porcelain --untracked-files=all)"
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-original-base"
+          sha256sum pla_watch.db > "$RUNNER_TEMP/korea-original-db-before"
+      - name: Install existing site and original-source dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Clone immutable-versioned Korean original evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --branch shadow/korea-policy-briefing \
+            "https://github.com/$GITHUB_REPOSITORY.git" "$RUNNER_TEMP/korea-frozen-source"
+          git -C "$RUNNER_TEMP/korea-frozen-source" rev-parse HEAD > \
+            "$RUNNER_TEMP/korea-original-source-head"
+      - name: Admit the single owner-approved original after all exact checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.admit_korea_original_text \
+            --source-checkout "$RUNNER_TEMP/korea-frozen-source" \
+            --identity "$KOREA_ID" --expected-sha256 "$KOREA_SHA" \
+            --owner-approved-verbatim-korean-text-only
+          python -m scripts.verify_korea_original_publication \
+            --source-checkout "$RUNNER_TEMP/korea-frozen-source" \
+            --owner-dispatched-identity "$KOREA_ID" \
+            --owner-dispatched-original-sha256 "$KOREA_SHA"
+      - name: Render and verify only source-pinned Korean public pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          python site/render.py
+          python scripts/validate_output.py
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          from core.korea_published_originals import read_release_index
+          rows=read_release_index()
+          expected={row["route"] for row in rows}
+          root=Path("output/korea-originals")
+          actual={p.relative_to("output").as_posix() for p in root.glob("*.html")}
+          assert expected and actual==expected
+          desk=Path("output/korea.html").read_text(encoding="utf-8")
+          assert desk.count("data-korea-original-text=")==len(rows)
+          assert any(r["source_identity"]==os.environ["KOREA_ID"] and
+                     r["original_text_sha256"]==os.environ["KOREA_SHA"] for r in rows)
+          for row in rows:
+              page=(Path("output")/row["route"]).read_text(encoding="utf-8")
+              assert row["official_url"] in page
+              assert row["original_text_sha256"] in page
+              assert row["route"] in desk
+              assert "<script" not in page and ".hwpx" not in page
+          routes={"korea.html"}|expected
+          Path(os.environ["RUNNER_TEMP"],"korea-route-allowlist.json").write_text(
+              json.dumps(sorted(routes)))
+          print("Exact Korean public route count:",len(routes))
+          PY
+          sha256sum -c "$RUNNER_TEMP/korea-original-db-before"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          git diff --exit-code -- pla_watch.db
+      - name: Reject moving source branch or competing main writer
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_now="$(git ls-remote "https://github.com/$GITHUB_REPOSITORY.git" refs/heads/shadow/korea-policy-briefing | cut -f1)"
+          test "$source_now" = "$(cat "$RUNNER_TEMP/korea-original-source-head")"
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-original-base")"
+      - name: Commit only the approved source text, index and Korea HTML
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A -- research/korea_published_original_texts.json \
+            research/korea_published_original_texts output/korea.html output/korea-originals
+          python - <<'PY'
+          import subprocess
+          from core.korea_published_originals import read_release_index
+          allowed={"research/korea_published_original_texts.json","output/korea.html"}
+          for row in read_release_index():
+              allowed.add("research/korea_published_original_texts/"+row["news_id"]+".txt")
+              allowed.add("output/"+row["route"])
+          staged=set(subprocess.check_output(
+              ["git","diff","--cached","--name-only"],text=True).splitlines())
+          assert staged<=allowed,"Attempted to stage non-Korean source or site file"
+          print("Allowed Korea-only main changes:",len(staged))
+          PY
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-original-base")"
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: owner-authorized original MND Korean text and Desk page"
+            git push origin HEAD:main
+          fi
+          git rev-parse HEAD > "$RUNNER_TEMP/korea-original-main-commit"
+      - name: Checkout existing Pages without bulk site upload
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: korea-existing-original-pages
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Mirror only Korea Desk and registered Korean originals to Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-original-main-commit")"
+          test -z "$(git -C korea-existing-original-pages status --porcelain --untracked-files=all)"
+          mkdir -p korea-existing-original-pages/korea-originals
+          cp output/korea.html korea-existing-original-pages/korea.html
+          cp output/korea-originals/*.html korea-existing-original-pages/korea-originals/
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          allowed=set(json.loads(Path(os.environ["RUNNER_TEMP"],
+              "korea-route-allowlist.json").read_text()))
+          found={"korea.html"}|{p.relative_to("korea-existing-original-pages").as_posix()
+                 for p in Path("korea-existing-original-pages/korea-originals").glob("*.html")}
+          assert found==allowed,"Pages has orphan/missing Korean original text pages"
+          for path in allowed:
+              assert (Path("output")/path).read_bytes()==(
+                  Path("korea-existing-original-pages")/path).read_bytes()
+          print("Exact Korea main-to-Pages page parity:",len(allowed))
+          PY
+          cd korea-existing-original-pages
+          old_pages="$(git rev-parse HEAD)"
+          git add -A -- korea.html korea-originals
+          python - <<'PY'
+          import json,os,subprocess
+          from pathlib import Path
+          allowed=set(json.loads(Path(os.environ["RUNNER_TEMP"],
+              "korea-route-allowlist.json").read_text()))
+          staged=set(subprocess.check_output(
+              ["git","diff","--cached","--name-only"],text=True).splitlines())
+          assert staged<=allowed,"Unexpected non-Korea gh-pages update"
+          PY
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: exact owner-approved government original text, Pages only"
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$old_pages"
+          if [ "$(git rev-parse HEAD)" != "$old_pages" ]; then
+            git push origin HEAD:gh-pages
+          fi
+          git fetch origin gh-pages
+          test "$(git rev-parse origin/gh-pages)" = "$(git rev-parse HEAD)"
+          echo "Korea-only main and Pages release reconciled."
