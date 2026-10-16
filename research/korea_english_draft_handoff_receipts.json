@@ -1,4 +1,1 @@
-{
-  "schema": "ipr-korea-private-english-editorial-handoff/1",
-  "delivered": []
-}
+{"delivered":[{"delivered_at_utc":"2026-10-16T17:25:41Z","draft_sha256":"88eb63cfb914bdf6e321f86e45401d86e24c4a0f525d5aab4d763b0c4e347ff6","model_id":"claude-sonnet-4-6","source_identity":"korea-policy:156784297","source_sha256":"ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284"}],"schema":"ipr-korea-private-english-editorial-handoff/1"}
