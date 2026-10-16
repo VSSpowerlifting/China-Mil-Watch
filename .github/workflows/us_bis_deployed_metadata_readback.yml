@@ -65,7 +65,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -z "$(git status --porcelain --untracked-files=all)"
+          git diff --exit-code -- pla_watch.db output/ site/ desks/
+          test -z "$(git -C bis-existing-pages status --porcelain --untracked-files=all)"
           cmp output/us-indopacific.html bis-existing-pages/us-indopacific.html
           python - <<'PY'
           from core.us_bis_authenticated_metadata import load_public_links
@@ -99,5 +100,5 @@ jobs:
             --public-http-file "$RUNNER_TEMP/bis-http.html"
       - name: Refuse drift in exact Git readback and tracked public files
         run: |
-          test -z "$(git status --porcelain --untracked-files=all)"
           git diff --exit-code -- pla_watch.db output/ site/ desks/
+          test -z "$(git -C bis-existing-pages status --porcelain --untracked-files=all)"
