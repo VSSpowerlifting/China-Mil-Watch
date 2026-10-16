@@ -1,0 +1,120 @@
+name: Korea — Private English translation and analysis owner handoff
+
+# Privately draft newly published original Korean government texts, never
+# publish machine analysis and never send the drafts to editorial staff.
+on:
+  pull_request:
+    paths:
+      - scripts/draft_korea_english_analysis.py
+      - scripts/send_korea_english_owner_drafts.py
+      - tests/test_korea_english_publication.py
+      - tests/test_korea_english_owner_draft_handoff.py
+      - research/korea_english_draft_handoff_receipts.json
+      - .github/workflows/korea_english_owner_draft_handoff.yml
+  workflow_run:
+    workflows:
+      - Korea — Standing-Licensed Original Text to Live Pages
+    types: [completed]
+  schedule:
+    - cron: '43 14 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-korea-english-private-owner-handoff
+  cancel-in-progress: false
+
+jobs:
+  draft-unit-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Prove no-repeat private owner-email delivery and unreviewed-only drafts
+        run: python -m unittest -v tests.test_korea_english_publication tests.test_korea_english_owner_draft_handoff
+
+  send-unreviewed-korea-drafts-to-owner:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_run' ||
+       github.event.workflow_run.conclusion == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify owner-only credentials configured without logging secrets
+        id: credentials
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
+          IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
+          IPR_SMTP_USER: ${{ secrets.IPR_SMTP_USER }}
+          IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$ANTHROPIC_API_KEY" ] && [ -n "$IPR_PREVIEW_TO" ] && \
+             [ -n "$IPR_EDITOR_TO" ] && [ -n "$IPR_SMTP_USER" ] && \
+             [ -n "$IPR_SMTP_APP_PASSWORD" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+            echo "Owner-only private draft configuration detected"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "HOLD: missing owner-only model or SMTP configuration; no send"
+          fi
+      - name: Install Anthropic and exact-source validators
+        if: steps.credentials.outputs.ready == 'true'
+        run: python -m pip install -r requirements.txt
+      - name: Generate bounded English and analytical drafts and send to owner only
+        if: steps.credentials.outputs.ready == 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}
+          IPR_EDITOR_TO: ${{ secrets.IPR_EDITOR_TO }}
+          IPR_SMTP_USER: ${{ secrets.IPR_SMTP_USER }}
+          IPR_SMTP_APP_PASSWORD: ${{ secrets.IPR_SMTP_APP_PASSWORD }}
+        run: |
+          set -euo pipefail
+          python -m scripts.send_korea_english_owner_drafts \
+            --send-owner-only-unreviewed
+      - name: Commit only source SHA-delivery receipts, never model content
+        if: steps.credentials.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- research/korea_english_draft_handoff_receipts.json
+          staged="$(git diff --cached --name-only)"
+          test -z "$staged" || test "$staged" = "research/korea_english_draft_handoff_receipts.json"
+          if [ -n "$staged" ]; then
+            before="$(git rev-parse HEAD)"
+            git fetch origin main
+            test "$(git rev-parse origin/main)" = "$before" || {
+              echo "::error::Main changed; refuse to replace another review receipt"
+              exit 1
+            }
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Korea: record private English draft owner-delivery SHA only"
+            git push origin HEAD:main
+          fi
+          git diff --exit-code -- pla_watch.db output/ research/korea_english_publications.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
