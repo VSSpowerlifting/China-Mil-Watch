@@ -178,7 +178,9 @@ def main(argv=None):
                    recipient=recipient,password=password)
         print(json.dumps(result,sort_keys=True))
         return 0
-    except (KoreaEnglishHold,ValueError,OSError,smtplib.SMTPException):
+    except Exception:
+        # Provider and SMTP exceptions can include private draft text.
+        # Report a fixed hold receipt only; do not log its exception string.
         print(json.dumps({"status":"HOLD","unreviewed_content_logged":False,
                           "public_writes":0},sort_keys=True))
         return 2
