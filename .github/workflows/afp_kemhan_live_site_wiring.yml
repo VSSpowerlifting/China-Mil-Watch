@@ -1,0 +1,45 @@
+name: AFP and Kemhan — Production SQLite to Desk HTML Contract
+
+# Read-only synthetic verification. No source family is activated, no
+# published page is written, and no main/gh-pages permission is granted.
+on:
+  pull_request:
+    paths:
+      - core/regional_official_link_render.py
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+      - tests/test_regional_live_site_wiring.py
+      - .github/workflows/afp_kemhan_live_site_wiring.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regional-production-link-rail:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install 'jinja2>=3,<4'
+      - name: Read-only, source-free SQLite and country page rendering contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python -m unittest \
+            tests.test_regional_live_site_wiring \
+            tests.test_regional_official_link_render \
+            tests.test_regional_official_link_release -v
+      - name: No production database or published web file changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
