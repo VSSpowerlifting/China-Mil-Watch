@@ -12,6 +12,7 @@ on:
       - 'tests/test_china_retirement_release.py'
       - 'scripts/verify_china_retirement_backup_lineage.py'
       - 'tests/test_china_retirement_backup_lineage.py'
+      - 'tests/test_china_retirement_release_queue.py'
       - '.github/workflows/china_retirement_release.yml'
   workflow_dispatch:
     inputs:
@@ -53,7 +54,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Prove release verifier rejects broken references and legacy routes
-        run: python -m unittest -v tests.test_china_retirement_release tests.test_china_retirement_pages_readback tests.test_china_retirement_crossdesk tests.test_china_retirement_backup_lineage
+        run: python -m unittest -v tests.test_china_retirement_release tests.test_china_retirement_pages_readback tests.test_china_retirement_crossdesk tests.test_china_retirement_backup_lineage tests.test_china_retirement_release_queue
       - name: Prove this contract did not modify the tracked corpus/site
         run: |
           set -euo pipefail
@@ -117,6 +118,7 @@ jobs:
         run: |
           python -m unittest -v             tests.test_retired_article_urls             tests.test_china_retirement_atomic             tests.test_china_active_retirement             tests.test_china_retirement_release \
             tests.test_china_retirement_backup_lineage \
+            tests.test_china_retirement_release_queue \
             tests.test_china_retirement_pages_readback \
             tests.test_china_retirement_crossdesk
       - name: Prepare full 4400-record reduction in external scratch ONLY
