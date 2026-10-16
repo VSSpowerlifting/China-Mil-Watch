@@ -156,6 +156,19 @@ def run(*, ledger=RECEIPT_PATH, client, sender, recipient, password, send=None):
             "count":len(sent),"ids":sent,"public_writes":0}
 
 
+def safe_hold_reason(error):
+    """Static machine reasons only; never serialize arbitrary exception text."""
+    if type(error) is KoreaEnglishHold:
+        candidate=str(error)
+        if re.fullmatch(r"[a-z][a-z0-9_]{2,127}",candidate):
+            return candidate
+    if isinstance(error,smtplib.SMTPException):
+        return "korea_owner_private_smtp_delivery_failed"
+    if type(error).__module__.split(".")[0]=="anthropic":
+        return "korea_owner_model_api_request_failed"
+    return "korea_owner_draft_processing_failed"
+
+
 def main(argv=None):
     p=argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--send-owner-only-unreviewed",action="store_true")
@@ -178,10 +191,12 @@ def main(argv=None):
                    recipient=recipient,password=password)
         print(json.dumps(result,sort_keys=True))
         return 0
-    except Exception:
-        # Provider and SMTP exceptions can include private draft text.
-        # Report a fixed hold receipt only; do not log its exception string.
-        print(json.dumps({"status":"HOLD","unreviewed_content_logged":False,
+    except Exception as exc:
+        # Provider and SMTP exceptions may include private Korean source text.
+        # Only predefined reason codes can enter the Actions log.
+        print(json.dumps({"status":"HOLD",
+                          "reason_code":safe_hold_reason(exc),
+                          "unreviewed_content_logged":False,
                           "public_writes":0},sort_keys=True))
         return 2
 
