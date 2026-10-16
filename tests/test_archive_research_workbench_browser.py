@@ -53,8 +53,8 @@ class WorkbenchBrowserTests(unittest.TestCase):
     def test_search_filter_sort_open_copy_export_reload_back_forward(self):
         p = self.page
         self.ready()
-        p.get_by_label('Search titles, permitted text and metadata',exact=True).fill('maritime')
-        p.get_by_role('button',name='Search archive',exact=True).click()
+        p.get_by_label('Search archive',exact=True).fill('maritime')
+        p.get_by_role('button',name='Search',exact=True).click()
         self.assertIn('q=maritime',p.url)
         self.assertEqual(p.locator('#count').inner_text(),'33 results')
         p.locator('#desk').select_option('singapore')
@@ -169,3 +169,84 @@ class WorkbenchBrowserTests(unittest.TestCase):
         with self.assertRaises(HTTPError):urlopen(Request(self.url,headers={'Host':'untrusted.example'}))
         with urlopen(self.url+'robots.txt') as r:self.assertIn(b'Disallow: /',r.read())
         self.assertFalse((self.path/'sitemap.xml').exists())
+
+    def test_real_font_files_load_and_render_instead_of_system_fallbacks(self):
+        p = self.page
+        responses = []
+        p.on('response', lambda r: responses.append((r.url, r.status)) if '/assets/fonts/' in r.url else None)
+        self.ready('?q=maritime')
+        p.wait_for_function("() => document.fonts.status === 'loaded'")
+        for file in ('instrument-serif-1.woff2', 'inter-0.woff2', 'source-serif-4-1.woff2'):
+            self.assertIn((self.url + 'assets/fonts/' + file, 200), responses)
+            self.assertEqual((self.path / 'assets/fonts' / file).read_bytes(), (ROOT / 'site/assets/fonts' / file).read_bytes())
+        expected = {'h1':('Instrument Serif', 'InstrumentSerif'), '.result h3':('Source Serif 4', 'SourceSerif4'),
+                    '#desk':('Inter', 'Inter-Regular'), '.metadata':('Inter', 'Inter-Regular')}
+        cdp = self.context.new_cdp_session(p)
+        cdp.send('DOM.enable'); cdp.send('CSS.enable')
+        document = cdp.send('DOM.getDocument')['root']['nodeId']
+        for selector, (family, postscript) in expected.items():
+            computed = p.locator(selector).first.evaluate('(e) => ({family:getComputedStyle(e).fontFamily,weight:getComputedStyle(e).fontWeight})')
+            self.assertIn(family, computed['family'])
+            self.assertEqual(computed['weight'], '400')
+            ident = cdp.send('DOM.querySelector', {'nodeId':document, 'selector':selector})['nodeId']
+            fonts = cdp.send('CSS.getPlatformFontsForNode', {'nodeId':ident})['fonts']
+            self.assertTrue(any(f['isCustomFont'] and postscript in f['postScriptName'] and f['glyphCount'] > 0 for f in fonts), (selector, fonts))
+        for selector in ('#query', '#source', '#issuer', '#from', '#to', '#sort', '.primary'):
+            computed = p.locator(selector).evaluate('(e) => ({family:getComputedStyle(e).fontFamily,weight:getComputedStyle(e).fontWeight})')
+            self.assertIn('Inter', computed['family']); self.assertEqual(computed['weight'], '400')
+        self.assertEqual(self.errors, [])
+
+    def test_more_filters_keyboard_url_restore_removal_and_mobile_layout(self):
+        p = self.page
+        self.ready('?q=maritime')
+        disclosure = p.locator('#more-filters > summary')
+        self.assertFalse(p.locator('#source').is_visible())
+        self.assertTrue(p.locator('#desk').is_visible()); self.assertTrue(p.locator('#record_type').is_visible())
+        disclosure.focus(); p.keyboard.press('Enter')
+        self.assertTrue(p.locator('#source').is_visible())
+        p.locator('#source').select_option('MINDEF Singapore — official releases')
+        p.locator('#from').fill('2026-10-01'); p.locator('#from').dispatch_event('change')
+        p.locator('#to').fill('2026-10-15'); p.locator('#to').dispatch_event('change')
+        self.assertEqual(p.locator('#more-filter-count').inner_text().strip(), '(3)')
+        self.assertIn('source’s publication date', p.locator('#date-help').inner_text())
+        self.assertIn('recorded IPR publication dates', p.locator('#date-help').inner_text())
+        p.reload(); p.wait_for_function("() => document.querySelector('#count').textContent.includes('results')")
+        self.assertTrue(p.locator('#source').is_visible())
+        self.assertEqual(p.locator('#from').input_value(), '2026-10-01')
+        for width in (320, 375, 768, 1280):
+            p.set_viewport_size({'width':width, 'height':900})
+            self.assertTrue(p.evaluate('document.documentElement.scrollWidth <= innerWidth'), width)
+        disclosure.click()
+        self.assertFalse(p.locator('#source').is_visible())
+        remove = p.get_by_role('button', name='Remove Source filter', exact=True)
+        self.assertTrue(remove.is_visible()); remove.click()
+        self.assertEqual(p.locator(':focus').inner_text(), 'More filters (2)')
+        self.assertNotIn('source=', p.url)
+        p.go_back(); self.assertEqual(p.locator('#source').input_value(), 'MINDEF Singapore — official releases')
+        self.assertTrue(p.locator('#source').is_visible())
+        p.locator('#reset').click(); self.assertFalse(p.locator('#source').is_visible())
+        self.assertEqual(p.locator('#query').input_value(), '')
+        self.assertEqual(self.errors, [])
+
+    def test_full_provenance_citations_exports_and_specific_holds_survive_quieter_rows(self):
+        p = self.page
+        self.ready('?q=maritime')
+        first = p.locator('.result').first
+        ident = first.get_attribute('data-record-id')
+        records = json.loads((self.path/'index.json').read_text())['records']
+        r = next(r for r in records if r['id'] == ident)
+        self.assertIn('not human-reviewed', first.locator('.processing').inner_text())
+        self.assertFalse(first.locator('.provenance-notes').is_visible())
+        first.locator('summary').click()
+        self.assertIn(r['processing'], first.locator('.provenance-notes').inner_text())
+        self.assertIn(r['date_kind'], first.locator('.provenance-notes').inner_text())
+        self.assertEqual(first.locator('.citation').inner_text(), r['citation'])
+        first.locator('input[type=checkbox]').check()
+        with p.expect_download() as download: p.locator('#export-json').click()
+        selected = json.loads(Path(download.value.path()).read_text())['records']
+        self.assertEqual(selected, [r])
+        p.locator('#query').fill('156785161'); p.locator('.primary').click()
+        self.assertTrue(p.locator('.result .hold').is_visible())
+        self.assertIn('unresolved excavation-year discrepancy', p.locator('.hold').inner_text())
+        self.assertFalse(p.locator('.result .provenance-notes').is_visible())
+        self.assertEqual(self.errors, [])

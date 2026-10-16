@@ -39,7 +39,7 @@ def build(path=DEFAULT):
     for name in ('index.html', 'styles.css', 'search.js', 'app.js'):
         shutil.copyfile(SOURCE / name, out / name)
     shutil.copyfile(ROOT / 'site/assets/identity/selected-ipr/ipr-accent-32.png', out / 'favicon.png')
-    shutil.copyfile(ROOT / 'site/assets/identity/selected-ipr/ipr-ivory-160.png', out / 'ipr.png')
+    shutil.copyfile(ROOT / 'site/assets/identity/selected-ipr/ipr-navy-160.png', out / 'ipr.png')
     (out / 'index.json').write_bytes(encoded(corpus))
     (out / 'manifest.json').write_bytes(encoded(manifest))
     (out / '.ipr-private-preview').write_text('archive-workbench/1\n', encoding='utf-8')
@@ -48,7 +48,7 @@ def build(path=DEFAULT):
     shutil.copyfile(ROOT / 'site/preview/fonts.css', out / 'fonts.css')
     fonts = out / 'assets/fonts'
     fonts.mkdir(parents=True)
-    for name in ('instrument-serif-1.woff2', 'inter-0.woff2', 'inter-1.woff2'):
+    for name in ('instrument-serif-1.woff2', 'inter-0.woff2', 'inter-1.woff2', 'source-serif-4-1.woff2'):
         shutil.copyfile(ROOT / 'site/assets/fonts' / name, fonts / name)
     metrics = {'build_seconds': round(time.perf_counter() - start, 4),
                'index_bytes': (out / 'index.json').stat().st_size,

@@ -133,7 +133,7 @@ other tests running concurrently; no optimization claim):
 | Singapore, 2026-09-01 through 2026-10-15 | 48 | 0.0659 | 0.3378 |
 | `nonexistent-token` | 0 | 0.3290 | 1.1893 |
 
-Focused validation: **33 tests pass**, including 15 relevance cases, publication
+Focused validation: **36 tests pass**, including 15 relevance cases, publication
 boundaries, retirement/alias/stale-index attacks, exact duplicate resolution,
 missing metadata, guarded destinations, Unicode/CSV formula injection, clipboard,
 downloads, selection persistence, back/forward/reset, HTML/script payloads,
@@ -147,6 +147,25 @@ screen-reader/assistive-technology audit.
 [Desktop citation/list capture](../../docs/evidence/archive-research-workbench/desktop.png)
 and [mobile filtered search](../../docs/evidence/archive-research-workbench/mobile.png).
 The captures use approved published metadata; no source content was invented.
+
+## Private visual revision — PR #766
+
+The workbench uses the existing locally served Instrument Serif for the page
+heading, Source Serif 4 for reading-list titles/citations, and regular-weight
+Inter for controls and metadata. The builder copies existing production assets;
+shared fonts/styles/templates remain unchanged. Search leads the layout, desk/type
+stay visible, and native **More filters** holds source/issuer/date controls.
+Applied filters remain individually removable. Full processing/date/original-title
+notes sit beside the unchanged citation in each result's disclosure; specific
+editorial holds remain visible. Search and coverage help retain the limitations,
+including the distinction between source and IPR publication dates.
+
+[Comparable before/after captures and verification](../../docs/evidence/archive-research-workbench/visual-revision/README.md)
+include desktop/mobile, expanded filters, selected citation/export controls and
+empty results. Chromium verifies HTTP 200 font responses **and actual custom font
+glyphs**, regular control weights, disclosure keyboard/URL restoration, overflow
+at 320/375/768/1280 px, unchanged full provenance/citations and exact exported records.
+No query, eligibility, record data, persistence or export-layer code changed.
 
 Output validator: passes with the existing **10 governed warnings**.
 Full offline suite and final-head CI status are recorded in the PR.

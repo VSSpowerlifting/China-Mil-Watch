@@ -1,0 +1,66 @@
+{
+  "actualFonts": [
+    {
+      "selector": "h1",
+      "fonts": [
+        {
+          "familyName": "Instrument Serif",
+          "glyphCount": 26,
+          "isCustomFont": true,
+          "postScriptName": "InstrumentSerif-Regular"
+        }
+      ]
+    },
+    {
+      "selector": ".result h3",
+      "fonts": [
+        {
+          "familyName": "Source Serif 4",
+          "glyphCount": 85,
+          "isCustomFont": true,
+          "postScriptName": "SourceSerif4-Regular"
+        }
+      ]
+    },
+    {
+      "selector": "#desk",
+      "fonts": [
+        {
+          "familyName": "Inter",
+          "glyphCount": 9,
+          "isCustomFont": true,
+          "postScriptName": "Inter-Regular"
+        }
+      ]
+    },
+    {
+      "selector": ".metadata",
+      "fonts": [
+        {
+          "familyName": "Inter",
+          "glyphCount": 18,
+          "isCustomFont": true,
+          "postScriptName": "Inter-Regular"
+        }
+      ]
+    }
+  ],
+  "fontResponses": [
+    {
+      "url": "http://127.0.0.1:8878/assets/fonts/inter-0.woff2",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8878/assets/fonts/source-serif-4-1.woff2",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8878/assets/fonts/instrument-serif-1.woff2",
+      "status": 200
+    }
+  ],
+  "viewport": {
+    "width": 1280,
+    "height": 1000
+  }
+}

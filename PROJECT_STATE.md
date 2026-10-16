@@ -7,7 +7,10 @@ Pinned base `a736229d17`; 962 items, 4,400 retirement entries enforced. Archive
 bodies, machine summaries and original URLs remain excluded from bulk search.
 No production integration, output regeneration, desk/rights/approval change or
 deployment. Build/preview/tests, limitations and measured evidence:
-`research/archive_workbench/README.md`. Owner review and a separate production
+`research/archive_workbench/README.md`. PR #766 now includes a private visual
+revision using existing local IPR fonts, quieter filters and editorial reading
+rows; 36 focused tests pass, with comparable desktop/mobile evidence in
+`docs/evidence/archive-research-workbench/visual-revision/README.md`. Owner review and a separate production
 integration decision remain outstanding; final-head checks are recorded in the PR.
 
 **Brief reading foundation approved; cartographic accent candidate (14 October 2026):**

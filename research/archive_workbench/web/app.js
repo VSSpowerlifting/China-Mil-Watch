@@ -46,6 +46,7 @@
       }
       controls[k].value = v;
     });
+    $('more-filters').open = ['source', 'issuer', 'from', 'to'].some(k => controls[k].value);
   }
   function state(push) {
     const p = new URLSearchParams();
@@ -68,6 +69,7 @@
   }
   function selectionPanel() {
     $('selection-count').textContent = selection.size + ' selected';
+    $('research-list').dataset.empty = String(selection.size === 0);
     for (const id of ['export-csv', 'export-json', 'clear-selection']) $(id).disabled = !selection.size;
     $('selected-list').replaceChildren();
     E.selected(records, [...selection]).forEach(r => {
@@ -84,7 +86,7 @@
   }
   function card(r) {
     const article = node('article', null, 'result'); article.dataset.recordId = r.id;
-    const top = node('div', null, 'result-top'), titleArea = node('div');
+    const top = node('div', null, 'result-top'), titleArea = node('div', null, 'title-area');
     titleArea.appendChild(node('span', types[r.record_type], 'kind ' + r.record_type));
     const title = node('h3'); highlighted(title, display(r)); titleArea.appendChild(title);
     const select = node('label'), input = document.createElement('input');
@@ -95,17 +97,32 @@
       store(); selectionPanel();
     });
     select.append(input, document.createTextNode('Keep')); top.append(titleArea, select); article.appendChild(top);
-    article.appendChild(node('p', [r.date || 'Publication date not recorded', r.desks.join(', ') || 'Desk not recorded',
-      r.issuer || 'Issuer / author not recorded', r.source].filter(Boolean).join(' · '), 'metadata'));
-    article.appendChild(node('p', r.date_kind, 'metadata'));
-    if (r.processing) article.appendChild(node('p', r.processing, 'processing' +
-      (r.record_type === 'archive_record' && /machine/i.test(r.processing) ? ' machine' : '')));
+    article.appendChild(node('p', [r.date || 'Publication date not recorded',
+      r.desks.join(', ') || 'Desk not recorded'].join(' · '), 'metadata'));
+    article.appendChild(node('p', [r.issuer || 'Issuer / author not recorded', r.source].filter(Boolean).join(' · '), 'metadata attribution'));
+    // A short reading-list label; the complete, unchanged note remains in the
+    // provenance panel and exports. This never assigns a new editorial state.
+    let processing = r.record_type === 'archive_record' ? (r.processing || '').split(' · ')[0] : '';
+    if (processing === 'Analyzed') processing += ' · Machine-generated English; not human-reviewed';
+    if (r.record_type === 'reviewed_translation' || r.record_type === 'reviewed_analysis') processing = 'Machine-assisted · Editor-reviewed';
+    if (processing) article.appendChild(node('p', processing, 'processing' +
+      (r.record_type !== 'human_analysis' ? ' machine' : '')));
+    // Keep a source-specific hold visible even when its provenance is closed.
+    const hold = r.record_type === 'official_link' && (r.processing || '').split('verification. ')[1];
+    if (hold) article.appendChild(node('p', hold, 'hold'));
+    const originalMatch = r.original_title && E.normalize(r.original_title) !== E.normalize(r.title) &&
+      E.terms(query.q || '').some(t => E.normalize(r.original_title).includes(t) && !E.normalize(r.title).includes(t));
     const snippet = E.snippet(r, query.q);
-    if (snippet && (r.summary || r.text || (r.original_title && r.original_title !== r.title))) { const p = node('p', null, 'snippet'); highlighted(p, snippet); article.appendChild(p); }
+    if (snippet && (r.summary || r.text || originalMatch)) { const p = node('p', null, 'snippet'); highlighted(p, snippet); article.appendChild(p); }
     const links = node('div', null, 'links');
     const ipr = link(r.ipr_url, 'Open IPR record', true), source = link(r.source_url, 'Open official source', false);
     if (ipr) links.appendChild(ipr); if (source) links.appendChild(source); article.appendChild(links);
     const details = node('details'), summary = node('summary', 'Citation & provenance'); details.appendChild(summary);
+    const provenance = node('div', null, 'provenance-notes');
+    if (r.date_kind) provenance.appendChild(node('p', r.date_kind));
+    if (r.processing) provenance.appendChild(node('p', r.processing));
+    if (r.original_title && r.original_title !== r.title) provenance.appendChild(node('p', 'Original title: ' + r.original_title));
+    details.appendChild(provenance);
     details.appendChild(node('p', r.citation, 'citation'));
     const copy = node('button', 'Copy citation', 'copy'); copy.type = 'button';
     const feedback = node('p'); feedback.setAttribute('role', 'status'); feedback.setAttribute('aria-live', 'polite');
@@ -117,7 +134,7 @@
         feedback.textContent = 'Copy was unavailable. Citation selected; use your device’s copy command.';
       }
     });
-    details.append(copy, feedback, node('p', 'Record identity: ' + r.id + '. Export does not grant reuse rights.'));
+    details.append(copy, feedback, node('p', 'Record identity: ' + r.id + '. Export does not grant reuse rights.', 'record-identity'));
     article.appendChild(details); return article;
   }
   function renderResults() {
@@ -128,11 +145,15 @@
   function update(push = false) {
     limit = 30; state(push); $('error').hidden = true;
     $('active').replaceChildren();
+    const extraFilters = ['source', 'issuer', 'from', 'to'].filter(k => query[k]).length;
+    $('more-filter-count').textContent = extraFilters ? ' (' + extraFilters + ')' : '';
     keys.filter(k => k !== 'sort' && query[k]).forEach(k => {
       const label = controls[k].tagName === 'SELECT' ? controls[k].selectedOptions[0].textContent : query[k];
       const chip = node('button', labels[k] + ': ' + label + ' ×'); chip.type = 'button';
       chip.setAttribute('aria-label', 'Remove ' + labels[k] + ' filter');
-      chip.addEventListener('click', () => { controls[k].value = ''; update(true); controls[k].focus(); });
+      chip.addEventListener('click', () => { controls[k].value = ''; update(true);
+        if (controls[k].closest('#more-filters') && !$('more-filters').open) $('more-filters').querySelector('summary').focus();
+        else controls[k].focus(); });
       $('active').appendChild(chip);
     });
     try {
@@ -196,7 +217,7 @@
     keys.filter(k => k !== 'q').forEach(k => controls[k].addEventListener('change', () => update(true)));
     $('reset').addEventListener('click', () => {
       urlError = null; keys.forEach(k => { controls[k].value = k === 'sort' ? 'relevance' : ''; });
-      update(true); $('query').focus();
+      $('more-filters').open = false; update(true); $('query').focus();
     });
     $('more').addEventListener('click', () => {
       const firstNew = limit; limit += 30; renderResults();
