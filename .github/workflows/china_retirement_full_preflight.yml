@@ -1,6 +1,9 @@
 name: China retirement full live-corpus scratch preflight
 
 on:
+  # Owner may rehearse the latest main at any time without a backup SHA or
+  # credentials. This event has no inputs and cannot publish or alter main.
+  workflow_dispatch:
   pull_request:
     paths:
       - 'scripts/prepare_china_retirement_release.py'
@@ -13,13 +16,9 @@ permissions:
 
 jobs:
   full-scratch-rehearsal:
-    # This is stacked on #665, which is stacked on #663 and #657.
-    # Those feature branches predate the current focus-first main renderer.
-    # The standalone stacked checkout lacks the required current 600-focus
-    # corpus index; it must not produce a misleading red release verdict.
-    # Full end-to-end rehearsals run on the current-main integration PR and
-    # later on this PR after it is retargeted to main.
-    if: github.event.pull_request.base.ref == 'main'
+    # PRs must target main, but the manual one-click preview is permitted
+    # directly on main. Neither path has a write permission or remote push.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
