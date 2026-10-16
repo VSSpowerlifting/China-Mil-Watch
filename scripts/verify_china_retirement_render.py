@@ -32,7 +32,7 @@ def _ids(index):
 
 def validate(before_site, after_site, reduced_db, plan_summary):
     before_site, after_site, reduced_db = (
-        Path(before_site), Path(after_site), Path(reduced_db))
+        Path(before_site).resolve(), Path(after_site).resolve(), Path(reduced_db).resolve())
     old, new = _index(before_site), _index(after_site)
     plan = json.loads(Path(plan_summary).read_text(encoding="utf-8"))
     old_ids, new_ids = _ids(old), _ids(new)
