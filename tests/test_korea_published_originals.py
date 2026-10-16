@@ -6,7 +6,8 @@ import unittest
 from pathlib import Path
 
 from core.korea_published_originals import (
-    PublishedKoreaHold, SCHEMA, read_release_index, render_original_page,
+    PublishedKoreaHold, SCHEMA, original_page_title, read_release_index,
+    render_original_body,
 )
 
 RID = "156784297"
@@ -60,10 +61,14 @@ class KoreaPublishedOriginals(unittest.TestCase):
         records = self.read()
         self.assertEqual(len(records), 1)
         self.assertEqual(records[0]["route"], "korea-originals/" + RID + ".html")
-        markup = render_original_page(records[0])
+        markup = render_original_body(records[0])
         self.assertIn("https://www.korea.kr/guide/copyRight.do", markup)
         self.assertIn(URL, markup)
-        self.assertIn("indopacificrecord.org/korea-originals/" + RID, markup)
+        # The canonical belongs to the shared shell now, not the body; the
+        # built page's canonical is pinned in test_korea_original_shell.
+        self.assertNotIn('rel="canonical"', markup)
+        self.assertEqual(original_page_title(records[0]),
+                         "Korean MND official release " + RID)
         self.assertIn("&lt;script&gt;", markup)
         self.assertNotIn("<script>", markup)
         self.assertIn("pre lang=\"ko\"", markup)
@@ -98,7 +103,7 @@ class KoreaPublishedOriginals(unittest.TestCase):
 
     def test_untrusted_source_script_cannot_be_exec_in_markup(self):
         self.write([self.row])
-        html = render_original_page(self.read()[0])
+        html = render_original_body(self.read()[0])
         self.assertNotIn("<script", html)
         self.assertEqual(html.count("&lt;script&gt;"), 12)
 

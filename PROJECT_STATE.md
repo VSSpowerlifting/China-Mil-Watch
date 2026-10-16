@@ -1,5 +1,17 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Korean original pages use the IPR shell (16 October 2026, draft PR):**
+The first owner-released Korean original (`korea-originals/156784297.html`,
+commit 6389e6675a) was emitted as a bare document. Sixteen site-wide identity,
+indexability and chrome tests failed on it, and daily_update's offline suite
+stopped collection. The page now renders through `korea-original.html` over
+`base.html`. `core/korea_published_originals.render_original_body` owns only
+the escaped body; the Korean bytes and sha256 `ef066346…0284` are unchanged.
+The deployed-readback verifier now requires the exact body inside the page
+plus exact main↔Pages parity (result key `rendered_body_in_pages_exact`).
+`tests/test_korea_original_shell.py` pins this. No merge or deployment is
+authorized.
+
 **Brief reading foundation approved; cartographic accent candidate (14 October 2026):**
 The owner approved PR #588 head `d5c3ca5169bf10eb7685897c234b06452c3592e5`
 as the Phase 2 design baseline. The follow-up on the same branch/PR adds only

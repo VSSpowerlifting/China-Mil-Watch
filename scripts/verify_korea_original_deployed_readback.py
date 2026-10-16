@@ -1,8 +1,9 @@
 """Independent, read-only deployed Korean original HTML readback.
 
-Proves registered source UTF-8 SHA -> deterministic rendered HTML -> main
-output -> gh-pages blob -> optional real HTTPS served bytes. Never uploads
-source bodies, makes publication changes, or treats branch parity as HTTP proof.
+Proves registered source UTF-8 SHA -> deterministic rendered body inside the
+shared site shell -> main output -> gh-pages blob -> optional real HTTPS served
+bytes. Never uploads source bodies, makes publication changes, or treats branch
+parity as HTTP proof.
 """
 from __future__ import annotations
 
@@ -17,7 +18,7 @@ from urllib.parse import urlsplit
 import requests
 
 from core.korea_published_originals import (
-    read_release_index, render_original_page, PublishedKoreaHold,
+    read_release_index, render_original_body, PublishedKoreaHold,
 )
 
 SCHEMA = "ipr-korea-public-original-https-readback/1"
@@ -84,12 +85,15 @@ def validate_branch_parity(main_root, pages_root):
     page_bytes = {}
     for row in rows:
         route = row["route"]
-        rendered = render_original_page(row).encode("utf-8")
+        # The page is the shared IPR shell around this body. The shell moves
+        # with the site (masthead, freshness line), so it is the escaped body
+        # that must be found intact; main and Pages must still match exactly.
+        rendered = render_original_body(row).encode("utf-8")
         main_file = _html(main_root / "output" / route)
         pages_file = _html(pages_root / route)
         need(main_file == pages_file,
              "korea_original_main_pages_bytes_differ")
-        need(main_file == rendered,
+        need(main_file.count(rendered) == 1,
              "korea_original_rendered_bytes_differ_from_published")
         need(row["official_url"] in main_desk_text and route in main_desk_text,
              "korea_original_desk_link_missing")
@@ -131,7 +135,7 @@ def verify_readback(main_root, pages_root, *, require_https=False,
         "registered_originals": len(rows),
         "korea_html_paths_verified": len(verified),
         "main_pages_exact_html_parity": True,
-        "rendered_to_pages_exact_html_parity": True,
+        "rendered_body_in_pages_exact": True,
         "public_https_verified": False,
         "db_changed": False,
         "pages_written": False,

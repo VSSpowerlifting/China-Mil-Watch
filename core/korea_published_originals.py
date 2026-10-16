@@ -106,26 +106,26 @@ def read_release_index(index=INDEX, original_dir=ORIGINAL_DIR):
                   reverse=True)
 
 
-def render_original_page(record):
-    """Re-render verified Korean original bytes as escaped, attributable text."""
+def original_page_title(record):
+    """The page name for a registered original; digits only, so never escaped."""
+    return "Korean MND official release " + record["news_id"]
+
+
+def render_original_body(record):
+    """Re-render verified Korean original bytes as escaped, attributable text.
+
+    Returns the page body only. The page itself is rendered through the shared
+    IPR shell (`korea-original.html` over `base.html`), which owns the head,
+    canonical, robots, masthead and footer, so this fragment is the part of the
+    published page that consumers must find byte-for-byte.
+    """
     e = lambda value: html.escape(str(value), quote=True)
     rid = record["news_id"]
     require(type(rid) is str and re.fullmatch(r"[0-9]{9}", rid)
             and record["route"] == ROUTE_PREFIX + rid + ".html"
             and record["official_url"] == URL_PREFIX + rid,
             "korea_original_page_identity_mismatch")
-    title = "Korean MND official release " + rid
-    canonical = "https://indopacificrecord.org/" + record["route"]
     markup = (
-        '<!doctype html><html lang="ko"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<title>' + e(title) + ' — Indo-Pacific Record</title>'
-        '<meta name="description" content="Licensed Korean-language official source text, attributed to the Republic of Korea government.">'
-        '<link rel="canonical" href="' + e(canonical) + '">'
-        '<link rel="stylesheet" href="../styles.css">'
-        '</head><body><main style="max-width:76ch;margin:2rem auto;padding:1rem;">'
-        '<p><a href="../korea.html">← South Korea Desk</a></p>'
-        '<h1 lang="en">' + e(title) + '</h1>'
         '<p lang="en"><strong>Official Korean government source text</strong> '
         '— not an IPR fact-check or independent endorsement of the claims.</p>'
         '<p lang="en">Issuer: Republic of Korea Ministry of National Defense; '
@@ -143,6 +143,5 @@ def render_original_page(record):
         '<article aria-label="Verbatim Korean-language original"><pre lang="ko" '
         'style="white-space:pre-wrap;overflow-wrap:anywhere;">'
         + e(record["text_original"]) + '</pre></article>'
-        '</main></body></html>'
     )
     return markup

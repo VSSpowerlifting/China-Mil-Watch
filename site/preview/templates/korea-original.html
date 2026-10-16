@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "_atlas.html" import breadcrumb %}
+{#- One registered Korean government original, in the shared IPR shell.
+    The body is escaped once, in core/korea_published_originals.py, so the
+    Korean bytes and their escaping are identical to what the registry pins;
+    this template adds only the page frame around them. -#}
+{% block title %}{{ original_title }} — {{ title }}{% endblock %}
+{% block content %}
+{{ breadcrumb([('Desks', '../desks.html'), ('South Korea Desk', '../korea.html'), (original_title, none)]) }}
+<header class="page-head">
+  <p class="eyebrow">Licensed Korean government text</p>
+  <h1 class="page-name">{{ original_title }}</h1>
+</header>
+{{ original_body }}
+{% endblock %}
