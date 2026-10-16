@@ -119,8 +119,8 @@ class DVIDSNeutralMetadata(unittest.TestCase):
                 self.assertEqual(d.normalize_issued_key(key), key)
         rejected = (
             ("key-", "suffix_empty"),
-            ("key-\\x00abc", "control_character"),
-            ("key-new\\nline", "embedded_whitespace"),
+            ("key-\x00abc", "control_character"),
+            ("key-new\nline", "embedded_whitespace"),
             ("key-with space", "embedded_whitespace"),
             ("key-α", "non_ascii_character"),
             ("key-" + "a" * 509, "input_over_limit"),
