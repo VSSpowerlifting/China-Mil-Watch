@@ -129,6 +129,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Tracked DB may lag a newly merged schema migration after an
+          # unrelated desk changed main. This is the ONLY step that commits
+          # pla_watch.db; repair schema here rather than treating valid
+          # independently preserved metadata as a failed collection.
+          python -m migrations.cli --apply --db "$GITHUB_WORKSPACE/pla_watch.db"
+          python scripts/verify_db_current.py
           python -m scripts.admit_uscc_official_metadata             --source-checkout "$RUNNER_TEMP/uscc-preserved-metadata"             --production-db "$GITHUB_WORKSPACE/pla_watch.db"             --standing-official-links-approval
           python scripts/verify_db_current.py
           python site/render.py
