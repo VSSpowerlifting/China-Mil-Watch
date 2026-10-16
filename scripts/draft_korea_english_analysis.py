@@ -165,6 +165,7 @@ def draft(source, *, client):
     numbered = [{
         "index": i, "original_sha256": digest(s.encode("utf-8")), "text_ko": s
     } for i, s in enumerate(original, 1)]
+    catalog = source_quote_catalog(original)
     payload = json.dumps({
         "source_identity": source["source_identity"],
         "source_sha256": source["original_text_sha256"],
