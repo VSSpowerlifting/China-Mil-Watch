@@ -1,0 +1,116 @@
+{
+  "dossier_schema": 1,
+  "slug": "fictional-exercise-reporting",
+  "title": "Fictional Maritime Exercise Reporting — Illustrative Dossier",
+  "dek": "A made-up example demonstrating how IPR might distinguish official statements and editorial comparisons.",
+  "research_question": "How do two imaginary ministry releases characterize different training objectives without treating those statements as independently verified operational outcomes?",
+  "editorial_status": "draft",
+  "author_name": "IPR Synthetic Fixture",
+  "editor_name": "Review pending",
+  "prepared_on": "2026-10-09",
+  "updated_on": "2026-10-09",
+  "reviewed_on": null,
+  "revision": 0,
+  "scope": {
+    "period_start": "2026-08-01",
+    "period_end": "2026-09-30",
+    "jurisdictions": [
+      "fictional-state-alpha",
+      "fictional-state-beta"
+    ],
+    "institutions": [
+      "fixture-ministry-alpha",
+      "fixture-ministry-beta"
+    ],
+    "included": "Two invented official exercise announcements with distinct reporting dates.",
+    "excluded": "No real events, performance measures, historical completeness, or public-source use.",
+    "method": "Fixture only: hypothetical source claims compared without asserting operational facts.",
+    "collection_limits": "Completely synthetic. This is not a collected archive or real-world evidentiary basis."
+  },
+  "overview": "In this wholly invented example, two fictional ministries described exercise participation using different editorial emphases. This sentence is not a factual IPR finding.",
+  "sources": [
+    {
+      "record_id": 900001,
+      "desk": "fixture-alpha",
+      "source_id": "fixture-alpha-releases",
+      "institution_id": "fixture-ministry-alpha",
+      "language": "en",
+      "published_on": "2026-08-12",
+      "url": "https://example.org/hypothetical-alpha",
+      "stored_original_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "editorial_admission_ref": null,
+      "source_use_decision_ref": null
+    },
+    {
+      "record_id": 900002,
+      "desk": "fixture-beta",
+      "source_id": "fixture-beta-releases",
+      "institution_id": "fixture-ministry-beta",
+      "language": "en",
+      "published_on": "2026-09-07",
+      "url": "https://example.org/hypothetical-beta",
+      "stored_original_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "editorial_admission_ref": null,
+      "source_use_decision_ref": null
+    }
+  ],
+  "sections": [
+    {
+      "id": "reported-objectives",
+      "heading": "Reported training objectives",
+      "intro": "Attributed descriptions below are fictional assertions by imagined publishers.",
+      "claims": [
+        {
+          "id": "alpha-training-claim",
+          "claim_kind": "issuer_statement",
+          "text": "The hypothetical Alpha ministry described communications drills as a training objective.",
+          "source_record_ids": [
+            900001
+          ],
+          "event_period": {
+            "start": "2026-08-12",
+            "end": "2026-08-12",
+            "basis": "planned",
+            "date_basis": "Fictional Alpha release dated 2026-08-12 is depicted as announcing a planned activity; not a real-world event."
+          },
+          "limits": "A ministry assertion would not independently establish that the drill was conducted.",
+          "counterevidence_ids": []
+        },
+        {
+          "id": "beta-safety-claim",
+          "claim_kind": "issuer_statement",
+          "text": "The hypothetical Beta ministry characterized maritime safety as a stated objective.",
+          "source_record_ids": [
+            900002
+          ],
+          "event_period": null,
+          "limits": "The scope and implementation would remain unverified.",
+          "counterevidence_ids": []
+        }
+      ]
+    },
+    {
+      "id": "different-framing",
+      "heading": "Differences in published framing",
+      "intro": "Compare issuing accounts without inferring the governments had conflicting intent.",
+      "claims": [
+        {
+          "id": "descriptions-differ",
+          "claim_kind": "editorial_interpretation",
+          "text": "The two invented reports emphasize different training topics; this alone does not establish policy disagreement.",
+          "source_record_ids": [
+            900001,
+            900002
+          ],
+          "event_period": null,
+          "limits": "Different exercise types, genres, dates or contexts could explain the wording.",
+          "counterevidence_ids": []
+        }
+      ]
+    }
+  ],
+  "disagreements": [],
+  "related_briefs": [],
+  "related_timelines": [],
+  "changes": []
+}
