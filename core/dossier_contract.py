@@ -20,6 +20,10 @@ ROOT = Path(__file__).resolve().parent.parent
 DOSSIERS_DIR = ROOT / "dossiers"
 SCHEMA = 1
 SLUG = re.compile(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*\Z")
+# Registered desk/source/institution IDs are not public URL slugs; their
+# registry vocabulary includes underscores (e.g. sg_mindef_releases).
+INTERNAL_ID = re.compile(r"[a-z][a-z0-9_]*(?:-[a-z0-9_]+)*\Z")
+SQLITE_MAX_ID = (1 << 63) - 1
 DAY = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
 HEX64 = re.compile(r"[0-9a-f]{64}\Z")
 MARKUP = re.compile(r"<[^>]*>|[<{]%|{{|}}|!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\([^)]+\)")
@@ -72,9 +76,13 @@ def _object(value, fields, location, optional=frozenset()):
     return value
 
 
-def _integer(value, location, *, minimum=0):
-    if type(value) is not int or value < minimum:
-        _fail(location, f"expected integer >= {minimum}")
+def _integer(value, location, *, minimum=0, maximum=None):
+    if (type(value) is not int or value < minimum
+            or (maximum is not None and value > maximum)):
+        label = f"expected integer >= {minimum}"
+        if maximum is not None:
+            label += f" and <= {maximum} (SQLite signed ID range)"
+        _fail(location, label)
     return value
 
 
@@ -82,6 +90,8 @@ def _text(value, location, *, limit=2500):
     if (type(value) is not str or not value or value != value.strip()
             or len(value) > limit):
         _fail(location, f"expected trimmed nonempty plain text <= {limit} characters")
+    if any(0xD800 <= ord(char) <= 0xDFFF for char in value):
+        _fail(location, "unpaired Unicode surrogate not allowed")
     if unicodedata.normalize("NFC", value) != value:
         _fail(location, "text must use Unicode NFC")
     if any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in value):
@@ -94,6 +104,14 @@ def _text(value, location, *, limit=2500):
 def _slug(value, location):
     if type(value) is not str or len(value) > 80 or not SLUG.fullmatch(value):
         _fail(location, "unsafe stable slug")
+    return value
+
+
+def _internal_id(value, location):
+    """Use the registered source identity vocabulary, not public-route slugs."""
+    if (type(value) is not str or len(value) > 80
+            or not INTERNAL_ID.fullmatch(value)):
+        _fail(location, "unsafe registered internal identifier")
     return value
 
 
@@ -131,10 +149,18 @@ def _slug_list(value, location, *, minimum=0):
     return values
 
 
+def _internal_id_list(value, location, *, minimum=0):
+    values = _list(value, location, minimum=minimum)
+    for v in values:
+        _internal_id(v, location)
+    _sorted_unique(values, location)
+    return values
+
+
 def _record_ids(value, location, *, minimum=0):
     values = _list(value, location, minimum=minimum)
     for v in values:
-        _integer(v, location, minimum=1)
+        _integer(v, location, minimum=1, maximum=SQLITE_MAX_ID)
     _sorted_unique(values, location)
     return values
 
@@ -207,7 +233,7 @@ def validate_dossier_shape(sc):
     if period_start > period_end or period_end > updated:
         _fail("scope", "invalid or not-yet-observed scope period")
     _slug_list(scope["jurisdictions"], "scope.jurisdictions", minimum=1)
-    _slug_list(scope["institutions"], "scope.institutions", minimum=1)
+    _internal_id_list(scope["institutions"], "scope.institutions", minimum=1)
     for field in ("included", "excluded", "method", "collection_limits"):
         _text(scope[field], "scope." + field)
 
@@ -216,10 +242,11 @@ def validate_dossier_shape(sc):
     for i, source in enumerate(sources):
         at = f"sources[{i}]"
         _object(source, SOURCE_FIELDS, at)
-        rid = _integer(source["record_id"], at + ".record_id", minimum=1)
+        rid = _integer(source["record_id"], at + ".record_id",
+                       minimum=1, maximum=SQLITE_MAX_ID)
         ledger_ids.append(rid)
         for key in ("desk", "source_id", "institution_id"):
-            _slug(source[key], at + "." + key)
+            _internal_id(source[key], at + "." + key)
         _text(source["language"], at + ".language", limit=30)
         if _day(source["published_on"], at + ".published_on") > updated:
             _fail(at, "source publication date follows this version")
