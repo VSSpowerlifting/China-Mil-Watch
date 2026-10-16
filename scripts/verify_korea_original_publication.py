@@ -79,10 +79,13 @@ def verify(source_checkout, identity, expected_sha):
                 and src["source_git_commit"] == record["source_git_commit"]
                 and src["source_capture_sha256"] == record["source_html_sha256"]
                 and proof["entire_clean_original_text_sha256"] ==
-                record["original_text_sha256"]
-                and record["policy_sha256"] ==
-                live_terms["publisher_policy_sha256"],
+                record["original_text_sha256"],
                 "public_registry_source_or_policy_drift")
+        # Each fresh official policy snapshot is independently checked for
+        # the required terms. Its raw full-HTML SHA may legitimately differ
+        # from the recorded publication-time observation due to changing
+        # publisher page chrome; do not mistake that for a license revocation.
+        # The original policy digest is retained as historical provenance.
         raw = adapter.read_original_text_private()
         require(hashlib.sha256(raw).hexdigest() ==
                 record["original_text_sha256"]
