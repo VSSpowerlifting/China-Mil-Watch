@@ -145,6 +145,28 @@ class SingaporeScheduledProofTests(unittest.TestCase):
         self.assertEqual(result["duplicates"], 2)
         self.assertTrue(result["new_reliability_day_proven"])
 
+    def test_workflow_authenticates_scheduled_attempt_from_actions_api(self):
+        workflow = (Path(__file__).resolve().parents[1] / ".github" /
+                    "workflows" / "singapore_first_clean_scheduled_proof.yml")
+        contents = workflow.read_text(encoding="utf-8")
+        # Human-triggered replays must authenticate the original GitHub Actions
+        # schedule/attempt/job; a self-declared run ID or ledger is insufficient.
+        for needle in (
+            "actions: read",
+            "gh api \"repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID_INPUT}\"",
+            ".event == \"schedule\"",
+            ".run_attempt == 1",
+            ".head_branch == \"main\"",
+            ".head_sha == $sha",
+            ".name == \"shadow\"",
+            ".name == \"Run shadow collection\"",
+            ".total_count == (.jobs | length)",
+        ):
+            with self.subTest(expected_guard=needle):
+                self.assertIn(needle, contents)
+        self.assertNotIn("contents: write", contents)
+        self.assertNotIn("pages: write", contents)
+
     def test_never_creates_production_sqlite_or_sidecar(self):
         self.check()
         self.assertFalse((self.root / "pla_watch.db").exists())
