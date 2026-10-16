@@ -14,7 +14,8 @@ def page(clauses):
     # HTML itself is fictional; legal clauses are the fixed public contract.
     return ("<!doctype html><html><body><main>"
             + "".join("<p>" + c + "</p>" for c in clauses)
-            + "</main></body></html>").encode("utf-8")
+            + "</main><footer>" + ("synthetic navigation only " * 40)
+            + "</footer></body></html>").encode("utf-8")
 
 
 class Response:
