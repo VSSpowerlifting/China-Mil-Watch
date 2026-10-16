@@ -1,7 +1,7 @@
 """Send each verified Korean source's English draft to owner ONCE, privately.
 
-Reads only already published government text. Makes at most two bounded model
-calls per selected source. Never emails editor/Dylan or publishes generated
+Reads only already published government text. Makes two source-bounded drafting stages, each allowing one JSON-only
+format retry per selected source. Never emails editor/Dylan or publishes generated
 translation/analysis; a successful owner-only SMTP send earns a hash receipt.
 """
 from __future__ import annotations

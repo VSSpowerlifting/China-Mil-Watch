@@ -1,6 +1,6 @@
 """Create private, source-pinned Korea English translation + analytical draft.
 
-Two bounded Anthropic calls, no public writes and NO implicit editor approval.
+Two source-bounded drafting stages (each permits one JSON-format retry), no public writes and NO implicit editor approval.
 The model is sent only the already public Korean original plain text.
 Every proposed claim must cite numbered source paragraphs and exact excerpts.
 Generated output is private and labelled machine_unreviewed.
@@ -51,21 +51,58 @@ def source_paragraphs(source):
     return ko
 
 
-def response_json(client, *, system, prompt, max_tokens=6500):
-    resp = client.messages.create(
-        model=MODEL, max_tokens=max_tokens, temperature=0,
-        system=system,
-        messages=[{"role": "user", "content": prompt}],
-    )
-    need(resp.stop_reason == "end_turn" and resp.content
-         and all(block.type == "text" for block in resp.content),
-         "korea_model_response_incomplete_or_nontext")
-    raw = "".join(x.text for x in resp.content).strip()
-    need(len(raw) <= 100000, "korea_model_response_too_large")
+def _exact_model_json(raw):
+    """Accept exact JSON, or ONE whole fenced JSON block; never scrape prose."""
+    need(type(raw) is str and len(raw) <= 100000,
+         "korea_model_response_too_large")
+    data = raw.strip()
+    if data.startswith("```json\n") and data.endswith("\n```"):
+        data = data[len("```json\n"):-len("\n```")].strip()
+    elif data.startswith("```\n") and data.endswith("\n```"):
+        data = data[len("```\n"):-len("\n```")].strip()
     try:
-        return json.loads(raw)
+        result = json.loads(data)
     except (ValueError, UnicodeError):
         raise KoreaEnglishHold("korea_model_response_not_exact_json") from None
+    need(type(result) is dict,
+         "korea_model_response_not_exact_json")
+    return result
+
+
+def response_json(client, *, system, prompt, max_tokens=6500):
+    """At most one formatting retry, never relaxing content provenance.
+
+    The next call repeats the *original bounded source prompt*, not any
+    potentially adversarial model response. No unreviewed text or exception
+    reaches logs; downstream paragraph hashes and Korean quotations are still
+    verified exactly. Token budgets are unchanged on either call.
+    """
+    for attempt in range(2):
+        user_prompt = prompt
+        if attempt:
+            user_prompt += (
+                "\n\nFORMAT RETRY: The reply MUST be one valid JSON object. "
+                "Begin with { and end with }. Use double-quoted JSON keys "
+                "and strings and escape all embedded newlines; do not include "
+                "Markdown, comments, commentary, or trailing commas."
+            )
+        resp = client.messages.create(
+            model=MODEL, max_tokens=max_tokens, temperature=0,
+            system=system,
+            messages=[{"role": "user", "content": user_prompt}],
+        )
+        need(resp.stop_reason == "end_turn" and resp.content
+             and all(block.type == "text" for block in resp.content),
+             "korea_model_response_incomplete_or_nontext")
+        raw = "".join(x.text for x in resp.content)
+        try:
+            return _exact_model_json(raw)
+        except KoreaEnglishHold as exc:
+            # Oversized and other holds are not formatting errors. Do not
+            # retry them or print any provider text from the exception.
+            if str(exc) != "korea_model_response_not_exact_json" or attempt:
+                raise
+    raise KoreaEnglishHold("korea_model_response_not_exact_json")
 
 
 def draft(source, *, client):

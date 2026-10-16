@@ -74,6 +74,28 @@ class OwnerDraftTests(unittest.TestCase):
                         password="notused")
         self.assertEqual(json.loads(self.path.read_text())["delivered"],[])
 
+    def test_partial_delivery_receipt_survives_second_draft_failure(self):
+        second={**SOURCE,"source_identity":"korea-policy:156784298",
+                "original_text_sha256":"c"*64}
+        sent=[]
+        def send_first_then_fail(row,*args,**kwargs):
+            if row["source_identity"] == second["source_identity"]:
+                raise ValueError("later delivery failed")
+            sent.append(row["source_identity"])
+        with patch.object(sut,"read_release_index",return_value=[SOURCE,second]), \
+             patch.object(sut,"public_registry",return_value=[]), \
+             patch.object(sut,"draft",side_effect=self.fake_draft), \
+             patch.object(sut,"send_owner",side_effect=send_first_then_fail):
+            with self.assertRaisesRegex(ValueError,"later delivery failed"):
+                sut.run(ledger=self.path,client=object(),
+                        sender="ipr@gmail.com",recipient="owner@gmail.com",
+                        password="notused")
+            remaining,_=sut.pending(self.path)
+        self.assertEqual(sent,[SOURCE["source_identity"]])
+        self.assertEqual([r["source_identity"] for r in remaining],
+                         [second["source_identity"]])
+        self.assertEqual(len(json.loads(self.path.read_text())["delivered"]),1)
+
     def test_already_editor_approved_source_not_re_drafted(self):
         with patch.object(sut,"read_release_index",return_value=[SOURCE]), \
              patch.object(sut,"public_registry",return_value=[

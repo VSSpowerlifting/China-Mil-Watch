@@ -169,6 +169,61 @@ class ReviewTests(unittest.TestCase):
                 public_registry(index,base,source_index=original_index,
                                 source_dir=base)
 
+    def test_model_json_accepts_only_complete_object_or_single_fence(self):
+        self.assertEqual(draft._exact_model_json('{"translations":[]}'),
+                         {"translations":[]})
+        self.assertEqual(draft._exact_model_json(
+            '```json\n{"translations":[]}\n```'),
+            {"translations":[]})
+        for raw in (
+            'Here is JSON: {"translations":[]}',
+            '{"translations":[]}\nExtra prose',
+            '{"translations":[]}{"claims":[]}',
+            '[1,2]', '{"translations":[],}',
+        ):
+            with self.subTest(raw=raw):
+                with self.assertRaisesRegex(KoreaEnglishHold,
+                                            "korea_model_response_not_exact_json"):
+                    draft._exact_model_json(raw)
+
+    def test_model_json_retries_format_at_most_once_without_echoing_response(self):
+        from types import SimpleNamespace as NS
+        from unittest.mock import Mock
+        client=NS(messages=NS(create=Mock(side_effect=[
+            NS(stop_reason="end_turn",content=[NS(type="text",text="PRIVATE_BAD_DRAFT")]),
+            NS(stop_reason="end_turn",content=[NS(type="text",text='{"ok":true}')]),
+        ])))
+        got=draft.response_json(client,system="source-only",prompt="ORIGINAL SOURCE")
+        self.assertEqual(got,{"ok":True})
+        self.assertEqual(client.messages.create.call_count,2)
+        calls=client.messages.create.call_args_list
+        self.assertEqual(calls[0].kwargs["max_tokens"],6500)
+        self.assertEqual(calls[1].kwargs["max_tokens"],6500)
+        self.assertIn("ORIGINAL SOURCE",calls[1].kwargs["messages"][0]["content"])
+        self.assertNotIn("PRIVATE_BAD_DRAFT",
+                         str(calls[1].kwargs["messages"]))
+        self.assertIn("FORMAT RETRY",calls[1].kwargs["messages"][0]["content"])
+
+    def test_model_json_two_malformed_responses_fail_closed(self):
+        from types import SimpleNamespace as NS
+        from unittest.mock import Mock
+        client=NS(messages=NS(create=Mock(return_value=NS(
+            stop_reason="end_turn",content=[NS(type="text",text="NOT JSON")]))))
+        with self.assertRaisesRegex(KoreaEnglishHold,
+                                    "^korea_model_response_not_exact_json$"):
+            draft.response_json(client,system="strict",prompt="original")
+        self.assertEqual(client.messages.create.call_count,2)
+
+    def test_model_incomplete_response_never_retried_or_admitted(self):
+        from types import SimpleNamespace as NS
+        from unittest.mock import Mock
+        client=NS(messages=NS(create=Mock(return_value=NS(
+            stop_reason="max_tokens",content=[NS(type="text",text='{"ok":true}')]))))
+        with self.assertRaisesRegex(KoreaEnglishHold,
+                                    "korea_model_response_incomplete_or_nontext"):
+            draft.response_json(client,system="strict",prompt="original")
+        self.assertEqual(client.messages.create.call_count,1)
+
     def test_model_draft_generation_is_private_and_unreviewed(self):
         source=make_source()
         original=original_paragraphs(TEXT)
