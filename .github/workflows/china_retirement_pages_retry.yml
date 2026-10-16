@@ -1,0 +1,104 @@
+name: China retirement — verified Pages-only deployment retry
+
+# Recovery-only path after the exact full-corpus release commit succeeded but
+# the Pages deployment failed. Does NOT rerun deletion, collect, or alter DB.
+on:
+  workflow_dispatch:
+    inputs:
+      approved_release_sha:
+        description: 'Exact merged main release commit to redeploy'
+        required: true
+        type: string
+      expected_reduced_db_sha256:
+        description: 'SHA-256 of the already-retired tracked SQLite database'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-redeploy:
+    if: github.repository == 'VSSpowerlifting/IndoPacificRecord' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    concurrency:
+      group: daily-update
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Require exact signed-off current release tree, not an old branch
+        env:
+          EXPECTED_SHA: ${{ inputs.approved_release_sha }}
+          EXPECTED_DB: ${{ inputs.expected_reduced_db_sha256 }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$EXPECTED_DB" =~ ^[0-9a-f]{64}$ ]]
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test "$(sha256sum pla_watch.db | cut -d' ' -f1)" = "$EXPECTED_DB"
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+      - name: Verify already-retired database, rendered pages and public export
+        run: |
+          python - <<'PY'
+          import json, pathlib, sqlite3
+          from core.retired_article_urls import verify_no_active_retired_urls
+          root = pathlib.Path(".")
+          idx = json.loads((root/"output/corpus-index.json").read_text(encoding="utf-8"))
+          ids = {r[0] for r in idx["records"]}
+          assert len(ids) == len(idx["records"]), "duplicate site corpus IDs"
+          with sqlite3.connect((root/"pla_watch.db").resolve().as_uri()+"?mode=ro&immutable=1",uri=True) as con:
+              assert con.execute("PRAGMA integrity_check").fetchone()[0]=="ok"
+              assert con.execute("PRAGMA foreign_key_check").fetchone() is None
+              assert verify_no_active_retired_urls(con)==4400, "retirement missing or unsafe"
+              active={r[0] for r in con.execute("SELECT id FROM articles")}
+              analyzed={r[0] for r in con.execute(
+                  "SELECT id FROM articles WHERE analyzed_at IS NOT NULL AND passed_relevance=1")}
+          assert active==ids, "site corpus differs from reduced production DB"
+          record={int(p.stem) for p in (root/"output/record").glob("*.html") if p.stem.isdigit()}
+          legacy={int(p.stem) for p in (root/"output/article").glob("*.html") if p.stem.isdigit()}
+          assert record==active, "rendered record routes differ from database"
+          assert legacy==analyzed, "legacy redirects are incomplete or stale"
+          export=json.loads((root/"output/data/articles.json").read_text(encoding="utf-8"))
+          exported=[r["id"] for r in export]
+          assert len(exported)==len(set(exported)) and set(exported)==analyzed
+          print("PASS: already-reduced SQLite + static pages; Pages-only retry safe")
+          PY
+          python scripts/validate_output.py
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Retry existing Pages publish without touching main or the corpus
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          publish_branch: gh-pages
+          cname: indopacificrecord.org
+          user_name: github-actions[bot]
+          user_email: 41898282+github-actions[bot]@users.noreply.github.com
+          commit_message: 'Pages-only retry verified China retirement: ${{ github.run_id }}'
+      - name: Verify retried Pages Git tree equals the already-retired main output
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin \
+            refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          mkdir -p "$RUNNER_TEMP/china-pages-retry-readback"
+          git archive refs/remotes/origin/gh-pages | \
+            tar -xf - -C "$RUNNER_TEMP/china-pages-retry-readback"
+          python -m scripts.verify_china_retirement_pages_readback \
+            --expected-output output \
+            --pages-tree "$RUNNER_TEMP/china-pages-retry-readback" \
+            --db pla_watch.db --expected-tombstones 4400
+          git diff --exit-code HEAD -- pla_watch.db output/
+
+# A new or updated database requires a NEW reviewed full-site release.
+# This workflow never rewrites or refreshes the tracked SQLite database.
