@@ -109,7 +109,14 @@ class TestNoPageDescribesItselfAsUnpublished(BuildCase):
 
     def test_the_build_actually_produced_pages_to_check(self):
         """A scan of nothing passes for the wrong reason."""
-        self.assertGreater(len(self.pages), 3000)
+        # 4,400 China records and their record pages are intentionally gone.
+        # Assert the scan covered at least every *currently active* source
+        # record, rather than the pre-retirement page count.
+        from scripts.reconcile_db import read_only
+        with read_only(TRACKED_DB) as con:
+            active = con.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
+        self.assertGreater(active, 0)
+        self.assertGreaterEqual(len(self.pages), active)
 
     def test_every_page_has_chrome_to_scan(self):
         without = [str(p.relative_to(self.out)) for p in self.pages[:200]
@@ -142,9 +149,11 @@ class TestTheFooterSaysWhatThePublicationIs(BuildCase):
 
     def test_the_footer_is_the_same_on_every_page_type(self):
         seen = set()
+        records = sorted((self.out / "record").glob("*.html"))
+        self.assertTrue(records)
         for name in ("index.html", "archive.html", "methodology.html",
                      "desks.html", "coverage.html", "about.html",
-                     "record/1.html"):
+                     records[0].relative_to(self.out).as_posix()):
             page = self.out / name
             if page.is_file():
                 seen.add(self.footer(page))
@@ -185,8 +194,9 @@ class TestQuotedSourceTextIsNotPoliced(BuildCase):
     """
 
     def test_the_chrome_pattern_does_not_match_the_record_body(self):
-        page = self.out / "record" / "1.html"
-        html = page.read_text("utf-8", errors="replace")
+        records = sorted((self.out / "record").glob("*.html"))
+        self.assertTrue(records, "no active record to verify source-text isolation")
+        html = records[0].read_text("utf-8", errors="replace")
         chrome = " ".join(m.group(0) for m in CHROME.finditer(html))
         body = re.search(r"<main\b[\s\S]*?</main>", html, re.I)
         self.assertIsNotNone(body)
