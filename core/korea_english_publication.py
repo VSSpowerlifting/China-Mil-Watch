@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from core.korea_full_content_rehearsal import original_paragraphs
-from core.korea_published_originals import read_release_index
+from core.korea_published_originals import read_release_index, PUBLIC_ORIGIN
 
 SCHEMA = "ipr-korea-reviewed-english-and-analysis/1"
 REGISTER = "ipr-korea-editorial-english-publications/1"
@@ -259,15 +259,11 @@ def _render_approved_editorial_template(name, review, source, *, site_origin):
     return page.replace(NOINDEX_TAG, metadata, 1)
 
 
-def render_translation(row, review, source, *, site_origin=None):
-    from core.korea_published_originals import PUBLIC_ORIGIN
-    origin = PUBLIC_ORIGIN if site_origin is None else site_origin
+def render_translation(row, review, source, *, site_origin=PUBLIC_ORIGIN):
     return _render_approved_editorial_template(
-        "korea_translation.html", review, source, site_origin=origin)
+        "korea_translation.html", review, source, site_origin=site_origin)
 
 
-def render_analysis(row, review, source, *, site_origin=None):
-    from core.korea_published_originals import PUBLIC_ORIGIN
-    origin = PUBLIC_ORIGIN if site_origin is None else site_origin
+def render_analysis(row, review, source, *, site_origin=PUBLIC_ORIGIN):
     return _render_approved_editorial_template(
-        "korea_analysis.html", review, source, site_origin=origin)
+        "korea_analysis.html", review, source, site_origin=site_origin)
