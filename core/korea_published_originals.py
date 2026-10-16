@@ -139,6 +139,9 @@ def render_original_page(record, *, site_origin=PUBLIC_ORIGIN):
     from core.brief_collection import COLLECTION_NAME
     env = Environment(loader=FileSystemLoader(str(TEMPLATES)),
                       autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    # base.html is compiled in full even if the snapshot-only branch is not
+    # active on this source page; register its custom filter deterministically.
+    env.filters["reader_date"] = lambda day: str(day)
     page = env.get_template("korea_original.html").render(
         original=record, page=record["route"], nested=True,
         title="Indo-Pacific Record", tagline=TAGLINE,
