@@ -1,0 +1,60 @@
+name: Desk Source Atlas — public data boundary
+
+on:
+  push:
+    branches:
+      - review/source-atlas-public-boundary-20261013
+    paths:
+      - core/desk_source_provenance.py
+      - scripts/desk_source_provenance.py
+      - tests/test_desk_source_provenance.py
+      - docs/engineering/DESK_SOURCE_PROVENANCE_SCHEMA_2026-10-13.md
+      - .github/workflows/desk_source_public_boundary.yml
+  pull_request:
+    paths:
+      - core/desk_source_provenance.py
+      - scripts/desk_source_provenance.py
+      - tests/test_desk_source_provenance.py
+      - docs/engineering/DESK_SOURCE_PROVENANCE_SCHEMA_2026-10-13.md
+      - .github/workflows/desk_source_public_boundary.yml
+
+permissions:
+  contents: read
+
+jobs:
+  public-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Install existing source-adapter dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Test all source-provenance contracts
+        run: python -m unittest tests.test_desk_source_provenance -v
+      - name: Verify the CLI returns only approved public JSON
+        run: |
+          set -euo pipefail
+          python scripts/desk_source_provenance.py --no-health --as-of 2026-10-13 --json "$RUNNER_TEMP/ipr-public-atlas.json"
+          python - "$RUNNER_TEMP/ipr-public-atlas.json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+          data = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+          assert data["schema"] == "ipr-desk-source-provenance/1"
+          assert len(data["desks"]) == 8
+          assert set(data) == {"schema", "as_of", "desks"}
+          serialized = json.dumps(data)
+          for token in ("undisplayed_shadow_declarations", "unmatched_health_slugs",
+                        "us_dvids_indopacom", "scrape_run_id", '"source_slug"',
+                        '"basis"', '"lane_id"', '"conflicts"', '"note"',
+                        '"rights_statement"', "fixture"):
+              assert token not in serialized, token
+          for desk in data["desks"]:
+              assert desk["public"] is True
+              for source in desk["sources"]:
+                  assert "health" not in source
+          print("Public Atlas JSON boundary verified; no shadow diagnostic fields.")
+          PY

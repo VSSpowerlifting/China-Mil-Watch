@@ -1,0 +1,88 @@
+{
+  "schema": "ipr-desk-source-provenance-bindings/1",
+  "_comment": [
+    "Reviewed classification of each desk research source family into a public evidence class.",
+    "Family names must match desks/registry.json research.source_families[].name exactly.",
+    "'production' is never assignable here: only a manifest under desks/ validated by core.manifests can make a source production.",
+    "source_slug must be declared in config/shadow_source_workflow_bindings.json; the shadow manifest it names supplies language tags and rights statements.",
+    "basis cites the recorded evidence that supports the class. It is a pointer, not new evidence."
+  ],
+  "reference_lanes": {
+    "korea_mnd_bibliography": {"loader": "korea_public_bibliography", "kind": "bibliography", "filter_by_source_slug": false},
+    "indonesia_berita_index": {"loader": "indonesia_official_index", "kind": "official_index", "filter_by_source_slug": false},
+    "indonesia_press_index": {"loader": "indonesia_press_index", "kind": "official_index", "filter_by_source_slug": false},
+    "indonesia_reviewed_links": {"loader": "reviewed_links_indonesia", "kind": "reviewed_links", "filter_by_source_slug": true},
+    "philippines_reviewed_links": {"loader": "reviewed_links_philippines", "kind": "reviewed_links", "filter_by_source_slug": true},
+    "vietnam_reviewed_links": {"loader": "reviewed_links_vietnam", "kind": "reviewed_links", "filter_by_source_slug": true}
+  },
+  "desks": {
+    "china": {"shadow_desk_ids": [], "families": []},
+    "singapore": {"shadow_desk_ids": [], "families": []},
+    "japan": {
+      "shadow_desk_ids": ["japan", "japan_jcg"],
+      "families": [
+        {"name": "Ministry of Defense — news feed (Japanese)", "evidence_class": "shadow", "source_slug": "jp_mod_news_ja", "reference_lanes": [],
+         "basis": "Declared in shadow/jp_mod/manifest.json (registry manifest for the desk); scheduled shadow workflow binding."},
+        {"name": "Ministry of Defense — site update feed (Japanese)", "evidence_class": "shadow", "source_slug": "jp_mod_siteupdate_ja", "reference_lanes": [],
+         "basis": "Declared in shadow/jp_mod/manifest.json; scheduled shadow workflow binding."},
+        {"name": "Japan Coast Guard — English press releases", "evidence_class": "shadow", "source_slug": "jp_jcg_press_en", "reference_lanes": [],
+         "basis": "Declared in shadow/jp_jcg/manifest.json; registry format records a separate guarded shadow pilot."},
+        {"name": "Joint Staff — press releases (English)", "evidence_class": "access_blocked", "source_slug": "jp_joint_staff_en", "reference_lanes": [],
+         "basis": "Registry format records 'challenged (403), not collected'; disabled in shadow/jp_mod/manifest.json."},
+        {"name": "Ministry of Defense — press releases (English)", "evidence_class": "access_blocked", "source_slug": "jp_mod_press_en", "reference_lanes": [],
+         "basis": "Registry format records 'challenged (403), not collected'; disabled in shadow/jp_mod/manifest.json."}
+      ]
+    },
+    "korea": {
+      "shadow_desk_ids": ["korea"],
+      "families": [
+        {"name": "Ministry of National Defense — Policy Briefing republications (Korean)", "evidence_class": "shadow", "source_slug": "kr_policy_mnd_releases", "reference_lanes": ["korea_mnd_bibliography"],
+         "basis": "Declared in shadow/kr_policy_briefing/manifest.json; five-entry public bibliography gated by core.korea_public_bibliography."},
+        {"name": "Defense Acquisition Program Administration (방위사업청) — Policy Briefing press index (Korean; research only)", "evidence_class": "public_reference", "source_slug": null, "reference_lanes": [],
+         "basis": "Registry records an official first-party press index for external navigation only, with no DAPA shadow collection."}
+      ]
+    },
+    "philippines": {
+      "shadow_desk_ids": ["philippines"],
+      "families": [
+        {"name": "Armed Forces of the Philippines — first-party publications", "evidence_class": "shadow", "source_slug": "ph_afp_articles", "reference_lanes": ["philippines_reviewed_links"],
+         "basis": "Declared in shadow/ph_afp/manifest.json; scheduled shadow workflow binding."},
+        {"name": "Philippine National Security Council — official statements", "evidence_class": "shadow", "source_slug": "ph_nsc_official_statements", "reference_lanes": ["philippines_reviewed_links"],
+         "basis": "Declared in shadow/ph_nsc/manifest.json; scheduled shadow workflow binding."}
+      ]
+    },
+    "vietnam": {
+      "shadow_desk_ids": ["vietnam"],
+      "families": [
+        {"name": "Viet Nam Government News — defense tag page (English)", "evidence_class": "shadow", "source_slug": "vn_vgp_defense_en", "reference_lanes": [],
+         "basis": "Declared in shadow/vietnam/manifest.json; registry blocker records that remote dispatch is unapproved."},
+        {"name": "Ministry of National Defence — English portal", "evidence_class": "access_blocked", "source_slug": null, "reference_lanes": [],
+         "basis": "Registry format records 'Not reached — robots.txt returned a script page, twice'."},
+        {"name": "People's Army Newspaper — military news and international relations listings (English)", "evidence_class": "access_blocked", "source_slug": null, "reference_lanes": [],
+         "basis": "Registry format records 'Not reached — HTTP 302 back to the same address'."},
+        {"name": "Government portal", "evidence_class": "insufficient_evidence", "source_slug": null, "reference_lanes": [],
+         "basis": "Registry records the homepage was read once and not collected; no publisher URL, shadow declaration or approved reference."},
+        {"name": "Ministry of Public Security — foreign affairs (Vietnamese)", "evidence_class": "shadow", "source_slug": "vn_mps_foreign_affairs_vi", "reference_lanes": ["vietnam_reviewed_links"],
+         "basis": "Declared in shadow/vietnam_ministries/manifest.json; scheduled shadow workflow binding."},
+        {"name": "Ministry of Industry and Trade — energy (Vietnamese)", "evidence_class": "shadow", "source_slug": "vn_moit_energy_vi", "reference_lanes": [],
+         "basis": "Declared in shadow/vietnam_ministries/manifest.json; MOIT rights hold keeps it out of the reviewed-link lane."},
+        {"name": "Ministry of Industry and Trade — foundational industry (Vietnamese)", "evidence_class": "shadow", "source_slug": "vn_moit_foundational_industry_vi", "reference_lanes": [],
+         "basis": "Declared in shadow/vietnam_ministries/manifest.json; MOIT rights hold keeps it out of the reviewed-link lane."},
+        {"name": "National Defence Journal — English edition (military journal)", "evidence_class": "shadow", "source_slug": "vn_national_defence_journal_en", "reference_lanes": [],
+         "basis": "Declared, disabled, in shadow/vietnam_journal/manifest.json; registry format records a disabled source candidate."},
+        {"name": "Ministry of Finance", "evidence_class": "access_blocked", "source_slug": null, "reference_lanes": [],
+         "basis": "Registry format records 'Not reached — robots.txt returned an app shell'."}
+      ]
+    },
+    "indonesia": {
+      "shadow_desk_ids": ["indonesia"],
+      "families": [
+        {"name": "Indonesian Ministry of Defense — Berita (Indonesian)", "evidence_class": "shadow", "source_slug": "id_kemhan_news", "reference_lanes": ["indonesia_berita_index", "indonesia_reviewed_links"],
+         "basis": "Declared in shadow/id_kemhan/manifest.json; thirteen metadata-only links gated by core.indonesia_official_index."},
+        {"name": "Indonesian Ministry of Defense — Siaran Pers (Indonesian)", "evidence_class": "public_reference", "source_slug": null, "reference_lanes": ["indonesia_press_index"],
+         "basis": "Registry records a disabled parser with no collection; two metadata-only links gated by core.indonesia_press_index."}
+      ]
+    },
+    "us-indopacific": {"shadow_desk_ids": [], "families": []}
+  }
+}

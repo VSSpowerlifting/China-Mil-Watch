@@ -970,6 +970,22 @@ hangs beside the seat instead of into a band (`is-mid-side`, narrower), the
 one exception, because Hanoi sits between Beijing and Singapore. A private
 render measured `desks.html` at 98,442 bytes.
 
+**Desk source provenance adapter (2026-10-13, Milestone A of #498; PR open,
+not merged):** `core/desk_source_provenance.py` merges the registry, the
+reviewed family bindings in `config/desk_source_provenance.json`, shadow
+declarations, the gated reference loaders and read-only `source_run_results`
+into five evidence classes: production, shadow, public_reference,
+access_blocked, insufficient_evidence. Conflicts can downgrade a source but
+never promote one. Run health attaches only to contract-validated production
+slugs; China (5) and Singapore (1) are the only production sources. Limits and
+status explanations stay verbatim. Nothing is rendered yet and the Phase 4A map
+(PR #504) is untouched. The Desks Source Atlas (Milestone B) consumes this
+adapter after #504 merges. The schema is in
+`docs/engineering/DESK_SOURCE_PROVENANCE_SCHEMA_2026-10-13.md`. The
+eight-desk matrix and six owner-review findings are in
+`docs/engineering/DESK_SOURCE_PROVENANCE_MATRIX_2026-10-13.md`; the findings
+include the US limit wording against the disabled DVIDS shadow manifest.
+
 **Homepage atlas experiment (2026-10-01):**
 `styles.css` replaces the home page's margin grid with a compact pale blue-gray
 vector field: thirteen closely spaced abstract contours and two polygon fills.
