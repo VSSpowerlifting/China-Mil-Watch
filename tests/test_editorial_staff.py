@@ -46,7 +46,7 @@ def test_public_roster_is_exact_and_domain_focused():
     assert [(p["name"], p["role"]) for p in people] == [
         ("Benjamin Yang", "Founder & Editor-in-Chief"),
         ("Dylan Tanzi", "Managing Editor"),
-        ("Christin", "Communications Editor"),
+        ("Christin Sawyer", "Communications Editor"),
     ]
     for person in people:
         assert person["route"] == "authors/" + person["slug"] + ".html"
@@ -73,19 +73,19 @@ def test_author_and_research_credits_are_not_conflated():
         {"slug": "published", "author_names": ["Benjamin Yang"], "date": "2026-10-01", "title": "Published", "url": "briefs/published.html"},
         {"slug": "joint", "author_names": ["Benjamin Yang", "Dylan Tanzi"], "date": "2026-10-02", "title": "Joint", "url": "briefs/joint.html"},
         {"slug": "researched", "author_names": ["Benjamin Yang"], "date": "2026-10-03", "title": "Researched", "url": "briefs/researched.html"},
-        {"slug": "draft", "author_names": ["Christin"], "is_review": True, "url": "briefs/draft.html"},
-        {"slug": "synthetic", "author_names": ["Christin"], "synthetic": True, "url": "briefs/synthetic.html"},
+        {"slug": "draft", "author_names": ["Christin Sawyer"], "is_review": True, "url": "briefs/draft.html"},
+        {"slug": "synthetic", "author_names": ["Christin Sawyer"], "synthetic": True, "url": "briefs/synthetic.html"},
     ]
     c = SimpleNamespace(briefs=briefs, sidecars={
         "researched": {"research_contributor": {"name": "Dylan Tanzi", "title": "Research analyst"}},
-        "published": {"research_contributor": {"name": "Christin", "title": "Communications"}},
+        "published": {"research_contributor": {"name": "Christin Sawyer", "title": "Communications"}},
     })
     b = credited_works(c, "Benjamin Yang")
     assert [p["slug"] for p in b["authored"]] == ["published", "joint", "researched"]
     d = credited_works(c, "Dylan Tanzi")
     assert [p["slug"] for p in d["authored"]] == ["joint"]
     assert [p["slug"] for p in d["contributed"]] == ["researched"]
-    ch = credited_works(c, "Christin")
+    ch = credited_works(c, "Christin Sawyer")
     assert not ch["authored"]
     assert [p["slug"] for p in ch["contributed"]] == ["published"]
 
@@ -98,11 +98,11 @@ def test_templates_have_accessible_routes_without_assumed_credentials():
     assert team.count('href="authors/') == 6
     assert "Manhasset" not in team
     profile = _template("staff_profile.html", **_ctx(
-        page="authors/christin.html", member=people[2],
+        page="authors/christin-sawyer.html", member=people[2],
         works={"authored": (), "contributed": ()},
         staff_schema=None,
     ))
-    assert "Christin" in profile and "Communications Editor" in profile
+    assert "Christin Sawyer" in profile and "Communications Editor" in profile
     assert 'href="../team.html"' in profile
     assert 'href="../staff.css"' in profile
     assert "Authored Briefs" not in profile
