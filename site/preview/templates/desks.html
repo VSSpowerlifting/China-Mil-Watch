@@ -80,7 +80,13 @@ actual admitted government originals, not editorial articles.</p>
       <dl class="deskmap-stats">
         <div><dt>{{ 'Corpus records' if d.status == 'shadow' else 'Records' }}</dt><dd>{% if d.record_count is not none %}{{ d.record_count|count }}{% else %}{{ 'Not admitted' if d.status == 'shadow' else 'None collected' }}{% endif %}</dd></div>
         <div><dt>{{ 'Last corpus collection' if d.status == 'shadow' else 'Last collection' }}</dt><dd>{{ 'Not admitted' if d.status == 'shadow' else (d.last_successful_run or 'None') }}</dd></div>
+        {% if d.slug == 'korea' and korea_mnd_live_link_count | default(0) > 0 %}
+        <div data-korea-directory-mnd-metadata="{{ korea_mnd_live_link_count }}"><dt>Live MND link metadata</dt><dd>{{ korea_mnd_live_link_count }}</dd></div>
+        {% endif %}
       </dl>
+      {% if d.slug == 'korea' and korea_mnd_live_link_count | default(0) > 0 %}
+      <p class="meta" data-korea-directory-scope>MND official-link publication is operational; the countrywide article corpus and DAPA remain unadmitted.</p>
+      {% endif %}
       <p class="deskmap-enter"><a href="{{ d.route }}" aria-label="Enter the {{ d.name }}">Enter desk <span aria-hidden="true">→</span></a></p>
     </section>
     {% endfor %}
@@ -132,7 +138,7 @@ actual admitted government originals, not editorial articles.</p>
 {% for d in desks %}
   <div class="scope-entry">
     <dt><a href="{{ d.route }}">{{ d.name }}</a> <span class="desk-state desk-state--{{ d.status }}" aria-label="{{ 'Research published; source archive: ' ~ d.status_label if d.slug in editorial_published_desks | default([]) else d.status_label }}" title="{{ d.status_label }}">{{ "Research published" if d.slug in editorial_published_desks | default([]) else d.status_label }}</span></dt>
-    <dd><p>{{ d.scope }}</p><p class="blocking">{{ d.status_explanation }}</p>{% if d.record_count %}<p class="card-foot"><a href="archive.html?desk={{ d.slug }}">Browse its records</a></p>{% endif %}</dd>
+    <dd><p>{{ d.scope }}</p><p class="blocking">{{ d.status_explanation }}</p>{% if d.slug == 'korea' and korea_mnd_live_link_count | default(0) > 0 %}<p class="meta" data-korea-directory-scope-count="{{ korea_mnd_live_link_count }}">Live MND government-link metadata: {{ korea_mnd_live_link_count }} verified URL/date/issuer records. Full-country article corpus and DAPA not admitted.</p>{% endif %}{% if d.record_count %}<p class="card-foot"><a href="archive.html?desk={{ d.slug }}">Browse its records</a></p>{% endif %}</dd>
   </div>
 {% endfor %}
 </dl>

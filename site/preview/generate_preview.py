@@ -2806,7 +2806,13 @@ def build(out_dir: Path, title: str, db_path: Path,
     }
     written = []
     for target, template in pages.items():
-        page_html = env.get_template(template).render(page=target, **ctx)
+        # A live, separately governed Korea metadata table is NOT an article
+        # corpus or a full-country source admission. Show its measured count
+        # only on the Desks directory, without reclassifying Korea as 'live'.
+        desk_index_lanes = ({"korea_mnd_live_link_count": korea_production_link_count}
+                            if target == "desks.html" else {})
+        page_html = env.get_template(template).render(
+            page=target, **ctx, **desk_index_lanes)
         if target == "desks.html":
             # Desks embeds the canonical 1:50m map inline. Its accessible
             # directory keeps every status/limit, so trim only indentation
