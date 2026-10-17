@@ -54,6 +54,17 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+from pathlib import Path
+
+# Both the scheduled Actions job and the registered Git merge driver execute
+# this file as "python scripts/reconcile_db.py". In that mode Python puts
+# scripts/, not the repository root, on sys.path; unlike -m or unit imports,
+# the production entry point cannot import core.retired_article_urls without
+# an explicit project-root bootstrap. Resolve from __file__, not cwd, so an
+# installed driver behaves consistently in Git's worktree.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
 from core.retired_article_urls import (is_retired, has_retired_table,
     next_available_article_id, verify_no_active_retired_urls)
