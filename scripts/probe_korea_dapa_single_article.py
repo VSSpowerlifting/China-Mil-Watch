@@ -119,15 +119,21 @@ def inspect_article(raw):
     except (TypeError, ValueError):
         raise Hold("dapa_article_unparseable") from None
     visible = " ".join(parser.text)
-    # This is a weak publisher-page date-marker observation, NOT a date
-    # authenticated to an individually traced listing-row identity.
-    has_expected_date = bool(re.search(
-        r"(?<![0-9])2026[-.]09[-.]18(?![0-9])", visible
-    ))
-    has_date_label = "게시일" in visible
+    # A document body can refer to the indexed date even when the actual
+    # publisher posting date differs. Require one unambiguous "게시일" field,
+    # immediately followed by its own date; never search the whole body.
+    # This is still a page-local observation, NOT a live listing-row match.
+    labels = list(re.finditer(r"게시일\\s*[:：]?\\s*", visible))
+    tail = visible[labels[0].end():].lstrip() if len(labels) == 1 else ""
+    posted = re.match(
+        r"^(20[0-9]{2}[-.][01][0-9][-.][0-3][0-9])(?![0-9])", tail
+    )
+    has_expected_date = bool(
+        posted and posted.group(1).replace(".", "-") == EXPECTED_POSTED_DATE
+    )
     return {
-        "date_marker_matches_indexed_item": has_expected_date and has_date_label,
-        "date_label_observed": has_date_label,
+        "date_marker_matches_indexed_item": has_expected_date,
+        "date_label_observed": bool(labels),
         "title_or_publisher_text_saved": False,
         "document_sha256": hashlib.sha256(raw).hexdigest(),
     }
