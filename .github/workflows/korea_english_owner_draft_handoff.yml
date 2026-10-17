@@ -16,8 +16,15 @@ on:
       - scripts/send_korea_english_owner_drafts.py
       - tests/test_korea_english_publication.py
       - tests/test_korea_english_owner_draft_handoff.py
+      - tests/test_korea_owner_handoff_recovery_contract.py
+      - scripts/verify_korea_original_deployed_readback.py
       - research/korea_english_draft_handoff_receipts.json
       - .github/workflows/korea_english_owner_draft_handoff.yml
+  # An owner-approved source release can commit exact originals and Pages,
+  # then fail only its terminal HTTPS cache/readback step. GitHub marks that
+  # workflow red and previously skipped the owner draft handoff altogether.
+  # A failed upstream run is NOT publication proof: a new independent
+  # main -> gh-pages -> HTTPS readback below must pass before ANY model call.
   workflow_run:
     workflows:
       - Korea — Standing-Licensed Original Text to Live Pages
@@ -47,13 +54,20 @@ jobs:
           python-version: '3.9'
       - run: python -m pip install -r requirements.txt
       - name: Prove no-repeat private owner-email delivery and unreviewed-only drafts
-        run: python -m unittest -v tests.test_korea_english_publication tests.test_korea_english_owner_draft_handoff
+        run: >-
+          python -m unittest -v
+          tests.test_korea_english_publication
+          tests.test_korea_english_owner_draft_handoff
+          tests.test_korea_original_deployed_readback
+          tests.test_korea_owner_handoff_recovery_contract
 
   send-unreviewed-korea-drafts-to-owner:
     if: >-
       github.event_name != 'pull_request' &&
       (github.event_name != 'workflow_run' ||
-       github.event.workflow_run.conclusion == 'success')
+       (github.event.workflow_run.head_branch == 'main' &&
+        (github.event.workflow_run.conclusion == 'success' ||
+         github.event.workflow_run.conclusion == 'failure')))
     runs-on: ubuntu-latest
     timeout-minutes: 18
     permissions:
@@ -90,10 +104,51 @@ jobs:
       - name: Install Anthropic and exact-source validators
         if: steps.credentials.outputs.ready == 'true'
         run: python -m pip install -r requirements.txt
+      - name: Select published originals without delivered/reviewed English
+        id: pending
+        if: steps.credentials.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          from scripts.send_korea_english_owner_drafts import pending
+          selected, _ = pending()
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write("has_pending=" + ("true" if selected else "false") + "\n")
+          print("Pending published originals eligible for private owner review:", len(selected))
+          PY
+      - name: Read existing Pages branch without publish credentials
+        if: steps.pending.outputs.has_pending == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --single-branch --branch gh-pages \
+            https://github.com/VSSpowerlifting/IndoPacificRecord.git \
+            "$RUNNER_TEMP/korea-owner-draft-pages"
+      - name: Independently prove source and desk are live over exact HTTPS
+        id: public_readback
+        if: steps.pending.outputs.has_pending == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.verify_korea_original_deployed_readback \
+            --main-checkout . --pages-checkout "$RUNNER_TEMP/korea-owner-draft-pages" \
+            --require-https-readback --attempts 8
+          # A green upstream job is insufficient; original source bytes,
+          # main/gh-pages parity and live HTTP must all be proved again.
+          git diff --exit-code -- pla_watch.db output/ \
+            research/korea_published_original_texts.json \
+            research/korea_published_original_texts
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
       - name: Generate bounded English and analytical drafts and send to owner only
         id: draft
         continue-on-error: true
-        if: steps.credentials.outputs.ready == 'true'
+        if: >-
+          steps.credentials.outputs.ready == 'true' &&
+          steps.pending.outputs.has_pending == 'true' &&
+          steps.public_readback.outcome == 'success'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           IPR_PREVIEW_TO: ${{ secrets.IPR_PREVIEW_TO }}

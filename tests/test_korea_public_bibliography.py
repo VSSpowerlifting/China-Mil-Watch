@@ -88,7 +88,7 @@ class KoreaPublicMetadataContracts(unittest.TestCase):
             self.assertIn("Shadow evaluation — not in corpus", desks_html)
             self.assertNotIn("Shadow evaluation — not public", desks_html)
             self.assertIn("approved official-source links", desks_html)
-            self.assertIn("Official references available", page)
+            self.assertIn("Ministry of National Defense — official references", page)
             sitemap = (target / "sitemap.xml").read_text(encoding="utf-8")
             self.assertIn("https://indopacificrecord.org/korea.html", sitemap)
 

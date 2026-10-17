@@ -59,7 +59,7 @@
 {{ cover_figure(brief.article_media) }}
     {% endif %}
     <div class="brief-context">    <p class="brief-dek">{{ brief.dek }}</p>
-    <p class="brief-byline">By <span class="byline-name">{{ brief.author_name }}</span>{% if brief.author_title and not (brief.research_contributor and brief.research_contributor.credit_role == 'co-author') %}<span class="byline-title">{{ brief.author_title }}</span>{% endif %}</p>
+    <p class="brief-byline">By <span class="byline-name">{% set byline_names = [brief.author_card_name, brief.research_contributor.name] if brief.research_contributor and brief.research_contributor.credit_role == 'co-author' else [brief.author_name] %}{% for name in byline_names %}{% set byline_member = (team_by_name|default({})).get(name) %}{% if byline_member %}<a href="../{{ byline_member.route }}">{{ name }}</a>{% else %}{{ name }}{% endif %}{% if not loop.last %} and {% endif %}{% endfor %}</span>{% if brief.author_title and not (brief.research_contributor and brief.research_contributor.credit_role == 'co-author') %}<span class="byline-title">{{ brief.author_title }}</span>{% endif %}</p>
     <ul class="brief-meta">
       <li>Covers <time datetime="{{ brief.week_start }}">{{ brief.week_start|reader_date }}</time> – <time datetime="{{ brief.week_ending }}">{{ brief.week_ending|reader_date }}</time></li>
       {% if brief.source_linked %}<li>Source-linked editorial analysis</li><li>{{ brief.publisher_references|length }} publisher references</li>{% else %}
@@ -259,7 +259,7 @@
     {% endif %}
     <section class="brief-author" aria-label="{{ 'Co-author' if brief.research_contributor and brief.research_contributor.credit_role == 'co-author' else 'Author' }}">
       <p class="brief-author-label">{{ 'Co-author' if brief.research_contributor and brief.research_contributor.credit_role == 'co-author' else 'Author' }}</p>
-      <p class="brief-author-name">{{ brief.author_card_name|default(brief.author_name) }}</p>
+      <p class="brief-author-name">{% set author_member = (team_by_name|default({})).get(brief.author_card_name|default(brief.author_name)) %}{% if author_member %}<a href="../{{ author_member.route }}">{{ brief.author_card_name|default(brief.author_name) }}</a>{% else %}{{ brief.author_card_name|default(brief.author_name) }}{% endif %}</p>
       {% if brief.author_title %}<p class="brief-author-title">{{ brief.author_title }}</p>{% endif %}
       {% if brief.author_bio %}<p class="brief-author-bio">{{ brief.author_bio }}</p>{% endif %}
       {% if brief.author_links %}
@@ -272,7 +272,7 @@
     {% if brief.research_contributor %}
     <section class="brief-author" {% if brief.research_contributor.credit_role == 'co-author' %}aria-label="Co-author"{% else %}aria-label="Research contributor"{% endif %}>
       <p class="brief-author-label">{{ 'Co-author' if brief.research_contributor.credit_role == 'co-author' else 'Research contributor' }}</p>
-      <p class="brief-author-name">{{ brief.research_contributor.name }}</p>
+      <p class="brief-author-name">{% set contributor_member = (team_by_name|default({})).get(brief.research_contributor.name) %}{% if contributor_member %}<a href="../{{ contributor_member.route }}">{{ brief.research_contributor.name }}</a>{% else %}{{ brief.research_contributor.name }}{% endif %}</p>
       <p class="brief-author-title">{{ brief.research_contributor.title }}</p>
       <p class="brief-author-bio">{{ brief.research_contributor.bio }}</p>
       <ul class="brief-author-links">

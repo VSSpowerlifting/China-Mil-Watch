@@ -23,6 +23,7 @@ What changed at the launch, and why these tests changed with it:
     present, correct, and the same in all four places that carry it.
 """
 import importlib.util
+import sqlite3
 import re
 import sys
 import tempfile
@@ -132,33 +133,26 @@ class TestTheAcceptedSnapshot(unittest.TestCase):
         self.assertEqual(gp.DECLARED_SNAPSHOT, self.ACCEPTED)
 
     def test_the_declared_snapshot_is_a_pin_and_not_the_daily_identity(self):
-        """
-        This used to assert that the declared snapshot still equalled the
-        tracked corpus, and it was right to while the two were the same thing.
-        They are not any more, and holding them equal is what broke production.
+        """August's accepted identity remains immutable after Oct. retirement.
 
-        The declared snapshot is accepted release metadata for one frozen
-        corpus: 2026-08-26, 3,574 records. Collection adds records every
-        morning. Requiring equality made every daily render abort with
-        `SnapshotMismatch` once the corpus passed 3,574 — and because
-        `daily_update.yml` runs this suite before it collects, with no
-        `continue-on-error`, it would have stopped collection as well.
-
-        Owner decision, 2026-08-28: the pin does not move. The daily path
-        derives its own identity from the corpus it is rendering instead. So
-        the corpus is ALLOWED to have grown past the pin, and what is asserted
-        here is that the pin itself is intact and that the drift is in the
-        direction growth produces. `tests/test_daily_corpus_advance.py` proves
-        the daily render follows the corpus, and the two cases below prove a
-        declared snapshot is still enforced exactly.
+        Daily collection initially only *grew* past 3,574 articles, but the
+        independently owner-approved October China retirement explicitly
+        removed 4,400 originals and added a tombstone to bar reuse. The old
+        'records never disappear' assertion now mistakes a lawful cull for a
+        data-loss incident. Verify that exact retired-ID ledger instead.
         """
+        from core.retired_article_urls import verify_no_active_retired_urls
         derived = gp.snapshot_from_corpus(gp.TRACKED_DB)
         self.assertEqual(gp.DECLARED_SNAPSHOT, self.ACCEPTED)
-        self.assertGreaterEqual(derived["expected_records"],
-                                self.ACCEPTED["expected_records"],
-                                "the corpus has fewer records than the "
-                                "accepted snapshot — records do not "
-                                "disappear, so this is data loss, not growth")
+        from scripts.reconcile_db import read_only
+        with read_only(gp.TRACKED_DB) as conn:
+            self.assertEqual(verify_no_active_retired_urls(conn), 4400)
+            live = conn.execute("SELECT COUNT(*) FROM articles").fetchone()[0]
+        self.assertEqual(derived["expected_records"], live)
+        # It would be incorrect to label the post-cull daily corpus as the
+        # unchanged August launch snapshot, even when its size crosses it.
+        self.assertNotEqual(derived["logical_sha256"],
+                            self.ACCEPTED["logical_sha256"])
 
     def test_a_corpus_that_has_moved_past_the_pin_still_renders(self):
         """

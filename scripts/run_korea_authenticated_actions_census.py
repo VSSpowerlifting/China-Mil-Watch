@@ -20,7 +20,7 @@ from urllib.request import Request, urlopen
 from scripts import audit_korea_actions_attempts as census
 from scripts import audit_indonesia_shadow_provenance as provenance
 
-REPO = "VSSpowerlifting/China-Mil-Watch"
+REPO = "VSSpowerlifting/IndoPacificRecord"
 WORKFLOW = provenance.WORKFLOW_ID
 API = "https://api.github.com/repos/" + REPO
 MAX_WORKFLOW_RUNS = 2000

@@ -1,0 +1,35 @@
+name: Korea DAPA — Official catalogue metadata contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/qualify_korea_dapa_official_catalogue.py
+      - tests/test_korea_dapa_official_catalogue.py
+      - docs/engineering/KOREA_DAPA_OPEN_DATA_CATALOGUE_LEAD_2026-10-16.md
+      - .github/workflows/korea_dapa_official_catalogue_contracts.yml
+
+permissions:
+  contents: read
+
+jobs:
+  synthetic-catalogue-identity-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Offline authority, version, licensing and no-publication gates
+        run: python -m unittest -v tests.test_korea_dapa_official_catalogue
+      - name: No release or archive effects
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ research/korea_published_original_texts.json research/korea_english_publications.json
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
