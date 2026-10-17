@@ -175,9 +175,9 @@ class FirstRealKoreaEnglishPacketTests(unittest.TestCase):
 
 
 class TwoCorrectedKoreaPacketsTests(unittest.TestCase):
-    """Prepared editorial packets are source-pinned; staging never publishes."""
+    """Prepared packets remain source-pinned before AND after owner dispatch."""
 
-    def test_corrected_october_sixteen_english_remains_unpublished_until_owner_dispatch(self):
+    def test_corrected_october_sixteen_english_remains_exact_after_owner_dispatch(self):
         from core.korea_published_originals import read_release_index
         from core.korea_english_publication import verify_review
 
@@ -195,12 +195,18 @@ class TwoCorrectedKoreaPacketsTests(unittest.TestCase):
                 22, 4, 8,
             ),
         }
-        published = {row["source_identity"] for row, _, _ in public_registry()}
+        published = {row["source_identity"]: row for row, _, _ in public_registry()}
         for news_id, (source_sha, review_sha, n_trans, n_claims, n_quotes) in expected.items():
             with self.subTest(news_id=news_id):
                 identity = "korea-policy:" + news_id
                 self.assertIn(identity, known)
-                self.assertNotIn(identity, published)
+                # Before owner dispatch this identity is absent. Afterward it
+                # is accepted ONLY if its exact owner-approved packet SHA is
+                # registered with a positive authenticated workflow run.
+                if identity in published:
+                    self.assertEqual(published[identity]["review_sha256"], review_sha)
+                    self.assertEqual(published[identity]["source_sha256"], source_sha)
+                    self.assertRegex(published[identity]["owner_run_id"], r"^[0-9]{3,24}$")
                 self.assertEqual(known[identity]["original_text_sha256"], source_sha)
                 packet = json.loads((root / "research/korea_english_reviewed" /
                                     (news_id + ".json")).read_text(encoding="utf-8"))

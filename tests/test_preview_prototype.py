@@ -1672,8 +1672,36 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
             r"\b(analysed|labelled|labelling|summarised|organised|"
             r"behaviour|colour|defence|centre|programme|judgement)\b",
             re.I)
+        # Owner-reviewed, immutable bilingual source/analysis fields are
+        # editorial payloads, not the site's template/chrome copy. Never
+        # silently modify those SHA-pinned payloads to satisfy this site
+        # style guard. Remove only the *exact* registered approved values;
+        # unregistered machine drafts receive no exemption.
+        from core.korea_english_publication import public_registry
+        reviewed = {
+            row["source_identity"].split(":")[1]: packet
+            for row, packet, _ in public_registry()
+        }
         for name, html in self._all_html().items():
-            text = re.sub(r"<[^>]+>", " ", _authored_text(html, name))
+            own = _authored_text(html, name)
+            match = re.fullmatch(
+                r"korea-(analysis|translations)/([0-9]{9})\.html", name)
+            if match and match.group(2) in reviewed:
+                packet = reviewed[match.group(2)]
+                if match.group(1) == "analysis":
+                    analysis = packet["analysis"]
+                    values = [
+                        analysis["heading_en"], analysis["thesis_en"],
+                        analysis["limitations_en"],
+                    ]
+                    for claim in analysis["claims"]:
+                        values.extend((claim["heading_en"], claim["analysis_en"]))
+                else:
+                    values = [p["text_en"] for p in packet["translations"]]
+                for value in sorted(set(values), key=len, reverse=True):
+                    own = own.replace(str(markupsafe.escape(value)), " ")
+                    own = own.replace(value, " ")
+            text = re.sub(r"<[^>]+>", " ", own)
             for proper_noun in OFFICIAL_NAMES_WITH_BRITISH_SPELLING:
                 text = text.replace(proper_noun, " ")
             with self.subTest(page=name):
