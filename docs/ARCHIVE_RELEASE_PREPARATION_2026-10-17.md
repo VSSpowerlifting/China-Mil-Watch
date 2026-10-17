@@ -34,6 +34,15 @@ boundary, route and budget evidence; repeating those unchanged browser inputs
 is unnecessary. The fresh full CI still executes its seven Archive contracts.
 Sixty focused regional wiring/render/readback and Archive contracts passed.
 
+The final base then advanced without conflicts to
+**`bd20c82e80c513f59dc61669fb352e2e5183633c`** (#791's private, unscheduled
+DAPA collector). This adds no public admission or renderer change. Both complete
+isolated production renders were repeated against that base: every main and
+candidate output byte matches the regional-refresh inventories below, with the
+same zero errors/ten warnings. The final full CI uses this reconciled base;
+the intermediate acd648 regional run is superseded, not claimed as final proof.
+No unrelated collector code was edited by this PR.
+
 Both indexes remain bound to the HTML. Candidate output manifest SHA-256:
 `8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02`.
 Research-index SHA-256:
@@ -69,11 +78,12 @@ country/DAPA boundaries. The sitemap adds Team and three author URLs. Five new
 files are Team, staff CSS and three author profiles. These groups account for
 all 975 changed plus five added paths; no unexplained path remains. Candidate
 versus tracked ca4424 main was 983 paths (977 changed, six added), with overlap
-between Archive and inherited shell changes. On current 348ff1 main, the new
+between Archive and inherited shell changes. On 348ff1 main, the new
 conditional template adds a blank line to Korea too: inherited drift is **981
 paths (976 changed, five added)**; candidate versus tracked main is **984 paths
 (978 changed, six added)**. The prior 980 groups remain accounted for, and the
-sole new inherited path is whitespace-only `korea.html`. The U.S. page update
+sole new inherited path is whitespace-only `korea.html`; bd20c82 changes none
+of these output paths. The U.S. page update
 on main already includes its blank line. No unexplained path remains. None of
 this establishes release approval.
 

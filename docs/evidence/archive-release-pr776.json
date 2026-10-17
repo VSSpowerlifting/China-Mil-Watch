@@ -1,6 +1,6 @@
 {
   "original_pr_head": "da4a07c6a0d30394dd7a964d6339ce0316b63886",
-  "base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
+  "base": "bd20c82e80c513f59dc61669fb352e2e5183633c",
   "reviewed_candidate_tree": "9d5e5d19fd93257a02633fee7fa1f500f4883abc",
   "previous_snapshot": {
     "base": "e376bcb6bfc9c2926d21c180a944535917990172",
@@ -288,8 +288,8 @@
     "research_gzip_estimate": 121065
   },
   "latest_refresh": {
-    "base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
-    "rendered_tree": "3776e625511cd0b2f5f90c7db25be6e26e52f4c8",
+    "base": "bd20c82e80c513f59dc61669fb352e2e5183633c",
+    "rendered_tree": "d4278e615fa77030a04aa1c9cc4739a7a13c6715",
     "main_files": 1893,
     "candidate_files": 1894,
     "unchanged_main_candidate": 1890,
@@ -323,7 +323,9 @@
     "new_inherited_paths": [
       "korea.html"
     ],
-    "removed_inherited_paths": []
+    "removed_inherited_paths": [],
+    "output_inventories_equal_to_previous_refresh": true,
+    "private_dapa_base_changes_have_zero_public_output_delta": true
   },
   "previous_verified_linux_ci": {
     "head": "faef90f15a2939de68cc9916eca4264c0bce3353",
@@ -365,5 +367,55 @@
     "new_path": "korea.html",
     "new_path_cause": "one blank line from inherited conditional regional desk template",
     "unexplained_paths": []
+  },
+  "regional_reconciliation_base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
+  "regional_refresh": {
+    "base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
+    "rendered_tree": "3776e625511cd0b2f5f90c7db25be6e26e52f4c8",
+    "main_files": 1893,
+    "candidate_files": 1894,
+    "unchanged_main_candidate": 1890,
+    "archive_changes": [
+      "archive-research-index.json",
+      "archive.css",
+      "archive.html",
+      "browse.js"
+    ],
+    "candidate_delta_from_previous_manifest": [
+      "china.html",
+      "indonesia.html",
+      "japan.html",
+      "korea.html",
+      "philippines.html",
+      "singapore.html",
+      "us-indopacific.html",
+      "vietnam.html"
+    ],
+    "all_delta_is_whitespace": true,
+    "archive_html_js_css_both_indexes_and_shared_dependencies_byte_identical": true,
+    "browser_evidence_reused": true,
+    "new_regional_admitted_rows": {
+      "indonesia": 0,
+      "philippines": 0
+    },
+    "candidate_manifest_sha256": "8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02",
+    "main_manifest_sha256": "dc56bcaedf0b096bee82737789f6a927d1910723461f5a5d0de46a20ac8e76ef",
+    "inherited_paths": 981,
+    "candidate_vs_tracked_paths": 984,
+    "new_inherited_paths": [
+      "korea.html"
+    ],
+    "removed_inherited_paths": []
+  },
+  "final_base_advance": {
+    "kind": "private unscheduled DAPA collector inherited from main #791",
+    "conflicts": [],
+    "authored_collector_edits": [],
+    "public_output_delta": [],
+    "both_complete_production_inventory_checks_passed": true,
+    "both_validators": {
+      "errors": 0,
+      "warnings": 10
+    }
   }
 }
