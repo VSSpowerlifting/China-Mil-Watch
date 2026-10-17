@@ -110,12 +110,14 @@ class KoreaPublicWriterCutoverGuardTests(unittest.TestCase):
             self.assertIs(receipt["legacy_public_writer_permitted"], False)
             self.assertNotIn(str(path), output.getvalue())
 
-    def test_workflow_guard_order_and_indonesia_cadence(self):
+    def test_workflow_guard_order_and_preserved_korea_cadence(self):
         raw = WORKFLOW.read_text(encoding="utf-8")
-        for item in ("17 17 * * *", "47 17 * * *",
-                     "state_branch=shadow/indonesia-kemhan",
-                     "state_branch=shadow/korea-policy-briefing"):
+        for item in ("47 17 * * *", "state_branch=shadow/korea-policy-briefing"):
             self.assertIn(item, raw)
+        for retired in ("17 17 * * *", "state_branch=shadow/indonesia-kemhan",
+                        "candidate-shadow-indonesia-", "DESK_INPUT=indonesia"):
+            self.assertNotIn(retired, raw)
+        self.assertIn("SHADOW_CRON_UTC=$cron_utc", raw)
         self.assertEqual(raw.count("scripts/check_korea_public_shadow_writer.py"), 2)
         self.assertEqual(raw.count("--stage pre_collect"), 1)
         self.assertEqual(raw.count("--stage pre_public_push"), 1)
