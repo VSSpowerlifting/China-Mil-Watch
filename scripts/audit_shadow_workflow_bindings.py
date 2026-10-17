@@ -15,7 +15,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCHEMA = "ipr-shadow-source-workflow-bindings/1"
-TRIGGERS = frozenset(("scheduled", "manual_only", "research_only"))
+TRIGGERS = frozenset(("scheduled", "manual_only", "research_only", "private_handoff_pending"))
 FIELDS = frozenset(("manifest", "source_slug", "state_branch", "workflow", "cron", "trigger"))
 NAME = re.compile(r"[a-z0-9][a-z0-9_-]*\Z")
 CRON = re.compile(r"([0-9*,-/]+ ){4}[0-9*,-/]+\Z")
@@ -155,6 +155,31 @@ def validate(root=ROOT, contract_path=None):
             require(workflow is None and branch is None and cron is None,
                     "research-only source must not claim a workflow or branch")
             classification = "no_collection_workflow_declared"
+        elif trigger == "private_handoff_pending":
+            # Narrow explicit exception: the Indonesia *historical public*
+            # source ref remains accessible, but the old public writer must
+            # be retired before the owner can authorize private collection.
+            # We cannot verify an external private repository from PR-only
+            # offline CI; this classification never claims running collection.
+            require(binding["manifest"] == "shadow/id_kemhan/manifest.json"
+                    and slug == "id_kemhan_news"
+                    and branch == "shadow/indonesia-kemhan"
+                    and workflow is None and cron is None,
+                    "private handoff limited to exact Indonesia Kemhan source")
+            legacy_path = root / ".github/workflows/indonesia_korea_shadow.yml"
+            require(legacy_path.is_file() and not legacy_path.is_symlink(),
+                    "missing Korea-only legacy workflow during private handoff")
+            raw = legacy_path.read_text(encoding="utf-8")
+            active = uncommented_workflow_text(raw)
+            require(workflow_crons(raw) == ["47 17 * * *"]
+                    and not contains_literal_branch(active, branch)
+                    and "candidate-shadow-indonesia-" not in active
+                    and not re.search(r"(?m)^\s*-\s*indonesia\s*$", active)
+                    and bool(re.search(
+                        r"(?m)^\s*korea\)\s+state_branch=shadow/korea-policy-briefing;"
+                        r"\s+cron_utc=17:47\s*;;\s*$", active)),
+                    "private Indonesia handoff still has a public writer or Korea cadence drift")
+            classification = "private_handoff_pending_external_runs_unverified"
         else:
             require(type(branch) is str and
                     re.fullmatch(r"shadow/[a-z0-9][a-z0-9_/-]*", branch),

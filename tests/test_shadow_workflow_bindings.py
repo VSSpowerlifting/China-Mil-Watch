@@ -147,7 +147,41 @@ class BindingContracts(unittest.TestCase):
         item["state_branch"] = "shadow/indonesia-kemhan"
         # Both branches occur in this shared YAML, but the actual case arm
         # must bind the Korea desk to the Korea branch and Korea cron.
-        with self.assertRaisesRegex(audit.BindingError, "routing mismatch"):
+        with self.assertRaisesRegex(audit.BindingError, "branch not in active|routing mismatch"):
+            self.report()
+
+    def test_indonesia_external_handoff_is_not_live_attestation(self):
+        record = next(x for x in self.original["sources"]
+                      if x["source_slug"] == "id_kemhan_news")
+        self.assertEqual(record["trigger"], "private_handoff_pending")
+        self.assertEqual(record["state_branch"], "shadow/indonesia-kemhan")
+        self.assertIsNone(record["workflow"])
+        self.assertIsNone(record["cron"])
+        self.assertEqual(record["evidence"], "private_handoff_pending_external_runs_unverified")
+        self.assertIs(record["run_attested"], False)
+        self.assertIs(record["production_eligible"], False)
+
+    def test_only_exact_indonesia_source_may_claim_pending_private_handoff(self):
+        philippines = next(x for x in self.config["sources"]
+                           if x["source_slug"] == "ph_afp_articles")
+        philippines.update(trigger="private_handoff_pending", workflow=None, cron=None)
+        with self.assertRaisesRegex(audit.BindingError, "exact Indonesia Kemhan"):
+            self.report()
+
+    def test_indonesia_legacy_writer_reintroduced_fails_handoff(self):
+        name = self.root / ".github/workflows/indonesia_korea_shadow.yml"
+        raw = name.read_text()
+        name.write_text(raw.replace("state_branch=shadow/korea-policy-briefing",
+                                    "state_branch=shadow/indonesia-kemhan", 1))
+        with self.assertRaisesRegex(audit.BindingError, "private Indonesia handoff still"):
+            self.report()
+
+    def test_indonesia_public_schedule_reintroduced_fails_handoff(self):
+        name = self.root / ".github/workflows/indonesia_korea_shadow.yml"
+        raw = name.read_text()
+        name.write_text(raw.replace("    - cron: '47 17 * * *'",
+                                    "    - cron: '17 17 * * *'\n    - cron: '47 17 * * *'", 1))
+        with self.assertRaisesRegex(audit.BindingError, "private Indonesia handoff still"):
             self.report()
 
     def test_vietnam_ministry_swapped_branch_fails_routing(self):

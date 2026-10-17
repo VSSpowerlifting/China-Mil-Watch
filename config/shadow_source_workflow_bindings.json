@@ -6,9 +6,9 @@
       "manifest": "shadow/id_kemhan/manifest.json",
       "source_slug": "id_kemhan_news",
       "state_branch": "shadow/indonesia-kemhan",
-      "workflow": ".github/workflows/indonesia_korea_shadow.yml",
-      "cron": "17 17 * * *",
-      "trigger": "scheduled"
+      "workflow": null,
+      "cron": null,
+      "trigger": "private_handoff_pending"
     },
     {
       "manifest": "shadow/jp_jcg/manifest.json",

@@ -1,19 +1,18 @@
-name: Indonesia and South Korea Shadow Collection
+name: South Korea Shadow Collection (legacy custody)
 
-# Owner-approved daily shadow cadence; separate owner merge activates scheduling.
-# State stays on each desk's separate orphan branch; no production deployment.
+# Preserve existing Korea collection and public branch exactly.
+# Indonesia source-history handoff is coordinated separately with the private vault;
+# NEVER remove source-history refs or change publication through this workflow.
 on:
   schedule:
-    - cron: '17 17 * * *'
     - cron: '47 17 * * *'
   workflow_dispatch:
     inputs:
       desk:
         type: choice
-        description: Shadow candidate to collect
+        description: Korea existing-state collector
         required: true
         options:
-          - indonesia
           - korea
       target_date:
         description: Logical UTC date (YYYY-MM-DD); empty means today's UTC date
@@ -24,7 +23,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: candidate-shadow-${{ inputs.desk || (github.event.schedule == '17 17 * * *' && 'indonesia' || github.event.schedule == '47 17 * * *' && 'korea' || 'invalid') }}
+  group: candidate-shadow-${{ inputs.desk || (github.event.schedule == '47 17 * * *' && 'korea' || 'invalid') }}
   cancel-in-progress: false
 
 jobs:
@@ -52,7 +51,6 @@ jobs:
           case "$EVENT_NAME" in
             schedule)
               case "$SCHEDULE_INPUT" in
-                '17 17 * * *') DESK_INPUT=indonesia ;;
                 '47 17 * * *') DESK_INPUT=korea ;;
                 *) echo "::error::unknown shadow schedule"; exit 1 ;;
               esac
@@ -61,7 +59,6 @@ jobs:
             *) echo "::error::unsupported collection event"; exit 1 ;;
           esac
           case "$DESK_INPUT" in
-            indonesia) state_branch=shadow/indonesia-kemhan; cron_utc=17:17 ;;
             korea) state_branch=shadow/korea-policy-briefing; cron_utc=17:47 ;;
             *) exit 1 ;;
           esac
@@ -196,21 +193,8 @@ jobs:
           if-no-files-found: warn
           retention-days: 90
 
-      # Keep Indonesia's pre-existing evidence contract out of this Korea
-      # privacy change; review that desk's retention in a separate phase.
-      - name: Preserve Indonesia complete attempt evidence
-        if: ${{ always() && env.SHADOW_DESK == 'indonesia' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: candidate-shadow-indonesia-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            ${{ runner.temp }}/candidate-state/state/
-            ${{ runner.temp }}/candidate-run.log
-          if-no-files-found: warn
-          retention-days: 90
-
       - name: Preserve unselected attempt log only
-        if: ${{ always() && env.SHADOW_DESK != 'korea' && env.SHADOW_DESK != 'indonesia' }}
+        if: ${{ always() && env.SHADOW_DESK != 'korea' }}
         uses: actions/upload-artifact@v4
         with:
           name: candidate-shadow-unselected-${{ github.run_id }}-${{ github.run_attempt }}
