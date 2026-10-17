@@ -2,12 +2,14 @@
 import hashlib
 import io
 import json
+import requests
 import sqlite3
 import tempfile
 import unittest
 import zipfile
 from datetime import date
 from pathlib import Path
+from unittest import mock
 
 from core.collection import status as st
 from core.collection.contract import CollectionWindow
@@ -198,6 +200,14 @@ class DapaPrivateCollection(unittest.TestCase):
                         adapter=adapter, dapa_original_access_authorized=True)
                     self.assertNotEqual(result["health"], "ok", result)
                     self.assertFalse((Path(td) / "held" / "shadow.db").exists())
+
+    def test_dapa_robots_timeout_never_inherits_mnd_retry(self):
+        adapter, session = instance()
+        with mock.patch.object(session, "request", side_effect=requests.Timeout()) as request:
+            result = adapter.discover(CollectionWindow(date(2026, 10, 8)))
+        self.assertEqual(result.status, st.TIMEOUT)
+        self.assertEqual(request.call_count, 1)
+        self.assertEqual(session.calls, [])
 
     def test_license_observations_never_grant_rights(self):
         self.assertEqual(observed_text_notice(article(license_type="1")),
