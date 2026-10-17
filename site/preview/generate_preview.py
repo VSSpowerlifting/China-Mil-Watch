@@ -2411,6 +2411,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     korea_public_rows = []
     korea_additional_rows = []
     korea_auto_official_rows = []
+    korea_production_link_count = 0
     korea_published_original_rows = []
     korea_english_publication_rows = []
     if korea_release_state is not None:
@@ -2430,8 +2431,16 @@ def build(out_dir: Path, title: str, db_path: Path,
             from core.korea_official_live_links import load_live_korea_official_links
             frozen_ids = {r["source_identity"] for r in (
                 korea_public_rows + korea_additional_rows)}
-            korea_auto_official_rows = load_live_korea_official_links(
-                db_path, exclude=frozen_ids)
+            # A verified production metadata admission may overlap the
+            # historic curated link directory. Count ALL authenticated DB
+            # admissions, suppressing the overlap only in the new-link rail.
+            # An empty rail is not evidence that the live feed is empty.
+            korea_admitted_official_rows = load_live_korea_official_links(db_path)
+            korea_production_link_count = len(korea_admitted_official_rows)
+            korea_auto_official_rows = [
+                item for item in korea_admitted_official_rows
+                if item["source_identity"] not in frozen_ids
+            ]
             from core.korea_published_originals import read_release_index
             korea_published_original_rows = read_release_index()
             from core.korea_english_publication import public_registry
@@ -3014,6 +3023,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
+                             korea_production_link_count=(korea_production_link_count if desk.slug == "korea" else 0),
                              korea_published_originals=(korea_published_original_rows if desk.slug == "korea" else []),
                              korea_english_publications=(korea_english_publication_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
