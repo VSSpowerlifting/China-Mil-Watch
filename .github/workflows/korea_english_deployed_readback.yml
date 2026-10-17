@@ -1,0 +1,74 @@
+name: Korea — approved English and analysis exact HTTPS readback
+
+# The editorial owner dispatch is the publication gate. This workflow adds
+# independent, read-only evidence that the live pages serve those exact bytes.
+# It must never publish unreviewed content or mutate a release registry.
+on:
+  pull_request:
+    paths:
+      - scripts/verify_korea_english_deployed_readback.py
+      - tests/test_korea_english_deployed_readback.py
+      - .github/workflows/korea_english_deployed_readback.yml
+  workflow_run:
+    workflows:
+      - Korea — Owner-reviewed English translation and analysis release
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  approved-english-readback-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Assert owner-approved source-to-HTML-to-HTTPS fail-closed contracts
+        run: python -m unittest -v tests.test_korea_english_deployed_readback
+      - name: No production or editorial publication mutations
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/             research/korea_english_publications.json             research/korea_published_original_texts.json
+
+  verify-actual-reviewed-english-https:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.event_name != 'workflow_run' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - name: Read current main after owner-reviewed release
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Read existing gh-pages branch; do not write to it
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: korea-reviewed-pages-readback
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python -m pip install -r requirements.txt
+      - name: Verify owner-reviewed source SHA, registry, rendered and live HTML bytes
+        run: |
+          python -m scripts.verify_korea_english_deployed_readback             --main-checkout .             --pages-checkout korea-reviewed-pages-readback             --require-https-readback --attempts 8
+      - name: Inspection changed no database, registry, source or site files
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/             research/korea_english_publications.json             research/korea_published_original_texts.json             research/korea_english_reviewed/
+          git -C korea-reviewed-pages-readback diff --exit-code --

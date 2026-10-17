@@ -337,6 +337,21 @@ class PreviewCase(unittest.TestCase):
     def page(self, name: str) -> str:
         return (self.out / name).read_text(encoding="utf-8")
 
+    def state_has_records_or_exact_zero(self, state: str) -> bool:
+        """Require correct nonnegative processing counts after the China cutover.
+
+        The state classification remains defined even when nobody currently
+        occupies it; a zero-row state must not require a fabricated record page.
+        """
+        data = getattr(self, "data", None)
+        if data is None:
+            data = gp.load_corpus(TRACKED_DB)
+        counts = {item["code"]: item["count"] for item in data["state_counts"]}
+        self.assertIn(state, counts)
+        live_count = sum(r["state"] == state for r in data["corpus"])
+        self.assertEqual(counts[state], live_count)
+        return live_count > 0
+
     def css_for(self, route="corpus.html") -> str:
         """Read the complete styles delivered to this route, after the split."""
         from core.frontend_budget import measure_page
@@ -1040,7 +1055,7 @@ class TestRenderedStructure(PreviewCase):
         self.assertNotIn("is a working name", html)
         self.assertNotIn("Release candidate", html)
         self.assertNotIn("not published", html)
-        self.assertIn("is an independent research project created and edited by",
+        self.assertIn("is an independent research project founded by",
                       html)
         self.assertIn('name="generator" content="Test Title '
                       '— indo-pacific-record build"', html)
@@ -1414,17 +1429,10 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         self.assertNotIn("desk--live", block)
 
         page = self.page("us-indopacific.html")
-        # Source-family status is conditional: a genuinely admitted BIS row
-        # expands the U.S. metadata feed without unblocking PACOM originals.
-        from core.us_bis_authenticated_metadata import load_public_links as bis_links
-        expected = (
-            "Official USCC, Treasury and BIS link metadata feeds live — PACOM collection blocked"
-            if bis_links(TRACKED_DB) else
-            "Official congressional and Treasury metadata feeds live — PACOM collection blocked"
-        )
-        self.assertIn(expected, page)
+        self.assertIn("Official USCC, Treasury and BIS link metadata feeds live — PACOM collection blocked", page)
         self.assertIn("It is not a feed of US defense releases.", page)
         self.assertIn("Collected official congressional metadata links", page)
+        self.assertIn("BIS official press reference", page)
         self.assertIn("Direct PACOM command collection", page)
         self.assertIn("Admitted U.S. source-body articles", page)
         self.assertNotIn("Nothing has been configured, enabled or collected.", page)
@@ -1434,14 +1442,23 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_the_maintainer_is_named_with_a_route_to_reach_them(self):
         html = self.page("about.html")
         self.assertIn(gp.MAINTAINER["name"], html)
-        self.assertIn(gp.MAINTAINER["role"], html)
+        self.assertIn('href="team.html"', html)
         self.assertIn(gp.MAINTAINER["email"], html)
-        self.assertIn(gp.MAINTAINER["linkedin"], html)
+        profile = self.page("authors/benjamin-yang.html")
+        self.assertIn("Founder &amp; Director of Research and Editorial", profile)
+        self.assertIn(gp.MAINTAINER["linkedin"], profile)
 
     def test_the_lead_edition_carries_a_byline(self):
-        self.assertIn("%s, %s" % (gp.MAINTAINER["name"],
-                                  gp.MAINTAINER["role"]),
-                      self.page("analysis.html"))
+        from bs4 import BeautifulSoup
+        from core.edition_identity import resolve_identity
+        lead = gp.load_editions(REPO_ROOT)[0]
+        original = json.loads((REPO_ROOT / "output/the-pla-watch/posts" /
+                               (lead["slug"] + ".json")).read_text())
+        identity = resolve_identity(original)
+        byline = BeautifulSoup(self.page("analysis.html"), "html.parser").select_one(
+            ".briefs-lead-byline").get_text()
+        self.assertEqual(byline, "%s, %s" % (identity["author_name"], identity["author_title"]))
+        self.assertNotIn(gp.MAINTAINER["role"], byline)
 
     # ── Typography ──────────────────────────────────────────────────────
 
@@ -1539,15 +1556,19 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
                       html)
         self.assertIn("it is not an analysis queue.", html)
 
-    def test_reader_facing_counts_use_thousands_separators(self):
+    def test_reader_facing_counts_reflect_current_corpus_exactly(self):
         data = gp.load_corpus(TRACKED_DB)
         total = data["totals"]["articles"]
-        self.assertGreaterEqual(total, 1000)
+        self.assertEqual(total, self.corpus_size)
+        self.assertGreater(total, 0)
         for page in ("china.html", "about.html"):
             with self.subTest(page=page):
                 html = self.page(page)
+                # Publishing must reflect the active post-retirement corpus;
+                # 873 has no separator; 1,234 must have one when it grows.
                 self.assertIn("{:,}".format(total), html)
-                self.assertNotRegex(html, r">\s*%d\s*<" % total)
+                if total >= 1000:
+                    self.assertNotRegex(html, r">\s*%d\s*<" % total)
 
     def test_ids_dates_and_hashes_are_not_comma_formatted(self):
         """Run ids, dates and hashes are identifiers, not quantities."""
@@ -1660,8 +1681,36 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
             r"\b(analysed|labelled|labelling|summarised|organised|"
             r"behaviour|colour|defence|centre|programme|judgement)\b",
             re.I)
+        # Owner-reviewed, immutable bilingual source/analysis fields are
+        # editorial payloads, not the site's template/chrome copy. Never
+        # silently modify those SHA-pinned payloads to satisfy this site
+        # style guard. Remove only the *exact* registered approved values;
+        # unregistered machine drafts receive no exemption.
+        from core.korea_english_publication import public_registry
+        reviewed = {
+            row["source_identity"].split(":")[1]: packet
+            for row, packet, _ in public_registry()
+        }
         for name, html in self._all_html().items():
-            text = re.sub(r"<[^>]+>", " ", _authored_text(html, name))
+            own = _authored_text(html, name)
+            match = re.fullmatch(
+                r"korea-(analysis|translations)/([0-9]{9})\.html", name)
+            if match and match.group(2) in reviewed:
+                packet = reviewed[match.group(2)]
+                if match.group(1) == "analysis":
+                    analysis = packet["analysis"]
+                    values = [
+                        analysis["heading_en"], analysis["thesis_en"],
+                        analysis["limitations_en"],
+                    ]
+                    for claim in analysis["claims"]:
+                        values.extend((claim["heading_en"], claim["analysis_en"]))
+                else:
+                    values = [p["text_en"] for p in packet["translations"]]
+                for value in sorted(set(values), key=len, reverse=True):
+                    own = own.replace(str(markupsafe.escape(value)), " ")
+                    own = own.replace(value, " ")
+            text = re.sub(r"<[^>]+>", " ", own)
             for proper_noun in OFFICIAL_NAMES_WITH_BRITISH_SPELLING:
                 text = text.replace(proper_noun, " ")
             with self.subTest(page=name):
@@ -2094,12 +2143,22 @@ class TestRecordPages(PreviewCase):
     def test_every_processing_state_has_a_rendered_page(self):
         for state in gp.STATE_ORDER:
             with self.subTest(state=state):
+                if not self.state_has_records_or_exact_zero(state):
+                    # No analysis_incomplete record exists after cutover;
+                    # the zero-state label remains in the structured index.
+                    index = json.loads((self.out / "corpus-index.json").read_text())
+                    self.assertIn({"code": state, "count": 0,
+                                   "label": gp.STATE_LABELS[state]},
+                                  index["states"])
+                    continue
                 html = self.record(self.first_in_state(state))
                 self.assertIn(gp.STATE_LABELS[state], html)
 
     def test_records_without_english_claim_no_translation_or_summary(self):
         for state in ("awaiting_screening", "not_selected",
                       "analysis_incomplete"):
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             rec_id = self.first_in_state(state)
             html = self.record(rec_id)
             with self.subTest(state=state):
@@ -2109,6 +2168,8 @@ class TestRecordPages(PreviewCase):
     def test_an_unanalyzed_record_is_never_called_not_flagged(self):
         for state in ("awaiting_screening", "not_selected",
                       "analysis_incomplete"):
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertNotIn("Model-flagged", html)
@@ -2201,6 +2262,8 @@ class TestRecordPages(PreviewCase):
 
     def test_exactly_one_h1_per_record_page(self):
         for state in gp.STATE_ORDER:
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertEqual(len(re.findall(r"<h1(?:\s[^>]*)?>", html)), 1)
@@ -2225,7 +2288,7 @@ class TestRecordPages(PreviewCase):
         self.assertNotIn("tabindex=\"-1\"", html)
 
     def test_urls_and_hashes_can_wrap_at_320px(self):
-        css = self.css_for("record/1.html")
+        css = self.css_for("record/%d.html" % self.ids[0])
         rule = re.search(r"\.token,\s*\.prov-value\s*\{([^{}]*)\}", css)
         self.assertIsNotNone(rule)
         self.assertIn("overflow-wrap", rule.group(1))
@@ -2251,7 +2314,9 @@ class TestRecordPages(PreviewCase):
                     html, r'<p class="cite-text" id="%s">[^<]+</p>' % anchor)
 
     def test_slate_blue_marks_only_machine_generated_material(self):
-        css = self.css_for("record/1.html")
+        # A record with ID 1 was retired in the authorized China cutover.
+        # Exercise the delivered CSS of a currently rendered analyzed record.
+        css = self.css_for("record/%d.html" % self.first_in_state("analyzed"))
         # The slate-blue family moved with the palette; what may not move is the
         # discipline. One token, reserved for machine output.
         self.assertIn("--machine-ink:       #446C79", css)
@@ -2850,11 +2915,21 @@ class TestRecordSemantics(PreviewCase):
                 authored = stored.sub(" ", caveat.sub(" ", section))
                 self.assertIsNone(claim.search(authored))
 
-    def test_noisy_stored_text_is_preserved_byte_for_byte(self):
-        """Record 2579's capture carries unrelated page furniture. It stays."""
-        rec = self.data["corpus"] and next(
-            r for r in self.data["corpus"] if r["id"] == 2579)
-        html = self.record(2579)
+    def test_retained_stored_text_is_preserved_byte_for_byte(self):
+        """Text fidelity stays mandatory even after noisy record 2579 retired.
+
+        Select the longest multilined source held in the active corpus. Do not
+        recreate the removed original merely to satisfy a former fixture.
+        """
+        self.assertNotIn(2579, {r["id"] for r in self.data["corpus"]})
+        # After the source cull the surviving captures are single-line.
+        # Requiring a multiline source would invent a non-existent specimen.
+        # Exact text preservation is still tested on the LONGEST real body.
+        candidates = [r for r in self.data["corpus"]
+                      if r.get("text_original")]
+        self.assertTrue(candidates, "retained source corpus has no source text")
+        rec = max(candidates, key=lambda r: len(r["text_original"]))
+        html = self.record(rec["id"])
         for para in [p.strip() for p in rec["text_original"].split("\n")
                      if p.strip()]:
             with self.subTest(para=para[:40]):
@@ -3147,10 +3222,28 @@ class TestCompactQueryIndex(PreviewCase):
                          sorted(r["id"] for r in self.data["corpus"]))
         self.assertEqual(len(ids), self.snapshot["expected_records"])
 
-    def test_the_six_missing_ids_remain_absent(self):
+    def test_historical_gaps_and_4400_retired_ids_remain_absent(self):
         ids = {row[0] for row in self.index["records"]}
         missing = set(range(1, max(ids) + 1)) - ids
-        self.assertEqual(len(missing), 6)
+        # Before October 2026 there were six natural missing identifiers.
+        # The owner-approved China cutover then tombstoned precisely 4,400
+        # additional former article IDs; none may be reused or rehosted.
+        from scripts.reconcile_db import read_only
+        with read_only(TRACKED_DB) as con:
+            retired = {
+                row[0] for row in con.execute(
+                    "SELECT original_article_id FROM retired_article_urls"
+                )
+            }
+        self.assertEqual(len(retired), 4400)
+        self.assertTrue(retired <= missing,
+                        "a tombstoned ID is being advertised as an active record")
+        self.assertEqual(len(missing - retired), 6,
+                         "historical non-retirement gaps changed unexpectedly")
+        self.assertFalse(ids & retired)
+        for ident in retired:
+            self.assertFalse((self.out / "record" / ("%d.html" % ident)).exists(),
+                             "retired source HTML was regenerated")
 
     def test_snapshot_date_and_count_match_the_declaration(self):
         self.assertEqual(self.index["snapshot"]["date"],
@@ -3264,9 +3357,19 @@ class TestCompactQueryIndex(PreviewCase):
         for key, counts in expected.items():
             offered = {e["code"]: e["count"] for e in self.index[key]}
             with self.subTest(facet=key):
-                self.assertEqual(offered, dict(counts))
-                for code, n in offered.items():
-                    self.assertGreater(n, 0)
+                if key == "states":
+                    # State indices are stable: even the currently empty
+                    # analysis_incomplete state must occupy its real index.
+                    # An empty state is accurately displayed as 0.
+                    self.assertEqual(
+                        offered, {code: counts.get(code, 0)
+                                  for code in gp.STATE_ORDER})
+                    for code, n in offered.items():
+                        self.assertGreaterEqual(n, 0)
+                else:
+                    self.assertEqual(offered, dict(counts))
+                    for code, n in offered.items():
+                        self.assertGreater(n, 0)
 
     def test_only_sources_holding_records_reach_the_source_facet(self):
         """
@@ -3557,7 +3660,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
         self.assertEqual(labels, ["Records", "Briefs", "Desks", "Sources",
-                                  "Coverage", "Methodology", "About"])
+                                  "Coverage", "Methodology", "Team", "About"])
         self.assertNotIn("Corpus", labels)
         self.assertNotIn("Archive", labels)
 
@@ -5139,7 +5242,7 @@ class TestSnapshotScopedCitations(PreviewCase):
         self.assertEqual(
             gp.corpus_citation("Test Title", gp.DECLARED_SNAPSHOT),
             "Test Title. Research Atlas corpus. Snapshot — "
-            "%s. %s records. Benjamin Yang, Creator and Editor."
+            "%s. %s records. Benjamin Yang, Founder & Director of Research and Editorial."
             % (gp.DECLARED_SNAPSHOT["date"],
                "{:,}".format(gp.DECLARED_SNAPSHOT["expected_records"])))
 
@@ -5202,10 +5305,16 @@ class TestSnapshotScopedCitations(PreviewCase):
                     self.assertNotIn(english, cite["source_text"])
         # The negative check must cover the bulk of the analyzed set, not a
         # handful of records that happened to qualify.
-        self.assertGreater(compared, 1_000)
+        # Once 4,400 retired sources were removed, a fixed 1,000-example
+        # threshold exceeded the entire active 873-record corpus. Require
+        # coverage of a MAJORITY of reviewed (analyzed) source titles.
+        analyzed_count = sum(r["state"] == "analyzed" for r in self.corpus)
+        self.assertGreater(compared, analyzed_count // 2)
 
     def test_the_rendered_source_text_block_quotes_the_original_title(self):
         for state in gp.STATE_ORDER:
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             rec_id = self.first_in_state(state)
             rec = self.by_id[rec_id]
             html = self.record(rec_id)
@@ -5237,6 +5346,8 @@ class TestSnapshotScopedCitations(PreviewCase):
         ):
             with self.subTest(state=state):
                 self.assertIn(expected, notes[state])
+                if not self.state_has_records_or_exact_zero(state):
+                    continue
                 html = self.record(self.first_in_state(state))
                 self.assertIn(markupsafe.escape(notes[state]), html)
                 # and no other state's note
@@ -5247,6 +5358,8 @@ class TestSnapshotScopedCitations(PreviewCase):
     def test_an_unscreened_record_is_never_told_it_was_analyzed(self):
         for state in ("not_selected", "awaiting_screening",
                       "analysis_incomplete"):
+            if not self.state_has_records_or_exact_zero(state):
+                continue
             html = self.record(self.first_in_state(state))
             with self.subTest(state=state):
                 self.assertNotIn("machine-generated and have not been reviewed",
@@ -5338,8 +5451,12 @@ class TestSnapshotScopedCitations(PreviewCase):
                                     gp.DECLARED_SNAPSHOT)]
         texts += [gp.edition_citation(e) for e in self.editions]
         for state in gp.STATE_ORDER:
-            cite = gp.record_citation(self.by_id[self.first_in_state(state)],
-                                      "Test Title",
+            # Empty active states still require safe synthetic citation
+            # rendering; do not manufacture public article pages for them.
+            rec = (self.by_id[self.first_in_state(state)]
+                   if self.state_has_records_or_exact_zero(state)
+                   else _fake_record(state=state))
+            cite = gp.record_citation(rec, "Test Title",
                                       gp.DECLARED_SNAPSHOT)
             texts += [cite["source_text"], cite["as_held"], cite["note"]]
         for text in texts:
@@ -6341,8 +6458,12 @@ class TestStop4RoutesAreIntact(PreviewCase):
         from core.korea_english_publication import public_registry
         registered_korean_originals = len(read_release_index())
         reviewed_english_pages = 2 * len(public_registry())
+        from core.staff_directory import load_staff
+        staff = load_staff(REPO_ROOT / "site/preview/staff.json")
+        self.assertEqual(sorted(q.name for q in (self.out / "authors").glob("*.html")),
+                         sorted(p["slug"] + ".html" for p in staff))
         self.assertEqual(len(files),
-                         self.corpus_size + len(top) + len(sources)
+                         self.corpus_size + len(top) + len(sources) + len(staff)
                          + len(covers) + len(atmosphere)
                          + registered_korean_originals + reviewed_english_pages
                          + len([q for q in (self.out / "assets").rglob("*") if q.is_file()]))

@@ -137,5 +137,94 @@ class OwnerEnglishAdmissionTests(unittest.TestCase):
         self.assertEqual(pub.owner_event(env),"38839142468")
 
 
+class FirstRealKoreaEnglishPacketTests(unittest.TestCase):
+    """Release-specific validation, without granting publication authority."""
+
+    def test_approved_first_real_packet_is_source_exact_and_unpublished_until_dispatch(self):
+        from core.korea_published_originals import read_release_index
+        from core.korea_english_publication import verify_review
+
+        root = Path(__file__).resolve().parents[1]
+        path = root / "research/korea_english_reviewed/156784297.json"
+        packet = json.loads(path.read_text(encoding="utf-8"))
+        source = next(
+            r for r in read_release_index()
+            if r["source_identity"] == "korea-policy:156784297"
+        )
+        self.assertEqual(source["original_text_sha256"],
+            "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284")
+        self.assertEqual(packet["review"]["status"], "editor_approved")
+        self.assertEqual(packet["review"]["reviewer"], "VSSpowerlifting")
+        self.assertTrue(all(packet["review"][flag] is True for flag in (
+            "translation_semantics_checked", "analysis_fact_checked",
+            "attribution_checked", "source_limitations_checked",
+        )))
+        receipt = verify_review(packet, source)
+        self.assertEqual(receipt["paragraphs"], 22)
+        self.assertEqual(receipt["claims"], 5)
+        self.assertFalse(receipt["machine_only"])
+        self.assertFalse(receipt["editorial_meaning_verified_by_code"])
+        self.assertEqual(receipt["review_sha256"],
+            "d58554299f26ede9d14c5e00337a3f52dd39c9a0e816dc6f1cd4717b73abe5ea")
+        # Merely staging this approved packet does not grant public release;
+        # the owner-authenticated workflow dispatch and SHA remain mandatory.
+        for published, _, _ in public_registry():
+            if published["source_identity"] == "korea-policy:156784297":
+                self.assertEqual(published["review_sha256"],
+                                 receipt["review_sha256"])
+
+
+class TwoCorrectedKoreaPacketsTests(unittest.TestCase):
+    """Prepared packets remain source-pinned before AND after owner dispatch."""
+
+    def test_corrected_october_sixteen_english_remains_exact_after_owner_dispatch(self):
+        from core.korea_published_originals import read_release_index
+        from core.korea_english_publication import verify_review
+
+        root = Path(__file__).resolve().parents[1]
+        known = {row["source_identity"]: row for row in read_release_index()}
+        expected = {
+            "156785286": (
+                "cfa3c915731df8ef506d72ebcb0328886a7d5bcd76270adcbb76f20bea7fb8c0",
+                "c768a2e7886cf257d05f062bec940c55c1018d7c85faeafe1e79907cfaaf8bbd",
+                42, 6, 13,
+            ),
+            "156785444": (
+                "6a6efbc65efb614857ce1a90863a76ea074c35cac6cb8482c92d5f5ff0c886b6",
+                "02754137f5f62048949b88fb52a70f77bab21b83f92a721df5fd048229030a24",
+                22, 4, 8,
+            ),
+        }
+        published = {row["source_identity"]: row for row, _, _ in public_registry()}
+        for news_id, (source_sha, review_sha, n_trans, n_claims, n_quotes) in expected.items():
+            with self.subTest(news_id=news_id):
+                identity = "korea-policy:" + news_id
+                self.assertIn(identity, known)
+                # Before owner dispatch this identity is absent. Afterward it
+                # is accepted ONLY if its exact owner-approved packet SHA is
+                # registered with a positive authenticated workflow run.
+                if identity in published:
+                    self.assertEqual(published[identity]["review_sha256"], review_sha)
+                    self.assertEqual(published[identity]["source_sha256"], source_sha)
+                    self.assertRegex(published[identity]["owner_run_id"], r"^[0-9]{3,24}$")
+                self.assertEqual(known[identity]["original_text_sha256"], source_sha)
+                packet = json.loads((root / "research/korea_english_reviewed" /
+                                    (news_id + ".json")).read_text(encoding="utf-8"))
+                self.assertEqual(packet["review"]["status"], "editor_approved")
+                self.assertEqual(packet["review"]["reviewer"], "VSSpowerlifting")
+                for key in ("translation_semantics_checked", "analysis_fact_checked",
+                            "attribution_checked", "source_limitations_checked"):
+                    self.assertIs(packet["review"][key], True)
+                verified = verify_review(packet, known[identity])
+                self.assertEqual(verified["review_sha256"], review_sha)
+                self.assertFalse(verified["machine_only"])
+                self.assertFalse(verified["editorial_meaning_verified_by_code"])
+                self.assertEqual(verified["paragraphs"], n_trans)
+                self.assertEqual(verified["claims"], n_claims)
+                self.assertEqual(sum(len(c["source_quotes_ko"])
+                                     for c in packet["analysis"]["claims"]), n_quotes)
+                self.assertEqual(packet["source_sha256"], source_sha)
+
+
 if __name__=="__main__":
     unittest.main()

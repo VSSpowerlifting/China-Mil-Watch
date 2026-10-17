@@ -68,6 +68,17 @@ def make_review():
     }
 
 
+def model_source_ids(analysis):
+    """Simulate model ID selections, not model-written Korean quotation text."""
+    shape = json.loads(json.dumps(analysis, ensure_ascii=False))
+    for claim in shape["claims"]:
+        claim["source_quote_ids"] = [
+            "P%02dQ001" % n for n in claim["source_indices"]
+        ]
+        del claim["source_quotes_ko"]
+    return shape
+
+
 class ReviewTests(unittest.TestCase):
     def test_fully_source_pinned_structure_can_be_rendered(self):
         review=make_review()
@@ -81,6 +92,56 @@ class ReviewTests(unittest.TestCase):
         self.assertIn("claims attributed",b.lower())
         self.assertIn("연합훈련",b)
         self.assertIn("Limits of the evidence",b)
+
+    def test_editor_approved_pages_have_ipr_shell_and_public_canonical(self):
+        review, source = make_review(), make_source()
+        for kind, renderer, route in (
+            ("translation", render_translation,
+             "korea-translations/156784297.html"),
+            ("analysis", render_analysis,
+             "korea-analysis/156784297.html"),
+        ):
+            with self.subTest(page=kind):
+                html = renderer({}, review, source)
+                url = "https://indopacificrecord.org/" + route
+                self.assertIn('class="masthead', html)
+                self.assertIn('<footer class="site">', html)
+                self.assertIn('href="#main"', html)
+                self.assertIn('id="main"', html)
+                self.assertIn('<meta name="description" content="Official defense and security texts, preserved as published and analyzed in context.">', html)
+                self.assertIn('<link rel="canonical" href="' + url + '">', html)
+                self.assertIn('<meta property="og:url" content="' + url + '">', html)
+                self.assertNotIn('content="noindex, nofollow"', html)
+                self.assertIn(source["original_text_sha256"], html)
+                self.assertIn('href="../korea-originals/156784297.html"', html)
+                self.assertIn('href="' + source["official_url"] + '"', html)
+                self.assertIn('rel="noopener noreferrer"', html)
+                self.assertNotIn("<iframe", html)
+                self.assertNotIn(".hwpx", html)
+
+    def test_private_english_pages_remain_noindex_and_source_escaped(self):
+        review, source = make_review(), make_source()
+        review["translations"][0]["text_en"] = '<script>bad()</script>'
+        for renderer in (render_translation, render_analysis):
+            with self.subTest(renderer=renderer.__name__):
+                html = renderer({}, review, source, site_origin=None)
+                self.assertIn('content="noindex, nofollow"', html)
+                self.assertNotIn('rel="canonical"', html)
+                self.assertNotIn('property="og:url"', html)
+                self.assertNotIn("<script>", html)
+                self.assertNotIn(".hwpx", html)
+        self.assertIn("&lt;script&gt;", render_translation({}, review, source,
+                                                          site_origin=None))
+
+    def test_reviewed_page_cannot_be_indexed_at_unapproved_origin(self):
+        with self.assertRaisesRegex(KoreaEnglishHold,
+                                    "korea_english_page_origin_unrecognized"):
+            render_translation({}, make_review(), make_source(),
+                               site_origin="https://example.invalid")
+        with self.assertRaisesRegex(KoreaEnglishHold,
+                                    "korea_english_page_origin_unrecognized"):
+            render_analysis({}, make_review(), make_source(),
+                            site_origin="https://example.invalid")
 
     def test_editor_review_required_for_public(self):
         r=make_review()
@@ -136,7 +197,9 @@ class ReviewTests(unittest.TestCase):
         tr=render_translation({},r,make_source())
         an=render_analysis({},r,make_source())
         self.assertNotIn("<script>",tr)
-        self.assertNotIn("<img ",an)
+        # Shared publication chrome legitimately contains <img> identity assets.
+        # Forbid the injected element, not the standard site logo.
+        self.assertNotIn("<img src=x",an)
         self.assertIn("&lt;script&gt;",tr)
         self.assertIn("&lt;img ",an)
 
@@ -224,22 +287,138 @@ class ReviewTests(unittest.TestCase):
             draft.response_json(client,system="strict",prompt="original")
         self.assertEqual(client.messages.create.call_count,1)
 
-    def test_model_draft_generation_is_private_and_unreviewed(self):
-        source=make_source()
-        original=original_paragraphs(TEXT)
-        review=make_review()
-        response_calls=[]
-        def fake_response(client,*,system,prompt,max_tokens=6500):
-            response_calls.append(system)
-            if len(response_calls)==1:
-                return {"translations":review["translations"]}
-            return review["analysis"]
-        with patch.object(draft,"response_json",side_effect=fake_response):
-            machine,receipt=draft.draft(source,client=object())
-        self.assertEqual(len(response_calls),2)
-        self.assertEqual(machine["review"]["status"],"machine_unreviewed")
-        self.assertTrue(receipt["machine_only"])
+    def test_model_draft_generation_is_private_and_source_owned(self):
+        source = make_source()
+        review = make_review()
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append((system, prompt))
+            return ({"translations": review["translations"]}
+                    if len(calls) == 1
+                    else model_source_ids(review["analysis"]))
+        with patch.object(draft, "response_json", side_effect=fake):
+            machine, receipt = draft.draft(source, client=object())
+        self.assertEqual(len(calls), 2)
+        self.assertIn("source_quote_catalog", calls[1][1])
+        self.assertNotIn("source_quotes_ko", calls[1][0])
+        self.assertEqual(machine["review"]["status"], "machine_unreviewed")
         self.assertFalse(machine["review"]["analysis_fact_checked"])
+        self.assertTrue(receipt["machine_only"])
+        ko = original_paragraphs(TEXT)
+        for claim in machine["analysis"]["claims"]:
+            for index, quote in zip(claim["source_indices"],
+                                    claim["source_quotes_ko"]):
+                self.assertIn(quote, ko[index - 1])
+                self.assertGreaterEqual(len(quote), 8)
+                self.assertLessEqual(len(quote), 240)
+
+    def test_invented_quote_id_stops_without_email_ready_draft(self):
+        shape = make_review()
+        invalid = model_source_ids(shape["analysis"])
+        invalid["claims"][0]["source_quote_ids"] = ["INVENTED_ID"]
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append(True)
+            return ({"translations": shape["translations"]}
+                    if len(calls) == 1 else invalid)
+        with patch.object(draft, "response_json", side_effect=fake):
+            with self.assertRaisesRegex(
+                    KoreaEnglishHold, "^korea_machine_quote_selection_invalid$"):
+                draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 2)
+
+    def test_cross_paragraph_quote_id_stops_without_repair(self):
+        shape = make_review()
+        invalid = model_source_ids(shape["analysis"])
+        invalid["claims"][0]["source_quote_ids"] = ["P02Q001"]
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append(True)
+            return ({"translations": shape["translations"]}
+                    if len(calls) == 1 else invalid)
+        with patch.object(draft, "response_json", side_effect=fake):
+            with self.assertRaisesRegex(
+                    KoreaEnglishHold, "^korea_machine_quote_selection_invalid$"):
+                draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 2)
+
+    def test_model_cannot_inject_korean_quote_body_or_extra_fields(self):
+        shape = model_source_ids(make_review()["analysis"])
+        shape["claims"][0]["source_quotes_ko"] = ["UNTRUSTED_QUOTE"]
+        catalog = draft.source_quote_catalog(original_paragraphs(TEXT))
+        with self.assertRaisesRegex(
+                KoreaEnglishHold, "^korea_machine_claim_quote_ids_invalid$"):
+            draft.resolve_quote_selections(shape, catalog)
+
+    def test_catalog_exact_windows_preserve_korean_whitespace(self):
+        original = "한글  문장.  " * 44
+        catalog = draft.source_quote_catalog([original, "끝"])
+        self.assertGreaterEqual(len(catalog), 3)
+        self.assertEqual({entry["index"] for entry in catalog.values()}, {1})
+        for entry in catalog.values():
+            self.assertIn(entry["text_ko"], original)
+            self.assertTrue(8 <= len(entry["text_ko"]) <= 240)
+
+    def test_reordered_source_indices_still_fail_original_validator(self):
+        shape = model_source_ids(make_review()["analysis"])
+        shape["claims"][0]["source_indices"] = [2, 1]
+        shape["claims"][0]["source_quote_ids"] = ["P02Q001", "P01Q001"]
+        converted = draft.resolve_quote_selections(
+            shape, draft.source_quote_catalog(original_paragraphs(TEXT)))
+        review = make_review()
+        review["analysis"] = converted
+        with self.assertRaisesRegex(
+                KoreaEnglishHold, "^korea_english_claim_indices_invalid$"):
+            verify_review(review, make_source(), allow_machine=True)
+
+    def test_unsupported_claim_type_gets_one_source_only_retry(self):
+        shape = make_review()
+        invalid = model_source_ids(shape["analysis"])
+        invalid["claims"][0]["assessment_type"] = "independently_verified"
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append((system, prompt))
+            if len(calls) == 1:
+                return {"translations": shape["translations"]}
+            return invalid if len(calls) == 2 else model_source_ids(shape["analysis"])
+        with patch.object(draft, "response_json", side_effect=fake):
+            candidate, receipt = draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 3)
+        self.assertNotIn("independently_verified", calls[2][1])
+        self.assertIn("source_quote_catalog", calls[2][1])
+        self.assertTrue(receipt["machine_only"])
+        self.assertEqual(candidate["review"]["status"], "machine_unreviewed")
+        self.assertFalse(candidate["review"]["analysis_fact_checked"])
+
+    def test_second_unsupported_type_still_fails_closed(self):
+        shape = make_review()
+        invalid = model_source_ids(shape["analysis"])
+        invalid["claims"][0]["assessment_type"] = "independently_verified"
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append(True)
+            return ({"translations": shape["translations"]}
+                    if len(calls) == 1 else invalid)
+        with patch.object(draft, "response_json", side_effect=fake):
+            with self.assertRaisesRegex(
+                    KoreaEnglishHold, "^korea_english_unsupported_analysis_type$"):
+                draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 3)
+
+    def test_unrelated_invalid_analysis_never_gets_model_retry(self):
+        shape = make_review()
+        invalid = model_source_ids(shape["analysis"])
+        invalid["thesis_en"] = ""
+        calls = []
+        def fake(client, *, system, prompt, max_tokens=6500):
+            calls.append(True)
+            return ({"translations": shape["translations"]}
+                    if len(calls) == 1 else invalid)
+        with patch.object(draft, "response_json", side_effect=fake):
+            with self.assertRaisesRegex(
+                    KoreaEnglishHold, "^korea_english_thesis_invalid$"):
+                draft.draft(make_source(), client=object())
+        self.assertEqual(len(calls), 2)
 
     def test_model_draft_bogus_alignment_does_not_reach_analyst_call(self):
         r=make_review()

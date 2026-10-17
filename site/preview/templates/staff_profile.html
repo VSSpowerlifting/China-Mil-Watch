@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}{{ member.name }} — {{ title }}{% endblock %}
+{% block description %}{{ member.name }}, {{ member.role }} at Indo-Pacific Record. Biography and explicitly credited published work.{% endblock %}
+{% block stylesheets %}{{ super() }}<link rel="stylesheet" href="../staff.css">{% endblock %}
+{% block head_scripts %}{% if staff_schema %}<script type="application/ld+json">{{ staff_schema|tojson }}</script>{% endif %}{% endblock %}
+{% block content %}
+<nav class="staff-back" aria-label="Breadcrumb"><a href="../team.html">← Editorial team</a></nav>
+<header class="page-head staff-person-head">
+<h1 class="page-name">{{ member.name }}</h1>
+<p class="staff-person-role">{{ member.role }}</p>
+</header>
+<div class="staff-person">
+<section class="prose" aria-label="Biography">
+<h2 class="plain">About</h2>
+<p>{{ member.bio }}</p>
+{% if member.links %}<p class="staff-outbound">{% for label, href in member.links.items() %}<a href="{{ href }}" rel="noopener noreferrer">{{ label }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+</section>
+{% if works.authored %}
+<section class="staff-work" aria-labelledby="staff-authored">
+<h2 class="plain" id="staff-authored">Authored Briefs</h2>
+<ol class="staff-work-list">
+{% for item in works.authored %}<li><a href="../{{ item.url }}">{{ item.title }}</a><span>Week ending {{ item.date|reader_date }}</span></li>{% endfor %}
+</ol></section>
+{% endif %}
+{% if works.contributed %}
+<section class="staff-work" aria-labelledby="staff-contributed">
+<h2 class="plain" id="staff-contributed">Research contributions</h2>
+<ol class="staff-work-list">
+{% for item in works.contributed %}<li><a href="../{{ item.url }}">{{ item.title }}</a><span>{{ item.credit_role }} · Week ending {{ item.date|reader_date }}</span></li>{% endfor %}
+</ol></section>
+{% endif %}
+{% if not works.authored and not works.contributed %}
+<p class="staff-boundary">Publications appear here only when their published credits explicitly name this person.</p>
+{% endif %}
+</div>
+{% endblock %}

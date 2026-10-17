@@ -1,0 +1,42 @@
+name: Korea — accurate public production counts and content lanes
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+      - tests/test_korea_visible_production_index.py
+      - .github/workflows/korea_visible_live_count_contracts.yml
+      - .github/workflows/korea_verified_official_link_production.yml
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-production-index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Install existing site and source-index dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Prove live SQLite count, rendered text, no duplicate source URLs
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python -m unittest -v \
+            tests.test_korea_visible_production_index \
+            tests.test_korea_official_index \
+            tests.test_korea_official_metadata_auto_admission
+      - name: Do not mutate real archive, production DB, or published state
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ research/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ research/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
