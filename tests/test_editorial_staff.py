@@ -58,8 +58,11 @@ def test_public_roster_is_exact_and_domain_focused():
     assert "Vietnam Research Desk" in dylan["bio"]
     founder = next(p for p in people if p["slug"] == "benjamin-yang")
     assert founder["links"]["LinkedIn"] == "https://www.linkedin.com/in/benjamin-w-yang/"
-    assert "Strategic Materials Policy Tracker" in founder["bio"]
-    assert "The Diplomat" in founder["bio"]
+    assert "Indo-Pacific Record" in founder["bio"]
+    assert "primary-source evidence" in founder["bio"]
+    assert "Strategic Materials Policy Tracker" not in founder["bio"]
+    assert "The Diplomat" not in founder["bio"]
+    assert "The Globe" not in founder["bio"]
     christin = next(p for p in people if p["slug"] == "christin-sawyer")
     assert christin["links"]["LinkedIn"] == "https://www.linkedin.com/in/christin-sawyer-b4b499339/"
     assert "International Affairs" in christin["bio"]
