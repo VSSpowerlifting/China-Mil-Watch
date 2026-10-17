@@ -57,7 +57,7 @@
         <label for="f-desk">Desk</label>
         <select id="f-desk" name="desk">
           <option value="">All desks</option>
-          {% for d in desks %}<option value="{{ d.slug }}">{{ d.name }} ({{ d.record_count | count }})</option>{% endfor %}
+          {% for d in desks %}<option value="{{ d.slug }}">{{ d.name }} ({{ d.record_count | count }} preserved)</option>{% endfor %}
         </select>
       </div>
       <div class="finder-field">
@@ -122,7 +122,7 @@
 
     <details class="finder-about">
       <summary>Search scope and counts</summary>
-    <p id="research-help">Title contains keeps literal title matching. Keywords require every term or quoted phrase. All published material adds public official-link references, registered originals, reviewed English artifacts and human-controlled analysis. Archive dates remain source-stated. IPR publication dates come from public release records; unrecorded dates stay unrecorded. Processing state, institution, original language and source-trail filters apply to archive records.</p>
+    <p id="research-help">Title contains keeps literal title matching. Keywords require every term or quoted phrase. All published material adds public official-link references, registered originals, reviewed English artifacts and human-controlled analysis. Archive dates remain source-stated. IPR publication dates come from public release records; unrecorded dates stay unrecorded. Dates use YYYY-MM-DD. Processing state, institution, original language and source-trail filters apply to archive records. Search counts are documents, not events or independent corroboration.</p>
     <p class="finder-note">Archive title search covers titles only — the English title where one
     exists, and the original title always. It does not search machine summaries
     or stored source text.</p>
@@ -147,13 +147,14 @@ accessible through the week-by-week browse above.</p>
 
 <details id="research-list" class="archive-research-list" hidden>
   <summary>Research list · <span id="selection-count">0</span><span id="export-cue" hidden> · Exports available</span></summary>
-  <div class="research-list-body"><button type="submit" form="controls">Show citations and keep records</button><p id="selection-note" data-first="First record kept. Exports are in Research list; citations are beside each result." role="status" aria-live="polite">Keep records from the results below. This list stays in this browser tab.</p>
+  <div class="research-list-body"><button type="submit" form="controls">Show citations and keep records</button><p>Selections stay in this browser tab. Each kept record remains listed below.</p>
     <button type="button" id="export-csv" disabled>Export CSV</button>
     <button type="button" id="export-json" disabled>Export JSON</button>
     <button type="button" id="selection-clear" disabled>Clear list</button>
-    <p>Each result has a citation. Exports preserve attribution and grant no reuse rights.</p>
+    <ul id="selected-list"></ul><p>Each result has a citation. Exports preserve attribution and grant no reuse rights.</p>
   </div>
 </details>
+<p id="selection-note" class="visually-hidden" data-kept=" kept. Exports are in Research list; citations are beside each result." role="status" aria-live="polite"></p>
 <p id="research-error" role="status" hidden></p>
 <h2 id="results-heading" class="visually-hidden">Records</h2>
 {# tabindex="-1": a page turn moves focus here (browse.js `turn`), because
@@ -220,6 +221,6 @@ Remove a filter, widen the date range, or try the original-language title.</p></
 {% include "_volume.html" %}
 {% endblock %}
 {% block scripts %}
-<template id="archive-row"><li class="record-row"><div><h3><a data-text="title"></a></h3><p class="original" data-text="original"></p><p class="row-tags"><span data-text="analyzed"></span><span class="trail-tag" data-text="trail_label"></span></p><p class="archive-hold" data-text="hold"></p><div class="archive-actions"><label class="keep-record"><input type="checkbox">Keep in research list</label><details><summary>Citation and provenance</summary><p data-text="processing"></p><p data-text="date_info"></p><p class="archive-citation" tabindex="0" data-text="citation"></p><button type="button">Copy citation</button></details></div></div><p class="row-side"><span class="row-who" data-text="who"></span><span class="row-via" data-text="via"></span><a data-text="desk_name"></a><span data-text="state"></span></p></li></template>
+<template id="archive-row"><li class="record-row"><div><h3><a data-text="title"></a></h3><p class="original" data-text="original"></p><p class="row-tags"><span data-text="analyzed"></span><span class="trail-tag" data-text="trail_label"></span></p><p class="archive-snippet" data-text="summary"></p><p class="archive-hold" data-text="hold"></p><div class="archive-actions"><label class="keep-record"><input type="checkbox">Keep in research list</label><details><summary>Citation and provenance</summary><p data-text="processing"></p><p data-text="date_info"></p><p class="archive-citation" tabindex="0" data-text="citation"></p><button type="button" aria-live="polite" aria-atomic="true">Copy citation</button></details></div></div><p class="row-side"><span class="row-who" data-text="who"></span><span class="row-via" data-text="via"></span><a data-text="desk_name"></a><span data-text="state"></span></p></li></template>
 <template id="archive-day"><section class="records-day"><p class="day-date"><time><span class="day-num"></span><span class="day-month"></span><span class="day-week"></span></time></p><ul class="record-list"></ul></section></template>
 <script src="browse.js" defer></script>{% endblock %}

@@ -65,3 +65,12 @@
 @media(max-width:680px){.archive-page .finder-row>.finder-field:first-child{grid-column:1/-1}}
 
 .archive-page input::placeholder{color:var(--muted);opacity:1}
+.archive-page #selected-list{list-style:none;padding:0;margin:8px 0;min-height:52px;max-height:180px;overflow:auto}
+.archive-page #selected-list .record-row{display:block;padding:4px 0;border:0}.archive-page #selected-list .record-row>div{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px}
+.archive-page #selected-list h3{font:400 17px/1.5 var(--serif);margin:0}.archive-page #selected-list .archive-actions{margin:0}
+.archive-page #selected-list :is(.original,.row-tags,.row-side,.archive-hold,.archive-snippet,details){display:none}
+@media(max-width:680px){.archive-page #selected-list .record-row>div{grid-template-columns:1fr}.archive-page #selected-list .record-row{padding-block:8px}}
+
+.archive-page #selected-list{padding-inline:6px}
+
+.archive-page .archive-snippet{font:16px/1.7 var(--serif);max-width:70ch;overflow-wrap:anywhere}

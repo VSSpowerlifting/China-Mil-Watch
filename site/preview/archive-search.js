@@ -12,9 +12,9 @@
   }
   function terms(q) {
     if (typeof q !== 'string' || q.length > 512) throw Error('Limit: 512 characters.');
-    if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) throw Error('Invalid control character.');
+    if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(q)) throw Error('Control character.');
     q = q.normalize('NFKC');
-    if (q.split('"').length % 2 === 0) throw Error('Close the quote.');
+    if (q.split('"').length % 2 === 0) throw Error('Close quote.');
     const out = (q.normalize('NFKC').match(/"[^"]*"|[^"\s]+/g) || [])
       .map(s => normalize(s.replace(/^"|"$/g, '').trim())).filter(Boolean);
     const unique = [...new Set(out)];
@@ -28,8 +28,8 @@
   }
   function search(prepared, query = {}) {
     const ts = terms(query.q || '');
-    for (const k of ['from', 'to']) if (query[k] && !validDate(query[k])) throw Error('Invalid date (YYYY-MM-DD).');
-    if (query.from && query.to && query.from > query.to) throw Error('Reversed date range.');
+    for (const k of ['from', 'to']) if (query[k] && !validDate(query[k])) throw Error('Bad date.');
+    if (query.from && query.to && query.from > query.to) throw Error('Reversed dates.');
     if (query.sort && !['relevance', 'newest', 'oldest'].includes(query.sort)) throw Error('Invalid sort.');
     let result = [];
     for (const {record: r, fields} of prepared) {

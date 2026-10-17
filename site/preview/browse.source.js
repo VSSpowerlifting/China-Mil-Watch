@@ -9,7 +9,7 @@
    list = $("research-list"), note = $("selection-note"), error = $("research-error"), E = ArchiveSearch,
    KEYS = "scope q desk source status sort institution language from to trail keywords record_type issuer".split(" "),
    F = form.elements, PER = 50,
-   storage = "ipr/1", TR = "In an analysis source trail";
+   storage = "ipr/1";
  let research, prepared, pending, view = [], page = 1, selected = new Set();
  function get(k) { return F[k].type === "checkbox" ? (F[k].checked ? "1" : "") : F[k].value.trim(); }
  function put(k, value) {
@@ -36,8 +36,8 @@
  const clone = id => $(id).content.firstElementChild.cloneNode(true);
  function card(r) {
   const li = clone("archive-row"), find = q => li.querySelector(q), meta = research.display[r.id],
-    fields = {...r, hold:research.holds[r.id], ...(meta || {who:r.issuer || r.source, via:r.source, state:r.record_type.replaceAll("_", " ")}),
-      title:r.title || r.original_title || "Published original source text",
+    fields = {...r, hold:research.holds[r.id], ...(meta || {who:r.issuer || r.source, via:r.source, state:r.processing}),
+      title:r.title || r.original_title || r.id,
       original:r.title && r.original_title && r.title.trim() !== r.original_title.trim() ? r.original_title : null,
       date_info:[r.date_kind,r.date].filter(Boolean).join(" · ")};
   li.querySelectorAll("[data-text]").forEach(e => { const text = fields[e.dataset.text]; if (text) e.textContent = text; else e.remove(); });
@@ -51,7 +51,7 @@
   if (!find(".row-tags").children.length) find(".row-tags").remove();
   const citation = find(".archive-citation"), copy = find("details button"), check = find("input");
   check.checked = selected.has(r.id); check.setAttribute("aria-label", "Keep: " + fields.title);
-  check.onchange = () => { const first = !selected.size; check.checked ? selected.add(r.id) : selected.delete(r.id); updateList(first && check.checked); };
+  check.onchange = () => { check.checked ? selected.add(r.id) : selected.delete(r.id); updateList(); };
   copy.onclick = async () => {
    try { await navigator.clipboard.writeText(r.citation); copy.textContent = "Copied"; }
    catch (_) { citation.focus(); const rng = document.createRange(); rng.selectNodeContents(citation);
@@ -72,7 +72,7 @@
    ["source","status","institution","language"].every(k => !get(k) || get(k) === (m || r)[k]) && (!get("trail") || m && m.trail);
  }
  function render() {
-  const total = view.length, pages = Math.max(1, Math.ceil(total / PER)); page = Math.min(page, pages);
+  const total = view.length, pages = Math.ceil(total / PER) || 1; page = Math.min(page, pages);
   const start = (page - 1) * PER, rows = view.slice(start, start + PER), wrap = el("div", "records-days");
   let last, ul; wrap.setAttribute("data-from-index", "");
   rows.forEach(r => { if (r.date !== last) { last = r.date; const sec = wrap.appendChild(day(last)); ul = sec.querySelector("ul"); } ul.appendChild(card(r)); });
@@ -88,16 +88,17 @@
  function drawChips() {
   chips.replaceChildren(); reset.hidden = !filtered();
   KEYS.filter(k => !["scope","sort"].includes(k) && get(k)).forEach(k => {
-   const e = F[k], label = k === "trail" ? TR : e.tagName === "SELECT" ? e.selectedOptions[0].text : get(k),
+   const e = F[k], label = e.labels[0].textContent.trim() + (e.type === "checkbox" ? "" : ": " + (e.tagName === "SELECT" ? e.selectedOptions[0].text : get(k))),
     b = chips.appendChild(el("li")).appendChild(el("button", "chip", label));
    b.type = "button"; b.setAttribute("aria-label", "Remove filter: " + label);
    b.onclick = () => { put(k, ""); go(true, true); F.q.focus(); };
   });
  }
- function updateList(first) {
+ function updateList() {
+  $("selected-list").replaceChildren(...E.selected(research.records, selected).map(card));
   $("selection-count").textContent = selected.size; $("export-cue").hidden = !selected.size;
   ["export-csv","export-json","selection-clear"].forEach(id => { $(id).disabled = !selected.size; });
-  note.textContent = first ? note.dataset.first : selected.size + " records kept.";
+  note.textContent = selected.size + note.dataset.kept;
   try { sessionStorage.setItem(storage, JSON.stringify([...selected])); } catch (_) {}
  }
  function unavailable() { root.hidden = wait.hidden = prev.hidden = next.hidden = list.hidden = true; fail.hidden = false; }
@@ -137,6 +138,7 @@
     url = URL.createObjectURL(new Blob([content], {type:type === "csv" ? "text/csv;charset=utf-8" : "application/json"})), a = el("a");
   a.href = url; a.download = "ipr." + type; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
  };
+ list.onchange = () => { render(); list.querySelector("summary").focus(); };
  $("selection-clear").onclick = () => { selected.clear(); updateList(); out.querySelectorAll("input").forEach(e => { e.checked = false; }); };
  let timer;
  F.q.onfocus = () => load(); F.q.oninput = F.keywords.oninput = () => { clearTimeout(timer); timer = setTimeout(() => go(false, true), 200); };
