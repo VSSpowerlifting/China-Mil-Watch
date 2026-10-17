@@ -88,6 +88,39 @@ class SingleArticleIdentityCanary(unittest.TestCase):
                                  "dapa_article_expected_date_not_proven")
                 self.assertFalse(result["production_published"])
 
+    def test_one_unique_posting_label_must_own_the_expected_date(self):
+        # A matching date elsewhere in the article is NOT a posting-date
+        # observation. Never upgrade a date merely found in a press body.
+        misleading = (
+            "<html><body><span>게시일</span><time>2026-09-19</time>"
+            "<p>Event held on 2026-09-18</p></body></html>",
+            "<html><body><p>2026-09-18</p><span>게시일</span>"
+            "<span>2026-09-19</span></body></html>",
+            "<html><body><span>게시일</span><em>Other text</em>"
+            "<time>2026-09-18</time></body></html>",
+            "<html><body><span>게시일</span><time>2026-09-18</time>"
+            "<span>게시일</span><time>2026-09-18</time></body></html>",
+            "<html><body><span>게시일</span><time>2026-09-19</time>"
+            "<span>게시일</span><time>2026-09-18</time></body></html>",
+            "<html><body><script>게시일 2026-09-18</script>"
+            "<p>게시일 2026-09-19</p></body></html>",
+        )
+        for sample in misleading:
+            with self.subTest(sample=sample[:55]):
+                receipt = sut.inspect_article(sample.encode("utf-8"))
+                self.assertFalse(receipt["date_marker_matches_indexed_item"])
+                self.assertFalse(receipt["title_or_publisher_text_saved"])
+
+    def test_adjacent_posting_dates_allow_expected_publisher_format(self):
+        for label in ("게시일 2026-09-18", "게시일: 2026.09.18",
+                      "게시일：2026-09-18"):
+            page = ("<html><body><span>" + label + "</span>"
+                    "<p>Unrelated date 2024-06-20</p></body></html>")
+            with self.subTest(label=label):
+                proof = sut.inspect_article(page.encode("utf-8"))
+                self.assertTrue(proof["date_marker_matches_indexed_item"])
+                self.assertTrue(proof["date_label_observed"])
+
     def test_non_html_challenge_and_invalid_encoding_fail_closed(self):
         for body, code in (
             (b"PRIVATE PRESS ARTICLE", "dapa_article_challenge_or_non_html"),
