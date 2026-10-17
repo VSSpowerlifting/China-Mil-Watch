@@ -3045,6 +3045,11 @@ def build(out_dir: Path, title: str, db_path: Path,
         from core.us_bis_authenticated_metadata import load_public_links as load_bis_live_links
         bis_links = (load_bis_live_links(db_path)
                      if desk.slug == "us-indopacific" else [])
+        # Only already-admitted database metadata, never archived bodies.
+        from core.regional_official_link_render import load_admitted_links
+        regional_official_links = (
+            load_admitted_links(db_path, desk.slug)
+            if desk.slug in ("philippines", "indonesia") else [])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -3055,6 +3060,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              public_reference_languages=languages,
                              indonesia_official_links=indonesia_official_links,
                              indonesia_press_links=indonesia_press_links,
+                             regional_official_links=regional_official_links,
                              us_pacom_official_links=us_pacom_links,
                              uscc_official_links=uscc_links,
                              us_treasury_official_links=treasury_links,

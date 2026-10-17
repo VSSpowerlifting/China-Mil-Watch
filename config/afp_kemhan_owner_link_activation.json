@@ -1,0 +1,51 @@
+{
+  "schema": "ipr-afp-kemhan-owner-metadata-activation/1",
+  "decision_recorded_on": "2026-10-15",
+  "decision_source": "Owner's explicit in-conversation approval on 2026-10-15",
+  "owner_confirms_human_review_occurred": true,
+  "owner_authorizes_automated_verified_link_metadata": true,
+  "metadata_only_fields": [
+    "source_family",
+    "source_identity",
+    "canonical_official_url",
+    "publisher_posted_date",
+    "official_issuer",
+    "official_publisher",
+    "official_republisher",
+    "source_git_commit",
+    "metadata_version_sha256"
+  ],
+  "excluded_public_outputs": [
+    "original_title",
+    "publisher_article_body",
+    "raw_capture_json",
+    "photograph",
+    "pdf_or_other_source_document",
+    "translation",
+    "model_summary",
+    "editorial_analysis"
+  ],
+  "source_families": [
+    {
+      "source_family": "ph_afp_articles",
+      "desk": "philippines",
+      "frozen_review_cohort_commit": "8a63ba423818e30d147096fd1a32949cf6905ee5",
+      "frozen_review_cohort_candidate_count": 23,
+      "frozen_review_cohort_metadata_manifest_sha256": "c97c10884e28da7ebcc591e51e35bbef9ba0bae29a474a40e57b1ca760622c75",
+      "known_excluded_source_identities": []
+    },
+    {
+      "source_family": "id_kemhan_news",
+      "desk": "indonesia",
+      "frozen_review_cohort_commit": "0595c6677be24f8f0f33aecb28eec0050e36e8f9",
+      "frozen_review_cohort_candidate_count": 31,
+      "frozen_review_cohort_metadata_manifest_sha256": "2fbb897f1a71b9503fddaea1d41e8b93b5751cc90286c1eb7702b99d51f9c95a",
+      "known_excluded_source_identities": [
+        "kemhan:/2026/10/02/kunker-ke-kaltara-menhan-sjafrie-tinjau-yonif-tp-880-banuanta-di-bulungan-tegaskan-kemampuan-tempur-dan-teritorial-pembangunan-untuk-kedaulatan-perbatasan.html"
+      ]
+    }
+  ],
+  "machine_verified_record_specific_human_review_receipts_in_repository": false,
+  "all_actions_attempts_and_release_gates_approved_by_this_declaration": false,
+  "production_database_or_site_changed_by_this_declaration": false
+}
