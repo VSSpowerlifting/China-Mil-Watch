@@ -45,7 +45,7 @@ def test_public_roster_is_exact_and_domain_focused():
     people = load_staff(ROSTER)
     assert [(p["name"], p["role"]) for p in people] == [
         ("Benjamin Yang", "Founder & Editor-in-Chief"),
-        ("Dylan Tanzi", "Managing Editor"),
+        ("Dylan Tanzi", "Lead Research Analyst"),
         ("Christin Sawyer", "Communications Editor"),
     ]
     for person in people:
@@ -53,6 +53,9 @@ def test_public_roster_is_exact_and_domain_focused():
         assert not any(word in person["bio"].lower() for word in
                        ("manhasset", "aylus", "powerlifting", "oboe"))
     assert "Euna" not in ROSTER.read_text(encoding="utf-8")
+    dylan = next(p for p in people if p["slug"] == "dylan-tanzi")
+    assert dylan["links"]["LinkedIn"] == "https://www.linkedin.com/in/dylan-tanzi/"
+    assert "Vietnam Research Desk" in dylan["bio"]
 
 
 @pytest.mark.parametrize("bad", [
