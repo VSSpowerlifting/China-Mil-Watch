@@ -1,0 +1,53 @@
+{
+  "manifest_version": 1,
+  "_shadow": true,
+  "_comment": "Isolated DAPA source family. No schedule, workflow dispatch, publication, or claim of rights approval. Manual-run source access must be independently authorized.",
+  "desk": {
+    "desk_id": "korea",
+    "display_name": "South Korea — DAPA private source",
+    "jurisdiction_code": "KR",
+    "default_timezone": "Asia/Seoul",
+    "default_calendar": "gregorian",
+    "supported_language_tags": [
+      "ko"
+    ],
+    "public_status": "shadow",
+    "active": false
+  },
+  "institutions": [
+    {
+      "institution_id": "kr_policy_briefing",
+      "display_name": "Korea Policy Briefing",
+      "name_original": "대한민국 정책브리핑",
+      "institution_type": "other"
+    },
+    {
+      "institution_id": "kr_dapa",
+      "display_name": "Defense Acquisition Program Administration",
+      "name_original": "방위사업청",
+      "institution_type": "other"
+    }
+  ],
+  "sources": [
+    {
+      "slug": "kr_policy_dapa_releases",
+      "institution_id": "kr_policy_briefing",
+      "display_name": "Korea Policy Briefing — DAPA B00008 republications",
+      "base_url": "https://www.korea.kr",
+      "language_tag": "ko",
+      "access_method": "html",
+      "authority_tier": "B",
+      "source_type": "government_republished_release",
+      "originality": "syndicated",
+      "enabled": true,
+      "adapter": "scraper.sources.kr_dapa_policy_briefing:KoreaDapaPolicyAdapter",
+      "listing_endpoints": [
+        "https://www.korea.kr/briefing/pressReleaseList.do"
+      ],
+      "article_url_patterns": [
+        "^https://www\\.korea\\.kr/briefing/pressReleaseView\\.do\\?newsId=[0-9]+$"
+      ],
+      "notes": "Separate B00008 DAPA issuer. Only owner-approved one-time manual isolated runner; no schedule/public admission. Collect one HWPX original (PDF optional metadata) only after source-access approval; require per-record issuer/date/rights/human review before any public reuse or link admission. Multi-issuer content remains held."
+    }
+  ]
+}

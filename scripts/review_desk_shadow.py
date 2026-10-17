@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BRANCHES = {
     "indonesia": "shadow/indonesia-kemhan",
     "korea": "shadow/korea-policy-briefing",
+    "korea_dapa": "private/korea-dapa-policy-briefing",
     "japan_jcg": "shadow/japan-jcg",
 }
 STATE_PATH = re.compile(r"state/(shadow\.db|clock\.json|ledger/[A-Za-z0-9_.+-]+\.json|captures/[0-9a-f]{64}\.bin)$")

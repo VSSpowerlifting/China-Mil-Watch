@@ -8,6 +8,8 @@ on:
       - "scripts/prepare_indonesia_reference_review_queue.py"
       - "tests/test_prepare_indonesia_reference_review_queue.py"
       - "tests/test_indonesia_31_pinned_docket_contract.py"
+      - "scripts/bind_indonesia_review_versions.py"
+      - "tests/test_indonesia_source_version_review.py"
       - ".github/workflows/indonesia_pinned_reference_review_queue.yml"
   workflow_dispatch:
     inputs:
@@ -38,7 +40,7 @@ jobs:
           sha256sum pla_watch.db > "$RUNNER_TEMP/id-review-db.sha"
           find output -type f -print0 | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/id-review-output.sha"
       - name: Synthetic metadata and anti-body tests
-        run: python -m unittest tests.test_prepare_indonesia_reference_review_queue tests.test_indonesia_31_pinned_docket_contract -v
+        run: python -m unittest tests.test_prepare_indonesia_reference_review_queue tests.test_indonesia_31_pinned_docket_contract tests.test_indonesia_source_version_review -v
       - name: Pin immutable existing Indonesia Git state
         shell: bash
         env:
@@ -94,6 +96,29 @@ jobs:
               assert row["publisher_body_reuse_authorized"] is False
               assert row["eligible_for_public_corpus"] is False
           print("Verified pinned metadata-only Indonesia source review queue:", counts)
+          PY
+      - name: Bind all 31 unsigned decisions to immutable archived-original versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m scripts.bind_indonesia_review_versions \
+            --state-repo "$RUNNER_TEMP/indonesia-state" \
+            --state-commit "$INDONESIA_STATE_SHA" \
+            --queue "$RUNNER_TEMP/indonesia-review-queue/review_queue.json" \
+            --out "$RUNNER_TEMP/indonesia-review-queue"
+          # This new private artifact is NEVER a reviewer signoff or site input.
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"]) / "indonesia-review-queue"
+          report = json.loads((root/"original_version_manifest.json").read_text())
+          assert report["originals_version_bound"] == 31
+          assert report["known_geography_holds"] == 1
+          assert not report["human_review_authenticated"]
+          assert not report["production_admission_authorized"]
+          assert not report["archived_capture_bytes_independently_authenticated"]
+          assert (root/"review_decisions_UNSIGNED.csv").is_file()
+          print("31 archived source versions pinned; original rights and reviewer authority remain HELD")
           PY
       - name: Confirm protected database, output and source unchanged
         run: |

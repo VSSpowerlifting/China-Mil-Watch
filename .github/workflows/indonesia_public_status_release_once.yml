@@ -66,4 +66,4 @@ jobs:
           assert len(links) == 15
           print("Indonesia bibliography navigation verified; zero corpus records")
           PY
-          git diff --name-only -- output/ | head -45
+          git diff --name-only -- output/ | sed -n '1,45p'

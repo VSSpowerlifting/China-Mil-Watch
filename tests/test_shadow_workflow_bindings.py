@@ -41,18 +41,23 @@ class BindingContracts(unittest.TestCase):
 
     def test_real_repository_has_exact_explicit_coverage(self):
         result = self.original
-        self.assertEqual(11, result["manifests_checked"])
-        self.assertEqual(16, result["source_families_checked"])
+        self.assertEqual(12, result["manifests_checked"])
+        self.assertEqual(17, result["source_families_checked"])
         self.assertFalse(result["all_runs_attested"])
         self.assertFalse(result["shadow_promotion_authorized"])
         self.assertFalse(result["editorial_publication_authorized"])
         self.assertFalse(result["production_eligible"])
         self.assertEqual(0, result["writes"])
-        self.assertEqual(len(result["sources"]), 16)
+        self.assertEqual(len(result["sources"]), 17)
+        dapa = next(row for row in result["sources"]
+                    if row["source_slug"] == "kr_policy_dapa_releases")
+        self.assertEqual(dapa["evidence"], "no_collection_workflow_declared")
+        self.assertIsNone(dapa["workflow"])
+        self.assertFalse(dapa["production_eligible"])
 
     def test_synthetic_mirror_preserves_count_without_modifications(self):
         result = self.report()
-        self.assertEqual(result["source_families_checked"], 16)
+        self.assertEqual(result["source_families_checked"], 17)
         self.assertTrue(all(not s["run_attested"] for s in result["sources"]))
 
     def test_missing_source_binding_is_a_hard_error(self):
