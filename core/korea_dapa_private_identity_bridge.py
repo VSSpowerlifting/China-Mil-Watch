@@ -225,8 +225,15 @@ def reconcile(listing_raw, article_raw, article_url):
     # Only the field directly following the visible "게시일" posting label
     # is relevant. Repeated/conflicting labels are not resolved by guessing.
     markers = list(re.finditer(r"게시일\s*[:：]?\s*", visible))
-    page_date = (_iso_date(visible[markers[0].end():markers[0].end() + 48])
-                 if len(markers) == 1 else None)
+    # Only the immediate date following the label counts. A separate
+    # calendar date in the article body must neither override nor invalidate
+    # the exact posting-date field.
+    tail = visible[markers[0].end():] if len(markers) == 1 else ""
+    match = re.match(
+        r"^\s*(20[0-9]{2}[-.][01][0-9][-.][0-3][0-9])(?![0-9])",
+        tail,
+    )
+    page_date = _iso_date(match.group(1)) if match else None
     matches = [row for row in reader.rows if
                row["navigation_unambiguous"] and
                row["provisional_docseq"] == identity["provisional_docseq"]]
