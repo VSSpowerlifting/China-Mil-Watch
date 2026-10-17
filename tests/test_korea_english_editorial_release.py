@@ -174,5 +174,51 @@ class FirstRealKoreaEnglishPacketTests(unittest.TestCase):
                                  receipt["review_sha256"])
 
 
+class TwoCorrectedKoreaPacketsTests(unittest.TestCase):
+    """Prepared editorial packets are source-pinned; staging never publishes."""
+
+    def test_corrected_october_sixteen_english_remains_unpublished_until_owner_dispatch(self):
+        from core.korea_published_originals import read_release_index
+        from core.korea_english_publication import verify_review
+
+        root = Path(__file__).resolve().parents[1]
+        known = {row["source_identity"]: row for row in read_release_index()}
+        expected = {
+            "156785286": (
+                "cfa3c915731df8ef506d72ebcb0328886a7d5bcd76270adcbb76f20bea7fb8c0",
+                "c768a2e7886cf257d05f062bec940c55c1018d7c85faeafe1e79907cfaaf8bbd",
+                42, 6, 13,
+            ),
+            "156785444": (
+                "6a6efbc65efb614857ce1a90863a76ea074c35cac6cb8482c92d5f5ff0c886b6",
+                "02754137f5f62048949b88fb52a70f77bab21b83f92a721df5fd048229030a24",
+                22, 4, 8,
+            ),
+        }
+        published = {row["source_identity"] for row, _, _ in public_registry()}
+        for news_id, (source_sha, review_sha, n_trans, n_claims, n_quotes) in expected.items():
+            with self.subTest(news_id=news_id):
+                identity = "korea-policy:" + news_id
+                self.assertIn(identity, known)
+                self.assertNotIn(identity, published)
+                self.assertEqual(known[identity]["original_text_sha256"], source_sha)
+                packet = json.loads((root / "research/korea_english_reviewed" /
+                                    (news_id + ".json")).read_text(encoding="utf-8"))
+                self.assertEqual(packet["review"]["status"], "editor_approved")
+                self.assertEqual(packet["review"]["reviewer"], "VSSpowerlifting")
+                for key in ("translation_semantics_checked", "analysis_fact_checked",
+                            "attribution_checked", "source_limitations_checked"):
+                    self.assertIs(packet["review"][key], True)
+                verified = verify_review(packet, known[identity])
+                self.assertEqual(verified["review_sha256"], review_sha)
+                self.assertFalse(verified["machine_only"])
+                self.assertFalse(verified["editorial_meaning_verified_by_code"])
+                self.assertEqual(verified["paragraphs"], n_trans)
+                self.assertEqual(verified["claims"], n_claims)
+                self.assertEqual(sum(len(c["source_quotes_ko"])
+                                     for c in packet["analysis"]["claims"]), n_quotes)
+                self.assertEqual(packet["source_sha256"], source_sha)
+
+
 if __name__=="__main__":
     unittest.main()
