@@ -40,11 +40,13 @@
   <noscript><p>This local interface requires JavaScript. Visit <a href="https://indopacificrecord.org/archive.html">the IPR archive</a> to read canonical records.</p></noscript>
   <section class="workspace" aria-label="Search results and research list">
     <aside class="research-list" id="research-list" aria-label="Selected research list">
-      <div class="list-heading"><h2>Your research list</h2><p id="selection-count" role="status" aria-live="polite">0 selected</p></div>
+      <details id="research-disclosure" open><summary class="research-summary">Research list · <span id="research-mobile-count">0</span><span id="research-export-hint" hidden>Exports available</span></summary>
+      <div class="research-content"><div class="list-heading"><h2>Your research list</h2><p id="selection-count" role="status" aria-live="polite">0 selected</p></div>
       <p class="list-intro">Choose Keep beside a record to start a list.</p>
       <div class="exports"><button id="export-csv" type="button" disabled>Export CSV</button><button id="export-json" type="button" disabled>Export JSON</button><button id="clear-selection" type="button" disabled>Clear selection</button></div>
       <ul id="selected-list"></ul><p id="feedback" role="status" aria-live="polite"></p>
       <details class="list-help"><summary>About this list</summary><p>Selections stay in this tab across reloads. Export to keep a copy. A research list preserves attribution; it does not grant rights to reuse the underlying material.</p></details>
+      </div></details><p id="research-notice" class="research-notice" role="status" aria-live="polite" aria-atomic="true"></p>
     </aside>
     <div class="result-column"><div class="results-heading"><div><h2 id="count" role="status" aria-live="polite" aria-atomic="true">Loading results…</h2><p id="coverage">Loading the published index…</p></div><label for="sort">Sort<select id="sort"><option value="relevance">Relevant first</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label></div>
       <div id="results"></div><p id="empty" hidden>No records match this search. Remove a filter or try fewer terms. Metadata-only references have no searchable body.</p><button id="more" type="button" hidden>Show more results</button>

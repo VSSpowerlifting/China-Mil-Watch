@@ -25,7 +25,7 @@ and Inter-Regular, with successful HTTP 200 responses for the corresponding loca
 WOFF2 files. Controls and metadata compute to Inter at weight 400. No new asset,
 font service, package, shared stylesheet or production template was introduced.
 
-Validation: 36 focused behavior/browser tests pass. Tests exercise font file
+Initial visual revision: 36 focused behavior/browser tests passed. Tests exercise font file
 identity and actual rendered custom glyphs; native disclosure keyboard access,
 hidden-filter URL restore/removal/focus; 320/375/768/1280 px overflow; full raw
 provenance and exact citation/export preservation. Existing end-to-end tests
@@ -43,3 +43,29 @@ source files retain their initial hashes (1,836 total). No generated production 
 editorial content changed. The output validator retains its 10 governed warnings.
 Exact-head full offline CI and any environmental limitations are recorded in the PR.
 No merge, production integration or deployment is authorized.
+
+## Final mobile adjustment
+
+The narrow-screen research-list section now starts as a native `details` / `summary`
+disclosure: **Research list · 0**. At 375 px it occupies less than 50 px and brings
+the first result into the initial viewport. The count stays visible; a selection
+adds **Exports available**, with a polite announcement pointing to the research
+list exports and the existing per-result citations. Selecting an item does not
+auto-expand the panel, move focus, or move the viewport. Manual expansion stays
+open through selection/clearing. Reload restores selections with the disclosure
+collapsed and its count/export cue visible. Desktop retains its open presentation.
+
+![Final mobile, empty list](mobile-disclosure-empty.jpg)
+![Final mobile, one selected](mobile-disclosure-selected.jpg)
+![Manual expansion using the keyboard](mobile-disclosure-expanded.jpg)
+
+Final focused validation: **38 tests pass**, including empty, selected, cleared,
+restored-selection states; native accessibility-tree expanded semantics; Enter /
+Space; first-selection checkbox focus, scroll position and viewport geometry;
+visible export discovery, live announcements and 320/375/680 px overflow.
+The existing 1280 px tests retain desktop workflows and typography. Actual browser
+inspection compared document geometry and computed fonts for masthead, heading,
+workspace, research list and its content, results header and first result title
+against the prior revision: identical at 1280 px. Console warning/error logs are
+empty. Validator retains ten governed warnings; all 1,836 protected hashes and the
+804,727-byte index remain unchanged. Final PR CI results are recorded in PR #766.

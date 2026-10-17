@@ -133,7 +133,7 @@ other tests running concurrently; no optimization claim):
 | Singapore, 2026-09-01 through 2026-10-15 | 48 | 0.0659 | 0.3378 |
 | `nonexistent-token` | 0 | 0.3290 | 1.1893 |
 
-Focused validation: **36 tests pass**, including 15 relevance cases, publication
+Focused validation: **38 tests pass**, including 15 relevance cases, publication
 boundaries, retirement/alias/stale-index attacks, exact duplicate resolution,
 missing metadata, guarded destinations, Unicode/CSV formula injection, clipboard,
 downloads, selection persistence, back/forward/reset, HTML/script payloads,
@@ -165,6 +165,13 @@ include desktop/mobile, expanded filters, selected citation/export controls and
 empty results. Chromium verifies HTTP 200 font responses **and actual custom font
 glyphs**, regular control weights, disclosure keyboard/URL restoration, overflow
 at 320/375/768/1280 px, unchanged full provenance/citations and exact exported records.
+On screens up to 680 px, the research list starts as a native **Research list · 0**
+disclosure. Selection and reload preserve the visible count; kept items add an
+**Exports available** cue and a polite announcement pointing to exports and
+per-result citations. Selection changes leave the disclosure in the reader’s
+chosen state, avoiding expansion above results or focus/scroll movement. Enter
+and Space expand/collapse it; desktop remains open with its existing presentation.
+
 No query, eligibility, record data, persistence or export-layer code changed.
 
 Output validator: passes with the existing **10 governed warnings**.

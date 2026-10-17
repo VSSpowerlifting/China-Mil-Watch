@@ -33,6 +33,14 @@
   let urlError = null;
   let records, prepared, manifest, selection = new Set(), limit = 30, query = {}, hits = [];
   const STORAGE = 'ipr-archive-research-selection-v1';
+  const narrowScreen = window.matchMedia('(max-width: 680px)');
+  // Desktop stays open. On mobile only the reader toggles the disclosure;
+  // selection changes never expand content above the focused result.
+  const researchLayout = () => {
+    $('research-disclosure').open = !narrowScreen.matches;
+    $('selection-count').setAttribute('aria-live', narrowScreen.matches ? 'off' : 'polite');
+  };
+  researchLayout(); narrowScreen.addEventListener('change', researchLayout);
   function store() { try { sessionStorage.setItem(STORAGE, JSON.stringify([...selection].sort())); } catch (_) {} }
   const display = r => r.title || (r.record_type === 'preserved_original' ? 'Published original source text' : 'Untitled published record');
   function readUrl() {
@@ -69,6 +77,10 @@
   }
   function selectionPanel() {
     $('selection-count').textContent = selection.size + ' selected';
+    $('research-mobile-count').textContent = selection.size;
+    $('research-export-hint').hidden = !selection.size;
+    $('research-notice').textContent = selection.size + ' selected.' + (selection.size
+      ? ' Exports are available in Research list; citations are beside each result.' : '');
     $('research-list').dataset.empty = String(selection.size === 0);
     for (const id of ['export-csv', 'export-json', 'clear-selection']) $(id).disabled = !selection.size;
     $('selected-list').replaceChildren();

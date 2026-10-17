@@ -9,7 +9,9 @@ No production integration, output regeneration, desk/rights/approval change or
 deployment. Build/preview/tests, limitations and measured evidence:
 `research/archive_workbench/README.md`. PR #766 now includes a private visual
 revision using existing local IPR fonts, quieter filters and editorial reading
-rows; 36 focused tests pass, with comparable desktop/mobile evidence in
+rows. The final mobile adjustment collapses the research list behind a native
+disclosure with a visible count and export cue; selection never auto-expands it
+or moves focus/scroll. 38 focused tests pass, with desktop/mobile evidence in
 `docs/evidence/archive-research-workbench/visual-revision/README.md`. Owner review and a separate production
 integration decision remain outstanding; final-head checks are recorded in the PR.
 

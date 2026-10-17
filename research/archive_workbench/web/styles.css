@@ -113,6 +113,7 @@ mark { color: inherit; background: #DDE7E3; }
 .copy { margin-top: 8px; font-size: 12px; }
 .record-identity { font-size: 11px; color: var(--muted); overflow-wrap: anywhere; }
 .research-list { grid-column: 2; grid-row: 1; align-self: start; position: sticky; top: 24px; border-left: 1px solid var(--rule); padding-left: 24px; }
+.research-summary, .research-notice { display: none; }
 .list-heading { display: flex; flex-direction: column; gap: 8px; }
 .list-heading h2 { font: 400 20px/1.4 var(--serif); }
 #selection-count { font-size: 12px; color: var(--muted); }
@@ -171,7 +172,11 @@ footer { font-size: 11px; color: var(--muted); padding-block: 18px; }
   #active { gap: 0 16px; }
   #active button { font-size: 11px; }
   .workspace { display: flex; flex-direction: column; gap: 26px; padding: 14px 0 34px; }
-  .research-list { position: static; width: 100%; padding: 14px 0 16px; border-left: 0; border-block: 1px solid var(--rule-soft); }
+  .research-list { position: static; width: 100%; padding: 0; border-left: 0; border-block: 1px solid var(--rule-soft); }
+  .research-summary { display: list-item; width: 100%; font: 400 17px/1.4 var(--serif); }
+  #research-export-hint { float: right; font: 400 11px/2.2 var(--sans); color: var(--accent); }
+  .research-content { padding: 12px 0 16px; }
+  .research-notice { display: block; position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .list-heading { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 15px; }
   .list-heading h2 { font-size: 19px; }
   .list-intro { margin-top: 7px; }
