@@ -81,7 +81,11 @@ def check_robots(raw):
     return True
 
 
-def observe(*, fetch=get_once, sleep=time.sleep):
+def observe(*, fetch=None, sleep=time.sleep):
+    # Resolve the transport at invocation time. This is essential for
+    # synthetic CI: patching get_once must actually intercept EVERY request.
+    if fetch is None:
+        fetch = get_once
     out = {
         "schema": SCHEMA,
         "state": "HOLD",
