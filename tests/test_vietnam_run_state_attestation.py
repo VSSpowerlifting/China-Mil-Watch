@@ -101,10 +101,10 @@ class FakeGitHub:
 
 
 class LiveRunAttestationTests(unittest.TestCase):
-    def test_actual_16_source_binding_audit_selects_only_three_vietnam(self):
+    def test_actual_source_binding_audit_selects_only_three_vietnam(self):
         b = binding_audit()
         self.assertEqual(b["schema"], "ipr-shadow-source-workflow-bindings/1")
-        self.assertEqual(b["source_families_checked"], 16)
+        self.assertEqual(b["source_families_checked"], 17)
         selected = [x for x in b["sources"] if x["source_slug"] in SOURCES]
         self.assertEqual(len(selected), 3)
         self.assertTrue(all(x["trigger"] == "scheduled" for x in selected))
