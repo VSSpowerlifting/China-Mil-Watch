@@ -2652,6 +2652,10 @@ def build(out_dir: Path, title: str, db_path: Path,
     # record routes, full corpus index and cited issue links remain unchanged.
     focus = build_focus(data["corpus"])
 
+    from core.staff_directory import load_staff, credited_works
+    team_members = load_staff(REPO_ROOT / "site/preview/staff.json")
+    team_by_name = {member["name"]: member for member in team_members}
+
     ctx = {
         "title": title,
         "focus": focus,
@@ -2667,6 +2671,8 @@ def build(out_dir: Path, title: str, db_path: Path,
         "predecessor_name": PREDECESSOR_NAME,
         "predecessor_series": PREDECESSOR_SERIES,
         "maintainer": MAINTAINER,
+        "team": team_members,
+        "team_by_name": team_by_name,
         "snapshot_label": snapshot_label,
         "citation": citation,
         "institutions": data["institutions"],
@@ -2794,6 +2800,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         "pla-watch.html": "pla_watch.html",
         "methodology.html": "methodology.html",
         "about.html": "about.html",
+        "team.html": "team.html",
     }
     written = []
     for target, template in pages.items():
@@ -2807,6 +2814,29 @@ def build(out_dir: Path, title: str, db_path: Path,
             page_html = re.sub(r"(?m)^[ \t]+(?=<)", "", page_html)
         (out_dir / target).write_text(page_html, encoding="utf-8")
         written.append(target)
+
+    # Static staff profiles use exact published credits; historical authorship
+    # and the editorial release authority are unaffected.
+    (out_dir / "authors").mkdir(exist_ok=True)
+    profile_template = env.get_template("staff_profile.html")
+    for member in team_members:
+        schema = None
+        if (site_origin or "").strip():
+            profile_origin = site_origin.strip().rstrip("/")
+            schema = {"@context": "https://schema.org", "@type": "Person",
+                      "name": member["name"],
+                      "url": profile_origin + "/" + member["route"],
+                      "jobTitle": member["role"],
+                      "worksFor": {"@type": "Organization", "name": title,
+                                   "url": profile_origin + "/"}}
+            if member["links"]:
+                schema["sameAs"] = list(member["links"].values())
+        route = member["route"]
+        (out_dir / route).write_text(profile_template.render(
+            page=route, nested=True, member=member,
+            works=credited_works(collection, member["name"]),
+            staff_schema=schema, **ctx), encoding="utf-8")
+        written.append(route)
 
     if timelines:
         (out_dir / "timeline").mkdir()
@@ -3180,7 +3210,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
+    for name in ("staff.css", "fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
     # Explicit named assets only: homepage relief sprites and Phase 4A Desks
