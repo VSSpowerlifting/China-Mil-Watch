@@ -255,7 +255,7 @@ class NativeDapaCanaryContracts(unittest.TestCase):
         def fetch(url, limit):
             seen.append(url)
             if url == ROBOTS:
-                return ROBOTS_ALLOW
+                return ALLOW
             return b"""<html><body><table>
             <tr><td><a onclick="detail(59293)" href="#">test</a></td>
             <td>2026-10-15</td></tr></table></body></html>"""
