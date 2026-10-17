@@ -59,11 +59,11 @@
       {{ links() }}
       <details class="shell-menu nav-more"><summary>About IPR</summary><div>
         <a href="{{ root }}sources.html"{% if page == 'sources.html' %} aria-current="page"{% endif %}>Sources</a><a href="{{ root }}coverage.html"{% if page == 'coverage.html' %} aria-current="page"{% endif %}>Coverage</a>
-        <a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a><a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a>
+        <a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a>{% if team is defined %}<a href="{{ root }}team.html"{% if page == 'team.html' or page.startswith('authors/') %} aria-current="page"{% endif %}>Team</a>{% endif %}<a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a>
       </div></details>
     </nav>
     <details class="shell-menu nav-mobile"><summary>Menu <span aria-hidden="true">☰</span></summary>
-      <nav aria-label="Primary">{{ links() }}<a href="{{ root }}sources.html"{% if page == 'sources.html' %} aria-current="page"{% endif %}>Sources</a><a href="{{ root }}coverage.html"{% if page == 'coverage.html' %} aria-current="page"{% endif %}>Coverage</a><a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a><a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a></nav>
+      <nav aria-label="Primary">{{ links() }}<a href="{{ root }}sources.html"{% if page == 'sources.html' %} aria-current="page"{% endif %}>Sources</a><a href="{{ root }}coverage.html"{% if page == 'coverage.html' %} aria-current="page"{% endif %}>Coverage</a><a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a>{% if team is defined %}<a href="{{ root }}team.html"{% if page == 'team.html' or page.startswith('authors/') %} aria-current="page"{% endif %}>Team</a>{% endif %}<a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a></nav>
     </details>
   </div>
 </header>
@@ -126,8 +126,13 @@
       <div>
         <a class="brand brand--footer" href="{{ root }}index.html" aria-label="{{ title }} home"><img class="brand-mark" src="{{ root }}assets/identity/selected-ipr/ipr-navy-160.png" width="160" height="130" loading="lazy" alt=""><span class="brand-name">Indo-Pacific<span>Record</span></span></a>
         <p class="colophon-tagline">{{ tagline }}</p>
+{% if team is defined %}
+        <p>{{ title }} is an independent research project founded by {{ maintainer.name }} and produced with its
+        <a href="{{ root }}team.html">editorial team</a> · <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
+{% else %}
         <p>{{ title }} is an independent research project created and edited by
         {{ maintainer.name }} · <a href="mailto:{{ maintainer.email }}">{{ maintainer.email }}</a></p>
+{% endif %}
         <p>Corrections and questions about any record are welcome at the same
         address.</p>
       </div>
@@ -156,6 +161,9 @@
         <ul>
           <li><a href="{{ root }}methodology.html"{% if page == 'methodology.html' %} aria-current="page"{% endif %}>Methodology</a></li>
           <li><a href="{{ root }}about.html"{% if page == 'about.html' %} aria-current="page"{% endif %}>About</a></li>
+{% if team is defined %}
+          <li><a href="{{ root }}team.html"{% if page == 'team.html' or page.startswith('authors/') %} aria-current="page"{% endif %}>Editorial team</a></li>
+{% endif %}
           <li><a href="{{ root }}corpus-guide.html#citation">Citing a record</a></li>
         </ul>
       </nav>
