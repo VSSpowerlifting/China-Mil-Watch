@@ -221,7 +221,12 @@ def reconcile(listing_raw, article_raw, article_url):
     visible = " ".join(page.parts)
     # Never extract or echo any governmental original text or media.
     # A displayed date without the posting label is not sufficient.
-    page_date = _iso_date(visible) if "게시일" in visible else None
+    # The release body can legitimately mention other calendar dates.
+    # Only the field directly following the visible "게시일" posting label
+    # is relevant. Repeated/conflicting labels are not resolved by guessing.
+    markers = list(re.finditer(r"게시일\s*[:：]?\s*", visible))
+    page_date = (_iso_date(visible[markers[0].end():markers[0].end() + 48])
+                 if len(markers) == 1 else None)
     matches = [row for row in reader.rows if
                row["navigation_unambiguous"] and
                row["provisional_docseq"] == identity["provisional_docseq"]]
