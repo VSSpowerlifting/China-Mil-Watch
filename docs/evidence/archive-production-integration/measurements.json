@@ -1,0 +1,99 @@
+{
+  "html_css_bytes": 155730,
+  "js_bytes": 9879,
+  "css": [
+    "archive.css",
+    "fonts.css",
+    "relief.css",
+    "styles.css",
+    "support.css",
+    "surfaces.css"
+  ],
+  "js": [
+    "browse.js",
+    "shell.js"
+  ],
+  "external": [],
+  "asset_bytes": 271116,
+  "assets": [
+    "assets/desk-marks/china.svg",
+    "assets/desk-marks/japan.svg",
+    "assets/desk-marks/singapore.svg",
+    "assets/desk-marks/vietnam.svg",
+    "assets/fonts/instrument-serif-0.woff2",
+    "assets/fonts/instrument-serif-1.woff2",
+    "assets/fonts/inter-0.woff2",
+    "assets/fonts/inter-1.woff2",
+    "assets/fonts/source-serif-4-0.woff2",
+    "assets/fonts/source-serif-4-1.woff2",
+    "assets/fonts/source-serif-4-2.woff2",
+    "assets/identity/selected-ipr/ipr-accent-180.png",
+    "assets/identity/selected-ipr/ipr-accent-32.png",
+    "assets/identity/selected-ipr/ipr-navy-160.png",
+    "assets/identity/selected-ipr/ipr-navy-320.png",
+    "assets/material/chart-paper.png",
+    "assets/material/chart-shelf.svg",
+    "assets/material/coast-profile.svg"
+  ],
+  "external_assets": [],
+  "html_bytes": 72547,
+  "javascript_gzip_bytes_separately_encoded": 4458,
+  "index_raw_bytes": 1220147,
+  "index_gzip_bytes": 116625,
+  "included": 966,
+  "archive_projection_sha256": "cc267c0be5a204074b2c5ea419a7170864baf01318095a5203e898753f8e5bc0",
+  "record_digest": "3965cb329661c15f6cf6345ca5368a6b11ffcbc16ac0e3f939edf86051b4aea0",
+  "archive_html_sha256": "e06b2e71c6f2e269ea3592a2426fa0e917c1fa37c0ed6efc7b86c8677e408975",
+  "desktop": {
+    "actual_glyph_fonts": {
+      "title": [
+        {
+          "familyName": "Source Serif 4",
+          "postScriptName": "SourceSerif4-Regular",
+          "isCustomFont": true,
+          "glyphCount": 28
+        }
+      ],
+      "control": [
+        {
+          "familyName": "Inter",
+          "postScriptName": "Inter-Regular",
+          "isCustomFont": true,
+          "glyphCount": 14
+        }
+      ]
+    },
+    "console_errors": [],
+    "unexpected_requests": [],
+    "scroll_width": 1280,
+    "research_list_expanded": true,
+    "title_font": "\"Source Serif 4\", Georgia, \"Times New Roman\", serif",
+    "control_font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+  },
+  "mobile": {
+    "actual_glyph_fonts": {
+      "title": [
+        {
+          "familyName": "Source Serif 4",
+          "postScriptName": "SourceSerif4-Regular",
+          "isCustomFont": true,
+          "glyphCount": 28
+        }
+      ],
+      "control": [
+        {
+          "familyName": "Inter",
+          "postScriptName": "Inter-Regular",
+          "isCustomFont": true,
+          "glyphCount": 14
+        }
+      ]
+    },
+    "console_errors": [],
+    "unexpected_requests": [],
+    "scroll_width": 375,
+    "research_list_expanded": false,
+    "title_font": "\"Source Serif 4\", Georgia, \"Times New Roman\", serif",
+    "control_font": "Inter, system-ui, -apple-system, \"Segoe UI\", sans-serif"
+  }
+}

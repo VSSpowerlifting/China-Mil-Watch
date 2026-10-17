@@ -29,7 +29,8 @@ class ArchiveIntegrationBrowser(unittest.TestCase):
         cls.temp = Path(tempfile.mkdtemp(prefix='ipr-production-archive-'))
         cls.site = cls.temp / 'site'
         gp.build(cls.site, gp.PUBLIC_TITLE, ROOT / 'pla_watch.db',
-                 snapshot=gp.snapshot_from_corpus(ROOT / 'pla_watch.db'), legacy_routes=True)
+                 snapshot=gp.snapshot_from_corpus(ROOT / 'pla_watch.db'), legacy_routes=True,
+                 site_origin='https://indopacificrecord.org')
         cls.compact = json.loads((cls.site / 'corpus-index.json').read_text())
         cls.index = json.loads((cls.site / 'archive-research-index.json').read_text())
         cls.server = ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=str(cls.site)))

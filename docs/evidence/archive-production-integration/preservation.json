@@ -1,0 +1,14 @@
+{
+  "base_sha": "81aeb6dd296820301729927fbbd59b12da126de0",
+  "changed_generated_paths": [
+    "archive-research-index.json",
+    "archive.css",
+    "archive.html",
+    "browse.js"
+  ],
+  "baseline_files": 1709,
+  "candidate_files": 1710,
+  "protected_files_checked": 2089,
+  "protected_inventory_sha256": "8c9bed785bcffe1bd136c89a3fd77982ec5a8a5b671c15b2643b73d5681f436a",
+  "protected_mismatches": []
+}

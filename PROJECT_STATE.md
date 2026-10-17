@@ -1,5 +1,19 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Archive production integration (17 October 2026, source-only review candidate):**
+`codex/archive-production-integration` integrates the reviewed private #766 engine
+into the existing Archive, based on current main `81aeb6dd29`. The selected DB,
+current in-memory projection and public loaders generate the research index in
+one build; existing URLs/facets/order, server records and week routes remain.
+The current public input set has 966 items after main's separate Korea releases.
+Archive-only typography, citations, exports and accessible mobile research-list
+controls fit both raw JS budgets. No tracked output, DB, editorial/publication
+record, source permission or workflow change is part of this integration.
+Evidence and exact gates: `docs/ARCHIVE_PRODUCTION_INTEGRATION.md` and
+`docs/evidence/archive-production-integration/README.md`; final full CI is recorded
+in the integration PR. #766 remains the unchanged private reference. Owner review
+and separate merge/regeneration/release authorization remain outstanding.
+
 **Brief reading foundation approved; cartographic accent candidate (14 October 2026):**
 The owner approved PR #588 head `d5c3ca5169bf10eb7685897c234b06452c3592e5`
 as the Phase 2 design baseline. The follow-up on the same branch/PR adds only
