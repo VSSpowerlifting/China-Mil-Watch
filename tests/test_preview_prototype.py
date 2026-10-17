@@ -1685,7 +1685,7 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
         for name, html in self._all_html().items():
             own = _authored_text(html, name)
             match = re.fullmatch(
-                r"korea-(analysis|translations)/([0-9]{9})\\.html", name)
+                r"korea-(analysis|translations)/([0-9]{9})\.html", name)
             if match and match.group(2) in reviewed:
                 packet = reviewed[match.group(2)]
                 if match.group(1) == "analysis":
