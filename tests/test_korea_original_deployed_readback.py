@@ -94,6 +94,32 @@ class KoreaOriginalReadbackTests(unittest.TestCase):
             "PR and scheduled source-rendering jobs must both install Jinja2",
         )
 
+    def test_deployed_readback_covers_both_korea_publication_workflows(self):
+        # The original-text release and metadata-only desk release are two
+        # distinct Pages writers. BOTH must trigger an independent HTTPS
+        # verification job after a successful main-branch release.
+        workflow = (Path(__file__).resolve().parents[1] /
+                    ".github/workflows/korea_original_deployed_readback.yml"
+                    ).read_text(encoding="utf-8")
+        self.assertIn(
+            "      - Korea — Owner-authorized exact original-text Pages release",
+            workflow)
+        self.assertIn(
+            "      - Korea — Verified Government Links to Production and Pages",
+            workflow)
+        self.assertIn("github.event.workflow_run.conclusion == 'success'",
+                      workflow)
+        self.assertIn("github.event.workflow_run.head_branch == 'main'",
+                      workflow)
+        self.assertIn("--require-https-readback --attempts 8", workflow)
+        self.assertIn("--pages-checkout korea-pages-readback", workflow)
+        self.assertIn("permissions:\\n  contents: read", workflow)
+        self.assertNotIn("contents: write", workflow)
+        self.assertNotIn("git push", workflow)
+        # No new publisher URLs or official-page collection in a verifier.
+        self.assertNotIn("www.dapa.go.kr", workflow)
+        self.assertNotIn("data.go.kr", workflow)
+
     def test_exact_branch_parity_verified_not_misreported_as_https(self):
         out = self._verify()
         self.assertEqual(out["registered_originals"], 1)
