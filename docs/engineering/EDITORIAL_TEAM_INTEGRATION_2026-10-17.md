@@ -1,10 +1,13 @@
 # Editorial team integration — 17 October 2026
 
 PR: https://github.com/VSSpowerlifting/IndoPacificRecord/pull/770
-Integrated main: `d53ee0ed043380a05fafa053cdd622a15bcfbed9`.
+Integrated main: `a4d7961e47d01b20cf34458a8731de3975597401`
+(initial integration: `d53ee0ed043380a05fafa053cdd622a15bcfbed9`).
 Original feature head: `977b6c02934eab2629695f07e534a1b6aae2eb5f`.
 Merge base before integration: `6a3861b035846e49d9d99b1934e39229253becad`.
 Main was merged without conflicts; its Korea/U.S. changes are retained.
+Two subsequent Korea commits (#780/#781) were also merged without conflicts;
+they change no staff, template, CSS or corpus input.
 
 ## Source and publication boundaries
 

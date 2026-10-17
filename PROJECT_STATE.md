@@ -1,7 +1,7 @@
 # PROJECT_STATE — Indo-Pacific Record
 
 **Editorial team integration (17 October 2026, PR #770 review candidate):**
-The staff branch incorporates main `d53ee0ed04` without conflicts. Three approved
+The staff branch incorporates main `a4d7961e47` without conflicts. Three approved
 profiles and the Team directory use the shared utility material system; exact
 published credits distinguish authors, co-authors and research contributions.
 Historical shell bytes and Korean-original pages remain identical; no tracked
