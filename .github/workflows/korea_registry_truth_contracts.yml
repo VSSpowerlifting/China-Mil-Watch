@@ -1,0 +1,35 @@
+name: Korea — registry publication truth after MND activation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - desks/registry.json
+      - tests/test_korea_registry_post_activation_truth.py
+      - .github/workflows/korea_verified_official_link_production.yml
+      - .github/workflows/korea_registry_truth_contracts.yml
+
+permissions:
+  contents: read
+
+jobs:
+  read-only-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Verify Korea registry, source distinctions and scoped writer
+        run: |
+          python -m unittest -v tests.test_korea_registry_post_activation_truth
+      - name: No production or source changes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ research/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ research/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

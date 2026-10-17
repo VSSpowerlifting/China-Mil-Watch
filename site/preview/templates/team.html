@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Editorial Team — {{ title }}{% endblock %}
+{% block description %}Meet the team behind Indo-Pacific Record's source-grounded defense and security research.{% endblock %}
+{% block stylesheets %}{{ super() }}<link rel="stylesheet" href="staff.css">{% endblock %}
+{% block content %}
+<header class="page-head staff-head">
+<h1 class="page-name">Editorial team</h1>
+<p class="lede">Research, editorial review, and communications behind the record.</p>
+</header>
+<section class="staff-directory" aria-label="Editorial staff">
+{% for member in team %}
+<article class="staff-entry">
+<div>
+<h2 class="plain"><a href="{{ member.route }}">{{ member.name }}</a></h2>
+<p class="staff-role">{{ member.role }}</p>
+</div>
+<div class="staff-summary">
+<p class="staff-bio">{{ member.bio }}</p>
+<p class="staff-action"><a href="{{ member.route }}">View profile <span aria-hidden="true">→</span></a></p>
+</div>
+</article>
+{% endfor %}
+</section>
+<p class="staff-boundary">Staff roles do not establish authorship of individual publications. Author and research credits follow the published Brief's original editorial record.</p>
+{% endblock %}

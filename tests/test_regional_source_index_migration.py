@@ -154,5 +154,53 @@ class RegionalSourceIndexMigration(unittest.TestCase):
         ).fetchone()[0], 1)
 
 
+    def test_real_writer_and_public_reader_round_trip(self):
+        # Check the actual production writer and renderer against migration
+        # 0010, not just a hand-made INSERT into a synthetic schema. Every
+        # reviewer/Actions authentication used here is FICTIONAL test data.
+        from unittest.mock import patch
+        from core import regional_official_link_release as release
+        from core.regional_official_link_render import read_live_links
+        from tests.test_regional_official_link_release import data
+
+        migration.up(self.conn)
+        self.assertEqual(migration.COLUMNS, release.EXPECTED_TABLE_COLUMNS)
+        policy, packet, receipt = data("id_kemhan_news", with_hold=True)
+        with patch.object(release, "load_owner_policy", return_value=policy):
+            with self.assertRaisesRegex(
+                release.RegionalLinkHold,
+                "trusted_release_evidence_validator_missing",
+            ):
+                release.admit(
+                    self.conn, packet, policy, receipt,
+                    as_of_utc="2026-10-17T18:00:00Z",
+                )
+            self.assertEqual(read_live_links(self.conn, "indonesia"), [])
+            # Only synthetic tests may substitute the independent reviewer.
+            first = release.admit(
+                self.conn, packet, policy, receipt,
+                as_of_utc="2026-10-17T18:00:00Z",
+                trusted_validator=lambda *_: True,
+            )
+            repeated = release.admit(
+                self.conn, packet, policy, receipt,
+                as_of_utc="2026-10-17T18:00:00Z",
+                trusted_validator=lambda *_: True,
+            )
+        self.assertEqual(first["new_official_links"], 1)
+        self.assertEqual(first["held_semantic_exceptions"], 1)
+        self.assertEqual(repeated["new_official_links"], 0)
+        self.assertEqual(repeated["unchanged_official_links"], 1)
+        indonesia = read_live_links(self.conn, "indonesia")
+        self.assertEqual(len(indonesia), 1)
+        self.assertEqual(indonesia[0]["source_identity"],
+                         packet["records"][0]["source_identity"]
+                         if not packet["records"][0]["semantic_exception_hold"]
+                         else packet["records"][1]["source_identity"])
+        self.assertEqual(read_live_links(self.conn, "philippines"), [])
+        self.assertNotIn("kunker-ke-kaltara",
+                         indonesia[0]["canonical_official_url"])
+
+
 if __name__ == "__main__":
     unittest.main()

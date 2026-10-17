@@ -1,5 +1,17 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Editorial team integration (17 October 2026, PR #770 review candidate):**
+The staff branch incorporates main `a4d7961e47` without conflicts. Three approved
+profiles and the Team directory use the shared utility material system; exact
+published credits distinguish authors, co-authors and research contributions.
+Historical shell bytes and Korean-original pages remain identical; no tracked
+output, database, source archive or approval changes are included relative to
+main. Pure `unittest` staff coverage and route-aware existing tests replace the
+failing contracts. Focused acceptance passes 98 tests; complete exact-head CI
+and maintainer review remain the release gates. Scope, visual evidence and
+reproduction: `docs/engineering/EDITORIAL_TEAM_INTEGRATION_2026-10-17.md`.
+No merge or deployment is authorized by this integration task.
+
 **Brief reading foundation approved; cartographic accent candidate (14 October 2026):**
 The owner approved PR #588 head `d5c3ca5169bf10eb7685897c234b06452c3592e5`
 as the Phase 2 design baseline. The follow-up on the same branch/PR adds only

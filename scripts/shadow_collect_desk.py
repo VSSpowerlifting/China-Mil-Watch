@@ -24,11 +24,13 @@ from core.shadow_schedule import resolve_target_date, ScheduleError, SOURCE_EXPL
 from scraper.sources.desk_shadow_http import USER_AGENT
 from scraper.sources.id_kemhan import KemhanAdapter
 from scraper.sources.kr_policy_briefing import KoreaPolicyAdapter
+from scraper.sources.kr_dapa_policy_briefing import KoreaDapaPolicyAdapter
 from scraper.sources.jp_jcg_en import JCGEnglishAdapter
 
 DESKS = {
     "indonesia": ("id_kemhan", KemhanAdapter, "shadow/indonesia-kemhan"),
     "korea": ("kr_policy_briefing", KoreaPolicyAdapter, "shadow/korea-policy-briefing"),
+    "korea_dapa": ("kr_dapa_policy_briefing", KoreaDapaPolicyAdapter, "private/korea-dapa-policy-briefing"),
     "japan_jcg": ("jp_jcg", JCGEnglishAdapter, "shadow/japan-jcg"),
 }
 # Explicit publisher identities for the one-time, Oct8-bound source import.
@@ -114,7 +116,10 @@ def finish(entry, state_dir):
 
 
 def run(desk, state_dir, target, lookback=6, cap=40, run_id="local", commit="unknown",
-        adapter=None, target_source=SOURCE_EXPLICIT, historical_backfill=False):
+        adapter=None, target_source=SOURCE_EXPLICIT, historical_backfill=False,
+        dapa_original_access_authorized=False):
+    if desk == "korea_dapa" and not dapa_original_access_authorized:
+        raise ValueError("DAPA article/HWPX collection requires separate one-time owner authorization")
     if desk not in DESKS or not 1 <= cap <= 40:
         raise ValueError("known desk and 1–40 cap required")
     if historical_backfill:
@@ -277,17 +282,23 @@ def main(argv=None):
     parser.add_argument("--event-name", default=os.environ.get("GITHUB_EVENT_NAME"))
     parser.add_argument("--cron-utc")
     parser.add_argument("--run-attempt", default=os.environ.get("GITHUB_RUN_ATTEMPT", "1"))
+    parser.add_argument("--approve-one-time-dapa-original-access", action="store_true",
+                        help="Explicitly authorize this separate DAPA portal article/HWPX operation")
     parser.add_argument("--jcg-september-backfill", action="store_true",
                         help="one-time owner-approved JCG historical content backfill only")
     args = parser.parse_args(argv)
     try:
         target, provenance = resolve_target_date(datetime.now(timezone.utc), args.event_name,
                                                 args.cron_utc, args.target_date, args.run_attempt)
+        if args.desk == "korea_dapa" and (args.event_name != "workflow_dispatch" or
+                                         not args.approve_one_time_dapa_original_access):
+            raise ValueError("DAPA originals require explicitly approved manual dispatch")
         if args.jcg_september_backfill and args.event_name != "workflow_dispatch":
             raise ValueError("JCG historical backfill requires explicit owner manual dispatch")
         entry = run(args.desk, args.state_dir, target, args.lookback_days, args.cap,
                     args.run_id, args.commit, target_source=provenance,
-                    historical_backfill=args.jcg_september_backfill)
+                    historical_backfill=args.jcg_september_backfill,
+                    dapa_original_access_authorized=args.approve_one_time_dapa_original_access)
     except (ValueError, ScheduleError, sqlite3.Error) as exc:
         print("collection refused: " + str(exc), file=sys.stderr)
         return 2

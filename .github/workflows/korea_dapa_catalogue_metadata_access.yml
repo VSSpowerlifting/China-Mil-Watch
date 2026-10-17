@@ -1,0 +1,71 @@
+name: Korea DAPA — separately authorized government catalogue JSON probe
+
+# distinct publisher from dapa.go.kr. NO prior DAPA robots/listing approval
+# authorizes www.data.go.kr. Offline pull-request tests only.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/probe_korea_dapa_catalogue_metadata.py
+      - tests/test_korea_dapa_catalogue_metadata_probe.py
+      - docs/engineering/KOREA_DAPA_OPEN_DATA_CATALOGUE_ACCESS_2026-10-17.md
+      - .github/workflows/korea_dapa_catalogue_metadata_access.yml
+  workflow_dispatch:
+    inputs:
+      approve_one_time_data_go_kr_metadata:
+        description: "Authorize ONE data.go.kr robots GET and, only if permitted, ONE exact DAPA catalogue metadata JSON GET; no HWPX, article or publication"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  no-network-contracts:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Exact URL, robots, JSON, source and no-publish contracts
+        run: python -m unittest -v tests.test_korea_dapa_catalogue_metadata_probe tests.test_korea_dapa_official_catalogue
+      - name: Refuse any source or publication mutations
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db research/ output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db research/ output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  one-time-robots-and-json-observation:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.actor == 'VSSpowerlifting' &&
+      inputs.approve_one_time_data_go_kr_metadata == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run exactly one distinct-host robots and qualified catalogue metadata check
+        run: python -m scripts.probe_korea_dapa_catalogue_metadata --approve-one-time-data-go-kr-metadata
+      - name: Verify original source and publication state untouched
+        if: always()
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db research/ output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db research/ output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm

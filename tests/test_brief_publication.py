@@ -28,6 +28,19 @@ class PublicationChecks(unittest.TestCase):
         self.pending.pop('approval', None)
         self.pending['title'] = 'Approval command fixture; never published'
         self.pending['author_name'] = 'Owner (test fixture)'
+        # The published historical Brief was approved before the
+        # owner-authorized October China retirement. Its already-cited source
+        # identities survive, but whole-week desk COVERAGE counts legitimately
+        # change when 4,400 unrelated sources retire. Approval tests work on
+        # a synthetic DRAFT copy, not on the immutable published Brief. Update
+        # only that draft's computed coverage to the live read-only corpus,
+        # and keep the full source-trail + citation/readiness gate intact.
+        with author_brief.read_only(ROOT / 'pla_watch.db') as connection:
+            active = author_brief.get_articles_for_desks(
+                self.pending['week_start'], self.pending['week_ending'],
+                self.pending['desks'], conn=connection)
+        self.pending['coverage_by_desk'] = author_brief.coverage_by_desk(
+            active, self.pending['desks'])
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)

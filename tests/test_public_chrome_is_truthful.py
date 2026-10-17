@@ -109,7 +109,19 @@ class TestNoPageDescribesItselfAsUnpublished(BuildCase):
 
     def test_the_build_actually_produced_pages_to_check(self):
         """A scan of nothing passes for the wrong reason."""
-        self.assertGreater(len(self.pages), 3000)
+        # Previously this required >3,000 rendered pages, which silently
+        # demanded resurrection after the 4,400-record China retirement.
+        # Require every surviving record and at least one other site page.
+        import json
+        index = json.loads(
+            (self.out / "corpus-index.json").read_text(encoding="utf-8"))
+        self.assertGreater(len(index["records"]), 0)
+        self.assertGreater(len(self.pages), len(index["records"]))
+        self.assertEqual(
+            {p.stem for p in self.out.glob("record/*.html")},
+            {str(row[0]) for row in index["records"]},
+            "missing, extra or retired record page in public chrome scan",
+        )
 
     def test_every_page_has_chrome_to_scan(self):
         without = [str(p.relative_to(self.out)) for p in self.pages[:200]
@@ -185,8 +197,12 @@ class TestQuotedSourceTextIsNotPoliced(BuildCase):
     """
 
     def test_the_chrome_pattern_does_not_match_the_record_body(self):
-        page = self.out / "record" / "1.html"
-        html = page.read_text("utf-8", errors="replace")
+        # Article 1 was retired during the China cutover. Choose an actual
+        # active record so the no-chrome-in-source-body safety contract stays
+        # exercised without restoring any tombstoned page.
+        pages = sorted((self.out / "record").glob("*.html"))
+        self.assertTrue(pages, "no surviving record page rendered")
+        html = pages[0].read_text("utf-8", errors="replace")
         chrome = " ".join(m.group(0) for m in CHROME.finditer(html))
         body = re.search(r"<main\b[\s\S]*?</main>", html, re.I)
         self.assertIsNotNone(body)

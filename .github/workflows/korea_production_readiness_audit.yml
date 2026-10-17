@@ -1,0 +1,59 @@
+name: Korea — Read-only production readiness witness
+
+# A reporting lane, never a collector, publisher, or editorial authority.
+on:
+  pull_request:
+    paths:
+      - scripts/audit_korea_production_readiness.py
+      - tests/test_korea_production_readiness.py
+      - research/korea_published_original_texts.json
+      - research/korea_published_original_texts/**
+      - research/korea_english_publications.json
+      - research/korea_english_reviewed/**
+      - research/korea_english_draft_handoff_receipts.json
+      - .github/workflows/korea_production_readiness_audit.yml
+  push:
+    branches: [main]
+    paths:
+      - scripts/audit_korea_production_readiness.py
+      - tests/test_korea_production_readiness.py
+      - research/korea_published_original_texts.json
+      - research/korea_published_original_texts/**
+      - research/korea_english_publications.json
+      - research/korea_english_reviewed/**
+      - research/korea_english_draft_handoff_receipts.json
+  schedule:
+    - cron: '19 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipr-korea-readiness-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline-korea-editorial-readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run synthetic source-version, receipt and editorial-state contracts
+        run: python -m unittest -v tests.test_korea_production_readiness
+      - name: Reconcile real registered originals, owner receipts and releases
+        run: >-
+          python -m scripts.audit_korea_production_readiness
+          --output "${{ runner.temp }}/korea-readiness.json"
+      - name: Upload sanitized metadata-only witness
+        uses: actions/upload-artifact@v4
+        with:
+          name: korea-production-readiness-${{ github.run_id }}
+          path: ${{ runner.temp }}/korea-readiness.json
+          retention-days: 7
+          if-no-files-found: error

@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from core.korea_full_content_rehearsal import original_paragraphs
-from core.korea_published_originals import read_release_index
+from core.korea_published_originals import read_release_index, PUBLIC_ORIGIN
 
 SCHEMA = "ipr-korea-reviewed-english-and-analysis/1"
 REGISTER = "ipr-korea-editorial-english-publications/1"
@@ -200,77 +200,70 @@ def public_registry(index=INDEX, directory=CONTENT_DIR, *,
     return published
 
 
-def render_translation(row, review, source):
-    esc = lambda v: html.escape(str(v), quote=True)
+
+def _render_approved_editorial_template(name, review, source, *, site_origin):
+    """Render reviewed English content in the canonical IPR site shell.
+
+    The caller remains responsible for release registry + owner review checks.
+    Noindex for previews, and a pinned origin for public output, exactly as
+    the main site renderer does. No model invocation or new authority here.
+    """
+    from jinja2 import Environment, FileSystemLoader
+    from core.korea_published_originals import (
+        NOINDEX_TAG, PUBLIC_ORIGIN, TAGLINE, TEMPLATES,
+    )
+    from core.edition_identity import COLLECTION_NAME
+
+    need(site_origin is None or site_origin == PUBLIC_ORIGIN,
+         "korea_english_page_origin_unrecognized")
     number = source["source_identity"].split(":")[1]
-    route = "korea-translations/" + number + ".html"
-    sections = "".join(
-        "<section><h3>Paragraph " + str(p["index"]) + "</h3><p lang='en'>"
-        + esc(p["text_en"]) + "</p><details><summary>Korean source</summary><p lang='ko'>"
-        + esc(original_paragraphs(source["text_original"])[p["index"]-1])
-        + "</p></details></section>"
-        for p in review["translations"]
+    need(SOURCE_RE.fullmatch(source["source_identity"]) is not None,
+         "korea_english_page_source_invalid")
+    route = ("korea-translations" if name == "korea_translation.html"
+             else "korea-analysis") + "/" + number + ".html"
+    env = Environment(loader=FileSystemLoader(str(TEMPLATES)),
+                      autoescape=True, trim_blocks=True, lstrip_blocks=True)
+    env.filters["reader_date"] = lambda value: str(value)
+    original = original_paragraphs(source["text_original"])
+    aligned = [
+        {"index": item["index"], "text_en": item["text_en"],
+         "source_ko": original[item["index"] - 1]}
+        for item in review["translations"]
+    ]
+    page = env.get_template(name).render(
+        review=review, korea_source=source, translations=aligned, number=number,
+        page=route, nested=True,
+        title="Indo-Pacific Record", tagline=TAGLINE,
+        mode="indo-pacific-record",
+        maintainer={"name": "Benjamin Yang", "email": "ben.yang@gwmail.gwu.edu"},
+        collection_name=COLLECTION_NAME,
+        live_base=PUBLIC_ORIGIN, desks=[], timelines=[],
+        review_mode=False, run_status=None,
     )
-    return (
-        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<title>English translation of Korean MND release ' + number + '</title>'
-        '<link rel="canonical" href="https://indopacificrecord.org/' + route + '">'
-        '<link rel="stylesheet" href="../styles.css"></head><body>'
-        '<main style="max-width:76ch;margin:2rem auto;padding:1rem">'
-        '<p><a href="../korea.html">South Korea Desk</a> · '
-        '<a href="../korea-originals/' + number + '.html">Korean original</a></p>'
-        '<h1>English translation — Korean MND release ' + number + '</h1>'
-        '<p>Machine-assisted English translation, subsequently reviewed by an editor '
-        'for meaning against the Korean source. Not a statement of IPR editorial '
-        'agreement or independent verification.</p>'
-        '<p>Source: <a href="' + esc(source["official_url"])
-        + '">Republic of Korea Ministry of National Defense via Policy Briefing</a>. '
-        'Translation made from source text under KOGL Type 1 with attribution; '
-        'changes of language are explicitly disclosed.</p>'
-        '<p>Original source SHA-256: <code>' + esc(source["original_text_sha256"])
-        + '</code></p>' + sections + '</main></body></html>'
-    )
+    need(page.count(NOINDEX_TAG) == 1,
+         "korea_english_page_indexability_invalid")
+    if site_origin is None:
+        return page
+    url = site_origin + "/" + route
+    card = site_origin + "/social-card.png"
+    metadata = "\n".join([
+        '<link rel="canonical" href="%s">' % html.escape(url, quote=True),
+        '<meta property="og:url" content="%s">' % html.escape(url, quote=True),
+        '<meta property="og:image" content="%s">' % card,
+        '<meta property="og:image:width" content="1200">',
+        '<meta property="og:image:height" content="630">',
+        '<meta property="og:image:alt" content="Indo-Pacific Record">',
+        '<meta name="twitter:image" content="%s">' % card,
+        '<meta name="twitter:image:alt" content="Indo-Pacific Record">',
+    ])
+    return page.replace(NOINDEX_TAG, metadata, 1)
 
 
-def render_analysis(row, review, source):
-    esc = lambda v: html.escape(str(v), quote=True)
-    number = source["source_identity"].split(":")[1]
-    route = "korea-analysis/" + number + ".html"
-    claims = "".join(
-        '<section><h2>' + esc(c["heading_en"]) + '</h2><p>' +
-        esc(c["analysis_en"]) + '</p><p>Claim type: ' +
-        ('Bounded analytical inference' if c["assessment_type"] ==
-         "bounded_analytical_inference" else 'Attributed official-source interpretation') +
-        '.</p><p>Original-source paragraph references: ' +
-        ", ".join(str(i) for i in c["source_indices"]) +
-        '.</p><details><summary>Verbatim Korean evidence</summary>' +
-        "".join("<blockquote lang='ko'>" + esc(q) + "</blockquote>"
-                for q in c["source_quotes_ko"]) +
-        '</details></section>'
-        for c in review["analysis"]["claims"]
-    )
-    return (
-        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<title>' + esc(review["analysis"]["heading_en"]) + ' — IPR Korea</title>'
-        '<link rel="canonical" href="https://indopacificrecord.org/' + route + '">'
-        '<link rel="stylesheet" href="../styles.css"></head><body>'
-        '<main style="max-width:76ch;margin:2rem auto;padding:1rem">'
-        '<p><a href="../korea.html">South Korea Desk</a> · '
-        '<a href="../korea-originals/' + number + '.html">Verified Korean original</a> · '
-        '<a href="../korea-translations/' + number + '.html">Reviewed translation</a></p>'
-        '<h1>' + esc(review["analysis"]["heading_en"]) + '</h1>'
-        '<p><strong>IPR source-grounded analysis</strong>, machine-assisted '
-        'and reviewed by an editor. Claims attributed to the Ministry of National '
-        'Defense are not independently corroborated merely because they appear '
-        'in an official release.</p>'
-        '<p>' + esc(review["analysis"]["thesis_en"]) + '</p>'
-        + claims + '<h2>Limits of the evidence</h2><p>'
-        + esc(review["analysis"]["limitations_en"]) + '</p>'
-        '<p>Official source: <a href="' + esc(source["official_url"]) +
-        '">Republic of Korea Policy Briefing</a>. '
-        'Evidence is confined to the cited Korean text; no media reproduced.</p>'
-        '<p>Source SHA-256: <code>' + esc(source["original_text_sha256"])
-        + '</code></p></main></body></html>'
-    )
+def render_translation(row, review, source, *, site_origin=PUBLIC_ORIGIN):
+    return _render_approved_editorial_template(
+        "korea_translation.html", review, source, site_origin=site_origin)
+
+
+def render_analysis(row, review, source, *, site_origin=PUBLIC_ORIGIN):
+    return _render_approved_editorial_template(
+        "korea_analysis.html", review, source, site_origin=site_origin)

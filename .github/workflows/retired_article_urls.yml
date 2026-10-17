@@ -9,6 +9,7 @@ on:
       - "scripts/reconcile_db.py"
       - "scripts/verify_db_current.py"
       - "tests/test_retired_article_urls.py"
+      - "tests/test_reconcile_cli.py"
       - "tests/test_tracked_db_no_residue.py"
       - ".github/workflows/retired_article_urls.yml"
 
@@ -38,6 +39,7 @@ jobs:
           python -m unittest -v \
             tests.test_retired_article_urls \
             tests.test_reconcile \
+            tests.test_reconcile_cli \
             tests.test_migrations \
             tests.test_tracked_db_no_residue
       - name: Enforce no write to tracked production data
