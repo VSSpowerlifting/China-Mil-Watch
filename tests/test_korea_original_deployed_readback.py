@@ -113,7 +113,7 @@ class KoreaOriginalReadbackTests(unittest.TestCase):
                       workflow)
         self.assertIn("--require-https-readback --attempts 8", workflow)
         self.assertIn("--pages-checkout korea-pages-readback", workflow)
-        self.assertIn("permissions:\\n  contents: read", workflow)
+        self.assertIn("permissions:\n  contents: read", workflow)
         self.assertNotIn("contents: write", workflow)
         self.assertNotIn("git push", workflow)
         # No new publisher URLs or official-page collection in a verifier.
