@@ -213,6 +213,60 @@ class NativeDapaCanaryContracts(unittest.TestCase):
         self.assertNotIn("PRIVATE", str(result))
         self.assertFalse(result.get("collector_enabled", False))
 
+    def test_dated_row_click_argument_shapes_never_promote_unverified_ids(self):
+        sample = b"""<html><body><table>
+        <tr><td><a href="#" onclick="goDetail('59293')">PRIVATE A</a></td>
+        <td>2026-10-15</td></tr>
+        <tr><td><a href="javascript:openDetail(59292)">PRIVATE B</a></td>
+        <td>2026-10-15</td></tr>
+        <tr><td><a href="#" onclick="goDetail('59291',326)">PRIVATE C</a></td>
+        <td>2026-10-08</td></tr>
+        <tr><td><a href="#" onclick="openDocument(this)">PRIVATE D</a></td>
+        <td>2026-10-08</td></tr>
+        <tr><td><a href="#">PRIVATE E</a></td>
+        <td>2026-10-07</td></tr>
+        <tr><td><a href="#" onclick="goDetail('59290')">Not dated</a></td></tr>
+        </table></body></html>"""
+        from scripts.probe_korea_dapa_native_access import _action_argument_shape
+        rows = inspect_listing(sample)["date_row_shape_counts"]
+        self.assertEqual(rows["table_rows_with_iso_date"], 5)
+        self.assertEqual(rows["dated_rows_with_single_numeric_js_shape"], 2)
+        self.assertEqual(rows["dated_rows_with_ambiguous_numeric_js_shape"], 1)
+        self.assertEqual(rows["dated_rows_with_only_non_numeric_js"], 1)
+        self.assertEqual(rows["dated_rows_without_js_call_shape"], 1)
+        result = inspect_listing(sample)
+        self.assertEqual(result["provisional_docseq_count"], 0)
+        self.assertEqual(result["sample_unverified_docseq"], [])
+        self.assertTrue(result["zero_matching_links_is_not_zero_publications"])
+        for prohibited in ("PRIVATE", "goDetail", "openDetail", "59293",
+                           "59292", "59291", "59290", "2026-10-15"):
+            self.assertNotIn(prohibited, str(result))
+        for sample in ("goDetail('59293')", "goDetail(59293)",
+                       "javascript:openDetail(59292)"):
+            self.assertIn(_action_argument_shape(sample),
+                          ("single_integer", "single_quoted_integer"))
+        for sample in ("goDetail('59291',326)", "openDocument(this)",
+                       "javascript:alert('oops')", "jQuery(this)"):
+            self.assertNotIn(_action_argument_shape(sample),
+                             ("single_integer", "single_quoted_integer"))
+
+    def test_dated_js_shapes_do_not_change_live_fetch_budget(self):
+        seen = []
+        def fetch(url, limit):
+            seen.append(url)
+            if url == ROBOTS:
+                return ALLOW
+            return b"""<html><body><table>
+            <tr><td><a onclick="detail(59293)" href="#">test</a></td>
+            <td>2026-10-15</td></tr></table></body></html>"""
+        result = probe(fetch=fetch, sleep=lambda _: None)
+        self.assertEqual(seen, [ROBOTS, LISTING])
+        self.assertEqual(result["article_requests"], 0)
+        self.assertFalse(result["collector_enabled"])
+        self.assertFalse(result["production_published"])
+        self.assertFalse(result["dapa_issuer_per_article_verified"])
+        self.assertEqual(result["date_row_shape_counts"]["dated_rows_with_single_numeric_js_shape"], 1)
+
     def test_challenge_and_invalid_listing_cannot_establish_dapa(self):
         for raw, code in (
             (b"\xff", "publisher_listing_not_utf8"),

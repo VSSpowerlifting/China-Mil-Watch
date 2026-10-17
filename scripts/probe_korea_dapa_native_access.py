@@ -98,6 +98,30 @@ def provisional_doc_sequence(href):
     return number if re.fullmatch(r"[1-9][0-9]{0,19}", number) else None
 
 
+def _action_argument_shape(action):
+    """Classify one bounded JS navigation attribute; return NO values or code.
+
+    Even a plain numeric argument could be a displayed list ordinal, tracking
+    value or another unrelated identifier. This NEVER returns a docSeq.
+    """
+    if not isinstance(action, str) or not action or len(action) > 512:
+        return "other"
+    text = action.strip()
+    if text.lower().startswith("javascript:"):
+        text = text[len("javascript:"):].strip()
+    # A single literal argument in an ordinary function call is only a
+    # *candidate shape*, not authentication of the function or its arguments.
+    simple = re.fullmatch(
+        r"""(?:return\s+)?[a-zA-Z_$][a-zA-Z0-9_$]{0,63}\s*\(\s*(?P<q>['"]?)(?P<n>[1-9][0-9]{0,19})(?P=q)\s*\)\s*;?""",
+        text,
+    )
+    if simple:
+        return "single_quoted_integer" if simple.group("q") else "single_integer"
+    if re.search(r"(?<![a-zA-Z])[0-9]+", text):
+        return "other_numeric"
+    return "no_numeric"
+
+
 class Anchors(HTMLParser):
     """Count safe structural shapes ONLY; never print href, JS, title or HTML."""
 
@@ -116,6 +140,10 @@ class Anchors(HTMLParser):
             "dated_rows_with_js_or_click_activation": 0,
             "dated_rows_with_qualified_static_docseq": 0,
             "dated_rows_without_qualified_static_docseq": 0,
+            "dated_rows_with_single_numeric_js_shape": 0,
+            "dated_rows_with_ambiguous_numeric_js_shape": 0,
+            "dated_rows_with_only_non_numeric_js": 0,
+            "dated_rows_without_js_call_shape": 0,
         }
         self.structures = {
             "anchors_missing_href": 0,
@@ -140,6 +168,7 @@ class Anchors(HTMLParser):
             self._row = {
                 "date": False, "anchor": False, "activation": False,
                 "qualified": False,
+                "action_shapes": [],
             }
         elif tag == "td" and self._row is not None:
             self.row_counts["table_data_cells"] += 1
@@ -169,6 +198,13 @@ class Anchors(HTMLParser):
             ):
                 self._row["activation"] = True
         href = vals.get("href")
+        if self._row is not None:
+            actions = []
+            if isinstance(vals.get("onclick"), str):
+                actions.append(vals["onclick"])
+            if isinstance(href, str) and href.lstrip().lower().startswith("javascript:"):
+                actions.append(href)
+            self._row["action_shapes"].extend(_action_argument_shape(x) for x in actions)
         if href is None:
             self.structures["anchors_missing_href"] += 1
         elif isinstance(href, str):
@@ -241,6 +277,17 @@ class Anchors(HTMLParser):
                     self.row_counts["dated_rows_with_qualified_static_docseq"] += 1
                 else:
                     self.row_counts["dated_rows_without_qualified_static_docseq"] += 1
+                shapes = self._row["action_shapes"]
+                simple = sum(x in ("single_integer", "single_quoted_integer")
+                             for x in shapes)
+                if simple == 1 and len(shapes) == 1:
+                    self.row_counts["dated_rows_with_single_numeric_js_shape"] += 1
+                elif any(x == "other_numeric" for x in shapes) or simple > 1:
+                    self.row_counts["dated_rows_with_ambiguous_numeric_js_shape"] += 1
+                elif shapes:
+                    self.row_counts["dated_rows_with_only_non_numeric_js"] += 1
+                else:
+                    self.row_counts["dated_rows_without_js_call_shape"] += 1
             self._row = None
             self._cell = None
             self._cell_chunks = []

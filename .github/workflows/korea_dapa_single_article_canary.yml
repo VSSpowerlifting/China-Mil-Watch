@@ -1,0 +1,71 @@
+name: Korea DAPA — single official article identity probe (owner only)
+
+# New content-use scope. Earlier DAPA listing access or data.go.kr
+# authorizations cannot authorize GETting an actual DAPA document page.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - scripts/probe_korea_dapa_single_article.py
+      - tests/test_korea_dapa_single_article.py
+      - docs/engineering/KOREA_DAPA_SINGLE_ARTICLE_IDENTITY_2026-10-17.md
+      - .github/workflows/korea_dapa_single_article_canary.yml
+  workflow_dispatch:
+    inputs:
+      authorize_one_item_official_article_get:
+        description: "Separately approve 1 robots GET and, if allowed, one exact DAPA original article URL (board 326, docSeq 59180); no attachments, retention, article backfill or publication"
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  offline-only:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Strict single-source identity, robots and zero-publication contracts
+        run: python -m unittest -v tests.test_korea_dapa_single_article
+      - name: No archive, government article text, or published changes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db research/ output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db research/ output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  one-time-publisher-article-observation:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.actor == 'VSSpowerlifting' &&
+      inputs.authorize_one_item_official_article_get == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Owner-scoped original page identity observation, zero content retention
+        run: python -m scripts.probe_korea_dapa_single_article --authorize-one-item-official-article-get
+      - name: Confirm no original, document or production write
+        if: always()
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db research/ output/ shadow/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db research/ output/ shadow/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
