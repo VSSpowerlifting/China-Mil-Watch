@@ -1,0 +1,36 @@
+name: Korea DAPA — private first-party row-to-article reconciliation
+
+# Synthetic/offline contract only. Live robots/listing/article probes require
+# separate owner approvals in their own existing workflows.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - core/korea_dapa_private_identity_bridge.py
+      - tests/test_korea_dapa_private_identity_bridge.py
+      - docs/engineering/KOREA_DAPA_PRIVATE_ROW_ARTICLE_BRIDGE_2026-10-17.md
+      - .github/workflows/korea_dapa_private_identity_bridge.yml
+
+permissions:
+  contents: read
+
+jobs:
+  held-private-identity-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      - name: Run strict no-network DAPA adversarial reconciliation suite
+        run: python -m unittest -v tests.test_korea_dapa_private_identity_bridge
+      - name: Confirm zero archive, original or production changes
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/ research/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/ shadow/ research/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
