@@ -1,0 +1,27 @@
+{
+  "note": "Synthetic relevance examples, not publication records. Chinese title copied exactly from public compact record 5279 solely to test script handling.",
+  "records": [
+    {"id":"fixture:a","title":"Alpha maritime planning","original_title":null,"summary":"Synthetic register.","text":null,"date":"2026-01-03","date_kind":"synthetic","desks":["fixture-a"],"source":"Fixture bulletin","issuer":"Fixture board","record_type":"archive_record","processing":"Synthetic","ipr_url":"https://indopacificrecord.org/record/999001.html","source_url":null,"citation":"Synthetic A"},
+    {"id":"fixture:b","title":"Beta planning","original_title":null,"summary":"Maritime planning in a synthetic register.","text":null,"date":"2026-01-04","date_kind":"synthetic","desks":["fixture-b"],"source":"Fixture ledger","issuer":"Fixture board","record_type":"human_analysis","processing":"Synthetic","ipr_url":"https://indopacificrecord.org/record/999002.html","source_url":null,"citation":"Synthetic B"},
+    {"id":"fixture:c","title":"北约秘书长：暂无迹象表明北约领土面临迫在眉睫威胁","original_title":"北约秘书长：暂无迹象表明北约领土面临迫在眉睫威胁","summary":null,"text":null,"date":null,"date_kind":"synthetic","desks":["fixture-a"],"source":"Fixture multilingual","issuer":null,"record_type":"archive_record","processing":"Synthetic","ipr_url":"https://indopacificrecord.org/record/999003.html","source_url":null,"citation":"Synthetic C"},
+    {"id":"fixture:d","title":null,"original_title":null,"summary":null,"text":null,"date":null,"date_kind":"synthetic","desks":["fixture-b"],"source":"Fixture reference","issuer":"Metadata-only board","record_type":"official_link","processing":"Synthetic","ipr_url":null,"source_url":"https://example.org/fixture-d","citation":"Synthetic D"},
+    {"id":"fixture:e","title":"Café, punctuation & planning","original_title":null,"summary":null,"text":"Unicode résumé example.","date":"2026-01-03","date_kind":"synthetic","desks":["fixture-a"],"source":"Fixture bulletin","issuer":"Fixture board","record_type":"preserved_original","processing":"Synthetic","ipr_url":"https://indopacificrecord.org/record/999005.html","source_url":null,"citation":"Synthetic E"}
+  ],
+  "cases": [
+    {"why":"Title matches rank ahead of summary-only matches.","query":{"q":"maritime"},"ids":["fixture:a","fixture:b"]},
+    {"why":"Quoted phrase must occur contiguously within one field.","query":{"q":"\"maritime planning\""},"ids":["fixture:a","fixture:b"]},
+    {"why":"Unquoted terms use AND, including terms in different fields.","query":{"q":"alpha register"},"ids":["fixture:a"]},
+    {"why":"Chinese substring matching does not need whitespace tokenization.","query":{"q":"北约"},"ids":["fixture:c"]},
+    {"why":"NFKC handles full-width Latin input.","query":{"q":"Ａｌｐｈａ"},"ids":["fixture:a"]},
+    {"why":"Diacritics are preserved, not translated or guessed.","query":{"q":"café"},"ids":["fixture:e"]},
+    {"why":"Punctuation is literal.","query":{"q":"punctuation &"},"ids":["fixture:e"]},
+    {"why":"Metadata-only references can be found by issuer.","query":{"q":"metadata-only"},"ids":["fixture:d"]},
+    {"why":"Desk filters constrain a keyword result set.","query":{"q":"maritime","desk":"fixture-b"},"ids":["fixture:b"]},
+    {"why":"Date bounds are inclusive; equal dates use stable ID order.","query":{"from":"2026-01-03","to":"2026-01-03","sort":"oldest"},"ids":["fixture:a","fixture:e"]},
+    {"why":"Dates do not borrow a week ending or infer undated items.","query":{"record_type":"official_link","from":"2026-01-01"},"ids":[]},
+    {"why":"Newest sort overrides relevance; missing dates sort last.","query":{"q":"maritime","sort":"newest"},"ids":["fixture:b","fixture:a"]},
+    {"why":"Source and issuer use exact facet values.","query":{"source":"Fixture bulletin","issuer":"Fixture board","sort":"oldest"},"ids":["fixture:a","fixture:e"]},
+    {"why":"Unknown terms produce an honest empty set.","query":{"q":"nonexistent-token"},"ids":[]},
+    {"why":"Unknown facets do not silently broaden the search.","query":{"desk":"nonexistent-desk"},"ids":[]}
+  ]
+}

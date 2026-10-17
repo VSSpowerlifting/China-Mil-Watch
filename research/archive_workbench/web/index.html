@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive"><meta name="referrer" content="no-referrer">
+  <title>Archive Research Workbench · Indo-Pacific Record</title>
+  <link rel="icon" href="favicon.png"><link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="styles.css">
+  <script defer src="search.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<a class="skip" href="#query">Skip to search</a>
+<header><div class="masthead">
+  <a href="https://indopacificrecord.org" class="identity" aria-label="Indo-Pacific Record home"><img src="ipr.png" alt="" width="62" height="42"><span>Indo-Pacific Record</span></a>
+  <span class="preview-label">Private research preview</span>
+</div></header>
+<main>
+  <section class="opening"><h1>Archive research workbench</h1><p class="intro">Search the published record. Keep the source and citation close.</p></section>
+  <form id="controls" role="search" aria-label="Search published material">
+    <div class="query-line"><label for="query">Search archive</label><div class="search-line"><input id="query" name="q" type="search" maxlength="512" placeholder="Search a topic or phrase" aria-describedby="query-help"><button type="submit" class="primary">Search</button></div></div>
+    <div class="filter-bar"><div class="quick-filters">
+      <label class="quick-filter">Desk<select name="desk" id="desk"><option value="">All desks</option></select></label>
+      <label class="quick-filter">Type<select name="record_type" id="record_type"><option value="">All record types</option></select></label>
+      </div><details id="more-filters" class="more-filters"><summary>More filters<span id="more-filter-count"></span></summary>
+        <div class="advanced-grid">
+          <fieldset><legend>Source and issuer</legend>
+            <label>Source<select name="source" id="source"><option value="">All sources</option></select></label>
+            <label>Issuer or author<select name="issuer" id="issuer"><option value="">All issuers / authors</option></select></label>
+          </fieldset>
+          <fieldset aria-describedby="date-help"><legend>Publication dates</legend><div class="date-range">
+            <label>Published from<input name="from" id="from" type="date" aria-describedby="date-help"></label>
+            <label>Published through<input name="to" id="to" type="date" aria-describedby="date-help"></label>
+          </div><p id="date-help">Source items use the source’s publication date. Reviewed English pages and Briefs use recorded IPR publication dates. Coverage weeks and approval dates are not substituted; undated items are excluded by date filters.</p></fieldset>
+        </div>
+      </details>
+    </div>
+    <div class="search-notes"><details class="query-help"><summary>Search help</summary><p id="query-help">Search titles, available text and metadata. All terms must match; use double quotes for a phrase. Dates are inclusive publication dates, not event dates. <a href="#limitations">Coverage and date limits</a></p></details><button type="button" id="reset">Clear search &amp; filters</button></div>
+    <div id="active" aria-label="Active filters"></div>
+  </form>
+  <p id="error" role="alert" hidden></p>
+  <noscript><p>This local interface requires JavaScript. Visit <a href="https://indopacificrecord.org/archive.html">the IPR archive</a> to read canonical records.</p></noscript>
+  <section class="workspace" aria-label="Search results and research list">
+    <aside class="research-list" id="research-list" aria-label="Selected research list">
+      <details id="research-disclosure" open><summary class="research-summary">Research list · <span id="research-mobile-count">0</span><span id="research-export-hint" hidden>Exports available</span></summary>
+      <div class="research-content"><div class="list-heading"><h2>Your research list</h2><p id="selection-count" role="status" aria-live="polite">0 selected</p></div>
+      <p class="list-intro">Choose Keep beside a record to start a list.</p>
+      <div class="exports"><button id="export-csv" type="button" disabled>Export CSV</button><button id="export-json" type="button" disabled>Export JSON</button><button id="clear-selection" type="button" disabled>Clear selection</button></div>
+      <ul id="selected-list"></ul><p id="feedback" role="status" aria-live="polite"></p>
+      <details class="list-help"><summary>About this list</summary><p>Selections stay in this tab across reloads. Export to keep a copy. A research list preserves attribution; it does not grant rights to reuse the underlying material.</p></details>
+      </div></details><p id="research-notice" class="research-notice" role="status" aria-live="polite" aria-atomic="true"></p>
+    </aside>
+    <div class="result-column"><div class="results-heading"><div><h2 id="count" role="status" aria-live="polite" aria-atomic="true">Loading results…</h2><p id="coverage">Loading the published index…</p></div><label for="sort">Sort<select id="sort"><option value="relevance">Relevant first</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option></select></label></div>
+      <div id="results"></div><p id="empty" hidden>No records match this search. Remove a filter or try fewer terms. Metadata-only references have no searchable body.</p><button id="more" type="button" hidden>Show more results</button>
+    </div>
+  </section>
+  <details id="limitations" class="limits"><summary>Coverage, dates and reuse</summary><div class="limit-columns">
+    <div><h2>Archive records</h2><p>Indexed published material, not comprehensive regional activity. Documents are not independent events or corroboration. Archive search uses titles and public metadata; captured bodies, machine summaries and source URLs are excluded from bulk search and export. Open the canonical IPR record for its provenance.</p></div>
+    <div><h2>Links and originals</h2><p>Approved public loaders define available fields. A neutral reference label is not a publisher headline. Only separately registered published originals have searchable source text. Export does not grant reuse rights or verify a source’s statements.</p></div>
+    <div><h2>Analysis and dates</h2><p>Human-controlled Briefs retain their publication identity and citations. Source artifacts use source-stated publication dates; reviewed English artifacts and Briefs use recorded IPR publication dates. Coverage weeks and approval dates are never substituted. Undated items are excluded when date filters are active.</p></div>
+  </div><p id="snapshot"></p></details>
+</main>
+<footer>Indo-Pacific Record · Private research preview</footer>
+</body></html>
