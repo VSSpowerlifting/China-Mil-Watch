@@ -158,7 +158,7 @@ class BindingContracts(unittest.TestCase):
 
     def test_only_exact_indonesia_source_may_claim_pending_private_handoff(self):
         philippines = next(x for x in self.config["sources"]
-                           if x["source_slug"] == "ph_afp_news")
+                           if x["source_slug"] == "ph_afp_articles")
         philippines.update(trigger="private_handoff_pending", workflow=None, cron=None)
         with self.assertRaisesRegex(audit.BindingError, "exact Indonesia Kemhan"):
             self.report()
