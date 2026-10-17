@@ -18,9 +18,9 @@ ARTICLE_DATE = "2026-10-15"
 def listing(*, row_date=LIST_DATE, call="goDoc('59293')", second="", rows=""):
     return ("""<!doctype html><html lang="ko"><body>
     <table><tr><th>Number</th><th>Title</th><th>Posted</th></tr>
-    <tr><td>701</td><td><a href="#" onclick="%s">PRIVATE GOVERNMENT RELEASE TITLE</a></td>
-    <td>%s</td></tr>%s%s
-    </table></body></html>""" % (call, row_date, second, rows)).encode("utf-8")
+    <tr><td>701</td><td><a href="#" onclick="%s">PRIVATE GOVERNMENT RELEASE TITLE</a>%s</td>
+    <td>%s</td></tr>%s
+    </table></body></html>""" % (call, second, row_date, rows)).encode("utf-8")
 
 
 def article(*, posted=ARTICLE_DATE, label="게시일", extra=""):
