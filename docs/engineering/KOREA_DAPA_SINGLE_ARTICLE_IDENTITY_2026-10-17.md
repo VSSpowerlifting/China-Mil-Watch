@@ -1,6 +1,8 @@
 # Korea DAPA — one exact first-party original article identity check
 
-**Status: unexecuted owner authorization, offline fixtures only. 2026-10-17.**
+**Status: one authorized, bounded first-party article observation succeeded on 2026-10-17; strengthened date binding is not yet live-verified. No source admission.**
+
+[Owner-dispatched run 39042839823](https://github.com/VSSpowerlifting/IndoPacificRecord/actions/runs/39042839823) returned `DAPA_ONE_OFFICIAL_DOCUMENT_ROUTE_AND_DATE_MARKER_OBSERVED` for article `59180` (SHA-256 `94bdbabc7e1bfb19aadd8cc8f0bc8f80d8096c967e0c5e88e75bc3ff48274807`), with exactly two requests, no original retained and all issuer, listing-linkage and rights flags false. **Its earlier implementation tested for a date anywhere in visible text plus a posting label anywhere else, so the green result must not be described as proof of the adjacent posting-date field.** The hardening below requires a new, separately owner-authorized exact-URL run after merge to prove the stronger condition on live HTML.
 
 The source is the actual DAPA website, `www.dapa.go.kr`, not the distinct annual `data.go.kr` catalogue and not the `korea.kr` republisher. Prior DAPA listing permission covered at most one first-party listing GET, NOT an original article GET.
 
@@ -20,7 +22,7 @@ This is a **source-specific example**, not a currently live new release, not pro
 
 1. One `GET https://www.dapa.go.kr/robots.txt` (15s, 32KiB, text/plain, exact URL, no redirects), then fail closed if unavailable or the exact article route is disallowed.
 2. Only if that rule permits the article route, sleep two seconds and issue ONE strict GET of the **sole allowlisted** full URL with docSeq `59180` (15s, 800KiB, exact URL, text/html, no redirect, no session/cookie/retry or alternate endpoints).
-3. Inspect Korean publisher HTML in memory only. Look for an actual visible posting-date marker `게시일` and the expected `2026-09-18`, excluding JavaScript-only dates and challenge/error markup. Emit only fixed access/identity statuses, response SHA256 and metadata booleans. The untrusted body, original Korean prose, title, HTML/JS, attachments and full URL are **not logged or preserved**.
+3. Inspect Korean publisher HTML in memory only. Require **exactly one** visible posting-date label `게시일` with its immediately adjacent, valid date matching `2026-09-18`; matching dates elsewhere in the body, a competing posting label, JavaScript-only dates, and challenge/error markup must fail closed. Emit only fixed access/identity statuses, response SHA256 and metadata booleans. The untrusted body, original Korean prose, title, HTML/JS, attachments and full URL are **not logged or preserved**.
 
 Even after a successful check the following explicitly remain **false**: `article_linked_to_live_listing_row`, `individual_dapa_issuer_verified`, `source_content_licensed`, `article_text_captured`, `collection_enabled`, `production_published`.
 
