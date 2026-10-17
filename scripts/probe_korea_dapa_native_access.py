@@ -8,6 +8,7 @@ The one-time approval for korea.kr does NOT authorize this separate host.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import time
@@ -18,6 +19,9 @@ from html.parser import HTMLParser
 from urllib.parse import parse_qs, urljoin, urlsplit
 
 from scripts.probe_vietnam_mod_defrel_access import NoRedirect
+from core.korea_dapa_private_identity_bridge import (
+    DAPAHold, ListingRows, canonical_article_identity,
+)
 
 HOST = "https://www.dapa.go.kr"
 ROBOTS = HOST + "/robots.txt"
@@ -293,7 +297,7 @@ class Anchors(HTMLParser):
             self._cell_chunks = []
 
 
-def inspect_listing(data):
+def inspect_listing(data, *, owner_clicked_url=None):
     try:
         body = data.decode("utf-8-sig")
     except UnicodeError:
@@ -313,6 +317,34 @@ def inspect_listing(data):
     except (ValueError, TypeError):
         raise AccessHold("publisher_listing_invalid_markup") from None
     ids = sorted(parser.docseq, key=lambda value: int(value))
+    witness = None
+    if owner_clicked_url is not None:
+        # The user provided a browser-click result, not permission to fetch a
+        # source article. Compare one row's provisional numeric action only.
+        try:
+            identity = canonical_article_identity(owner_clicked_url)
+            rows = ListingRows()
+            rows.feed(body)
+            rows.close()
+        except (DAPAHold, ValueError, TypeError):
+            raise AccessHold("dapa_owner_click_witness_invalid_or_ambiguous") from None
+        matches = [index for index, row in enumerate(rows.rows)
+                   if row["navigation_unambiguous"] and
+                   row["provisional_docseq"] == identity["provisional_docseq"]]
+        witness = {
+            "owner_supplied_browser_click": True,
+            "first_dated_row_numeric_action_matches_click": matches == [0],
+            "matching_dated_rows": len(matches),
+            "listing_sha256": hashlib.sha256(data).hexdigest(),
+            "first_row_claimed_date": (
+                rows.rows[0]["posted_date"] if matches == [0] else None
+            ),
+            "js_handler_semantics_independently_verified": False,
+            "article_html_or_body_fetched": False,
+            "article_issuer_verified": False,
+            "source_rights_approved": False,
+            "automatic_collection_authorized": False,
+        }
     return {
         "observed_anchor_count": parser.links,
         "structure_counts": parser.structures,
@@ -320,10 +352,11 @@ def inspect_listing(data):
         "provisional_docseq_count": len(ids),
         "sample_unverified_docseq": ids[:MAX_SAMPLES],
         "zero_matching_links_is_not_zero_publications": len(ids) == 0,
+        **({"owner_clicked_witness": witness} if witness is not None else {}),
     }
 
 
-def probe(*, fetch=fetch_once, sleep=time.sleep):
+def probe(*, fetch=fetch_once, sleep=time.sleep, owner_clicked_url=None):
     record = {
         "schema": SCHEMA,
         "publisher": "www.dapa.go.kr",
@@ -340,15 +373,29 @@ def probe(*, fetch=fetch_once, sleep=time.sleep):
         "collector_enabled": False,
         "production_published": False,
     }
+    if owner_clicked_url is not None:
+        # Reject untrusted GitHub dispatch inputs BEFORE requesting a publisher.
+        try:
+            canonical_article_identity(owner_clicked_url)
+        except (DAPAHold, TypeError):
+            record["reason_code"] = "dapa_owner_click_witness_url_invalid"
+            return record
     try:
         record["requests_attempted"] = 1
         robots_allow(fetch(ROBOTS, MAX_ROBOTS))
         record["robots_checked"] = True
         sleep(PAUSE)
         record["requests_attempted"] = 2
-        record.update(inspect_listing(fetch(LISTING, MAX_LISTING)))
+        record.update(inspect_listing(
+            fetch(LISTING, MAX_LISTING), owner_clicked_url=owner_clicked_url))
         record["listing_checked"] = True
-        record["state"] = "listing_shape_observed_unverified"
+        if owner_clicked_url is None:
+            record["state"] = "listing_shape_observed_unverified"
+        elif record["owner_clicked_witness"][
+                "first_dated_row_numeric_action_matches_click"]:
+            record["state"] = "owner_click_row_shape_consistent_not_source_qualified"
+        else:
+            record["state"] = "owner_click_row_shape_mismatch_hold"
     except AccessHold as exc:
         record["reason_code"] = str(exc)
     return record
@@ -357,12 +404,17 @@ def probe(*, fetch=fetch_once, sleep=time.sleep):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--approve-one-time-direct-dapa-access", action="store_true")
+    parser.add_argument("--owner-clicked-first-row-url", default="",
+                        help="Optional owner browser-clicked FIRST dated row URL; never fetches it")
     args = parser.parse_args(argv)
     if not args.approve_one_time_direct_dapa_access:
         parser.error("separate first-party DAPA host permission required")
-    report = probe()
+    report = probe(owner_clicked_url=args.owner_clicked_first_row_url or None)
     print(json.dumps(report, sort_keys=True, ensure_ascii=True))
-    return 0 if report["state"] == "listing_shape_observed_unverified" else 2
+    return 0 if report["state"] in (
+        "listing_shape_observed_unverified",
+        "owner_click_row_shape_consistent_not_source_qualified",
+    ) else 2
 
 
 if __name__ == "__main__":
