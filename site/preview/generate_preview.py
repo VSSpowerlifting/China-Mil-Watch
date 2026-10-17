@@ -174,14 +174,14 @@ BUILD_MODE = "indo-pacific-record"
 #: published edition said at the time.
 MAINTAINER = {
     "name": "Benjamin Yang",
-    "role": "Creator and Editor",
+    "role": "Founder & Director of Research and Editorial",
     "bio": ("Benjamin Yang studies International Affairs at George Washington "
             "University’s Elliott School, with interests in U.S.–China "
             "relations, public diplomacy, and security affairs. He founded "
             "Indo-Pacific Record, writes source-linked security and policy "
             "analysis, and maintains the project’s collection pipeline."),
     "email": "ben.yang@gwmail.gwu.edu",
-    "linkedin": "https://www.linkedin.com/in/benjamin-yang-42b525294",
+    "linkedin": "https://www.linkedin.com/in/benjamin-w-yang/",
 }
 
 #: The desk roster is NOT a constant here any more. It is loaded from
