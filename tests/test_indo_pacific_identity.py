@@ -131,9 +131,17 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
                 # description is the editor's dek, not the site tagline.
                 source = REPO_ROOT / "briefs" / (Path(name).stem + ".json")
                 description = json.loads(source.read_text(encoding="utf-8"))["dek"]
+            elif name == "team.html":
+                description = "Meet the team behind Indo-Pacific Record's source-grounded defense and security research."
+            elif name.startswith("authors/"):
+                from core.staff_directory import load_staff
+                member = next(p for p in load_staff(REPO_ROOT / "site/preview/staff.json") if p["route"] == name)
+                description = "%s, %s at Indo-Pacific Record. Biography and explicitly credited published work." % (member["name"], member["role"])
             with self.subTest(page=name):
-                self.assertIn('<meta name="description" content="%s">'
-                              % html_mod.escape(description, quote=True), html)
+                from bs4 import BeautifulSoup
+                tags = BeautifulSoup(html, "html.parser").select('meta[name="description"]')
+                self.assertEqual(len(tags), 1)
+                self.assertEqual(tags[0]["content"], description)
 
     def test_the_build_mode_is_recorded_in_metadata(self):
         for name, html in self.pages().items():
@@ -186,7 +194,7 @@ class TestTheMastheadIsTheNewIdentity(IdentityCase):
         # (Methodology, About). "Records" is the destination formerly labelled
         # "Atlas"; its address is unchanged.
         self.assertEqual(labels, ["Records", "Briefs", "Desks", "Sources",
-                                  "Coverage", "Methodology", "About"])
+                                  "Coverage", "Methodology", "Team", "About"])
 
 
 class TestRetiredNamesStayRetired(IdentityCase):

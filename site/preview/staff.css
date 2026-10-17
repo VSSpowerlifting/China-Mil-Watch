@@ -1,15 +1,26 @@
-/* Staff directory: shared IPR editorial type and quiet rules. */
-.staff-head{margin-bottom:1.3rem}.staff-directory{border-top:2px solid var(--rule-hard);margin-bottom:2rem}
-.staff-entry{display:grid;grid-template-columns:minmax(2.5rem,.16fr) minmax(0,1fr);gap:1rem;border-bottom:1px solid var(--rule);padding:1.5rem 0 1.8rem;max-width:58rem}
-.staff-index{font:600 .75rem/1.5 var(--sans);color:var(--muted);margin:.6rem 0 0}
-.staff-entry h2.plain{margin:0;font:500 clamp(1.65rem,3vw,2.3rem)/1.17 var(--display);letter-spacing:-.016em}
-.staff-entry h2 a{color:var(--ink)}
-.staff-role,.staff-person-role{color:var(--editorial-ink,var(--accent));font:600 .875rem/1.5 var(--sans);margin:.55rem 0 .75rem}
-.staff-bio{max-width:62ch;color:var(--ink-2);line-height:1.7;margin:0 0 .75rem}
-.staff-action{margin:0;font-weight:600;font-size:.875rem}.staff-boundary{border-top:1px solid var(--rule);padding:1rem 0;max-width:65ch;color:var(--ink-2);font-size:.875rem}
-.staff-back{padding-top:1.2rem;font-size:.875rem;font-weight:600}.staff-person-head{margin-bottom:2rem}.staff-person-role{font-size:1rem}
-.staff-person{max-width:48rem;margin-bottom:4rem}.staff-person .prose{margin-bottom:2.5rem}.staff-outbound{margin-top:1rem;font-size:.875rem}
-.staff-work{border-top:2px solid var(--rule-hard);padding-top:1rem;margin-top:2rem}.staff-work-list{list-style:none;margin:.7rem 0 0;padding:0}
-.staff-work-list li{border-bottom:1px solid var(--rule);padding:.85rem 0}.staff-work-list li a{display:block;font-family:var(--serif);font-size:1.15rem}.staff-work-list li span{display:block;color:var(--muted);font-size:.8rem;margin-top:.25rem}
-@media(max-width:500px){.staff-entry{grid-template-columns:2rem minmax(0,1fr);gap:.5rem;padding:1.2rem 0}.staff-entry h2.plain{font-size:1.7rem}}
-@media print{.staff-directory,.staff-work{break-inside:avoid}.staff-action{display:none}}
+/* Editorial staff reuse the utility surface's paper, chart shelf and shell. */
+.staff-directory{margin-bottom:2rem}
+.staff-entry{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.65fr);gap:clamp(1.5rem,4vw,4rem);border-bottom:1px solid var(--rule);padding:2rem 0 2.5rem}
+.staff-entry:first-child{padding-top:.5rem}
+.staff-entry h2.plain{margin:0;font:400 clamp(1.85rem,3vw,2.5rem)/1.12 var(--display);letter-spacing:-.016em}
+.staff-entry h2 a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:.15em}
+.staff-role,.staff-person-role{color:var(--editorial-ink);font:600 .875rem/1.6 var(--sans);margin:.75rem 0 0;max-width:32ch}
+.staff-bio{max-width:64ch;color:var(--ink-2);font:400 1rem/1.75 var(--serif);margin:0 0 1rem}
+.staff-action{margin:0;font:600 .875rem/1.5 var(--sans)}
+.staff-action a,.staff-outbound a{display:inline-block;padding-block:.6rem;text-underline-offset:.2em}
+.staff-boundary{max-width:68ch;color:var(--ink-2);font:.875rem/1.7 var(--sans);margin-block:1.5rem 3rem}
+.staff-back{padding-top:1.2rem;font:.875rem/1.5 var(--sans)}
+.staff-back a{display:inline-block;padding-block:.5rem}
+.staff-person-role{font-size:1rem;max-width:48ch}
+.staff-person{max-width:46rem;margin-bottom:4rem}
+.staff-person .prose{max-width:66ch;margin-bottom:2.5rem}
+.staff-person .prose>h2{margin-top:0}
+.staff-outbound{margin-top:1rem;font:.875rem/1.5 var(--sans)}
+.staff-work{border-top:2px solid var(--rule-hard);padding-top:1rem;margin-top:2rem}
+.staff-work-list{list-style:none;margin:.7rem 0 0;padding:0}
+.staff-work-list li{border-bottom:1px solid var(--rule);padding:1rem 0}
+.staff-work-list li a{display:block;font:400 1.35rem/1.4 var(--display)}
+.staff-work-list li span{display:block;color:var(--muted);font:.8rem/1.6 var(--sans);margin-top:.4rem}
+@media(max-width:700px){.staff-entry{grid-template-columns:minmax(0,1fr);gap:1rem;padding:1.5rem 0 2rem}.staff-entry h2.plain{font-size:2rem}.staff-role{max-width:40ch}}
+@media print{.staff-entry,.staff-work-list li{break-inside:avoid}.staff-action{display:none}.staff-role,.staff-person-role{color:inherit}}
+@media(forced-colors:active){.staff-role,.staff-person-role{color:CanvasText}}

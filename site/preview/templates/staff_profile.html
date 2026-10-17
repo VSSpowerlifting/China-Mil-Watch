@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% block title %}{{ member.name }} — {{ title }}{% endblock %}
-{% block description %}{{ member.name }}, {{ member.role }} at Indo-Pacific Record. {{ member.bio }}{% endblock %}
+{% block description %}{{ member.name }}, {{ member.role }} at Indo-Pacific Record. Biography and explicitly credited published work.{% endblock %}
 {% block stylesheets %}{{ super() }}<link rel="stylesheet" href="../staff.css">{% endblock %}
 {% block head_scripts %}{% if staff_schema %}<script type="application/ld+json">{{ staff_schema|tojson }}</script>{% endif %}{% endblock %}
 {% block content %}
 <nav class="staff-back" aria-label="Breadcrumb"><a href="../team.html">← Editorial team</a></nav>
 <header class="page-head staff-person-head">
-<p class="eyebrow">Indo-Pacific Record / Staff</p>
 <h1 class="page-name">{{ member.name }}</h1>
 <p class="staff-person-role">{{ member.role }}</p>
 </header>

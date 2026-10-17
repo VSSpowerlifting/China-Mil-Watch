@@ -1154,6 +1154,9 @@ def _edition_identity_fields(sidecar_path: Path, data: dict) -> dict:
     except IdentityError as exc:
         raise IdentityError("sidecar %s: %s" % (sidecar_path.name, exc))
     return {
+        # Catalogue bylines follow the original edition, not today's staff role.
+        "author_name": identity["author_name"],
+        "author_title": identity["author_title"],
         "publication": identity["publication"],
         "publication_home_label": identity["publication_home_label"],
         "series_name": identity["series_name"],

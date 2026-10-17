@@ -4,17 +4,17 @@
 {% block stylesheets %}{{ super() }}<link rel="stylesheet" href="staff.css">{% endblock %}
 {% block content %}
 <header class="page-head staff-head">
-<p class="eyebrow">Indo-Pacific Record / People</p>
 <h1 class="page-name">Editorial team</h1>
 <p class="lede">Research, editorial review, and communications behind the record.</p>
 </header>
 <section class="staff-directory" aria-label="Editorial staff">
 {% for member in team %}
 <article class="staff-entry">
-<p class="staff-index" aria-hidden="true">{{ "%02d"|format(loop.index) }}</p>
 <div>
 <h2 class="plain"><a href="{{ member.route }}">{{ member.name }}</a></h2>
 <p class="staff-role">{{ member.role }}</p>
+</div>
+<div class="staff-summary">
 <p class="staff-bio">{{ member.bio }}</p>
 <p class="staff-action"><a href="{{ member.route }}">View profile <span aria-hidden="true">→</span></a></p>
 </div>
