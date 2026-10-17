@@ -35,7 +35,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - run: python -m pip install requests
+      - run: python -m pip install requests 'jinja2>=3.1.4,<4'
       - name: Validate source-to-HTML-to-Pages-to-HTTPS distinction
         run: python -m unittest -v tests.test_korea_original_deployed_readback
       - name: No production DB, registry or site mutations
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-      - run: python -m pip install requests
+      - run: python -m pip install requests 'jinja2>=3.1.4,<4'
       - name: Verify exact source SHA, renderer, Desk, Pages and public HTTPS bytes
         run: |
           python -m scripts.verify_korea_original_deployed_readback \
