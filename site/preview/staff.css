@@ -1,0 +1,15 @@
+/* Staff directory: shared IPR editorial type and quiet rules. */
+.staff-head{margin-bottom:1.3rem}.staff-directory{border-top:2px solid var(--rule-hard);margin-bottom:2rem}
+.staff-entry{display:grid;grid-template-columns:minmax(2.5rem,.16fr) minmax(0,1fr);gap:1rem;border-bottom:1px solid var(--rule);padding:1.5rem 0 1.8rem;max-width:58rem}
+.staff-index{font:600 .75rem/1.5 var(--sans);color:var(--muted);margin:.6rem 0 0}
+.staff-entry h2.plain{margin:0;font:500 clamp(1.65rem,3vw,2.3rem)/1.17 var(--display);letter-spacing:-.016em}
+.staff-entry h2 a{color:var(--ink)}
+.staff-role,.staff-person-role{color:var(--editorial-ink,var(--accent));font:600 .875rem/1.5 var(--sans);margin:.55rem 0 .75rem}
+.staff-bio{max-width:62ch;color:var(--ink-2);line-height:1.7;margin:0 0 .75rem}
+.staff-action{margin:0;font-weight:600;font-size:.875rem}.staff-boundary{border-top:1px solid var(--rule);padding:1rem 0;max-width:65ch;color:var(--ink-2);font-size:.875rem}
+.staff-back{padding-top:1.2rem;font-size:.875rem;font-weight:600}.staff-person-head{margin-bottom:2rem}.staff-person-role{font-size:1rem}
+.staff-person{max-width:48rem;margin-bottom:4rem}.staff-person .prose{margin-bottom:2.5rem}.staff-outbound{margin-top:1rem;font-size:.875rem}
+.staff-work{border-top:2px solid var(--rule-hard);padding-top:1rem;margin-top:2rem}.staff-work-list{list-style:none;margin:.7rem 0 0;padding:0}
+.staff-work-list li{border-bottom:1px solid var(--rule);padding:.85rem 0}.staff-work-list li a{display:block;font-family:var(--serif);font-size:1.15rem}.staff-work-list li span{display:block;color:var(--muted);font-size:.8rem;margin-top:.25rem}
+@media(max-width:500px){.staff-entry{grid-template-columns:2rem minmax(0,1fr);gap:.5rem;padding:1.2rem 0}.staff-entry h2.plain{font-size:1.7rem}}
+@media print{.staff-directory,.staff-work{break-inside:avoid}.staff-action{display:none}}

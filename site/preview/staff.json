@@ -1,0 +1,25 @@
+[
+  {
+    "slug": "benjamin-yang",
+    "name": "Benjamin Yang",
+    "role": "Founder & Editor-in-Chief",
+    "bio": "Benjamin Yang studies international affairs at George Washington University's Elliott School. He founded Indo-Pacific Record and leads its research direction, editorial standards, and official-source monitoring systems.",
+    "links": {
+      "LinkedIn": "https://www.linkedin.com/in/benjamin-yang-42b525294"
+    }
+  },
+  {
+    "slug": "dylan-tanzi",
+    "name": "Dylan Tanzi",
+    "role": "Managing Editor",
+    "bio": "Dylan Tanzi supports editorial review and source-grounded regional research for Indo-Pacific Record, including work on the publication's Briefs.",
+    "links": {}
+  },
+  {
+    "slug": "christin",
+    "name": "Christin",
+    "role": "Communications Editor",
+    "bio": "Christin supports the presentation and communication of Indo-Pacific Record's research, including accessible visual explainers and publication updates.",
+    "links": {}
+  }
+]
