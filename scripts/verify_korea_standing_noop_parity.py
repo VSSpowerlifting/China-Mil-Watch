@@ -60,7 +60,7 @@ def verify_parity():
     try:
         registry = json.loads(blob("origin/main",
                                    "research/korea_published_original_texts.json"))
-    except (ValueError, UnicodeError):
+    except (json.JSONDecodeError, UnicodeError):
         raise NoopHold("korea_noop_registry_invalid") from None
     need(type(registry) is dict and set(registry) == {"schema", "records"}
          and registry["schema"] == REGISTER and type(registry["records"]) is list
