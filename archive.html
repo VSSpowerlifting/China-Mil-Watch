@@ -42,11 +42,11 @@
       <a href="archive.html" aria-current="page">Records</a><a href="analysis.html">Briefs</a><a href="desks.html">Desks</a>
       <details class="shell-menu nav-more"><summary>About IPR</summary><div>
         <a href="sources.html">Sources</a><a href="coverage.html">Coverage</a>
-        <a href="methodology.html">Methodology</a><a href="about.html">About</a>
+        <a href="methodology.html">Methodology</a><a href="team.html">Team</a><a href="about.html">About</a>
       </div></details>
     </nav>
     <details class="shell-menu nav-mobile"><summary>Menu <span aria-hidden="true">☰</span></summary>
-      <nav aria-label="Primary"><a href="archive.html" aria-current="page">Records</a><a href="analysis.html">Briefs</a><a href="desks.html">Desks</a><a href="sources.html">Sources</a><a href="coverage.html">Coverage</a><a href="methodology.html">Methodology</a><a href="about.html">About</a></nav>
+      <nav aria-label="Primary"><a href="archive.html" aria-current="page">Records</a><a href="analysis.html">Briefs</a><a href="desks.html">Desks</a><a href="sources.html">Sources</a><a href="coverage.html">Coverage</a><a href="methodology.html">Methodology</a><a href="team.html">Team</a><a href="about.html">About</a></nav>
     </details>
   </div>
 </header>
@@ -55,7 +55,7 @@
   <div class="wrap">
 <header class="page-head"><h1>The record.</h1><p class="lede">912 preserved records. Search English and original titles.</p><p class="finder-note">Start with a smaller <strong>automatically assembled research focus</strong> (600 China records, plus 86 records from other desks). It is not individually fact-checked or editor-approved. All 912 preserved records, their permanent links and publication citations remain available below and through Full preserved record.</p></header>
 <div id="browse" data-snapshot-date="2026-10-17"
-     data-snapshot-records="912" data-focus-records="686" hidden>
+     data-snapshot-records="912" data-focus-records="686" data-archive-digest="ca27f6862ce535b791a9daadf9c811af6b9fef3ce1ff035648ee24a35e392432" data-research-digest="9624fa77e93b132d9b3dbf6b3d67cfcb2fccbdc21480fed2acabd8a8a7342d20" hidden>
   <form id="controls" class="finder rl-finder" role="search" action="archive.html" method="get" hidden>
     <div class="finder-row">
       <div class="finder-field">
@@ -63,6 +63,7 @@
         <select id="f-scope" name="scope">
           <option value="focus" selected>Research focus (686 records)</option>
           <option value="all">Full preserved record (912 records)</option>
+          <option value="published">All published material</option>
         </select>
       </div>
       <div class="finder-field finder-field--q">
@@ -71,19 +72,32 @@
                placeholder="English or original title">
       </div>
       <details class="finder-more">
+
         <summary>Filters</summary>
         <div class="finder-more-body">
+          <div class="finder-field">
+            <label for="f-keywords">Keywords or "quoted phrase"</label>
+            <input id="f-keywords" name="keywords" type="search" maxlength="512" aria-describedby="research-help">
+          </div>
+          <div class="finder-field">
+            <label for="f-record_type">Publication type</label>
+            <select id="f-record_type" name="record_type"><option value="">All publication types</option>
+            <option value="archive_record">Archive record</option><option value="official_link">Official-link reference</option>
+            <option value="preserved_original">Published original</option><option value="reviewed_translation">Reviewed translation</option>
+            <option value="reviewed_analysis">Reviewed analysis</option><option value="human_analysis">Human-controlled analysis</option></select>
+          </div>
+          <div class="finder-field"><label for="f-issuer">Issuer or author</label><select id="f-issuer" name="issuer"><option value="">All issuers / authors</option><option value="Benjamin Yang">Benjamin Yang</option><option value="Benjamin Yang and Dylan Tanzi">Benjamin Yang and Dylan Tanzi</option><option value="CMC Political Work Department">CMC Political Work Department</option><option value="Kementerian Pertahanan Republik Indonesia">Kementerian Pertahanan Republik Indonesia</option><option value="Ministry of Defence">Ministry of Defence</option><option value="Ministry of National Defense">Ministry of National Defense</option><option value="People&#39;s Daily Group">People&#39;s Daily Group</option><option value="Republic of Korea Ministry of National Defense">Republic of Korea Ministry of National Defense</option><option value="U.S. Department of Commerce · Bureau of Industry and Security">U.S. Department of Commerce · Bureau of Industry and Security</option><option value="U.S. Department of the Treasury">U.S. Department of the Treasury</option><option value="U.S. Indo-Pacific Command">U.S. Indo-Pacific Command</option><option value="U.S.-China Economic and Security Review Commission">U.S.-China Economic and Security Review Commission</option><option value="Xinhua News Agency">Xinhua News Agency</option></select></div>
       <div class="finder-field">
         <label for="f-desk">Desk</label>
         <select id="f-desk" name="desk">
           <option value="">All desks</option>
-<option value="china">China Desk (826)</option><option value="singapore">Singapore Desk (86)</option>        </select>
+<option value="china">China Desk (826 preserved)</option><option value="singapore">Singapore Desk (86 preserved)</option><option value="japan">Japan Desk</option><option value="korea">South Korea Desk</option><option value="philippines">Philippines Desk</option><option value="vietnam">Vietnam Desk</option><option value="indonesia">Indonesia Desk</option><option value="us-indopacific">US Indo-Pacific Reference Desk</option>        </select>
       </div>
       <div class="finder-field">
         <label for="f-source">Source outlet</label>
         <select id="f-source" name="source">
           <option value="">All sources</option>
-<option value="pla_daily">PLA Daily (解放军报) (339)</option><option value="china_mil_online">China Military Online (EN) (162)</option><option value="mod_china">MOD China (国防部) (160)</option><option value="xinhua_mil">Xinhua Military (新华军事) (131)</option><option value="sg_mindef_releases">MINDEF Singapore — official releases (86)</option><option value="global_times_mil">Global Times — Defense (34)</option>        </select>
+<option value="pla_daily">PLA Daily (解放军报) (339)</option><option value="china_mil_online">China Military Online (EN) (162)</option><option value="mod_china">MOD China (国防部) (160)</option><option value="xinhua_mil">Xinhua Military (新华军事) (131)</option><option value="sg_mindef_releases">MINDEF Singapore — official releases (86)</option><option value="global_times_mil">Global Times — Defense (34)</option><option value="BIS press releases">BIS press releases — published material</option><option value="Indo-Pacific Record">Indo-Pacific Record — published material</option><option value="Indo-Pacific Record Briefs">Indo-Pacific Record Briefs — published material</option><option value="Kemhan Berita">Kemhan Berita — published material</option><option value="Kemhan Siaran Pers">Kemhan Siaran Pers — published material</option><option value="Republic of Korea Policy Briefing">Republic of Korea Policy Briefing — published material</option><option value="The PLA Watch">The PLA Watch — published material</option><option value="Treasury press releases">Treasury press releases — published material</option><option value="U.S. Indo-Pacific Command official site">U.S. Indo-Pacific Command official site — published material</option><option value="USCC press releases">USCC press releases — published material</option>        </select>
       </div>
       <div class="finder-field">
         <label for="f-status">Processing status</label>
@@ -96,6 +110,7 @@
         <select id="f-sort" name="sort">
           <option value="new">Newest first</option>
           <option value="old">Oldest first</option>
+          <option value="relevance">Keyword relevance</option>
         </select>
       </div>
 
@@ -112,12 +127,12 @@
 <option value="zh-Hans">Simplified Chinese (630)</option><option value="en">English (282)</option>            </select>
           </div>
           <div class="finder-field">
-            <label for="f-from">Source-stated date from</label>
-            <input id="f-from" name="from" type="date" min="2026-05-07" max="2026-10-17">
+            <label for="f-from">Publication date from</label>
+            <input id="f-from" name="from" type="date" >
           </div>
           <div class="finder-field">
-            <label for="f-to">Source-stated date to</label>
-            <input id="f-to" name="to" type="date" min="2026-05-07" max="2026-10-17">
+            <label for="f-to">Publication date through</label>
+            <input id="f-to" name="to" type="date" >
           </div>
           <div class="finder-field">
             <label for="f-trail"><input id="f-trail" name="trail" type="checkbox" value="1">
@@ -135,7 +150,8 @@
 
     <details class="finder-about">
       <summary>Search scope and counts</summary>
-    <p class="finder-note">Search covers titles only — the English title where one
+    <p id="research-help">Title contains keeps literal title matching. Keywords require every term or quoted phrase. All published material adds public official-link references, registered originals, reviewed English artifacts and human-controlled analysis. Archive dates remain source-stated. IPR publication dates come from public release records; unrecorded dates stay unrecorded. Dates use YYYY-MM-DD. Processing state, institution, original language and source-trail filters apply to archive records. Search counts are documents, not events or independent corroboration.</p>
+    <p class="finder-note">Archive title search covers titles only — the English title where one
     exists, and the original title always. It does not search machine summaries
     or stored source text.</p>
       <p>Source outlets and publishing institutions overlap: one institution can
@@ -154,6 +170,17 @@ search index could not be loaded or did not match this snapshot, so search and
 filters are unavailable. The records held in this snapshot remain
 accessible through the week-by-week browse above.</p>
 
+<details id="research-list" class="archive-research-list" hidden>
+  <summary>Research list · <span id="selection-count">0</span><span id="export-cue" hidden> · Exports available</span></summary>
+  <div class="research-list-body"><button type="submit" form="controls">Show citations and keep records</button><p>Selections stay in this browser tab. Each kept record remains listed below.</p>
+    <button type="button" id="export-csv" disabled>Export CSV</button>
+    <button type="button" id="export-json" disabled>Export JSON</button>
+    <button type="button" id="selection-clear" disabled>Clear list</button>
+    <ul id="selected-list"></ul><p>Each result has a citation. Exports preserve attribution and grant no reuse rights.</p>
+  </div>
+</details>
+<p id="selection-note" class="visually-hidden" data-kept=" kept. Exports are in Research list; citations are beside each result." role="status" aria-live="polite"></p>
+<p id="research-error" role="status" hidden></p>
 <h2 id="results-heading" class="visually-hidden">Records</h2>
 <p class="result-range" id="result-range" tabindex="-1">The newest 50 of 686 research-focus records. <a href="corpus.html">All 912 preserved records by week</a>.</p>
 <p class="visually-hidden" id="result-live" role="status" aria-live="polite"></p>
@@ -1132,8 +1159,8 @@ coverage denominator.</p>
       <div>
         <a class="brand brand--footer" href="index.html" aria-label="Indo-Pacific Record home"><img class="brand-mark" src="assets/identity/selected-ipr/ipr-navy-160.png" width="160" height="130" loading="lazy" alt=""><span class="brand-name">Indo-Pacific<span>Record</span></span></a>
         <p class="colophon-tagline">Official defense and security texts, preserved as published and analyzed in context.</p>
-        <p>Indo-Pacific Record is an independent research project created and edited by
-        Benjamin Yang · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
+        <p>Indo-Pacific Record is an independent research project founded by Benjamin Yang and produced with its
+        <a href="team.html">editorial team</a> · <a href="mailto:ben.yang@gwmail.gwu.edu">ben.yang@gwmail.gwu.edu</a></p>
         <p>Corrections and questions about any record are welcome at the same
         address.</p>
       </div>
@@ -1160,6 +1187,7 @@ coverage denominator.</p>
         <ul>
           <li><a href="methodology.html">Methodology</a></li>
           <li><a href="about.html">About</a></li>
+          <li><a href="team.html">Editorial team</a></li>
           <li><a href="corpus-guide.html#citation">Citing a record</a></li>
         </ul>
       </nav>
@@ -1168,5 +1196,7 @@ coverage denominator.</p>
     claims are true or its capabilities exist.</p>
   </div>
 </footer>
+<template id="archive-row"><li class="record-row"><div><h3><a data-text="title"></a></h3><p class="original" data-text="original"></p><p class="row-tags"><span data-text="analyzed"></span><span class="trail-tag" data-text="trail_label"></span></p><p class="archive-snippet" data-text="summary"></p><p class="archive-hold" data-text="hold"></p><div class="archive-actions"><label class="keep-record"><input type="checkbox">Keep in research list</label><details><summary>Citation and provenance</summary><p data-text="processing"></p><p data-text="date_info"></p><p class="archive-citation" tabindex="0" data-text="citation"></p><button type="button" aria-live="polite" aria-atomic="true">Copy citation</button></details></div></div><p class="row-side"><span class="row-who" data-text="who"></span><span class="row-via" data-text="via"></span><a data-text="desk_name"></a><span data-text="state"></span></p></li></template>
+<template id="archive-day"><section class="records-day"><p class="day-date"><time><span class="day-num"></span><span class="day-month"></span><span class="day-week"></span></time></p><ul class="record-list"></ul></section></template>
 <script src="browse.js" defer></script><script src="shell.js" defer></script></body>
 </html>
