@@ -2,7 +2,7 @@
 
 **Archive production integration (17 October 2026, source-only review candidate):**
 `codex/archive-production-integration` integrates the reviewed private #766 engine
-into the existing Archive, based on current main `81aeb6dd29`. The selected DB,
+into the existing Archive, based on current main `e376bcb6bf`. The selected DB,
 current in-memory projection and public loaders generate the research index in
 one build; existing URLs/facets/order, server records and week routes remain.
 The current public input set has 966 items after main's separate Korea releases.

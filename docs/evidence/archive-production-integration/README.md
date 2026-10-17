@@ -1,6 +1,6 @@
 # Archive production integration — review evidence
 
-17 October 2026. Source candidate based on main `81aeb6dd29`; no deployment.
+17 October 2026. Source candidate based on main `e376bcb6bf`; no deployment.
 Private reference #766 remains at `cee7f1f6e1248e02cedd0c373d0f5b542a233e8a`.
 
 - [Desktop search](desktop.jpg) · [research list](desktop-list.jpg) · [citation](desktop-citation.jpg)
@@ -46,6 +46,9 @@ failures and 27 store/dependency/GPG errors reproduced on clean initial base
 `edf5fa7adc` (28 tests plus two class-setup errors). Six historical Brief browser
 navigation timeouts occurred in that broad run; all six passed on clean main
 `445592121b` in 123.556 seconds. This is not an all-green local full-suite claim.
+After rebasing onto current main e376bcb6bf, the 30 new Archive contracts and
+six newly inherited DAPA probe contracts passed together (36 tests). Runtime
+source and exact rendered Archive HTML are unchanged by this rebase.
 Final Linux full offline CI, including Chromium, is required and recorded in the PR.
 No unrelated dependencies, store safeguards or historical browser tests changed.
 

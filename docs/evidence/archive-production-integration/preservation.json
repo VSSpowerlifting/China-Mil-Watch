@@ -1,5 +1,5 @@
 {
-  "base_sha": "81aeb6dd296820301729927fbbd59b12da126de0",
+  "base_sha": "e376bcb6bfc9c2926d21c180a944535917990172",
   "changed_generated_paths": [
     "archive-research-index.json",
     "archive.css",
@@ -8,7 +8,7 @@
   ],
   "baseline_files": 1709,
   "candidate_files": 1710,
-  "protected_files_checked": 2089,
-  "protected_inventory_sha256": "8c9bed785bcffe1bd136c89a3fd77982ec5a8a5b671c15b2643b73d5681f436a",
+  "protected_files_checked": 2090,
+  "protected_inventory_sha256": "49d8359fed450161d3de4d39c519648af06971f4e8fd0fdea910ddfa5c0e9777",
   "protected_mismatches": []
 }
