@@ -1,0 +1,36 @@
+name: Sunday Briefs Delivery Ledger — Offline Safety Contracts
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/sunday_delivery_ledger.py"
+      - "tests/test_sunday_delivery_ledger.py"
+      - "docs/SUNDAY_PRIVATE_DELIVERY_LEDGER.md"
+      - ".github/workflows/sunday_delivery_ledger_contracts.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  private-ledger-no-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout without saved credentials
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test idempotency states and durable private concurrent writes
+        run: python -m unittest tests.test_sunday_delivery_ledger -v
+      - name: Verify protected corpus and generated output untouched
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
