@@ -132,11 +132,14 @@ class DapaCatalogueLiveProbeContracts(unittest.TestCase):
 
     def test_stdout_and_credentials_never_include_metadata(self):
         # A sanitized failure remains a failure even with correct owner flag.
+        # Critically: patching the transport MUST intercept the main() path;
+        # no tests may silently reach a real government website.
         with patch.object(probe, "get_once", side_effect=probe.ProbeHold(
-                "catalogue_publisher_unavailable")):
+                "catalogue_publisher_unavailable")) as intercepted:
             out = io.StringIO()
             with redirect_stdout(out):
                 status = probe.main(["--approve-one-time-data-go-kr-metadata"])
+            intercepted.assert_called_once_with(probe.ROBOTS, probe.MAX_ROBOTS)
         self.assertEqual(status, 2)
         result = json.loads(out.getvalue())
         self.assertEqual(result["requests_attempted"], 1)
