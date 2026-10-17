@@ -1,0 +1,136 @@
+name: Singapore — First Genuine Clean Scheduled Shadow Proof
+
+# Evidence-only callback after REAL Singapore MINDEF scheduled collector.
+# No collector rerun, source rewrite, production mutation or Pages publication.
+on:
+  workflow_run:
+    workflows:
+      - Singapore Shadow Collection
+    types: [completed]
+  pull_request:
+    paths:
+      - .github/workflows/singapore_first_clean_scheduled_proof.yml
+      - scripts/verify_singapore_clean_shadow_run.py
+      - tests/test_singapore_clean_shadow_run_proof.py
+      - docs/engineering/SINGAPORE_REAL_SCHEDULED_CLEAN_SLOT_PROOF_2026-10-15.md
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Exact real Singapore Shadow Collection scheduled GitHub run ID'
+        required: true
+        type: string
+      collector_sha:
+        description: 'Exact 40-character main SHA from that GitHub Actions run'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  synthetic-invariants:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Verify fail-closed first-clean proof with fictional state only
+        run: python -m unittest tests.test_singapore_clean_shadow_run_proof -v
+      - name: Prove no site or tracked production mutation
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+  inspect-real-scheduled-slot:
+    if: >-
+      github.event_name != 'pull_request' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'schedule'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Freeze production hash
+        run: sha256sum pla_watch.db > "$RUNNER_TEMP/singapore-prod.sha"
+      - name: Fetch current real Singapore shadow state read-only
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone --single-branch --no-tags --branch shadow/singapore-mindef \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/sg-proof"
+          git -C "$RUNNER_TEMP/sg-proof" rev-parse HEAD > "$RUNNER_TEMP/sg-source.sha"
+          test -z "$(git -C "$RUNNER_TEMP/sg-proof" status --porcelain --untracked-files=all)"
+      - name: Authenticate real first-attempt scheduled collector and successful job
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID_INPUT: ${{ github.event.workflow_run.id || inputs.run_id }}
+          COLLECTOR_SHA_INPUT: ${{ github.event.workflow_run.head_sha || inputs.collector_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$RUN_ID_INPUT" =~ ^[0-9]{9,16}$ ]] || exit 1
+          [[ "$COLLECTOR_SHA_INPUT" =~ ^[a-f0-9]{40}$ ]] || exit 1
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID_INPUT}" > "$RUNNER_TEMP/sg-actions-run.json"
+          jq -e --arg sha "$COLLECTOR_SHA_INPUT" '
+            .name == "Singapore Shadow Collection" and
+            .event == "schedule" and .status == "completed" and
+            .conclusion == "success" and .run_attempt == 1 and
+            .head_branch == "main" and .head_sha == $sha
+          ' "$RUNNER_TEMP/sg-actions-run.json" > /dev/null
+          gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${RUN_ID_INPUT}/jobs?filter=latest&per_page=100" > "$RUNNER_TEMP/sg-actions-jobs.json"
+          jq -e '
+            .total_count == (.jobs | length) and
+            ([.jobs[] | select(
+              .name == "shadow" and .conclusion == "success" and
+              ([.steps[]? | select(.name == "Run shadow collection" and .conclusion == "success")] | length) == 1
+            )] | length) == 1
+          ' "$RUNNER_TEMP/sg-actions-jobs.json" > /dev/null
+
+      - name: Confirm scheduled runner identity against preserved source version
+        shell: bash
+        env:
+          RUN_ID_INPUT: ${{ github.event.workflow_run.id || inputs.run_id }}
+          COLLECTOR_SHA_INPUT: ${{ github.event.workflow_run.head_sha || inputs.collector_sha }}
+        run: |
+          set -euo pipefail
+          test -n "$RUN_ID_INPUT" && test -n "$COLLECTOR_SHA_INPUT"
+          python -m scripts.verify_singapore_clean_shadow_run \
+            --state-checkout "$RUNNER_TEMP/sg-proof" \
+            --run-id "$RUN_ID_INPUT" \
+            --collector-sha "$COLLECTOR_SHA_INPUT"
+      - name: Confirm immutable proof branch and unchanged production artifacts
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          head="$(git ls-remote \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            refs/heads/shadow/singapore-mindef | cut -f1)"
+          test "$head" = "$(cat "$RUNNER_TEMP/sg-source.sha")"
+          sha256sum -c "$RUNNER_TEMP/singapore-prod.sha"
+          git diff --exit-code -- pla_watch.db output/ shadow/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+
+# One clean proof only; does not restore historical incomplete days or permit
+# automatic production/source-text/rights/translation/model releases.
