@@ -56,6 +56,15 @@ def test_public_roster_is_exact_and_domain_focused():
     dylan = next(p for p in people if p["slug"] == "dylan-tanzi")
     assert dylan["links"]["LinkedIn"] == "https://www.linkedin.com/in/dylan-tanzi/"
     assert "Vietnam Research Desk" in dylan["bio"]
+    founder = next(p for p in people if p["slug"] == "benjamin-yang")
+    assert founder["links"]["LinkedIn"] == "https://www.linkedin.com/in/benjamin-w-yang/"
+    assert "Strategic Materials Policy Tracker" in founder["bio"]
+    assert "The Diplomat" in founder["bio"]
+    christin = next(p for p in people if p["slug"] == "christin-sawyer")
+    assert christin["links"]["LinkedIn"] == "https://www.linkedin.com/in/christin-sawyer-b4b499339/"
+    assert "International Affairs" in christin["bio"]
+    assert "International Business" not in christin["bio"]
+    assert "Korean and English" in christin["bio"]
 
 
 @pytest.mark.parametrize("bad", [
