@@ -1,0 +1,191 @@
+{
+  "analysis": {
+    "claims": [
+      {
+        "analysis_en": "The ministry says South Korean forces watched North Korea’s recent successive missile launches from the preparation stage, then detected and tracked the missiles and identified the launch points immediately after launch. The statement provides no supporting imagery, tracking records, coordinates, or measurements with which to verify those claimed capabilities independently. “Successive” signals multiple launches but does not establish a count or chronology, and the statement does not identify specific missile models or launch sites.",
+        "assessment_type": "attributed_source_interpretation",
+        "heading_en": "Surveillance and launch-point identification: An official assertion",
+        "source_indices": [
+          8
+        ],
+        "source_quotes_ko": [
+          "우리 군은 북한의 최근 연이은 미사일 발사를 준비 단계부터 면밀히 감시하였으며, 발사 직후 미사일을 탐지·추적하고 발사 원점을 정확히 식별하였음"
+        ]
+      },
+      {
+        "analysis_en": "The ministry says the Republic of Korea and the United States maintain a firm combined defense posture and assesses recently launched North Korean missiles as detectable and interceptable with their existing defense assets. This is a government assessment of capability, not a report that any missile was intercepted. No defense system, test result, engagement record, or evidentiary basis for the assessment is identified in the release.",
+        "assessment_type": "attributed_source_interpretation",
+        "heading_en": "Allied interception capability is assessed, not demonstrated",
+        "source_indices": [
+          9
+        ],
+        "source_quotes_ko": [
+          "한미는 확고한 연합방위태세를 유지하고 있으며, 북한이 최근 발사한 미사일은 한미가 보유한 방어자산으로 충분히 탐지·요격 가능한 수준으로 평가하고 있음"
+        ]
+      },
+      {
+        "analysis_en": "The ministry describes a North Korean ballistic missile launch as a grave violation of UN Security Council resolutions. This accurately reflects the South Korean government’s legal and diplomatic characterization. The release does not cite specific resolution numbers, identify technical evidence relevant to individual launches, or document any separate Security Council finding or response. It therefore cannot, by itself, establish those additional details.",
+        "assessment_type": "attributed_source_interpretation",
+        "heading_en": "The resolution-violation allegation is not independently adjudicated here",
+        "source_indices": [
+          10
+        ],
+        "source_quotes_ko": [
+          "북한의 탄도미사일 발사는 유엔 안보리 결의를 위반하는 엄중한 행위임"
+        ]
+      },
+      {
+        "analysis_en": "The statement moves from a claim of combined defensive readiness to an appeal that North Korea halt tension-raising actions and participate in efforts to establish peace. Read together, these elements present military reassurance alongside a diplomatic call for restraint. That is an interpretation of the statement’s wording and sequence, not evidence of the ministry’s undisclosed intentions, a formal diplomatic approach, North Korea’s response, or any change in regional tensions.",
+        "assessment_type": "bounded_analytical_inference",
+        "heading_en": "Military reassurance accompanies an appeal for restraint",
+        "source_indices": [
+          9,
+          10
+        ],
+        "source_quotes_ko": [
+          "한미는 확고한 연합방위태세를 유지하고 있으며",
+          "북한은 한반도의 긴장을 고조시키는 행위를 즉각 중단하고, 한반도 평화 정착을 위한 노력에 동참할 것을 촉구함"
+        ]
+      },
+      {
+        "analysis_en": "The preserved ministry document labels 15:40 on Sunday, October 4, 2026 as its distribution time and indicates press coverage after distribution. The government’s Korea Policy Briefing page separately lists October 6, 2026 as its portal posting date. These are different kinds of timestamps and should not be conflated; neither independently establishes the date or time of a missile launch. The document identifies a responsible ministry office and named officials, but supplies no underlying operational evidence.",
+        "assessment_type": "attributed_source_interpretation",
+        "heading_en": "Ministry distribution timestamp differs from portal posting date",
+        "source_indices": [
+          6
+        ],
+        "source_quotes_ko": [
+          "2026.10. 4.(일) 15:40"
+        ]
+      }
+    ],
+    "heading_en": "South Korea’s October 4 missile-launch statement: Official claims and evidence limits",
+    "limitations_en": "Evidence for the military and diplomatic claims comes from one South Korean Ministry of National Defense statement, distributed on October 4 and reposted on the official government portal on October 6, 2026. The source does not establish the exact number, models, flight paths, payloads, launch locations, or intended targets of the missiles; confirm surveillance/tracking accuracy; document an interception attempt or outcome; explain the allied capability assessment; identify particular UNSC resolutions; or provide independent evidence of diplomatic communications or effects. The interpretation of how the statement combines defensive and diplomatic messaging is limited to its wording, not verified policy intent. Translation and analysis require human semantic, factual and attribution review before any publication.",
+    "thesis_en": "In a statement carrying an October 4, 2026 distribution timestamp, South Korea’s Ministry of National Defense said its military had monitored recent North Korean missile-launch preparations, detected and tracked missiles after launch, and identified launch origins. The ministry also asserted allied detection and interception capability, characterized ballistic missile launches as violating UN Security Council resolutions, and urged North Korea to stop escalating tensions. These are official statements, not independent verification of military performance, missile characteristics, or diplomatic outcomes."
+  },
+  "model_id": "claude-sonnet-4-6",
+  "review": {
+    "analysis_fact_checked": true,
+    "attribution_checked": true,
+    "reviewed_at_utc": "2026-10-16T18:02:55Z",
+    "reviewer": "VSSpowerlifting",
+    "source_limitations_checked": true,
+    "status": "editor_approved",
+    "translation_semantics_checked": true
+  },
+  "schema": "ipr-korea-reviewed-english-and-analysis/1",
+  "source_identity": "korea-policy:156784297",
+  "source_sha256": "ef066346d991369fe99a1ad8db5dae85979c05c484d0f77462c25b30684b0284",
+  "translations": [
+    {
+      "index": 1,
+      "original_sha256": "fa22cdfb3221d82b98bd748ffed79114fbe8c8caf07409a62c81c0c478a5f959",
+      "text_en": "End"
+    },
+    {
+      "index": 2,
+      "original_sha256": "c8d6f56eaa0ff50eb1273731d601b03267fa0274f37c4db5427334a652652742",
+      "text_en": "Press Release"
+    },
+    {
+      "index": 3,
+      "original_sha256": "c9447136ceb3e8e3860a6524a6145ccf7510c3418940c26d4202cf7436592280",
+      "text_en": "Timing of press coverage"
+    },
+    {
+      "index": 4,
+      "original_sha256": "be6beaecd0ca17e76c66817652d59f58621a73b84afe0634549c7a2dde3e4db0",
+      "text_en": "After distribution"
+    },
+    {
+      "index": 5,
+      "original_sha256": "0b11864a69b91f5c36a649a0d1f6accc86904c83930da40957c2c864827e52ba",
+      "text_en": "Distributed"
+    },
+    {
+      "index": 6,
+      "original_sha256": "b88af69876d8291b612117ea9627fe66c5f74177c24e7cc7942157ae4e1441f8",
+      "text_en": "4 October 2026 (Sunday), 15:40"
+    },
+    {
+      "index": 7,
+      "original_sha256": "cc7c7f9ae0ec05133a385a7d4a3e8f8446b5a88084696efd1079d21dcc49c7ad",
+      "text_en": "Ministry of National Defense statement regarding North Korea’s ballistic missile launch"
+    },
+    {
+      "index": 8,
+      "original_sha256": "3e9967f26f4c0081624cfe9231948e2bf5abdaee0a8988b498e29f5f54e1268a",
+      "text_en": "□ Our military closely monitored North Korea’s recent successive missile launches from the preparation stage; immediately after launch, it detected and tracked the missiles and accurately identified the launch point of origin."
+    },
+    {
+      "index": 9,
+      "original_sha256": "6f776aad1b71ee21712880acf35acf53562c000161dc9eed46b9a687d742f2c2",
+      "text_en": "□ The Republic of Korea and the United States maintain a firm combined defense posture and assess that the missiles recently launched by North Korea are within the detection and interception capabilities of the defensive assets they possess."
+    },
+    {
+      "index": 10,
+      "original_sha256": "f2cbcb9012a3bd838b37298ed068b1a22d5ceff70685bc29ad26afab401475fa",
+      "text_en": "□ North Korea’s ballistic missile launch is a grave act that violates UN Security Council resolutions. We urge North Korea to immediately cease actions that heighten tensions on the Korean Peninsula and to join efforts to establish peace on the peninsula. <End>"
+    },
+    {
+      "index": 11,
+      "original_sha256": "986731b271c6a448faba0f0e9cdb7708fb592de023bcf65f5803d81151b5c0e3",
+      "text_en": "1 -"
+    },
+    {
+      "index": 12,
+      "original_sha256": "d6a66b9c4627f200ab1b7b52560c2f8aab39ec9d5a9e0e92de431ad2df3827bd",
+      "text_en": "Responsible office"
+    },
+    {
+      "index": 13,
+      "original_sha256": "e34c96671227fe963cd1d949251c0b6812ee6057f71dfaf1e56694f7f2a91789",
+      "text_en": "National Defense Policy Office — Director-General for Defense Policy"
+    },
+    {
+      "index": 14,
+      "original_sha256": "34f0309a2e61fbea2aedc1a062498c5381f185e5b8c34478284de02718f0d2e1",
+      "text_en": "Responsible official"
+    },
+    {
+      "index": 15,
+      "original_sha256": "c31fd8541ed59be0fa3c0dc44eaf1737913e5266bbffcde87eb0c5c1b8b8428e",
+      "text_en": "Bureau director"
+    },
+    {
+      "index": 16,
+      "original_sha256": "df28d130ec2fd86b90a1895b193df115ec6f44ffa52340416b2f2d51d2ce5481",
+      "text_en": "Choi Yong-sam"
+    },
+    {
+      "index": 17,
+      "original_sha256": "cdb0cb99bfff8980b82c533d232246a7884e5241f38b27bccdc4236827654081",
+      "text_en": "(02-748-6710)"
+    },
+    {
+      "index": 18,
+      "original_sha256": "15aff7d2e09229ae67f722074732823f3d85f8c31a1c98670560813224dd79a4",
+      "text_en": "Defense Policy Division"
+    },
+    {
+      "index": 19,
+      "original_sha256": "c9cacdac4264cd8d65fcfe64cd7438fcedd19f2619e8f6c02a97f03676d4ec7e",
+      "text_en": "Contact official"
+    },
+    {
+      "index": 20,
+      "original_sha256": "5059f5884e5a9a691b28c93d690eae780401db44d29f31424267e620c79a9ebd",
+      "text_en": "Division head"
+    },
+    {
+      "index": 21,
+      "original_sha256": "d85b17a98e93042b0ad5514bb21f7c69fc841a375031c8737aa8e16a9357dd3d",
+      "text_en": "Kim Min-jae"
+    },
+    {
+      "index": 22,
+      "original_sha256": "cdb0cb99bfff8980b82c533d232246a7884e5241f38b27bccdc4236827654081",
+      "text_en": "(02-748-6710)"
+    }
+  ]
+}

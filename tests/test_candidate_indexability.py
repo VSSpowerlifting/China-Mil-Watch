@@ -159,9 +159,19 @@ class TestSupplyingAnOriginProducesALaunchableTree(BuiltTreeCase):
             with self.subTest(stub=p.name):
                 self.assertIn("noindex", p.read_text(encoding="utf-8"))
 
-    def test_the_stub_canonical_still_points_at_its_record(self):
-        stub = (self.root / "article" / "1000.html").read_text(encoding="utf-8")
-        self.assertIn('rel="canonical" href="../record/1000.html"', stub)
+    def test_every_surviving_stub_canonical_points_to_its_exact_record(self):
+        # Record 1000 was retired in the approved China cutover. Requiring it
+        # here would resurrect a deleted citation address rather than protect
+        # redirect correctness. Check ALL surviving aliases by their real IDs.
+        stubs = list(self.pages(stubs=True))
+        self.assertTrue(stubs, "current analyzed records need redirect stubs")
+        for stub in stubs:
+            with self.subTest(stub=stub.name):
+                route = "../record/" + stub.name
+                text = stub.read_text(encoding="utf-8")
+                self.assertIn('rel="canonical" href="' + route + '"', text)
+                self.assertTrue((self.root / "record" / stub.name).is_file(),
+                                "alias redirects to missing/retired source")
 
 
 class TestTheBuilderAndTheTemplateCannotDrift(unittest.TestCase):

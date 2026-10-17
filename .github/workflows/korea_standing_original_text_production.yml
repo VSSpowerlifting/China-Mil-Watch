@@ -18,7 +18,9 @@ on:
   pull_request:
     paths:
       - scripts/admit_korea_standing_original_texts.py
+      - scripts/verify_korea_standing_noop_parity.py
       - tests/test_korea_standing_original_texts.py
+      - tests/test_korea_standing_noop_parity.py
       - .github/workflows/korea_standing_original_text_production.yml
 
 permissions:
@@ -42,7 +44,7 @@ jobs:
           python-version: '3.9'
       - run: python -m pip install -r requirements.txt
       - name: Validate historical no-backfill, holds, append-only exact source and clean retries
-        run: python -m unittest -v tests.test_korea_standing_original_texts
+        run: python -m unittest -v tests.test_korea_standing_original_texts tests.test_korea_standing_noop_parity
       - name: Confirm neither DB nor public source bodies were modified
         run: |
           set -euo pipefail
@@ -182,7 +184,44 @@ jobs:
           test ! -e pla_watch.db-wal
           test ! -e pla_watch.db-shm
           git diff --exit-code -- pla_watch.db
+      # This branch is read-only: if no Korean publication files changed,
+      # independently prove that the LATEST main Korea routes match gh-pages.
+      # Otherwise retain the existing strict writer CAS and Pages recovery.
+      - name: Verify no-op against current source, main and Pages
+        id: verified_noop
+        env:
+          SRC_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain -- research/korea_published_original_texts.json research/korea_published_original_texts output/korea.html output/korea-originals)" ]; then
+            echo "Korea publication changes found; retain full source/main/Pages compare-and-swap."
+            echo "verified=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # A new source version can contain a genuinely eligible article.
+          # Never skip an unseen capture merely because this run read old Git.
+          source_now="$(git ls-remote "$SRC_REMOTE" refs/heads/shadow/korea-policy-briefing | cut -f1)"
+          test -n "$source_now"
+          test "$source_now" = "$(cat "$RUNNER_TEMP/korea-future-text-source-head")"
+          git fetch origin \
+            refs/heads/main:refs/remotes/origin/main \
+            refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          main_before="$(git rev-parse origin/main)"
+          pages_before="$(git rev-parse origin/gh-pages)"
+          python -m scripts.verify_korea_standing_noop_parity
+          # Read-only convergence proof must also be stable across refetch.
+          git fetch origin \
+            refs/heads/main:refs/remotes/origin/main \
+            refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          test "$main_before" = "$(git rev-parse origin/main)"
+          test "$pages_before" = "$(git rev-parse origin/gh-pages)"
+          source_now="$(git ls-remote "$SRC_REMOTE" refs/heads/shadow/korea-policy-briefing | cut -f1)"
+          test "$source_now" = "$(cat "$RUNNER_TEMP/korea-future-text-source-head")"
+          echo "Korea standing no-op: source is unchanged; current main and Pages match."
+          echo "verified=true" >> "$GITHUB_OUTPUT"
       - name: Refuse stale source capture or concurrent main write
+        if: steps.verified_noop.outputs.verified != 'true'
         env:
           SRC_REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
         shell: bash
@@ -193,6 +232,7 @@ jobs:
           git fetch origin main
           test "$(git rev-parse origin/main)" = "$(cat "$RUNNER_TEMP/korea-text-auto-main-before")"
       - name: Commit ONLY Korean original-text register, text and HTML on main
+        if: steps.verified_noop.outputs.verified != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -220,6 +260,7 @@ jobs:
           fi
           git rev-parse HEAD > "$RUNNER_TEMP/korea-text-auto-main-after"
       - name: Checkout live Pages branch without bulk site upload
+        if: steps.verified_noop.outputs.verified != 'true'
         uses: actions/checkout@v4
         with:
           ref: gh-pages
@@ -227,6 +268,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
       - name: Publish only exact Korea Desk and registered original text pages
+        if: steps.verified_noop.outputs.verified != 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -272,6 +314,7 @@ jobs:
           git fetch origin gh-pages
           test "$(git rev-parse origin/gh-pages)" = "$(git rev-parse HEAD)"
       - name: Verify exact public HTTPS byte readback of every Korean source page
+        if: steps.verified_noop.outputs.verified != 'true'
         shell: bash
         run: |
           set -euo pipefail

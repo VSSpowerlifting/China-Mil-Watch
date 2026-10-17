@@ -810,16 +810,15 @@ class TestSiteBuild(unittest.TestCase):
                               "Briefs is continuing"):
                     self.assertNotIn(claim, text)
 
-    def test_the_about_bio_describes_the_founder_and_claims_no_brief(self):
-        text = self.flat(self.page("plain", "about.html"))
-        self.assertIn("He founded Indo-Pacific Record, writes source-linked "
-                      "security and policy analysis, and maintains the "
-                      "project’s collection pipeline.", text)
-        self.assertNotIn("He writes The PLA Watch", text)
-        bio = text[text.index("Benjamin Yang studies"):]
-        bio = bio[:bio.index("pipeline.") + len("pipeline.")]
-        for word in ("Brief", "brief", "PLA Watch"):
-            self.assertNotIn(word, bio)
+    def test_the_about_team_identifies_founder_without_claiming_brief_authorship(self):
+        html = self.page("plain", "about.html")
+        text = self.flat(html)
+        self.assertIn("was founded by Benjamin Yang", text)
+        self.assertIn('href="team.html"', html)
+        self.assertIn('href="mailto:%s"' % gp.MAINTAINER["email"], html)
+        self.assertTrue((self.root / "plain" / "team.html").is_file())
+        for claim in ("He writes The PLA Watch", "He writes the Briefs", "sole author", "sole editor"):
+            self.assertNotIn(claim, text)
 
     def test_the_old_series_route_is_a_compatibility_bridge_only(self):
         # `pla-watch.html` stays because inbound links to it are established
