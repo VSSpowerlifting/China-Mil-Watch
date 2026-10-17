@@ -40,6 +40,23 @@ class KoreaLiveMetadataCountTests(unittest.TestCase):
                           snapshot=preview.snapshot_from_corpus(db),
                           site_origin="https://indopacificrecord.org")
             html = (out / "korea.html").read_text(encoding="utf-8")
+            directory = (out / "desks.html").read_text(encoding="utf-8")
+            self.assertIn(
+                'data-korea-directory-mnd-metadata="%d"' % len(all_admitted),
+                directory)
+            self.assertIn(
+                'data-korea-directory-scope-count="%d"' % len(all_admitted),
+                directory)
+            self.assertIn("Live MND link metadata", directory)
+            self.assertIn("countrywide article corpus and DAPA remain unadmitted",
+                          directory)
+            korea_card = directory.split('id="desk-korea"', 1)[1].split(
+                '</section>', 1)[0]
+            self.assertIn("desk--shadow", directory.split(
+                'id="desk-korea"', 1)[0][-350:])
+            self.assertIn("Corpus records", korea_card)
+            self.assertIn("Not admitted", korea_card)
+            self.assertNotIn("archive.html?desk=korea", korea_card)
             self.assertIn(
                 'data-korea-production-admitted-count="%d"' % len(all_admitted),
                 html)
