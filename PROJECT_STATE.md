@@ -1,12 +1,13 @@
 # PROJECT_STATE — Indo-Pacific Record
 
 **Archive release preparation (17 October 2026, PR #776):**
-The existing integration now reconciles main `ca4424cb15204ef366323f997c28119c2bf6d3ad`
+The existing integration now reconciles main `348ff1c8f1de66f668d46fd2406696aa46db2a83`
 with the reviewed Archive implementation and narrow absent-count label fix.
-Runtime/public inputs match reviewed candidate tree
-`9d5e5d19fd93257a02633fee7fa1f500f4883abc`: 912 corpus records and 1,006
-eligible research items. Source reconciliation retains staff loading and measured
-Korea desk lanes. Release snapshots, inherited main output causes, exact Linux
+The pinned public set retains 912 corpus records and 1,006 eligible research
+items. Source reconciliation retains staff loading, measured Korea desk lanes
+and main's conditional regional desk loader; both new regional lanes are empty
+in the current production DB. The refreshed candidate differs from the prior
+reviewed output only by one blank line on each desk page. Release snapshots, inherited main output causes, exact Linux
 CI identity and publication gates are recorded in
 `docs/ARCHIVE_RELEASE_PREPARATION_2026-10-17.md`.
 Source/evidence commit and push are authorized; merge/publication are not.

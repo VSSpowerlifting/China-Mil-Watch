@@ -1,0 +1,76 @@
+name: Philippines AFP — Reconcile 23 Preserved Originals
+
+# This is a source-review roster, not source-use or publication authorization.
+on:
+  pull_request:
+    paths:
+      - scripts/reconcile_ph_afp_first23_originals.py
+      - tests/test_ph_afp_first23_reconciliation.py
+      - .github/workflows/ph_afp_first23_originals_review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  exact-source-reconciliation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Run source-free failure and success contracts
+        run: |
+          python -m unittest tests.test_ph_afp_first23_reconciliation \
+            tests.test_ph_afp_review_docket tests.test_ph_afp_run_review -q
+      - name: Fetch preserved AFP Git history read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          git clone -q --single-branch --branch shadow/ph-afp \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            "$RUNNER_TEMP/ph-afp-preserved"
+          git -C "$RUNNER_TEMP/ph-afp-preserved" fsck --no-reflogs --connectivity-only
+      - name: Build 22 + 1 exact-source capture-bound unsigned review roster
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pla_watch.db > "$RUNNER_TEMP/db-before.sha"
+          python -m scripts.reconcile_ph_afp_first23_originals \
+            --state-repo "$RUNNER_TEMP/ph-afp-preserved" \
+            --docket-out "$RUNNER_TEMP/ph-afp-23-originals-unsigned.json" \
+            | tee "$RUNNER_TEMP/ph-afp-23-reconciliation-receipt.json"
+          python - "$RUNNER_TEMP/ph-afp-23-reconciliation-receipt.json" <<'PY'
+          import json, sys
+          x=json.load(open(sys.argv[1], encoding="utf-8"))
+          assert x["protocol"]=="ipr_afp_23_originals_reconciled_unsigned/1"
+          assert x["total_pinned_originals"]==23
+          assert x["previously_pinned_originals"]==22
+          assert x["new_originals"]==1
+          assert x["new_original_run_id"]=="38731523240-1"
+          assert x["source_commit"]=="8a63ba423818e30d147096fd1a32949cf6905ee5"
+          for k in ("all_human_reviews_complete","source_rights_approved",
+                    "production_admission_authorized","publication_authorized"):
+              assert x[k] is False
+          PY
+          sha256sum -c "$RUNNER_TEMP/db-before.sha"
+          git diff --exit-code -- pla_watch.db output/
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+      - name: Retain metadata-only, unsigned reviewer docket
+        if: github.event_name == 'workflow_dispatch' && success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ph-afp-first23-unsigned-review-${{ github.run_id }}
+          path: ${{ runner.temp }}/ph-afp-23-originals-unsigned.json
+          if-no-files-found: error
+          retention-days: 7
+
+# No original bodies, API captures, photographs, LLM, publisher requests,
+# production DB writes, gh-pages release, or source-family authorization.

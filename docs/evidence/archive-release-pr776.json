@@ -1,6 +1,6 @@
 {
   "original_pr_head": "da4a07c6a0d30394dd7a964d6339ce0316b63886",
-  "base": "ca4424cb15204ef366323f997c28119c2bf6d3ad",
+  "base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
   "reviewed_candidate_tree": "9d5e5d19fd93257a02633fee7fa1f500f4883abc",
   "previous_snapshot": {
     "base": "e376bcb6bfc9c2926d21c180a944535917990172",
@@ -73,7 +73,84 @@
     "Xinhua Military (新华军事)": 3
   },
   "new_official_reference": "official:us-treasury-press:sb0662",
-  "generated_comparison": {
+  "inherited_main_output": {
+    "changed": 975,
+    "added": 5,
+    "shared_shell_and_credit_html": 971,
+    "individually_reviewed_html": [
+      "about.html",
+      "corpus-guide.html",
+      "desks.html"
+    ],
+    "sitemap_changes": "four team/author URLs added; none removed",
+    "new_files": [
+      "team.html",
+      "staff.css",
+      "authors/benjamin-yang.html",
+      "authors/christin-sawyer.html",
+      "authors/dylan-tanzi.html"
+    ],
+    "unexplained_paths": []
+  },
+  "reused_evidence": {
+    "pins.json": {
+      "sha256": "0dfc2d7644d52cd033435d3a150ec2f9aaea9596817d66fd05ff1233e08b4691",
+      "local_path": "docs/evidence/archive-release-2026-10-17/pins.json"
+    },
+    "candidate-output-manifest.json": {
+      "sha256": "8e6256033dccf122bdbc94e7b6ce3c035fcac84ac3e742888aea472b9c2375bc",
+      "local_path": "docs/evidence/archive-release-2026-10-17/candidate-output-manifest.json"
+    },
+    "main-output-manifest.json": {
+      "sha256": "a4049a58a41a0862ab6bbde11b0485ceb0c341faa7599218ac49139e3f9ed97a",
+      "local_path": "docs/evidence/archive-release-2026-10-17/main-output-manifest.json"
+    },
+    "tracked-output-drift.json": {
+      "sha256": "8dd764c84b799e774667b77aa073d78859ec1c687852d06a68b7e520f38b124d",
+      "local_path": "docs/evidence/archive-release-2026-10-17/tracked-output-drift.json"
+    },
+    "browser.json": {
+      "sha256": "dcb9e6db17baff553d92b997e74a5a4c390c9b4a08cddf675b2aa9a59d65cd02",
+      "local_path": "docs/evidence/archive-release-2026-10-17/browser.json"
+    },
+    "validator.json": {
+      "sha256": "4769b912749d3d60f182ff53c3ef5c5ac76d56f6dddaa70325c2f77da73f3217",
+      "local_path": "docs/evidence/archive-release-2026-10-17/validator.json"
+    },
+    "historical-replays.json": {
+      "sha256": "3b146ea84608a3c8bc3764c34f71111532448fab1e08c5a8652adcb71c69de0a",
+      "local_path": "docs/evidence/archive-release-2026-10-17/historical-replays.json"
+    },
+    "final-audit.json": {
+      "sha256": "566c17ae071cda4033e7ffcaec079788b7b4c478cd450674dd93d46b711f13a5",
+      "local_path": "docs/evidence/archive-release-2026-10-17/final-audit.json"
+    }
+  },
+  "scoped_local_tests": {
+    "tests": 116,
+    "success": true,
+    "includes": [
+      "PR workflow security",
+      "Archive integration",
+      "pilot sources",
+      "independent pilot review"
+    ]
+  },
+  "initial_reconciliation_base": "ca4424cb15204ef366323f997c28119c2bf6d3ad",
+  "initial_reconciliation_equivalence": {
+    "reviewed_tree": "9d5e5d19fd93257a02633fee7fa1f500f4883abc",
+    "only_changed_or_added_paths": [
+      ".github/workflows/pr_offline_checks.yml",
+      "PROJECT_STATE.md",
+      "docs/ARCHIVE_PRODUCTION_INTEGRATION.md",
+      "docs/ARCHIVE_RELEASE_PREPARATION_2026-10-17.md",
+      "docs/evidence/archive-production-integration/README.md",
+      "docs/evidence/archive-release-pr776.json"
+    ],
+    "runtime_canonical_and_generated_inputs_identical": true,
+    "authored_output_or_database_changes_vs_base": []
+  },
+  "initial_generated_comparison": {
     "main_output_files": 1893,
     "candidate_output_files": 1894,
     "unchanged_files": 1890,
@@ -210,80 +287,83 @@
     "browse_raw_bytes": 9493,
     "research_gzip_estimate": 121065
   },
-  "inherited_main_output": {
-    "changed": 975,
+  "latest_refresh": {
+    "base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
+    "rendered_tree": "3776e625511cd0b2f5f90c7db25be6e26e52f4c8",
+    "main_files": 1893,
+    "candidate_files": 1894,
+    "unchanged_main_candidate": 1890,
+    "archive_changes": [
+      "archive-research-index.json",
+      "archive.css",
+      "archive.html",
+      "browse.js"
+    ],
+    "candidate_delta_from_previous_manifest": [
+      "china.html",
+      "indonesia.html",
+      "japan.html",
+      "korea.html",
+      "philippines.html",
+      "singapore.html",
+      "us-indopacific.html",
+      "vietnam.html"
+    ],
+    "all_delta_is_whitespace": true,
+    "archive_html_js_css_both_indexes_and_shared_dependencies_byte_identical": true,
+    "browser_evidence_reused": true,
+    "new_regional_admitted_rows": {
+      "indonesia": 0,
+      "philippines": 0
+    },
+    "candidate_manifest_sha256": "8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02",
+    "main_manifest_sha256": "dc56bcaedf0b096bee82737789f6a927d1910723461f5a5d0de46a20ac8e76ef",
+    "inherited_paths": 981,
+    "candidate_vs_tracked_paths": 984,
+    "new_inherited_paths": [
+      "korea.html"
+    ],
+    "removed_inherited_paths": []
+  },
+  "previous_verified_linux_ci": {
+    "head": "faef90f15a2939de68cc9916eca4264c0bce3353",
+    "base": "ca4424cb15204ef366323f997c28119c2bf6d3ad",
+    "synthetic_merge": "106a3fda5e8827948c83fe88b415a64c19ad773f",
+    "tree": "c7148735a1d94d2aaf600c1d2dedf2ec546ecdb0",
+    "synthetic_tree_equals_pushed_head": true,
+    "ci_run": 39057066513,
+    "ci_status": "running; final results not yet recorded",
+    "status": "passed on recorded base; main subsequently advanced",
+    "tests": 7275,
+    "seconds": 973.614,
+    "failures": 0,
+    "errors": 0,
+    "skips": [
+      "test_a_record_quoting_the_vocabulary_is_not_read_as_our_claim (tests.test_preview_prototype.TestCoverageClaimScopeOnTheRealTree) ... skipped 'no stored record currently quotes the vocabulary'",
+      "Release-readiness, not correctness. ... skipped 'declared snapshot is stale relative to the tracked corpus — advance it before preparing a release: declared 2026-08-26/3574/d5b897cd4802, corpus 2026-10-17/912/6dc8594a72c2'"
+    ],
+    "gpg": "2.4.4",
+    "gpg_cases_passed": 56,
+    "archive_browser_cases_passed": 7,
+    "historical_source_rows": 60,
+    "historical_review_excerpts": 60,
+    "validator_errors": 0,
+    "validator_warnings": 10,
+    "preservation_passed": true,
+    "full_log_sha256": "28e4141d1cc244acdc38fb61efb46c222a6ea40fe4dbef94aa33c6d977f51d6b"
+  },
+  "latest_focused_tests": {
+    "tests": 60,
+    "seconds": 7.919,
+    "success": true
+  },
+  "latest_inherited_main_output": {
+    "changed": 976,
     "added": 5,
-    "shared_shell_and_credit_html": 971,
-    "individually_reviewed_html": [
-      "about.html",
-      "corpus-guide.html",
-      "desks.html"
-    ],
-    "sitemap_changes": "four team/author URLs added; none removed",
-    "new_files": [
-      "team.html",
-      "staff.css",
-      "authors/benjamin-yang.html",
-      "authors/christin-sawyer.html",
-      "authors/dylan-tanzi.html"
-    ],
+    "paths": 981,
+    "previous_groups_preserved": true,
+    "new_path": "korea.html",
+    "new_path_cause": "one blank line from inherited conditional regional desk template",
     "unexplained_paths": []
-  },
-  "reused_evidence": {
-    "pins.json": {
-      "sha256": "0dfc2d7644d52cd033435d3a150ec2f9aaea9596817d66fd05ff1233e08b4691",
-      "local_path": "docs/evidence/archive-release-2026-10-17/pins.json"
-    },
-    "candidate-output-manifest.json": {
-      "sha256": "8e6256033dccf122bdbc94e7b6ce3c035fcac84ac3e742888aea472b9c2375bc",
-      "local_path": "docs/evidence/archive-release-2026-10-17/candidate-output-manifest.json"
-    },
-    "main-output-manifest.json": {
-      "sha256": "a4049a58a41a0862ab6bbde11b0485ceb0c341faa7599218ac49139e3f9ed97a",
-      "local_path": "docs/evidence/archive-release-2026-10-17/main-output-manifest.json"
-    },
-    "tracked-output-drift.json": {
-      "sha256": "8dd764c84b799e774667b77aa073d78859ec1c687852d06a68b7e520f38b124d",
-      "local_path": "docs/evidence/archive-release-2026-10-17/tracked-output-drift.json"
-    },
-    "browser.json": {
-      "sha256": "dcb9e6db17baff553d92b997e74a5a4c390c9b4a08cddf675b2aa9a59d65cd02",
-      "local_path": "docs/evidence/archive-release-2026-10-17/browser.json"
-    },
-    "validator.json": {
-      "sha256": "4769b912749d3d60f182ff53c3ef5c5ac76d56f6dddaa70325c2f77da73f3217",
-      "local_path": "docs/evidence/archive-release-2026-10-17/validator.json"
-    },
-    "historical-replays.json": {
-      "sha256": "3b146ea84608a3c8bc3764c34f71111532448fab1e08c5a8652adcb71c69de0a",
-      "local_path": "docs/evidence/archive-release-2026-10-17/historical-replays.json"
-    },
-    "final-audit.json": {
-      "sha256": "566c17ae071cda4033e7ffcaec079788b7b4c478cd450674dd93d46b711f13a5",
-      "local_path": "docs/evidence/archive-release-2026-10-17/final-audit.json"
-    }
-  },
-  "scoped_local_tests": {
-    "tests": 116,
-    "success": true,
-    "includes": [
-      "PR workflow security",
-      "Archive integration",
-      "pilot sources",
-      "independent pilot review"
-    ]
-  },
-  "reconciliation_equivalence": {
-    "reviewed_tree": "9d5e5d19fd93257a02633fee7fa1f500f4883abc",
-    "only_changed_or_added_paths": [
-      ".github/workflows/pr_offline_checks.yml",
-      "PROJECT_STATE.md",
-      "docs/ARCHIVE_PRODUCTION_INTEGRATION.md",
-      "docs/ARCHIVE_RELEASE_PREPARATION_2026-10-17.md",
-      "docs/evidence/archive-production-integration/README.md",
-      "docs/evidence/archive-release-pr776.json"
-    ],
-    "runtime_canonical_and_generated_inputs_identical": true,
-    "authored_output_or_database_changes_vs_base": []
   }
 }

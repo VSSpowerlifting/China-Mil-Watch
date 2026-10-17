@@ -1,0 +1,46 @@
+name: AFP and Kemhan — Regional Live Admission Contract
+
+# A synthetic contract test only. NEVER promotes or publishes shadow records.
+on:
+  pull_request:
+    paths:
+      - config/afp_kemhan_owner_link_activation.json
+      - core/regional_official_link_release.py
+      - core/regional_official_link_render.py
+      - tests/test_regional_official_link_release.py
+      - tests/test_regional_official_link_render.py
+      - docs/engineering/AFP_KEMHAN_OWNER_REGIONAL_METADATA_RELEASE_2026-10-15.md
+      - .github/workflows/afp_kemhan_regional_release_contracts.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regional-official-link-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Test owner-scope and synthetic cross-desk SQLite import
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python -m unittest \
+            tests.test_regional_official_link_release \
+            tests.test_regional_official_link_render \
+            tests.test_afp_kemhan_official_link_intake -v
+      - name: Prove no production database, Pages or shadow-state writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all -- pla_watch.db output/)"
+          git diff --exit-code -- pla_watch.db output/
+          test ! -e pla_watch.db-wal
+          test ! -e pla_watch.db-shm
+          test ! -e .git/refs/heads/gh-pages

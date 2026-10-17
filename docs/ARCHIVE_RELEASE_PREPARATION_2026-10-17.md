@@ -9,22 +9,33 @@ manifests, captures and the detailed owner report are preserved untracked under
 
 ## Reconciliation and reused verification
 
-Base: `ca4424cb15204ef366323f997c28119c2bf6d3ad`. Git conflicts were limited to
-`PROJECT_STATE.md` and two renderer sections. Both Archive indexing and main's
-staff loading survive; deferred Archive rendering retains main's measured Korea
-Desks context. The absent-count label omits its parenthetical instead of printing
-`None preserved` or inventing zero. No feature or data admission was added.
+Initial reconciliation with base `ca4424cb15204ef366323f997c28119c2bf6d3ad`
+resolved `PROJECT_STATE.md` and the Archive/staff and Archive/Korea renderer
+sections. That pushed revision `faef90f15a2939de68cc9916eca4264c0bce3353`
+passed Linux CI run 39057066513: 7,275 tests, two explained corpus-dependent
+skips, all 56 GPG-backed cases, seven Archive browser cases, 60 source rows and
+60 independent review excerpts. Tested synthetic merge:
+`106a3fda5e8827948c83fe88b415a64c19ad773f`.
 
-After reconciliation, all indexed files match reviewed candidate tree
-`9d5e5d19fd93257a02633fee7fa1f500f4883abc` except `PROJECT_STATE.md`, the offline
-CI workflow and this concise evidence. Runtime, templates, DB, public registers,
-permissions and protected inputs are identical. Thus the completed isolated
-production render, full diff, seven browser contracts, route/preservation audits,
-and validator (zero errors, ten governed warnings) remain applicable. No render
-or browser repetition is needed for documentation/CI-only differences.
+During that run main advanced to **`348ff1c8f1de66f668d46fd2406696aa46db2a83`**
+with AFP/Kemhan tooling and conditional regional desk rendering. The one new
+conflict is resolved by retaining both the admitted-regional loader and the
+reviewed Archive projection block. The current DB has zero admitted rows in
+either new regional lane; this reconciliation grants no admission or approval.
+The absent-count Archive label fix remains unchanged.
+
+Both current isolated production renders were refreshed through `site/render.py`.
+They pass with zero errors and ten governed warnings. Their entire candidate
+change since reviewed tree `9d5e5d19fd93257a02633fee7fa1f500f4883abc`'s output
+is one added blank line in each of the eight desk HTML pages. Every other output
+file, including Archive HTML/CSS/JS, both indexes and all shared dependencies,
+is byte-identical. This exact comparison preserves the browser, publication-
+boundary, route and budget evidence; repeating those unchanged browser inputs
+is unnecessary. The fresh full CI still executes its seven Archive contracts.
+Sixty focused regional wiring/render/readback and Archive contracts passed.
 
 Both indexes remain bound to the HTML. Candidate output manifest SHA-256:
-`8e6256033dccf122bdbc94e7b6ce3c035fcac84ac3e742888aea472b9c2375bc`.
+`8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02`.
 Research-index SHA-256:
 `9624fa77e93b132d9b3dbf6b3d67cfcb2fccbdc21480fed2acabd8a8a7342d20`.
 Raw JS remains 9,879/10,000 bytes; HTML/CSS is 156,997/300,000.
@@ -50,15 +61,21 @@ not candidate output against stale tracked output. That scope is unchanged:
 `archive.html`, `archive.css`, `browse.js`, added `archive-research-index.json`.
 Current clean-main has 1,893 files; candidate 1,894; 1,890 are identical, none deleted.
 
-Main's own render separately differs from its tracked output at 980 paths:
+At pinned ca4424, main's own render differed from tracked output at 980 paths:
 971 HTML pages change only shared Team navigation/colophon or author-credit links;
 three individually reviewed HTML pages change about/team presentation, the
 maintainer citation title, and Desks' measured MND count (15) and unadmitted
 country/DAPA boundaries. The sitemap adds Team and three author URLs. Five new
 files are Team, staff CSS and three author profiles. These groups account for
 all 975 changed plus five added paths; no unexplained path remains. Candidate
-versus tracked main is 983 paths (977 changed, six added), with overlap between
-Archive and inherited shell changes. None of this establishes release approval.
+versus tracked ca4424 main was 983 paths (977 changed, six added), with overlap
+between Archive and inherited shell changes. On current 348ff1 main, the new
+conditional template adds a blank line to Korea too: inherited drift is **981
+paths (976 changed, five added)**; candidate versus tracked main is **984 paths
+(978 changed, six added)**. The prior 980 groups remain accounted for, and the
+sole new inherited path is whitespace-only `korea.html`. The U.S. page update
+on main already includes its blank line. No unexplained path remains. None of
+this establishes release approval.
 
 ## Final Linux CI
 
@@ -79,7 +96,7 @@ The current explicit corpus pin and wrong-content rejection remain validated.
 
 ## Concrete output-release proposal
 
-1. Review the exact corpus/output pin and separately approve main's 980 inherited
+1. Review the exact corpus/output pin and separately approve main's 981 inherited
    changes. Publish main's Team routes before or together with their new links;
    a four-path Archive-only publication onto current tracked output is incomplete.
 2. At an authorized window, recheck current main, renderer competitors and all
