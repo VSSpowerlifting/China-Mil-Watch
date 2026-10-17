@@ -57,7 +57,7 @@
         <label for="f-desk">Desk</label>
         <select id="f-desk" name="desk">
           <option value="">All desks</option>
-          {% for d in desks %}<option value="{{ d.slug }}">{{ d.name }} ({{ d.record_count | count }} preserved)</option>{% endfor %}
+          {% for d in desks %}<option value="{{ d.slug }}">{{ d.name }}{% if d.record_count is not none %} ({{ d.record_count | count }} preserved){% endif %}</option>{% endfor %}
         </select>
       </div>
       <div class="finder-field">
