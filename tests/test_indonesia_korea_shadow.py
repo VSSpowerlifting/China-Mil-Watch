@@ -552,14 +552,15 @@ class Runner(Case):
         self.assertNotIn("/candidate-state/state/shadow.db", korea)
         self.assertIn("retention-days: 90", korea)
 
-        indonesia = step("Preserve Indonesia complete attempt evidence")
-        self.assertIn("if: ${{ always() && env.SHADOW_DESK == 'indonesia' }}", indonesia)
-        self.assertIn("name: candidate-shadow-indonesia-${{ github.run_id }}-${{ github.run_attempt }}", indonesia)
-        self.assertIn("${{ runner.temp }}/candidate-state/state/", indonesia)
-        self.assertIn("${{ runner.temp }}/candidate-run.log", indonesia)
+        # Indonesia's full-state public artifact is retired, not silently
+        # converted into a Korea artifact or treated as confidential custody.
+        self.assertNotIn("Preserve Indonesia complete attempt evidence", raw)
+        self.assertNotIn("candidate-shadow-indonesia-", raw)
+        self.assertNotIn("shadow/indonesia-kemhan", raw)
 
         unselected = step("Preserve unselected attempt log only")
-        self.assertIn("env.SHADOW_DESK != 'korea' && env.SHADOW_DESK != 'indonesia'", unselected)
+        self.assertIn("env.SHADOW_DESK != 'korea'", unselected)
+        self.assertNotIn("env.SHADOW_DESK != 'indonesia'", unselected)
         self.assertIn("name: candidate-shadow-unselected-${{ github.run_id }}-${{ github.run_attempt }}", unselected)
         self.assertIn("path: ${{ runner.temp }}/candidate-run.log", unselected)
         self.assertNotIn("candidate-state/state/", unselected)
@@ -651,26 +652,28 @@ class WorkflowCadence(unittest.TestCase):
         self.assertEqual(args[0], "scripts/shadow_collect_desk.py")
         return args[1:]
 
-    def test_each_schedule_selects_its_desk_even_with_conflicting_dispatch_input(self):
-        for cron, desk, branch, time in (
-            ("17 17 * * *", "indonesia", "shadow/indonesia-kemhan", "17:17"),
-            ("47 17 * * *", "korea", "shadow/korea-policy-briefing", "17:47"),
-        ):
-            with self.subTest(desk=desk):
-                result, values = self.selection("schedule", cron, "korea" if desk == "indonesia" else "indonesia")
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertEqual(values, {"SHADOW_DESK": desk, "STATE_BRANCH": branch, "SHADOW_CRON_UTC": time})
+    def test_only_korea_schedule_selects_the_original_korea_branch(self):
+        result, values = self.selection("schedule", "47 17 * * *", "indonesia")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(values, {
+            "SHADOW_DESK": "korea",
+            "STATE_BRANCH": "shadow/korea-policy-briefing",
+            "SHADOW_CRON_UTC": "17:47",
+        })
 
-    def test_manual_dispatch_keeps_its_selected_desk(self):
-        for desk, time in (("indonesia", "17:17"), ("korea", "17:47")):
-            result, values = self.selection("workflow_dispatch", "", desk)
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertEqual(values["SHADOW_DESK"], desk)
-            self.assertEqual(values["SHADOW_CRON_UTC"], time)
+    def test_manual_dispatch_stays_korea_only(self):
+        result, values = self.selection("workflow_dispatch", "", "korea")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(values["SHADOW_DESK"], "korea")
+        self.assertEqual(values["SHADOW_CRON_UTC"], "17:47")
+        rejected, env = self.selection("workflow_dispatch", "", "indonesia")
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertEqual(env, {})
 
     def test_unknown_events_schedules_and_desks_fail_before_state_selection(self):
         for event, schedule, desk in (
             ("schedule", "", "indonesia"), ("schedule", "0 * * * *", "korea"),
+            ("schedule", "17 17 * * *", "korea"),
             ("push", "", "indonesia"), ("workflow_dispatch", "", "../foreign"),
         ):
             with self.subTest(event=event, schedule=schedule, desk=desk):
@@ -681,7 +684,7 @@ class WorkflowCadence(unittest.TestCase):
     def test_actual_workflow_arguments_preserve_scheduled_dates_across_midnight(self):
         from contextlib import redirect_stdout
         from datetime import datetime, timezone
-        for cron in ("17 17 * * *", "47 17 * * *"):
+        for cron in ("47 17 * * *",):
             _, values = self.selection("schedule", cron)
             args = self.collection_args(values, "schedule")
             with mock.patch.object(runner, "datetime") as clock, mock.patch.object(runner, "run", return_value={"health": "ok"}) as collect:
@@ -707,7 +710,7 @@ class WorkflowCadence(unittest.TestCase):
 
     def test_scheduled_ui_rerun_still_refuses_an_ambiguous_date(self):
         from contextlib import redirect_stderr
-        _, values = self.selection("schedule", "17 17 * * *")
+        _, values = self.selection("schedule", "47 17 * * *")
         args = self.collection_args(values, "schedule", attempt="2")
         with mock.patch.object(runner, "run") as collect, redirect_stderr(io.StringIO()):
             self.assertEqual(runner.main(args), 2)
@@ -720,7 +723,7 @@ class WorkflowCadence(unittest.TestCase):
         (self.root / "bin/git").write_text("#!" + sys.executable + "\nimport sys\nsys.exit(2 if sys.argv[1] == 'ls-remote' else 98)\n")
         result = self.shell("Check out isolated state", {
             "PATH": path, "RUNNER_TEMP": str(self.root), "GITHUB_EVENT_NAME": "schedule",
-            "STATE_BRANCH": "shadow/indonesia-kemhan", "STATE_REMOTE": "https://example.invalid/fixture",
+            "STATE_BRANCH": "shadow/korea-policy-briefing", "STATE_REMOTE": "https://example.invalid/fixture",
         })
         self.assertEqual(result.returncode, 1, result.stderr)
         self.assertIn("refusing to restart its clock", result.stdout)
@@ -728,11 +731,11 @@ class WorkflowCadence(unittest.TestCase):
 
     def test_schedule_contract_keeps_daily_slots_main_guard_and_desk_serialization(self):
         import re
-        self.assertEqual(re.findall(r"- cron: '([^']+)'", self.raw), ["17 17 * * *", "47 17 * * *"])
+        self.assertEqual(re.findall(r"- cron: '([^']+)'", self.raw), ["47 17 * * *"])
         self.assertIn("if: github.ref == 'refs/heads/main'", self.raw)
         group = next(line for line in self.raw.splitlines() if line.startswith("  group:"))
         self.assertIn("inputs.desk ||", group)
-        self.assertIn("github.event.schedule == '17 17 * * *' && 'indonesia'", group)
+        self.assertNotIn("github.event.schedule == '17 17 * * *' && 'indonesia'", group)
         self.assertIn("github.event.schedule == '47 17 * * *' && 'korea'", group)
         self.assertIn("cancel-in-progress: false", self.raw)
         self.assertIn('--lookback-days 6 --cap 40', self.raw)
