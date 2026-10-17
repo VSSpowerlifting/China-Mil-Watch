@@ -260,8 +260,8 @@ class NativeDapaCanaryContracts(unittest.TestCase):
             <tr><td><a onclick="detail(59293)" href="#">test</a></td>
             <td>2026-10-15</td></tr></table></body></html>"""
         result = probe(fetch=fetch, sleep=lambda _: None)
-        self.assertEqual(seen, [ROBOTS, DAPA_LISTING] if False else [ROBOTS, DAPA_LISTING])
-        self.assertEqual(result["article_requests"], 0) if "article_requests" in result else None
+        self.assertEqual(seen, [ROBOTS, LISTING])
+        self.assertEqual(result["article_requests"], 0)
         self.assertFalse(result["collector_enabled"])
         self.assertFalse(result["production_published"])
         self.assertFalse(result["dapa_issuer_per_article_verified"])
