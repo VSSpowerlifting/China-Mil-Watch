@@ -50,6 +50,14 @@ Separate publicly indexed official first-party pages establish that the publishe
 
 **Follow-up change:** Count only the number of HTML table rows, table cells, rows bearing a date-shaped token, and whether such rows have an anchor/JavaScript navigation or a qualified static document link. This diagnostic intentionally returns no row number, date, title, URL, JavaScript code, hidden field value, candidate original, or inferred source ID. No new request routes, no click simulation, no collector, and no rights or editorial authority are added. Further human owner authorization is required for another manual network run after merge.
 
+## Latest bounded row-navigation diagnostic: actionable vs. ambiguous JS shape
+
+Verified [owner-run 39031062944](https://github.com/VSSpowerlifting/IndoPacificRecord/actions/runs/39031062944) saw ten date-bearing table rows, all with interactive anchors, but zero static canonical `docSeq` URLs. One cannot conclude the actual row-to-ID mapping from this count.
+
+The next **offline-first, PR-tested** phase classifies whether dated rows carry a simple single-integer function call, a more complex numeric call, a nonnumeric call, or no recognizable call. Crucially it returns **counts only**: neither JavaScript code/function names nor argument values, document IDs, dates, Korean release titles, row ordinals or raw publisher HTML appear in the receipt. A simple numeric argument might be an ordinal or tracking reference; it is **not assumed to equal the immutable DAPA `docSeq`**.
+
+This adds no request endpoints or retries. On PRs the test uses fictional HTML only. A later real observation is a new explicitly approved owner dispatch of the existing robots-first DAPA listing canary; previous approvals are not automatically reused. Even a successful run cannot enable collection, source reproduction, per-item DAPA attribution, English translation or analysis publication. Link arguments must be separately corroborated against genuinely served same-origin article identities before admission.
+
 ## After a separately approved successful listing observation
 
 Independently establish visible first-party article issuer, posted date and stable document identity against the actual publisher. Then open a new proposal for a source-specific private shadow collector, prospective collection reliability, rights restrictions per content class, and a distinct metadata-only source adapter. **No direct DAPA original text, HWPX, PDF, photograph, translation or analysis may be published by this probe.**
