@@ -123,7 +123,7 @@ def inspect_article(raw):
     # publisher posting date differs. Require one unambiguous "게시일" field,
     # immediately followed by its own date; never search the whole body.
     # This is still a page-local observation, NOT a live listing-row match.
-    labels = list(re.finditer(r"게시일\\s*[:：]?\\s*", visible))
+    labels = list(re.finditer(r"게시일\s*[:：]?\s*", visible))
     tail = visible[labels[0].end():].lstrip() if len(labels) == 1 else ""
     posted = re.match(
         r"^(20[0-9]{2}[-.][01][0-9][-.][0-3][0-9])(?![0-9])", tail
