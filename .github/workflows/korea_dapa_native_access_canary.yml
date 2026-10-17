@@ -17,6 +17,11 @@ on:
         type: boolean
         required: true
         default: false
+      witness_article_url:
+        description: "Optional URL reached by clicking the FIRST dated DAPA listing row; compare numeric shape only, no article GET"
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -59,7 +64,13 @@ jobs:
         with:
           python-version: '3.9'
       - name: Exactly robots then at most one DAPA-owned press listing GET
-        run: python -m scripts.probe_korea_dapa_native_access --approve-one-time-direct-dapa-access
+        env:
+          # Dispatch input is data, never interpolated into shell code.
+          WITNESS_ARTICLE_URL: ${{ inputs.witness_article_url }}
+        run: >-
+          python -m scripts.probe_korea_dapa_native_access
+          --approve-one-time-direct-dapa-access
+          --owner-clicked-first-row-url "$WITNESS_ARTICLE_URL"
       - name: Confirm zero files, government originals or database changed
         if: always()
         run: |
