@@ -49,6 +49,7 @@ class KoreaSitePreviewTests(unittest.TestCase):
         self.assertIn("Private design review", self.page)
         self.assertIn("not published IPR records", self.page)
         self.assertIn("human-approved references", self.page)
+        self.assertNotIn('data-korea-production-lanes', self.page)
         self.assertIn("0</strong>", self.page)
         # The real public official-source bibliography is now listed, while
         # this separately generated source-review preview stays noindex.

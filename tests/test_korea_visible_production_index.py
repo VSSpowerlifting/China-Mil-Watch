@@ -55,6 +55,17 @@ class KoreaLiveMetadataCountTests(unittest.TestCase):
                 html)
             self.assertEqual(
                 html.count('data-korea-auto-official-link='), len(newly_listed))
+            self.assertIn('data-korea-production-lanes', html)
+            self.assertIn('Live MND official-link metadata</dt><dd>%d</dd>'
+                          % len(all_admitted), html)
+            self.assertIn('Published Korean originals</dt><dd>%d</dd>'
+                          % len(originals), html)
+            self.assertIn('Reviewed English translations and analyses</dt><dd>%d</dd>'
+                          % len(reviewed), html)
+            self.assertIn('Article-corpus records</dt><dd>Not admitted', html)
+            self.assertIn('DAPA production source</dt><dd>Not qualified', html)
+            self.assertNotIn(
+                'This desk has no admitted records in the public IPR corpus.', html)
             self.assertEqual(html.count('data-korea-public-link='), 5)
             self.assertEqual(html.count('data-korea-additional-link='), 9)
             for source in newly_listed:
