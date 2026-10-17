@@ -44,7 +44,7 @@ def _template(name, **ctx):
 def test_public_roster_is_exact_and_domain_focused():
     people = load_staff(ROSTER)
     assert [(p["name"], p["role"]) for p in people] == [
-        ("Benjamin Yang", "Founder & Editor-in-Chief"),
+        ("Benjamin Yang", "Founder & Director of Research and Editorial"),
         ("Dylan Tanzi", "Lead Research Analyst"),
         ("Christin Sawyer", "Communications Editor"),
     ]
@@ -60,6 +60,8 @@ def test_public_roster_is_exact_and_domain_focused():
     assert founder["links"]["LinkedIn"] == "https://www.linkedin.com/in/benjamin-w-yang/"
     assert "Indo-Pacific Record" in founder["bio"]
     assert "primary-source evidence" in founder["bio"]
+    assert "Director of Research and Editorial" in founder["bio"]
+    assert "Editor-in-Chief" not in founder["bio"]
     assert "Strategic Materials Policy Tracker" not in founder["bio"]
     assert "The Diplomat" not in founder["bio"]
     assert "The Globe" not in founder["bio"]
