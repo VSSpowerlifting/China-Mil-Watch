@@ -11,7 +11,7 @@ from urllib.parse import parse_qs, urljoin, urlsplit
 from bs4 import BeautifulSoup
 
 from core.collection.contract import ExtractedDocument
-from scraper.sources.desk_shadow_http import Page
+from scraper.sources.desk_shadow_http import Page, ListingShadowAdapter
 from scraper.sources.id_kemhan import one
 from scraper.sources.kr_policy_briefing import (
     KoreaPolicyAdapter, LISTING, HOST, article_url, hwpx_text,
@@ -36,6 +36,13 @@ def observed_text_notice(html):
 
 class KoreaDapaPolicyAdapter(KoreaPolicyAdapter):
     """Reuse proven bounded transport/HWPX extraction, isolate DAPA identity."""
+
+    # MND has its own authorized timeout retry. DAPA does not inherit it.
+    ROBOTS_TIMEOUT = 30
+
+    def _request(self, url, form=None, robots=False, binary=False):
+        return ListingShadowAdapter._request(
+            self, url, form=form, robots=robots, binary=binary)
 
     def first_request(self, window):
         url, form = super().first_request(window)
