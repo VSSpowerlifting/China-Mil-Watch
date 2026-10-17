@@ -11,6 +11,9 @@ on:
     branches: [main]
     paths:
       - .github/workflows/korea_verified_official_link_production.yml
+      - site/preview/generate_preview.py
+      - site/preview/templates/desk.html
+      - desks/registry.json
   workflow_run:
     workflows:
       - Indonesia and South Korea Shadow Collection

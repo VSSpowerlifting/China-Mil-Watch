@@ -15,6 +15,7 @@ on:
   workflow_run:
     workflows:
       - Korea — Owner-authorized exact original-text Pages release
+      - Korea — Verified Government Links to Production and Pages
     types: [completed]
   schedule:
     - cron: '41 5 * * *'
@@ -47,7 +48,8 @@ jobs:
     if: >-
       github.event_name != 'pull_request' &&
       (github.event_name != 'workflow_run' ||
-       github.event.workflow_run.conclusion == 'success')
+       (github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.head_branch == 'main'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

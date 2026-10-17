@@ -1,18 +1,29 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Archive production integration (17 October 2026, source-only review candidate):**
-`codex/archive-production-integration` integrates the reviewed private #766 engine
-into the existing Archive, based on current main `e376bcb6bf`. The selected DB,
-current in-memory projection and public loaders generate the research index in
-one build; existing URLs/facets/order, server records and week routes remain.
-The current public input set has 966 items after main's separate Korea releases.
-Archive-only typography, citations, exports and accessible mobile research-list
-controls fit both raw JS budgets. No tracked output, DB, editorial/publication
-record, source permission or workflow change is part of this integration.
-Evidence and exact gates: `docs/ARCHIVE_PRODUCTION_INTEGRATION.md` and
-`docs/evidence/archive-production-integration/README.md`; final full CI is recorded
-in the integration PR. #766 remains the unchanged private reference. Owner review
-and separate merge/regeneration/release authorization remain outstanding.
+**Archive release preparation (17 October 2026, PR #776):**
+The existing integration now reconciles main `ca4424cb15204ef366323f997c28119c2bf6d3ad`
+with the reviewed Archive implementation and narrow absent-count label fix.
+Runtime/public inputs match reviewed candidate tree
+`9d5e5d19fd93257a02633fee7fa1f500f4883abc`: 912 corpus records and 1,006
+eligible research items. Source reconciliation retains staff loading and measured
+Korea desk lanes. Release snapshots, inherited main output causes, exact Linux
+CI identity and publication gates are recorded in
+`docs/ARCHIVE_RELEASE_PREPARATION_2026-10-17.md`.
+Source/evidence commit and push are authorized; merge/publication are not.
+No generated-output or canonical-data change is authored by this PR. A source
+merge can activate the feature on the next eligible scheduled render.
+
+**Editorial team integration (17 October 2026, PR #770 review candidate):**
+The staff branch incorporates main `a4d7961e47` without conflicts. Three approved
+profiles and the Team directory use the shared utility material system; exact
+published credits distinguish authors, co-authors and research contributions.
+Historical shell bytes and Korean-original pages remain identical; no tracked
+output, database, source archive or approval changes are included relative to
+main. Pure `unittest` staff coverage and route-aware existing tests replace the
+failing contracts. Focused acceptance passes 98 tests; complete exact-head CI
+and maintainer review remain the release gates. Scope, visual evidence and
+reproduction: `docs/engineering/EDITORIAL_TEAM_INTEGRATION_2026-10-17.md`.
+No merge or deployment is authorized by this integration task.
 
 **Brief reading foundation approved; cartographic accent candidate (14 October 2026):**
 The owner approved PR #588 head `d5c3ca5169bf10eb7685897c234b06452c3592e5`

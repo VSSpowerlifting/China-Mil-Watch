@@ -1055,7 +1055,7 @@ class TestRenderedStructure(PreviewCase):
         self.assertNotIn("is a working name", html)
         self.assertNotIn("Release candidate", html)
         self.assertNotIn("not published", html)
-        self.assertIn("is an independent research project created and edited by",
+        self.assertIn("is an independent research project founded by",
                       html)
         self.assertIn('name="generator" content="Test Title '
                       '— indo-pacific-record build"', html)
@@ -1442,14 +1442,23 @@ class TestTrancheOneIdentityAndStructure(PreviewCase):
     def test_the_maintainer_is_named_with_a_route_to_reach_them(self):
         html = self.page("about.html")
         self.assertIn(gp.MAINTAINER["name"], html)
-        self.assertIn(gp.MAINTAINER["role"], html)
+        self.assertIn('href="team.html"', html)
         self.assertIn(gp.MAINTAINER["email"], html)
-        self.assertIn(gp.MAINTAINER["linkedin"], html)
+        profile = self.page("authors/benjamin-yang.html")
+        self.assertIn("Founder &amp; Director of Research and Editorial", profile)
+        self.assertIn(gp.MAINTAINER["linkedin"], profile)
 
     def test_the_lead_edition_carries_a_byline(self):
-        self.assertIn("%s, %s" % (gp.MAINTAINER["name"],
-                                  gp.MAINTAINER["role"]),
-                      self.page("analysis.html"))
+        from bs4 import BeautifulSoup
+        from core.edition_identity import resolve_identity
+        lead = gp.load_editions(REPO_ROOT)[0]
+        original = json.loads((REPO_ROOT / "output/the-pla-watch/posts" /
+                               (lead["slug"] + ".json")).read_text())
+        identity = resolve_identity(original)
+        byline = BeautifulSoup(self.page("analysis.html"), "html.parser").select_one(
+            ".briefs-lead-byline").get_text()
+        self.assertEqual(byline, "%s, %s" % (identity["author_name"], identity["author_title"]))
+        self.assertNotIn(gp.MAINTAINER["role"], byline)
 
     # ── Typography ──────────────────────────────────────────────────────
 
@@ -3649,7 +3658,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
         nav = nav.split("</nav>", 1)[0]
         labels = re.findall(r">([A-Za-z ]+)</a>", nav)
         self.assertEqual(labels, ["Records", "Briefs", "Desks", "Sources",
-                                  "Coverage", "Methodology", "About"])
+                                  "Coverage", "Methodology", "Team", "About"])
         self.assertNotIn("Corpus", labels)
         self.assertNotIn("Archive", labels)
 
@@ -5217,7 +5226,7 @@ class TestSnapshotScopedCitations(PreviewCase):
         self.assertEqual(
             gp.corpus_citation("Test Title", gp.DECLARED_SNAPSHOT),
             "Test Title. Research Atlas corpus. Snapshot — "
-            "%s. %s records. Benjamin Yang, Creator and Editor."
+            "%s. %s records. Benjamin Yang, Founder & Director of Research and Editorial."
             % (gp.DECLARED_SNAPSHOT["date"],
                "{:,}".format(gp.DECLARED_SNAPSHOT["expected_records"])))
 
@@ -6433,8 +6442,12 @@ class TestStop4RoutesAreIntact(PreviewCase):
         from core.korea_english_publication import public_registry
         registered_korean_originals = len(read_release_index())
         reviewed_english_pages = 2 * len(public_registry())
+        from core.staff_directory import load_staff
+        staff = load_staff(REPO_ROOT / "site/preview/staff.json")
+        self.assertEqual(sorted(q.name for q in (self.out / "authors").glob("*.html")),
+                         sorted(p["slug"] + ".html" for p in staff))
         self.assertEqual(len(files),
-                         self.corpus_size + len(top) + len(sources)
+                         self.corpus_size + len(top) + len(sources) + len(staff)
                          + len(covers) + len(atmosphere)
                          + registered_korean_originals + reviewed_english_pages
                          + len([q for q in (self.out / "assets").rglob("*") if q.is_file()]))

@@ -59,6 +59,28 @@ class KoreaAuthenticatedActionsCensus(unittest.TestCase):
         self.assertEqual(set(e["artifacts"]), {"1001", "1002"})
         self.assertTrue(all("/actions/" in url for url in self.api.calls))
 
+    def test_live_census_uses_current_canonical_repository_and_rejects_legacy(self):
+        # This executes in IndoPacificRecord. A stale hardcoded repository
+        # rejects every real workflow_dispatch before any authenticated census.
+        self.assertEqual(live.REPO, "VSSpowerlifting/IndoPacificRecord")
+        self.assertEqual(live.API,
+                         "https://api.github.com/repos/VSSpowerlifting/IndoPacificRecord")
+        live.fetch_authenticated(self.api, self.now)
+        self.assertTrue(self.api.calls)
+        self.assertTrue(all(url.startswith(live.API + "/actions/")
+                            for url in self.api.calls))
+        # Fail closed on the *old* repository name, with no network request.
+        with patch.dict("os.environ", {
+            "GITHUB_REPOSITORY": "VSSpowerlifting/China-Mil-Watch",
+            "GH_TOKEN": "synthetic-not-a-secret",
+        }):
+            with self.assertRaisesRegex(
+                    provenance.ProvenanceError, "exact repository"):
+                live.main([
+                    "--shadow-checkout", "/nonexistent-test-shadow",
+                    "--output", "/nonexistent-test-receipt.json",
+                ])
+
     def test_pagination_beyond_one_page_must_be_complete(self):
         before = [run(1500+i, "2026-10-05T22:00:00Z")
                   for i in range(99)]

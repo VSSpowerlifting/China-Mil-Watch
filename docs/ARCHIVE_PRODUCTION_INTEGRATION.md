@@ -1,5 +1,8 @@
 # Archive production integration — source candidate, 17 October 2026
 
+Historical 966-item snapshot. Current reconciliation, 1,006-item corpus and
+separately grouped inherited output are recorded in the [release preparation](ARCHIVE_RELEASE_PREPARATION_2026-10-17.md).
+
 The existing `archive.html` gains publication-aware search, citations and a
 browser-tab research list. Private reference [PR #766](https://github.com/VSSpowerlifting/IndoPacificRecord/pull/766)
 at `cee7f1f6e1248e02cedd0c373d0f5b542a233e8a` remains separate and unchanged.

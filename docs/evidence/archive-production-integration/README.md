@@ -1,5 +1,8 @@
 # Archive production integration — review evidence
 
+Historical 966-item snapshot. Current reconciliation, 1,006-item corpus and
+separately grouped inherited output are recorded in the [release preparation](../../ARCHIVE_RELEASE_PREPARATION_2026-10-17.md).
+
 17 October 2026. Source candidate based on main `e376bcb6bf`; no deployment.
 Private reference #766 remains at `cee7f1f6e1248e02cedd0c373d0f5b542a233e8a`.
 

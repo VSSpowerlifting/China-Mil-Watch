@@ -174,14 +174,14 @@ BUILD_MODE = "indo-pacific-record"
 #: published edition said at the time.
 MAINTAINER = {
     "name": "Benjamin Yang",
-    "role": "Creator and Editor",
+    "role": "Founder & Director of Research and Editorial",
     "bio": ("Benjamin Yang studies International Affairs at George Washington "
             "University’s Elliott School, with interests in U.S.–China "
             "relations, public diplomacy, and security affairs. He founded "
             "Indo-Pacific Record, writes source-linked security and policy "
             "analysis, and maintains the project’s collection pipeline."),
     "email": "ben.yang@gwmail.gwu.edu",
-    "linkedin": "https://www.linkedin.com/in/benjamin-yang-42b525294",
+    "linkedin": "https://www.linkedin.com/in/benjamin-w-yang/",
 }
 
 #: The desk roster is NOT a constant here any more. It is loaded from
@@ -1154,6 +1154,9 @@ def _edition_identity_fields(sidecar_path: Path, data: dict) -> dict:
     except IdentityError as exc:
         raise IdentityError("sidecar %s: %s" % (sidecar_path.name, exc))
     return {
+        # Catalogue bylines follow the original edition, not today's staff role.
+        "author_name": identity["author_name"],
+        "author_title": identity["author_title"],
         "publication": identity["publication"],
         "publication_home_label": identity["publication_home_label"],
         "series_name": identity["series_name"],
@@ -2411,6 +2414,7 @@ def build(out_dir: Path, title: str, db_path: Path,
     korea_public_rows = []
     korea_additional_rows = []
     korea_auto_official_rows = []
+    korea_production_link_count = 0
     korea_published_original_rows = []
     korea_english_publication_rows = []
     if korea_release_state is not None:
@@ -2430,8 +2434,16 @@ def build(out_dir: Path, title: str, db_path: Path,
             from core.korea_official_live_links import load_live_korea_official_links
             frozen_ids = {r["source_identity"] for r in (
                 korea_public_rows + korea_additional_rows)}
-            korea_auto_official_rows = load_live_korea_official_links(
-                db_path, exclude=frozen_ids)
+            # A verified production metadata admission may overlap the
+            # historic curated link directory. Count ALL authenticated DB
+            # admissions, suppressing the overlap only in the new-link rail.
+            # An empty rail is not evidence that the live feed is empty.
+            korea_admitted_official_rows = load_live_korea_official_links(db_path)
+            korea_production_link_count = len(korea_admitted_official_rows)
+            korea_auto_official_rows = [
+                item for item in korea_admitted_official_rows
+                if item["source_identity"] not in frozen_ids
+            ]
             from core.korea_published_originals import read_release_index
             korea_published_original_rows = read_release_index()
             from core.korea_english_publication import public_registry
@@ -2665,6 +2677,10 @@ def build(out_dir: Path, title: str, db_path: Path,
         edition_citation=edition_citation, state_labels=STATE_LABELS,
         state_order=STATE_ORDER, language_label=language_label))
     archive_official_groups = []
+    from core.staff_directory import load_staff, credited_works
+    team_members = load_staff(REPO_ROOT / "site/preview/staff.json")
+    team_by_name = {member["name"]: member for member in team_members}
+
     ctx = {
         "archive_digest": archive_digest(archive_encoded(index)),
         "title": title,
@@ -2681,6 +2697,8 @@ def build(out_dir: Path, title: str, db_path: Path,
         "predecessor_name": PREDECESSOR_NAME,
         "predecessor_series": PREDECESSOR_SERIES,
         "maintainer": MAINTAINER,
+        "team": team_members,
+        "team_by_name": team_by_name,
         "snapshot_label": snapshot_label,
         "citation": citation,
         "institutions": data["institutions"],
@@ -2808,12 +2826,19 @@ def build(out_dir: Path, title: str, db_path: Path,
         "pla-watch.html": "pla_watch.html",
         "methodology.html": "methodology.html",
         "about.html": "about.html",
+        "team.html": "team.html",
     }
     written = []
     for target, template in pages.items():
         if target == "archive.html":
             continue  # Bind the complete current indexes before rendering the finder.
-        page_html = env.get_template(template).render(page=target, **ctx)
+        # A live, separately governed Korea metadata table is NOT an article
+        # corpus or a full-country source admission. Show its measured count
+        # only on the Desks directory, without reclassifying Korea as 'live'.
+        desk_index_lanes = ({"korea_mnd_live_link_count": korea_production_link_count}
+                            if target == "desks.html" else {})
+        page_html = env.get_template(template).render(
+            page=target, **ctx, **desk_index_lanes)
         if target == "desks.html":
             # Desks embeds the canonical 1:50m map inline. Its accessible
             # directory keeps every status/limit, so trim only indentation
@@ -2823,6 +2848,29 @@ def build(out_dir: Path, title: str, db_path: Path,
             page_html = re.sub(r"(?m)^[ \t]+(?=<)", "", page_html)
         (out_dir / target).write_text(page_html, encoding="utf-8")
         written.append(target)
+
+    # Static staff profiles use exact published credits; historical authorship
+    # and the editorial release authority are unaffected.
+    (out_dir / "authors").mkdir(exist_ok=True)
+    profile_template = env.get_template("staff_profile.html")
+    for member in team_members:
+        schema = None
+        if (site_origin or "").strip():
+            profile_origin = site_origin.strip().rstrip("/")
+            schema = {"@context": "https://schema.org", "@type": "Person",
+                      "name": member["name"],
+                      "url": profile_origin + "/" + member["route"],
+                      "jobTitle": member["role"],
+                      "worksFor": {"@type": "Organization", "name": title,
+                                   "url": profile_origin + "/"}}
+            if member["links"]:
+                schema["sameAs"] = list(member["links"].values())
+        route = member["route"]
+        (out_dir / route).write_text(profile_template.render(
+            page=route, nested=True, member=member,
+            works=credited_works(collection, member["name"]),
+            staff_schema=schema, **ctx), encoding="utf-8")
+        written.append(route)
 
     if timelines:
         (out_dir / "timeline").mkdir()
@@ -3040,6 +3088,7 @@ def build(out_dir: Path, title: str, db_path: Path,
                              korea_public_links=(korea_public_rows if desk.slug == "korea" else []),
                              korea_additional_links=(korea_additional_rows if desk.slug == "korea" else []),
                              korea_auto_official_links=(korea_auto_official_rows if desk.slug == "korea" else []),
+                             korea_production_link_count=(korea_production_link_count if desk.slug == "korea" else 0),
                              korea_published_originals=(korea_published_original_rows if desk.slug == "korea" else []),
                              korea_english_publications=(korea_english_publication_rows if desk.slug == "korea" else []),
                              display_limits=public_desk_limits(
@@ -3220,7 +3269,7 @@ def build(out_dir: Path, title: str, db_path: Path,
         (Path(__file__).parent / "styles.css").read_text(encoding="utf-8"),
         encoding="utf-8")
     written.append("styles.css")
-    for name in ("fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
+    for name in ("staff.css", "fonts.css", "support.css", "home.css", "relief.css", "archive.css", "record.css", "briefs-catalog.css", "shell.js", "surfaces.css", "desk-map.css", "desk-map.js", "desk-references.css", "desk-references.js"):
         (out_dir / name).write_bytes((Path(__file__).parent / name).read_bytes())
         written.append(name)
     # Explicit named assets only: homepage relief sprites and Phase 4A Desks

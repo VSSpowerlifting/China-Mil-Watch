@@ -50,8 +50,31 @@ Separate publicly indexed official first-party pages establish that the publishe
 
 **Follow-up change:** Count only the number of HTML table rows, table cells, rows bearing a date-shaped token, and whether such rows have an anchor/JavaScript navigation or a qualified static document link. This diagnostic intentionally returns no row number, date, title, URL, JavaScript code, hidden field value, candidate original, or inferred source ID. No new request routes, no click simulation, no collector, and no rights or editorial authority are added. Further human owner authorization is required for another manual network run after merge.
 
+## Latest bounded row-navigation diagnostic: actionable vs. ambiguous JS shape
+
+Verified [owner-run 39031062944](https://github.com/VSSpowerlifting/IndoPacificRecord/actions/runs/39031062944) saw ten date-bearing table rows, all with interactive anchors, but zero static canonical `docSeq` URLs. One cannot conclude the actual row-to-ID mapping from this count.
+
+The next **offline-first, PR-tested** phase classifies whether dated rows carry a simple single-integer function call, a more complex numeric call, a nonnumeric call, or no recognizable call. Crucially it returns **counts only**: neither JavaScript code/function names nor argument values, document IDs, dates, Korean release titles, row ordinals or raw publisher HTML appear in the receipt. A simple numeric argument might be an ordinal or tracking reference; it is **not assumed to equal the immutable DAPA `docSeq`**.
+
+This adds no request endpoints or retries. On PRs the test uses fictional HTML only. A later real observation is a new explicitly approved owner dispatch of the existing robots-first DAPA listing canary; previous approvals are not automatically reused. Even a successful run cannot enable collection, source reproduction, per-item DAPA attribution, English translation or analysis publication. Link arguments must be separately corroborated against genuinely served same-origin article identities before admission.
+
 ## After a separately approved successful listing observation
 
 Independently establish visible first-party article issuer, posted date and stable document identity against the actual publisher. Then open a new proposal for a source-specific private shadow collector, prospective collection reliability, rights restrictions per content class, and a distinct metadata-only source adapter. **No direct DAPA original text, HWPX, PDF, photograph, translation or analysis may be published by this probe.**
 
 Because the existing first-party and republisher sites are distinct domains, do not treat failure on either as justification to rotate IPs, change user agents or evade access controls. An official publisher-documented RSS/API is an alternative only if independently verified and separately approved.
+
+## October 17 — owner browser-click witness as an optional listing-only comparison
+
+The owner clicked the apparent newest entry on the live DAPA first-party press list, page 1 with 10 rows, and reported the resulting browser URL:
+
+`https://www.dapa.go.kr/dapa/doc/selectDoc.do?docSeq=59312&menuSeq=3069&bbsSeq=326&currentPageNo=1&recordCountPerPage=10`
+
+This is an **owner-supplied browser observation** from a real click, not an independently captured versioned source record or proof of the government article's text, date, issuer or rights. The strict canonical route for this one example is `https://www.dapa.go.kr/dapa/doc/selectDoc.do?bbsSeq=326&docSeq=59312&menuSeq=3069`. The two navigation parameters are pagination state, not source identity; list row number 1 is not itself the `docSeq`.
+
+The previously authorized first-party listing canary [run 39042532768](https://github.com/VSSpowerlifting/IndoPacificRecord/actions/runs/39042532768) saw ten dated rows, each with one simple numeric JavaScript link argument, but **zero static article URLs**. The clicked URL lets the owner compare the apparent first row's exact numeric argument against one browser outcome on the **next separately approved listing request**; it does not establish what the navigation handler does for all rows.
+
+The existing `korea_dapa_native_access_canary.yml` now accepts an **optional** `witness_article_url` on owner-approved manual dispatch only. It enforces the original fixed maximum of **one robots GET plus one listing GET**—no article, JS resource, HWPX, PDF, or media GET. It strictly checks the owner-provided full same-host URL/board/section and navigation parameters *before* any request, then uses the existing offline private row parser to ask whether **exactly one** unambiguous dated row matches the URL's numeric value **and it is the first dated row**. The only additional emitted data are a fixed match verdict, row count, a claimed list date when matched, and the SHA-256 of the listing HTML response. No raw HTML, original headline, JavaScript function code or article text leaves runner memory. A mismatch has a distinct nonzero HOLD result and does not silently qualify collection.
+
+**Still separately unverified even if this comparison turns green:** authenticated visual click/handler semantics, article date and issuer from this specific current item, exact-source preservation and private custody, dynamic listing pagination/completeness, per-article/attachment license, scheduled reliability and production admission. The previously qualified article `docSeq=59180` and the owner-clicked current `docSeq=59312` are different items. The owner must separately authorize any live listing request; the earlier one-time consent is not reused. Do not re-run probes merely for a green checkmark or mark full Korea source coverage as live from one row.
+

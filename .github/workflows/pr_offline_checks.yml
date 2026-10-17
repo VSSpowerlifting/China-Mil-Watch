@@ -78,7 +78,7 @@ jobs:
       # `persist-credentials: false` because nothing here needs git auth. The
       # default writes the job token into .git/config as an extraheader, where
       # any later step — including this PR's own test code — could read it.
-      # Every git command below reads the local checkout only.
+      # Frozen historical replay objects are fetched below without credentials.
       - name: Check out the pull request
         uses: actions/checkout@v4
         with:
@@ -104,6 +104,37 @@ jobs:
           fi
           echo "db=$(sha256sum pla_watch.db | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
           echo "Tracked database baseline recorded."
+
+      # Supply exact frozen history for applicable pilot/review contracts.
+      # Object retrieval is public/read-only; it changes no branch or worktree.
+      - name: Verify GPG and restore frozen historical replay objects
+        run: |
+          set -euo pipefail
+          gpg --version
+          python - <<'PYTHON'
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+
+          event = json.loads(Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+          pr = event['pull_request']
+          print('Tested PR head:', pr['head']['sha'], flush=True)
+          print('Tested base:', pr['base']['sha'], flush=True)
+          print('Synthetic merge:', subprocess.check_output(
+              ['git', 'rev-parse', 'HEAD'], text=True).strip(), flush=True)
+          origins = json.loads(Path('research/topic_pilot_v1/ledger.json').read_text())['origins']
+          for name, origin in sorted(origins.items()):
+              commit = origin['commit']
+              subprocess.run(['git', 'fetch', '--no-tags', '--depth=1',
+                  'https://github.com/VSSpowerlifting/IndoPacificRecord.git', commit], check=True)
+              spec = commit + ':' + origin['path']
+              actual = subprocess.check_output(['git', 'rev-parse', spec], text=True).strip()
+              if actual != origin['blob']:
+                  raise SystemExit('Frozen source blob mismatch: ' + name)
+              subprocess.run(['git', 'cat-file', '-e', actual], check=True)
+              print('Frozen object verified:', name, spec, actual, flush=True)
+          PYTHON
 
       # First execution of PR-controlled content.
       - name: Install dependencies
@@ -199,6 +230,23 @@ jobs:
               print("chromium %s launched" % browser.version)
               browser.close()
           PY
+
+      - name: Replay all frozen pilot sources and independent review excerpts
+        run: |
+          set -euo pipefail
+          python scripts/topic_pilot.py --verify-sources
+          python - <<'PYTHON'
+          import json
+          from scripts import topic_pilot as pilot
+          from tests.test_topic_pilot_review import REVIEW, validate_review, replay_data
+
+          review = json.loads(REVIEW.read_text())
+          validate_review(review)
+          count = pilot.verify_sources(replay_data(review))
+          if count != 60:
+              raise SystemExit('Incomplete historical review replay: ' + str(count))
+          print('Verified %d pinned review excerpts; no database writes.' % count)
+          PYTHON
 
       # The suite uses temporary databases and never touches the tracked file.
       # The assertion below is what makes that a fact rather than a claim.
