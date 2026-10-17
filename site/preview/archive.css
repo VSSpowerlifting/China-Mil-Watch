@@ -40,3 +40,26 @@
 .archive-page .row-side a[href="vietnam.html"]::before{-webkit-mask-image:url(assets/desk-marks/vietnam.svg);mask-image:url(assets/desk-marks/vietnam.svg)}
 @media(forced-colors:active){.archive-page .row-side a::before{display:none!important}}
 @media print{.archive-page .row-side a::before{display:none!important}}
+/* Archive research integration: reading type and native, compact disclosures.
+   The shared shell, fonts and tokens remain the publication's authority. */
+.archive-page .record-row h3{font:400 26px/1.3 var(--serif);max-width:65ch;text-wrap:pretty}
+.archive-page .finder-field label,.archive-page .finder button{font-weight:400}
+.archive-page .archive-actions{font:14px/1.7 var(--sans);margin-top:18px;max-width:70ch;overflow-wrap:anywhere}
+.archive-page .archive-actions summary,.archive-page .keep-record{min-height:44px;display:flex;align-items:center;gap:8px;cursor:pointer}
+.archive-page .archive-actions summary{display:list-item;padding-block:10px}
+.archive-page .keep-record input{width:18px;height:18px;margin:0;accent-color:var(--accent)}
+.archive-page .archive-citation{font:16px/1.7 var(--serif);color:var(--ink)}
+.archive-page .archive-actions button,.archive-page .research-list-body button{font:400 14px/1.5 var(--sans);min-height:44px;cursor:pointer;padding:9px 14px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);margin:4px 8px 4px 0}
+.archive-page .research-list-body button:disabled{opacity:.55;cursor:default}
+.archive-page .archive-research-list{margin:18px 0 28px;max-width:72%;border-block:1px solid var(--rule);font:14px/1.7 var(--sans)}
+.archive-page .archive-research-list>summary{min-height:46px;padding-block:11px;cursor:pointer}
+.archive-page .research-list-body{padding-bottom:16px}.archive-page .research-list-body p{max-width:70ch}
+.archive-page #research-error{font:14px/1.7 var(--sans);color:var(--warning)}
+.archive-page :is(button,input,select,summary,.archive-citation):focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+@media(max-width:900px){.archive-page .archive-research-list{max-width:100%}}
+@media(max-width:680px){.archive-page .record-row h3{font-size:23px}.archive-page .archive-research-list{margin-block:12px 20px}.archive-page .archive-research-list>summary{font-size:13px}}
+@media print{.archive-page .archive-research-list,.archive-page .keep-record,.archive-page .archive-actions button{display:none!important}}
+.archive-page .record-row>*{min-width:0}.archive-page .record-row h3,.archive-page .row-side{overflow-wrap:anywhere}
+.archive-page .archive-hold{font:14px/1.7 var(--sans);color:var(--ink-2);max-width:70ch;overflow-wrap:anywhere}
+.archive-page .keep-record{font-weight:400}
+@media(max-width:680px){.archive-page .finder-row>.finder-field:first-child{grid-column:1/-1}}

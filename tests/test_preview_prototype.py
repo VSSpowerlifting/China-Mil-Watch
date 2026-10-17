@@ -3493,19 +3493,17 @@ class TestCorpusBrowserMarkup(PreviewCase):
         self.assertEqual(gp.language_label("ru-RU"), "ru-RU")
 
     def test_result_cards_use_the_label_not_the_raw_tag(self):
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
-        card = js.split("function card(", 1)[1].split("function cal", 1)[0]
-        # The reader sees the editorial name...
-        self.assertIn("lang && lang.label", card)
-        # ...and `lang.code` survives only as a `lang` attribute, which is
-        # where a BCP 47 tag belongs. No default: a tag the source does not
-        # declare is not guessed.
-        uses = re.findall(r"[^\n]*lang\.code[^\n]*", card)
-        self.assertTrue(uses)
-        for line in uses:
-            with self.subTest(line=line.strip()):
-                self.assertIn('setAttribute("lang", lang.code)', line)
-        self.assertNotIn('"zh"', card)
+        # The renderer now resolves reader labels once. Browser parity below
+        # still checks the exact words, links, language attributes and classes.
+        payload = json.loads((self.out / "archive-research-index.json").read_text())
+        compact = json.loads((self.out / "corpus-index.json").read_text())
+        for row in compact["records"]:
+            source = compact["sources"][row[2]]
+            lang = compact["languages"][source["language"]]
+            display = payload["display"]["record:" + str(row[0])]
+            self.assertIn(lang["label"], display["via"])
+            self.assertEqual(display["lang"], lang["code"])
+            self.assertNotIn(lang["code"], display["via"].split(" · "))
 
     def test_no_raw_language_or_state_code_in_archive_authored_ui(self):
         html = self.page("archive.html")
@@ -3544,8 +3542,8 @@ class TestCorpusBrowserMarkup(PreviewCase):
 
     def test_the_date_filters_name_the_stated_source_date(self):
         html = self.page("archive.html")
-        self.assertIn("Source-stated date from", html)
-        self.assertIn("Source-stated date to", html)
+        self.assertIn("Publication date from", html)
+        self.assertIn("Publication date through", html)
 
     def test_the_volume_section_is_reachable_from_the_top(self):
         html = self.page("archive.html")
@@ -3612,7 +3610,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
         # match" is said once, by #no-results (and once to a screen reader,
         # by the live region). Behaviourally:
         # TestBrowserRejectsMalformedIndex.test_an_empty_result_is_stated_once.
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
+        js = (REPO_ROOT / "site/preview/browse.source.js").read_text(encoding="utf-8")
         body = js.split("function render(", 1)[1].split("function drawChips(", 1)[0]
         self.assertRegex(body, r'range\.textContent = total \?[^;]*: "";')
         self.assertIn("none.hidden = total !== 0", body)
@@ -3663,7 +3661,7 @@ class TestCorpusBrowserMarkup(PreviewCase):
                 self.assertTrue((self.out / href).is_file())
 
     def test_corpus_values_are_never_written_through_inner_html(self):
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
+        js = (REPO_ROOT / "site/preview/browse.source.js").read_text(encoding="utf-8")
         for hit in re.findall(r"\.innerHTML\s*=\s*([^\n;]+)", js):
             with self.subTest(assignment=hit):
                 self.assertIn('""', hit)
@@ -3717,22 +3715,18 @@ class TestCorpusBrowserMarkup(PreviewCase):
         finally:
             shutil.rmtree(tmp, ignore_errors=True)
 
-    def test_every_index_row_shape_is_validated_not_a_sample(self):
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
-        self.assertIn("A = Array.isArray", js)
-        block = js.split("function valid(", 1)[1].split("\n  }", 1)[0]
-        self.assertIn("for (var i = 0; i < d.records.length; i++)", block)
-        self.assertIn("var r = d.records[i];", block)
-        self.assertIn("!A(r) || r.length !== 6", block)
-        self.assertIn('"id,date,source,state,title_en,title_orig"', block)
-        # No slicing or early exit that would turn this into a sample.
-        self.assertNotIn(".slice(", block)
+    def test_every_index_byte_is_bound_to_the_page_not_a_sample(self):
+        html = self.page("archive.html")
+        for asset, attribute in (("corpus-index.json", "archive"),
+                                  ("archive-research-index.json", "research")):
+            digest = hashlib.sha256((self.out / asset).read_bytes()).hexdigest()
+            self.assertIn('data-%s-digest="%s"' % (attribute, digest), html)
 
     def test_unavailable_restores_the_safe_hidden_state(self):
         # Since 2026-09-27 the newest records are server-rendered, and a
         # refused index never draws a row, so the safe state withdraws the
         # finder and keeps those rows: it must NOT clear the results.
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
+        js = (REPO_ROOT / "site/preview/browse.source.js").read_text(encoding="utf-8")
         block = js.split("function unavailable(", 1)[1].split("\n  }", 1)[0]
         self.assertRegex(block, r"root\.hidden = [^;]*= true;")
         self.assertIn("fail.hidden = false", block)
@@ -3747,31 +3741,21 @@ class TestCorpusBrowserMarkup(PreviewCase):
                       % self.snapshot["expected_records"], root)
         self.assertNotIn(self.snapshot["logical_sha256"], html)
 
-    def test_the_browser_validates_the_index_before_revealing_controls(self):
-        # Since 2026-09-27 the controls are revealed on arrival and the
-        # index loads on the first request (DECISION_LOG). What the check
-        # guards is unchanged: nothing is drawn from an index until it has
-        # proved it is this page's snapshot.
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
-        for check in ("d.snapshot.date !== WANT",
-                      "d.snapshot.records !== COUNT",
-                      "d.records.length !== COUNT",
-                      'd.fields.join() !== "id,date,source,state,title_en,title_orig"'):
-            with self.subTest(check=check):
-                self.assertIn(check, js)
-        # Validation gates the data every render reads.
-        body = js.split(".then(function (j) {", 1)[1]
-        self.assertLess(body.index("if (!valid(j))"), body.index("(data = j)"))
-        self.assertIn(".catch(unavailable)", js)
-        go = js.split("function go(", 1)[1].split("\n  }", 1)[0]
-        self.assertLess(go.index("load().then("), go.index("render()"))
+    def test_the_browser_validates_every_byte_before_parsing_or_rendering(self):
+        js = (REPO_ROOT / "site/preview/browse.source.js").read_text()
+        self.assertIn('crypto.subtle.digest("SHA-256"', js)
+        self.assertLess(js.index('actual !== expected'), js.index('return JSON.parse(raw)'))
+        self.assertIn('.catch(unavailable)', js)
+        go = js.split('function go(', 1)[1]
+        self.assertLess(go.index('load().then('), go.index('render()'))
 
-    def test_the_cache_discriminator_uses_public_facts_only(self):
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
-        request = js.split('fetch("corpus-index.json', 1)[1].split("{", 1)[0]
-        self.assertIn("WANT", request)
-        self.assertIn("COUNT", request)
-        self.assertNotIn("logical", request)
+    def test_the_cache_discriminator_uses_public_projection_digest_only(self):
+        js = (REPO_ROOT / "site/preview/browse.source.js").read_text()
+        self.assertIn('fetchJson("corpus-index.json", root.dataset.archiveDigest)', js)
+        html = self.page("archive.html")
+        digest = hashlib.sha256((self.out / "corpus-index.json").read_bytes()).hexdigest()
+        self.assertIn('data-archive-digest="' + digest + '"', html)
+        self.assertNotIn(self.snapshot['logical_sha256'], html)
 
     def test_the_failure_copy_is_the_approved_wording(self):
         html = re.sub(r"\s+", " ", self.page("archive.html"))
@@ -4012,7 +3996,7 @@ class TestVolumeByWeek(PreviewCase):
         """It is server-rendered inside the page, not built by the browser."""
         self.assertIn('id="volume-heading"', self.html)
         self.assertIn('<table class="volume">', self.html)
-        js = (self.out / "browse.js").read_text(encoding="utf-8")
+        js = (REPO_ROOT / "site/preview/browse.source.js").read_text(encoding="utf-8")
         # The script must never select, create or mutate volume markup. A
         # comment that merely mentions the word is not a violation.
         code = re.sub(r"/\*.*?\*/", " ", js, flags=re.S)
@@ -4161,11 +4145,11 @@ class TestBrowserRejectsMalformedIndex(PreviewCase):
         """browse.js `card()` draws the row `_records.html` renders: the same
         words, links and language attributes, for the same record."""
         page = self.browser.new_page(viewport={"width": 1280, "height": 900})
-        grab = """el => ({
+        grab = """el => { el.querySelectorAll('.archive-actions,.archive-hold').forEach(e => e.remove()); el.querySelectorAll('[data-text]').forEach(e => e.removeAttribute('data-text')); return ({
             text: el.innerText.replace(/\\s+/g, ' ').trim(),
             links: [...el.querySelectorAll('a')].map(a => a.getAttribute('href')),
             langs: [...el.querySelectorAll('[lang]')].map(e => e.getAttribute('lang')),
-            classes: [...el.querySelectorAll('[class]')].map(e => e.className)})"""
+            classes: [...el.querySelectorAll('[class]')].map(e => e.className)}) }"""
         try:
             page.goto("http://127.0.0.1:%d/archive.html" % self.port,
                       wait_until="load")

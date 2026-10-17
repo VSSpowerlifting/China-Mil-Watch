@@ -94,9 +94,14 @@ class ResearchAtlasHierarchy(unittest.TestCase):
         for source in self.index["sources"]:
             self.assertIsNotNone(source["desk"])
             self.assertTrue((self.out / source["desk"]["route"]).is_file())
-        browse = (self.out / "browse.js").read_text()
-        self.assertIn('s.desk.route', browse)
-        self.assertIn('s.desk.code', browse)
+        # The same source join is now resolved once by the snapshot adapter.
+        research = json.loads((self.out / "archive-research-index.json").read_text())
+        records = {r['id']: r for r in research['records']}
+        for row in self.index['records']:
+            ident = 'record:' + str(row[0])
+            desk = self.index['sources'][row[2]]['desk']
+            self.assertEqual(research['display'][ident]['desk_route'], desk['route'])
+            self.assertEqual(records[ident]['desks'], [desk['code']])
         for source in self.index["sources"]:
             self.assertTrue(source["desk"]["code"])
         self.assertTrue(any('href="china.html"' in p.read_text(encoding="utf-8")
