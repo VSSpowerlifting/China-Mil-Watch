@@ -1,5 +1,20 @@
 # PROJECT_STATE — Indo-Pacific Record
 
+**Archive release preparation (17 October 2026, PR #776):**
+The existing integration now reconciles main `bd20c82e80c513f59dc61669fb352e2e5183633c`
+with the reviewed Archive implementation and narrow absent-count label fix.
+The pinned public set retains 912 corpus records and 1,006 eligible research
+items. Source reconciliation retains staff loading, measured Korea desk lanes
+and main's conditional regional desk loader; both new regional lanes are empty
+in the current production DB. The inherited private, unscheduled DAPA collector
+changes no public output. The refreshed candidate differs from the prior
+reviewed output only by one blank line on each desk page. Release snapshots, inherited main output causes, exact Linux
+CI identity and publication gates are recorded in
+`docs/ARCHIVE_RELEASE_PREPARATION_2026-10-17.md`.
+Source/evidence commit and push are authorized; merge/publication are not.
+No generated-output or canonical-data change is authored by this PR. A source
+merge can activate the feature on the next eligible scheduled render.
+
 **Editorial team integration (17 October 2026, PR #770 review candidate):**
 The staff branch incorporates main `a4d7961e47` without conflicts. Three approved
 profiles and the Team directory use the shared utility material system; exact

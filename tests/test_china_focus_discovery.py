@@ -114,7 +114,7 @@ class ChinaFocusDiscoveryTest(unittest.TestCase):
 
     def test_browser_keeps_index_completeness_and_explicit_all_escape(self):
         template = (ROOT / "site/preview/templates/archive.html").read_text()
-        js = (ROOT / "site/preview/browse.js").read_text()
+        js = (ROOT / "site/preview/browse.source.js").read_text()
         generator = (ROOT / "site/preview/generate_preview.py").read_text()
         self.assertIn('value="all">Full preserved record', template)
         self.assertIn('href="corpus.html"', template)
@@ -122,8 +122,8 @@ class ChinaFocusDiscoveryTest(unittest.TestCase):
         self.assertIn("data-focus-records", template)
         self.assertIn('k === "scope" && v === "focus"', js)
         self.assertIn('get("scope") === "focus"', js)
-        self.assertIn("d.records.length !== COUNT", js)
-        self.assertIn("d.focus_ids.length !== FOCUS_COUNT", js)
+        self.assertIn('crypto.subtle.digest("SHA-256"', js)
+        self.assertIn('actual !== expected', js)
         self.assertIn("focus = build_focus(data[\"corpus\"])", generator)
         self.assertIn('record/%d.html', generator)
         self.assertIn('data["corpus"]', generator)

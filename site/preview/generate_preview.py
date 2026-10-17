@@ -2535,6 +2535,8 @@ def build(out_dir: Path, title: str, db_path: Path,
     briefs_dir = BRIEFS_SOURCE if briefs_dir is None else Path(briefs_dir)
     collection = load_collection(editions, load_registry(), briefs_dir=briefs_dir,
                                  allow_synthetic=allow_synthetic_briefs)
+    # Freeze the approved collection before any private review can add a draft.
+    public_archive_collection = collection
     atmosphere = home_atmosphere(REPO_ROOT)
     veil = home_veil(REPO_ROOT)
 
@@ -2664,11 +2666,23 @@ def build(out_dir: Path, title: str, db_path: Path,
     # record routes, full corpus index and cited issue links remain unchanged.
     focus = build_focus(data["corpus"])
 
+    from core.archive_research import (analysis_records, build_index as build_archive_index,
+                                       digest as archive_digest, encoded as archive_encoded)
+    index = corpus_index(data["corpus"], data["sources"], snapshot, desks, focus=focus)
+    public_analyses = list(analysis_records(
+        public_archive_collection, editorial_research,
+        {row["entry"]["slug"]: json.loads((REPO_ROOT / "output/the-pla-watch/posts" /
+            (row["entry"]["slug"] + ".json")).read_text(encoding="utf-8"))
+         for row in public_archive_collection.rows if row["kind"] == "issue"},
+        edition_citation=edition_citation, state_labels=STATE_LABELS,
+        state_order=STATE_ORDER, language_label=language_label))
+    archive_official_groups = []
     from core.staff_directory import load_staff, credited_works
     team_members = load_staff(REPO_ROOT / "site/preview/staff.json")
     team_by_name = {member["name"]: member for member in team_members}
 
     ctx = {
+        "archive_digest": archive_digest(archive_encoded(index)),
         "title": title,
         "focus": focus,
         "review_mode": bool(review_brief or review_timeline or review_presentation),
@@ -2816,6 +2830,8 @@ def build(out_dir: Path, title: str, db_path: Path,
     }
     written = []
     for target, template in pages.items():
+        if target == "archive.html":
+            continue  # Bind the complete current indexes before rendering the finder.
         # A live, separately governed Korea metadata table is NOT an article
         # corpus or a full-country source admission. Show its measured count
         # only on the Desks directory, without reclassifying Korea as 'live'.
@@ -3050,6 +3066,16 @@ def build(out_dir: Path, title: str, db_path: Path,
         regional_official_links = (
             load_admitted_links(db_path, desk.slug)
             if desk.slug in ("philippines", "indonesia") else [])
+        # Reuse the exact public results that render this build's desk pages.
+        archive_official_groups.extend([
+            (references, desk.slug, None, None),
+            (indonesia_official_links, desk.slug, "Kemhan Berita", "Kementerian Pertahanan Republik Indonesia"),
+            (indonesia_press_links, desk.slug, "Kemhan Siaran Pers", "Kementerian Pertahanan Republik Indonesia"),
+            (us_pacom_links, desk.slug, "U.S. Indo-Pacific Command official site", "U.S. Indo-Pacific Command"),
+            (uscc_links, desk.slug, "USCC press releases", "U.S.-China Economic and Security Review Commission"),
+            (treasury_links, desk.slug, "Treasury press releases", "U.S. Department of the Treasury"),
+            (bis_links, desk.slug, "BIS press releases", "U.S. Department of Commerce · Bureau of Industry and Security"),
+        ])
         source_options = sorted({(r["source_slug"], r["source_name"]) for r in references})
         languages = sorted({r["language"] for r in references})
         (out_dir / desk.route).write_text(
@@ -3189,13 +3215,27 @@ def build(out_dir: Path, title: str, db_path: Path,
     # assert_snapshot() has passed, so an index can never describe a corpus the
     # build refused to publish. Sorted keys and fixed separators keep it
     # byte-deterministic.
-    index = corpus_index(data["corpus"], data["sources"], snapshot, desks,
-                         focus=focus)
     (out_dir / "corpus-index.json").write_text(
         json.dumps(index, ensure_ascii=False, sort_keys=True,
                    separators=(",", ":")) + "\n",
         encoding="utf-8")
     written.append("corpus-index.json")
+    archive_official_groups.append((korea_public_rows + korea_additional_rows + korea_auto_official_rows,
+        "korea", "Republic of Korea Policy Briefing", "Republic of Korea Ministry of National Defense"))
+    research_index = build_archive_index(
+        db_path, index, cite_record=record_citation, processing_notes=CITATION_PROCESSING_NOTES,
+        official_groups=archive_official_groups, originals=korea_published_original_rows,
+        english_publications=korea_english_publication_rows, analyses=public_analyses)
+    (out_dir / "archive-research-index.json").write_bytes(archive_encoded(research_index))
+    written.append("archive-research-index.json")
+    ctx["archive_research_digest"] = archive_digest(archive_encoded(research_index))
+    ctx["archive_public_sources"] = sorted({r["source"] for r in research_index["records"]
+        if r["record_type"] != "archive_record" and r["source"]})
+    ctx["archive_issuers"] = sorted({r["issuer"] for r in research_index["records"] if r["issuer"]})
+    (out_dir / "archive.html").write_text(
+        env.get_template("archive.html").render(page="archive.html", **ctx), encoding="utf-8")
+    if "archive.html" not in written:
+        written.append("archive.html")
 
     (out_dir / "browse.js").write_text(
         (Path(__file__).parent / "browse.js").read_text(encoding="utf-8"),

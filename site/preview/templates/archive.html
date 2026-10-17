@@ -21,7 +21,7 @@
    plain GET, so a query survives in the address and the back button restores
    it. (DECISION_LOG 2026-09-27, the Records finder.) #}
 <div id="browse" data-snapshot-date="{{ snapshot.date }}"
-     data-snapshot-records="{{ corpus_total }}" data-focus-records="{{ focus.all_focus }}" hidden>
+     data-snapshot-records="{{ corpus_total }}" data-focus-records="{{ focus.all_focus }}" data-archive-digest="{{ archive_digest }}" data-research-digest="{{ archive_research_digest }}" hidden>
   <form id="controls" class="finder rl-finder" role="search" action="archive.html" method="get" hidden>
     <div class="finder-row">
       <div class="finder-field">
@@ -29,6 +29,7 @@
         <select id="f-scope" name="scope">
           <option value="focus" selected>Research focus ({{ focus.all_focus | count }} records)</option>
           <option value="all">Full preserved record ({{ corpus_total | count }} records)</option>
+          <option value="published">All published material</option>
         </select>
       </div>
       <div class="finder-field finder-field--q">
@@ -37,13 +38,26 @@
                placeholder="English or original title">
       </div>
       <details class="finder-more">
+
         <summary>Filters</summary>
         <div class="finder-more-body">
+          <div class="finder-field">
+            <label for="f-keywords">Keywords or "quoted phrase"</label>
+            <input id="f-keywords" name="keywords" type="search" maxlength="512" aria-describedby="research-help">
+          </div>
+          <div class="finder-field">
+            <label for="f-record_type">Publication type</label>
+            <select id="f-record_type" name="record_type"><option value="">All publication types</option>
+            <option value="archive_record">Archive record</option><option value="official_link">Official-link reference</option>
+            <option value="preserved_original">Published original</option><option value="reviewed_translation">Reviewed translation</option>
+            <option value="reviewed_analysis">Reviewed analysis</option><option value="human_analysis">Human-controlled analysis</option></select>
+          </div>
+          <div class="finder-field"><label for="f-issuer">Issuer or author</label><select id="f-issuer" name="issuer"><option value="">All issuers / authors</option>{% for issuer in archive_issuers %}<option value="{{ issuer }}">{{ issuer }}</option>{% endfor %}</select></div>
       <div class="finder-field">
         <label for="f-desk">Desk</label>
         <select id="f-desk" name="desk">
           <option value="">All desks</option>
-          {% for d in desks if d.record_count %}<option value="{{ d.slug }}">{{ d.name }} ({{ d.record_count | count }})</option>{% endfor %}
+          {% for d in desks %}<option value="{{ d.slug }}">{{ d.name }}{% if d.record_count is not none %} ({{ d.record_count | count }} preserved){% endif %}</option>{% endfor %}
         </select>
       </div>
       <div class="finder-field">
@@ -51,6 +65,7 @@
         <select id="f-source" name="source">
           <option value="">All sources</option>
           {% for s in corpus_facets.source %}<option value="{{ s.key }}">{{ s.label }} ({{ s.count | count }})</option>{% endfor %}
+          {% for source in archive_public_sources %}<option value="{{ source }}">{{ source }} — published material</option>{% endfor %}
         </select>
       </div>
       <div class="finder-field">
@@ -65,6 +80,7 @@
         <select id="f-sort" name="sort">
           <option value="new">Newest first</option>
           <option value="old">Oldest first</option>
+          <option value="relevance">Keyword relevance</option>
         </select>
       </div>
 
@@ -83,12 +99,12 @@
             </select>
           </div>
           <div class="finder-field">
-            <label for="f-from">Source-stated date from</label>
-            <input id="f-from" name="from" type="date" min="{{ totals.first_date }}" max="{{ totals.last_date }}">
+            <label for="f-from">Publication date from</label>
+            <input id="f-from" name="from" type="date" >
           </div>
           <div class="finder-field">
-            <label for="f-to">Source-stated date to</label>
-            <input id="f-to" name="to" type="date" min="{{ totals.first_date }}" max="{{ totals.last_date }}">
+            <label for="f-to">Publication date through</label>
+            <input id="f-to" name="to" type="date" >
           </div>
           <div class="finder-field">
             <label for="f-trail"><input id="f-trail" name="trail" type="checkbox" value="1">
@@ -106,7 +122,8 @@
 
     <details class="finder-about">
       <summary>Search scope and counts</summary>
-    <p class="finder-note">Search covers titles only — the English title where one
+    <p id="research-help">Title contains keeps literal title matching. Keywords require every term or quoted phrase. All published material adds public official-link references, registered originals, reviewed English artifacts and human-controlled analysis. Archive dates remain source-stated. IPR publication dates come from public release records; unrecorded dates stay unrecorded. Dates use YYYY-MM-DD. Processing state, institution, original language and source-trail filters apply to archive records. Search counts are documents, not events or independent corroboration.</p>
+    <p class="finder-note">Archive title search covers titles only — the English title where one
     exists, and the original title always. It does not search machine summaries
     or stored source text.</p>
       <p>Source outlets and publishing institutions overlap: one institution can
@@ -128,6 +145,17 @@ search index could not be loaded or did not match this snapshot, so search and
 filters are unavailable. The records held in this snapshot remain
 accessible through the week-by-week browse above.</p>
 
+<details id="research-list" class="archive-research-list" hidden>
+  <summary>Research list · <span id="selection-count">0</span><span id="export-cue" hidden> · Exports available</span></summary>
+  <div class="research-list-body"><button type="submit" form="controls">Show citations and keep records</button><p>Selections stay in this browser tab. Each kept record remains listed below.</p>
+    <button type="button" id="export-csv" disabled>Export CSV</button>
+    <button type="button" id="export-json" disabled>Export JSON</button>
+    <button type="button" id="selection-clear" disabled>Clear list</button>
+    <ul id="selected-list"></ul><p>Each result has a citation. Exports preserve attribution and grant no reuse rights.</p>
+  </div>
+</details>
+<p id="selection-note" class="visually-hidden" data-kept=" kept. Exports are in Research list; citations are beside each result." role="status" aria-live="polite"></p>
+<p id="research-error" role="status" hidden></p>
 <h2 id="results-heading" class="visually-hidden">Records</h2>
 {# tabindex="-1": a page turn moves focus here (browse.js `turn`), because
    the button pressed may have become disabled. #}
@@ -192,4 +220,7 @@ Remove a filter, widen the date range, or try the original-language title.</p></
 </details>
 {% include "_volume.html" %}
 {% endblock %}
-{% block scripts %}<script src="browse.js" defer></script>{% endblock %}
+{% block scripts %}
+<template id="archive-row"><li class="record-row"><div><h3><a data-text="title"></a></h3><p class="original" data-text="original"></p><p class="row-tags"><span data-text="analyzed"></span><span class="trail-tag" data-text="trail_label"></span></p><p class="archive-snippet" data-text="summary"></p><p class="archive-hold" data-text="hold"></p><div class="archive-actions"><label class="keep-record"><input type="checkbox">Keep in research list</label><details><summary>Citation and provenance</summary><p data-text="processing"></p><p data-text="date_info"></p><p class="archive-citation" tabindex="0" data-text="citation"></p><button type="button" aria-live="polite" aria-atomic="true">Copy citation</button></details></div></div><p class="row-side"><span class="row-who" data-text="who"></span><span class="row-via" data-text="via"></span><a data-text="desk_name"></a><span data-text="state"></span></p></li></template>
+<template id="archive-day"><section class="records-day"><p class="day-date"><time><span class="day-num"></span><span class="day-month"></span><span class="day-week"></span></time></p><ul class="record-list"></ul></section></template>
+<script src="browse.js" defer></script>{% endblock %}

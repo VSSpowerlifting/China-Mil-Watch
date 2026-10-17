@@ -1,0 +1,421 @@
+{
+  "original_pr_head": "da4a07c6a0d30394dd7a964d6339ce0316b63886",
+  "base": "bd20c82e80c513f59dc61669fb352e2e5183633c",
+  "reviewed_candidate_tree": "9d5e5d19fd93257a02633fee7fa1f500f4883abc",
+  "previous_snapshot": {
+    "base": "e376bcb6bfc9c2926d21c180a944535917990172",
+    "date": "2026-10-15",
+    "corpus_records": 873,
+    "research_items": 966,
+    "compact_sha256": "cc267c0be5a204074b2c5ea419a7170864baf01318095a5203e898753f8e5bc0"
+  },
+  "current_snapshot": {
+    "date": "2026-10-17",
+    "expected_records": 912,
+    "logical_sha256": "6dc8594a72c2b8fd435a95c59f5a4af4e4eda98ae474610b9ad463b0df704930"
+  },
+  "current_research_items": 1006,
+  "added_ids": [
+    "official:us-treasury-press:sb0662",
+    "record:5280",
+    "record:5281",
+    "record:5282",
+    "record:5283",
+    "record:5284",
+    "record:5285",
+    "record:5286",
+    "record:5287",
+    "record:5288",
+    "record:5289",
+    "record:5290",
+    "record:5291",
+    "record:5292",
+    "record:5293",
+    "record:5294",
+    "record:5295",
+    "record:5296",
+    "record:5297",
+    "record:5298",
+    "record:5299",
+    "record:5300",
+    "record:5301",
+    "record:5302",
+    "record:5303",
+    "record:5304",
+    "record:5305",
+    "record:5306",
+    "record:5307",
+    "record:5308",
+    "record:5309",
+    "record:5310",
+    "record:5311",
+    "record:5312",
+    "record:5313",
+    "record:5314",
+    "record:5315",
+    "record:5316",
+    "record:5317",
+    "record:5318"
+  ],
+  "removed_ids": [],
+  "retained_changes": {
+    "citation_snapshot_updated": 873,
+    "screening_status_updated": [
+      "record:5276",
+      "record:5277"
+    ]
+  },
+  "new_archive_records_by_source": {
+    "China Military Online (EN)": 1,
+    "Global Times — Defense": 1,
+    "MOD China (国防部)": 10,
+    "PLA Daily (解放军报)": 24,
+    "Xinhua Military (新华军事)": 3
+  },
+  "new_official_reference": "official:us-treasury-press:sb0662",
+  "inherited_main_output": {
+    "changed": 975,
+    "added": 5,
+    "shared_shell_and_credit_html": 971,
+    "individually_reviewed_html": [
+      "about.html",
+      "corpus-guide.html",
+      "desks.html"
+    ],
+    "sitemap_changes": "four team/author URLs added; none removed",
+    "new_files": [
+      "team.html",
+      "staff.css",
+      "authors/benjamin-yang.html",
+      "authors/christin-sawyer.html",
+      "authors/dylan-tanzi.html"
+    ],
+    "unexplained_paths": []
+  },
+  "reused_evidence": {
+    "pins.json": {
+      "sha256": "0dfc2d7644d52cd033435d3a150ec2f9aaea9596817d66fd05ff1233e08b4691",
+      "local_path": "docs/evidence/archive-release-2026-10-17/pins.json"
+    },
+    "candidate-output-manifest.json": {
+      "sha256": "8e6256033dccf122bdbc94e7b6ce3c035fcac84ac3e742888aea472b9c2375bc",
+      "local_path": "docs/evidence/archive-release-2026-10-17/candidate-output-manifest.json"
+    },
+    "main-output-manifest.json": {
+      "sha256": "a4049a58a41a0862ab6bbde11b0485ceb0c341faa7599218ac49139e3f9ed97a",
+      "local_path": "docs/evidence/archive-release-2026-10-17/main-output-manifest.json"
+    },
+    "tracked-output-drift.json": {
+      "sha256": "8dd764c84b799e774667b77aa073d78859ec1c687852d06a68b7e520f38b124d",
+      "local_path": "docs/evidence/archive-release-2026-10-17/tracked-output-drift.json"
+    },
+    "browser.json": {
+      "sha256": "dcb9e6db17baff553d92b997e74a5a4c390c9b4a08cddf675b2aa9a59d65cd02",
+      "local_path": "docs/evidence/archive-release-2026-10-17/browser.json"
+    },
+    "validator.json": {
+      "sha256": "4769b912749d3d60f182ff53c3ef5c5ac76d56f6dddaa70325c2f77da73f3217",
+      "local_path": "docs/evidence/archive-release-2026-10-17/validator.json"
+    },
+    "historical-replays.json": {
+      "sha256": "3b146ea84608a3c8bc3764c34f71111532448fab1e08c5a8652adcb71c69de0a",
+      "local_path": "docs/evidence/archive-release-2026-10-17/historical-replays.json"
+    },
+    "final-audit.json": {
+      "sha256": "566c17ae071cda4033e7ffcaec079788b7b4c478cd450674dd93d46b711f13a5",
+      "local_path": "docs/evidence/archive-release-2026-10-17/final-audit.json"
+    }
+  },
+  "scoped_local_tests": {
+    "tests": 116,
+    "success": true,
+    "includes": [
+      "PR workflow security",
+      "Archive integration",
+      "pilot sources",
+      "independent pilot review"
+    ]
+  },
+  "initial_reconciliation_base": "ca4424cb15204ef366323f997c28119c2bf6d3ad",
+  "initial_reconciliation_equivalence": {
+    "reviewed_tree": "9d5e5d19fd93257a02633fee7fa1f500f4883abc",
+    "only_changed_or_added_paths": [
+      ".github/workflows/pr_offline_checks.yml",
+      "PROJECT_STATE.md",
+      "docs/ARCHIVE_PRODUCTION_INTEGRATION.md",
+      "docs/ARCHIVE_RELEASE_PREPARATION_2026-10-17.md",
+      "docs/evidence/archive-production-integration/README.md",
+      "docs/evidence/archive-release-pr776.json"
+    ],
+    "runtime_canonical_and_generated_inputs_identical": true,
+    "authored_output_or_database_changes_vs_base": []
+  },
+  "initial_generated_comparison": {
+    "main_output_files": 1893,
+    "candidate_output_files": 1894,
+    "unchanged_files": 1890,
+    "complete_changes": [
+      {
+        "path": "archive-research-index.json",
+        "kind": "added",
+        "main": null,
+        "candidate": {
+          "sha256": "9624fa77e93b132d9b3dbf6b3d67cfcb2fccbdc21480fed2acabd8a8a7342d20",
+          "bytes": 1269620
+        }
+      },
+      {
+        "path": "archive.css",
+        "kind": "changed",
+        "main": {
+          "sha256": "d063df55833c53766988357a379229047c053a8e28fb0368b9eaca557e3393fa",
+          "bytes": 8720
+        },
+        "candidate": {
+          "sha256": "6d6582adf5f2a679075875a85c6f2a8bbd16c1319faf9305c9af1fcf7ff132c7",
+          "bytes": 12129
+        }
+      },
+      {
+        "path": "archive.html",
+        "kind": "changed",
+        "main": {
+          "sha256": "de8540d3c91e9f50c17cf797abed0821afee3dec6506592d6e20488036e1e20a",
+          "bytes": 67362
+        },
+        "candidate": {
+          "sha256": "04b6e8c45ae2b668104ae637b41714f2b7804e0021b06aafee74a38d37870c2c",
+          "bytes": 73814
+        }
+      },
+      {
+        "path": "browse.js",
+        "kind": "changed",
+        "main": {
+          "sha256": "2ae1eaf91c6486f54cd26ffbd393421c2d9299acde01aba2b3317a7f6ce16493",
+          "bytes": 9381
+        },
+        "candidate": {
+          "sha256": "0e1129ce0e9c5858e38cd50f2f7d363eddcb70df05c3d0f43fc30fafa7e1d485",
+          "bytes": 9493
+        }
+      }
+    ],
+    "candidate_output_manifest_sha256": "8e6256033dccf122bdbc94e7b6ce3c035fcac84ac3e742888aea472b9c2375bc",
+    "main_output_manifest_sha256": "a4049a58a41a0862ab6bbde11b0485ceb0c341faa7599218ac49139e3f9ed97a",
+    "complete_diff_sha256": "5c27cef6ccadf647605178fc29d80a35f05913e7fac43864b39b1d9887224755",
+    "snapshot": {
+      "date": "2026-10-17",
+      "records": 912
+    },
+    "public_items": 1006,
+    "by_type": {
+      "human_analysis": 18,
+      "official_link": 67,
+      "preserved_original": 3,
+      "archive_record": 912,
+      "reviewed_analysis": 3,
+      "reviewed_translation": 3
+    },
+    "desk_memberships": {
+      "china": 843,
+      "singapore": 89,
+      "indonesia": 17,
+      "korea": 25,
+      "us-indopacific": 34
+    },
+    "missing_dates_preserved": {
+      "human_analysis": 15,
+      "official_link": 9
+    },
+    "research_digest": "2db9afda41125bea7eb890f9a42ebaa593580630b6b4bf40fe6826307db0fa83",
+    "research_index_sha256": "9624fa77e93b132d9b3dbf6b3d67cfcb2fccbdc21480fed2acabd8a8a7342d20",
+    "compact_index_sha256": "ca27f6862ce535b791a9daadf9c811af6b9fef3ce1ff035648ee24a35e392432",
+    "retirement_entries": 4400,
+    "holds": 1,
+    "excluded": {
+      "active_not_in_public_projection": 0
+    },
+    "legacy_paths_compared": 1696,
+    "missing_local_public_routes": [],
+    "official_links_missing_from_public_desks": [],
+    "protected_tracked_files": 4540,
+    "intentional_source_doc_changes": [
+      "PROJECT_STATE.md",
+      "site/preview/templates/archive.html"
+    ],
+    "protected_mismatches": [],
+    "budget": {
+      "html_css_bytes": 156997,
+      "js_bytes": 9879,
+      "css": [
+        "archive.css",
+        "fonts.css",
+        "relief.css",
+        "styles.css",
+        "support.css",
+        "surfaces.css"
+      ],
+      "js": [
+        "browse.js",
+        "shell.js"
+      ],
+      "external": [],
+      "asset_bytes": 271116,
+      "assets": [
+        "assets/desk-marks/china.svg",
+        "assets/desk-marks/japan.svg",
+        "assets/desk-marks/singapore.svg",
+        "assets/desk-marks/vietnam.svg",
+        "assets/fonts/instrument-serif-0.woff2",
+        "assets/fonts/instrument-serif-1.woff2",
+        "assets/fonts/inter-0.woff2",
+        "assets/fonts/inter-1.woff2",
+        "assets/fonts/source-serif-4-0.woff2",
+        "assets/fonts/source-serif-4-1.woff2",
+        "assets/fonts/source-serif-4-2.woff2",
+        "assets/identity/selected-ipr/ipr-accent-180.png",
+        "assets/identity/selected-ipr/ipr-accent-32.png",
+        "assets/identity/selected-ipr/ipr-navy-160.png",
+        "assets/identity/selected-ipr/ipr-navy-320.png",
+        "assets/material/chart-paper.png",
+        "assets/material/chart-shelf.svg",
+        "assets/material/coast-profile.svg"
+      ],
+      "external_assets": []
+    },
+    "browse_raw_bytes": 9493,
+    "research_gzip_estimate": 121065
+  },
+  "latest_refresh": {
+    "base": "bd20c82e80c513f59dc61669fb352e2e5183633c",
+    "rendered_tree": "d4278e615fa77030a04aa1c9cc4739a7a13c6715",
+    "main_files": 1893,
+    "candidate_files": 1894,
+    "unchanged_main_candidate": 1890,
+    "archive_changes": [
+      "archive-research-index.json",
+      "archive.css",
+      "archive.html",
+      "browse.js"
+    ],
+    "candidate_delta_from_previous_manifest": [
+      "china.html",
+      "indonesia.html",
+      "japan.html",
+      "korea.html",
+      "philippines.html",
+      "singapore.html",
+      "us-indopacific.html",
+      "vietnam.html"
+    ],
+    "all_delta_is_whitespace": true,
+    "archive_html_js_css_both_indexes_and_shared_dependencies_byte_identical": true,
+    "browser_evidence_reused": true,
+    "new_regional_admitted_rows": {
+      "indonesia": 0,
+      "philippines": 0
+    },
+    "candidate_manifest_sha256": "8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02",
+    "main_manifest_sha256": "dc56bcaedf0b096bee82737789f6a927d1910723461f5a5d0de46a20ac8e76ef",
+    "inherited_paths": 981,
+    "candidate_vs_tracked_paths": 984,
+    "new_inherited_paths": [
+      "korea.html"
+    ],
+    "removed_inherited_paths": [],
+    "output_inventories_equal_to_previous_refresh": true,
+    "private_dapa_base_changes_have_zero_public_output_delta": true
+  },
+  "previous_verified_linux_ci": {
+    "head": "faef90f15a2939de68cc9916eca4264c0bce3353",
+    "base": "ca4424cb15204ef366323f997c28119c2bf6d3ad",
+    "synthetic_merge": "106a3fda5e8827948c83fe88b415a64c19ad773f",
+    "tree": "c7148735a1d94d2aaf600c1d2dedf2ec546ecdb0",
+    "synthetic_tree_equals_pushed_head": true,
+    "ci_run": 39057066513,
+    "ci_status": "running; final results not yet recorded",
+    "status": "passed on recorded base; main subsequently advanced",
+    "tests": 7275,
+    "seconds": 973.614,
+    "failures": 0,
+    "errors": 0,
+    "skips": [
+      "test_a_record_quoting_the_vocabulary_is_not_read_as_our_claim (tests.test_preview_prototype.TestCoverageClaimScopeOnTheRealTree) ... skipped 'no stored record currently quotes the vocabulary'",
+      "Release-readiness, not correctness. ... skipped 'declared snapshot is stale relative to the tracked corpus — advance it before preparing a release: declared 2026-08-26/3574/d5b897cd4802, corpus 2026-10-17/912/6dc8594a72c2'"
+    ],
+    "gpg": "2.4.4",
+    "gpg_cases_passed": 56,
+    "archive_browser_cases_passed": 7,
+    "historical_source_rows": 60,
+    "historical_review_excerpts": 60,
+    "validator_errors": 0,
+    "validator_warnings": 10,
+    "preservation_passed": true,
+    "full_log_sha256": "28e4141d1cc244acdc38fb61efb46c222a6ea40fe4dbef94aa33c6d977f51d6b"
+  },
+  "latest_focused_tests": {
+    "tests": 60,
+    "seconds": 7.919,
+    "success": true
+  },
+  "latest_inherited_main_output": {
+    "changed": 976,
+    "added": 5,
+    "paths": 981,
+    "previous_groups_preserved": true,
+    "new_path": "korea.html",
+    "new_path_cause": "one blank line from inherited conditional regional desk template",
+    "unexplained_paths": []
+  },
+  "regional_reconciliation_base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
+  "regional_refresh": {
+    "base": "348ff1c8f1de66f668d46fd2406696aa46db2a83",
+    "rendered_tree": "3776e625511cd0b2f5f90c7db25be6e26e52f4c8",
+    "main_files": 1893,
+    "candidate_files": 1894,
+    "unchanged_main_candidate": 1890,
+    "archive_changes": [
+      "archive-research-index.json",
+      "archive.css",
+      "archive.html",
+      "browse.js"
+    ],
+    "candidate_delta_from_previous_manifest": [
+      "china.html",
+      "indonesia.html",
+      "japan.html",
+      "korea.html",
+      "philippines.html",
+      "singapore.html",
+      "us-indopacific.html",
+      "vietnam.html"
+    ],
+    "all_delta_is_whitespace": true,
+    "archive_html_js_css_both_indexes_and_shared_dependencies_byte_identical": true,
+    "browser_evidence_reused": true,
+    "new_regional_admitted_rows": {
+      "indonesia": 0,
+      "philippines": 0
+    },
+    "candidate_manifest_sha256": "8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02",
+    "main_manifest_sha256": "dc56bcaedf0b096bee82737789f6a927d1910723461f5a5d0de46a20ac8e76ef",
+    "inherited_paths": 981,
+    "candidate_vs_tracked_paths": 984,
+    "new_inherited_paths": [
+      "korea.html"
+    ],
+    "removed_inherited_paths": []
+  },
+  "final_base_advance": {
+    "kind": "private unscheduled DAPA collector inherited from main #791",
+    "conflicts": [],
+    "authored_collector_edits": [],
+    "public_output_delta": [],
+    "both_complete_production_inventory_checks_passed": true,
+    "both_validators": {
+      "errors": 0,
+      "warnings": 10
+    }
+  }
+}

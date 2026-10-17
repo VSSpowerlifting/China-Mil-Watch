@@ -153,7 +153,9 @@ class ProductionDeliveryTests(unittest.TestCase):
 
     def test_initial_rows_keep_declared_desk_routes_without_requiring_art(self):
         html = (self.out / "archive.html").read_text(encoding="utf-8")
-        rows = re.findall(r'<li class="record-row">.*?</li>', html, re.S)
+        # Inert client templates are not server-rendered initial records.
+        content = re.sub(r'<template\b[^>]*>.*?</template>', '', html, flags=re.S)
+        rows = re.findall(r'<li class="record-row">.*?</li>', content, re.S)
         self.assertEqual(len(rows), 50)
         registry = json.loads((REPO_ROOT / "desks" / "registry.json").read_text(encoding="utf-8"))
         declared_routes = {desk["route"] for desk in registry["desks"] if desk.get("route")}
