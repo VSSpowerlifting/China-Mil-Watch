@@ -267,6 +267,90 @@ class NativeDapaCanaryContracts(unittest.TestCase):
         self.assertFalse(result["dapa_issuer_per_article_verified"])
         self.assertEqual(result["date_row_shape_counts"]["dated_rows_with_single_numeric_js_shape"], 1)
 
+    def test_real_owner_clicked_first_row_url_matches_only_correct_numeric_action(self):
+        # Browser-observed 2026-10-17 URL; simulated listing is FICTIONAL.
+        # The click is not independently authenticated by this parser.
+        owner_url = (
+            "https://www.dapa.go.kr/dapa/doc/selectDoc.do?"
+            "docSeq=59312&menuSeq=3069&bbsSeq=326&"
+            "currentPageNo=1&recordCountPerPage=10"
+        )
+        sample = b"""<html><body><table>
+        <tr><th>row</th><th>title</th><th>date</th></tr>
+        <tr><td>701</td><td><a href="#" onclick="detail('59312')">
+        FICTIONAL PRIVATE HEADLINE</a></td><td>2026-10-17</td></tr>
+        <tr><td>700</td><td><a href="javascript:detail(59311)">
+        FICTIONAL PRIVATE SECOND</a></td><td>2026-10-16</td></tr>
+        </table></body></html>"""
+        report = inspect_listing(sample, owner_clicked_url=owner_url)
+        witness = report["owner_clicked_witness"]
+        self.assertTrue(witness["first_dated_row_numeric_action_matches_click"])
+        self.assertEqual(witness["matching_dated_rows"], 1)
+        self.assertEqual(witness["first_row_claimed_date"], "2026-10-17")
+        self.assertEqual(len(witness["listing_sha256"]), 64)
+        self.assertEqual(report["provisional_docseq_count"], 0)
+        self.assertFalse(witness["js_handler_semantics_independently_verified"])
+        self.assertFalse(witness["article_html_or_body_fetched"])
+        self.assertFalse(witness["article_issuer_verified"])
+        self.assertFalse(witness["source_rights_approved"])
+        self.assertFalse(witness["automatic_collection_authorized"])
+        for secret in ("FICTIONAL PRIVATE", "detail(", "59311", "59312"):
+            self.assertNotIn(secret, str(report))
+
+        # The original, owner-approved request budget remains two GETs.
+        calls = []
+        def fake_get(url, cap):
+            calls.append(url)
+            return ALLOW if url == ROBOTS else sample
+        observed = probe(fetch=fake_get, sleep=lambda _: None,
+                         owner_clicked_url=owner_url)
+        self.assertEqual(calls, [ROBOTS, LISTING])
+        self.assertEqual(observed["state"],
+                         "owner_click_row_shape_consistent_not_source_qualified")
+        self.assertFalse(observed["production_published"])
+        self.assertEqual(observed["article_requests"], 0)
+
+    def test_owner_click_missing_duplicate_nonfirst_or_malformed_is_hold(self):
+        owner_url = (
+            "https://www.dapa.go.kr/dapa/doc/selectDoc.do?"
+            "docSeq=59312&menuSeq=3069&bbsSeq=326&"
+            "currentPageNo=1&recordCountPerPage=10"
+        )
+        def make(first, second):
+            return ("""<html><body><table>
+            <tr><td>1</td><td><a href="#" onclick="detail(%s)">PRIVATE</a></td>
+            <td>2026-10-17</td></tr>
+            <tr><td>2</td><td><a href="#" onclick="detail(%s)">PRIVATE</a></td>
+            <td>2026-10-16</td></tr></table></body></html>""" %
+                    (first, second)).encode("utf-8")
+        for html in (make(59311, 59312), make(59312, 59312),
+                     make(59311, 59310)):
+            with self.subTest(size=len(html)):
+                result = inspect_listing(html, owner_clicked_url=owner_url)
+                self.assertFalse(result["owner_clicked_witness"][
+                    "first_dated_row_numeric_action_matches_click"])
+                observed = probe(
+                    fetch=lambda url, cap: ALLOW if url == ROBOTS else html,
+                    sleep=lambda _: None, owner_clicked_url=owner_url)
+                self.assertEqual(observed["state"],
+                                 "owner_click_row_shape_mismatch_hold")
+        for invalid in (
+            owner_url.replace("www.dapa.go.kr", "www.evil.example"),
+            owner_url.replace("bbsSeq=326", "bbsSeq=999"),
+            owner_url + "&docSeq=59313",
+            owner_url + "#fragment",
+            owner_url.replace("recordCountPerPage=10", "recordCountPerPage=all"),
+        ):
+            calls = []
+            result = probe(
+                fetch=lambda *args: calls.append(args),
+                owner_clicked_url=invalid)
+            self.assertEqual(calls, [], "bad witness must fail before requests")
+            self.assertEqual(result["state"], "blocked")
+            self.assertEqual(result["reason_code"],
+                             "dapa_owner_click_witness_url_invalid")
+            self.assertEqual(result["requests_attempted"], 0)
+
     def test_challenge_and_invalid_listing_cannot_establish_dapa(self):
         for raw, code in (
             (b"\xff", "publisher_listing_not_utf8"),
