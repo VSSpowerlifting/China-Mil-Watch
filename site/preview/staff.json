@@ -3,9 +3,9 @@
     "slug": "benjamin-yang",
     "name": "Benjamin Yang",
     "role": "Founder & Editor-in-Chief",
-    "bio": "Benjamin Yang studies international affairs at George Washington University's Elliott School. He founded Indo-Pacific Record and leads its research direction, editorial standards, and official-source monitoring systems.",
+    "bio": "Benjamin Yang studies International Affairs at George Washington University's Elliott School, with interests in Indo-Pacific defense and security, U.S.–China relations, and economic security. He founded Indo-Pacific Record and directs its research agenda, editorial standards, and technical development. He writes source-linked analysis of regional military affairs, defense policy, and the strategic narratives conveyed through official accounts. He also designed IPR's automated research archive, using Python, SQLite, and GitHub Actions to preserve official publications, document collection gaps, and support transparent, reproducible editorial work. Beyond IPR, he leads the Strategic Materials Policy Tracker, which examines government interventions in critical-material supply chains, and has published analysis in The Diplomat on U.S.–China exchange. He is also an Associate Editor at The Globe, George Washington University's undergraduate international affairs research journal.",
     "links": {
-      "LinkedIn": "https://www.linkedin.com/in/benjamin-yang-42b525294"
+      "LinkedIn": "https://www.linkedin.com/in/benjamin-w-yang/"
     }
   },
   {
@@ -21,7 +21,9 @@
     "slug": "christin-sawyer",
     "name": "Christin Sawyer",
     "role": "Communications Editor",
-    "bio": "Christin Sawyer supports the presentation and communication of Indo-Pacific Record's research, including accessible visual explainers and publication updates.",
-    "links": {}
+    "bio": "Christin Sawyer studies International Affairs at George Washington University. As Communications Editor at Indo-Pacific Record, she supports the presentation and distribution of source-grounded research through visual explainers, editorial updates, and public-facing communications. Fluent in Korean and English, she brings language skills and a cross-cultural perspective to the publication's coverage of Indo-Pacific affairs.",
+    "links": {
+      "LinkedIn": "https://www.linkedin.com/in/christin-sawyer-b4b499339/"
+    }
   }
 ]
