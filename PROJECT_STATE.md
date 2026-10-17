@@ -1,19 +1,18 @@
 # PROJECT_STATE — Indo-Pacific Record
 
-**Archive release preparation (17 October 2026, PR #776):**
-The existing integration now reconciles main `bd20c82e80c513f59dc61669fb352e2e5183633c`
-with the reviewed Archive implementation and narrow absent-count label fix.
-The pinned public set retains 912 corpus records and 1,006 eligible research
-items. Source reconciliation retains staff loading, measured Korea desk lanes
-and main's conditional regional desk loader; both new regional lanes are empty
-in the current production DB. The inherited private, unscheduled DAPA collector
-changes no public output. The refreshed candidate differs from the prior
-reviewed output only by one blank line on each desk page. Release snapshots, inherited main output causes, exact Linux
-CI identity and publication gates are recorded in
-`docs/ARCHIVE_RELEASE_PREPARATION_2026-10-17.md`.
-Source/evidence commit and push are authorized; merge/publication are not.
-No generated-output or canonical-data change is authored by this PR. A source
-merge can activate the feature on the next eligible scheduled render.
+**Archive released (17 October 2026, PR #776):**
+Approved source `6d9368c2f60679f44aaa034c5bb5541976520f9b` merged as
+`027f3f56ca9ccef323545124f55ac3c3fb319e01`. The owner authorized the 981
+inherited main-output changes and Archive activation. Separate inherited and
+Archive output commits culminate at `f50524cb119b039c9d7e090a5f6bbd43a06d2917`;
+output-only deployment 39062144232 published the complete accepted build.
+Live corpus: 912 records / 1,006 public research items. All 1,892 public files
+match accepted bytes; eight live contracts cover research tools, legacy URLs,
+desktop/mobile/no-JS and Team/author routes. Validator: zero errors, ten governed
+warnings. Source Linux CI passed 7,376 tests with two explained skips. Database,
+editorial/permission records, retired exclusions, #766 and db53 are preserved.
+Exact commits, pins, coordination and evidence: `docs/ARCHIVE_RELEASE_2026-10-17.md`.
+No release blocker remains; future scheduled rendering uses the activated source.
 
 **Editorial team integration (17 October 2026, PR #770 review candidate):**
 The staff branch incorporates main `a4d7961e47` without conflicts. Three approved

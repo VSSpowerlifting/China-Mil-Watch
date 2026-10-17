@@ -1,5 +1,8 @@
 # Archive release preparation — PR #776
 
+**Historical preparation record.** The owner subsequently authorized release,
+which is now published and verified. See the [executed release report](ARCHIVE_RELEASE_2026-10-17.md).
+
 This completes the existing release preparation; no publication is authorized.
 The original 966-item receipts remain historical evidence. Full local candidate
 manifests, captures and the detailed owner report are preserved untracked under

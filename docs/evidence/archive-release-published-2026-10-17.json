@@ -1,0 +1,86 @@
+{
+  "completed_at_new_york": "2026-10-17T15:26:42.752692-04:00",
+  "source_pr": 776,
+  "approved_head": "6d9368c2f60679f44aaa034c5bb5541976520f9b",
+  "merge_sha": "027f3f56ca9ccef323545124f55ac3c3fb319e01",
+  "inherited_output_commit": "db2afc8bd2b6e6b7003e37bfecf71e4ec8434be4",
+  "output_commit": "f50524cb119b039c9d7e090a5f6bbd43a06d2917",
+  "deployment_run": 39062144232,
+  "deployment_url": "https://github.com/VSSpowerlifting/IndoPacificRecord/actions/runs/39062144232",
+  "deployment_head": "f50524cb119b039c9d7e090a5f6bbd43a06d2917",
+  "gh_pages_commit": "6e7ab454a735ba92f9e1a654c891b43c1ef155a1",
+  "live_url": "https://indopacificrecord.org/archive.html?scope=published",
+  "corpus": {
+    "date": "2026-10-17",
+    "records": 912,
+    "logical_sha256": "6dc8594a72c2b8fd435a95c59f5a4af4e4eda98ae474610b9ad463b0df704930",
+    "research_items": 1006
+  },
+  "candidate_manifest_sha256": "8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02",
+  "published_git_files_matched": 1894,
+  "public_http_files_matched": 1892,
+  "deployment_controls_verified_in_git": [
+    ".nojekyll",
+    "CNAME"
+  ],
+  "inherited_paths": 981,
+  "archive_paths": 4,
+  "combined_changed_paths": 984,
+  "unexplained_paths": [],
+  "source_ci": {
+    "run": 39059700956,
+    "tests": 7376,
+    "skips": 2,
+    "failures": 0,
+    "errors": 0,
+    "gpg_cases": 56,
+    "archive_browser_contracts": 7,
+    "historical_source_rows": 60,
+    "historical_review_excerpts": 60
+  },
+  "production_validator": {
+    "errors": 0,
+    "governed_warnings": 10
+  },
+  "live_browser": {
+    "contracts": 8,
+    "success": true,
+    "skips": [],
+    "widths": [
+      320,
+      375,
+      768,
+      1280
+    ],
+    "no_javascript_widths": [
+      375,
+      1280
+    ],
+    "console_errors": [],
+    "unexpected_requests": [],
+    "canonical_article_navigation_unmocked": true
+  },
+  "retired_ids_excluded": 4400,
+  "retired_page_paths_absent": 8800,
+  "public_retired_negative_probes": 20,
+  "team_and_all_three_author_routes_verified": true,
+  "database_sha256": "21012d0e3f04426145ccf9eddae2e2dd9c820e42283230011f62163dd52e48a6",
+  "canonical_edition_or_permission_changes": [],
+  "private_pr_766_unchanged": true,
+  "db53_untouched": true,
+  "coordination": {
+    "mechanism": "Temporarily disable existing main/Pages writer workflows, drain, use output-only publication, restore original states after live verification",
+    "writers": 21,
+    "active_or_queued_writers_before_merge": 0,
+    "optional_generation_guard_assumed": false
+  },
+  "evidence_hashes": {
+    "candidate-output-manifest.json": "8bce55968f1df8a586753c053fe200d54477a8a2808f3fc4c0a61156141e1e02",
+    "live-bytes.json": "b8463d9b4ff9cb1eacf3ba92214c2f22e89a0d9870d59d99c903d2c6e6cd55a8",
+    "live-browser.json": "a6f872a7d541a36d69fb8a7222b9c58b71498b1de5d5393c0bc73208169ffcbd",
+    "live-desktop.png": "f023535af1b7691887a6dcfb3b7de1e00c97f41f4fa892faa299e0f88811355d",
+    "live-mobile.png": "008becf3206cfad9dcf24a80a44967ae4bc852e64d168e638c8c010d7875d443",
+    "gh-pages-artifact-verification.json": "424bc8aa6b572fea5ae4d3d8cbf03ca115a2ed0b336b7b70bc18ab638f7263e1"
+  },
+  "remaining_release_blockers": []
+}
