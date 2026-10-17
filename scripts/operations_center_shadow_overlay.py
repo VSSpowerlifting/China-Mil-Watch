@@ -25,7 +25,7 @@ from scripts.source_health_report import build_report
 BINDING_SCHEMA = "ipr-shadow-source-workflow-bindings/1"
 SLOT_SCHEMA = "ipr-shadow-slot-candidates/1"
 EVIDENCE_SCHEMA = "ipr-operations-shadow-candidates/1"
-TRIGGERS = frozenset(("scheduled", "manual_only", "research_only"))
+TRIGGERS = frozenset(("scheduled", "manual_only", "research_only", "private_handoff_pending"))
 SLOT_STATUSES = frozenset((
     "pending_grace", "scheduled_success_new_records_candidate",
     "scheduled_success_no_new_records_candidate",
@@ -143,6 +143,13 @@ def _check_bindings(report, expected):
         if trigger == "research_only":
             require(branch is None and row.get("workflow") is None and
                     row.get("cron") is None, "research-only source has collector binding")
+        elif trigger == "private_handoff_pending":
+            require(identity == ("shadow/id_kemhan/manifest.json", "id_kemhan_news")
+                    and branch == "shadow/indonesia-kemhan"
+                    and row.get("workflow") is None
+                    and row.get("cron") is None
+                    and row.get("evidence") == "private_handoff_pending_external_runs_unverified",
+                    "private handoff must remain exact Indonesia-only and unverified")
         else:
             require(type(branch) is str and
                     bool(re.fullmatch(r"shadow/[a-z0-9_/-]+", branch)) and
