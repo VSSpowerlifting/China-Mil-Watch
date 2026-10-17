@@ -63,3 +63,5 @@
 .archive-page .archive-hold{font:14px/1.7 var(--sans);color:var(--ink-2);max-width:70ch;overflow-wrap:anywhere}
 .archive-page .keep-record{font-weight:400}
 @media(max-width:680px){.archive-page .finder-row>.finder-field:first-child{grid-column:1/-1}}
+
+.archive-page input::placeholder{color:var(--muted);opacity:1}

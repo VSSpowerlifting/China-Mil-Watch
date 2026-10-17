@@ -65,6 +65,9 @@ class ArchiveIntegrationBrowser(unittest.TestCase):
                  dict(scope='all',status=data['states'][first[3]]['code']),
                  dict(scope='all',trail='1'), dict(scope='all',q=first[4][:12]),
                  dict(scope='all',**{'from':first[1], 'to':first[1]})]
+        original_only = next(r for r in data['records'] if not r[4] and r[5])
+        # Legacy title matching must not duplicate an absent English title.
+        cases.append(dict(scope='all', q=original_only[5]+' '+original_only[5]))
         page = self.context().new_page()
         for query in cases:
             with self.subTest(query=query):
@@ -159,6 +162,17 @@ class ArchiveIntegrationBrowser(unittest.TestCase):
         self.assertEqual(page.locator('#results .record-row').count(),50)
         self.assertEqual(page.locator('#results [data-from-index]').count(),0)
         self.assertFalse(page.locator('#controls').is_visible())
+
+    def test_official_hold_is_visible_before_opening_provenance(self):
+        self.assertTrue(self.index['holds'])
+        ident, hold = next(iter(self.index['holds'].items()))
+        record = next(r for r in self.index['records'] if r['id']==ident)
+        page = self.context().new_page()
+        self.open(page,dict(scope='published',record_type='official_link',q=record['title']))
+        row = page.locator('#results .record-row').filter(has_text=hold).first
+        self.assertTrue(row.locator('.archive-hold').is_visible())
+        self.assertEqual(row.locator('.archive-hold').inner_text(),hold)
+        self.assertFalse(row.locator('details').evaluate('e=>e.open'))
 
     def test_invalid_query_is_reported_and_no_javascript_keeps_week_browsing(self):
         page=self.context().new_page(); page.goto(self.origin+'/archive.html?keywords=%22unclosed',wait_until='networkidle')
