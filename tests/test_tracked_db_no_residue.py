@@ -95,17 +95,17 @@ class ReadOnlyToolsLeaveNothingBehind(unittest.TestCase):
                 self.sweep()
                 proc = self.run_script(argv)
                 if name == "verify_db_current" and proc.returncode == 1:
-                    # A schema-only PR may add China tombstone migration 0009 before the
-                    # tracked production database has received its guarded
-                    # production admission. The verifier MUST fail closed in
-                    # that transitional state while still leaving no SQLite
-                    # WAL/SHM sidecars beside the tracked file.
+                    # This schema-only PR introduces regional metadata migration
+                    # 0010 before the tracked production database receives its
+                    # separately reviewed migration. Version 0009 is already
+                    # applied. Verify the *exact* pending version, not an
+                    # arbitrary failure. Read-only checks must leave no sidecars.
                     from migrations.runner import discover, applied_versions
                     from scripts.reconcile_db import read_only
                     with read_only(TRACKED) as check_db:
                         pending = ({m.version for m in discover()}
                                    - set(applied_versions(check_db)))
-                    self.assertEqual({"0009"}, pending,
+                    self.assertEqual({"0010"}, pending,
                                      "an unrecognized migration is pending")
                     self.assertIn("database is 'partially_applied'",
                                   proc.stderr)
