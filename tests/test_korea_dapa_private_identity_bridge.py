@@ -49,7 +49,8 @@ class DapaPrivateRowToArticleContracts(unittest.TestCase):
             "public_release_authorized",
         ):
             self.assertIs(result[key], False)
-        for private in ("PRIVATE", "goDoc", "2026-01-11", "GOVERNMENT ARTICLE BODY"):
+        for private in ("PRIVATE GOVERNMENT RELEASE TITLE", "PRIVATE GOVERNMENT ARTICLE BODY",
+                        "goDoc", "2026-01-11"):
             self.assertNotIn(private, str(result))
 
     def test_ordinary_navigational_params_do_not_change_docseq_identity(self):
