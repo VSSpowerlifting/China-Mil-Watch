@@ -81,6 +81,19 @@ class KoreaOriginalReadbackTests(unittest.TestCase):
     def _verify(self, **kwargs):
         return verify_readback(self.main, self.pages, **kwargs)
 
+    def test_workflow_installs_template_renderer_for_pr_and_scheduled_jobs(self):
+        # The exact original-page readback invokes render_original_page(),
+        # which imports jinja2 lazily. The runner must install it in BOTH
+        # offline contracts and public verification paths, not just site CI.
+        workflow = (Path(__file__).resolve().parents[1] /
+                    ".github/workflows/korea_original_deployed_readback.yml"
+                    ).read_text(encoding="utf-8")
+        self.assertEqual(
+            workflow.count("python -m pip install requests 'jinja2>=3.1.4,<4'"),
+            2,
+            "PR and scheduled source-rendering jobs must both install Jinja2",
+        )
+
     def test_exact_branch_parity_verified_not_misreported_as_https(self):
         out = self._verify()
         self.assertEqual(out["registered_originals"], 1)
