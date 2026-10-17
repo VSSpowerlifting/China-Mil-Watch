@@ -114,7 +114,11 @@ class KoreaDapaPolicyAdapter(KoreaPolicyAdapter):
             info.select('a.gotosite[href="/news/ministryNewsList.do?repCode=B00008"]'),
             "DAPA issuer link",
         )
-        if issuer.get_text(" ", strip=True) != ISSUER or not title:
+        # Policy Briefing appends a navigation cue to the issuer link text.
+        # The exact DAPA repCode URL above is authoritative; accept only the
+        # verified display variants, never arbitrary issuer names or suffixes.
+        displayed_issuer = issuer.get_text(" ", strip=True)
+        if displayed_issuer not in (ISSUER, ISSUER + " 부처별 뉴스 이동") or not title:
             raise ValueError("DAPA article issuer or title changed")
 
         hwpx = set()
