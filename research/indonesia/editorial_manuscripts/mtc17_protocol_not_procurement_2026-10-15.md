@@ -1,4 +1,4 @@
-# Indonesia and Russia Signed a Defense Protocol. The Industrial Commitments Remain Unclear.
+# Indonesia Reports a Defense Protocol with Russia. The Industrial Commitments Remain Unclear.
 
 *Indo-Pacific Record | Indonesia Desk | Unpublished editorial candidate, revised October 17, 2026. This is a public-repository draft PR, not a confidential source archive. Indonesian-language review, editorial approval and publication authorization remain outstanding.*
 
